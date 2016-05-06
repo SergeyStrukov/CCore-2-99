@@ -1,7 +1,7 @@
 /* SIntFunc.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -17,16 +17,17 @@
 #define CCore_inc_gadget_SIntFunc_h
 
 #include <CCore/inc/gadget/UIntFunc.h>
+#include <CCore/inc/gadget/Classification.h>
 
 namespace CCore {
 
 /* classes */
 
-template <class SInt,class=Meta::EnableIf< Meta::IsSInt<SInt> && Is2sComplementArithmetic > > struct SIntFunc;
+template <S2sIntType SInt> struct SIntFunc;
 
 /* struct SIntFunc<SInt> */
 
-template <class SInt,class>
+template <S2sIntType SInt>
 struct SIntFunc
  {
   // types

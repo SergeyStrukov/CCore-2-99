@@ -1,7 +1,7 @@
 /* MSec.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -18,6 +18,7 @@
 
 #include <CCore/inc/gadget/Replace.h>
 #include <CCore/inc/gadget/Nothing.h>
+#include <CCore/inc/gadget/Classification.h>
 
 namespace CCore {
 
@@ -39,8 +40,7 @@ struct MSecUnit
 
   // methods
 
-  template <class T>
-  constexpr unsigned operator () (T time) const { return time*scale; }
+  constexpr unsigned operator () (UIntType time) const { return time*scale; }
  };
 
 /* consts */
@@ -65,8 +65,7 @@ struct MSec
 
   explicit constexpr MSec(unsigned time_) : time(time_) {}
 
-  template <class T>
-  constexpr MSec(T time_,MSecUnit unit) : time(unit(time_)) {}
+  constexpr MSec(UIntType time_,MSecUnit unit) : time(unit(time_)) {}
 
   // methods
 

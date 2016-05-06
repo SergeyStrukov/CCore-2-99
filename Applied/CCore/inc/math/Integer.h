@@ -1493,7 +1493,7 @@ void PrintInteger<Integer>::operator () (P &out,IntegerPrintOpt opt,Integer a) c
       {
        out.put('-');
 
-       print(out,PosSub(opt.width,1),-a,K);
+       print(out,PosSub(opt.width,1u),-a,K);
       }
      break;
 
@@ -1503,7 +1503,7 @@ void PrintInteger<Integer>::operator () (P &out,IntegerPrintOpt opt,Integer a) c
          {
           out.put('+');
 
-          opt.width=PosSub(opt.width,1);
+          opt.width=PosSub(opt.width,1u);
          }
 
        if( opt.width )
@@ -1519,7 +1519,7 @@ void PrintInteger<Integer>::operator () (P &out,IntegerPrintOpt opt,Integer a) c
          {
           out.put('+');
 
-          opt.width=PosSub(opt.width,1);
+          opt.width=PosSub(opt.width,1u);
          }
 
        print(out,opt.width,a,K);

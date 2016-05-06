@@ -16,6 +16,7 @@
 #ifndef CCore_inc_Gadget_h
 #define CCore_inc_Gadget_h
 
+#include <CCore/inc/gadget/Classification.h>
 #include <CCore/inc/gadget/CreateAt.h>
 #include <CCore/inc/gadget/DefaultTimeout.h>
 #include <CCore/inc/gadget/ExceptionType.h>
@@ -30,6 +31,7 @@
 #include <CCore/inc/gadget/NoCopy.h>
 #include <CCore/inc/gadget/Nothing.h>
 #include <CCore/inc/gadget/NoThrowFlags.h>
+#include <CCore/inc/gadget/OpAddHelper.h>
 #include <CCore/inc/gadget/Place.h>
 #include <CCore/inc/gadget/PosSub.h>
 #include <CCore/inc/gadget/PtrLen.h>

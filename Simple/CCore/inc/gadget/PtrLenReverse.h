@@ -1,7 +1,7 @@
 /* PtrLenReverse.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -172,17 +172,9 @@ PtrLenReverse<const T> RangeReverse_const(T *ptr,T *lim) { return PtrLenReverse<
 
 /* container RangeReverse...() */
 
-template <class S>
-auto RangeReverse(S &&src) -> decltype( RangeReverse(src.getPtr(),src.getLen()) )
- {
-  return RangeReverse(src.getPtr(),src.getLen());
- }
+auto RangeReverse(RangeAccessType &&obj) { return RangeReverse(obj.getPtr(),obj.getLen()); }
 
-template <class S>
-auto RangeReverse_const(const S &src) -> decltype( RangeReverse_const(src.getPtr_const(),src.getLen()) )
- {
-  return RangeReverse_const(src.getPtr_const(),src.getLen());
- }
+auto RangeReverse_const(const RangeAccessType &obj) { return RangeReverse_const(obj.getPtr_const(),obj.getLen()); }
 
 /* begin()/end() */
 

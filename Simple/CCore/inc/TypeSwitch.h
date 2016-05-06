@@ -529,7 +529,7 @@ const auto CaseVal = CaseValCtor<CaseList,T>::Ret ;
 template <class ... CC>
 struct CaseListMaxSizeofCtor< CaseList<CC...> >
  {
-  static const ulen Ret = MaxOf<ulen>( sizeof (CaseType<CC>) ... ) ;
+  static const ulen Ret = Max_cast( sizeof (CaseType<CC>) ... ) ;
  };
 
 /* const CaseListMaxSizeof<CaseList> */

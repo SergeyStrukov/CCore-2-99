@@ -1,7 +1,7 @@
 /* Function.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -71,9 +71,7 @@ class Function<R (AA...)>
 
    static R FuncProxy(Handle ctx,AA ... aa)
     {
-     R (*func_ptr)(AA...);
-
-     func_ptr=(R (*)(AA...))ctx.func_ptr;
+     auto func_ptr=(R (*)(AA...))ctx.func_ptr;
 
      return func_ptr(aa...);
     }

@@ -1,7 +1,7 @@
 /* Init.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -35,7 +35,11 @@ template <class T> struct InitExitObject;
 template <ulen Len>
 struct InitStorage
  {
+  // storage
+
   Meta::AlignedStorage<Len> storage;
+
+  // methods
 
   void * getMem() { return &storage; }
 
@@ -54,6 +58,7 @@ struct InitExitObject
   // private data
 
   InitStorage<sizeof (T)> storage;
+
   T *obj;
 
   // init/exit
@@ -67,7 +72,7 @@ struct InitExitObject
    {
     if( obj ) return;
 
-    static_assert( std::is_pod<InitExitObject<T> >::value ,"CCore::InitExitObject<T> must be POD");
+    static_assert( Meta::IsPOD<InitExitObject<T> > ,"CCore::InitExitObject<T> must be POD");
 
     obj=new(storage.getPlace()) T( std::forward<SS>(ss)... );
    }

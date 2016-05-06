@@ -1,7 +1,7 @@
 /* Replace.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -17,6 +17,7 @@
 #define CCore_inc_gadget_Replace_h
 
 #include <CCore/inc/gadget/UtilFunc.h>
+#include <CCore/inc/gadget/Classification.h>
 
 namespace CCore {
 
@@ -40,7 +41,7 @@ T Replace_add(T &obj,S a) { T ret(obj); obj=ret+a; return ret; }
 template <class T,class S>
 T Replace_sub(T &obj,S a) { T ret(obj); obj=ret-a; return ret; }
 
-template <class Func,class T>
+template <class Func,class T> requires FuncType<Func,T,T>
 T Replace_gen(Func func,T &obj) { T ret(obj); obj=func(ret); return ret; }
 
 } // namespace CCore

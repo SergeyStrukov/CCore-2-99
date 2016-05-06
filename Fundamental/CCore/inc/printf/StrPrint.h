@@ -123,7 +123,7 @@ class StrPrint
 
    ulen getExtra(ulen width,bool quoted) const
     {
-     return quoted?PosSub(width,str.len,2):PosSub(width,str.len);
+     return quoted?PosSub(width,str.len,2u):PosSub(width,str.len);
     }
 
    template <class P>
@@ -228,7 +228,7 @@ class Title
      out.put(' ');
      out.put(str.ptr,str.len);
      out.put(' ');
-     out.put(opt.border,PosSub(opt.width,opt.off,str.len,2));
+     out.put(opt.border,PosSub(opt.width,opt.off,str.len,2u));
     }
  };
 

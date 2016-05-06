@@ -438,7 +438,7 @@ void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
       {
        ulen off=xscroll.getPos();
 
-       off=PosSub(off,text_dx);
+       off=PosSub(off,(uCoord)text_dx);
 
        xscroll.setPos(off);
 

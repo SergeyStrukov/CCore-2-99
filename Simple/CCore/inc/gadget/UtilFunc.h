@@ -1,7 +1,7 @@
 /* UtilFunc.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -16,7 +16,7 @@
 #ifndef CCore_inc_gadget_UtilFunc_h
 #define CCore_inc_gadget_UtilFunc_h
 
-#include <CCore/inc/gadget/Meta.h>
+#include <CCore/inc/gadget/OpAddHelper.h>
 
 namespace CCore {
 
@@ -30,6 +30,18 @@ constexpr T Min(T a,T b) { return (a<b)?a:b; }
 
 template <class T>
 constexpr T Max(T a,T b) { return (a<b)?b:a; }
+
+template <class T>
+constexpr T Min_cast(T a,AnyType ... args)
+ {
+  return ( OpAddHelper<T,Min>(a) + ... + OpAddHelper<T,Min>(args) ).val;
+ }
+
+template <class T>
+constexpr T Max_cast(T a,AnyType ... args)
+ {
+  return ( OpAddHelper<T,Max>(a) + ... + OpAddHelper<T,Max>(args) ).val;
+ }
 
 template <class T>
 constexpr T Cap(T a,T x,T b) { return (x<a)?a:( (b<x)?b:x ); }
@@ -65,49 +77,31 @@ bool Change(T &obj,T val)
 
 /* functions */
 
-template <class UInt,class S>
-Meta::EnableIf< Meta::IsUInt<UInt> > BitSet(UInt &obj,S bits)
+template <UIntType UInt,class S>
+void BitSet(UInt &obj,S bits)
  {
   obj |= UInt(bits) ;
  }
 
-template <class UInt,class S>
-Meta::EnableIf< Meta::IsUInt<UInt> > BitClear(UInt &obj,S bits)
+template <UIntType UInt,class S>
+void BitClear(UInt &obj,S bits)
  {
   obj &= ~UInt(bits) ;
  }
 
-template <class UInt,class S>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > BitTest(UInt val,S bits)
+template <UIntType UInt,class S>
+UInt BitTest(UInt val,S bits)
  {
   return UInt( val&UInt(bits) );
  }
 
-template <class UInt,class S>
-Meta::EnableIf< Meta::IsUInt<UInt>  , bool > BitTestAll(UInt val,S bits_)
+template <UIntType UInt,class S>
+bool BitTestAll(UInt val,S bits_)
  {
   UInt bits=UInt(bits_);
 
   return UInt( val&bits )==bits;
  }
-
-/* MaxOf() */
-
-namespace Meta {
-
-template <class RetType,class T>
-constexpr RetType MaxOf(T t)
- {
-  return t;
- }
-
-template <class RetType,class T,class ... TT>
-constexpr RetType MaxOf(T t,TT ... tt)
- {
-  return Max<RetType>(t,MaxOf<RetType>(tt...));
- }
-
-} // namespace Meta
 
 } // namespace CCore
 

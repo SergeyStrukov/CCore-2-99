@@ -1,7 +1,7 @@
 /* Place.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -18,7 +18,7 @@
 
 #include <CCore/inc/gadget/Len.h>
 #include <CCore/inc/gadget/Replace.h>
-#include <CCore/inc/gadget/Meta.h>
+#include <CCore/inc/gadget/Classification.h>
 
 namespace CCore {
 
@@ -47,11 +47,11 @@ inline ulen PtrDist(const void *from,const void *to) { return ulen( CastPtr(to)-
 
 /* classes */
 
-template <class Void,class=Meta::EnableIf< Meta::OneOf<Void,void,const void> > > class Place;
+template <VoidType Void> class Place;
 
 /* class Place<Void> */
 
-template <class Void,class>
+template <VoidType Void>
 class Place
  {
    Void *ptr;
@@ -60,17 +60,13 @@ class Place
 
    explicit Place(Void *ptr_) : ptr(ptr_) {}
 
-   template <class T>
-   Place<Void> operator + (T delta) const { return Place<Void>(PtrAdd(ptr,delta)); }
+   Place<Void> operator + (UIntType delta) const { return Place<Void>(PtrAdd(ptr,delta)); }
 
-   template <class T>
-   Place<Void> operator - (T delta) const { return Place<Void>(PtrSub(ptr,delta)); }
+   Place<Void> operator - (UIntType delta) const { return Place<Void>(PtrSub(ptr,delta)); }
 
-   template <class T>
-   Place<Void> operator += (T delta) { return Replace(*this,*this+delta); }
+   Place<Void> operator += (UIntType delta) { return Replace(*this,*this+delta); }
 
-   template <class T>
-   Place<Void> operator -= (T delta) { return Replace(*this,*this-delta); }
+   Place<Void> operator -= (UIntType delta) { return Replace(*this,*this-delta); }
 
    template <class T>
    operator T * () const { return static_cast<T *>(ptr); }

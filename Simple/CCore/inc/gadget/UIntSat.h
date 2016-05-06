@@ -1,7 +1,7 @@
 /* UIntSat.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -24,15 +24,11 @@ namespace CCore {
 
 /* classes */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct UIntSat;
-
-template <class UInt,UInt A,UInt B> struct UIntConstAdd_ok;
-
-template <class UInt,UInt A,UInt B> struct UIntConstSub_ok;
+template <UIntType UInt> struct UIntSat;
 
 /* struct UIntSat<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 struct UIntSat
  {
   static const UInt MaxVal = MaxUInt<UInt> ;
@@ -50,8 +46,7 @@ struct UIntSat
    {
    }
 
-  template <class T,class=Meta::EnableIf< Meta::IsUInt<T> > >
-  constexpr UIntSat(T value_)
+  constexpr UIntSat(UIntType value_)
    : value( (value_<=MaxVal)? value_ : MaxVal ),
      overflow( value_>MaxVal )
    {
@@ -76,31 +71,15 @@ struct UIntSat
   bool operator >= (UInt lim) const { return value>=lim || overflow ; }
  };
 
-/* struct UIntConstAdd_ok<UInt,UInt A,UInt B> */
-
-template <class UInt,UInt A,UInt B>
-struct UIntConstAdd_ok
- {
-  enum RetType : UInt { Ret = A+B };
- };
-
 /* const UIntConstAdd<UInt,UInt A,UInt B> */
 
-template <class UInt,UInt A,UInt B>
-const UInt UIntConstAdd = Meta::Select<( A<=MaxUInt<UInt>-B ), UIntConstAdd_ok<UInt,A,B> , Meta::Empty >::Ret ;
-
-/* struct UIntConstSub_ok<UInt,UInt A,UInt B> */
-
-template <class UInt,UInt A,UInt B>
-struct UIntConstSub_ok
- {
-  enum RetType : UInt { Ret = A-B };
- };
+template <UIntType UInt,UInt A,UInt B> requires ( A <= MaxUInt<UInt> - B )
+const UInt UIntConstAdd = A + B ;
 
 /* const UIntConstSub<UInt,UInt A,UInt B> */
 
-template <class UInt,UInt A,UInt B>
-const UInt UIntConstSub = Meta::Select<( A>=B ), UIntConstSub_ok<UInt,A,B> , Meta::Empty >::Ret ;
+template <UIntType UInt,UInt A,UInt B> requires ( A >= B )
+const UInt UIntConstSub = A - B ;
 
 /* type ULenSat */
 

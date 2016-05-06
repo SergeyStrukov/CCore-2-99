@@ -41,6 +41,10 @@ class ToMemBase : NoCopy
 
    ~ToMemBase();
 
+   // range access
+
+   const uint8 * getPtr_const() const { return ptr; }
+
    const uint8 * getPtr() const { return ptr; }
 
    ulen getLen() const { return len; }

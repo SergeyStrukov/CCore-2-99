@@ -1,7 +1,7 @@
 /* Len.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -16,7 +16,7 @@
 #ifndef CCore_inc_gadget_Len_h
 #define CCore_inc_gadget_Len_h
 
-#include <CCore/inc/base/PlatformBase.h>
+#include <CCore/inc/gadget/OpAddHelper.h>
 
 namespace CCore {
 
@@ -36,7 +36,7 @@ inline constexpr ulen operator "" _MByte (unsigned long long len) { return len*1
 
 void GuardLenAddOverflow(ulen len,ulen extra_len);
 
-inline ulen LenAdd(ulen len,ulen extra_len)
+inline ulen CheckedLenAdd(ulen len,ulen extra_len)
  {
   ulen ret=len+extra_len;
 
@@ -45,10 +45,9 @@ inline ulen LenAdd(ulen len,ulen extra_len)
   return ret;
  }
 
-template <class ... TT>
-ulen LenAdd(ulen len1,ulen len2,ulen len3,TT ... extra_len)
+ulen LenAdd(AnyType ... args)
  {
-  return LenAdd(len1,LenAdd(len2,len3,extra_len...));
+  return ( ... + OpAddHelper<ulen,CheckedLenAdd>(args) ).val;
  }
 
 void GuardLenFailed(ulen len,ulen maxlen);

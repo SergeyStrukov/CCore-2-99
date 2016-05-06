@@ -1,7 +1,7 @@
 /* Meta.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -538,6 +538,11 @@ const bool IsClass = std::is_class<T>::value ;
 template <class T>
 const bool IsPOD = std::is_pod<T>::value ;
 
+/* const HasNothrowDtor<T> */
+
+template <class T>
+const bool HasNothrowDtor = std::is_nothrow_destructible<T>::value ;
+
 /* const HasTrivDtor<T> */
 
 template <class T>
@@ -577,6 +582,11 @@ const bool IsCopyable = std::is_copy_constructible<T>::value && std::is_copy_ass
 
 template <class T>
 const bool IsMovable = std::is_move_constructible<T>::value && std::is_move_assignable<T>::value ;
+
+/* const IsBaseOf<B,D> */
+
+template <class B,class D>
+const bool IsBaseOf = std::is_base_of<B,D>::value ;
 
 /* type AlignedStorage<ulen Len> */
 

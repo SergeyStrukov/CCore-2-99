@@ -75,7 +75,7 @@ CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) \
 
 FREETYPEOPT = -I$(HOME)/freetype
 
-CCOPT = -c -pthread -std=c++14 -fwrapv -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA) $(FREETYPEOPT)
+CCOPT = -c -pthread -std=c++1z -fconcepts -fwrapv -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA) $(FREETYPEOPT)
 
 ASOPT =
 

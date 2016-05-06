@@ -140,7 +140,7 @@ void FontSelector::createList(const FontDatabase &fdb)
                    [] (const FontInfo &a,const FontInfo &b) { return AlphaCmp(b.monospace,a.monospace,
                                                                               CmpAsStr(a.family),CmpAsStr(b.family),
                                                                               a.italic,b.italic,
-                                                                              a.bold,b.bold)<0; } );
+                                                                              a.bold,b.bold); } );
 
   for(const FontInfo *obj : index.getList() )
     {

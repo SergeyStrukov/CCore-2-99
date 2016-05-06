@@ -48,7 +48,7 @@ class PrintTitleType
      Putobj(out_count,obj);
 
      out.put(' ');
-     out.put(opt.border,PosSub(opt.width,opt.off,out_count.getCount(),2));
+     out.put(opt.border,PosSub(opt.width,opt.off,out_count.getCount(),2u));
     }
  };
 

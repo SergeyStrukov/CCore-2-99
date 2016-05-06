@@ -1,7 +1,7 @@
 /* XXX.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Fundamental Applied Desktop HCore XCore Target/
 //

@@ -1,7 +1,7 @@
 /* SafeBuf.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -41,7 +41,11 @@ class SafeBuf : NoCopy
 
    ~SafeBuf();
 
+   // range access
+
    char * getPtr() const { return ptr; }
+
+   char * getPtr_const() const { return ptr; }
 
    ulen getLen() const { return len; }
  };

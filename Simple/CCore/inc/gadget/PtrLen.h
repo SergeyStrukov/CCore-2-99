@@ -1,7 +1,7 @@
 /* PtrLen.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -19,7 +19,7 @@
 #include <CCore/inc/gadget/Len.h>
 #include <CCore/inc/gadget/Nothing.h>
 #include <CCore/inc/gadget/UtilFunc.h>
-#include <CCore/inc/gadget/Meta.h>
+#include <CCore/inc/gadget/Classification.h>
 
 namespace CCore {
 
@@ -235,31 +235,15 @@ PtrLen<const T> Range_const(T *ptr,T *lim) { return {ptr,Dist(ptr,lim)}; }
 
 /* container Range...() */
 
-template <class S>
-auto Range(S &&src) -> decltype( Range(src.getPtr(),src.getLen()) )
- {
-  return Range(src.getPtr(),src.getLen());
- }
+auto Range(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }
 
-template <class S>
-auto Range_const(const S &src) -> decltype( Range_const(src.getPtr_const(),src.getLen()) )
- {
-  return Range_const(src.getPtr_const(),src.getLen());
- }
+auto Range_const(const RangeAccessType &obj) { return Range_const(obj.getPtr_const(),obj.getLen()); }
 
 /* begin()/end() */
 
-template <class S>
-auto begin(S &&src) -> decltype( Range(src.getPtr(),src.getLen()) )
- {
-  return Range(src.getPtr(),src.getLen());
- }
+auto begin(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }
 
-template <class S>
-auto end(S &&src) -> decltype( Range(src.getPtr(),src.getLen()) )
- {
-  return Nothing;
- }
+auto end(RangeAccessType &&obj) -> decltype( begin(obj) ) { return Nothing; }
 
 template <class T>
 PtrLen<T> begin(PtrLen<T> a) { return a; }
@@ -269,11 +253,11 @@ PtrLen<T> end(PtrLen<T>) { return Nothing; }
 
 /* Mutate...() */
 
-template <class T>
-Meta::EnableIf< Meta::OneOf<T,char,const char,unsigned char,const unsigned char> , T * > MutatePtr(void *ptr) { return static_cast<T *>(ptr); }
+template <CharType T>
+T * MutatePtr(void *ptr) { return static_cast<T *>(ptr); }
 
-template <class T>
-Meta::EnableIf< Meta::OneOf<T,const char,const unsigned char> , T * > MutatePtr(const void *ptr) { return static_cast<T *>(ptr); }
+template <ConstCharType T>
+T * MutatePtr(const void *ptr) { return static_cast<T *>(ptr); }
 
 template <class T,class S>
 PtrLen<T> Mutate(PtrLen<S> a) { return {MutatePtr<T>(a.ptr),a.len*sizeof (S)}; }
