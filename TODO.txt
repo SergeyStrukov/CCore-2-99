@@ -1,0 +1,15 @@
+./README
+
+------------------------------------------------
+
+RBTreeMap CompactRBTreeMap
+
+KRef != K
+
+Cmp(KRef,K)
+
+K = KRef 
+
+find_or_add() create new node with the key, no K = KRef in complete
+
+------------------------------------------------

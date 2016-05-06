@@ -1,0 +1,18 @@
+# MakeCfg
+
+CONFIGURE = ../../gcc-6.1.0/configure
+
+OPT = --program-suffix=-6.1.0                       \
+      --prefix=/opt/gcc-6.1.0                       \
+      --with-local-prefix=/opt/gcc-6.1.0            \
+      --enable-languages=c,c++                      \
+      --enable-threads=posix                        \
+      --enable-__cxa_atexit                         \
+      --enable-c99                                  \
+      --enable-long-long                            \
+      --disable-shared                              \
+      --disable-sjlj-exceptions                     \
+
+all:
+	$(CONFIGURE) $(OPT)
+

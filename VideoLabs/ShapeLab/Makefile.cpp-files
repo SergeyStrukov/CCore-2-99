@@ -1,0 +1,4 @@
+./CCore/src/video/WindowLib2.cpp
+./src/Application.cpp
+./src/main.cpp
+./src/ShapeLab.cpp

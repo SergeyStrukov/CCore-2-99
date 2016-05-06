@@ -1,0 +1,110 @@
+/* ScanTools.h */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 2.00
+//
+//  Tag: Fundamental Mini
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+#ifndef CCore_inc_scanf_ScanTools_h
+#define CCore_inc_scanf_ScanTools_h
+
+#include <CCore/inc/TextTools.h>
+
+namespace CCore {
+
+/* CharBaseValue() */
+
+inline int CharBaseValue(char ch,unsigned base)
+ {
+  int dig=CharHexValue(ch);
+
+  if( (unsigned)dig>=base ) return -1;
+
+  return dig;
+ }
+
+/* SkipSpace() */
+
+template <class S>
+void SkipSpace(S &inp)
+ {
+  for(; +inp && CharIsSpace(*inp) ;++inp);
+ }
+
+/* ProbeChar() */
+
+template <class S>
+bool ProbeChar(S &inp,char ch)
+ {
+  if( +inp )
+    {
+     if( *inp==ch )
+       {
+        ++inp;
+
+        return true;
+       }
+    }
+
+  return false;
+ }
+
+/* PassChars() */
+
+template <class S>
+void PassChars(S &)
+ {
+  // do nothing
+ }
+
+template <class S,class C,class ... CC>
+void PassChars(S &inp,C ch,CC ... cc)
+ {
+  if( +inp && (*inp)==char(ch) )
+    {
+     ++inp;
+
+     PassChars(inp,cc...);
+    }
+  else
+    {
+     inp.fail();
+    }
+ }
+
+/* PassOneOfChar() */
+
+template <class S,class Func>
+void PassOneOfChar(S &inp,Func func)
+ {
+  if( +inp && func(*inp) )
+    {
+     ++inp;
+    }
+  else
+    {
+     inp.fail();
+    }
+ }
+
+/* SkipAllOfChar() */
+
+template <class S,class Func>
+void SkipAllOfChar(S &inp,Func func)
+ {
+  for(; +inp && func(*inp) ;++inp);
+ }
+
+} // namespace CCore
+
+#endif
+
+

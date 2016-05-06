@@ -1,0 +1,54 @@
+<!--
+/* page_ApplyToRange.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 2.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> ApplyToRange</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>ApplyToRange</h2>
+
+<p class="Files">Files <b>CCore/inc/algon/ApplyToRange.h</b> <b>CCore/src/algon/ApplyToRange.cpp</b></p>
+
+<p>
+<b>ApplyToRange()</b> applies a functor to a set of elements.
+This algorithm uses the <a href="page_FunctorType.html">Functor Init Pattern</a>.
+The first argument is a <b>Cursor</b>, the second is a functor initializer.
+</p>
+
+<pre>
+
+template &lt;class R,class FuncInit&gt;
+void <span class="Att">Algon::ApplyToRange</span>(R r,FuncInit func_init)
+ {
+  FunctorTypeOf&lt;FuncInit&gt; func(func_init);
+  
+  for(; +r ;++r) func(*r);
+ }
+
+</pre>
+
+</body>
+
+</html>
+

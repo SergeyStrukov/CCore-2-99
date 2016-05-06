@@ -1,0 +1,10 @@
+./src/Application.cpp
+./src/ColorEdit.cpp
+./src/CoordEdit.cpp
+./src/Designer.cpp
+./src/FontEdit.cpp
+./src/main.cpp
+./src/MCoordEdit.cpp
+./src/PointEdit.cpp
+./src/SpinEdit.cpp
+./src/TestFrame.cpp
