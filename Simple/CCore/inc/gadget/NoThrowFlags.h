@@ -1,7 +1,7 @@
 /* NoThrowFlags.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -16,9 +16,7 @@
 #ifndef CCore_inc_gadget_NoThrowFlags_h
 #define CCore_inc_gadget_NoThrowFlags_h
 
-#include <CCore/inc/base/PlatformBase.h>
-
-#include <CCore/inc/gadget/Nothing.h>
+#include <CCore/inc/gadget/Meta.h>
 
 namespace CCore {
 
@@ -28,32 +26,9 @@ namespace Meta {
 
 /* classes */
 
-template <class T,class S> struct SetNoThrowFlagsWarningCtor;
+template <class T,bool flag> struct BadNoThrowFlagCtor;
 
-template <class T,bool Flag> struct BadNoThrowFlagCtor;
-
-/* struct SetNoThrowFlagsWarningCtor<T,S> */
-
-template <class T,class S>
-struct SetNoThrowFlagsWarningCtor
- {
-  static constexpr bool Unused(int unused=0) { return false; }
-
-  enum RetType { Ret = Unused() };
- };
-
-template <class T>
-struct SetNoThrowFlagsWarningCtor<T,T>
- {
-  enum RetType { Ret = true };
- };
-
-/* const SetNoThrowFlagsWarning<T,S> */
-
-template <class T,class S>
-const bool SetNoThrowFlagsWarning = SetNoThrowFlagsWarningCtor<T,S>::Ret ;
-
-/* struct BadNoThrowFlagCtor<T,bool Flag> */
+/* struct BadNoThrowFlagCtor<T,bool flag> */
 
 template <class T>
 struct BadNoThrowFlagCtor<T,true>
@@ -64,19 +39,24 @@ struct BadNoThrowFlagCtor<T,true>
 template <class T>
 struct BadNoThrowFlagCtor<T,false>
  {
-  static constexpr bool Unused(int unused=0) { return false; }
+  [[deprecated("poor default flag value")]]
+  static constexpr bool Warning() { return false; }
 
-  enum RetType { Ret = Unused() };
+  enum RetType { Ret = Warning() };
  };
 
-/* const BadNoThrowFlag<T,bool Flag> */
+/* const BadNoThrowFlag<T,bool flag> */
 
-template <class T,bool Flag>
-const bool BadNoThrowFlag = BadNoThrowFlagCtor<T,Flag>::Ret ;
+template <class T,bool flag>
+const bool BadNoThrowFlag = BadNoThrowFlagCtor<T,flag>::Ret ;
 
 } // namespace Meta
 
 /* classes */
+
+template <class T,bool default_no_throw> struct SetDefaultNoThrowFlag;
+
+template <class T,bool copy_no_throw> struct SetCopyNoThrowFlag;
 
 template <class T,bool default_no_throw,bool copy_no_throw> struct SetNoThrowFlags;
 
@@ -84,43 +64,64 @@ struct GetNoThrowFlagsBase;
 
 template <class T> struct GetNoThrowFlags;
 
+/* struct SetDefaultNoThrowFlag<T,bool default_no_throw> */
+
+template <class T,bool default_no_throw> struct SetDefaultNoThrowFlag {};
+
+/* struct SetCopyNoThrowFlag<T,bool copy_no_throw> */
+
+template <class T,bool copy_no_throw> struct SetCopyNoThrowFlag {};
+
 /* struct SetNoThrowFlags<T,bool default_no_throw,bool copy_no_throw> */
 
-template <class T,bool default_no_throw,bool copy_no_throw>
-struct SetNoThrowFlags
- {
-  template <class S>
-  static constexpr bool Default_no_throw() { return Meta::SetNoThrowFlagsWarning<T,S> && default_no_throw ; }
-
-  template <class S>
-  static constexpr bool Copy_no_throw() { return Meta::SetNoThrowFlagsWarning<T,S> && copy_no_throw ; }
- };
+template <class T,bool default_no_throw,bool copy_no_throw> struct SetNoThrowFlags
+ : SetDefaultNoThrowFlag<T,default_no_throw> , SetCopyNoThrowFlag<T,copy_no_throw> {};
 
 /* struct GetNoThrowFlagsBase */
+
+template <class T> concept bool TrueDefaultNoThrowType = Meta::IsBaseOf<SetDefaultNoThrowFlag<T,true>,T> ;
+
+template <class T> concept bool FalseDefaultNoThrowType = Meta::IsBaseOf<SetDefaultNoThrowFlag<T,false>,T> ;
+
+template <class T> concept bool NoDefaultNoThrowType = !( TrueDefaultNoThrowType<T> || FalseDefaultNoThrowType<T> ) ;
+
+
+template <class T> concept bool TrueCopyNoThrowType = Meta::IsBaseOf<SetCopyNoThrowFlag<T,true>,T> ;
+
+template <class T> concept bool FalseCopyNoThrowType = Meta::IsBaseOf<SetCopyNoThrowFlag<T,false>,T> ;
+
+template <class T> concept bool NoCopyNoThrowType = !( TrueCopyNoThrowType<T> || FalseCopyNoThrowType<T> ) ;
+
 
 struct GetNoThrowFlagsBase
  {
   // default
 
-  template <class T>
-  static constexpr bool GetDefault(int)
+  template <NoDefaultNoThrowType T>
+  static constexpr bool GetDefault()
    {
-    return Meta::BadNoThrowFlag<T, !std::is_default_constructible<T>::value || std::is_nothrow_default_constructible<T>::value >;
+    return Meta::BadNoThrowFlag<T, !Meta::HasDefaultCtor<T> || Meta::HasNothrowDefaultCtor<T> >;
    }
 
-  template <class T,bool Ret=T::template Default_no_throw<T>()>
-  static constexpr bool GetDefault(NothingType) { return Ret; }
+  template <TrueDefaultNoThrowType T>
+  static constexpr bool GetDefault() { return true; }
+
+  template <FalseDefaultNoThrowType T>
+  static constexpr bool GetDefault() { return false; }
 
   // copy
 
-  template <class T>
-  static constexpr bool GetCopy(int)
+  template <NoCopyNoThrowType T>
+  static constexpr bool GetCopy()
    {
-    return Meta::BadNoThrowFlag<T, !std::is_copy_constructible<T>::value || std::is_nothrow_copy_constructible<T>::value >;
+    return Meta::BadNoThrowFlag<T, !Meta::HasCopyCtor<T> || Meta::HasNothrowCopyCtor<T> >;
    }
 
-  template <class T,bool Ret=T::template Copy_no_throw<T>()>
-  static constexpr bool GetCopy(NothingType) { return Ret; }
+  template <TrueCopyNoThrowType T>
+  static constexpr bool GetCopy() { return true; }
+
+  template <FalseCopyNoThrowType T>
+  static constexpr bool GetCopy() { return false; }
  };
 
 /* struct GetNoThrowFlags<T> */
@@ -130,8 +131,8 @@ struct GetNoThrowFlags : GetNoThrowFlagsBase
  {
   enum NoThrowFlagType
    {
-    Default_no_throw = GetDefault<T>(Nothing),
-    Copy_no_throw = GetCopy<T>(Nothing)
+    Default_no_throw = GetDefault<T>(),
+    Copy_no_throw = GetCopy<T>()
    };
  };
 

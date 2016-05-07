@@ -1,7 +1,7 @@
 /* GCDConst.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -32,12 +32,12 @@ constexpr Meta::EnableIf< Meta::IsUInt<UInt> , UInt > EuclidAlgo()
 /* const GCDConst<UInt,UInt A,UInt B> */
 
 template <class UInt,UInt A,UInt B>
-const UInt GCDConst = EuclidAlgo<UInt,A,B>() ;
+constexpr UInt GCDConst = EuclidAlgo<UInt,A,B>() ;
 
 /* const LCMConst<UInt,UInt A,UInt B> */
 
 template <class UInt,UInt A,UInt B>
-const UInt LCMConst = (A/GCDConst<UInt,A,B>)*B ; // no overflow check
+constexpr UInt LCMConst = (A/GCDConst<UInt,A,B>)*B ; // no overflow check
 
 } // namespace Algon
 } // namespace CCore

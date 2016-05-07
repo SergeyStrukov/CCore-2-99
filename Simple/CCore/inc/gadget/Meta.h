@@ -27,26 +27,6 @@ namespace Meta {
 
 template <class T,T Val> const T Const = Val ;
 
-/* SumOf() */
-
-template <class RetType>
-constexpr RetType SumOf()
- {
-  return 0;
- }
-
-template <class RetType,class T>
-constexpr RetType SumOf(T t)
- {
-  return t;
- }
-
-template <class RetType,class T,class ... TT>
-constexpr RetType SumOf(T t,TT ... tt)
- {
-  return t+SumOf<RetType>(tt...);
- }
-
 /* classes */
 
 struct Empty;
@@ -548,35 +528,40 @@ const bool HasNothrowDtor = std::is_nothrow_destructible<T>::value ;
 template <class T>
 const bool HasTrivDtor = std::is_trivially_destructible<T>::value ;
 
+/* const HasDefaultCtor<T> */
+
+template <class T>
+const bool HasDefaultCtor = std::is_default_constructible<T>::value ;
+
 /* const HasNothrowDefaultCtor<T> */
 
 template <class T>
 const bool HasNothrowDefaultCtor = std::is_nothrow_default_constructible<T>::value ;
-
-/* const HasNothrowCopyCtor<T> */
-
-template <class T>
-const bool HasNothrowCopyCtor = std::is_nothrow_copy_constructible<T>::value ;
 
 /* const HasCopyCtor<T> */
 
 template <class T>
 const bool HasCopyCtor = std::is_copy_constructible<T>::value ;
 
+/* const HasNothrowCopyCtor<T> */
+
+template <class T>
+const bool HasNothrowCopyCtor = std::is_nothrow_copy_constructible<T>::value ;
+
 /* const HasMoveCtor<T> */
 
 template <class T>
 const bool HasMoveCtor = std::is_move_constructible<T>::value ;
 
-/* const IsNothrowCopyable<T> */
-
-template <class T>
-const bool IsNothrowCopyable = std::is_nothrow_copy_constructible<T>::value && std::is_nothrow_copy_assignable<T>::value ;
-
 /* const IsCopyable<T> */
 
 template <class T>
 const bool IsCopyable = std::is_copy_constructible<T>::value && std::is_copy_assignable<T>::value ;
+
+/* const IsNothrowCopyable<T> */
+
+template <class T>
+const bool IsNothrowCopyable = std::is_nothrow_copy_constructible<T>::value && std::is_nothrow_copy_assignable<T>::value ;
 
 /* const IsMovable<T> */
 

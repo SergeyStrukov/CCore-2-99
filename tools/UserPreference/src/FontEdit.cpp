@@ -23,7 +23,7 @@ namespace App {
 
 class FontEditWindow::FDBInfo::Base : public InfoBase
  {
-   struct Rec : SetNoThrowFlags<Rec,false,true>
+   struct Rec : SetDefaultNoThrowFlag<Rec,false>
     {
      String name;
      const FontInfo *info;

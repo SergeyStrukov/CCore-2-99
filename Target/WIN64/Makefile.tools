@@ -55,6 +55,7 @@ NOWARN = -Wno-non-virtual-dtor \
          -Wno-enum-compare \
          -Wno-missing-field-initializers \
          -Wno-delete-non-virtual-dtor \
+         -Wno-misleading-indentation \
 
 
 CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) \

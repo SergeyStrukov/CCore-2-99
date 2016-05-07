@@ -1,7 +1,7 @@
 /* TypeSwitch.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -529,7 +529,7 @@ const auto CaseVal = CaseValCtor<CaseList,T>::Ret ;
 template <class ... CC>
 struct CaseListMaxSizeofCtor< CaseList<CC...> >
  {
-  static const ulen Ret = Max_cast( sizeof (CaseType<CC>) ... ) ;
+  static constexpr ulen Ret = Max_cast( sizeof (CaseType<CC>) ... ) ;
  };
 
 /* const CaseListMaxSizeof<CaseList> */

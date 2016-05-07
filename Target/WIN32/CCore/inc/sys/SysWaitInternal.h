@@ -1,7 +1,7 @@
 /* SysWaitInternal.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN32
 //
@@ -170,7 +170,7 @@ struct WaitNet
 template <class AsyncState,class Wait>
 class WaitBase : public MemBase_nocopy
  {
-   class State : NoCopy , public SetNoThrowFlags<State,false,true>
+   class State : NoCopy , public SetDefaultNoThrowFlag<State,false>
     {
       AsyncState state;
 

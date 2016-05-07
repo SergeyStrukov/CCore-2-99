@@ -1,7 +1,7 @@
 /* test1005.NoThrowFlags.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -30,8 +30,9 @@ struct Test2 : SetNoThrowFlags<Test2,true,false>
  {
  };
 
-struct Test3 : Test2
+struct Test3
  {
+  Test3() {}
  };
 
 template <class T>

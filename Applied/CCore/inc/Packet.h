@@ -1,7 +1,7 @@
 /* Packet.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -26,7 +26,7 @@ namespace CCore {
 
 /* consts */
 
-const ulen MaxPacketExtLen = Align(256) ;
+constexpr ulen MaxPacketExtLen = Align(256) ;
 
 const ulen MaxPacketCompleteFunctions = 8 ;
 
@@ -273,7 +273,7 @@ class PacketBuf : NoCopy
 /* const PacketDeepExtLen<TT> */
 
 template <class ... TT>
-const ulen PacketDeepExtLen = Meta::Const<ulen, Meta::SumOf<ulen>( Align(sizeof (TT))... ) > ;
+constexpr ulen PacketDeepExtLen = ( ... + Align(sizeof (TT)) ) ;
 
 /* class PacketHeader */
 
