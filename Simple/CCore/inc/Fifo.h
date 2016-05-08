@@ -1,7 +1,7 @@
 /* Fifo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -70,8 +70,7 @@ class Fifo : NoCopy
 
    // put
 
-   template <class Func>
-   bool put_gen(Func func)
+   bool put_gen(FuncArgType<T &> func)
     {
      if( count<len )
        {
@@ -92,8 +91,7 @@ class Fifo : NoCopy
 
    // get
 
-   template <class Func>
-   bool get_gen(Func func)
+   bool get_gen(FuncArgType<T &> func)
     {
      if( count )
        {

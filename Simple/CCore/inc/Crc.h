@@ -22,7 +22,7 @@ namespace CCore {
 
 /* classes */
 
-template <class ResultType,ResultType Mask,ResultType Polynom> class CrcTable;
+template <UIntType ResultType,ResultType Mask,ResultType Polynom> class CrcTable;
 
 struct AlgoCrc16;
 
@@ -34,11 +34,9 @@ template <class Algo> class CrcAccumulator;
 
 /* class CrcTable<ResultType,ResultType Mask,ResultType Polynom> */
 
-template <class ResultType,ResultType Mask,ResultType Polynom>
+template <UIntType ResultType,ResultType Mask,ResultType Polynom>
 class CrcTable : NoCopy
  {
-   static_assert( Meta::IsUInt<ResultType> ,"CCore::CrcTable<ResultType,...> : ResultType must be an unsigned integral type");
-
    static_assert( (Polynom&Mask)==Polynom ,"CCore::CrcTable<...,Mask,Polynom> : Polynom must be in Mask");
 
    static_assert( ((Mask+1)&Mask)==0 ,"CCore::CrcTable<...,Mask,...> : invalid Mask");
@@ -98,8 +96,7 @@ class CrcTable : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      ResultType table[256];
 
@@ -190,8 +187,7 @@ class CrcAccumulator
 
    void add(DataType data) { crc=Algo::Mask(Algo::Add(crc,data)); }
 
-   template <class R>
-   void addRange(R r)
+   void addRange(CastTypeRangeType<DataType> r)
     {
      ResultType temp=crc;
 

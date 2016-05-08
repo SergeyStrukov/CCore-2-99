@@ -22,11 +22,11 @@ namespace CCore {
 
 /* classes */
 
-template <class Enum,Enum Lim,class CountType=unsigned> class Counters;
+template <EnumType Enum,Enum Lim,class CountType=unsigned> class Counters;
 
 /* class Counters<Enum,Enum Lim,CountType> */
 
-template <class Enum,Enum Lim,class CountType>
+template <EnumType Enum,Enum Lim,class CountType>
 class Counters : public PrintOptAdapter<Enum>
  {
    CountType counter[Lim];
@@ -66,8 +66,7 @@ class Counters : public PrintOptAdapter<Enum>
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      for(ulen i=0; i<DimOf(counter) ;i++)
        {
@@ -78,8 +77,7 @@ class Counters : public PrintOptAdapter<Enum>
        }
     }
 
-   template <class P,class Opt>
-   void print(P &out,const Opt &opt) const
+   void print(PrinterType &out,const AnyType &opt) const
     {
      for(ulen i=0; i<DimOf(counter) ;i++)
        {

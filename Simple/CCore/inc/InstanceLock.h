@@ -1,7 +1,7 @@
 /* InstanceLock.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -22,7 +22,7 @@ namespace CCore {
 
 /* functions */
 
-void GuardInstanceLockTaken(StrLen name);
+void GuardInstanceLockTaken(StrLen name,ulen index);
 
 /* classes */
 
@@ -52,7 +52,7 @@ class InstanceLock : NoCopy
        {
         Lock[index_]--;
 
-        GuardInstanceLockTaken(name);
+        GuardInstanceLockTaken(name,index_);
        }
     }
 

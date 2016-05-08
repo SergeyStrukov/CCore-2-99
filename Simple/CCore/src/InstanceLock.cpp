@@ -1,7 +1,7 @@
 /* InstanceLock.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -21,9 +21,9 @@ namespace CCore {
 
 /* functions */
 
-void GuardInstanceLockTaken(StrLen name)
+void GuardInstanceLockTaken(StrLen name,ulen index)
  {
-  Printf(Exception,"CCore::InstanceLock<...>::InstanceLock() : #; instance is locked",name);
+  Printf(Exception,"CCore::InstanceLock<...>::InstanceLock(#.q;,#;) : instance is locked",name,index);
  }
 
 } // namespace CCore

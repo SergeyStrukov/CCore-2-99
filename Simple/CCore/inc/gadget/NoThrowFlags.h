@@ -79,18 +79,24 @@ template <class T,bool default_no_throw,bool copy_no_throw> struct SetNoThrowFla
 
 /* struct GetNoThrowFlagsBase */
 
-template <class T> concept bool TrueDefaultNoThrowType = Meta::IsBaseOf<SetDefaultNoThrowFlag<T,true>,T> ;
+template <class T>
+concept bool TrueDefaultNoThrowType = Meta::IsBaseOf<SetDefaultNoThrowFlag<T,true>,T> ;
 
-template <class T> concept bool FalseDefaultNoThrowType = Meta::IsBaseOf<SetDefaultNoThrowFlag<T,false>,T> ;
+template <class T>
+concept bool FalseDefaultNoThrowType = Meta::IsBaseOf<SetDefaultNoThrowFlag<T,false>,T> ;
 
-template <class T> concept bool NoDefaultNoThrowType = !( TrueDefaultNoThrowType<T> || FalseDefaultNoThrowType<T> ) ;
+template <class T>
+concept bool NoDefaultNoThrowType = !( TrueDefaultNoThrowType<T> || FalseDefaultNoThrowType<T> ) ;
 
 
-template <class T> concept bool TrueCopyNoThrowType = Meta::IsBaseOf<SetCopyNoThrowFlag<T,true>,T> ;
+template <class T>
+concept bool TrueCopyNoThrowType = Meta::IsBaseOf<SetCopyNoThrowFlag<T,true>,T> ;
 
-template <class T> concept bool FalseCopyNoThrowType = Meta::IsBaseOf<SetCopyNoThrowFlag<T,false>,T> ;
+template <class T>
+concept bool FalseCopyNoThrowType = Meta::IsBaseOf<SetCopyNoThrowFlag<T,false>,T> ;
 
-template <class T> concept bool NoCopyNoThrowType = !( TrueCopyNoThrowType<T> || FalseCopyNoThrowType<T> ) ;
+template <class T>
+concept bool NoCopyNoThrowType = !( TrueCopyNoThrowType<T> || FalseCopyNoThrowType<T> ) ;
 
 
 struct GetNoThrowFlagsBase

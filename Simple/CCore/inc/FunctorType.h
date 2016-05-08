@@ -1,7 +1,7 @@
 /* FunctorType.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -22,34 +22,30 @@ namespace CCore {
 
 /* classes */
 
-struct ProbeSet_FunctorType;
-
-template <bool has_FunctorType,class FuncInit> struct FunctorTypes;
+template <class FuncInit> struct FunctorTypeOfCtor;
 
 template <class T> struct FunctorRefType;
 
-/* struct ProbeSet_FunctorType */
-
-struct ProbeSet_FunctorType
- {
-  template <class T,class C=typename T::FunctorType> struct Condition;
- };
-
-/* const Has_FunctorType<T> */
+/* concept Has_FunctorType<T> */
 
 template <class T>
-const bool Has_FunctorType = Meta::Detect<ProbeSet_FunctorType,T> ;
+concept bool Has_FunctorType = requires() { typename T::FunctorType; } ;
 
-/* struct FunctorTypes<bool has_FunctorType,FuncInit> */
+/* concept No_FunctorType<T> */
 
-template <class FuncInit>
-struct FunctorTypes<true,FuncInit>
+template <class T>
+concept bool No_FunctorType = !Has_FunctorType<T> ;
+
+/* struct FunctorTypeOfCtor<FuncInit> */
+
+template <Has_FunctorType FuncInit>
+struct FunctorTypeOfCtor<FuncInit>
  {
   using Ret = typename FuncInit::FunctorType ;
  };
 
-template <class FuncInit>
-struct FunctorTypes<false,FuncInit>
+template <No_FunctorType FuncInit>
+struct FunctorTypeOfCtor<FuncInit>
  {
   using Ret = FuncInit ;
  };
@@ -57,7 +53,7 @@ struct FunctorTypes<false,FuncInit>
 /* type FunctorTypeOf<FuncInit> */
 
 template <class FuncInit>
-using FunctorTypeOf = typename FunctorTypes<Has_FunctorType<FuncInit>,FuncInit>::Ret ;
+using FunctorTypeOf = typename FunctorTypeOfCtor<FuncInit>::Ret ;
 
 /* struct FunctorRefType<T> */
 

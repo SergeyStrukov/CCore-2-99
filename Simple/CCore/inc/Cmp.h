@@ -35,12 +35,14 @@ const char * GetTextDesc(CmpResult cmp);
 
 /* concept Has_objCmp<T> */
 
-template <class T> concept bool Has_objCmp = requires() { { &T::objCmp } -> CmpResult (T::*)(const T &) const ; } ||
-                                             requires() { { &T::objCmp } -> CmpResult (T::*)(T) const ; } ;
+template <class T>
+concept bool Has_objCmp = requires() { { &T::objCmp } -> CmpResult (T::*)(const T &) const ; } ||
+                          requires() { { &T::objCmp } -> CmpResult (T::*)(T) const ; } ;
 
 /* concept No_objCmp<T> */
 
-template <class T> concept bool No_objCmp = !Has_objCmp<T> ;
+template <class T>
+concept bool No_objCmp = !Has_objCmp<T> ;
 
 /* LessCmp() */
 
@@ -144,7 +146,8 @@ CmpResult Cmp(const T &a,const T &b) { return LessCmp(a,b); }
 
 /* concept CmpableType<T> */
 
-template <class T> concept bool CmpableType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(a,b) } -> CmpResult ; } ;
+template <class T>
+concept bool CmpableType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(a,b) } -> CmpResult ; } ;
 
 /* AlphaCmp() */
 
@@ -255,7 +258,8 @@ bool RangeLessOf(const T &a,const T &b) { return RangeLess(Range(a),Range(b)); }
 
 /* concept CmpableBy<T,Func> */
 
-template <class T,class Func> concept bool CmpableBy = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(func(a),func(b)) } -> CmpResult ; } ;
+template <class T,class Func>
+concept bool CmpableBy = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(func(a),func(b)) } -> CmpResult ; } ;
 
 /* Range...By() */
 
