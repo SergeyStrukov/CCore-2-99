@@ -1,7 +1,7 @@
 /* test1010.UIntFunc.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -160,28 +160,28 @@ void testBits(ulen rep=Rep)
 
   for(auto count=rep; count ;count--)
     {
-     UInt a=random.next_uint<UInt>()|UIntBitFunc<UInt>::MSBit;
+     UInt a=random.next_uint<UInt>()|UIntBitFunc_default<UInt>::MSBit;
 
-     unsigned s=random.select(UIntBitFunc<UInt>::Bits);
+     unsigned s=random.select(UIntBitFunc_default<UInt>::Bits);
 
      a>>=s;
 
-     unsigned n=UIntBitFunc<UInt>::CountZeroMSB(a);
+     unsigned n=UIntBitFunc_default<UInt>::CountZeroMSB(a);
 
      if( n!=s ) Printf(Exception,"fail 7");
 
-     if( UIntBitFunc<UInt>::BitsOf(a)!=UIntBitFunc<UInt>::Bits-n ) Printf(Exception,"fail 8");
+     if( UIntBitFunc_default<UInt>::BitsOf(a)!=UIntBitFunc_default<UInt>::Bits-n ) Printf(Exception,"fail 8");
     }
 
   for(auto count=rep; count ;count--)
     {
      UInt a=random.next_uint<UInt>()|1u;
 
-     unsigned s=random.select(UIntBitFunc<UInt>::Bits);
+     unsigned s=random.select(UIntBitFunc_default<UInt>::Bits);
 
      a<<=s;
 
-     unsigned n=UIntBitFunc<UInt>::CountZeroLSB(a);
+     unsigned n=UIntBitFunc_default<UInt>::CountZeroLSB(a);
 
      if( n!=s ) Printf(Exception,"fail 8");
     }

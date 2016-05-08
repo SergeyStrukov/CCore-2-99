@@ -1,7 +1,7 @@
 /* UIntFunc.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -16,7 +16,7 @@
 #ifndef CCore_inc_gadget_UIntFunc_h
 #define CCore_inc_gadget_UIntFunc_h
 
-#include <CCore/inc/gadget/Meta.h>
+#include <CCore/inc/gadget/Classification.h>
 
 #include <CCore/inc/base/Quick.h>
 
@@ -24,35 +24,31 @@ namespace CCore {
 
 /* const MaxUInt<UInt> */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > >
+template <UIntType UInt>
 const UInt MaxUInt = UInt(-1) ;
 
 /* functions */
 
 inline constexpr unsigned Bit(unsigned num) { return 1u<<num; }
 
-template <class UInt>
-constexpr Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntBit(unsigned num) { return UInt(1)<<num; }
+template <UIntType UInt>
+constexpr UInt UIntBit(unsigned num) { return UInt(1)<<num; }
 
 /* classes */
 
-template <class UInt,class ExtUInt> struct UIntMulFunc_double;
+template <UIntType UInt,UIntType ExtUInt = Quick::UIntMulSelect< Meta::UIntBits<UInt> > > struct UIntMulFunc;
 
-template <class UInt,class ExtUInt> struct UIntMulFunc_exact;
+template <UIntType UInt> struct UIntBitFunc_default;
 
-template <class UInt> struct UIntBitFunc;
+template <UIntType UInt> struct UIntBitFunc;
 
-template <class UInt> struct UIntBitFunc_quick;
-
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct UIntFunc;
+template <UIntType UInt> struct UIntFunc;
 
 /* struct UIntMulFunc_double<UInt,ExtUInt> */
 
-template <class UInt,class ExtUInt>
-struct UIntMulFunc_double
+template <UIntType UInt,UIntType ExtUInt> requires ( 2*Meta::UIntBits<UInt> <= Meta::UIntBits<ExtUInt> )
+struct UIntMulFunc<UInt,ExtUInt>
  {
-  static_assert( 2*Meta::UIntBits<UInt> <= Meta::UIntBits<ExtUInt> ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must have the double bitsize than UInt");
-
   static const unsigned Bits = Meta::UIntBits<UInt> ;
 
   static ExtUInt Combine(UInt hi,UInt lo)
@@ -122,11 +118,9 @@ struct UIntMulFunc_double
 
 /* struct UIntMulFunc_exact<UInt,ExtUInt> */
 
-template <class UInt,class ExtUInt>
-struct UIntMulFunc_exact
+template <UIntType UInt,UIntType ExtUInt> requires ( Meta::UIntBits<UInt> == Meta::UIntBits<ExtUInt> )
+struct UIntMulFunc<UInt,ExtUInt>
  {
-  static_assert( Meta::UIntBits<UInt> == Meta::UIntBits<ExtUInt> ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must have the same bitsize as UInt");
-
   using Algo = Quick::UIntMulFunc<ExtUInt> ;
 
   struct Mul
@@ -183,10 +177,10 @@ struct UIntMulFunc_exact
    }
  };
 
-/* struct UIntBitFunc<UInt> */
+/* struct UIntBitFunc_default<UInt> */
 
-template <class UInt>
-struct UIntBitFunc
+template <UIntType UInt>
+struct UIntBitFunc_default
  {
   static const unsigned Bits = Meta::UIntBits<UInt> ;
 
@@ -263,10 +257,15 @@ struct UIntBitFunc
   static unsigned BitsOf(UInt a) { return Bits-CountZeroMSB(a); }
  };
 
-/* struct UIntBitFunc_quick<UInt> */
+/* struct UIntBitFunc<UInt> */
 
-template <class UInt>
-struct UIntBitFunc_quick
+template <UIntType UInt> requires ( MaxUInt<UInt> > MaxUInt<Quick::ScanUInt> )
+struct UIntBitFunc<UInt> : UIntBitFunc_default<UInt> {};
+
+/* struct UIntBitFunc<UInt> */
+
+template <UIntType UInt> requires ( MaxUInt<UInt> <= MaxUInt<Quick::ScanUInt> )
+struct UIntBitFunc<UInt>
  {
   static const unsigned Bits = Meta::UIntBits<UInt> ;
 
@@ -294,11 +293,8 @@ struct UIntBitFunc_quick
 
 /* struct UIntFunc<UInt> */
 
-template <class UInt,class>
-struct UIntFunc : Meta::SelectBuild2< Quick::UIntMulSelect< Meta::UIntBits<UInt> >::IsDoubleType , UIntMulFunc_double ,
-                                                                                                   UIntMulFunc_exact ,
-                                                                                                   UInt , typename Quick::UIntMulSelect< Meta::UIntBits<UInt> >::ExtType >,
-                  Meta::SelectBuild1<( MaxUInt<UInt><=MaxUInt<Quick::ScanUInt> ), UIntBitFunc_quick , UIntBitFunc , UInt >
+template <UIntType UInt>
+struct UIntFunc : UIntMulFunc<UInt> , UIntBitFunc<UInt>
  {
   // consts
 
@@ -424,20 +420,20 @@ struct UIntFunc : Meta::SelectBuild2< Quick::UIntMulSelect< Meta::UIntBits<UInt>
 
 /* functions */
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntNeg(UInt a)
+template <UIntType UInt>
+UInt UIntNeg(UInt a)
  {
   return UIntFunc<UInt>::Neg(a);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , unsigned > UIntBitsOf(UInt a)
+template <UIntType UInt>
+unsigned UIntBitsOf(UInt a)
  {
   return UIntFunc<UInt>::BitsOf(a);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntAdd(UInt &a,UInt b)
+template <UIntType UInt>
+bool UIntAdd(UInt &a,UInt b)
  {
   typename UIntFunc<UInt>::Add add(a,b);
 
@@ -446,8 +442,8 @@ Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntAdd(UInt &a,UInt b)
   return add.carry;
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntSub(UInt &a,UInt b)
+template <UIntType UInt>
+bool UIntSub(UInt &a,UInt b)
  {
   typename UIntFunc<UInt>::Sub sub(a,b);
 
@@ -456,8 +452,8 @@ Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntSub(UInt &a,UInt b)
   return sub.borrow;
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntInc(UInt &a)
+template <UIntType UInt>
+bool UIntInc(UInt &a)
  {
   typename UIntFunc<UInt>::Inc inc(a);
 
@@ -466,8 +462,8 @@ Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntInc(UInt &a)
   return inc.carry;
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntDec(UInt &a)
+template <UIntType UInt>
+bool UIntDec(UInt &a)
  {
   typename UIntFunc<UInt>::Dec dec(a);
 
@@ -476,38 +472,38 @@ Meta::EnableIf< Meta::IsUInt<UInt> , bool > UIntDec(UInt &a)
   return dec.borrow;
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntMulDiv(UInt a,UInt b,UInt den)
+template <UIntType UInt>
+UInt UIntMulDiv(UInt a,UInt b,UInt den)
  {
   return UIntFunc<UInt>::MulDiv(a,b,den);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntDiv(UInt hi,UInt lo,UInt den)
+template <UIntType UInt>
+UInt UIntDiv(UInt hi,UInt lo,UInt den)
  {
   return UIntFunc<UInt>::Div(hi,lo,den);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntMod(UInt hi,UInt lo,UInt den)
+template <UIntType UInt>
+UInt UIntMod(UInt hi,UInt lo,UInt den)
  {
   return UIntFunc<UInt>::Mod(hi,lo,den);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntModMul(UInt a,UInt b,UInt mod)
+template <UIntType UInt>
+UInt UIntModMul(UInt a,UInt b,UInt mod)
  {
   return UIntFunc<UInt>::ModMul(a,b,mod);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntModMac(UInt s,UInt a,UInt b,UInt mod)
+template <UIntType UInt>
+UInt UIntModMac(UInt s,UInt a,UInt b,UInt mod)
  {
   return UIntFunc<UInt>::ModMac(s,a,b,mod);
  }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > UIntSqRoot(UInt S)
+template <UIntType UInt>
+UInt UIntSqRoot(UInt S)
  {
   return UIntFunc<UInt>::SqRoot(S);
  }

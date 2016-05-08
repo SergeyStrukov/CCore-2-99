@@ -1,7 +1,7 @@
 /* Quick.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -44,43 +44,40 @@ uint64 ByteSwap64(uint64 value) noexcept;
 
 /* classes */
 
-template <unsigned UIntBits> struct UIntMulSelect;
+template <unsigned UIntBits> struct UIntMulSelectCtor;
 
 template <class UInt> struct UIntMulFunc;
 
-/* struct UIntMulSelect<unsigned UIntBits> */
+/* struct UIntMulSelectCtor<unsigned UIntBits> */
 
 template <>
-struct UIntMulSelect<8>
+struct UIntMulSelectCtor<8>
  {
-  using ExtType = uint16 ;
-
-  enum { IsDoubleType = true };
+  using Ret = uint16 ;
  };
 
 template <>
-struct UIntMulSelect<16>
+struct UIntMulSelectCtor<16>
  {
-  using ExtType = uint32 ;
-
-  enum { IsDoubleType = true };
+  using Ret = uint32 ;
  };
 
 template <>
-struct UIntMulSelect<32>
+struct UIntMulSelectCtor<32>
  {
-  using ExtType = uint64 ;
-
-  enum { IsDoubleType = true };
+  using Ret = uint64 ;
  };
 
 template <>
-struct UIntMulSelect<64>
+struct UIntMulSelectCtor<64>
  {
-  using ExtType = uint64 ;
-
-  enum { IsDoubleType = false };
+  using Ret = uint64 ;
  };
+
+/* type UIntMulSelect<unsigned UIntBits> */
+
+template <unsigned UIntBits>
+using UIntMulSelect = typename UIntMulSelectCtor<UIntBits>::Ret ;
 
 /* struct UIntMulFunc<uint64> */
 
