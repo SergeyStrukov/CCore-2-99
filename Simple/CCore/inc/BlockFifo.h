@@ -1,7 +1,7 @@
 /* BlockFifo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -63,8 +63,7 @@ class BlockFifo : NoCopy
 
    // put
 
-   template <class Func>
-   ulen put(ulen putlen,Func func) // func(T *ptr,ulen len)
+   ulen put(ulen putlen,FuncArgType<T *,ulen> func)
     {
      ulen free=len-count;
 
@@ -98,8 +97,7 @@ class BlockFifo : NoCopy
 
    // get
 
-   template <class Func>
-   ulen get(ulen getlen,Func func) // func([const] T *ptr,ulen len)
+   ulen get(ulen getlen,FuncArgType<const T *,ulen> func)
     {
      Replace_min(getlen,count);
 

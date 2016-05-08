@@ -65,18 +65,28 @@ template <class T> concept bool CopyableType = Meta::IsCopyable<T> ;
 /* concept FuncType<Func,R,AA> */
 
 template <class Func,class R,class ... AA>
-concept bool FuncType = requires(Func func,R &ret,AA ... aa) { ret = func(aa...) ; } ;
+concept bool FuncType = requires(Func func,R ret,AA ... aa) { ret = func(aa...) ; } ;
 
 /* concept FuncArgType<Func,AA> */
 
 template <class Func,class ... AA>
 concept bool FuncArgType = requires(Func func,AA ... aa) { func(aa...); } ;
 
+/* concept OpLessType<T> */
+
+template <class T> concept bool OpLessType = requires(T a,T b) { { a < b } -> bool ; } ;
+
+/* concept OpEqualType<T> */
+
+template <class T> concept bool OpEqualType = requires(T a,T b) { { a == b } -> bool ; } ;
+
+/* concept OpNotEqualType<T> */
+
+template <class T> concept bool OpNotEqualType = requires(T a,T b) { { a != b } -> bool ; } ;
+
 /* concept RangeAccessType<T> */
 
-template <class T,class T1,class T2> concept bool RangeAccessObjTypes = Meta::IsSame<T1,T2> && Meta::OneOf<T1,T,const T> ;
-
-template <class T,class T1,class T2> requires RangeAccessObjTypes<T,T1,T2>
+template <class T,class T1,class T2> requires ( Meta::IsSame<T1,T2> && Meta::OneOf<T1,T,const T> )
 void RangeAccessHelper(T *,T1 *,T2 *,ULenType) {}
 
 template <class T>

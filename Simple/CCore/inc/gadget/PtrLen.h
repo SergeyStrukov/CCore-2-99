@@ -239,6 +239,14 @@ auto Range(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }
 
 auto Range_const(const RangeAccessType &obj) { return Range_const(obj.getPtr_const(),obj.getLen()); }
 
+/* concept RangeableType<T> */
+
+template <class T> concept bool RangeableType = requires(T obj) { Range(obj); } ;
+
+/* concept TypeRangeableType<T,S> */
+
+template <class T,class S> concept bool TypeRangeableType = requires(T obj) { { Range(obj) } -> PtrLen<S> ; } ;
+
 /* begin()/end() */
 
 auto begin(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }
