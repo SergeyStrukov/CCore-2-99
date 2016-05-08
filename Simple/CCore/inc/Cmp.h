@@ -105,11 +105,11 @@ class CmpAsStr
 template <class T>
 struct LessComparable
  {
-  friend bool operator > (const T &a,const T &b) requires OpLessType<T> { return b<a; }
+  friend bool operator > (const T &a,const T &b) requires ( OpLessType<T> ) { return b<a; }
 
-  friend bool operator <= (const T &a,const T &b) requires OpLessType<T> { return !(b<a); }
+  friend bool operator <= (const T &a,const T &b) requires ( OpLessType<T> ) { return !(b<a); }
 
-  friend bool operator >= (const T &a,const T &b) requires OpLessType<T> { return !(a<b); }
+  friend bool operator >= (const T &a,const T &b) requires ( OpLessType<T> ) { return !(a<b); }
 
   friend bool operator == (const T &a,const T &b) requires ( OpLessType<T> && !OpEqualType<T> ) { return !( a<b || b<a ); }
 
@@ -121,17 +121,17 @@ struct LessComparable
 template <class T>
 struct CmpComparable
  {
-  friend bool operator < (const T &a,const T &b) requires Has_objCmp<T> { return a.objCmp(b)<0; }
+  friend bool operator < (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)<0; }
 
-  friend bool operator > (const T &a,const T &b) requires Has_objCmp<T> { return a.objCmp(b)>0; }
+  friend bool operator > (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)>0; }
 
-  friend bool operator <= (const T &a,const T &b) requires Has_objCmp<T> { return a.objCmp(b)<=0; }
+  friend bool operator <= (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)<=0; }
 
-  friend bool operator >= (const T &a,const T &b) requires Has_objCmp<T> { return a.objCmp(b)>=0; }
+  friend bool operator >= (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)>=0; }
 
-  friend bool operator == (const T &a,const T &b) requires Has_objCmp<T> { return a.objCmp(b)==0; }
+  friend bool operator == (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)==0; }
 
-  friend bool operator != (const T &a,const T &b) requires Has_objCmp<T> { return a.objCmp(b)!=0; }
+  friend bool operator != (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)!=0; }
  };
 
 /* Cmp() */
@@ -139,12 +139,12 @@ struct CmpComparable
 template <Has_objCmp T>
 CmpResult Cmp(const T &a,const T &b) { return a.objCmp(b); }
 
-template <No_objCmp T> requires OpLessType<T>
+template <No_objCmp T> requires ( OpLessType<T> )
 CmpResult Cmp(const T &a,const T &b) { return LessCmp(a,b); }
 
 /* concept CmpableType<T> */
 
-template <class T> concept bool CmpableType = requires(T a,T b) { { Cmp(a,b) } -> CmpResult ; } ;
+template <class T> concept bool CmpableType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(a,b) } -> CmpResult ; } ;
 
 /* AlphaCmp() */
 
@@ -181,13 +181,13 @@ CmpResult AlphaCmp(CmpResult cmp1,CmpResult cmp2,const TT & ... tt)
   return AlphaCmpAny(tt...);
  }
 
-template <class T>
+template <CmpableType T>
 CmpResult AlphaCmp(const T &a,const T &b)
  {
   return Cmp(a,b);
  }
 
-template <class T,class ... TT>
+template <CmpableType T,class ... TT>
 CmpResult AlphaCmp(const T &a,const T &b,const TT & ... tt)
  {
   if( CmpResult ret=Cmp(a,b) ) return ret;
@@ -247,15 +247,19 @@ bool RangeLess(PtrLen<T> a,PtrLen<T> b)
     }
  }
 
-template <TypeRangeableType<CmpableType> T>
+template <class T> requires ( RangeableType<Meta::ToConst<T> > )
 CmpResult RangeCmpOf(const T &a,const T &b) { return RangeCmp(Range(a),Range(b)); }
 
-template <TypeRangeableType<CmpableType> T>
+template <class T> requires ( RangeableType<Meta::ToConst<T> > )
 bool RangeLessOf(const T &a,const T &b) { return RangeLess(Range(a),Range(b)); }
+
+/* concept CmpableBy<T,Func> */
+
+template <class T,class Func> concept bool CmpableBy = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(func(a),func(b)) } -> CmpResult ; } ;
 
 /* Range...By() */
 
-template <class T,class Func>
+template <class T,class Func> requires ( CmpableBy<T,Func> )
 CmpResult RangeCmpBy(const T *a,const T *b,ulen count,Func by)
  {
   for(; count ;count--)
@@ -265,7 +269,7 @@ CmpResult RangeCmpBy(const T *a,const T *b,ulen count,Func by)
   return CmpEqual;
  }
 
-template <class T,class Func>
+template <class T,class Func> requires ( CmpableBy<T,Func> )
 CmpResult RangeCmpBy(PtrLen<T> a,PtrLen<T> b,Func by)
  {
   if( a.len<b.len )
@@ -286,7 +290,7 @@ CmpResult RangeCmpBy(PtrLen<T> a,PtrLen<T> b,Func by)
     }
  }
 
-template <class T,class Func>
+template <class T,class Func> requires ( CmpableBy<T,Func> )
 bool RangeLessBy(PtrLen<T> a,PtrLen<T> b,Func by)
  {
   if( a.len<b.len )
@@ -299,10 +303,10 @@ bool RangeLessBy(PtrLen<T> a,PtrLen<T> b,Func by)
     }
  }
 
-template <class T,class Func>
+template <class T,class Func> requires ( RangeableType<Meta::ToConst<T> > )
 CmpResult RangeCmpOfBy(const T &a,const T &b,Func by) { return RangeCmpBy(Range(a),Range(b),by); }
 
-template <class T,class Func>
+template <class T,class Func> requires ( RangeableType<Meta::ToConst<T> > )
 bool RangeLessOfBy(const T &a,const T &b,Func by) { return RangeLessBy(Range(a),Range(b),by); }
 
 } // namespace CCore

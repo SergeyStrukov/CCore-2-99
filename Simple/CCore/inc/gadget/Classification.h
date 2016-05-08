@@ -65,7 +65,7 @@ template <class T> concept bool CopyableType = Meta::IsCopyable<T> ;
 /* concept FuncType<Func,R,AA> */
 
 template <class Func,class R,class ... AA>
-concept bool FuncType = requires(Func func,R ret,AA ... aa) { ret = func(aa...) ; } ;
+concept bool FuncType = requires(Func func,AA ... aa) { { func(aa...) } -> R ; } ;
 
 /* concept FuncArgType<Func,AA> */
 
@@ -74,15 +74,15 @@ concept bool FuncArgType = requires(Func func,AA ... aa) { func(aa...); } ;
 
 /* concept OpLessType<T> */
 
-template <class T> concept bool OpLessType = requires(T a,T b) { { a < b } -> bool ; } ;
+template <class T> concept bool OpLessType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a < b } -> bool ; } ;
 
 /* concept OpEqualType<T> */
 
-template <class T> concept bool OpEqualType = requires(T a,T b) { { a == b } -> bool ; } ;
+template <class T> concept bool OpEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a == b } -> bool ; } ;
 
 /* concept OpNotEqualType<T> */
 
-template <class T> concept bool OpNotEqualType = requires(T a,T b) { { a != b } -> bool ; } ;
+template <class T> concept bool OpNotEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a != b } -> bool ; } ;
 
 /* concept RangeAccessType<T> */
 
@@ -90,7 +90,7 @@ template <class T,class T1,class T2> requires ( Meta::IsSame<T1,T2> && Meta::One
 void RangeAccessHelper(T *,T1 *,T2 *,ULenType) {}
 
 template <class T>
-concept bool RangeAccessType = requires(Meta::UnRef<T> obj,const Meta::UnRef<T> cobj)
+concept bool RangeAccessType = requires(T &obj,Meta::ToConst<T> &cobj)
  {
   RangeAccessHelper(obj.getPtr(),cobj.getPtr_const(),cobj.getPtr(),cobj.getLen());
  } ;

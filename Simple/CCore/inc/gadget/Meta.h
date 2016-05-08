@@ -37,6 +37,8 @@ template <class T> struct DefType;
 
 template <class T,T Val> struct DefConst;
 
+template <class T> struct ToConstCtor;
+
 template <bool Cond,class T1,class T2> struct SelectCtor;
 
 template <bool Cond,template <class A> class T,class A> struct BuildIfCtor;
@@ -123,6 +125,25 @@ struct DefConst
  {
   static const T Ret = Val ;
  };
+
+/* struct ToConstCtor<T> */
+
+template <class T>
+struct ToConstCtor
+ {
+  using Ret = const T ;
+ };
+
+template <class T>
+struct ToConstCtor<T &>
+ {
+  using Ret = const T & ;
+ };
+
+/* type ToConst<T> */
+
+template <class T>
+using ToConst = typename ToConstCtor<T>::Ret ;
 
 /* struct SelectCtor<bool Cond,T1,T2> */
 
