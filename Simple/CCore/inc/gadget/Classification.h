@@ -77,7 +77,15 @@ concept bool MovableType = Meta::IsMovable<T> ;
 template <class T>
 concept bool CopyableType = Meta::IsCopyable<T> ;
 
+template <class T>
+concept bool NothrowCopyableType = Meta::IsNothrowCopyable<T> ;
+
 /* complex concepts */
+
+/* concept ConstructibleType */
+
+template <class T,class ... SS>
+concept bool ConstructibleType = requires(SS && ... ss) { T( std::forward<SS>(ss)... ); } ;
 
 /* concept FuncType<Func,R,AA> */
 
@@ -120,6 +128,8 @@ concept bool RangeAccessType = requires(T &obj,Meta::ToConst<T> &cobj)
 template <class R>
 concept bool RangeType = requires(R &obj,Meta::ToConst<R> &cobj)
  {
+  requires ( NothrowCopyableType<R> ) ;
+
   { +cobj } -> bool ;
 
   *cobj;
@@ -132,6 +142,8 @@ concept bool RangeType = requires(R &obj,Meta::ToConst<R> &cobj)
 template <class R,class T>
 concept bool TypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
  {
+  requires ( NothrowCopyableType<R> ) ;
+
   { +cobj } -> bool ;
 
   { *cobj } -> T ;
@@ -144,6 +156,8 @@ concept bool TypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
 template <class R,class T>
 concept bool CastTypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
  {
+  requires ( NothrowCopyableType<R> ) ;
+
   { +cobj } -> bool ;
 
   T(*cobj);

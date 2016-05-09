@@ -1,7 +1,7 @@
 /* MakeString.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -110,13 +110,13 @@ class MakeString : NoCopy
 
    MakeString & add(NothingType) { return zero(); }
 
-   template <class T,class ... TT>
-   MakeString & add(T t,TT ... tt)
-    {
-     add(t);
-     add(tt...);
+   template <class T>
+   MakeString & operator += (T t) { return add(t); }
 
-     return *this;
+   template <class ... TT>
+   MakeString & add(TT ... tt)
+    {
+     return ( (*this) += ... += tt );
     }
 
    // get result

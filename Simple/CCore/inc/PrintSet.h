@@ -1,7 +1,7 @@
 /* PrintSet.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -22,11 +22,11 @@ namespace CCore {
 
 /* classes */
 
-template <class R,class T=Meta::RangeObjType<R> > class PrintSetType;
+template <RangeType R,class T=Meta::RangeObjType<R> > requires ( TypeRangeType<R,T> ) class PrintSetType;
 
 /* class PrintSetType<R,T> */
 
-template <class R,class T>
+template <RangeType R,class T> requires ( TypeRangeType<R,T> )
 class PrintSetType : public PrintOptAdapter<T>
  {
    R range;
@@ -40,8 +40,7 @@ class PrintSetType : public PrintOptAdapter<T>
 
    explicit PrintSetType(const R &range_) : range(range_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      R r=range;
 
@@ -59,8 +58,7 @@ class PrintSetType : public PrintOptAdapter<T>
        }
     }
 
-   template <class P,class Opt>
-   void print(P &out,const Opt &opt) const
+   void print(PrinterType &out,const AnyType &opt) const
     {
      R r=range;
 
@@ -81,7 +79,7 @@ class PrintSetType : public PrintOptAdapter<T>
 
 /* PrintSet() */
 
-template <class R>
+template <RangeType R>
 PrintSetType<R> PrintSet(const R &range) { return PrintSetType<R>(range); }
 
 } // namespace CCore

@@ -1,7 +1,7 @@
 /* PrintBits.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -22,11 +22,11 @@ namespace CCore {
 
 /* classes */
 
-template <class P,class UInt> class PrintBitsType;
+template <PrinterType P,UIntType UInt> class PrintBitsType;
 
 /* class PrintBitsType<P,UInt> */
 
-template <class P,class UInt>
+template <PrinterType P,UIntType UInt>
 class PrintBitsType
  {
    P &out;
@@ -61,7 +61,7 @@ class PrintBitsType
 
 /* PrintBits() */
 
-template <class UInt,class P>
+template <UIntType UInt,PrinterType P>
 PrintBitsType<P,UInt> PrintBits(P &out,UInt value) { return {out,value}; }
 
 } // namespace CCore

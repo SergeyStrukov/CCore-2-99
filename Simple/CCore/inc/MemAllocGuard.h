@@ -1,7 +1,7 @@
 /* MemAllocGuard.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -20,11 +20,21 @@
 
 namespace CCore {
 
+/* concept MemAllocAlgo<Algo> */
+
+template <class Algo>
+concept bool MemAllocAlgo = requires(ulen len,void *mem)
+ {
+  { Algo::MemAlloc(len) } -> void * ;
+
+  Algo::MemFree(mem);
+ } ;
+
 /* classes */
 
 class MemAllocGuard;
 
-template <class Algo> class MemAllocGuardOf;
+template <MemAllocAlgo Algo> class MemAllocGuardOf;
 
 /* class MemAllocGuard */
 
@@ -56,7 +66,7 @@ class MemAllocGuard : NoCopy
 
 /* class MemAllocGuardOf<Algo> */
 
-template <class Algo>
+template <MemAllocAlgo Algo>
 class MemAllocGuardOf : NoCopy
  {
    void *mem;

@@ -1,7 +1,7 @@
 /* NewDelete.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -20,11 +20,31 @@
 
 namespace CCore {
 
+/* concept AllocInitType<AllocInit> */
+
+template <class AllocInit,class AllocType>
+concept bool AllocInitType2 = requires(AllocInit init,AllocType alloc,ulen len,void *mem)
+ {
+  AllocType(init);
+
+  { alloc.alloc(len) } -> void * ;
+
+  alloc.free(mem,len);
+ } ;
+
+template <class AllocInit>
+concept bool AllocInitType = requires()
+ {
+  typename AllocInit::AllocType;
+
+  requires ( AllocInitType2<AllocInit,typename AllocInit::AllocType> );
+ } ;
+
 /* classes */
 
 struct DefaultHeapAlloc;
 
-template <class AllocInit> class CustomAllocGuard;
+template <AllocInitType AllocInit> class CustomAllocGuard;
 
 /* struct DefaultHeapAlloc */
 
@@ -41,7 +61,7 @@ struct DefaultHeapAlloc
 
 /* class CustomAllocGuard<AllocInit> */
 
-template <class AllocInit>
+template <AllocInitType AllocInit>
 class CustomAllocGuard : NoCopy
  {
    using AllocType = typename AllocInit::AllocType ;
@@ -71,8 +91,8 @@ class CustomAllocGuard : NoCopy
 
 /* New() */
 
-template <class T,class AllocInit,class ... SS>
-T * New(AllocInit init,SS && ... ss)
+template <NothrowDtorType T,AllocInitType AllocInit,class ... SS>
+T * New(AllocInit init,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   CustomAllocGuard<AllocInit> alloc(init,sizeof (T));
 
@@ -85,7 +105,7 @@ T * New(AllocInit init,SS && ... ss)
 
 /* Delete() */
 
-template <class T,class AllocInit>
+template <NothrowDtorType T,AllocInitType AllocInit>
 void Delete(AllocInit init,T *obj)
  {
   void *mem=obj;
@@ -101,7 +121,7 @@ void Delete(AllocInit init,T *obj)
 
 /* Delete_dynamic() */
 
-template <class T,class AllocInit>
+template <NothrowDtorType T,class AllocInit>
 void Delete_dynamic(AllocInit init,T *obj)
  {
   Space space=obj->getSpace();

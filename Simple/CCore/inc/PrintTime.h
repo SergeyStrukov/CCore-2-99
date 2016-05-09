@@ -1,7 +1,7 @@
 /* PrintTime.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -22,11 +22,11 @@ namespace CCore {
 
 /* classes */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > class PrintTimeType;
+template <UIntType UInt> class PrintTimeType;
 
 /* class PrintTimeType<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 class PrintTimeType
  {
    UInt value;
@@ -35,8 +35,7 @@ class PrintTimeType
 
    explicit PrintTimeType(UInt value_) : value(value_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      UInt val=value;
 
@@ -53,7 +52,7 @@ class PrintTimeType
 
 /* PrintTime() */
 
-template <class UInt>
+template <UIntType UInt>
 PrintTimeType<UInt> PrintTime(UInt value) { return PrintTimeType<UInt>(value); }
 
 } // namespace CCore

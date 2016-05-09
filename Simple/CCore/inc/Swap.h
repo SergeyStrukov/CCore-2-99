@@ -1,7 +1,7 @@
 /* Swap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -22,8 +22,9 @@ namespace CCore {
 
 /* functions */
 
-template <class T>
-Meta::EnableIf< Meta::IsCopyable<T> && !Meta::IsNothrowCopyable<T> > CopySwap(T &a,T &b,int unused=0) noexcept // emit warning
+template <CopyableType T>
+[[deprecated("throw copyable type")]]
+void CopySwap(T &a,T &b) noexcept requires ( !NothrowCopyableType<T> )
  {
   T temp(a);
 
@@ -32,8 +33,8 @@ Meta::EnableIf< Meta::IsCopyable<T> && !Meta::IsNothrowCopyable<T> > CopySwap(T 
   b=temp;
  }
 
-template <class T>
-Meta::EnableIf< Meta::IsNothrowCopyable<T> > CopySwap(T &a,T &b) noexcept
+template <NothrowCopyableType T>
+void CopySwap(T &a,T &b) noexcept
  {
   T temp(a);
 
@@ -42,8 +43,8 @@ Meta::EnableIf< Meta::IsNothrowCopyable<T> > CopySwap(T &a,T &b) noexcept
   b=temp;
  }
 
-template <class T>
-Meta::EnableIf< Meta::IsMovable<T> > MoveSwap(T &a,T &b) noexcept
+template <MovableType T>
+void MoveSwap(T &a,T &b) noexcept
  {
   T temp( std::move(a) );
 
@@ -52,42 +53,36 @@ Meta::EnableIf< Meta::IsMovable<T> > MoveSwap(T &a,T &b) noexcept
   b = std::move(temp) ;
  }
 
-/* classes */
-
-struct ProbeSet_objSwap;
-
-template <bool has_objSwap,bool is_movable,class T> struct SwapAdapters;
-
-/* struct ProbeSet_objSwap */
-
-struct ProbeSet_objSwap
- {
-  template <class T,void (T::*M)(T &)> struct Host;
-
-  template <class T,class C=Host<T,&T::objSwap> > struct Condition;
- };
-
-/* const Has_objSwap<T> */
+/* concept Has_objSwap<T> */
 
 template <class T>
-const bool Has_objSwap = Meta::Detect<ProbeSet_objSwap,T> ;
+concept bool Has_objSwap = requires() { { &T::objSwap } -> void (T::*)(T &) ; } ;
 
-/* struct SwapAdapters<bool has_objSwap,bool is_movable,T> */
+/* concept No_objSwap<T> */
 
-template <bool is_movable,class T>
-struct SwapAdapters<true,is_movable,T>
+template <class T>
+concept bool No_objSwap = !Has_objSwap<T> ;
+
+/* classes */
+
+template <class T> struct SwapAdapter; // ICE workaround
+
+/* struct SwapAdapter<T> */
+
+template <Has_objSwap T>
+struct SwapAdapter<T>
  {
   static void Swap(T &a,T &b) { a.objSwap(b); }
  };
 
-template <class T>
-struct SwapAdapters<false,true,T>
+template <No_objSwap T> requires ( MovableType<T> )
+struct SwapAdapter<T>
  {
   static void Swap(T &a,T &b) { MoveSwap(a,b); }
  };
 
-template <class T>
-struct SwapAdapters<false,false,T>
+template <No_objSwap T> requires ( !MovableType<T> )
+struct SwapAdapter<T>
  {
   static void Swap(T &a,T &b) { CopySwap(a,b); }
  };
@@ -95,7 +90,7 @@ struct SwapAdapters<false,false,T>
 /* Swap() */
 
 template <class T>
-void Swap(T &a,T &b) noexcept { SwapAdapters<Has_objSwap<T>,Meta::IsMovable<T>,T>::Swap(a,b); }
+void Swap(T &a,T &b) noexcept { SwapAdapter<T>::Swap(a,b); }
 
 /* NullBySwap() */
 

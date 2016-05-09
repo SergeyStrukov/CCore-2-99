@@ -37,7 +37,7 @@ class PrintTitleType
 
    using PrintOptType = TitlePrintOpt ;
 
-   template <class P>
+   template <PrinterType P>
    void print(P &out,PrintOptType opt) const
     {
      out.put(opt.border,opt.off);

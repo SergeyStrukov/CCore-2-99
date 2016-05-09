@@ -15,9 +15,6 @@
 
 #include <CCore/test/test.h>
 
-#include <CCore/inc/Cmp.h>
-#include <CCore/inc/Array.h>
-
 namespace App {
 
 namespace Private_2999 {

@@ -1,7 +1,7 @@
 /* OwnPtr.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -20,11 +20,19 @@
 
 namespace CCore {
 
+/* concept OwnPtrAlgo<Algo,T> */
+
+template <class Algo,class T>
+concept bool OwnPtrAlgo = requires(T *obj)
+ {
+  Algo::Destroy(obj);
+ } ;
+
 /* classes */
 
 template <class T> struct OwnAlgo;
 
-template <class T,class Algo=OwnAlgo<T> > class OwnPtr;
+template <class T,OwnPtrAlgo<T> Algo=OwnAlgo<T> > class OwnPtr;
 
 /* struct OwnAlgo<T> */
 
@@ -36,7 +44,7 @@ struct OwnAlgo
 
 /* class OwnPtr<T,Algo> */
 
-template <class T,class Algo>
+template <class T,OwnPtrAlgo<T> Algo>
 class OwnPtr : NoCopy
  {
    T *ptr;

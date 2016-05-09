@@ -1,7 +1,7 @@
 /* PrintStem.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -45,8 +45,7 @@ class PrintFirst : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      if( flag )
        {
@@ -83,8 +82,7 @@ class PrintPeriod : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      if( flag )
        {

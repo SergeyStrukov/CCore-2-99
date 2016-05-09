@@ -1,7 +1,7 @@
 /* AnyPtr.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -63,7 +63,7 @@ Ret ApplyToPtr2_const(const void *ptr1,const void *ptr2,FuncInit func_init)
 
 /* classes */
 
-template <class P> class PrintAnyObj;
+template <PrinterType P> class PrintAnyObj;
 
 template <class ... TT> class AnyPtr;
 
@@ -73,7 +73,7 @@ template <class T,class S> struct ElaborateAnyPtrBind;
 
 /* class PrintAnyObj<P> */
 
-template <class P>
+template <PrinterType P>
 class PrintAnyObj
  {
    P &out;
@@ -156,7 +156,7 @@ class AnyPtr
 
    // print object
 
-   template <class P>
+   template <PrinterType P>
    void print(P &out) const
     {
      if( ptr )
@@ -233,7 +233,7 @@ class AnyPtr_const
 
    // print object
 
-   template <class P>
+   template <PrinterType P>
    void print(P &out) const
     {
      if( ptr )
