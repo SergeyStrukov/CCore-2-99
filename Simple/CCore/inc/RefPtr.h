@@ -1,7 +1,7 @@
 /* RefPtr.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -20,11 +20,23 @@
 
 namespace CCore {
 
+/* concept RefPtrAlgo<Algo,T> */
+
+template <class Algo,class T>
+concept bool RefPtrAlgo = requires(T *obj)
+ {
+  Algo::IncRef(obj);
+
+  { Algo::DecRef(obj) } -> bool ;
+
+  Algo::Destroy(obj);
+ } ;
+
 /* classes */
 
 template <class T> struct RefAlgo;
 
-template <class T,class Algo=RefAlgo<T> > class RefPtr;
+template <class T,RefPtrAlgo<T> Algo=RefAlgo<T> > class RefPtr;
 
 /* struct RefAlgo<T> */
 
@@ -40,7 +52,7 @@ struct RefAlgo
 
 /* class RefPtr<T,Algo> */
 
-template <class T,class Algo>
+template <class T,RefPtrAlgo<T> Algo>
 class RefPtr
  {
    T *ptr;

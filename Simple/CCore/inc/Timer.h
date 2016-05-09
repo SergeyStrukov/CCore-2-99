@@ -1,7 +1,7 @@
 /* Timer.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -24,13 +24,13 @@ namespace CCore {
 
 /* classes */
 
-template <class T,T Time()> class Timer;
+template <UIntType T,T Time()> class Timer;
 
-template <class T,T Time()> class DiffTimer;
+template <UIntType T,T Time()> class DiffTimer;
 
 /* class Timer<T,T Time()> */
 
-template <class T,T Time()>
+template <UIntType T,T Time()>
 class Timer
  {
    T start;
@@ -56,7 +56,7 @@ class Timer
 
 /* class DiffTimer<T,T Time()> */
 
-template <class T,T Time()>
+template <UIntType T,T Time()>
 class DiffTimer
  {
    T prev;

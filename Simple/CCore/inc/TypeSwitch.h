@@ -23,7 +23,7 @@ namespace Meta {
 
 /* classes */
 
-template <class SUInt,SUInt Val,class T> struct Case;
+template <SUIntType SUInt,SUInt Val,class T> struct Case;
 
 template <class ... CC> struct CaseList;
 
@@ -57,7 +57,7 @@ template <class CaseList> struct CaseListMaxSizeofCtor;
 
 /* struct Case<SUInt,SUInt Val,class T> */
 
-template <class SUInt,SUInt Val_,class T>
+template <SUIntType SUInt,SUInt Val_,class T>
 struct Case
  {
   using SwType = SUInt ;
@@ -260,7 +260,7 @@ struct TypeSwitch<CaseList<> >
  {
  };
 
-template <class SUInt,SUInt Val1,class T1>
+template <SUIntType SUInt,SUInt Val1,class T1>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1> > >
  {
   template <class Ctx,class RetType=typename Ctx::RetType>
@@ -275,8 +275,8 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1> > >
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2> > >
  {
@@ -293,9 +293,9 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3> > >
@@ -314,10 +314,10 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3,
-                      SUInt Val4,class T4>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3,
+                          SUInt Val4,class T4>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3>,
@@ -338,11 +338,11 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3,
-                      SUInt Val4,class T4,
-                      SUInt Val5,class T5>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3,
+                          SUInt Val4,class T4,
+                          SUInt Val5,class T5>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3>,
@@ -365,12 +365,12 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3,
-                      SUInt Val4,class T4,
-                      SUInt Val5,class T5,
-                      SUInt Val6,class T6>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3,
+                          SUInt Val4,class T4,
+                          SUInt Val5,class T5,
+                          SUInt Val6,class T6>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3>,
@@ -395,13 +395,13 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3,
-                      SUInt Val4,class T4,
-                      SUInt Val5,class T5,
-                      SUInt Val6,class T6,
-                      SUInt Val7,class T7>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3,
+                          SUInt Val4,class T4,
+                          SUInt Val5,class T5,
+                          SUInt Val6,class T6,
+                          SUInt Val7,class T7>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3>,
@@ -428,14 +428,14 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3,
-                      SUInt Val4,class T4,
-                      SUInt Val5,class T5,
-                      SUInt Val6,class T6,
-                      SUInt Val7,class T7,
-                      SUInt Val8,class T8>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3,
+                          SUInt Val4,class T4,
+                          SUInt Val5,class T5,
+                          SUInt Val6,class T6,
+                          SUInt Val7,class T7,
+                          SUInt Val8,class T8>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3>,
@@ -464,15 +464,15 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-template <class SUInt,SUInt Val1,class T1,
-                      SUInt Val2,class T2,
-                      SUInt Val3,class T3,
-                      SUInt Val4,class T4,
-                      SUInt Val5,class T5,
-                      SUInt Val6,class T6,
-                      SUInt Val7,class T7,
-                      SUInt Val8,class T8,
-                      SUInt Val9,class T9>
+template <SUIntType SUInt,SUInt Val1,class T1,
+                          SUInt Val2,class T2,
+                          SUInt Val3,class T3,
+                          SUInt Val4,class T4,
+                          SUInt Val5,class T5,
+                          SUInt Val6,class T6,
+                          SUInt Val7,class T7,
+                          SUInt Val8,class T8,
+                          SUInt Val9,class T9>
 struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
                            Case<SUInt,Val2,T2>,
                            Case<SUInt,Val3,T3>,
@@ -505,7 +505,7 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
 
 /* struct CaseTypeCtor<Case> */
 
-template <class SUInt,SUInt Val,class T>
+template <SUIntType SUInt,SUInt Val,class T>
 struct CaseTypeCtor< Case<SUInt,Val,T> > : DefType<T> {};
 
 /* type CaseType<Case> */
@@ -515,7 +515,7 @@ using CaseType = typename CaseTypeCtor<Case>::Ret ;
 
 /* struct CaseValCtor<CaseList,T> */
 
-template <class T,class S,class SUInt,SUInt Val,class ... CC>
+template <class T,class S,SUIntType SUInt,SUInt Val,class ... CC>
 struct CaseValCtor< CaseList< Case<SUInt,Val,S> ,CC...> ,T>
  : Select< IsSame<T,S> , DefConst<SUInt,Val> , CaseValCtor< CaseList<CC...> ,T> > {};
 

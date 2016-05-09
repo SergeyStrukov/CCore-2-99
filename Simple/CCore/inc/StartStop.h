@@ -1,7 +1,7 @@
 /* StartStop.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -20,13 +20,29 @@
 
 namespace CCore {
 
+/* concept RunableType<T> */
+
+template <class T>
+concept bool RunableType = requires(T &obj)
+ {
+  obj.prepareRun();
+
+  obj.objRun();
+
+  obj.completeRun();
+
+  obj.signalStop();
+
+  obj.completeStop();
+ } ;
+
 /* classes */
 
-template <class T> class StartStopObject;
+template <RunableType T> class StartStopObject;
 
 /* class StartStopObject<T> */
 
-template <class T>
+template <RunableType T>
 class StartStopObject : NoCopy
  {
    T &obj;

@@ -33,7 +33,7 @@ struct Tuple<>
  {
   Tuple() {}
 
-  template <class FuncInit>
+  template <FuncInitArgType<> FuncInit>
   void call(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -51,7 +51,7 @@ struct Tuple<T>
 
   Tuple(const T &t) : first(t) {}
 
-  template <class FuncInit>
+  template <FuncInitArgType<T &> FuncInit>
   void call(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -70,7 +70,7 @@ struct Tuple<T,S,RR...>
 
   Tuple(const T &t,const S &s,const RR & ... rr) : first(t),rest(s,rr...) {}
 
-  template <class FuncInit>
+  template <FuncInitArgType<T &,S &,RR & ...> FuncInit>
   void call(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -88,7 +88,7 @@ struct ForwardTuple<>
  {
   ForwardTuple() {}
 
-  template <class FuncInit>
+  template <FuncInitArgType<> FuncInit>
   void call(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -106,7 +106,7 @@ struct ForwardTuple<T>
 
   ForwardTuple(const ForwardTuple<T> &obj) : first( std::forward<T>(obj.first) ) {}
 
-  template <class FuncInit>
+  template <FuncInitArgType<T &&> FuncInit>
   void call(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -125,7 +125,7 @@ struct ForwardTuple<T,S,RR...>
 
   ForwardTuple(const ForwardTuple<T,S,RR...> &obj) : first( std::forward<T>(obj.first) ),rest(obj.rest) {}
 
-  template <class FuncInit>
+  template <FuncInitArgType<T &&,S &&,RR && ...> FuncInit>
   void call(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);

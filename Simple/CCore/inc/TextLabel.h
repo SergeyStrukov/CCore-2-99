@@ -1,7 +1,7 @@
 /* TextLabel.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -19,6 +19,16 @@
 #include <CCore/inc/Printf.h>
 
 namespace CCore {
+
+/* concept TextLabelType<T> */
+
+template <class T>
+concept bool TextLabelType = requires()
+ {
+  { T::GetText() } -> const char * ;
+
+  { T::GetNumber() } -> unsigned ;
+ } ;
 
 /* type TextLabelFunc */
 
@@ -41,7 +51,7 @@ StrLen BuildNumTextLabel(const char *text,unsigned num,PtrLen<char> buf);
 
 class TextLabel;
 
-template <class T> class NumTextLabel;
+template <TextLabelType T> class NumTextLabel;
 
 /* class TextLabel */
 
@@ -56,7 +66,7 @@ class TextLabel
 
    static StrLen StringFunc(Handle ctx,PtrLen<char> buf);
 
-   template <class Enum>
+   template <EnumType Enum>
    static StrLen EnumFunc(Handle ctx,PtrLen<char>) { return GetTextDesc( Enum(ctx.sid) ); }
 
   public:
@@ -69,8 +79,7 @@ class TextLabel
 
    TextLabel(TextLabelFunc func_,Handle ctx_) : func(func_),ctx(ctx_) {}
 
-   template <class Enum, // assume the Enum value range fits into int
-             class=Meta::EnableIf< Meta::IsEnum<Enum> > >
+   template <EnumType Enum> // assume the Enum value range fits into int
    TextLabel(Enum e) : func(EnumFunc<Enum>),ctx( (int)e ) {}
 
    // methods
@@ -81,8 +90,7 @@ class TextLabel
 
    using PrintOptType = StrPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      char buf[TextBufLen];
      StrLen str;
@@ -112,7 +120,7 @@ class TextLabel
  //  };
  //
 
-template <class T>
+template <TextLabelType T>
 class NumTextLabel : public TextLabel
  {
   private:

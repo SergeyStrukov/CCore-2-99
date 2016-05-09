@@ -55,6 +55,26 @@ struct FunctorTypeOfCtor<FuncInit>
 template <class FuncInit>
 using FunctorTypeOf = typename FunctorTypeOfCtor<FuncInit>::Ret ;
 
+/* concept FuncInitType<FuncInit,R,AA> */
+
+template <class FuncInit,class R,class ... AA>
+concept bool FuncInitType = requires(FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit>(func_init);
+
+  requires ( FuncType<FunctorTypeOf<FuncInit>,R,AA...> );
+ } ;
+
+/* concept FuncInitArgType<FuncInit,AA> */
+
+template <class FuncInit,class ... AA>
+concept bool FuncInitArgType = requires(FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit>(func_init);
+
+  requires ( FuncArgType<FunctorTypeOf<FuncInit>,AA...> );
+ } ;
+
 /* struct FunctorRefType<T> */
 
 template <class T>

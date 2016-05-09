@@ -1,7 +1,7 @@
 /* UIntSplit.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -20,20 +20,19 @@
 
 namespace CCore {
 
-/* types */
+/* concept UIntSplitEnable<UIntBig,UIntSmall> */
 
-template <class UIntBig,class UIntSmall>
-using UIntSplitEnable = Meta::EnableIf< Meta::IsUInt<UIntBig> && Meta::IsUInt<UIntSmall> &&
-                                        ( Meta::UIntBits<UIntBig> % Meta::UIntBits<UIntSmall> == 0 ) &&
-                                        ( Meta::UIntBits<UIntBig> > Meta::UIntBits<UIntSmall> ) > ;
+template <UIntType UIntBig,UIntType UIntSmall>
+concept bool UIntSplitEnable = ( Meta::UIntBits<UIntBig> % Meta::UIntBits<UIntSmall> == 0 ) &&
+                               ( Meta::UIntBits<UIntBig> > Meta::UIntBits<UIntSmall> ) ;
 
 /* classes */
 
-template <class UIntBig,class UIntSmall,class=UIntSplitEnable<UIntBig,UIntSmall> > class UIntSplit;
+template <UIntType UIntBig,UIntType UIntSmall> requires UIntSplitEnable<UIntBig,UIntSmall> class UIntSplit;
 
 /* class UIntSplit<UIntBig,UIntSmall> */
 
-template <class UIntBig,class UIntSmall,class>
+template <UIntType UIntBig,UIntType UIntSmall> requires UIntSplitEnable<UIntBig,UIntSmall>
 class UIntSplit
  {
    static const unsigned BitLen    = Meta::UIntBits<UIntSmall> ;
@@ -92,9 +91,9 @@ class UIntSplit
     }
  };
 
-template <class UIntBig,class UIntSmall,class E>
+template <UIntType UIntBig,UIntType UIntSmall> requires UIntSplitEnable<UIntBig,UIntSmall>
 template <unsigned Ind,unsigned Off>
-struct UIntSplit<UIntBig,UIntSmall,E>::Get_loop
+struct UIntSplit<UIntBig,UIntSmall>::Get_loop
  {
   static void Do(UIntBig &ret,const UIntSmall buf[])
    {
@@ -104,9 +103,9 @@ struct UIntSplit<UIntBig,UIntSmall,E>::Get_loop
    }
  };
 
-template <class UIntBig,class UIntSmall,class E>
+template <UIntType UIntBig,UIntType UIntSmall> requires UIntSplitEnable<UIntBig,UIntSmall>
 template <unsigned Ind,unsigned Off>
-struct UIntSplit<UIntBig,UIntSmall,E>::Get_last
+struct UIntSplit<UIntBig,UIntSmall>::Get_last
  {
   static void Do(UIntBig &ret,const UIntSmall buf[])
    {
@@ -114,9 +113,9 @@ struct UIntSplit<UIntBig,UIntSmall,E>::Get_last
    }
  };
 
-template <class UIntBig,class UIntSmall,class E>
+template <UIntType UIntBig,UIntType UIntSmall> requires UIntSplitEnable<UIntBig,UIntSmall>
 template <unsigned Ind,unsigned Off>
-struct UIntSplit<UIntBig,UIntSmall,E>::Set_loop
+struct UIntSplit<UIntBig,UIntSmall>::Set_loop
  {
   static void Do(UIntBig value,UIntSmall buf[])
    {
@@ -126,9 +125,9 @@ struct UIntSplit<UIntBig,UIntSmall,E>::Set_loop
    }
  };
 
-template <class UIntBig,class UIntSmall,class E>
+template <UIntType UIntBig,UIntType UIntSmall> requires UIntSplitEnable<UIntBig,UIntSmall>
 template <unsigned Ind,unsigned Off>
-struct UIntSplit<UIntBig,UIntSmall,E>::Set_last
+struct UIntSplit<UIntBig,UIntSmall>::Set_last
  {
   static void Do(UIntBig value,UIntSmall buf[])
    {

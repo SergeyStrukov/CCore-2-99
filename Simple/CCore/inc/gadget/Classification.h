@@ -72,6 +72,18 @@ template <class T>
 concept bool TrivDtorType = Meta::HasTrivDtor<T> ;
 
 template <class T>
+concept bool MoveCtorType = Meta::HasMoveCtor<T> ;
+
+template <class T>
+concept bool NothrowDefaultCtorType = Meta::HasNothrowDefaultCtor<T> ;
+
+template <class T>
+concept bool CopyCtorType = Meta::HasCopyCtor<T> ;
+
+template <class T>
+concept bool NothrowCopyCtorType = Meta::HasNothrowCopyCtor<T> ;
+
+template <class T>
 concept bool MovableType = Meta::IsMovable<T> ;
 
 template <class T>
@@ -90,12 +102,12 @@ concept bool ConstructibleType = requires(SS && ... ss) { T( std::forward<SS>(ss
 /* concept FuncType<Func,R,AA> */
 
 template <class Func,class R,class ... AA>
-concept bool FuncType = requires(Func func,AA ... aa) { { func(aa...) } -> R ; } ;
+concept bool FuncType = requires(Func func,AA && ... aa) { { func( std::forward<AA>(aa)... ) } -> R ; } ;
 
 /* concept FuncArgType<Func,AA> */
 
 template <class Func,class ... AA>
-concept bool FuncArgType = requires(Func func,AA ... aa) { func(aa...); } ;
+concept bool FuncArgType = requires(Func func,AA && ... aa) { func( std::forward<AA>(aa)... ); } ;
 
 /* concept OpLessType<T> */
 

@@ -1,7 +1,7 @@
 /* ToMoveCtor.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -24,8 +24,6 @@ namespace CCore {
 
 template <class T> struct ToMoveCtor;
 
-struct ProbeSet_ToMoveCtor;
-
 /* struct ToMoveCtor<T> */
 
 template <class T>
@@ -41,22 +39,18 @@ struct ToMoveCtor
   ToMoveCtor<S> cast() const { return ToMoveCtor<S>(*obj); }
  };
 
-/* struct ProbeSet_ToMoveCtor */
-
-struct ProbeSet_ToMoveCtor
- {
-  static Place<void> GetPlace();
-
-  template <class T>
-  static ToMoveCtor<T> GetObj();
-
-  template <class T,class C=decltype( new(GetPlace()) T(GetObj<T>()) )> struct Condition;
- };
-
-/* const Has_ToMoveCtor<T> */
+/* concept Has_ToMoveCtor<T> */
 
 template <class T>
-const bool Has_ToMoveCtor = Meta::Detect<ProbeSet_ToMoveCtor,T> ;
+concept bool Has_ToMoveCtor = requires(ToMoveCtor<T> arg)
+ {
+  T(arg);
+ } ;
+
+/* concept No_ToMoveCtor<T> */
+
+template <class T>
+concept bool No_ToMoveCtor = !Has_ToMoveCtor<T> ;
 
 /* ObjToMove() */
 
