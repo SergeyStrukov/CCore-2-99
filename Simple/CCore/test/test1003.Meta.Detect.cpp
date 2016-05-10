@@ -1,7 +1,7 @@
 /* test1003.Blank.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -19,18 +19,6 @@ namespace App {
 
 namespace Private_1003 {
 
-template <class T>
-const bool IsInt = Meta::IsSame<T,int> ;
-
-template <class T,class=Meta::EnableIf<IsInt<T> > >
-class Test
- {
- };
-
-struct ProbeSet_Test
- {
-  template <class T,class C=Test<T> > struct Condition {};
- };
 
 } // namespace Private_1003
 
@@ -44,9 +32,6 @@ const char *const Testit<1003>::Name="Test1003 Meta Detect";
 template<>
 bool Testit<1003>::Main()
  {
-  Printf(Con,"int #;\n",Meta::Detect<ProbeSet_Test,int>);
-  Printf(Con,"unsigned #;\n",Meta::Detect<ProbeSet_Test,unsigned>);
-
   return true;
  }
 
