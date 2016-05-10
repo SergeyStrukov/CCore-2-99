@@ -23,21 +23,21 @@ namespace Algon {
 
 /* EuclidAlgo<UInt,UInt A,UInt B>() */
 
-template <class UInt,UInt A,UInt B>
-constexpr Meta::EnableIf< Meta::IsUInt<UInt> , UInt > EuclidAlgo()
+template <UIntType UInt,UInt A,UInt B>
+constexpr UInt EuclidAlgo()
  {
   return A? EuclidAlgo<UInt,B%(A?A:1),A>() : B ;
  }
 
 /* const GCDConst<UInt,UInt A,UInt B> */
 
-template <class UInt,UInt A,UInt B>
+template <UIntType UInt,UInt A,UInt B>
 constexpr UInt GCDConst = EuclidAlgo<UInt,A,B>() ;
 
 /* const LCMConst<UInt,UInt A,UInt B> */
 
-template <class UInt,UInt A,UInt B>
-constexpr UInt LCMConst = (A/GCDConst<UInt,A,B>)*B ; // no overflow check
+template <UIntType UInt,UInt A,UInt B> requires ( A!=0 || B!=0 )
+constexpr UInt LCMConst = UIntConstMul<UInt, A/GCDConst<UInt,A,B> , B > ;
 
 } // namespace Algon
 } // namespace CCore

@@ -86,7 +86,7 @@ template <class Algo,class SInt> class SCastInteger;
 
 template <class Algo,class UInt> class UCastInteger;
 
-template <class Algo,class SUInt> class CastInteger;
+template <class Algo,SUIntType SUInt> class CastInteger;
 
 template <class Algo,class SInt> class IntegerSIntBuilder;
 
@@ -580,7 +580,7 @@ class UCastInteger
 
 /* class CastInteger<Algo,SUInt> */
 
-template <class Algo,class SUInt>
+template <class Algo,SUIntType SUInt>
 class CastInteger
  {
    using Unit = typename Algo::Unit ;
@@ -1595,11 +1595,11 @@ class Integer
 
    Integer(StrLen str);
 
-   template <class UInt>
-   Integer(UInt val,Meta::EnableIf< Meta::IsUInt<UInt> , int > = 0);
+   template <UIntType UInt>
+   Integer(UInt val);
 
-   template <class SInt>
-   Integer(SInt val,Meta::EnableIf< Meta::IsSInt<SInt> , int > = 0);
+   template <SIntType SInt>
+   Integer(SInt val);
 
    ~Integer() {}
 
@@ -1658,8 +1658,8 @@ class Integer
 
    // cast
 
-   template <class UInt>
-   Meta::EnableIf< Meta::IsUInt<UInt> , UInt > cast() const
+   template <UIntType UInt>
+   UInt cast() const
     {
      UInt ret=0;
      unsigned shift=0;
@@ -1795,188 +1795,69 @@ class Integer
 
    // operators
 
-   template <class SUInt,class RetType=Integer>
-   using EnableIfSUInt = Meta::EnableIf< Meta::IsSUInt<SUInt> , RetType > ;
-
-   template <class SUInt>
-   EnableIfSUInt<SUInt> & revsub(SUInt val)
+   template <SUIntType SUInt>
+   Integer & revsub(SUInt val)
     {
      CastInteger<Algo,SUInt> cast(val);
 
      return revsub(cast.getPtr(),cast.getLen());
     }
 
-   template <class SUInt>
-   EnableIfSUInt<SUInt> & operator += (SUInt val)
+   template <SUIntType SUInt>
+   Integer & operator += (SUInt val)
     {
      CastInteger<Algo,SUInt> cast(val);
 
      return add(cast.getPtr(),cast.getLen());
     }
 
-   template <class SUInt>
-   EnableIfSUInt<SUInt> & operator -= (SUInt val)
+   template <SUIntType SUInt>
+   Integer & operator -= (SUInt val)
     {
      CastInteger<Algo,SUInt> cast(val);
 
      return sub(cast.getPtr(),cast.getLen());
     }
 
-   template <class SUInt>
-   EnableIfSUInt<SUInt> & operator *= (SUInt val)
+   template <SUIntType SUInt>
+   Integer & operator *= (SUInt val)
     {
      CastInteger<Algo,SUInt> cast(val);
 
      return mul(cast.getPtr(),cast.getLen());
     }
 
-   template <class SUInt>
-   EnableIfSUInt<SUInt> & operator /= (SUInt val)
+   template <SUIntType SUInt>
+   Integer & operator /= (SUInt val)
     {
      CastInteger<Algo,SUInt> cast(val);
 
      return div(cast.getPtr(),cast.getLen());
     }
 
-   template <class SUInt>
-   EnableIfSUInt<SUInt> & operator %= (SUInt val)
+   template <SUIntType SUInt>
+   Integer & operator %= (SUInt val)
     {
      CastInteger<Algo,SUInt> cast(val);
 
      return mod(cast.getPtr(),cast.getLen());
     }
 
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator + (const Integer &a,SUInt b)
-    {
-     CastInteger<Algo,SUInt> cast(b);
-
-     return Add(a.getBody(),Range(cast));
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator + (SUInt a,const Integer &b)
-    {
-     CastInteger<Algo,SUInt> cast(a);
-
-     return Add(Range(cast),b.getBody());
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator - (const Integer &a,SUInt b)
-    {
-     CastInteger<Algo,SUInt> cast(b);
-
-     return Sub(a.getBody(),Range(cast));
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator - (SUInt a,const Integer &b)
-    {
-     CastInteger<Algo,SUInt> cast(a);
-
-     return Sub(Range(cast),b.getBody());
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator * (const Integer &a,SUInt b)
-    {
-     CastInteger<Algo,SUInt> cast(b);
-
-     return Mul(a.getBody(),Range(cast));
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator * (SUInt a,const Integer &b)
-    {
-     CastInteger<Algo,SUInt> cast(a);
-
-     return Mul(Range(cast),b.getBody());
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator / (const Integer &a,SUInt b)
-    {
-     CastInteger<Algo,SUInt> cast(b);
-
-     return Div(a.getBody(),Range(cast));
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator / (SUInt a,const Integer &b)
-    {
-     CastInteger<Algo,SUInt> cast(a);
-
-     return Div(Range(cast),b.getBody());
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator % (const Integer &a,SUInt b)
-    {
-     CastInteger<Algo,SUInt> cast(b);
-
-     return Mod(a.getBody(),Range(cast));
-    }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt> operator % (SUInt a,const Integer &b)
-    {
-     CastInteger<Algo,SUInt> cast(a);
-
-     return Mod(Range(cast),b.getBody());
-    }
-
-   template <class SUInt>
-   EnableIfSUInt<SUInt,DivMod> divmod(SUInt b) const
+   template <SUIntType SUInt>
+   DivMod divmod(SUInt b) const
     {
      CastInteger<Algo,SUInt> cast(b);
 
      return DivMod(getBody(),Range(cast));
     }
 
-   template <class SUInt>
-   EnableIfSUInt<SUInt,CmpResult> cmp(SUInt b) const
+   template <SUIntType SUInt>
+   CmpResult cmp(SUInt b) const
     {
      CastInteger<Algo,SUInt> cast(b);
 
      return Algo::Cmp(body.getPtr(),body.getLen(),cast.getPtr(),cast.getLen());
     }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator == (const Integer &a,SUInt b) { return a.cmp(b)==0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator == (SUInt a,const Integer &b) { return b.cmp(a)==0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator != (const Integer &a,SUInt b) { return a.cmp(b)!=0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator != (SUInt a,const Integer &b) { return b.cmp(a)!=0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator < (const Integer &a,SUInt b) { return a.cmp(b)<0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator < (SUInt a,const Integer &b) { return b.cmp(a)>0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator > (const Integer &a,SUInt b) { return a.cmp(b)>0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator > (SUInt a,const Integer &b) { return b.cmp(a)<0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator <= (const Integer &a,SUInt b) { return a.cmp(b)<=0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator <= (SUInt a,const Integer &b) { return b.cmp(a)>=0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator >= (const Integer &a,SUInt b) { return a.cmp(b)>=0; }
-
-   template <class SUInt>
-   friend EnableIfSUInt<SUInt,bool> operator >= (SUInt a,const Integer &b) { return b.cmp(a)<=0; }
 
    // print object
 
@@ -2126,16 +2007,16 @@ Integer<Algo,ArrayType,ArrayAlgoType>::Integer(StrLen str)
  }
 
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType>
-template <class UInt>
-Integer<Algo,ArrayType,ArrayAlgoType>::Integer(UInt val,Meta::EnableIf< Meta::IsUInt<UInt> , int >)
+template <UIntType UInt>
+Integer<Algo,ArrayType,ArrayAlgoType>::Integer(UInt val)
  : body(DoBuild,IntegerUIntBuilder<Algo,UInt>(val))
  {
   normalize();
  }
 
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType>
-template <class SInt>
-Integer<Algo,ArrayType,ArrayAlgoType>::Integer(SInt val,Meta::EnableIf< Meta::IsSInt<SInt> , int >)
+template <SIntType SInt>
+Integer<Algo,ArrayType,ArrayAlgoType>::Integer(SInt val)
  : body(DoBuild,IntegerSIntBuilder<Algo,SInt>(val))
  {
   normalize();
@@ -2424,6 +2305,124 @@ Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::o
 
   return *this;
  }
+
+ // operators
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator + (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b)
+ {
+  CastInteger<Algo,SUInt> cast(b);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Add(a.getBody(),Range(cast));
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator + (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b)
+ {
+  CastInteger<Algo,SUInt> cast(a);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Add(Range(cast),b.getBody());
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator - (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b)
+ {
+  CastInteger<Algo,SUInt> cast(b);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Sub(a.getBody(),Range(cast));
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator - (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b)
+ {
+  CastInteger<Algo,SUInt> cast(a);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Sub(Range(cast),b.getBody());
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator * (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b)
+ {
+  CastInteger<Algo,SUInt> cast(b);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Mul(a.getBody(),Range(cast));
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator * (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b)
+ {
+  CastInteger<Algo,SUInt> cast(a);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Mul(Range(cast),b.getBody());
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator / (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b)
+ {
+  CastInteger<Algo,SUInt> cast(b);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Div(a.getBody(),Range(cast));
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator / (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b)
+ {
+  CastInteger<Algo,SUInt> cast(a);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Div(Range(cast),b.getBody());
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator % (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b)
+ {
+  CastInteger<Algo,SUInt> cast(b);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Mod(a.getBody(),Range(cast));
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+Integer<Algo,ArrayType,ArrayAlgoType> operator % (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b)
+ {
+  CastInteger<Algo,SUInt> cast(a);
+
+  return Integer<Algo,ArrayType,ArrayAlgoType>::Mod(Range(cast),b.getBody());
+ }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator == (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b) { return a.cmp(b)==0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator == (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b) { return b.cmp(a)==0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator != (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b) { return a.cmp(b)!=0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator != (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b) { return b.cmp(a)!=0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator < (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b) { return a.cmp(b)<0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator < (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b) { return b.cmp(a)>0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator > (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b) { return a.cmp(b)>0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator > (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b) { return b.cmp(a)<0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator <= (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b) { return a.cmp(b)<=0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator <= (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b) { return b.cmp(a)>=0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator >= (const Integer<Algo,ArrayType,ArrayAlgoType> &a,SUInt b) { return a.cmp(b)>=0; }
+
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType,SUIntType SUInt>
+bool operator >= (SUInt a,const Integer<Algo,ArrayType,ArrayAlgoType> &b) { return b.cmp(a)<=0; }
 
  // print object
 

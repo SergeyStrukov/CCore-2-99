@@ -1,7 +1,7 @@
 /* UIntSlowMulAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -23,13 +23,13 @@ namespace Math {
 
 /* classes */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct UIntSlowMulAlgo;
+template <UIntType UInt> struct UIntSlowMulAlgo;
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct UIntSlowMulFunc;
+template <UIntType UInt> struct UIntSlowMulFunc;
 
 /* struct UIntSlowMulAlgo<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 struct UIntSlowMulAlgo
  {
   static const unsigned Bits = Meta::UIntBits<UInt> ;
@@ -51,8 +51,8 @@ struct UIntSlowMulAlgo
   static UInt DoubleUDiv(UInt hi,UInt lo,UInt den); // hi<den
  };
 
-template <class UInt,class E>
-UIntSlowMulAlgo<UInt,E>::DoubleUMul::DoubleUMul(UInt a,UInt b)
+template <UIntType UInt>
+UIntSlowMulAlgo<UInt>::DoubleUMul::DoubleUMul(UInt a,UInt b)
  {
   static_assert( (Bits%2)==0 ,"CCore::Math::UIntSlowMulAlgo<UInt,E> : odd bits number");
 
@@ -86,8 +86,8 @@ UIntSlowMulAlgo<UInt,E>::DoubleUMul::DoubleUMul(UInt a,UInt b)
   lo=p0;
  }
 
-template <class UInt,class E>
-UInt UIntSlowMulAlgo<UInt,E>::Inv(UInt den)
+template <UIntType UInt>
+UInt UIntSlowMulAlgo<UInt>::Inv(UInt den)
  {
   static_assert( (Bits%2)==0 ,"CCore::Math::UIntSlowMulAlgo<UInt,E> : odd bits number");
 
@@ -153,14 +153,14 @@ UInt UIntSlowMulAlgo<UInt,E>::Inv(UInt den)
   }
  }
 
-template <class UInt,class E>
-UInt UIntSlowMulAlgo<UInt,E>::LShift(UInt hi,UInt lo,unsigned shift)
+template <UIntType UInt>
+UInt UIntSlowMulAlgo<UInt>::LShift(UInt hi,UInt lo,unsigned shift)
  {
   return UInt( (hi<<shift)|(lo>>(Bits-shift)) );
  }
 
-template <class UInt,class E>
-UInt UIntSlowMulAlgo<UInt,E>::DoubleUDiv(UInt hi,UInt lo,UInt den)
+template <UIntType UInt>
+UInt UIntSlowMulAlgo<UInt>::DoubleUDiv(UInt hi,UInt lo,UInt den)
  {
   // 1
   {
@@ -206,7 +206,7 @@ UInt UIntSlowMulAlgo<UInt,E>::DoubleUDiv(UInt hi,UInt lo,UInt den)
 
 /* struct UIntSlowMulFunc<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 struct UIntSlowMulFunc
  {
   using Algo = UIntSlowMulAlgo<UInt> ;

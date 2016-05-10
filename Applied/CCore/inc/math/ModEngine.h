@@ -1,7 +1,7 @@
 /* ModEngine.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -23,7 +23,7 @@ namespace Math {
 
 /* classes */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > class BitScanner;
+template <UIntType UInt> class BitScanner;
 
 template <class Integer> class IntegerBitScanner;
 
@@ -33,7 +33,7 @@ template <class Integer> class ModEngine;
 
 /* class BitScanner<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 class BitScanner : NoCopy
  {
    UInt d;
@@ -211,8 +211,8 @@ class ModEngine : NoCopy
 
    Integer squac(const Integer &s,const Integer &a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < M
 
-   template <class UInt>
-   Meta::EnableIf< Meta::IsUInt<UInt> , Integer > pow(const Integer &a,UInt d) const // a >=0 , a < M , M > 1
+   template <UIntType UInt>
+   Integer pow(const Integer &a,UInt d) const // a >=0 , a < M , M > 1
     {
      BitScanner<UInt> scanner(d);
 

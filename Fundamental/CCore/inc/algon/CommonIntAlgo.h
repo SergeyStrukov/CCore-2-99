@@ -1,7 +1,7 @@
 /* CommonIntAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,13 +23,13 @@ namespace Algon {
 
 /* classes */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct BitIntAlgo;
+template <UIntType UInt> struct BitIntAlgo;
 
-template <class UInt,class Algo=BitIntAlgo<UInt>,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct CommonIntAlgo;
+template <UIntType UInt,class Algo=BitIntAlgo<UInt> > struct CommonIntAlgo;
 
 /* struct BitIntAlgo<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 struct BitIntAlgo
  {
   static bool IsEven(UInt a)
@@ -50,7 +50,7 @@ struct BitIntAlgo
 
 /* struct CommonIntAlgo<UInt,Algo> */
 
-template <class UInt,class Algo,class>
+template <UIntType UInt,class Algo>
 struct CommonIntAlgo : Algo
  {
   using Algo::BitScan;
@@ -93,11 +93,11 @@ struct CommonIntAlgo : Algo
 
 /* functions */
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > GCD(UInt a,UInt b) { return CommonIntAlgo<UInt>::GCD(a,b); }
+template <UIntType UInt>
+UInt GCD(UInt a,UInt b) { return CommonIntAlgo<UInt>::GCD(a,b); }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > LCM(UInt a,UInt b) { return CommonIntAlgo<UInt>::LCM(a,b); }
+template <UIntType UInt>
+UInt LCM(UInt a,UInt b) { return CommonIntAlgo<UInt>::LCM(a,b); }
 
 } // namespace Algon
 } // namespace CCore

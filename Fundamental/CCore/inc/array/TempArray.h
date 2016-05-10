@@ -1,7 +1,7 @@
 /* TempArray.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -24,11 +24,11 @@ namespace CCore {
 
 /* classes */
 
-template <class T,ulen StackLen,class=Meta::EnableIf< Meta::IsPOD<T> > > class TempArray;
+template <PODType T,ulen StackLen> class TempArray;
 
 /* class TempArray<T,ulen StackLen> */
 
-template <class T,ulen StackLen,class>
+template <PODType T,ulen StackLen>
 class TempArray : NoCopy
  {
    T *ptr;

@@ -76,6 +76,11 @@ struct UIntSat
 template <UIntType UInt,UInt A,UInt B> requires ( A <= MaxUInt<UInt> - B )
 const UInt UIntConstAdd = A + B ;
 
+/* const UIntConstMul<UInt,UInt A,UInt B> */
+
+template <UIntType UInt,UInt A,UInt B> requires ( B == 0 || A <= MaxUInt<UInt> / B )
+const UInt UIntConstMul = A * B ;
+
 /* const UIntConstSub<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B> requires ( A >= B )
