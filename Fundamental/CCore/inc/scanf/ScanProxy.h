@@ -1,7 +1,7 @@
 /* ScanProxy.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,31 +23,23 @@ namespace CCore {
 
 /* classes */
 
-template <class UInt> struct UIntScanProxy;
+template <UIntType UInt> struct UIntScanProxy;
 
-template <class SInt> struct SIntScanProxy;
+template <SIntType SInt> struct SIntScanProxy;
 
 template <class T> struct ScanProxy_other;
 
-template <bool is_UInt,bool is_SInt,class T> struct ScanProxies_noclass;
-
 template <class T> struct ScanProxy_noclass;
 
-struct ProbeSet_ScanOptType;
+template <class T> struct ScanProxy_class_noproxy;
 
-struct ProbeSet_ScanProxyType;
-
-template <bool has_ScanOptType,class T> struct ScanProxies_class_noproxy;
-
-template <bool has_ScanProxyType,class T> struct ScanProxies_class;
-
-template <bool is_class,class T> struct ScanProxies;
+template <class T> struct ScanProxy_class;
 
 template <class T> struct ScanProxy;
 
 /* struct UIntScanProxy<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 struct UIntScanProxy
  {
   using OptType = IntScanOpt ;
@@ -57,7 +49,7 @@ struct UIntScanProxy
 
 /* struct SIntScanProxy<SInt> */
 
-template <class SInt>
+template <SIntType SInt>
 struct SIntScanProxy
  {
   using OptType = IntScanOpt ;
@@ -72,82 +64,74 @@ struct ScanProxy_other
  {
  };
 
-/* struct ScanProxies_noclass<bool is_UInt,bool is_SInt,T> */
-
-template <class T>
-struct ScanProxies_noclass<true,false,T> : UIntScanProxy<T> {};
-
-template <class T>
-struct ScanProxies_noclass<false,true,T> : SIntScanProxy<T> {};
-
-template <class T>
-struct ScanProxies_noclass<false,false,T> : ScanProxy_other<T> {};
-
 /* struct ScanProxy_noclass<T> */
 
 template <class T>
-struct ScanProxy_noclass : ScanProxies_noclass<Meta::IsUInt<T>,Meta::IsSInt<T>,T> {};
+struct ScanProxy_noclass : ScanProxy_other<T> {};
 
-/* struct ProbeSet_ScanOptType */
+template <UIntType T>
+struct ScanProxy_noclass<T> : UIntScanProxy<T> {};
 
-struct ProbeSet_ScanOptType
+template <SIntType T>
+struct ScanProxy_noclass<T> : SIntScanProxy<T> {};
+
+/* concept Has_ScanOptType<T> */
+
+template <class T>
+concept bool Has_ScanOptType = requires()
  {
-  template <class T,class C=typename T::ScanOptType> struct Condition;
- };
+  typename T::ScanOptType;
+ } ;
 
-/* const Has_ScanOptType<T> */
+/* concept No_ScanOptType<T> */
 
 template <class T>
-const bool Has_ScanOptType = Meta::Detect<ProbeSet_ScanOptType,T> ;
+concept bool No_ScanOptType = !Has_ScanOptType<T> ;
 
-/* struct ProbeSet_ScanProxyType */
+/* concept Has_ScanProxyType<T> */
 
-struct ProbeSet_ScanProxyType
+template <class T>
+concept bool Has_ScanProxyType = requires()
  {
-  template <class T,class C=typename T::ScanProxyType> struct Condition;
- };
+  typename T::ScanProxyType;
+ } ;
 
-/* const Has_ScanProxyType<T> */
-
-template <class T>
-const bool Has_ScanProxyType = Meta::Detect<ProbeSet_ScanProxyType,T> ;
-
-/* struct ScanProxies_class_noproxy<bool has_ScanOptType,T> */
+/* concept No_ScanProxyType<T> */
 
 template <class T>
-struct ScanProxies_class_noproxy<true,T>
+concept bool No_ScanProxyType = !Has_ScanProxyType<T> ;
+
+/* struct ScanProxy_class_noproxy<T> */
+
+template <Has_ScanOptType T>
+struct ScanProxy_class_noproxy<T>
  {
   using OptType = typename T::ScanOptType ;
 
   using ProxyType = T & ;
  };
 
-template <class T>
-struct ScanProxies_class_noproxy<false,T>
+template <No_ScanOptType T>
+struct ScanProxy_class_noproxy<T>
  {
   using ProxyType = T & ;
  };
 
-/* struct ScanProxies_class<bool has_ScanProxyType,T> */
+/* struct ScanProxy_class<T> */
 
-template <class T>
-struct ScanProxies_class<true,T> : ScanProxy<typename T::ScanProxyType> {};
+template <Has_ScanProxyType T>
+struct ScanProxy_class<T> : ScanProxy<typename T::ScanProxyType> {};
 
-template <class T>
-struct ScanProxies_class<false,T> : ScanProxies_class_noproxy<Has_ScanOptType<T>,T> {};
-
-/* struct ScanProxies<bool is_class,T> */
-
-template <class T>
-struct ScanProxies<true,T> : ScanProxies_class<Has_ScanProxyType<T>,T> {};
-
-template <class T>
-struct ScanProxies<false,T> : ScanProxy_noclass<T> {};
+template <No_ScanProxyType T>
+struct ScanProxy_class<T> : ScanProxy_class_noproxy<T> {};
 
 /* struct ScanProxy<T> */
 
 template <class T>
-struct ScanProxy : ScanProxies<Meta::IsClass<T>,T> {};
+struct ScanProxy : ScanProxy_noclass<T> {};
+
+template <ClassType T>
+struct ScanProxy<T> : ScanProxy_class<T> {};
 
 template <>
 struct ScanProxy<String>

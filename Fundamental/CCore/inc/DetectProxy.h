@@ -1,7 +1,7 @@
 /* DetectProxy.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -20,35 +20,31 @@
 
 namespace CCore {
 
-/* classes */
-
-struct ProbeSet_ProxyType;
-
-struct ProbeSet_OptType;
-
-/* struct ProbeSet_ProxyType */
-
-struct ProbeSet_ProxyType
- {
-  template <class T,class C=typename T::ProxyType> struct Condition;
- };
-
-/* const Has_ProxyType<T> */
+/* concept Has_ProxyType<T> */
 
 template <class T>
-const bool Has_ProxyType = Meta::Detect<ProbeSet_ProxyType,T> ;
-
-/* struct ProbeSet_OptType */
-
-struct ProbeSet_OptType
+concept bool Has_ProxyType = requires()
  {
-  template <class T,class C=typename T::OptType> struct Condition;
- };
+  typename T::ProxyType;
+ } ;
 
-/* const Has_OptType<T> */
+/* concept No_ProxyType<T> */
 
 template <class T>
-const bool Has_OptType = Meta::Detect<ProbeSet_OptType,T> ;
+concept bool No_ProxyType = !Has_ProxyType<T> ;
+
+/* concept Has_OptType<T> */
+
+template <class T>
+concept bool Has_OptType = requires()
+ {
+  typename T::OptType;
+ } ;
+
+/* concept No_OptType<T> */
+
+template <class T>
+concept bool No_OptType = !Has_OptType<T> ;
 
 /* const ProxySwitch<T> */
 

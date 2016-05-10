@@ -1,7 +1,7 @@
 /* PrintProxy.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -25,25 +25,17 @@ namespace CCore {
 
 struct StrPrintProxy;
 
-template <class UInt> struct UIntPrintProxy;
+template <UIntType UInt> struct UIntPrintProxy;
 
-template <class SInt> struct SIntPrintProxy;
+template <SIntType SInt> struct SIntPrintProxy;
 
 template <class T> struct PrintProxy_other;
 
-template <bool is_UInt,bool is_SInt,class T> struct PrintProxies_noclass;
-
 template <class T> struct PrintProxy_noclass;
 
-struct ProbeSet_PrintOptType;
+template <class T> struct PrintProxy_class_noproxy;
 
-struct ProbeSet_PrintProxyType;
-
-template <bool has_PrintOptType,class T> struct PrintProxies_class_noproxy;
-
-template <bool has_PrintProxyType,class T> struct PrintProxies_class;
-
-template <bool is_class,class T> struct PrintProxies;
+template <class T> struct PrintProxy_class;
 
 template <class T> struct PrintProxy;
 
@@ -57,7 +49,7 @@ struct StrPrintProxy
 
 /* struct UIntPrintProxy<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 struct UIntPrintProxy
  {
   using OptType = IntPrintOpt ;
@@ -66,7 +58,7 @@ struct UIntPrintProxy
 
 /* struct SIntPrintProxy<SInt> */
 
-template <class SInt>
+template <SIntType SInt>
 struct SIntPrintProxy
  {
   using OptType = IntPrintOpt ;
@@ -80,82 +72,74 @@ struct PrintProxy_other
  {
  };
 
-/* struct PrintProxies_noclass<bool is_UInt,bool is_SInt,T> */
-
-template <class T>
-struct PrintProxies_noclass<true,false,T> : UIntPrintProxy<T> {};
-
-template <class T>
-struct PrintProxies_noclass<false,true,T> : SIntPrintProxy<T> {};
-
-template <class T>
-struct PrintProxies_noclass<false,false,T> : PrintProxy_other<T> {};
-
 /* struct PrintProxy_noclass<T> */
 
 template <class T>
-struct PrintProxy_noclass : PrintProxies_noclass<Meta::IsUInt<T>,Meta::IsSInt<T>,T> {};
+struct PrintProxy_noclass : PrintProxy_other<T> {};
 
-/* struct ProbeSet_PrintOptType */
+template <UIntType T>
+struct PrintProxy_noclass<T> : UIntPrintProxy<T> {};
 
-struct ProbeSet_PrintOptType
+template <SIntType T>
+struct PrintProxy_noclass<T> : SIntPrintProxy<T> {};
+
+/* concept Has_PrintOptType<T> */
+
+template <class T>
+concept bool Has_PrintOptType = requires()
  {
-  template <class T,class C=typename T::PrintOptType> struct Condition;
- };
+  typename T::PrintOptType;
+ } ;
 
-/* const Has_PrintOptType<T> */
+/* concept No_PrintOptType<T> */
 
 template <class T>
-const bool Has_PrintOptType = Meta::Detect<ProbeSet_PrintOptType,T> ;
+concept bool No_PrintOptType = !Has_PrintOptType<T> ;
 
-/* struct ProbeSet_PrintProxyType */
+/* concept Has_PrintProxyType<T> */
 
-struct ProbeSet_PrintProxyType
+template <class T>
+concept bool Has_PrintProxyType = requires()
  {
-  template <class T,class C=typename T::PrintProxyType> struct Condition;
- };
+  typename T::PrintProxyType;
+ } ;
 
-/* const Has_PrintProxyType<T> */
-
-template <class T>
-const bool Has_PrintProxyType = Meta::Detect<ProbeSet_PrintProxyType,T> ;
-
-/* struct PrintProxies_class_noproxy<bool has_PrintOptType,T> */
+/* concept No_PrintProxyType<T> */
 
 template <class T>
-struct PrintProxies_class_noproxy<true,T>
+concept bool No_PrintProxyType = !Has_PrintProxyType<T> ;
+
+/* struct PrintProxy_class_noproxy<T> */
+
+template <Has_PrintOptType T>
+struct PrintProxy_class_noproxy<T>
  {
   using OptType = typename T::PrintOptType ;
 
   using ProxyType = const T & ;
  };
 
-template <class T>
-struct PrintProxies_class_noproxy<false,T>
+template <No_PrintOptType T>
+struct PrintProxy_class_noproxy<T>
  {
   using ProxyType = const T & ;
  };
 
-/* struct PrintProxies_class<bool has_PrintProxyType,T> */
+/* struct PrintProxy_class<T> */
 
-template <class T>
-struct PrintProxies_class<true,T> : PrintProxy<typename T::PrintProxyType> {};
+template <Has_PrintProxyType T>
+struct PrintProxy_class<T> : PrintProxy<typename T::PrintProxyType> {};
 
-template <class T>
-struct PrintProxies_class<false,T> : PrintProxies_class_noproxy<Has_PrintOptType<T>,T> {};
-
-/* struct PrintProxies<bool is_class,T> */
-
-template <class T>
-struct PrintProxies<true,T> : PrintProxies_class<Has_PrintProxyType<T>,T> {};
-
-template <class T>
-struct PrintProxies<false,T> : PrintProxy_noclass<T> {};
+template <No_PrintProxyType T>
+struct PrintProxy_class<T> : PrintProxy_class_noproxy<T> {};
 
 /* struct PrintProxy<T> */
 
 template <class T>
-struct PrintProxy : PrintProxies<Meta::IsClass<T>,T> {};
+struct PrintProxy : PrintProxy_noclass<T> {};
+
+template <ClassType T>
+struct PrintProxy<T> : PrintProxy_class<T> {};
 
 template <>
 struct PrintProxy<char *> : StrPrintProxy {};

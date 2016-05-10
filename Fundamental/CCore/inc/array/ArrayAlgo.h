@@ -1,7 +1,7 @@
 /* ArrayAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -40,10 +40,6 @@ template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_mini;
 template <class T> struct ArrayAlgo_pod;
 
 template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_class;
-
-struct ProbeSet_ArrayAlgoType;
-
-template <bool has_ArrayAlgoType,bool is_pod,class T,class Flags> struct ArrayAlgos;
 
 template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo;
 
@@ -497,33 +493,29 @@ struct ArrayAlgo_class : ArrayAlgoBase_class<T>
    }
  };
 
-/* struct ProbeSet_ArrayAlgoType */
-
-struct ProbeSet_ArrayAlgoType
- {
-  template <class T,class C=typename T::ArrayAlgoType> struct Condition;
- };
-
-/* const Has_ArrayAlgoType<T> */
+/* concept Has_ArrayAlgoType<T> */
 
 template <class T>
-const bool Has_ArrayAlgoType = Meta::Detect<ProbeSet_ArrayAlgoType,T> ;
+concept bool Has_ArrayAlgoType = requires()
+ {
+  typename T::ArrayAlgoType;
+ } ;
 
-/* struct ArrayAlgos<bool has_ArrayAlgoType,bool is_pod,T,Flags> */
+/* concept No_ArrayAlgoType<T> */
 
-template <bool is_pod,class T,class Flags>
-struct ArrayAlgos<true,is_pod,T,Flags> : T::ArrayAlgoType {};
-
-template <class T,class Flags>
-struct ArrayAlgos<false,true,T,Flags> : ArrayAlgo_pod<T> {};
-
-template <class T,class Flags>
-struct ArrayAlgos<false,false,T,Flags> : ArrayAlgo_class<T,Flags> {};
+template <class T>
+concept bool No_ArrayAlgoType = !Has_ArrayAlgoType<T> ;
 
 /* struct ArrayAlgo<T,Flags> */
 
-template <class T,class Flags>
-struct ArrayAlgo : ArrayAlgos< Has_ArrayAlgoType<T> , Meta::IsPOD<T> && Meta::IsNothrowCopyable<T> && Meta::HasNothrowDefaultCtor<T> , T , Flags > {};
+template <Has_ArrayAlgoType T,class Flags>
+struct ArrayAlgo<T,Flags> : T::ArrayAlgoType {};
+
+template <No_ArrayAlgoType T,class Flags> requires ( PODType<T> && NothrowCopyableType<T> && NothrowDefaultCtorType<T> )
+struct ArrayAlgo<T,Flags> : ArrayAlgo_pod<T> {};
+
+template <No_ArrayAlgoType T,class Flags> requires !( PODType<T> && NothrowCopyableType<T> && NothrowDefaultCtorType<T> )
+struct ArrayAlgo<T,Flags> : ArrayAlgo_class<T,Flags> {};
 
 } // namespace CCore
 

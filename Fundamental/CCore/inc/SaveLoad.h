@@ -1,7 +1,7 @@
 /* SaveLoad.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -133,8 +133,6 @@ class BufPutDev;
 class BufGetDev;
 
 class CountPutDev;
-
-struct ProbeSet_SaveLoadLen;
 
 template <class T> struct Get_SaveLoadLenCtor;
 
@@ -800,27 +798,20 @@ class CountPutDev : public PutDevBase<CountPutDev>
    PtrLen<uint8> do_putRange(ulen len) { count+=len; return Nothing; }
  };
 
-/* struct ProbeSet_SaveLoadLen */
-
-struct ProbeSet_SaveLoadLen
- {
-  template <bool> struct Host;
-
-  template <class T,class C=Host<T::SaveLoadLen> > struct Condition;
- };
-
-/* const Has_SaveLoadLen<T> */
+/* concept Has_SaveLoadLen<T> */
 
 template <class T>
-const bool Has_SaveLoadLen = Meta::OneOf<T,uint8,uint16,uint32,uint64> || Meta::Detect<ProbeSet_SaveLoadLen,T> ;
+concept bool Has_SaveLoadLen = Meta::OneOf<T,uint8,uint16,uint32,uint64> || requires() { { T::SaveLoadLen } -> ulen ; } ;
+
+/* concept No_SaveLoadLen<T> */
+
+template <class T>
+concept bool No_SaveLoadLen = !Has_SaveLoadLen<T> ;
 
 /* struct Get_SaveLoadLenCtor<T> */
 
 template <class T>
-struct Get_SaveLoadLenCtor
- {
-  enum RetType : ulen { Ret = T::SaveLoadLen };
- };
+struct Get_SaveLoadLenCtor : Meta::DefConst<ulen,T::SaveLoadLen> {};
 
 template <>
 struct Get_SaveLoadLenCtor<uint8> { enum RetType : ulen { Ret = 1 }; };
@@ -836,7 +827,7 @@ struct Get_SaveLoadLenCtor<uint64> { enum RetType : ulen { Ret = 8 }; };
 
 /* const Get_SaveLoadLen<T> */
 
-template <class T>
+template <Has_SaveLoadLen T>
 const ulen Get_SaveLoadLen = Get_SaveLoadLenCtor<T>::Ret ;
 
 /* struct SaveLenCounters<bool has_SaveLoadLen,T> */
