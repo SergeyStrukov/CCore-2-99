@@ -38,7 +38,7 @@ constexpr UInt UIntBit(unsigned num) { return UInt(1)<<num; }
 
 template <UIntType UInt,UIntType ExtUInt = Quick::UIntMulSelect< Meta::UIntBits<UInt> > > struct UIntMulFunc;
 
-template <UIntType UInt> struct UIntBitFunc_default;
+template <UIntType UInt> struct UIntBitFunc_gen;
 
 template <UIntType UInt> struct UIntBitFunc;
 
@@ -177,10 +177,10 @@ struct UIntMulFunc<UInt,ExtUInt>
    }
  };
 
-/* struct UIntBitFunc_default<UInt> */
+/* struct UIntBitFunc_gen<UInt> */
 
 template <UIntType UInt>
-struct UIntBitFunc_default
+struct UIntBitFunc_gen
  {
   static const unsigned Bits = Meta::UIntBits<UInt> ;
 
@@ -260,7 +260,7 @@ struct UIntBitFunc_default
 /* struct UIntBitFunc<UInt> */
 
 template <UIntType UInt> requires ( MaxUInt<UInt> > MaxUInt<Quick::ScanUInt> )
-struct UIntBitFunc<UInt> : UIntBitFunc_default<UInt> {};
+struct UIntBitFunc<UInt> : UIntBitFunc_gen<UInt> {};
 
 /* struct UIntBitFunc<UInt> */
 

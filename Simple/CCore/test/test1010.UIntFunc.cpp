@@ -160,28 +160,28 @@ void testBits(ulen rep=Rep)
 
   for(auto count=rep; count ;count--)
     {
-     UInt a=random.next_uint<UInt>()|UIntBitFunc_default<UInt>::MSBit;
+     UInt a=random.next_uint<UInt>()|UIntBitFunc_gen<UInt>::MSBit;
 
-     unsigned s=random.select(UIntBitFunc_default<UInt>::Bits);
+     unsigned s=random.select(UIntBitFunc_gen<UInt>::Bits);
 
      a>>=s;
 
-     unsigned n=UIntBitFunc_default<UInt>::CountZeroMSB(a);
+     unsigned n=UIntBitFunc_gen<UInt>::CountZeroMSB(a);
 
      if( n!=s ) Printf(Exception,"fail 7");
 
-     if( UIntBitFunc_default<UInt>::BitsOf(a)!=UIntBitFunc_default<UInt>::Bits-n ) Printf(Exception,"fail 8");
+     if( UIntBitFunc_gen<UInt>::BitsOf(a)!=UIntBitFunc_gen<UInt>::Bits-n ) Printf(Exception,"fail 8");
     }
 
   for(auto count=rep; count ;count--)
     {
      UInt a=random.next_uint<UInt>()|1u;
 
-     unsigned s=random.select(UIntBitFunc_default<UInt>::Bits);
+     unsigned s=random.select(UIntBitFunc_gen<UInt>::Bits);
 
      a<<=s;
 
-     unsigned n=UIntBitFunc_default<UInt>::CountZeroLSB(a);
+     unsigned n=UIntBitFunc_gen<UInt>::CountZeroLSB(a);
 
      if( n!=s ) Printf(Exception,"fail 8");
     }

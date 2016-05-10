@@ -1,7 +1,7 @@
 /* Random.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,11 +23,11 @@ namespace CCore {
 
 /* classes */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct RandomFill_gen;
+template <UIntType UInt> struct RandomFill_gen;
 
-template <class UInt> struct RandomFill;
+template <UIntType UInt> struct RandomFill;
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > struct RandomSelect;
+template <UIntType UInt> struct RandomSelect;
 
 template <class T> class RandomBase;
 
@@ -35,7 +35,7 @@ class Random;
 
 /* struct RandomFill_gen<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 struct RandomFill_gen
  {
   template <unsigned DstBit,unsigned SrcBit> struct Extra_loop;
@@ -49,9 +49,9 @@ struct RandomFill_gen
   static UInt Do(T &random);
  };
 
-template <class UInt,class E>
+template <UIntType UInt>
 template <unsigned DstBit,unsigned SrcBit>
-struct RandomFill_gen<UInt,E>::Extra_loop
+struct RandomFill_gen<UInt>::Extra_loop
  {
   template <class T>
   static void Do(UInt &ret,T &random)
@@ -64,17 +64,17 @@ struct RandomFill_gen<UInt,E>::Extra_loop
    }
  };
 
-template <class UInt,class E>
+template <UIntType UInt>
 template <unsigned DstBit,unsigned SrcBit>
-struct RandomFill_gen<UInt,E>::Extra_last
+struct RandomFill_gen<UInt>::Extra_last
  {
   template <class T>
   static void Do(UInt &,T &) {}
  };
 
-template <class UInt,class E>
+template <UIntType UInt>
 template <class T>
-UInt RandomFill_gen<UInt,E>::Do(T &random)
+UInt RandomFill_gen<UInt>::Do(T &random)
  {
   UInt ret=UInt(random.next());
 
@@ -85,7 +85,7 @@ UInt RandomFill_gen<UInt,E>::Do(T &random)
 
 /* struct RandomFill<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 struct RandomFill : RandomFill_gen<UInt> {};
 
 template <>
@@ -118,7 +118,7 @@ struct RandomFill<uint64>
 
 /* struct RandomSelect<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 struct RandomSelect
  {
   static UInt Do(UInt a,uint32 b,UInt lim) // lim!=0
@@ -170,26 +170,26 @@ class RandomBase : NoCopy
 
   public:
 
-   template <class UInt>
+   template <UIntType UInt>
    UInt next_uint() { return RandomFill<UInt>::Do(getObj()); }
 
    uint32 select(uint32 lim) { return lim?uint32( getObj().next64()%lim ):getObj().next32(); }
 
    uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
 
-   template <class UInt>
+   template <UIntType UInt>
    UInt select_uint(UInt lim) { return lim?RandomSelect<UInt>::Do(getObj(),lim):next_uint<UInt>(); }
 
-   template <class UInt>
+   template <UIntType UInt>
    UInt select_uint(UInt a,UInt b) { return a+select_uint<UInt>(b-a+1); }
 
-   template <class UInt>
+   template <UIntType UInt>
    void fill(PtrLen<UInt> r)
     {
      for(; +r ;++r) *r=next_uint<UInt>();
     }
 
-   template <class UInt>
+   template <UIntType UInt>
    void fill(UInt *ptr,ulen len)
     {
      fill(Range(ptr,len));

@@ -1,7 +1,7 @@
 /* test2018.StrParse.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -92,7 +92,7 @@ class Engine : NoCopy
 
      uint16 ret;
 
-     ParseUInt_empty(dev,ret,0,minval,maxval);
+     ParseUInt_empty(dev,ret,0u,minval,maxval);
 
      if( val>=minval && val<=maxval )
        {

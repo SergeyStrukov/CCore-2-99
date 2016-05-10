@@ -1,7 +1,7 @@
 /* StrParse.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -19,6 +19,30 @@
 #include <CCore/inc/Gadget.h>
 
 namespace CCore {
+
+/* concept CharPeekType<Dev> */
+
+template <class Dev,class Peek>
+concept bool CharPeekType2 = requires(Dev &dev,const Peek &peek)
+ {
+  Peek(dev);
+
+  { !peek } -> bool ;
+
+  { *peek } -> char ;
+ } ;
+
+template <class Dev>
+concept bool CharPeekType = requires(Dev &dev)
+ {
+  typename Dev::Peek;
+
+  dev.fail();
+
+  ++dev;
+
+  requires ( CharPeekType2<Dev,typename Dev::Peek> );
+ } ;
 
 /* classes */
 
@@ -162,8 +186,8 @@ void ParseChar_empty(Dev &dev,char &ret,char defval)
 
 /* functions */
 
-template <class Dev,class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , bool > ParseUIntSetup(Dev &dev,UInt &acc)
+template <class Dev,UIntType UInt>
+bool ParseUIntSetup(Dev &dev,UInt &acc)
  {
   typename Dev::Peek peek(dev);
 
@@ -180,8 +204,8 @@ Meta::EnableIf< Meta::IsUInt<UInt> , bool > ParseUIntSetup(Dev &dev,UInt &acc)
   return true;
  }
 
-template <class Dev,class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , UInt > ParseUIntDo(Dev &dev,UInt acc,UInt minval,UInt maxval)
+template <class Dev,UIntType UInt>
+UInt ParseUIntDo(Dev &dev,UInt acc,UInt minval,UInt maxval)
  {
   UInt a=maxval/10;
   UInt b=maxval%10;
@@ -216,8 +240,8 @@ Meta::EnableIf< Meta::IsUInt<UInt> , UInt > ParseUIntDo(Dev &dev,UInt acc,UInt m
   return acc;
  }
 
-template <class Dev,class UInt,class UInt1,class UInt2>
-Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt(Dev &dev,UInt &ret,UInt1 minval_,UInt2 maxval_)
+template <class Dev,UIntType UInt,UIntType UInt1,UIntType UInt2>
+void ParseUInt(Dev &dev,UInt &ret,UInt1 minval_,UInt2 maxval_)
  {
   UInt minval=minval_;
   UInt maxval=maxval_;
@@ -236,20 +260,20 @@ Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt(Dev &dev,UInt &ret,UInt1 minval_,
     }
  }
 
-template <class Dev,class UInt,class UInt1>
-Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt(Dev &dev,UInt &ret,UInt1 maxval)
+template <class Dev,UIntType UInt,UIntType UInt1>
+void ParseUInt(Dev &dev,UInt &ret,UInt1 maxval)
  {
   ParseUInt(dev,ret,0u,maxval);
  }
 
-template <class Dev,class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt(Dev &dev,UInt &ret)
+template <class Dev,UIntType UInt>
+void ParseUInt(Dev &dev,UInt &ret)
  {
   ParseUInt(dev,ret,0u,MaxUInt<UInt>);
  }
 
-template <class Dev,class UInt,class UInt1,class UInt2,class UInt3>
-Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval_,UInt2 minval_,UInt3 maxval_)
+template <class Dev,UIntType UInt,UIntType UInt1,UIntType UInt2,UIntType UInt3>
+void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval_,UInt2 minval_,UInt3 maxval_)
  {
   UInt defval=defval_;
   UInt minval=minval_;
@@ -276,14 +300,14 @@ Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt_empty(Dev &dev,UInt &ret,UInt1 de
     }
  }
 
-template <class Dev,class UInt,class UInt1,class UInt2>
-Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval,UInt2 maxval)
+template <class Dev,UIntType UInt,UIntType UInt1,UIntType UInt2>
+void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval,UInt2 maxval)
  {
   ParseUInt_empty(dev,ret,defval,0u,maxval);
  }
 
-template <class Dev,class UInt,class UInt1>
-Meta::EnableIf< Meta::IsUInt<UInt> > ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval)
+template <class Dev,UIntType UInt,UIntType UInt1>
+void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval)
  {
   ParseUInt_empty(dev,ret,defval,0u,MaxUInt<UInt>);
  }

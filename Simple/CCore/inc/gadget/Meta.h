@@ -277,6 +277,8 @@ struct EnableIfCtor<false,T>
 template <bool Cond,class RetType=void>
 using EnableIf = typename EnableIfCtor<Cond,RetType>::Ret ;
 
+#if 1
+
 /* struct DetectCtor<ProbeSet,T> */
 
 template <class ProbeSet,class T>
@@ -295,6 +297,8 @@ struct DetectCtor
 
 template <class ProbeSet,class T>
 const bool Detect = DetectCtor<ProbeSet,T>::Ret ;
+
+#endif
 
 /* struct IsSameCtor<T1,T2> */
 
