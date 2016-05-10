@@ -48,6 +48,14 @@ struct RetStep
   RetStep(T &obj_,StepId id_) : obj(obj_),id(id_) {}
  };
 
+/* concept Has_final<T,S> */
+
+template <class T,class S>
+concept bool Has_final = requires()
+ {
+  { &T::final } -> void (T::*)(S &) ;
+ } ;
+
 /* class StepEval<Ctx> */
 
 template <class Ctx>
@@ -105,25 +113,6 @@ class StepEval : public Ctx
      virtual void final(StepEval &eval)=0;
     };
 
-   struct ProbeSet_Call1 : Meta::ProbeSetBase
-    {
-     template <class T,class C=decltype( Ref<T>()(Ref<StepEval>()) )> struct Condition;
-    };
-
-   template <class T>
-   static const bool Has_Call1 = Meta::Detect<ProbeSet_Call1,T> ;
-
-   struct ProbeSet_Call2 : Meta::ProbeSetBase
-    {
-     template <class T,class C=decltype( Ref<T>()(Ref<StepEval>(),Obj<StepId>()) )> struct Condition;
-    };
-
-   template <class T>
-   static const bool Has_Call2 = Meta::Detect<ProbeSet_Call2,T> ;
-
-   template <class T>
-   static const int CallIndex = Has_Call2<T>?2:(Has_Call1<T>?1:0) ;
-
    template <class T>
    struct CallMain_0
     {
@@ -143,17 +132,10 @@ class StepEval : public Ctx
     };
 
    template <class T>
-   struct CallMain : Meta::SelectList<CallIndex<T>, CallMain_0<T> , CallMain_1<T> , CallMain_2<T> > {};
-
-   struct ProbeSet_final
-    {
-     template <class T,void (T::*M)(StepEval &)> struct Host;
-
-     template <class T,class C=Host<T,&T::final> > struct Condition;
-    };
+   static const int CallIndex = FuncArgType<T,StepEval &,StepId>?2:(FuncArgType<T,StepEval &>?1:0) ;
 
    template <class T>
-   static const bool Has_final = Meta::Detect<ProbeSet_final,T> ;
+   struct CallMain : Meta::SelectList<CallIndex<T>, CallMain_0<T> , CallMain_1<T> , CallMain_2<T> > {};
 
    template <class T>
    struct CallFinal_yes
@@ -168,7 +150,7 @@ class StepEval : public Ctx
     };
 
    template <class T>
-   struct CallFinal : Meta::Select<Has_final<T>, CallFinal_yes<T> , CallFinal_no<T> > {};
+   struct CallFinal : Meta::Select<Has_final<T,StepEval>, CallFinal_yes<T> , CallFinal_no<T> > {};
 
    template <class T>
    struct Node : NodeBase

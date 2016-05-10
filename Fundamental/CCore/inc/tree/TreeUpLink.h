@@ -1,7 +1,7 @@
 /* TreeUpLink.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -47,7 +47,7 @@ struct TreeUpLink
 
   template <TreeUpLink<T,K> T::* LinkMember,class KRef=K> struct BinAlgo;
 
-  template <TreeUpLink<T,K> T::* LinkMember,class=Meta::EnableIf< Meta::IsUInt<K> > > struct RadixAlgo;
+  template <TreeUpLink<T,K> T::* LinkMember> requires ( UIntType<K> ) struct RadixAlgo;
  };
 
 template <class T,class K>
@@ -425,7 +425,7 @@ struct TreeUpLink<T,K>::BinAlgo
  };
 
 template <class T,class K>
-template <TreeUpLink<T,K> T::* LinkMember,class>
+template <TreeUpLink<T,K> T::* LinkMember> requires ( UIntType<K> )
 struct TreeUpLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
  {
   using BinAlgo<LinkMember,K>::Link;

@@ -1,7 +1,7 @@
 /* IntPrint.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -37,13 +37,13 @@ struct IntPrintOpt;
 
 class IntToStr;
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > class UIntPrint;
+template <UIntType UInt> class UIntPrint;
 
-template <class SInt,class=Meta::EnableIf< Meta::IsSInt<SInt> > > class SIntPrint;
+template <SIntType SInt> class SIntPrint;
 
 struct PrintDumpOptType;
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > class PrintDumpType;
+template <UIntType UInt> class PrintDumpType;
 
 /* enum IntShowSign */
 
@@ -251,8 +251,8 @@ class IntToStr : NoCopy
 
    bool operator ! () const { return nok; }
 
-   template <class UInt>
-   Meta::EnableIf< Meta::IsUInt<UInt> > do_uint(UInt value)
+   template <UIntType UInt>
+   void do_uint(UInt value)
     {
      if( reset() ) return;
 
@@ -268,8 +268,8 @@ class IntToStr : NoCopy
        }
     }
 
-   template <class SInt,class UInt>
-   Meta::EnableIf< Meta::IsSInt<SInt> && Meta::IsUInt<UInt> > do_sint(SInt value)
+   template <SIntType SInt,UIntType UInt>
+   void do_sint(SInt value)
     {
      if( reset() ) return;
 
@@ -294,14 +294,14 @@ class IntToStr : NoCopy
        }
     }
 
-   template <class UInt>
-   Meta::EnableIf< Meta::IsUInt<UInt> > do_promote_uint(UInt value)
+   template <UIntType UInt>
+   void do_promote_uint(UInt value)
     {
      do_uint<typename Meta::PromoteUInt<UInt>::Type>(value);
     }
 
-   template <class SInt>
-   Meta::EnableIf< Meta::IsSInt<SInt> > do_promote_sint(SInt value)
+   template <SIntType SInt>
+   void do_promote_sint(SInt value)
     {
      do_sint<typename Meta::PromoteSInt<SInt>::SType,typename Meta::PromoteSInt<SInt>::UType>(value);
     }
@@ -360,7 +360,7 @@ class IntToStr : NoCopy
 
 /* class UIntPrint<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 class UIntPrint
  {
    UInt value;
@@ -384,7 +384,7 @@ class UIntPrint
 
 /* class SIntPrint<SInt> */
 
-template <class SInt,class>
+template <SIntType SInt>
 class SIntPrint
  {
    SInt value;
@@ -440,7 +440,7 @@ struct PrintDumpOptType
 
 /* class PrintDumpType<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 class PrintDumpType
  {
    PtrLen<const UInt> data;
@@ -503,13 +503,13 @@ class PrintDumpType
 
 /* PrintDump() */
 
-template <class UInt>
+template <UIntType UInt>
 PrintDumpType<UInt> PrintDump(const UInt *ptr,ulen len) { return PrintDumpType<UInt>(Range(ptr,len)); }
 
-template <class UInt>
+template <UIntType UInt>
 PrintDumpType<UInt> PrintDump(PtrLen<UInt> data) { return PrintDumpType<UInt>(Range_const(data)); }
 
-template <class UInt>
+template <UIntType UInt>
 PrintDumpType<UInt> PrintDump(PtrLen<const UInt> data) { return PrintDumpType<UInt>(data); }
 
 } // namespace CCore

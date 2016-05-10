@@ -26,8 +26,8 @@ namespace Private_2053 {
 
 /* TOut */
 
-const auto Trace = NoPrint ;
-//const auto Trace = Con ;
+//const auto Trace = NoPrint ;
+const auto Trace = Con ;
 
 /* classes */
 
@@ -555,7 +555,7 @@ const char *const Testit<2053>::Name="Test2053 StepEval";
 template<>
 bool Testit<2053>::Main()
  {
-#if 0
+#if 1
 
   Context ctx(100);
 

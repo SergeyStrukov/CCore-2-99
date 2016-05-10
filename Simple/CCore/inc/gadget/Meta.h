@@ -31,8 +31,6 @@ template <class T,T Val> const T Const = Val ;
 
 struct Empty;
 
-struct ProbeSetBase;
-
 template <class T> struct DefType;
 
 template <class T,T Val> struct DefConst;
@@ -56,8 +54,6 @@ template <bool Cond,template <class A1,class A2,class A3> class T1,
                     class A1,class A2,class A3> struct SelectBuild3Ctor;
 
 template <bool Cond,class T> struct EnableIfCtor;
-
-template <class ProbeSet,class T> struct DetectCtor;
 
 template <class T1,class T2> struct IsSameCtor;
 
@@ -99,15 +95,6 @@ template <class Skip,ulen Count,class ... TT> struct SkipTypeListCtor;
 
 struct Empty
  {
- };
-
-/* struct ProbeSetBase */
-
-struct ProbeSetBase
- {
-  template <class T> static T & Ref();
-
-  template <class T> static T Obj();
  };
 
 /* struct DefType<T> */
@@ -276,29 +263,6 @@ struct EnableIfCtor<false,T>
 
 template <bool Cond,class RetType=void>
 using EnableIf = typename EnableIfCtor<Cond,RetType>::Ret ;
-
-#if 1
-
-/* struct DetectCtor<ProbeSet,T> */
-
-template <class ProbeSet,class T>
-struct DetectCtor
- {
-  template <class S>
-  static constexpr bool Probe(int) { return false; }
-
-  template <class S,class C=typename ProbeSet::template Condition<S> >
-  static constexpr bool Probe(NothingType) { return true; }
-
-  enum RetType { Ret = Probe<T>(Nothing) };
- };
-
-/* const Detect<ProbeSet,T> */
-
-template <class ProbeSet,class T>
-const bool Detect = DetectCtor<ProbeSet,T>::Ret ;
-
-#endif
 
 /* struct IsSameCtor<T1,T2> */
 

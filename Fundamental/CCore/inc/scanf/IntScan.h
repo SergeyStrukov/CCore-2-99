@@ -1,7 +1,7 @@
 /* IntScan.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -31,17 +31,17 @@ const unsigned MaxScanIntBase = 16 ;
 
 struct IntScanOpt;
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > class UIntDigitAcc;
+template <UIntType UInt> class UIntDigitAcc;
 
-template <class SInt,class=Meta::EnableIf< Meta::IsSInt<SInt> > > class SIntDigitAcc;
+template <SIntType SInt> class SIntDigitAcc;
 
 template <ulen Len> class DetectIntFormat;
 
-template <class SUInt,class Acc,class=Meta::EnableIf< Meta::IsSUInt<SUInt> > > struct IntScanAlgo;
+template <SUIntType SUInt,class Acc> struct IntScanAlgo;
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > > class UIntScan;
+template <UIntType UInt> class UIntScan;
 
-template <class SInt,class=Meta::EnableIf< Meta::IsSInt<SInt> > > class SIntScan;
+template <SIntType SInt> class SIntScan;
 
 /* enum IntScanBase */
 
@@ -102,7 +102,7 @@ struct IntScanOpt
 
 /* class UIntDigitAcc<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 class UIntDigitAcc : NoCopy
  {
    UInt value;
@@ -144,7 +144,7 @@ class UIntDigitAcc : NoCopy
 
 /* class SIntDigitAcc<SInt> */
 
-template <class SInt,class>
+template <SIntType SInt>
 class SIntDigitAcc : NoCopy
  {
    using UInt = typename SIntFunc<SInt>::UInt ;
@@ -450,7 +450,7 @@ DetectIntFormat<Len>::DetectIntFormat(S &inp)
 
 /* struct IntScanAlgo<SUInt,Acc> */
 
-template <class SUInt,class Acc,class>
+template <SUIntType SUInt,class Acc>
 struct IntScanAlgo
  {
   // Hex
@@ -777,7 +777,7 @@ struct IntScanAlgo
 
 /* class UIntScan<UInt> */
 
-template <class UInt,class>
+template <UIntType UInt>
 class UIntScan : NoCopy
  {
    UInt &var;
@@ -797,7 +797,7 @@ class UIntScan : NoCopy
 
 /* class SIntScan<SInt> */
 
-template <class SInt,class>
+template <SIntType SInt>
 class SIntScan : NoCopy
  {
    SInt &var;

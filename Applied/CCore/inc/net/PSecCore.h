@@ -1,7 +1,7 @@
 /* PSecCore.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -82,8 +82,8 @@ using PacketType = uint8 ;
 
 /* functions */
 
-template <class UInt,class UInt1>
-Meta::EnableIf< Meta::IsUInt<UInt> && Meta::IsUInt<UInt1> > PosDec(UInt &var,UInt1 val)
+template <UIntType UInt,UIntType UInt1>
+void PosDec(UInt &var,UInt1 val)
  {
   if( val<=var )
     var-=(UInt)val;
