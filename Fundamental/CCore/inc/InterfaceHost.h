@@ -1,7 +1,7 @@
 /* InterfaceHost.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -26,9 +26,7 @@ void GuardNoInterface(StrLen from,StrLen name);
 
 /* classes */
 
-struct ProbeSet_InterfaceName;
-
-template <class T,bool has_InterfaceName> struct GetInterfaceName;
+template <class T> struct GetInterfaceName;
 
 struct InterfaceCaster;
 
@@ -36,32 +34,26 @@ struct InterfaceHost;
 
 template <class T> class InterfaceCasterTo;
 
-/* struct ProbeSet_InterfaceName */
-
-struct ProbeSet_InterfaceName
- {
-  template <class T,const StrLen *> struct Host;
-
-  template <class T,class C=Host<T,&T::InterfaceName> > struct Condition;
- };
-
-/* const Has_InterfaceName<T> */
+/* concept Has_InterfaceName<T> */
 
 template <class T>
-const bool Has_InterfaceName = Meta::Detect<ProbeSet_InterfaceName,T> ;
+concept bool Has_InterfaceName = requires() { { T::InterfaceName } -> StrLen ; } ;
 
-/* struct GetInterfaceName<T,bool has_InterfaceName> */
-
-template <class T,bool has_InterfaceName=Has_InterfaceName<T> > struct GetInterfaceName;
+/* concept No_InterfaceName<T> */
 
 template <class T>
-struct GetInterfaceName<T,true> : StrLen
+concept bool No_InterfaceName = !Has_InterfaceName<T> ;
+
+/* struct GetInterfaceName<T> */
+
+template <Has_InterfaceName T>
+struct GetInterfaceName<T> : StrLen
  {
   GetInterfaceName() : StrLen(T::InterfaceName) {}
  };
 
-template <class T>
-struct GetInterfaceName<T,false> : StrLen
+template <No_InterfaceName T>
+struct GetInterfaceName<T> : StrLen
  {
   GetInterfaceName() : StrLen("<Unknown interface>") {}
  };

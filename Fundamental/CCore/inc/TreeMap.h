@@ -1,7 +1,7 @@
 /* TreeMap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -30,7 +30,7 @@ void GuardKeyOutOfRange();
 
 template <class K,class T,class KRef=K,template <class Node> class Allocator=NodeAllocator> class RBTreeMap;
 
-template <class K,class=Meta::EnableIf< Meta::IsUInt<K> > > struct KeyRange;
+template <UIntType K> struct KeyRange;
 
 template <class K,class T,template <class Node> class Allocator=NodeAllocator> class RadixTreeMap;
 
@@ -450,7 +450,7 @@ void RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init) const
 
 /* struct KeyRange<K> */
 
-template <class K,class>
+template <UIntType K>
 struct KeyRange
  {
   K kmin;

@@ -1,7 +1,7 @@
 /* ObjectDomain.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental
 //
@@ -25,13 +25,9 @@ namespace CCore {
 
 class ObjectDomain;
 
-struct ProbeSet_keepAlive;
+template <class T> struct KeepAliveAdapter;
 
-template <class T,bool has_keepAlive> struct KeepAliveAdapters;
-
-struct ProbeSet_breakWeak;
-
-template <class T,bool has_breakWeak> struct BreakWeakAdapters;
+template <class T> struct BreakWeakAdapter;
 
 template <class T> class DeleteObjNode;
 
@@ -187,62 +183,56 @@ class ObjectDomain : NoCopy
    ulen getAvail() const { return max_total_len-total_len; }
  };
 
-/* struct ProbeSet_keepAlive */
+/* concept Has_keepAlive<T> */
 
-struct ProbeSet_keepAlive
+template <class T>
+concept bool Has_keepAlive = requires()
  {
-  template <class T,void (T::*M)(ObjectDomain::Keeper)> struct Host;
+  { &T::keepAlive } -> void (T::*)(ObjectDomain::Keeper) ;
+ } ;
 
-  template <class T,class C=Host<T,&T::keepAlive> > struct Condition;
- };
-
-/* const Has_keepAlive<T> */
+/* concept No_keepAlive<T> */
 
 template <class T>
-const bool Has_keepAlive = Meta::Detect<ProbeSet_keepAlive,T> ;
+concept bool No_keepAlive = !Has_keepAlive<T> ;
 
-/* struct KeepAliveAdapters<T,bool has_keepAlive> */
+/* struct KeepAliveAdapter<T> */
 
-template <class T,bool has_keepAlive=Has_keepAlive<T> > struct KeepAliveAdapters;
-
-template <class T>
-struct KeepAliveAdapters<T,true>
+template <Has_keepAlive T>
+struct KeepAliveAdapter<T>
  {
   static void KeepAlive(T &obj,ObjectDomain::Keeper keeper) { obj.keepAlive(keeper); }
  };
 
-template <class T>
-struct KeepAliveAdapters<T,false>
+template <No_keepAlive T>
+struct KeepAliveAdapter<T>
  {
   static void KeepAlive(T &,ObjectDomain::Keeper) {}
  };
 
-/* struct ProbeSet_breakWeak */
+/* concept Has_breakWeak<T> */
 
-struct ProbeSet_breakWeak
+template <class T>
+concept bool Has_breakWeak = requires()
  {
-  template <class T,void (T::*M)(ObjectDomain::Breaker)> struct Host;
+  { &T::breakWeak } -> void (T::*)(ObjectDomain::Breaker) ;
+ } ;
 
-  template <class T,class C=Host<T,&T::breakWeak> > struct Condition;
- };
-
-/* const Has_breakWeak<T> */
+/* concept No_breakWeak<T> */
 
 template <class T>
-const bool Has_breakWeak = Meta::Detect<ProbeSet_breakWeak,T> ;
+concept bool No_breakWeak = !Has_breakWeak<T> ;
 
-/* struct BreakWeakAdapters<T,bool has_breakWeak> */
+/* struct BreakWeakAdapter<T> */
 
-template <class T,bool has_breakWeak=Has_breakWeak<T> > struct BreakWeakAdapters;
-
-template <class T>
-struct BreakWeakAdapters<T,true>
+template <Has_breakWeak T>
+struct BreakWeakAdapter<T>
  {
   static void BreakWeak(T &obj,ObjectDomain::Breaker breaker) { obj.breakWeak(breaker); }
  };
 
-template <class T>
-struct BreakWeakAdapters<T,false>
+template <No_breakWeak T>
+struct BreakWeakAdapter<T>
  {
   static void BreakWeak(T &,ObjectDomain::Breaker) {}
  };
@@ -266,9 +256,9 @@ struct ObjectDomain::ObjNode : ObjBase
 
   virtual void destroy(ObjectDomain *domain) { Delete<ObjNode<T>,AllocInit>(domain,this); }
 
-  virtual void keepAlive(Keeper keeper) { KeepAliveAdapters<T>::KeepAlive(obj,keeper); }
+  virtual void keepAlive(Keeper keeper) { KeepAliveAdapter<T>::KeepAlive(obj,keeper); }
 
-  virtual void breakWeak(Breaker breaker) { BreakWeakAdapters<T>::BreakWeak(obj,breaker); }
+  virtual void breakWeak(Breaker breaker) { BreakWeakAdapter<T>::BreakWeak(obj,breaker); }
 
   T * getPtr() { return &obj; }
  };
@@ -574,13 +564,13 @@ class DeleteObjNode : NoCopy
    template <class Keeper>
    void keepAlive(Keeper keeper)
     {
-     if( +ptr ) KeepAliveAdapters<T>::KeepAlive(*ptr,keeper);
+     if( +ptr ) KeepAliveAdapter<T>::KeepAlive(*ptr,keeper);
     }
 
    template <class Breaker>
    void breakWeak(Breaker breaker)
     {
-     if( +ptr ) BreakWeakAdapters<T>::BreakWeak(*ptr,breaker);
+     if( +ptr ) BreakWeakAdapter<T>::BreakWeak(*ptr,breaker);
     }
  };
 

@@ -1,7 +1,7 @@
 /* InterfaceHost.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,7 +23,7 @@ namespace CCore {
 
 void GuardNoInterface(StrLen from,StrLen name)
  {
-  Printf(Exception,"CCore::GuardNoInterface(...) : interface #; is not avaliable from #;",name,from);
+  Printf(Exception,"CCore::GuardNoInterface(...) : interface #; is not available from #;",name,from);
  }
 
 } // namespace CCore
