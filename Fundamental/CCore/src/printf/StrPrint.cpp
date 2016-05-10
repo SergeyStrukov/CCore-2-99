@@ -1,7 +1,7 @@
 /* StrPrint.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,7 +23,7 @@ StrPrintOpt::StrPrintOpt(const char *ptr,const char *lim)
  {
   StrParse dev(ptr,lim);
 
-  ParseUInt_empty(dev,width,0);
+  ParseUInt_empty(dev,width,0u);
 
   if( ParseChar_try(dev,'.') )
     {

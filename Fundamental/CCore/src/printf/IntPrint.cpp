@@ -1,7 +1,7 @@
 /* IntPrint.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -25,7 +25,7 @@ IntPrintOpt::IntPrintOpt(const char *ptr,const char *lim)
 
   Parse_empty(dev,show_sign);
 
-  ParseUInt_empty(dev,width,0);
+  ParseUInt_empty(dev,width,0u);
 
   Parse_IntBase(dev,base,show_base);
 
@@ -40,7 +40,7 @@ PrintDumpOptType::PrintDumpOptType(const char *ptr,const char *lim)
  {
   StrParse dev(ptr,lim);
 
-  ParseUInt_empty(dev,width,0);
+  ParseUInt_empty(dev,width,0u);
 
   if( ParseChar_try(dev,'.') )
     {

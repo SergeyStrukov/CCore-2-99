@@ -1,7 +1,7 @@
 /* Integer.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -75,7 +75,7 @@ IntegerPrintOpt::IntegerPrintOpt(const char *ptr,const char *lim)
 
   Parse_empty(dev,show_sign);
 
-  ParseUInt_empty(dev,width,0);
+  ParseUInt_empty(dev,width,0u);
 
   if( !dev.finish() ) setDefault();
  }
