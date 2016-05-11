@@ -1,7 +1,7 @@
 /* DrawAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -1035,7 +1035,7 @@ class LineAlphaFunc
       Num(uint16 value_) : value(value_) {}
 
       template <class T>
-      static Meta::EnableIf<( Meta::UIntBits<T> > 16 )> Prepare(T &a,T &b)
+      static void Prepare(T &a,T &b) requires ( Meta::UIntBits<T> > 16 )
        {
         if( UInt c=a>>16 )
           {
@@ -1047,7 +1047,7 @@ class LineAlphaFunc
        }
 
       template <class T>
-      static Meta::EnableIf<( Meta::UIntBits<T> <= 16 )> Prepare(T &,T &)
+      static void Prepare(T &,T &) requires ( Meta::UIntBits<T> <= 16 )
        {
        }
 
@@ -1087,19 +1087,19 @@ class LineAlphaFunc
       friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
 
       template <class Ret=Num>
-      static Meta::EnableIf<( MPoint::Precision == Ret::Precision ),Ret> Make(MCoord a) // [0,2)
+      static Ret Make(MCoord a) requires ( MPoint::Precision == Ret::Precision ) // [0,2)
        {
         return uint16( a );
        }
 
       template <class Ret=Num>
-      static Meta::EnableIf<( MPoint::Precision < Ret::Precision ),Ret> Make(MCoord a) // [0,2)
+      static Ret Make(MCoord a) requires ( MPoint::Precision < Ret::Precision ) // [0,2)
        {
         return uint16( a )<<(Precision-MPoint::Precision);
        }
 
       template <class Ret=Num>
-      static Meta::EnableIf<( MPoint::Precision > Ret::Precision ),Ret> Make(MCoord a) // [0,2)
+      static Ret Make(MCoord a) requires ( MPoint::Precision > Ret::Precision ) // [0,2)
        {
         return uint16( a>>(MPoint::Precision-Precision) );
        }

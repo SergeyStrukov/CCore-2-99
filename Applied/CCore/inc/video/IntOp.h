@@ -1,7 +1,7 @@
 /* IntOp.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -98,8 +98,8 @@ SInt IntMask(SInt a,UInt mask) { return SIntFunc<SInt>::Mask(a,mask); }
 
 /* sint16 functions */
 
-template <class SInt>
-Meta::EnableIf< Meta::IsSInt<SInt> , sint16 > To16(SInt x) { IntGuard( x>=-32768 && x<=32767 ); return (sint16)x; }
+template <SIntType SInt>
+sint16 To16(SInt x) { IntGuard( x>=-32768 && x<=32767 ); return (sint16)x; }
 
 inline sint16 IntAdd(sint16 a,sint16 b) { return To16(sint32(a)+sint32(b)); }
 
@@ -111,11 +111,11 @@ inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return To16(sint32(a
 
 /* classes */
 
-template <class UInt,class> class DownBits;
+template <UIntType UInt> class DownBits;
 
 /* class DownBits<UInt> */
 
-template <class UInt,class=Meta::EnableIf< Meta::IsUInt<UInt> > >
+template <UIntType UInt>
 class DownBits
  {
    static const unsigned MaxBits = Meta::UIntBits<UInt> ;
@@ -136,8 +136,8 @@ class DownBits
 
    operator UInt() const { return value; }
 
-   template <class UInt1>
-   Meta::EnableIf< Meta::IsUInt<UInt1> > init(UInt1 b)
+   template <UIntType UInt1>
+   void init(UInt1 b)
     {
      unsigned bits=UIntBitsOf(b);
 
@@ -153,8 +153,8 @@ class DownBits
        }
     }
 
-   template <class UInt1>
-   Meta::EnableIf< Meta::IsUInt<UInt1> , UInt > operator () (UInt1 a) const
+   template <UIntType UInt1>
+   UInt operator () (UInt1 a) const
     {
      return UInt(a>>shift);
     }

@@ -39,22 +39,6 @@ template <class T> struct ToConstCtor;
 
 template <bool Cond,class T1,class T2> struct SelectCtor;
 
-template <bool Cond,template <class A> class T,class A> struct BuildIfCtor;
-
-template <bool Cond,template <class A1> class T1,
-                    template <class A1> class T2,
-                    class A1> struct SelectBuild1Ctor;
-
-template <bool Cond,template <class A1,class A2> class T1,
-                    template <class A1,class A2> class T2,
-                    class A1,class A2> struct SelectBuild2Ctor;
-
-template <bool Cond,template <class A1,class A2,class A3> class T1,
-                    template <class A1,class A2,class A3> class T2,
-                    class A1,class A2,class A3> struct SelectBuild3Ctor;
-
-template <bool Cond,class T> struct EnableIfCtor;
-
 template <class T1,class T2> struct IsSameCtor;
 
 template <class T,class ... TT> struct OneOfCtor;
@@ -150,119 +134,6 @@ struct SelectCtor<false,T1,T2>
 
 template <bool Cond,class T1,class T2>
 using Select = typename SelectCtor<Cond,T1,T2>::Ret ;
-
-/* struct BuildIfCtor<bool Cond,T,A> */
-
-template <template <class A> class T,class A>
-struct BuildIfCtor<true,T,A>
- {
-  using Ret = T<A> ;
- };
-
-template <template <class A> class T,class A>
-struct BuildIfCtor<false,T,A>
- {
-  using Ret = Empty ;
- };
-
-/* type BuildIf<bool Cond,T,A> */
-
-template <bool Cond,template <class A> class T,class A>
-using BuildIf = typename BuildIfCtor<Cond,T,A>::Ret ;
-
-/* struct SelectBuild1Ctor<bool Cond,T1,T2,A1> */
-
-template <template <class A1> class T1,
-          template <class A1> class T2,
-          class A1>
-struct SelectBuild1Ctor<true,T1,T2,A1>
- {
-  using Ret = T1<A1> ;
- };
-
-template <template <class A1> class T1,
-          template <class A1> class T2,
-          class A1>
-struct SelectBuild1Ctor<false,T1,T2,A1>
- {
-  using Ret = T2<A1> ;
- };
-
-/* type SelectBuild1<bool Cond,T1,T2,A1> */
-
-template <bool Cond,template <class A1> class T1,
-                    template <class A1> class T2,
-                    class A1>
-using SelectBuild1 = typename SelectBuild1Ctor<Cond,T1,T2,A1>::Ret ;
-
-/* struct SelectBuild2Ctor<bool Cond,T1,T2,A1,A2> */
-
-template <template <class A1,class A2> class T1,
-          template <class A1,class A2> class T2,
-          class A1,class A2>
-struct SelectBuild2Ctor<true,T1,T2,A1,A2>
- {
-  using Ret = T1<A1,A2> ;
- };
-
-template <template <class A1,class A2> class T1,
-          template <class A1,class A2> class T2,
-          class A1,class A2>
-struct SelectBuild2Ctor<false,T1,T2,A1,A2>
- {
-  using Ret = T2<A1,A2> ;
- };
-
-/* type SelectBuild2<bool Cond,T1,T2,A1,A2> */
-
-template <bool Cond,template <class A1,class A2> class T1,
-                    template <class A1,class A2> class T2,
-                    class A1,class A2>
-using SelectBuild2 = typename SelectBuild2Ctor<Cond,T1,T2,A1,A2>::Ret ;
-
-/* struct SelectBuild3Ctor<bool Cond,T1,T2,A1,A2,A3> */
-
-template <template <class A1,class A2,class A3> class T1,
-          template <class A1,class A2,class A3> class T2,
-          class A1,class A2,class A3>
-struct SelectBuild3Ctor<true,T1,T2,A1,A2,A3>
- {
-  using Ret = T1<A1,A2,A3> ;
- };
-
-template <template <class A1,class A2,class A3> class T1,
-          template <class A1,class A2,class A3> class T2,
-          class A1,class A2,class A3>
-struct SelectBuild3Ctor<false,T1,T2,A1,A2,A3>
- {
-  using Ret = T2<A1,A2,A3> ;
- };
-
-/* type SelectBuild3<bool Cond,T1,T2,A1,A2,A3> */
-
-template <bool Cond,template <class A1,class A2,class A3> class T1,
-                    template <class A1,class A2,class A3> class T2,
-                    class A1,class A2,class A3>
-using SelectBuild3 = typename SelectBuild3Ctor<Cond,T1,T2,A1,A2,A3>::Ret ;
-
-/* struct EnableIfCtor<bool Cond,T> */
-
-template <class T>
-struct EnableIfCtor<true,T>
- {
-  using Ret = T ;
- };
-
-template <class T>
-struct EnableIfCtor<false,T>
- {
-  // empty
- };
-
-/* type EnableIf<bool Cond,RetType> */
-
-template <bool Cond,class RetType=void>
-using EnableIf = typename EnableIfCtor<Cond,RetType>::Ret ;
 
 /* struct IsSameCtor<T1,T2> */
 
@@ -367,8 +238,8 @@ struct UIntBitsCtor_extra
 
 /* struct UIntBitsCtor<T> */
 
-template <class T>
-struct UIntBitsCtor : BuildIf< ExtraInt::Prop<T>::IsUnsigned , UIntBitsCtor_extra , T > {};
+template <class T> requires ( ExtraInt::Prop<T>::IsUnsigned )
+struct UIntBitsCtor<T> : UIntBitsCtor_extra<T> {};
 
 template <>
 struct UIntBitsCtor<unsigned char>
@@ -578,8 +449,8 @@ struct SIntToUInt_extra
 
 /* struct SIntToUInt<SInt> */
 
-template <class T>
-struct SIntToUInt : BuildIf< ExtraInt::Prop<T>::IsSigned , SIntToUInt_extra , T > {};
+template <class T> requires ( ExtraInt::Prop<T>::IsSigned )
+struct SIntToUInt<T> : SIntToUInt_extra<T> {};
 
 template <>
 struct SIntToUInt<signed char>
@@ -629,8 +500,8 @@ struct PromoteUInt_extra
 
 /* struct PromoteUInt<UInt> */
 
-template <class T>
-struct PromoteUInt : BuildIf< ExtraInt::Prop<T>::IsUnsigned , PromoteUInt_extra , T > {};
+template <class T> requires ( ExtraInt::Prop<T>::IsUnsigned )
+struct PromoteUInt<T> : PromoteUInt_extra<T> {};
 
 template <>
 struct PromoteUInt<unsigned char>
@@ -676,8 +547,8 @@ struct PromoteSInt_extra
 
 /* struct PromoteSInt<SInt> */
 
-template <class T>
-struct PromoteSInt : BuildIf< ExtraInt::Prop<T>::IsSigned , PromoteSInt_extra , T > {};
+template <class T> requires ( ExtraInt::Prop<T>::IsSigned )
+struct PromoteSInt<T> : PromoteSInt_extra<T> {};
 
 template <>
 struct PromoteSInt<signed char>

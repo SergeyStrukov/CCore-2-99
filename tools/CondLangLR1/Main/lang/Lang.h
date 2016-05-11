@@ -108,8 +108,8 @@ struct LangBase : NoCopy
 
     Element(const SyntDesc *synt) : ptr(synt) {}
 
-    template <class T,class=Meta::EnableIf< Meta::IsSame<T,Synt> > >
-    Element(const T &obj) : ptr(obj.desc) {}
+    template <class T>
+    Element(const T &obj) requires ( Meta::IsSame<T,Synt> ) : ptr(obj.desc) {}
 
     // properties
 

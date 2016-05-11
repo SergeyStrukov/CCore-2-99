@@ -1,7 +1,7 @@
 /* test.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -39,7 +39,7 @@ template <int XXXX> class Testit;
 
 class ShowInitExit;
 
-template <class UInt,class SumUInt=uint64,class=Meta::EnableIf< Meta::IsUInt<UInt> && Meta::IsUInt<SumUInt> > > class TimeStat;
+template <UIntType UInt,UIntType SumUInt=uint64> class TimeStat;
 
 /* class Testit<int XXXX> */
 
@@ -99,7 +99,7 @@ class ShowInitExit : NoCopy
 
 /* class TimeStat<UInt,SumUInt> */
 
-template <class UInt,class SumUInt,class>
+template <UIntType UInt,UIntType SumUInt>
 class TimeStat
  {
    UInt minval;

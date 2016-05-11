@@ -1,7 +1,7 @@
 /* Point.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -47,8 +47,8 @@ const Coord MinCoord = -32768 ;
 
 inline constexpr AreaType Area(Coord dx,Coord dy) { return AreaType(dx)*AreaType(dy); }
 
-template <class UInt>
-Meta::EnableIf< Meta::IsUInt<UInt> , MCoord > Position(UInt P,UInt Q,MCoord a,MCoord b)
+template <UIntType UInt>
+MCoord Position(UInt P,UInt Q,MCoord a,MCoord b)
  {
   if( P>=Q ) return b;
 
