@@ -24,7 +24,7 @@ namespace CCore {
 /* ApplyToPtr() */
 
 template <class T,class FuncInit,class ... SS>
-void ApplyToPtr(void *ptr,FuncInit func_init,SS && ... ss)
+void ApplyToPtr(void *ptr,FuncInit func_init,SS && ... ss) requires ( FuncInitArgType<FuncInit,T *,SS...> )
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
@@ -34,7 +34,7 @@ void ApplyToPtr(void *ptr,FuncInit func_init,SS && ... ss)
 /* ApplyToPtr_const() */
 
 template <class T,class FuncInit,class ... SS>
-void ApplyToPtr_const(const void *ptr,FuncInit func_init,SS && ... ss)
+void ApplyToPtr_const(const void *ptr,FuncInit func_init,SS && ... ss) requires ( FuncInitArgType<FuncInit,const T *,SS...> )
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
@@ -44,7 +44,7 @@ void ApplyToPtr_const(const void *ptr,FuncInit func_init,SS && ... ss)
 /* ApplyToPtr2() */
 
 template <class Ret,class T,class FuncInit>
-Ret ApplyToPtr2(void *ptr1,void *ptr2,FuncInit func_init)
+Ret ApplyToPtr2(void *ptr1,void *ptr2,FuncInit func_init) requires ( FuncInitType<FuncInit,Ret,T *,T *> )
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
@@ -54,12 +54,22 @@ Ret ApplyToPtr2(void *ptr1,void *ptr2,FuncInit func_init)
 /* ApplyToPtr2_const() */
 
 template <class Ret,class T,class FuncInit>
-Ret ApplyToPtr2_const(const void *ptr1,const void *ptr2,FuncInit func_init)
+Ret ApplyToPtr2_const(const void *ptr1,const void *ptr2,FuncInit func_init) requires ( FuncInitType<FuncInit,Ret,const T *,const T *> )
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
   return func(static_cast<const T *>(ptr1),static_cast<const T *>(ptr2));
  }
+
+/* concept BinaryRetType<Ret> */
+
+template <class Ret>
+concept bool BinaryRetType = requires(unsigned a,unsigned b)
+ {
+  Ret();
+
+  Ret(a,b);
+ } ;
 
 /* classes */
 
@@ -82,8 +92,7 @@ class PrintAnyObj
 
    explicit PrintAnyObj(P &out_) : out(out_) {}
 
-   template <class T>
-   void operator () (T *obj)
+   void operator () (AnyType *obj)
     {
      Putobj(out,*obj);
     }
@@ -123,7 +132,7 @@ class AnyPtr
    T * castPtr() const { if( hasType<T>() ) return static_cast<T *>(ptr); return 0; }
 
    template <class FuncInit,class ... SS>
-   void apply(FuncInit func_init,SS && ... ss) const
+   void apply(FuncInit func_init,SS && ... ss) const requires ( ... && FuncInitArgType<FuncInit,TT *,SS...> )
     {
      using FuncType = void (*)(void *ptr,FuncInit func_init,SS && ...) ;
 
@@ -133,15 +142,15 @@ class AnyPtr
     }
 
    template <class T,class FuncInit>
-   void applyFor(FuncInit func_init) const
+   void applyFor(FuncInit func_init) const requires ( FuncInitArgType<FuncInit,T *> )
     {
      if( hasType<T>() ) ApplyToPtr<T>(ptr,func_init);
     }
 
    // Binary
 
-   template <class Ret,class FuncInit>
-   static Ret Binary(AnyPtr<TT...> a,AnyPtr<TT...> b,FuncInit func_init)
+   template <BinaryRetType Ret,class FuncInit>
+   static Ret Binary(AnyPtr<TT...> a,AnyPtr<TT...> b,FuncInit func_init) requires ( ... && FuncInitType<FuncInit,Ret,TT *,TT *> )
     {
      if( a.type!=b.type ) return Ret(a.type,b.type);
 
@@ -200,7 +209,7 @@ class AnyPtr_const
    const T * castPtr() const { if( hasType<T>() ) return static_cast<const T *>(ptr); return 0; }
 
    template <class FuncInit,class ... SS>
-   void apply(FuncInit func_init,SS && ... ss) const
+   void apply(FuncInit func_init,SS && ... ss) const requires ( ... && FuncInitArgType<FuncInit,const TT *,SS...> )
     {
      using FuncType = void (*)(const void *ptr,FuncInit func_init,SS && ...) ;
 
@@ -210,15 +219,15 @@ class AnyPtr_const
     }
 
    template <class T,class FuncInit>
-   void applyFor(FuncInit func_init) const
+   void applyFor(FuncInit func_init) const requires ( FuncInitArgType<FuncInit,const T *> )
     {
      if( hasType<T>() ) ApplyToPtr_const<T>(ptr,func_init);
     }
 
    // Binary
 
-   template <class Ret,class FuncInit>
-   static Ret Binary(AnyPtr_const<TT...> a,AnyPtr_const<TT...> b,FuncInit func_init)
+   template <BinaryRetType Ret,class FuncInit>
+   static Ret Binary(AnyPtr_const<TT...> a,AnyPtr_const<TT...> b,FuncInit func_init) requires ( ... && FuncInitType<FuncInit,Ret,const TT *,const TT *> )
     {
      if( a.type!=b.type ) return Ret(a.type,b.type);
 
@@ -243,6 +252,12 @@ class AnyPtr_const
     }
  };
 
+/* concept ElaborateAnyPtrType<T> */
+
+template <class T>
+concept bool ElaborateAnyPtrType = requires (T &obj) { { obj } -> const AnyPtr<AnyType...> & ; } ||
+                                   requires (T &obj) { { obj } -> const AnyPtr_const<AnyType...> & ; } ;
+
 /* struct ElaborateAnyPtrBind<T,S> */
 
 template <class T,class S>
@@ -260,118 +275,13 @@ struct ElaborateAnyPtrBind
    }
  };
 
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,AnyPtr<TT...> >
+template <class T,ElaborateAnyPtrType S>
+struct ElaborateAnyPtrBind<T,S>
  {
   T &obj;
-  AnyPtr<TT...> &&arg;
+  S &&arg;
 
-  ElaborateAnyPtrBind(T &obj_,AnyPtr<TT...> &&arg_) : obj(obj_),arg( std::forward<AnyPtr<TT...> >(arg_) ) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,AnyPtr<TT...> &>
- {
-  T &obj;
-  AnyPtr<TT...> &arg;
-
-  ElaborateAnyPtrBind(T &obj_,AnyPtr<TT...> &arg_) : obj(obj_),arg(arg_) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,const AnyPtr<TT...> >
- {
-  T &obj;
-  const AnyPtr<TT...> &&arg;
-
-  ElaborateAnyPtrBind(T &obj_,const AnyPtr<TT...> &&arg_) : obj(obj_),arg( std::forward<const AnyPtr<TT...> >(arg_) ) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,const AnyPtr<TT...> &>
- {
-  T &obj;
-  const AnyPtr<TT...> &arg;
-
-  ElaborateAnyPtrBind(T &obj_,const AnyPtr<TT...> &arg_) : obj(obj_),arg(arg_) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,AnyPtr_const<TT...> >
- {
-  T &obj;
-  AnyPtr_const<TT...> &&arg;
-
-  ElaborateAnyPtrBind(T &obj_,AnyPtr_const<TT...> &&arg_) : obj(obj_),arg( std::forward<AnyPtr_const<TT...> >(arg_) ) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,AnyPtr_const<TT...> &>
- {
-  T &obj;
-  AnyPtr_const<TT...> &arg;
-
-  ElaborateAnyPtrBind(T &obj_,AnyPtr_const<TT...> &arg_) : obj(obj_),arg(arg_) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,const AnyPtr_const<TT...> >
- {
-  T &obj;
-  const AnyPtr_const<TT...> &&arg;
-
-  ElaborateAnyPtrBind(T &obj_,const AnyPtr_const<TT...> &&arg_) : obj(obj_),arg( std::forward<const AnyPtr_const<TT...> >(arg_) ) {}
-
-  template <class ... SS>
-  void operator () (SS && ... ss)
-   {
-    arg.apply( FunctorRef(obj) , std::forward<SS>(ss)... );
-   }
- };
-
-template <class T,class ... TT>
-struct ElaborateAnyPtrBind<T,const AnyPtr_const<TT...> &>
- {
-  T &obj;
-  const AnyPtr_const<TT...> &arg;
-
-  ElaborateAnyPtrBind(T &obj_,const AnyPtr_const<TT...> &arg_) : obj(obj_),arg(arg_) {}
+  ElaborateAnyPtrBind(T &obj_,S &&arg_) : obj(obj_),arg( std::forward<S>(arg_) ) {}
 
   template <class ... SS>
   void operator () (SS && ... ss)

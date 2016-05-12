@@ -72,6 +72,8 @@ template <class T> struct LessComparable;
 
 template <class T> struct CmpComparable;
 
+template <class T> struct CmpAdapter;
+
 /* class CmpAsStr */
 
 class CmpAsStr
@@ -136,13 +138,24 @@ struct CmpComparable
   friend bool operator != (const T &a,const T &b) requires ( Has_objCmp<T> ) { return a.objCmp(b)!=0; }
  };
 
-/* Cmp() */
+/* struct CmpAdapter<T> */
 
 template <Has_objCmp T>
-CmpResult Cmp(const T &a,const T &b) { return a.objCmp(b); }
+struct CmpAdapter<T>
+ {
+  static CmpResult Cmp(const T &a,const T &b) { return a.objCmp(b); }
+ };
 
 template <No_objCmp T> requires ( OpLessType<T> )
-CmpResult Cmp(const T &a,const T &b) { return LessCmp(a,b); }
+struct CmpAdapter<T>
+ {
+  static CmpResult Cmp(const T &a,const T &b) { return LessCmp(a,b); }
+ };
+
+/* Cmp() */
+
+template <class T>
+CmpResult Cmp(const T &a,const T &b) { return CmpAdapter<T>::Cmp(a,b); }
 
 /* concept CmpableType<T> */
 
@@ -256,14 +269,14 @@ CmpResult RangeCmpOf(const T &a,const T &b) { return RangeCmp(Range(a),Range(b))
 template <class T> requires ( RangeableType<Meta::ToConst<T> > )
 bool RangeLessOf(const T &a,const T &b) { return RangeLess(Range(a),Range(b)); }
 
-/* concept CmpableBy<T,Func> */
+/* concept ToCmpableFuncType<Func,T> */
 
-template <class T,class Func>
-concept bool CmpableBy = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(func(a),func(b)) } -> CmpResult ; } ;
+template <class Func,class T>
+concept bool ToCmpableFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(func(a),func(b)) } -> CmpResult ; } ;
 
 /* Range...By() */
 
-template <class T,class Func> requires ( CmpableBy<T,Func> )
+template <class T,ToCmpableFuncType<T> Func>
 CmpResult RangeCmpBy(const T *a,const T *b,ulen count,Func by)
  {
   for(; count ;count--)
@@ -273,7 +286,7 @@ CmpResult RangeCmpBy(const T *a,const T *b,ulen count,Func by)
   return CmpEqual;
  }
 
-template <class T,class Func> requires ( CmpableBy<T,Func> )
+template <class T,ToCmpableFuncType<T> Func>
 CmpResult RangeCmpBy(PtrLen<T> a,PtrLen<T> b,Func by)
  {
   if( a.len<b.len )
@@ -294,7 +307,7 @@ CmpResult RangeCmpBy(PtrLen<T> a,PtrLen<T> b,Func by)
     }
  }
 
-template <class T,class Func> requires ( CmpableBy<T,Func> )
+template <class T,ToCmpableFuncType<T> Func>
 bool RangeLessBy(PtrLen<T> a,PtrLen<T> b,Func by)
  {
   if( a.len<b.len )

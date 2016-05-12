@@ -1,7 +1,7 @@
 /* DynObject.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -23,11 +23,11 @@ namespace CCore {
 
 /* classes */
 
-template <class T> class DynObject;
+template <NothrowDtorType T> class DynObject;
 
 /* class DynObject<T> */
 
-template <class T>
+template <NothrowDtorType T>
 class DynObject
  {
    T *ptr;
@@ -51,10 +51,10 @@ class DynObject
 
    DynObject() noexcept : ptr(0) {}
 
-   explicit DynObject(NothingType) : ptr(New<T>(DefaultHeapAlloc())) {}
+   explicit DynObject(NothingType) requires ( ConstructibleType<T> ) : ptr(New<T>(DefaultHeapAlloc())) {}
 
    template <class ... SS>
-   explicit DynObject(SS && ... ss) : ptr(New<T>(DefaultHeapAlloc(), std::forward<SS>(ss)... )) {}
+   explicit DynObject(SS && ... ss) requires ( ConstructibleType<T,SS...> ) : ptr(New<T>(DefaultHeapAlloc(), std::forward<SS>(ss)... )) {}
 
    ~DynObject() { Destroy(ptr); }
 
@@ -80,13 +80,13 @@ class DynObject
 
    // methods
 
-   void create(NothingType)
+   void create(NothingType) requires ( ConstructibleType<T> )
     {
      Destroy(Replace(ptr, New<T>(DefaultHeapAlloc()) ));
     }
 
    template <class ... SS>
-   void create(SS && ... ss)
+   void create(SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      Destroy(Replace(ptr, New<T>(DefaultHeapAlloc(), std::forward<SS>(ss)... ) ));
     }

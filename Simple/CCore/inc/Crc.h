@@ -1,7 +1,7 @@
 /* Crc.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -20,6 +20,26 @@
 
 namespace CCore {
 
+/* concept CrcAlgoType<Algo> */
+
+template <class Algo,UIntType ResultType,UIntType DataType>
+concept bool CrcAlgoType2 = requires()
+ {
+  { &Algo::Add } -> ResultType (*)(ResultType,DataType) ;
+
+  { &Algo::Mask } -> ResultType (*)(ResultType) ;
+ } ;
+
+template <class Algo>
+concept bool CrcAlgoType = requires()
+ {
+  typename Algo::ResultType;
+
+  typename Algo::DataType;
+
+  requires ( CrcAlgoType2<Algo,typename Algo::ResultType,typename Algo::DataType> );
+ } ;
+
 /* classes */
 
 template <UIntType ResultType,ResultType Mask,ResultType Polynom> class CrcTable;
@@ -30,7 +50,7 @@ struct AlgoCrc24;
 
 struct AlgoCrc32;
 
-template <class Algo> class CrcAccumulator;
+template <CrcAlgoType Algo> class CrcAccumulator;
 
 /* class CrcTable<ResultType,ResultType Mask,ResultType Polynom> */
 
@@ -166,7 +186,7 @@ struct AlgoCrc32
 
 /* class CrcAccumulator<Algo> */
 
-template <class Algo>
+template <CrcAlgoType Algo>
 class CrcAccumulator
  {
   public:
