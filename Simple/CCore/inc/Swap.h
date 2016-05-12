@@ -65,7 +65,7 @@ concept bool No_objSwap = !Has_objSwap<T> ;
 
 /* classes */
 
-template <class T> struct SwapAdapter; // ICE workaround
+template <class T> struct SwapAdapter;
 
 /* struct SwapAdapter<T> */
 
@@ -94,8 +94,8 @@ void Swap(T &a,T &b) noexcept { SwapAdapter<T>::Swap(a,b); }
 
 /* NullBySwap() */
 
-template <class T>
-void NullBySwap(T &obj)
+template <NothrowDefaultCtorType T>
+void NullBySwap(T &obj) noexcept
  {
   T temp{};
 
@@ -104,8 +104,8 @@ void NullBySwap(T &obj)
 
 /* MoveBySwap() */
 
-template <class T>
-void MoveBySwap(T &dst,T &src)
+template <NothrowDefaultCtorType T>
+void MoveBySwap(T &dst,T &src) noexcept
  {
   if( &dst!=&src )
     {
