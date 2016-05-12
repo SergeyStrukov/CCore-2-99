@@ -20,10 +20,10 @@
 
 namespace CCore {
 
-/* concept CrcAlgoType<Algo> */
+/* concept CrcAlgo<Algo> */
 
 template <class Algo,UIntType ResultType,UIntType DataType>
-concept bool CrcAlgoType2 = requires()
+concept bool CrcAlgo2 = requires()
  {
   { &Algo::Add } -> ResultType (*)(ResultType,DataType) ;
 
@@ -31,13 +31,13 @@ concept bool CrcAlgoType2 = requires()
  } ;
 
 template <class Algo>
-concept bool CrcAlgoType = requires()
+concept bool CrcAlgo = requires()
  {
   typename Algo::ResultType;
 
   typename Algo::DataType;
 
-  requires ( CrcAlgoType2<Algo,typename Algo::ResultType,typename Algo::DataType> );
+  requires ( CrcAlgo2<Algo,typename Algo::ResultType,typename Algo::DataType> );
  } ;
 
 /* classes */
@@ -50,7 +50,7 @@ struct AlgoCrc24;
 
 struct AlgoCrc32;
 
-template <CrcAlgoType Algo> class CrcAccumulator;
+template <CrcAlgo Algo> class CrcAccumulator;
 
 /* class CrcTable<ResultType,ResultType Mask,ResultType Polynom> */
 
@@ -186,7 +186,7 @@ struct AlgoCrc32
 
 /* class CrcAccumulator<Algo> */
 
-template <CrcAlgoType Algo>
+template <CrcAlgo Algo>
 class CrcAccumulator
  {
   public:

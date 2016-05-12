@@ -20,10 +20,10 @@
 
 namespace CCore {
 
-/* concept MemAllocAlgoType<Algo> */
+/* concept MemAllocAlgo<Algo> */
 
 template <class Algo>
-concept bool MemAllocAlgoType = requires(ulen len,void *mem)
+concept bool MemAllocAlgo = requires(ulen len,void *mem)
  {
   { Algo::MemAlloc(len) } -> void * ;
 
@@ -34,7 +34,7 @@ concept bool MemAllocAlgoType = requires(ulen len,void *mem)
 
 class MemAllocGuard;
 
-template <MemAllocAlgoType Algo> class MemAllocGuardOf;
+template <MemAllocAlgo Algo> class MemAllocGuardOf;
 
 /* class MemAllocGuard */
 
@@ -66,7 +66,7 @@ class MemAllocGuard : NoCopy
 
 /* class MemAllocGuardOf<Algo> */
 
-template <MemAllocAlgoType Algo>
+template <MemAllocAlgo Algo>
 class MemAllocGuardOf : NoCopy
  {
    void *mem;
