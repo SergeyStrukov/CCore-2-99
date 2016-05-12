@@ -29,30 +29,42 @@ concept bool RefPtrAlgo = requires(T *obj)
 
   { Algo::DecRef(obj) } -> bool ;
 
-  Algo::Destroy(obj);
+  { Algo::Destroy(obj) } noexcept;
+ } ;
+
+/* concept RefCountType<T> */
+
+template <class T>
+concept bool RefCountType = requires(T &obj)
+ {
+  obj.incRef();
+
+  { obj.decRef() } -> bool ;
+
+  { obj.destroy() } noexcept ;
  } ;
 
 /* classes */
 
 template <class T> struct RefAlgo;
 
-template <class T,RefPtrAlgo<T> Algo=RefAlgo<T> > class RefPtr;
+template <class T,class Algo=RefAlgo<T> > class RefPtr;
 
 /* struct RefAlgo<T> */
 
 template <class T>
 struct RefAlgo
  {
-  static void IncRef(T *ptr) { ptr->incRef(); }
+  static void IncRef(T *ptr) requires ( RefCountType<T> ) { ptr->incRef(); }
 
-  static bool DecRef(T *ptr) { return ptr->decRef(); }
+  static bool DecRef(T *ptr) requires ( RefCountType<T> ) { return ptr->decRef(); }
 
-  static void Destroy(T *ptr) { ptr->destroy(); }
+  static void Destroy(T *ptr) noexcept requires ( RefCountType<T> ) { ptr->destroy(); }
  };
 
 /* class RefPtr<T,Algo> */
 
-template <class T,RefPtrAlgo<T> Algo>
+template <class T,class Algo> // TODO RefPtrAlgo<T> Algo
 class RefPtr
  {
    T *ptr;
@@ -109,7 +121,7 @@ class RefPtr
 
    // update
 
-   template <class Func>
+   template <FuncType<T *,T *> Func>
    void update(Func func) { ptr=func(ptr); }
 
    // swap/move objects

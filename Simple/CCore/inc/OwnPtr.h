@@ -30,21 +30,21 @@ concept bool OwnPtrAlgo = requires(T *obj)
 
 /* classes */
 
-template <NothrowDtorType T> struct OwnAlgo;
+template <class T> struct OwnAlgo;
 
-template <class T,OwnPtrAlgo<T> Algo=OwnAlgo<T> > class OwnPtr;
+template <class T,class Algo=OwnAlgo<T> > class OwnPtr;
 
 /* struct OwnAlgo<T> */
 
-template <NothrowDtorType T>
+template <class T>
 struct OwnAlgo
  {
-  static void Destroy(T *ptr) { delete ptr; }
+  static void Destroy(T *ptr) requires( NothrowDtorType<T> ) { delete ptr; }
  };
 
 /* class OwnPtr<T,Algo> */
 
-template <class T,OwnPtrAlgo<T> Algo>
+template <class T,class Algo> // TODO OwnPtrAlgo<T> Algo
 class OwnPtr : NoCopy
  {
    T *ptr;
