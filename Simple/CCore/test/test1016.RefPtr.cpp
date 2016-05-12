@@ -1,7 +1,7 @@
 /* test1016.RefPtr.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -41,7 +41,7 @@ class Test : public MemBase_nocopy
 
    bool decRef() { return !--refs; }
 
-   void destroy() { delete this; }
+   void destroy() noexcept { delete this; }
  };
 
 } // namespace Private_1016

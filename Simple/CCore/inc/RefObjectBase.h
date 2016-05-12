@@ -1,7 +1,7 @@
 /* RefObjectBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -43,7 +43,7 @@ class RefObjectBase : public NoCopyBase<MemBase,TT...>
 
    bool decRef() { return (refs--)==1; }
 
-   void destroy() { delete this; }
+   void destroy() noexcept { delete this; }
  };
 
 } // namespace CCore

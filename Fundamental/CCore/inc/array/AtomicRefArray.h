@@ -1,7 +1,7 @@
 /* AtomicRefArray.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -86,7 +86,7 @@ class AtomicRefArrayBase
 
      static bool DecRef(AtomicRefArrayHeader *ptr) { return ptr->decRef(); }
 
-     static void Destroy(AtomicRefArrayHeader *ptr) { Base::Destroy(ptr); }
+     static void Destroy(AtomicRefArrayHeader *ptr) noexcept { Base::Destroy(ptr); }
     };
 
    // data

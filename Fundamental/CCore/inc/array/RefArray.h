@@ -1,7 +1,7 @@
 /* RefArray.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -84,7 +84,7 @@ class RefArrayBase
 
      static bool DecRef(RefArrayHeader *ptr) { return ptr->decRef(); }
 
-     static void Destroy(RefArrayHeader *ptr) { Base::Destroy(ptr); }
+     static void Destroy(RefArrayHeader *ptr) noexcept { Base::Destroy(ptr); }
     };
 
    // data
