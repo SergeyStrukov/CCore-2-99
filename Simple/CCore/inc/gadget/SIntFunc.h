@@ -62,9 +62,9 @@ struct SIntFunc
 
   // shift
 
-  static SInt LShift(SInt a,unsigned shift) { return ToSInt(UInt(a)<<shift); } // may overflow , UB for some arguments must be removed, operates as ASL
+  static SInt LShift(SInt a,unsigned shift) { return ToSInt(UInt(a)<<shift); } // ASL
 
-  static SInt RShift(SInt a,unsigned shift) { return a>>shift; } // US for some arguments must be removed, operates as ASR
+  static SInt RShift(SInt a,unsigned shift) { return a>>shift; } // TODO ASR
 
   // mask
 

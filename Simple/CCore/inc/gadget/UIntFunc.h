@@ -44,7 +44,7 @@ template <UIntType UInt> struct UIntBitFunc;
 
 template <UIntType UInt> struct UIntFunc;
 
-/* struct UIntMulFunc_double<UInt,ExtUInt> */
+/* struct UIntMulFunc<UInt,ExtUInt> */
 
 template <UIntType UInt,UIntType ExtUInt> requires ( 2*Meta::UIntBits<UInt> <= Meta::UIntBits<ExtUInt> )
 struct UIntMulFunc<UInt,ExtUInt>
@@ -115,8 +115,6 @@ struct UIntMulFunc<UInt,ExtUInt>
     return UInt(p%mod);
    }
  };
-
-/* struct UIntMulFunc_exact<UInt,ExtUInt> */
 
 template <UIntType UInt,UIntType ExtUInt> requires ( Meta::UIntBits<UInt> == Meta::UIntBits<ExtUInt> )
 struct UIntMulFunc<UInt,ExtUInt>
@@ -261,8 +259,6 @@ struct UIntBitFunc_gen
 
 template <UIntType UInt> requires ( MaxUInt<UInt> > MaxUInt<Quick::ScanUInt> )
 struct UIntBitFunc<UInt> : UIntBitFunc_gen<UInt> {};
-
-/* struct UIntBitFunc<UInt> */
 
 template <UIntType UInt> requires ( MaxUInt<UInt> <= MaxUInt<Quick::ScanUInt> )
 struct UIntBitFunc<UInt>
