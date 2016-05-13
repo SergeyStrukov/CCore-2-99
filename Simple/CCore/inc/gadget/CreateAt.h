@@ -1,7 +1,7 @@
 /* CreateAt.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple Mini
 //
@@ -23,7 +23,7 @@ namespace CCore {
 /* CreateAt() */
 
 template <class T,class ... SS>
-void CreateAt(T &obj,SS && ... ss)
+void CreateAt(T &obj,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   new(PlaceAt(&obj)) T( std::forward<SS>(ss)... );
  }
