@@ -18,8 +18,6 @@
 
 #include <CCore/inc/base/PlatformBase.h>
 
-#include <CCore/inc/gadget/Nothing.h>
-
 namespace CCore {
 namespace Meta {
 

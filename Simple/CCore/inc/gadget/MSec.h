@@ -22,6 +22,20 @@
 
 namespace CCore {
 
+/* functions */
+
+template <UIntType A,UIntType B>
+constexpr unsigned MSecAdd(A a,B b)
+ {
+  return ( a <= unsigned(-1) && b <= unsigned(-1)-a ) ? unsigned(a+b) : unsigned(-1) ;
+ }
+
+template <UIntType A,UIntType B>
+constexpr unsigned MSecMul(A a,B b)
+ {
+  return ( !b || a <= unsigned(-1)/b ) ? unsigned(a*b) : unsigned(-1) ;
+ }
+
 /* classes */
 
 struct MSecUnit;
@@ -40,7 +54,7 @@ struct MSecUnit
 
   // methods
 
-  constexpr unsigned operator () (UIntType time) const { return time*scale; }
+  constexpr unsigned operator () (UIntType time) const { return MSecMul(time,scale); }
  };
 
 /* consts */
@@ -76,9 +90,9 @@ struct MSec
   MSec cap(MSec lim) { Replace_min(time,lim.time); return *this; }
  };
 
-inline constexpr MSec operator + (MSec a,MSec b) { return MSec(a.time+b.time); }
+inline constexpr MSec operator + (MSec a,MSec b) { return MSec(MSecAdd(a.time,b.time)); }
 
-inline constexpr MSec operator * (unsigned a,MSec b) { return MSec(a*b.time);  }
+inline constexpr MSec operator * (unsigned a,MSec b) { return MSec(MSecMul(b.time,a));  }
 
 /* unit functions */
 
