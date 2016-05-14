@@ -1,7 +1,7 @@
 /* ApplyToRange.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,7 +23,7 @@ namespace Algon {
 
 /* ApplyToRange() */
 
-template <class R,class FuncInit>
+template <RangeType R,FuncInitArgType<Meta::RangeObjType<R> &> FuncInit>
 void ApplyToRange(R r,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);

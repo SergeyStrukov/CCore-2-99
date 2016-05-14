@@ -124,6 +124,19 @@ concept bool OpEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { {
 template <class T>
 concept bool OpNotEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a != b } -> bool ; } ;
 
+/* concept OpCmpType<T> */
+
+template <class T>
+concept bool OpCmpType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b)
+ {
+  { a <  b } -> bool ;
+  { a <= b } -> bool ;
+  { a >  b } -> bool ;
+  { a >= b } -> bool ;
+  { a == b } -> bool ;
+  { a != b } -> bool ;
+ } ;
+
 /* concept RangeAccessType<T> */
 
 template <class T,class T1,class T2> requires ( Meta::IsSame<T1,T2> && Meta::OneOf<T1,T,const T> )
@@ -175,6 +188,29 @@ concept bool CastTypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
   T(*cobj);
 
   ++obj;
+ } ;
+
+/* concept RanType<Ran> */
+
+template <class Ran>
+concept bool RanType = requires(Ran ptr,ulen len)
+ {
+  requires ( NothrowCopyableType<Ran> ) ;
+  requires ( OpCmpType<Ran> ) ;
+
+  *ptr;
+
+  ptr++;
+  ptr--;
+
+  ++ptr;
+  --ptr;
+
+  ptr+len;
+  ptr+=len;
+
+  ptr-len;
+  ptr-=len;
  } ;
 
 /* concept PrinterType<P> */

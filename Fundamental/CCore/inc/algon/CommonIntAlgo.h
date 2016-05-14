@@ -21,11 +21,23 @@
 namespace CCore {
 namespace Algon {
 
+/* concept CommonBitIntAlgo<Algo,UInt> */
+
+template <class Algo,UIntType UInt>
+concept bool CommonBitIntAlgo = requires()
+ {
+  { &Algo::IsEven } -> bool (*)(UInt) ;
+
+  { &Algo::BitScan } -> unsigned (*)(UInt) ;
+
+  { &Algo::OddPart } -> UInt (*)(UInt) ;
+ } ;
+
 /* classes */
 
 template <UIntType UInt> struct BitIntAlgo;
 
-template <UIntType UInt,class Algo=BitIntAlgo<UInt> > struct CommonIntAlgo;
+template <UIntType UInt,CommonBitIntAlgo<UInt> Algo=BitIntAlgo<UInt> > struct CommonIntAlgo;
 
 /* struct BitIntAlgo<UInt> */
 
@@ -50,7 +62,7 @@ struct BitIntAlgo
 
 /* struct CommonIntAlgo<UInt,Algo> */
 
-template <UIntType UInt,class Algo>
+template <UIntType UInt,CommonBitIntAlgo<UInt> Algo>
 struct CommonIntAlgo : Algo
  {
   using Algo::BitScan;

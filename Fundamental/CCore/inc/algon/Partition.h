@@ -1,7 +1,7 @@
 /* Partition.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,7 +23,7 @@ namespace Algon {
 
 /* Partition() */
 
-template <class Ran,class Pred>
+template <RanType Ran,FuncType<bool,Meta::RangeObjType<Ran> > Pred>
 Ran Partition(Ran ptr,ulen len,Pred pred) // reorder such that pred(Range(ptr,len)) is 1,1,...,0,0,...
  {
   if( len==0 ) return ptr;
@@ -58,7 +58,7 @@ Ran Partition(Ran ptr,ulen len,Pred pred) // reorder such that pred(Range(ptr,le
   return pred(*a)?a+1:a;
  }
 
-template <class T,class Pred>
+template <class T,FuncType<bool,T> Pred>
 ulen Partition(PtrLen<T> r,Pred pred)
  {
   return Dist(r.ptr,Partition(r.ptr,r.len,pred));
