@@ -1,7 +1,7 @@
 /* EuclidRotate.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,11 +23,11 @@ namespace Algon {
 
 /* classes */
 
-template <class R,class Algo=BaseRangeAlgo<R> > struct EuclidRotateAlgo;
+template <RangeType R,class Algo=BaseRangeAlgo<R> > struct EuclidRotateAlgo;
 
 /* struct EuclidRotateAlgo<R,Algo> */
 
-template <class R,class Algo>
+template <RangeType R,class Algo>
 struct EuclidRotateAlgo : Algo
  {
   using LenType = typename Algo::LenType ;
@@ -81,10 +81,10 @@ struct EuclidRotateAlgo : Algo
 
 /* EuclidRotate...() */
 
-template <class R,class Len>
+template <RangeType R,class Len>
 void EuclidRotate_prefix(R r,Len prefix) { EuclidRotateAlgo<R>::Rotate_prefix(r,prefix); }
 
-template <class R,class Len>
+template <RangeType R,class Len>
 void EuclidRotate_suffix(R r,Len suffix) { EuclidRotateAlgo<R>::Rotate_suffix(r,suffix); }
 
 } // namespace Algon

@@ -124,6 +124,26 @@ concept bool OpEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { {
 template <class T>
 concept bool OpNotEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a != b } -> bool ; } ;
 
+/* concept OpLessTypes<T,S> */
+
+template <class T,class S>
+concept bool OpLessTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a < b } -> bool ; } ;
+
+/* concept OpLessEqualTypes<T,S> */
+
+template <class T,class S>
+concept bool OpLessEqualTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a <= b } -> bool ; } ;
+
+/* concept OpGreaterTypes<T,S> */
+
+template <class T,class S>
+concept bool OpGreaterTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a > b } -> bool ; } ;
+
+/* concept OpGreaterEqualTypes<T,S> */
+
+template <class T,class S>
+concept bool OpGreaterEqualTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a >= b } -> bool ; } ;
+
 /* concept OpCmpType<T> */
 
 template <class T>
@@ -148,10 +168,10 @@ concept bool RangeAccessType = requires(T &obj,Meta::ToConst<T> &cobj)
   RangeAccessHelper(obj.getPtr(),cobj.getPtr_const(),cobj.getPtr(),cobj.getLen());
  } ;
 
-/* concept RangeType<R> */
+/* concept CursorType<R> */
 
 template <class R>
-concept bool RangeType = requires(R &obj,Meta::ToConst<R> &cobj)
+concept bool CursorType = requires(R &obj,Meta::ToConst<R> &cobj)
  {
   requires ( NothrowCopyableType<R> ) ;
 
@@ -162,10 +182,10 @@ concept bool RangeType = requires(R &obj,Meta::ToConst<R> &cobj)
   ++obj;
  } ;
 
-/* concept TypeRangeType<R,T> */
+/* concept CursorOverType<R,T> */
 
 template <class R,class T>
-concept bool TypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
+concept bool CursorOverType = requires(R &obj,Meta::ToConst<R> &cobj)
  {
   requires ( NothrowCopyableType<R> ) ;
 
@@ -176,10 +196,10 @@ concept bool TypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
   ++obj;
  } ;
 
-/* concept CastTypeRangeType<R,T> */
+/* concept CursorCastType<R,T> */
 
 template <class R,class T>
-concept bool CastTypeRangeType = requires(R &obj,Meta::ToConst<R> &cobj)
+concept bool CursorCastType = requires(R &obj,Meta::ToConst<R> &cobj)
  {
   requires ( NothrowCopyableType<R> ) ;
 
@@ -211,6 +231,8 @@ concept bool RanType = requires(Ran ptr,ulen len)
 
   ptr-len;
   ptr-=len;
+
+  ptr[len];
  } ;
 
 /* concept PrinterType<P> */

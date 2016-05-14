@@ -23,7 +23,7 @@ namespace Algon {
 
 /* ApplyToRange() */
 
-template <RangeType R,FuncInitArgType<Meta::RangeObjType<R> &> FuncInit>
+template <CursorType R,FuncInitArgType<Meta::RangeObjType<R> &> FuncInit>
 void ApplyToRange(R r,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);

@@ -1,7 +1,7 @@
 /* BinarySearch.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,11 +23,11 @@ namespace Algon {
 
 /* classes */
 
-template <class R,class Algo=BaseRangeAlgo<R> > struct BinarySearchAlgo;
+template <RangeType R,class Algo=BaseRangeAlgo<R> > struct BinarySearchAlgo;
 
 /* struct BinarySearchAlgo<R,Algo> */
 
-template <class R,class Algo>
+template <RangeType R,class Algo>
 struct BinarySearchAlgo : Algo
  {
   using LenType = typename Algo::LenType ;
@@ -35,15 +35,16 @@ struct BinarySearchAlgo : Algo
   using Algo::GetLen;
   using Algo::Split;
 
-  template <class Pred>
-  static R Find(R &r,Pred pred) // pred(R) is 0,0,0,...,0,1,1,...
+  using T = Meta::RangeObjType<R> ;
+
+  static LenType FindLen(R r,FuncType<bool,const T &> pred)
+                         // pred(R) is 0,0,0,...,0,1,1,...
    {
-    R temp=r;
+    LenType len=GetLen(r);
+
+    if( !len ) return 0;
 
     LenType off=0;
-    LenType len=GetLen(temp);
-
-    if( !len ) return temp;
 
     // 0,0,... [off,len) 1,1,...
 
@@ -51,7 +52,7 @@ struct BinarySearchAlgo : Algo
       {
        LenType pref=len/2;
 
-       if( pred(temp[off+pref]) )
+       if( pred(r[off+pref]) )
          {
           len=pref;
          }
@@ -62,22 +63,29 @@ struct BinarySearchAlgo : Algo
           off+=pref;
           len-=pref;
 
-          if( !len ) return Split(r,off);
+          if( !len ) return off;
          }
       }
 
-    if( pred(temp[off]) )
+    if( pred(r[off]) )
       {
-       return Split(r,off);
+       return off;
       }
     else
       {
-       return Split(r,off+1);
+       return off+1;
       }
    }
 
+  static R Find(R &r,FuncType<bool,const T &> pred)
+                // pred(R) is 0,0,0,...,0,1,1,...
+   {
+    return Split(r,FindLen(r,pred));
+   }
+
   template <class S>
-  static R Find_less(R &r,const S &med) // R is decreasing
+  static R Find_less(R &r,const S &med) requires ( OpLessTypes<T,S> )
+                     // R is decreasing
    {
     using T = Meta::RangeObjType<R> ;
 
@@ -85,7 +93,8 @@ struct BinarySearchAlgo : Algo
    }
 
   template <class S>
-  static R Find_less_or_equal(R &r,const S &med) // R is decreasing
+  static R Find_less_or_equal(R &r,const S &med) requires ( OpLessEqualTypes<T,S> )
+                              // R is decreasing
    {
     using T = Meta::RangeObjType<R> ;
 
@@ -93,7 +102,8 @@ struct BinarySearchAlgo : Algo
    }
 
   template <class S>
-  static R Find_greater(R &r,const S &med) // R is increasing
+  static R Find_greater(R &r,const S &med) requires ( OpGreaterTypes<T,S> )
+                        // R is increasing
    {
     using T = Meta::RangeObjType<R> ;
 
@@ -101,7 +111,8 @@ struct BinarySearchAlgo : Algo
    }
 
   template <class S>
-  static R Find_greater_or_equal(R &r,const S &med) // R is increasing
+  static R Find_greater_or_equal(R &r,const S &med) requires ( OpGreaterEqualTypes<T,S> )
+                                 // R is increasing
    {
     using T = Meta::RangeObjType<R> ;
 
@@ -111,20 +122,32 @@ struct BinarySearchAlgo : Algo
 
 /* BinarySearch...() */
 
-template <class R,class Pred>
+template <RangeType R,FuncType<bool,const Meta::RangeObjType<R> &> Pred>
 R BinarySearch_if(R &r,Pred pred) { return BinarySearchAlgo<R>::Find(r,pred); }
 
-template <class R,class S>
-R BinarySearch_less(R &r,const S &med) { return BinarySearchAlgo<R>::Find_less(r,med); }
+template <RangeType R,class S>
+R BinarySearch_less(R &r,const S &med) requires ( OpLessTypes<Meta::RangeObjType<R>,S> )
+ {
+  return BinarySearchAlgo<R>::Find_less(r,med);
+ }
 
-template <class R,class S>
-R BinarySearch_less_or_equal(R &r,const S &med) { return BinarySearchAlgo<R>::Find_less_or_equal(r,med); }
+template <RangeType R,class S>
+R BinarySearch_less_or_equal(R &r,const S &med) requires ( OpLessEqualTypes<Meta::RangeObjType<R>,S> )
+ {
+  return BinarySearchAlgo<R>::Find_less_or_equal(r,med);
+ }
 
-template <class R,class S>
-R BinarySearch_greater(R &r,const S &med) { return BinarySearchAlgo<R>::Find_greater(r,med); }
+template <RangeType R,class S>
+R BinarySearch_greater(R &r,const S &med) requires ( OpGreaterTypes<Meta::RangeObjType<R>,S> )
+ {
+  return BinarySearchAlgo<R>::Find_greater(r,med);
+ }
 
-template <class R,class S>
-R BinarySearch_greater_or_equal(R &r,const S &med) { return BinarySearchAlgo<R>::Find_greater_or_equal(r,med); }
+template <RangeType R,class S>
+R BinarySearch_greater_or_equal(R &r,const S &med) requires ( OpGreaterEqualTypes<Meta::RangeObjType<R>,S> )
+ {
+  return BinarySearchAlgo<R>::Find_greater_or_equal(r,med);
+ }
 
 } // namespace Algon
 } // namespace CCore

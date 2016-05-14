@@ -22,11 +22,11 @@ namespace CCore {
 
 /* classes */
 
-template <RangeType R,class T=Meta::RangeObjType<R> > requires ( TypeRangeType<R,T> ) class PrintSetType;
+template <CursorType R,class T=Meta::RangeObjType<R> > requires ( CursorOverType<R,T> ) class PrintSetType;
 
 /* class PrintSetType<R,T> */
 
-template <RangeType R,class T> requires ( TypeRangeType<R,T> )
+template <CursorType R,class T> requires ( CursorOverType<R,T> )
 class PrintSetType : public PrintOptAdapter<T>
  {
    R range;
@@ -79,7 +79,7 @@ class PrintSetType : public PrintOptAdapter<T>
 
 /* PrintSet() */
 
-template <RangeType R>
+template <CursorType R>
 PrintSetType<R> PrintSet(const R &range) { return PrintSetType<R>(range); }
 
 } // namespace CCore

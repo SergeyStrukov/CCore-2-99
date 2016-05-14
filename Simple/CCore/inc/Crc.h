@@ -207,7 +207,7 @@ class CrcAccumulator
 
    void add(DataType data) { crc=Algo::Mask(Algo::Add(crc,data)); }
 
-   void addRange(CastTypeRangeType<DataType> r)
+   void addRange(CursorCastType<DataType> r)
     {
      ResultType temp=crc;
 

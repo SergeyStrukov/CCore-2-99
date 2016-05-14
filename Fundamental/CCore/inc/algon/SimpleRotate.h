@@ -1,7 +1,7 @@
 /* SimpleRotate.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,7 +23,7 @@ namespace Algon {
 
 /* classes */
 
-template <class R,class Algo=BaseRangeAlgo<R> > struct SimpleRotateAlgo;
+template <RangeType R,class Algo=BaseRangeAlgo<R> > struct SimpleRotateAlgo;
 
 /* RangeRotateLeft() */
 
@@ -37,7 +37,7 @@ void RangeRotateRight(R r) { SimpleRotateAlgo<R>::RotateRight(r); }
 
 /* struct SimpleRotateAlgo<R,Algo> */
 
-template <class R,class Algo>
+template <RangeType R,class Algo>
 struct SimpleRotateAlgo : Algo
  {
   using Algo::GetLen;

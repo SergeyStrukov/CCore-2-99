@@ -1,7 +1,7 @@
 /* SortUnique.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,20 +23,27 @@
 namespace CCore {
 namespace Algon {
 
+/* concept ToOpNotEqualFuncType<Func,T> */
+
+template <class Func,class T>
+concept bool ToOpNotEqualFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { func(a)!=func(b) } -> bool ; } ;
+
 /* classes */
 
-template <class R,class Algo=BaseRangeAlgo<R> > struct ApplyUniqueAlgo;
+template <RangeType R,class Algo=BaseRangeAlgo<R> > struct ApplyUniqueAlgo;
 
 /* struct ApplyUniqueAlgo<R,Algo> */
 
-template <class R,class Algo>
+template <RangeType R,class Algo>
 struct ApplyUniqueAlgo : Algo
  {
   using Algo::GetPtr;
   using Algo::GetPrefix;
 
-  template <class FuncInit>
-  static void ApplyUnique(R r,FuncInit func_init)
+  using T = Meta::RangeObjType<R> ;
+
+  template <FuncInitArgType<T &> FuncInit>
+  static void ApplyUnique(R r,FuncInit func_init) requires ( OpNotEqualType<T> )
    {
     FunctorTypeOf<FuncInit> func(func_init);
 
@@ -58,7 +65,7 @@ struct ApplyUniqueAlgo : Algo
       }
    }
 
-  template <class Func,class FuncInit>
+  template <ToOpNotEqualFuncType<T> Func,FuncInitArgType<T &> FuncInit>
   static void ApplyUniqueBy(R r,Func by,FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -81,7 +88,7 @@ struct ApplyUniqueAlgo : Algo
       }
    }
 
-  template <class FuncInit>
+  template <FuncInitArgType<R> FuncInit>
   static void ApplyUniqueRange(R r,FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
@@ -106,7 +113,7 @@ struct ApplyUniqueAlgo : Algo
       }
    }
 
-  template <class Func,class FuncInit>
+  template <ToOpNotEqualFuncType<T> Func,FuncInitArgType<R> FuncInit>
   static void ApplyUniqueRangeBy(R r,Func by,FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);

@@ -1,7 +1,7 @@
 /* BaseRangeAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -19,16 +19,128 @@
 #include <CCore/inc/Swap.h>
 
 namespace CCore {
-namespace Algon {
+
+/* namespace Meta */
+
+namespace Meta {
 
 /* classes */
 
-template <class R> struct BaseRangeAlgo;
+template <class R> struct IsPtrLenCtor;
 
-/* struct BaseRangeAlgo<R> */
+template <class R> struct IsPtrLenReverseCtor;
+
+/* struct IsPtrLenCtor<R> */
 
 template <class R>
-struct BaseRangeAlgo
+struct IsPtrLenCtor
+ {
+  enum RetType { Ret = false };
+ };
+
+template <class T>
+struct IsPtrLenCtor<PtrLen<T> >
+ {
+  enum RetType { Ret = true };
+ };
+
+/* const IsPtrLen<R> */
+
+template <class R>
+const bool IsPtrLen = IsPtrLenCtor<R>::Ret ;
+
+/* struct IsPtrLenReverseCtor<R> */
+
+template <class R>
+struct IsPtrLenReverseCtor
+ {
+  enum RetType { Ret = false };
+ };
+
+template <class T>
+struct IsPtrLenReverseCtor<PtrLenReverse<T> >
+ {
+  enum RetType { Ret = true };
+ };
+
+/* const IsPtrLenReverse<R> */
+
+template <class R>
+const bool IsPtrLenReverse = IsPtrLenReverseCtor<R>::Ret ;
+
+} // namespace Meta
+
+/* namespace Algon */
+
+namespace Algon {
+
+/* concept RangeAlgo<Algo,R> */
+
+template <class Algo,class R,class LenType>
+concept bool RangeAlgo2 = requires(R r,LenType len)
+ {
+  r[len];
+
+  Algo::GetPtr(r);
+
+  { Algo::GetLen(r) } -> LenType ;
+
+  { Algo::GetPrefix(r,len) } -> R ;
+
+  { Algo::GetSuffix(r,len) } -> R ;
+
+  { Algo::Split(r,len) } -> R ;
+
+  { Algo::GetPrefix(r,r) } -> R ;
+
+  Algo::RangeSwap(r,r);
+
+  Algo::Reverse(r);
+ } ;
+
+template <class Algo,class R>
+concept bool RangeAlgo = requires(R r)
+ {
+  typename Algo::LenType;
+
+  requires ( UIntType<typename Algo::LenType> ) ;
+
+  requires ( RangeAlgo2<Algo,R,typename Algo::LenType> ) ;
+ } ;
+
+/* concept Has_RangeAlgo<R> */
+
+template <class R>
+concept bool Has_RangeAlgo = requires()
+ {
+  typename R::RangeAlgo;
+
+  requires ( RangeAlgo<typename R::RangeAlgo,R> ) ;
+ } ;
+
+/* concept RangeType<R> */
+
+template <class R>
+concept bool RangeType2 = requires()
+ {
+  requires ( CursorType<R> ) ;
+
+  requires ( Has_RangeAlgo<R> ) ;
+ } ;
+
+template <class R>
+concept bool RangeType = Meta::IsPtrLen<R> || Meta::IsPtrLenReverse<R> || RangeType2<R> ;
+
+/* classes */
+
+template <class R> struct BaseRangeAlgo_gen;
+
+template <class R> struct BaseRangeAlgo;
+
+/* struct BaseRangeAlgo_gen<R> */
+
+template <class R>
+struct BaseRangeAlgo_gen
  {
   using LenType = ulen ;
 
@@ -52,23 +164,14 @@ struct BaseRangeAlgo
   static auto Reverse(R r) { return r.reverse(); }
  };
 
+/* struct BaseRangeAlgo<R> */
+
+template <Has_RangeAlgo R>
+struct BaseRangeAlgo<R> : R::RangeAlgo {};
+
 template <class T>
-struct BaseRangeAlgo<PtrLen<T> >
+struct BaseRangeAlgo<PtrLen<T> > : BaseRangeAlgo_gen<PtrLen<T> >
  {
-  using LenType = ulen ;
-
-  static T * GetPtr(PtrLen<T> r) { return r.ptr; }
-
-  static LenType GetLen(PtrLen<T> r) { return r.len; }
-
-  static PtrLen<T> GetPrefix(PtrLen<T> r,LenType len) { return r.prefix(len); }
-
-  static PtrLen<T> GetSuffix(PtrLen<T> r,LenType len) { return r.suffix(len); }
-
-  static PtrLen<T> Split(PtrLen<T> &r,LenType prefix) { return r+=prefix; }
-
-  static PtrLen<T> GetPrefix(PtrLen<T> r,PtrLen<T> suffix) { return r.prefix(suffix); }
-
   static void RangeSwap(PtrLen<T> a,PtrLen<T> b)
    {
     for(T *p=b.ptr; +a ;++a,++p) Swap(*a,*p);
@@ -78,28 +181,14 @@ struct BaseRangeAlgo<PtrLen<T> >
  };
 
 template <class T>
-struct BaseRangeAlgo<PtrLenReverse<T> >
+struct BaseRangeAlgo<PtrLenReverse<T> > : BaseRangeAlgo_gen<PtrLenReverse<T> >
  {
-  using LenType = ulen ;
-
   static T * GetPtr(PtrLenReverse<T> r) { return r.ptr-1; }
-
-  static LenType GetLen(PtrLenReverse<T> r) { return r.len; }
-
-  static PtrLenReverse<T> GetPrefix(PtrLenReverse<T> r,LenType len) { return r.prefix(len); }
-
-  static PtrLenReverse<T> GetSuffix(PtrLenReverse<T> r,LenType len) { return r.suffix(len); }
-
-  static PtrLenReverse<T> Split(PtrLenReverse<T> &r,LenType prefix) { return r+=prefix; }
-
-  static PtrLenReverse<T> GetPrefix(PtrLenReverse<T> r,PtrLenReverse<T> suffix) { return r.prefix(suffix); }
 
   static void RangeSwap(PtrLenReverse<T> a,PtrLenReverse<T> b)
    {
     for(T *p=b.ptr; +a ;++a,--p) Swap(*a,p[-1]);
    }
-
-  static PtrLen<T> Reverse(PtrLenReverse<T> r) { return r.reverse(); }
  };
 
 } // namespace Algon
