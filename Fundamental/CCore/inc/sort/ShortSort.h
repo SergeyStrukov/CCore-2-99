@@ -1,7 +1,7 @@
 /* ShortSort.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -20,17 +20,35 @@
 
 namespace CCore {
 
+/* concept SortRanType<Ran> */
+
+template <RanType Ran>
+concept bool SortRanType = requires(Ran a)
+ {
+  requires ( OpLessType<Meta::PtrObjType<Ran> > ) ;
+ } ;
+
+/* concept SortContextType<Ctx,Ran> */
+
+template <class Ctx,class Ran>
+concept bool SortContextType = requires(Ctx ctx,Ran a,Ran b)
+ {
+  { ctx.less(a,b) } -> bool ;
+
+  ctx.swap(a,b);
+ } ;
+
 /* classes */
 
-template <class Ran> struct SortCtx;
+template <SortRanType Ran> struct SortCtx;
 
-template <class T> struct SortIndexCtx;
+template <OpLessType T> struct SortIndexCtx;
 
-template <class Ran,class Ctx=SortCtx<Ran> > struct ShortSort;
+template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct ShortSort;
 
 /* struct SortCtx<Ran> */
 
-template <class Ran>
+template <SortRanType Ran>
 struct SortCtx
  {
   static void swap(Ran a,Ran b) { Swap(*a,*b); }
@@ -40,23 +58,23 @@ struct SortCtx
 
 /* struct SortIndexCtx<T> */
 
-template <class T>
+template <OpLessType T>
 struct SortIndexCtx
  {
   T *base;
 
   SortIndexCtx(T *base_) : base(base_) {}
 
-  template <class Ind>
+  template <UIntType Ind>
   static void swap(Ind *a,Ind *b) { Swap(*a,*b); }
 
-  template <class Ind>
+  template <UIntType Ind>
   bool less(const Ind *a,const Ind *b) const { return base[*a] < base[*b] ; }
  };
 
 /* struct ShortSort<Ran,Ctx> */
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 struct ShortSort
  {
   // general
@@ -81,18 +99,17 @@ struct ShortSort
 
   // default
 
-  static void Sort2(Ran a) { Sort2(a,Ctx()); }
+  static void Sort2(Ran a) requires ( DefaultCtorType<Ctx> ) { Sort2(a,Ctx()); }
 
-  static void Sort3(Ran a) { Sort3(a,Ctx()); }
+  static void Sort3(Ran a) requires ( DefaultCtorType<Ctx> ) { Sort3(a,Ctx()); }
 
-  static void Sort4(Ran a) { Sort4(a,Ctx()); }
+  static void Sort4(Ran a) requires ( DefaultCtorType<Ctx> ) { Sort4(a,Ctx()); }
 
-  static void Sort5(Ran a) { Sort5(a,Ctx()); }
+  static void Sort5(Ran a) requires ( DefaultCtorType<Ctx> ) { Sort5(a,Ctx()); }
 
   // combined
 
-  template <class Len>
-  static bool Sort(Ran a,Len len,Ctx ctx)
+  static bool Sort(Ran a,ULenType len,Ctx ctx)
    {
     switch( len )
       {
@@ -105,8 +122,7 @@ struct ShortSort
       }
    }
 
-  template <class Len>
-  static bool Sort(Ran a,Len len)
+  static bool Sort(Ran a,ULenType len)
    {
     switch( len )
       {
@@ -120,7 +136,7 @@ struct ShortSort
    }
  };
 
-template <class Ran,class Ctx>
+template <class Ran,SortContextType<Ran> Ctx>
 void ShortSort<Ran,Ctx>::Sort2(Ran a,Ran b,Ctx ctx)
  {
   Used(ctx);
@@ -128,7 +144,7 @@ void ShortSort<Ran,Ctx>::Sort2(Ran a,Ran b,Ctx ctx)
   if( ctx.less(b,a) ) ctx.swap(b,a);
  }
 
-template <class Ran,class Ctx>
+template <class Ran,SortContextType<Ran> Ctx>
 void ShortSort<Ran,Ctx>::Sort3(Ran a,Ran b,Ran c,Ctx ctx)
  {
   Used(ctx);
@@ -157,7 +173,7 @@ void ShortSort<Ran,Ctx>::Sort3(Ran a,Ran b,Ran c,Ctx ctx)
     }
  }
 
-template <class Ran,class Ctx>
+template <class Ran,SortContextType<Ran> Ctx>
 void ShortSort<Ran,Ctx>::Sort4(Ran a,Ran b,Ran c,Ran d,Ctx ctx)
  {
   Used(ctx);
@@ -192,7 +208,7 @@ void ShortSort<Ran,Ctx>::Sort4(Ran a,Ran b,Ran c,Ran d,Ctx ctx)
     }
  }
 
-template <class Ran,class Ctx>
+template <class Ran,SortContextType<Ran> Ctx>
 void ShortSort<Ran,Ctx>::Sort5(Ran a,Ran b,Ran c,Ran d,Ran e,Ctx ctx)
  {
   Used(ctx);

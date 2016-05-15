@@ -40,7 +40,7 @@ struct ApplyUniqueAlgo : Algo
   using Algo::GetPtr;
   using Algo::GetPrefix;
 
-  using T = Meta::RangeObjType<R> ;
+  using T = Meta::PtrObjType<R> ;
 
   template <FuncInitArgType<T &> FuncInit>
   static void ApplyUnique(R r,FuncInit func_init) requires ( OpNotEqualType<T> )
@@ -144,7 +144,7 @@ struct ApplyUniqueAlgo : Algo
 template <class Ran,class Len,class Func>
 void IncrSortBy(Ran ptr,Len len,Func by)
  {
-  using T = Meta::RangeObjType<Ran> ;
+  using T = Meta::PtrObjType<Ran> ;
 
   IncrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
  }
@@ -152,7 +152,7 @@ void IncrSortBy(Ran ptr,Len len,Func by)
 template <class Ran,class Len,class Func>
 void DecrSortBy(Ran ptr,Len len,Func by)
  {
-  using T = Meta::RangeObjType<Ran> ;
+  using T = Meta::PtrObjType<Ran> ;
 
   DecrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
  }

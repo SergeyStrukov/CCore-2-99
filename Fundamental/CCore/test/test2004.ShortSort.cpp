@@ -1,7 +1,7 @@
 /* test2004.ShortSort.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -98,7 +98,7 @@ class Engine
 class IndexEngine
  {
    using Type = unsigned ;
-   using IndexType = int ;
+   using IndexType = unsigned ;
 
    Random random;
 

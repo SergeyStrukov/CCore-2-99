@@ -1,7 +1,7 @@
 /* QuickSort.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -22,11 +22,11 @@ namespace CCore {
 
 /* classes */
 
-template <class Ran,class Ctx=SortCtx<Ran> > struct QuickSort;
+template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct QuickSort;
 
 /* struct QuickSort<Ran,Ctx> */
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 struct QuickSort
  {
   static Ran PartitionP(Ran a,Ran b,Ran p,Ctx ctx); // a <= b , p outside [a,b]
@@ -37,14 +37,13 @@ struct QuickSort
 
   static Ran Partition(Ran a,Ran b,Ran c,Ctx ctx);  // a < b < c
 
-  template <class Len>
+  template <ULenType Len>
   static void Sort(Ran a,Len len,Ctx ctx);
 
-  template <class Len>
-  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+  static void Sort(Ran a,ULenType len) requires ( DefaultCtorType<Ctx> ) { Sort(a,len,Ctx()); }
  };
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 Ran QuickSort<Ran,Ctx>::PartitionP(Ran a,Ran b,Ran p,Ctx ctx)
  {
   Used(ctx);
@@ -74,7 +73,7 @@ Ran QuickSort<Ran,Ctx>::PartitionP(Ran a,Ran b,Ran p,Ctx ctx)
   return a;
  }
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 Ran QuickSort<Ran,Ctx>::PartitionA(Ran a,Ran b,Ctx ctx)
  {
   Ran p=PartitionP(a+1,b,a,ctx);
@@ -93,7 +92,7 @@ Ran QuickSort<Ran,Ctx>::PartitionA(Ran a,Ran b,Ctx ctx)
   return p;
  }
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 Ran QuickSort<Ran,Ctx>::PartitionB(Ran a,Ran b,Ctx ctx)
  {
   Ran p=PartitionP(a,b-1,b,ctx);
@@ -112,7 +111,7 @@ Ran QuickSort<Ran,Ctx>::PartitionB(Ran a,Ran b,Ctx ctx)
   return p;
  }
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 Ran QuickSort<Ran,Ctx>::Partition(Ran a,Ran b,Ran c,Ctx ctx)
  {
   if( ctx.less(a,b) )
@@ -172,8 +171,8 @@ Ran QuickSort<Ran,Ctx>::Partition(Ran a,Ran b,Ran c,Ctx ctx)
     }
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void QuickSort<Ran,Ctx>::Sort(Ran a,Len len,Ctx ctx)
  {
   Len S=len;

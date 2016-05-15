@@ -1,7 +1,7 @@
 /* MergeSort.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -24,46 +24,46 @@ namespace CCore {
 
 /* classes */
 
-template <class Ran,class Ctx=SortCtx<Ran> > struct MergeSort;
+template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct MergeSort;
 
 /* struct MergeSort<Ran,Ctx> */
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 struct MergeSort
  {
   static const ulen MedLen = 1000 ;
 
-  template <class Len>
+  template <ULenType Len>
   static void Permutate(Ran a,Len len,Ctx ctx,Len temp[]);
 
-  template <class Len>
+  template <ULenType Len>
   static void Merge(Ran a,Len len,Len len1,Ctx ctx,Len temp[]); // len1 > 0 , len2 > 0
 
-  template <class Len>
+  template <ULenType Len>
   static void SubSort(Ran a,Len len,Ctx ctx,Len temp[]);
 
-  template <class Len>
+  template <ULenType Len>
   static void Sort(Ran a,Len len,Ctx ctx,Len temp[]); // len >= 2
 
-  template <class Len>
+  template <ULenType Len>
   static void DoMedSort(Ran a,Len len,Ctx ctx); // len >= 2
 
-  template <class Len>
+  template <ULenType Len>
   static bool MedSort(Ran a,Len len,Ctx ctx);
 
-  template <class Len>
-  static bool MedSort(Ran a,Len len) { return MedSort(a,len,Ctx()); }
+  template <ULenType Len>
+  static bool MedSort(Ran a,Len len) requires ( DefaultCtorType<Ctx> ) { return MedSort(a,len,Ctx()); }
 
 
-  template <class Len>
+  template <ULenType Len>
   static void Sort(Ran a,Len len,Ctx ctx);
 
-  template <class Len>
-  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+  template <ULenType Len>
+  static void Sort(Ran a,Len len) requires ( DefaultCtorType<Ctx> ) { Sort(a,len,Ctx()); }
  };
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void MergeSort<Ran,Ctx>::Permutate(Ran a,Len len,Ctx ctx,Len temp[])
  {
   Len *inv=temp+len;
@@ -89,8 +89,8 @@ void MergeSort<Ran,Ctx>::Permutate(Ran a,Len len,Ctx ctx,Len temp[])
     }
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void MergeSort<Ran,Ctx>::Merge(Ran a,Len len,Len len1,Ctx ctx,Len temp[])
  {
   Len i=0;
@@ -127,8 +127,8 @@ void MergeSort<Ran,Ctx>::Merge(Ran a,Len len,Len len1,Ctx ctx,Len temp[])
   Permutate(a,len,ctx,temp);
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void MergeSort<Ran,Ctx>::SubSort(Ran a,Len len,Ctx ctx,Len temp[])
  {
   if( ShortSort<Ran,Ctx>::Sort(a,len,ctx) ) return;
@@ -136,8 +136,8 @@ void MergeSort<Ran,Ctx>::SubSort(Ran a,Len len,Ctx ctx,Len temp[])
   Sort(a,len,ctx,temp);
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void MergeSort<Ran,Ctx>::Sort(Ran a,Len len,Ctx ctx,Len temp[])
  {
   Len len1=len/2;
@@ -149,8 +149,8 @@ void MergeSort<Ran,Ctx>::Sort(Ran a,Len len,Ctx ctx,Len temp[])
   Merge(a,len,len1,ctx,temp);
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void MergeSort<Ran,Ctx>::DoMedSort(Ran a,Len len,Ctx ctx)
  {
   Len temp[2*MedLen];
@@ -158,8 +158,8 @@ void MergeSort<Ran,Ctx>::DoMedSort(Ran a,Len len,Ctx ctx)
   Sort(a,len,ctx,temp);
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 bool MergeSort<Ran,Ctx>::MedSort(Ran a,Len len,Ctx ctx)
  {
   if( ShortSort<Ran,Ctx>::Sort(a,len,ctx) ) return true;
@@ -174,8 +174,8 @@ bool MergeSort<Ran,Ctx>::MedSort(Ran a,Len len,Ctx ctx)
   return false;
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void MergeSort<Ran,Ctx>::Sort(Ran a,Len len,Ctx ctx)
  {
   if( ShortSort<Ran,Ctx>::Sort(a,len,ctx) ) return;

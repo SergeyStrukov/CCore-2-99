@@ -49,7 +49,7 @@ template <class T> struct UIntBitsCtor;
 
 template <class T> struct IsSIntCtor;
 
-template <class R> struct RangeObjTypeCtor;
+template <class Ptr> struct PtrObjTypeCtor;
 
 template <class T> struct SIntToUInt_extra;
 
@@ -346,20 +346,20 @@ using UnRef = typename std::remove_reference<T>::type ;
 template <class T>
 using UnConst = typename std::remove_const<T>::type ;
 
-/* struct RangeObjTypeCtor<R> */
+/* struct PtrObjTypeCtor<Ptr> */
 
-template <class R>
-struct RangeObjTypeCtor
+template <class Ptr>
+struct PtrObjTypeCtor
  {
-  static R & GetObj();
+  static Ptr & GetObj();
 
   using Ret = UnRef<decltype( *GetObj() )> ;
  };
 
-/* type RangeObjType<R> */
+/* type PtrObjType<Ptr> */
 
-template <class R>
-using RangeObjType = typename RangeObjTypeCtor<R>::Ret ;
+template <class Ptr>
+using PtrObjType = typename PtrObjTypeCtor<Ptr>::Ret ;
 
 /* const IsEnum<E> */
 

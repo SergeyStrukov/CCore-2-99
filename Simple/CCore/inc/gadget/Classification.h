@@ -75,6 +75,9 @@ template <class T>
 concept bool MoveCtorType = Meta::HasMoveCtor<T> ;
 
 template <class T>
+concept bool DefaultCtorType = Meta::HasDefaultCtor<T> ;
+
+template <class T>
 concept bool NothrowDefaultCtorType = Meta::HasNothrowDefaultCtor<T> ;
 
 template <class T>
@@ -226,11 +229,13 @@ concept bool RanType = requires(Ran ptr,ulen len)
   ++ptr;
   --ptr;
 
-  ptr+len;
+  { ptr+len } -> Ran ;
   ptr+=len;
 
-  ptr-len;
+  { ptr-len } -> Ran ;
   ptr-=len;
+
+  { ptr-ptr } -> ulen ;
 
   ptr[len];
  } ;

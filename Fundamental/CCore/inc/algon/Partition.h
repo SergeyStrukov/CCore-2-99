@@ -23,7 +23,7 @@ namespace Algon {
 
 /* Partition() */
 
-template <RanType Ran,FuncType<bool,Meta::RangeObjType<Ran> > Pred>
+template <RanType Ran,FuncType<bool,Meta::PtrObjType<Ran> > Pred>
 Ran Partition(Ran ptr,ulen len,Pred pred) // reorder such that pred(Range(ptr,len)) is 1,1,...,0,0,...
  {
   if( len==0 ) return ptr;

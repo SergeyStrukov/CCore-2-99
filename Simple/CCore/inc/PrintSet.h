@@ -22,7 +22,7 @@ namespace CCore {
 
 /* classes */
 
-template <CursorType R,class T=Meta::RangeObjType<R> > requires ( CursorOverType<R,T> ) class PrintSetType;
+template <CursorType R,class T=Meta::PtrObjType<R> > requires ( CursorOverType<R,T> ) class PrintSetType;
 
 /* class PrintSetType<R,T> */
 

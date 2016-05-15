@@ -1,7 +1,7 @@
 /* test2005.Sort.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -115,7 +115,7 @@ template <template <class Ran,class Ctx> class Algo>
 class IndexEngine
  {
    using Type = unsigned ;
-   using IndexType = int ;
+   using IndexType = unsigned ;
 
    Random random;
 

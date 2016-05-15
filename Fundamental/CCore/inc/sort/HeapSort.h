@@ -1,7 +1,7 @@
 /* HeapSort.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -22,22 +22,21 @@ namespace CCore {
 
 /* classes */
 
-template <class Ran,class Ctx=SortCtx<Ran> > struct HeapSort;
+template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct HeapSort;
 
 /* struct HeapSort<Ran,Ctx> */
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 struct HeapSort
  {
-  template <class Len>
+  template <ULenType Len>
   static void Sort(Ran ptr,Len len,Ctx ctx);
 
-  template <class Len>
-  static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
+  static void Sort(Ran ptr,ULenType len) requires ( DefaultCtorType<Ctx> ) { Sort(ptr,len,Ctx()); }
  };
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void HeapSort<Ran,Ctx>::Sort(Ran ptr,Len len,Ctx ctx)
  {
   Used(ctx);

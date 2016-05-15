@@ -1,7 +1,7 @@
 /* DDLTools.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -477,7 +477,7 @@ bool CheckLoop(List &list,ErrorFunc error)
 
   for(auto &node : list ) node.index=index++;
 
-  using T = Meta::RangeObjType<decltype(begin(list))> ;
+  using T = Meta::PtrObjType<decltype(begin(list))> ;
 
   SimpleArray<CheckLoopState<T> > temp(index);
 
