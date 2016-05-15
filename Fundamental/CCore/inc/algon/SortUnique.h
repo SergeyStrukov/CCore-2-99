@@ -28,6 +28,16 @@ namespace Algon {
 template <class Func,class T>
 concept bool ToOpNotEqualFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { func(a)!=func(b) } -> bool ; } ;
 
+/* concept ToOpLessFuncType<Func,T> */
+
+template <class Func,class T>
+concept bool ToOpLessFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { func(a)<func(b) } -> bool ; } ;
+
+/* concept RanToOpLessFuncType<Func,Ran> */
+
+template <class Func,class Ran>
+concept bool RanToOpLessFuncType = ToOpLessFuncType<Func,Meta::PtrObjType<Ran> > ;
+
 /* classes */
 
 template <RangeType R,class Algo=BaseRangeAlgo<R> > struct ApplyUniqueAlgo;
@@ -141,7 +151,7 @@ struct ApplyUniqueAlgo : Algo
 
 /* ...SortBy() */
 
-template <class Ran,class Len,class Func>
+template <RanType Ran,ULenType Len,RanToOpLessFuncType<Ran> Func>
 void IncrSortBy(Ran ptr,Len len,Func by)
  {
   using T = Meta::PtrObjType<Ran> ;
@@ -149,7 +159,7 @@ void IncrSortBy(Ran ptr,Len len,Func by)
   IncrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
  }
 
-template <class Ran,class Len,class Func>
+template <RanType Ran,ULenType Len,RanToOpLessFuncType<Ran> Func>
 void DecrSortBy(Ran ptr,Len len,Func by)
  {
   using T = Meta::PtrObjType<Ran> ;
@@ -157,21 +167,21 @@ void DecrSortBy(Ran ptr,Len len,Func by)
   DecrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
  }
 
-template <class T,class Func>
+template <class T,ToOpLessFuncType<T> Func>
 void IncrSortBy(PtrLen<T> range,Func by) { IncrSortBy(range.ptr,range.len,by); }
 
-template <class T,class Func>
+template <class T,ToOpLessFuncType<T> Func>
 void DecrSortBy(PtrLen<T> range,Func by) { DecrSortBy(range.ptr,range.len,by); }
 
-template <class T,class Func>
+template <class T,ToOpLessFuncType<T> Func>
 void IncrSortBy(PtrLenReverse<T> range,Func by) { DecrSortBy(range.reverse(),by); }
 
-template <class T,class Func>
+template <class T,ToOpLessFuncType<T> Func>
 void DecrSortBy(PtrLenReverse<T> range,Func by) { IncrSortBy(range.reverse(),by); }
 
 /* ApplyUnique() */
 
-template <class R,class FuncInit>
+template <RangeType R,class FuncInit>
 void ApplyUnique(R r,FuncInit func_init)
  {
   ApplyUniqueAlgo<R>::ApplyUnique(r,func_init);
@@ -179,7 +189,7 @@ void ApplyUnique(R r,FuncInit func_init)
 
 /* SortThenApplyUnique() */
 
-template <class R,class FuncInit>
+template <RangeType R,class FuncInit>
 void SortThenApplyUnique(R r,FuncInit func_init)
  {
   Sort(r);
@@ -188,7 +198,7 @@ void SortThenApplyUnique(R r,FuncInit func_init)
 
 /* ApplyUniqueBy() */
 
-template <class R,class Func,class FuncInit>
+template <RangeType R,class Func,class FuncInit>
 void ApplyUniqueBy(R r,Func by,FuncInit func_init)
  {
   ApplyUniqueAlgo<R>::ApplyUniqueBy(r,by,func_init);
@@ -196,14 +206,14 @@ void ApplyUniqueBy(R r,Func by,FuncInit func_init)
 
 /* ...SortThenApplyUniqueBy() */
 
-template <class R,class Func,class FuncInit>
+template <RangeType R,class Func,class FuncInit>
 void IncrSortThenApplyUniqueBy(R r,Func by,FuncInit func_init)
  {
   IncrSortBy(r,by);
   ApplyUniqueBy(r,by,func_init);
  }
 
-template <class R,class Func,class FuncInit>
+template <RangeType R,class Func,class FuncInit>
 void DecrSortThenApplyUniqueBy(R r,Func by,FuncInit func_init)
  {
   DecrSortBy(r,by);
@@ -212,7 +222,7 @@ void DecrSortThenApplyUniqueBy(R r,Func by,FuncInit func_init)
 
 /* ApplyUniqueRange() */
 
-template <class R,class FuncInit>
+template <RangeType R,class FuncInit>
 void ApplyUniqueRange(R r,FuncInit func_init)
  {
   ApplyUniqueAlgo<R>::ApplyUniqueRange(r,func_init);
@@ -220,7 +230,7 @@ void ApplyUniqueRange(R r,FuncInit func_init)
 
 /* SortThenApplyUniqueRange() */
 
-template <class R,class FuncInit>
+template <RangeType R,class FuncInit>
 void SortThenApplyUniqueRange(R r,FuncInit func_init)
  {
   Sort(r);
@@ -229,7 +239,7 @@ void SortThenApplyUniqueRange(R r,FuncInit func_init)
 
 /* ApplyUniqueRangeBy() */
 
-template <class R,class Func,class FuncInit>
+template <RangeType R,class Func,class FuncInit>
 void ApplyUniqueRangeBy(R r,Func by,FuncInit func_init)
  {
   ApplyUniqueAlgo<R>::ApplyUniqueRangeBy(r,by,func_init);
@@ -237,14 +247,14 @@ void ApplyUniqueRangeBy(R r,Func by,FuncInit func_init)
 
 /* ...SortThenApplyUniqueRangeBy() */
 
-template <class R,class Func,class FuncInit>
+template <RangeType R,class Func,class FuncInit>
 void IncrSortThenApplyUniqueRangeBy(R r,Func by,FuncInit func_init)
  {
   IncrSortBy(r,by);
   ApplyUniqueRangeBy(r,by,func_init);
  }
 
-template <class R,class Func,class FuncInit>
+template <RangeType R,class Func,class FuncInit>
 void DecrSortThenApplyUniqueRangeBy(R r,Func by,FuncInit func_init)
  {
   DecrSortBy(r,by);

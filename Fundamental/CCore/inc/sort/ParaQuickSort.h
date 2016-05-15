@@ -25,11 +25,11 @@ namespace CCore {
 
 /* classes */
 
-template <class Ran,class Ctx=SortCtx<Ran> > struct ParaQuickSort;
+template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct ParaQuickSort;
 
 /* struct ParaQuickSort<Ran,Ctx> */
 
-template <class Ran,class Ctx>
+template <RanType Ran,SortContextType<Ran> Ctx>
 struct ParaQuickSort
  {
   static const ulen MinLen      = 1000 ;
@@ -37,17 +37,17 @@ struct ParaQuickSort
   static const ulen SplitLim    = 1000 ;
   static const ulen SpawnLim    =  500 ;
 
-  template <class Len> class SortEngine;
+  template <ULenType Len> class SortEngine;
 
-  template <class Len>
+  template <ULenType Len>
   static void Sort(Ran a,Len len,Ctx ctx);
 
-  template <class Len>
-  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+  template <ULenType Len>
+  static void Sort(Ran a,Len len) requires ( DefaultCtorType<Ctx> ) { Sort(a,len,Ctx()); }
  };
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 class ParaQuickSort<Ran,Ctx>::SortEngine : public Funchor_nocopy
  {
    struct Unit
@@ -99,8 +99,8 @@ class ParaQuickSort<Ran,Ctx>::SortEngine : public Funchor_nocopy
    Function<void (void)> function_job() { return FunctionOf(this,&SortEngine::job); }
  };
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::spawn(Ran a,Len len)
  {
   if( len<SpawnLim )
@@ -122,8 +122,8 @@ void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::spawn(Ran a,Len len)
     }
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::sort(Ran a,Len len)
  {
   Len S=len;
@@ -171,8 +171,8 @@ void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::sort(Ran a,Len len)
     }
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 ParaQuickSort<Ran,Ctx>::SortEngine<Len>::SortEngine(Ctx ctx_,Ran a,Len len)
  : mutex("ParaQuickSort"),
    sem("ParaQuickSort"),
@@ -181,8 +181,8 @@ ParaQuickSort<Ran,Ctx>::SortEngine<Len>::SortEngine(Ctx ctx_,Ran a,Len len)
   spawn(a,len);
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::job()
  {
   for(;;)
@@ -207,8 +207,8 @@ void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::job()
     }
  }
 
-template <class Ran,class Ctx>
-template <class Len>
+template <RanType Ran,SortContextType<Ran> Ctx>
+template <ULenType Len>
 void ParaQuickSort<Ran,Ctx>::Sort(Ran a,Len len,Ctx ctx)
  {
   if( len<MinLen )

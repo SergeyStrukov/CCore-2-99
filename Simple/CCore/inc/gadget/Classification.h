@@ -218,6 +218,7 @@ concept bool CursorCastType = requires(R &obj,Meta::ToConst<R> &cobj)
 template <class Ran>
 concept bool RanType = requires(Ran ptr,ulen len)
  {
+  requires ( DefaultCtorType<Ran> ) ;
   requires ( NothrowCopyableType<Ran> ) ;
   requires ( OpCmpType<Ran> ) ;
 
