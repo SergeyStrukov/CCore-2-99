@@ -31,15 +31,15 @@ void GuardArrayOverflow(ulen len,ulen maxlen,ulen extra_len);
 
 struct ArrayAlgoMemBase;
 
-template <class T> struct ArrayAlgoBase;
+template <TrivDtorType T> struct ArrayAlgoBase_nodtor;
 
-template <class T> struct ArrayAlgoBase_nodtor;
+template <NothrowDtorType T> struct ArrayAlgoBase;
 
-template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_mini;
+template <NothrowDtorType T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_mini;
 
-template <class T> struct ArrayAlgo_pod;
+template <PODType T> struct ArrayAlgo_pod;
 
-template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_class;
+template <NothrowDtorType T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_class;
 
 template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo;
 
@@ -56,114 +56,11 @@ struct ArrayAlgoMemBase
   static void MemFree(void *mem) { ::CCore::MemFree(mem); }
  };
 
-/* struct ArrayAlgoBase<T> */
-
-template <class T>
-struct ArrayAlgoBase : ArrayAlgoMemBase
- {
-  //
-  //  assume ~T() no-throw
-  //
-
-  //
-  //  Create() : clean on throw
-  //
-
-  class BuildGuard : NoCopy
-   {
-     Place<void> place;
-     T *ptr;
-     ulen len;
-
-    public:
-
-     explicit BuildGuard(Place<void> place_) : place(place_),ptr(place_),len(0) {}
-
-     ~BuildGuard() { if( len ) Destroy(ptr,len); }
-
-     Place<void> at() const { return place; }
-
-     void operator ++ () { place+=sizeof (T); len++; }
-
-     PtrLen<T> disarm() { return Range(ptr,Replace_null(len)); }
-   };
-
-  class CreateGuard : public BuildGuard
-   {
-    public:
-
-     CreateGuard(Place<void> place,ulen /*final_len*/) : BuildGuard(place) {}
-
-     ~CreateGuard() {}
-   };
-
-  class CreateGuard_nothrow : NoCopy
-   {
-     Place<void> place;
-     T *ptr;
-     ulen final_len;
-
-    public:
-
-     CreateGuard_nothrow(Place<void> place_,ulen final_len_) : place(place_),ptr(place_),final_len(final_len_) {}
-
-     Place<void> at() const { return place; }
-
-     void operator ++ () { place+=sizeof (T); }
-
-     PtrLen<T> disarm() { return Range(ptr,final_len); }
-   };
-
-  template <bool no_throw,class Base = Meta::Select<no_throw, CreateGuard_nothrow , CreateGuard > >
-  class CreateGuardNoThrow : public Base
-   {
-    public:
-
-     CreateGuardNoThrow(Place<void> place,ulen final_len) : Base(place,final_len) {}
-
-     ~CreateGuardNoThrow() {}
-   };
-
-  template <class Creator>
-  static PtrLen<T> Create(Place<void> place,ulen len,Creator creator) noexcept( Creator::NoThrow )
-   {
-    CreateGuardNoThrow<Creator::NoThrow> guard(place,len);
-
-    FunctorTypeOf<Creator> func(creator);
-
-    for(; len ;len--,++guard) func(guard.at());
-
-    return guard.disarm();
-   }
-
-  //
-  //  single Destroy() : no-throw
-  //
-
-  static void Destroy(T *ptr) noexcept
-   {
-    ptr->~T();
-   }
-
-  //
-  //  Destroy() : no-throw
-  //
-
-  static void Destroy(T *ptr,ulen len) noexcept
-   {
-    for(; len ;len--,ptr++) Destroy(ptr);
-   }
- };
-
 /* struct ArrayAlgoBase_nodtor<T> */
 
-template <class T>
+template <TrivDtorType T>
 struct ArrayAlgoBase_nodtor : ArrayAlgoMemBase
  {
-  //
-  //  assume ~T() is trivial
-  //
-
   //
   //  Create()
   //
@@ -214,7 +111,7 @@ struct ArrayAlgoBase_nodtor : ArrayAlgoMemBase
      ~CreateGuardNoThrow() {}
    };
 
-  template <class Creator>
+  template <CreatorType<T> Creator>
   static PtrLen<T> Create(Place<void> place,ulen len,Creator creator) noexcept( Creator::NoThrow )
    {
     PtrLen<T> ret(place,len);
@@ -243,20 +140,109 @@ struct ArrayAlgoBase_nodtor : ArrayAlgoMemBase
    }
  };
 
-/* type ArrayAlgoBase_class<T> */
+/* struct ArrayAlgoBase<T> */
 
-template <class T>
-using ArrayAlgoBase_class = Meta::Select< Meta::HasTrivDtor<T> , ArrayAlgoBase_nodtor<T> , ArrayAlgoBase<T> > ;
+template <NothrowDtorType T>
+struct ArrayAlgoBase : ArrayAlgoMemBase
+ {
+  //
+  //  Create() : clean on throw
+  //
+
+  class BuildGuard : NoCopy
+   {
+     Place<void> place;
+     T *ptr;
+     ulen len;
+
+    public:
+
+     explicit BuildGuard(Place<void> place_) : place(place_),ptr(place_),len(0) {}
+
+     ~BuildGuard() { if( len ) Destroy(ptr,len); }
+
+     Place<void> at() const { return place; }
+
+     void operator ++ () { place+=sizeof (T); len++; }
+
+     PtrLen<T> disarm() { return Range(ptr,Replace_null(len)); }
+   };
+
+  class CreateGuard : public BuildGuard
+   {
+    public:
+
+     CreateGuard(Place<void> place,ulen /*final_len*/) : BuildGuard(place) {}
+
+     ~CreateGuard() {}
+   };
+
+  class CreateGuard_nothrow : NoCopy
+   {
+     Place<void> place;
+     T *ptr;
+     ulen final_len;
+
+    public:
+
+     CreateGuard_nothrow(Place<void> place_,ulen final_len_) : place(place_),ptr(place_),final_len(final_len_) {}
+
+     Place<void> at() const { return place; }
+
+     void operator ++ () { place+=sizeof (T); }
+
+     PtrLen<T> disarm() { return Range(ptr,final_len); }
+   };
+
+  template <bool no_throw,class Base=Meta::Select<no_throw, CreateGuard_nothrow , CreateGuard > >
+  class CreateGuardNoThrow : public Base
+   {
+    public:
+
+     CreateGuardNoThrow(Place<void> place,ulen final_len) : Base(place,final_len) {}
+
+     ~CreateGuardNoThrow() {}
+   };
+
+  template <CreatorType<T> Creator>
+  static PtrLen<T> Create(Place<void> place,ulen len,Creator creator) noexcept( Creator::NoThrow )
+   {
+    CreateGuardNoThrow<Creator::NoThrow> guard(place,len);
+
+    FunctorTypeOf<Creator> func(creator);
+
+    for(; len ;len--,++guard) func(guard.at());
+
+    return guard.disarm();
+   }
+
+  //
+  //  single Destroy() : no-throw
+  //
+
+  static void Destroy(T *ptr) noexcept
+   {
+    ptr->~T();
+   }
+
+  //
+  //  Destroy() : no-throw
+  //
+
+  static void Destroy(T *ptr,ulen len) noexcept
+   {
+    for(; len ;len--,ptr++) Destroy(ptr);
+   }
+ };
+
+template <NothrowDtorType T> requires ( TrivDtorType<T> )
+struct ArrayAlgoBase<T> : ArrayAlgoBase_nodtor<T> {};
 
 /* struct ArrayAlgo_mini<T,Flags> */
 
-template <class T,class Flags>
+template <NothrowDtorType T,class Flags>
 struct ArrayAlgo_mini : ArrayAlgoBase<T>
  {
-  //
-  //  assume ~T() no-throw
-  //
-
   using ArrayAlgoBase<T>::Create;
 
   //
@@ -271,29 +257,29 @@ struct ArrayAlgo_mini : ArrayAlgoBase<T>
     MoveTo_exist = false
    };
 
-  static PtrLen<T> Create_raw(Place<void> place,ulen len)
+  static PtrLen<T> Create_raw(Place<void> place,ulen len) requires ( DefaultCtorType<T> )
    {
     return Create(place,len,Creator_default<T,Default_no_throw>());
    }
 
-  static PtrLen<T> Create_default(Place<void> place,ulen len)
+  static PtrLen<T> Create_default(Place<void> place,ulen len) requires ( DefaultCtorType<T> )
    {
     return Create(place,len,Creator_default<T,Default_no_throw>());
    }
 
   template <class ... SS>
-  static PtrLen<T> Create_fill(Place<void> place,ulen len,SS && ... ss)
+  static PtrLen<T> Create_fill(Place<void> place,ulen len,SS && ... ss) requires ( ConstructibleType<T,SS...> )
    {
     return Create(place,len,Creator_fill<T,SS...>( std::forward<SS>(ss)... ));
    }
 
-  static PtrLen<T> Create_copy(Place<void> place,ulen len,const T src[])
+  static PtrLen<T> Create_copy(Place<void> place,ulen len,const T src[]) requires ( CopyCtorType<T> )
    {
     return Create(place,len,Creator_copy<T,Copy_no_throw>(src));
    }
 
   template <class S>
-  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[])
+  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,S> )
    {
     return Create(place,len,Creator_cast<T,S>(src));
    }
@@ -301,7 +287,7 @@ struct ArrayAlgo_mini : ArrayAlgoBase<T>
 
 /* struct ArrayAlgo_pod<T> */
 
-template <class T>
+template <PODType T>
 struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
  {
   using ArrayAlgoBase_nodtor<T>::Create;
@@ -315,7 +301,7 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
     Default_no_throw = true,
     Copy_no_throw = true,
 
-    MoveTo_exist = true
+    MoveTo_exist = NothrowCopyCtorType<T>
    };
 
   static PtrLen<T> Create_raw(Place<void> place,ulen len)
@@ -325,7 +311,7 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
     return ret;
    }
 
-  static PtrLen<T> Create_default(Place<void> place,ulen len)
+  static PtrLen<T> Create_default(Place<void> place,ulen len) requires ( DefaultCtorType<T> )
    {
     PtrLen<T> ret(place,len);
 
@@ -335,12 +321,12 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
    }
 
   template <class ... SS>
-  static PtrLen<T> Create_fill(Place<void> place,ulen len,SS && ... ss)
+  static PtrLen<T> Create_fill(Place<void> place,ulen len,SS && ... ss) requires ( ConstructibleType<T,SS...> )
    {
     return Create(place,len,Creator_fill<T,SS...>( std::forward<SS>(ss)... ));
    }
 
-  static PtrLen<T> Create_copy(Place<void> place,ulen len,const T src[])
+  static PtrLen<T> Create_copy(Place<void> place,ulen len,const T src[]) requires ( CopyCtorType<T> )
    {
     PtrLen<T> ret(place,len);
 
@@ -350,12 +336,12 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
    }
 
   template <class S>
-  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[])
+  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,S> )
    {
     return Create(place,len,Creator_cast<T,S>(src));
    }
 
-  static PtrLen<T> Create_swap(Place<void> place,ulen len,T objs[])
+  static PtrLen<T> Create_swap(Place<void> place,ulen len,T objs[]) requires ( CopyableType<T> && DefaultCtorType<T> )
    {
     PtrLen<T> ret(place,len);
 
@@ -370,7 +356,7 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
   //  Single : no-throw
   //
 
-  static T * Create_swap(Place<void> place,T &obj) noexcept
+  static T * Create_swap(Place<void> place,T &obj) noexcept requires ( NothrowCopyableType<T> && NothrowDefaultCtorType<T> )
    {
     T *ret=new(place) T(obj);
 
@@ -392,7 +378,7 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
   //  MoveTo() : no-throw
   //
 
-  static PtrLen<T> MoveTo(T *ptr,ulen len,Place<void> place) noexcept
+  static PtrLen<T> MoveTo(T *ptr,ulen len,Place<void> place) noexcept requires ( NothrowCopyableType<T> )
    {
     PtrLen<T> ret(place,len);
 
@@ -404,14 +390,10 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
 
 /* struct ArrayAlgo_class<T,Flags> */
 
-template <class T,class Flags>
-struct ArrayAlgo_class : ArrayAlgoBase_class<T>
+template <NothrowDtorType T,class Flags>
+struct ArrayAlgo_class : ArrayAlgoBase<T>
  {
-  //
-  //  assume ~T() , Move(T *,Place<void>) , Swap(T &,T &) no-throw
-  //
-
-  using ArrayAlgoBase_class<T>::Create;
+  using ArrayAlgoBase<T>::Create;
 
   //
   //  Create...() : clean on throw
@@ -425,34 +407,34 @@ struct ArrayAlgo_class : ArrayAlgoBase_class<T>
     MoveTo_exist = true
    };
 
-  static PtrLen<T> Create_raw(Place<void> place,ulen len)
+  static PtrLen<T> Create_raw(Place<void> place,ulen len) requires ( DefaultCtorType<T> )
    {
     return Create(place,len,Creator_default<T,Default_no_throw>());
    }
 
-  static PtrLen<T> Create_default(Place<void> place,ulen len)
+  static PtrLen<T> Create_default(Place<void> place,ulen len) requires ( DefaultCtorType<T> )
    {
     return Create(place,len,Creator_default<T,Default_no_throw>());
    }
 
   template <class ... SS>
-  static PtrLen<T> Create_fill(Place<void> place,ulen len,SS && ... ss)
+  static PtrLen<T> Create_fill(Place<void> place,ulen len,SS && ... ss) requires ( ConstructibleType<T,SS...> )
    {
     return Create(place,len,Creator_fill<T,SS...>( std::forward<SS>(ss)... ));
    }
 
-  static PtrLen<T> Create_copy(Place<void> place,ulen len,const T src[])
+  static PtrLen<T> Create_copy(Place<void> place,ulen len,const T src[]) requires ( CopyCtorType<T> )
    {
     return Create(place,len,Creator_copy<T,Copy_no_throw>(src));
    }
 
   template <class S>
-  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[])
+  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,S> )
    {
     return Create(place,len,Creator_cast<T,S>(src));
    }
 
-  static PtrLen<T> Create_swap(Place<void> place,ulen len,T objs[])
+  static PtrLen<T> Create_swap(Place<void> place,ulen len,T objs[]) requires ( DefaultCtorType<T> )
    {
     return Create(place,len,Creator_swap<T,ArrayAlgo_class<T,Flags> >(objs));
    }
@@ -508,13 +490,13 @@ concept bool No_ArrayAlgoType = !Has_ArrayAlgoType<T> ;
 
 /* struct ArrayAlgo<T,Flags> */
 
-template <Has_ArrayAlgoType T,class Flags>
+template <class T,class Flags> requires ( Has_ArrayAlgoType<T> )
 struct ArrayAlgo<T,Flags> : T::ArrayAlgoType {};
 
-template <No_ArrayAlgoType T,class Flags> requires ( PODType<T> && NothrowCopyableType<T> && NothrowDefaultCtorType<T> )
+template <class T,class Flags> requires ( No_ArrayAlgoType<T> && PODType<T> && NothrowCopyableType<T> && NothrowDefaultCtorType<T> )
 struct ArrayAlgo<T,Flags> : ArrayAlgo_pod<T> {};
 
-template <No_ArrayAlgoType T,class Flags> requires !( PODType<T> && NothrowCopyableType<T> && NothrowDefaultCtorType<T> )
+template <class T,class Flags> requires ( No_ArrayAlgoType<T> && !( PODType<T> && NothrowCopyableType<T> && NothrowDefaultCtorType<T> ) )
 struct ArrayAlgo<T,Flags> : ArrayAlgo_class<T,Flags> {};
 
 } // namespace CCore

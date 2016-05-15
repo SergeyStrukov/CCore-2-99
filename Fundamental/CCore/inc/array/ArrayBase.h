@@ -1,7 +1,7 @@
 /* ArrayBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -26,11 +26,25 @@ enum DoBuildType { DoBuild };
 
 enum DoReserveType { DoReserve };
 
+/* concept ArrayHeaderType<H> */
+
+template <PODType H>
+concept bool ArrayHeaderType = requires(H obj,ulen len)
+ {
+  { &H::len } -> ulen H::* ;
+
+  { &H::maxlen } -> ulen H::* ;
+
+  obj.init(len);
+
+  obj.exit();
+ } ;
+
 /* classes */
 
 template <int Sw> class DoSomething;
 
-template <class T,class H,class Algo> struct ArrayBase;
+template <class T,ArrayHeaderType H,class Algo> struct ArrayBase;
 
 /* class DoSomething<int Sw> */
 
@@ -65,11 +79,9 @@ using DoCreate = DoSomething<6> ;
 
 /* struct ArrayBase<T,H,Algo> */
 
-template <class T,class H,class Algo>
+template <class T,ArrayHeaderType H,class Algo>
 struct ArrayBase
  {
-  static_assert( Meta::IsPOD<H> ,"CCore::ArrayBase<T,H,Algo> : H must be POD");
-
   // placement
 
   static const ulen Delta = Align(sizeof (H)) ;
