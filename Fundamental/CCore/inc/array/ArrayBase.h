@@ -40,6 +40,16 @@ concept bool ArrayHeaderType = requires(H obj,ulen len)
   obj.exit();
  } ;
 
+/* concept BuilderType<Builder,T> */
+
+template <class Builder,class T>
+concept bool BuilderType = requires(const Builder &cobj)
+ {
+  { cobj.getLen() } -> ulen ;
+
+  requires ( FuncInitType<Builder,PtrLen<T>,Place<void> > ) ;
+ } ;
+
 /* classes */
 
 template <int Sw> class DoSomething;
@@ -101,7 +111,7 @@ struct ArrayBase
 
   // basic
 
-  static H * Alloc(ulen maxlen,ulen mem_len)
+  static H * Alloc(ulen maxlen,ulen mem_len) requires ( ArrayAlgo_core<Algo,T> )
    {
     H *ret=PlaceAt(Algo::MemAlloc(mem_len)); // POD
 
@@ -110,28 +120,28 @@ struct ArrayBase
     return ret;
    }
 
-  static H * Alloc(ulen maxlen)
+  static H * Alloc(ulen maxlen)  requires ( ArrayAlgo_core<Algo,T> )
    {
     ulen mem_len=LenOf(maxlen,sizeof (T),Delta);
 
     return Alloc(maxlen,mem_len);
    }
 
-  static void Free(H *ptr)
+  static void Free(H *ptr) requires ( ArrayAlgo_core<Algo,T> )
    {
     ptr->exit();
 
     Algo::MemFree(ptr); // POD
    }
 
-  static H * Create(ulen maxlen)
+  static H * Create(ulen maxlen) requires ( ArrayAlgo_core<Algo,T> )
    {
     if( !maxlen ) maxlen=1;
 
     return Alloc(maxlen);
    }
 
-  static void Destroy(H *ptr)
+  static void Destroy(H *ptr) requires ( NothrowDtorType<T> && ArrayAlgo_core<Algo,T> )
    {
     if( ptr->maxlen )
       {
@@ -141,7 +151,7 @@ struct ArrayBase
       }
    }
 
-  static Place<void> MoveAndDestroy(H *ptr,Place<void> place)
+  static Place<void> MoveAndDestroy(H *ptr,Place<void> place) requires ( ArrayAlgo_move<Algo,T> )
    {
     if( ptr->maxlen )
       {
@@ -161,7 +171,7 @@ struct ArrayBase
 
   struct ProvideMove_move
    {
-    static H * Do(H *ptr,ulen extra_len) // ptr is not default
+    static H * Do(H *ptr,ulen extra_len) requires ( ArrayAlgo_move<Algo,T> ) // ptr is not default
      {
       ulen maxlen=Algo::ProvideLen(ptr->len,ptr->maxlen,extra_len);
 
@@ -198,10 +208,10 @@ struct ArrayBase
      }
    };
 
-  using ProvideMove = Meta::Select< Algo::MoveTo_exist , ProvideMove_move , ProvideMove_no_move > ;
-
-  static H * Provide_one(H *ptr) // provides not default ptr with room for 1 element
+  static H * Provide_one(H *ptr) requires ( ArrayAlgo_core<Algo,T> ) // provides not default ptr with room for 1 element
    {
+    using ProvideMove = Meta::Select< Algo::MoveTo_exist , ProvideMove_move , ProvideMove_no_move > ;
+
     if( GetExtraLen(ptr) ) return ptr;
 
     if( ptr->maxlen==0 ) return Create(1);
@@ -209,8 +219,10 @@ struct ArrayBase
     return ProvideMove::Do(ptr,1);
    }
 
-  static H * Provide(H *ptr,ulen extra_len) // provides not default ptr with room for extra_len elements
+  static H * Provide(H *ptr,ulen extra_len) requires ( ArrayAlgo_core<Algo,T> ) // provides not default ptr with room for extra_len elements
    {
+    using ProvideMove = Meta::Select< Algo::MoveTo_exist , ProvideMove_move , ProvideMove_no_move > ;
+
     if( ptr->maxlen==0 ) return Create(extra_len);
 
     if( extra_len<=GetExtraLen(ptr) ) return ptr;
@@ -220,7 +232,7 @@ struct ArrayBase
 
   // shrink
 
-  static ulen Shrink(H *ptr,ulen delta_len)
+  static ulen Shrink(H *ptr,ulen delta_len) requires ( NothrowDtorType<T> && ArrayAlgo_core<Algo,T> )
    {
     ulen len=ptr->len;
 
@@ -238,7 +250,7 @@ struct ArrayBase
     return delta_len;
    }
 
-  static bool Shrink_one(H *ptr)
+  static bool Shrink_one(H *ptr) requires ( NothrowDtorType<T> && ArrayAlgo_core<Algo,T> )
    {
     if( ulen len=ptr->len )
       {
@@ -254,7 +266,7 @@ struct ArrayBase
     return false;
    }
 
-  static ulen Shrink_all(H *ptr)
+  static ulen Shrink_all(H *ptr) requires ( NothrowDtorType<T> && ArrayAlgo_core<Algo,T> )
    {
     ulen len=ptr->len;
 
@@ -268,7 +280,7 @@ struct ArrayBase
     return len;
    }
 
-  static void Shrink_extra(H *ptr)
+  static void Shrink_extra(H *ptr) requires ( ArrayAlgo_core<Algo,T> )
    {
     ulen maxlen=ptr->len;
 
@@ -282,7 +294,7 @@ struct ArrayBase
       }
    }
 
-  static void Shrink_reserve(H *ptr,ulen maxlen)
+  static void Shrink_reserve(H *ptr,ulen maxlen) requires ( ArrayAlgo_core<Algo,T> )
    {
     if( !maxlen ) maxlen=1;
 
@@ -294,14 +306,14 @@ struct ArrayBase
       }
    }
 
-  static void Shrink_reserve(H *ptr)
+  static void Shrink_reserve(H *ptr) requires ( ArrayAlgo_core<Algo,T> )
    {
     Shrink_reserve(ptr,2*ptr->len+100u);
    }
 
   // extend : ptr is not default and has enough room for delta_len elements
 
-  static PtrLen<T> Extend_raw(H *ptr,ulen delta_len)
+  static PtrLen<T> Extend_raw(H *ptr,ulen delta_len) requires ( DefaultCtorType<T> && ArrayAlgo_raw<Algo,T> )
    {
     PtrLen<T> ret=Algo::Create_raw(GetExtra(ptr),delta_len);
 
@@ -310,7 +322,7 @@ struct ArrayBase
     return ret;
    }
 
-  static PtrLen<T> Extend_default(H *ptr,ulen delta_len)
+  static PtrLen<T> Extend_default(H *ptr,ulen delta_len) requires ( DefaultCtorType<T> && ArrayAlgo_default<Algo,T> )
    {
     PtrLen<T> ret=Algo::Create_default(GetExtra(ptr),delta_len);
 
@@ -320,7 +332,7 @@ struct ArrayBase
    }
 
   template <class ... SS>
-  static PtrLen<T> Extend_fill(H *ptr,ulen delta_len,SS && ... ss)
+  static PtrLen<T> Extend_fill(H *ptr,ulen delta_len,SS && ... ss) requires ( ConstructibleType<T,SS...> && ArrayAlgo_fill<Algo,T,SS...> )
    {
     PtrLen<T> ret=Algo::Create_fill(GetExtra(ptr),delta_len, std::forward<SS>(ss)... );
 
@@ -329,7 +341,7 @@ struct ArrayBase
     return ret;
    }
 
-  static PtrLen<T> Extend_copy(H *ptr,ulen delta_len,const T src[])
+  static PtrLen<T> Extend_copy(H *ptr,ulen delta_len,const T src[]) requires ( CopyCtorType<T> && ArrayAlgo_copy<Algo,T> )
    {
     PtrLen<T> ret=Algo::Create_copy(GetExtra(ptr),delta_len,src);
 
@@ -339,7 +351,7 @@ struct ArrayBase
    }
 
   template <class S>
-  static PtrLen<T> Extend_cast(H *ptr,ulen delta_len,const S src[])
+  static PtrLen<T> Extend_cast(H *ptr,ulen delta_len,const S src[]) requires ( ConstructibleType<T,const S> && ArrayAlgo_cast<Algo,T,S> )
    {
     PtrLen<T> ret=Algo::Create_cast(GetExtra(ptr),delta_len,src);
 
@@ -348,7 +360,7 @@ struct ArrayBase
     return ret;
    }
 
-  static PtrLen<T> Extend_swap(H *ptr,ulen delta_len,T objs[])
+  static PtrLen<T> Extend_swap(H *ptr,ulen delta_len,T objs[]) requires ( DefaultCtorType<T> && ArrayAlgo_swap<Algo,T> )
    {
     PtrLen<T> ret=Algo::Create_swap(GetExtra(ptr),delta_len,objs);
 
@@ -357,8 +369,8 @@ struct ArrayBase
     return ret;
    }
 
-  template <class Creator>
-  static PtrLen<T> Extend(H *ptr,ulen delta_len,Creator creator)
+  template <CreatorType<T> Creator>
+  static PtrLen<T> Extend(H *ptr,ulen delta_len,Creator creator) requires ( ArrayAlgo_creator<Algo,T,Creator> )
    {
     PtrLen<T> ret=Algo::Create(GetExtra(ptr),delta_len,creator);
 
@@ -367,7 +379,7 @@ struct ArrayBase
     return ret;
    }
 
-  template <class Builder>
+  template <BuilderType<T> Builder>
   static PtrLen<T> Extend(H *ptr,Builder builder)
    {
     FunctorTypeOf<Builder> func(builder);
@@ -381,7 +393,7 @@ struct ArrayBase
 
   // append : ptr is not default and has enough room for 1 element
 
-  static T * Append_raw(H *ptr)
+  static T * Append_raw(H *ptr) requires ( DefaultCtorType<T> )
    {
     T *ret=new(GetExtra(ptr)) T;
 
@@ -390,7 +402,7 @@ struct ArrayBase
     return ret;
    }
 
-  static T * Append_default(H *ptr)
+  static T * Append_default(H *ptr) requires ( DefaultCtorType<T> )
    {
     T *ret=new(GetExtra(ptr)) T();
 
@@ -400,7 +412,7 @@ struct ArrayBase
    }
 
   template <class ... SS>
-  static T * Append_fill(H *ptr,SS && ... ss)
+  static T * Append_fill(H *ptr,SS && ... ss) requires ( ConstructibleType<T,SS...> )
    {
     T *ret=new(GetExtra(ptr)) T( std::forward<SS>(ss)... );
 
@@ -409,7 +421,7 @@ struct ArrayBase
     return ret;
    }
 
-  static T * Append_copy(H *ptr,const T &src)
+  static T * Append_copy(H *ptr,const T &src) requires ( CopyCtorType<T> )
    {
     T *ret=new(GetExtra(ptr)) T(src);
 
@@ -418,7 +430,7 @@ struct ArrayBase
     return ret;
    }
 
-  static T * Append_swap(H *ptr,T &obj)
+  static T * Append_swap(H *ptr,T &obj) requires ( DefaultCtorType<T> && ArrayAlgo_swap<Algo,T> )
    {
     T *ret=Algo::Create_swap(GetExtra(ptr),obj);
 
@@ -427,7 +439,7 @@ struct ArrayBase
     return ret;
    }
 
-  template <class Creator>
+  template <CreatorType<T> Creator>
   static T * Append(H *ptr,Creator creator)
    {
     FunctorTypeOf<Creator> func(creator);

@@ -27,6 +27,96 @@ namespace CCore {
 
 void GuardArrayOverflow(ulen len,ulen maxlen,ulen extra_len);
 
+/* concept ArrayAlgo_core<Algo,T> */
+
+template <class Algo,class T>
+concept bool ArrayAlgo_core = requires(ulen len,void *mem,T *ptr)
+ {
+  { Algo::Default_no_throw } -> bool ;
+  { Algo::Copy_no_throw } -> bool ;
+  { Algo::MoveTo_exist } -> bool ;
+
+  { Algo::MemAlloc(len) } -> void * ;
+
+  Algo::MemFree(mem);
+
+  { Algo::MemExtend(mem,len) } -> bool ;
+
+  { Algo::MemShrink(mem,len) } -> bool ;
+
+  { Algo::Destroy(ptr) } noexcept;
+
+  { Algo::Destroy(ptr,len) } noexcept;
+ } ;
+
+/* concept ArrayAlgo_move<Algo,T> */
+
+template <class Algo,class T>
+concept bool ArrayAlgo_move = requires(ulen len,T *ptr,Place<void> place)
+ {
+  { Algo::ProvideLen(len,len,len) } -> ulen ;
+
+  { Algo::MoveTo(ptr,len,place) } noexcept -> PtrLen<T> ;
+ } ;
+
+/* concept ArrayAlgo_raw<Algo,T> */
+
+template <class Algo,class T>
+concept bool ArrayAlgo_raw = requires(Place<void> place,ulen len)
+ {
+  { Algo::Create_raw(place,len) } -> PtrLen<T> ;
+ } ;
+
+/* concept ArrayAlgo_default<Algo,T> */
+
+template <class Algo,class T>
+concept bool ArrayAlgo_default = requires(Place<void> place,ulen len)
+ {
+  { Algo::Create_default(place,len) } -> PtrLen<T> ;
+ } ;
+
+/* concept ArrayAlgo_fill<Algo,T,SS> */
+
+template <class Algo,class T,class ... SS>
+concept bool ArrayAlgo_fill = requires(Place<void> place,ulen len,SS && ... ss)
+ {
+  { Algo::Create_fill(place,len, std::forward<SS>(ss)... ) } -> PtrLen<T> ;
+ } ;
+
+/* concept ArrayAlgo_copy<Algo,T> */
+
+template <class Algo,class T>
+concept bool ArrayAlgo_copy = requires(Place<void> place,ulen len,const T *ptr)
+ {
+  { Algo::Create_copy(place,len,ptr) } -> PtrLen<T> ;
+ } ;
+
+/* concept ArrayAlgo_cast<Algo,T,S> */
+
+template <class Algo,class T,class S>
+concept bool ArrayAlgo_cast = requires(Place<void> place,ulen len,const S *ptr)
+ {
+  { Algo::Create_cast(place,len,ptr) } -> PtrLen<T> ;
+ } ;
+
+/* concept ArrayAlgo_swap<Algo,T> */
+
+template <class Algo,class T>
+concept bool ArrayAlgo_swap = requires(Place<void> place,ulen len,T *ptr,T &obj)
+ {
+  { Algo::Create_swap(place,len,ptr) } -> PtrLen<T> ;
+
+  { Algo::Create_swap(place,obj) } -> T * ;
+ } ;
+
+/* concept ArrayAlgo_creator<Algo,T,Creator> */
+
+template <class Algo,class T,class Creator>
+concept bool ArrayAlgo_creator = requires(Place<void> place,ulen len,Creator creator)
+ {
+  { Algo::Create(place,len,creator) } -> PtrLen<T> ;
+ } ;
+
 /* classes */
 
 struct ArrayAlgoMemBase;
@@ -127,7 +217,7 @@ struct ArrayAlgoBase_nodtor : ArrayAlgoMemBase
   //  single Destroy() : empty
   //
 
-  static void Destroy(T *)
+  static void Destroy(T *) noexcept
    {
    }
 
@@ -135,7 +225,7 @@ struct ArrayAlgoBase_nodtor : ArrayAlgoMemBase
   //  Destroy() : empty
   //
 
-  static void Destroy(T *,ulen)
+  static void Destroy(T *,ulen) noexcept
    {
    }
  };
@@ -279,7 +369,7 @@ struct ArrayAlgo_mini : ArrayAlgoBase<T>
    }
 
   template <class S>
-  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,S> )
+  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,const S> )
    {
     return Create(place,len,Creator_cast<T,S>(src));
    }
@@ -429,7 +519,7 @@ struct ArrayAlgo_class : ArrayAlgoBase<T>
    }
 
   template <class S>
-  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,S> )
+  static PtrLen<T> Create_cast(Place<void> place,ulen len,const S src[]) requires ( ConstructibleType<T,const S> )
    {
     return Create(place,len,Creator_cast<T,S>(src));
    }
@@ -443,7 +533,7 @@ struct ArrayAlgo_class : ArrayAlgoBase<T>
   //  Single
   //
 
-  static T * Create_swap(Place<void> place,T &obj) noexcept( Default_no_throw )
+  static T * Create_swap(Place<void> place,T &obj) noexcept( Default_no_throw ) requires ( DefaultCtorType<T> )
    {
     T *ret=new(place) T();
 
