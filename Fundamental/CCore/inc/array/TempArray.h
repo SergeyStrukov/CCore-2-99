@@ -31,7 +31,7 @@ template <PODType T,ulen StackLen> class TempArray;
 template <PODType T,ulen StackLen>
 class TempArray : NoCopy
  {
-   T *ptr;
+   T *ptr; // always at least StackLen items
    ulen len;
 
    T buf[StackLen];
@@ -98,21 +98,22 @@ class TempArray : NoCopy
 
    void provide(ulen len_)
     {
-     if( len_<=len ) return;
-
-     recreate(len_);
+     if( len_ > len )
+       {
+        recreate(len_);
+       }
     }
 
    void reset(ulen len_)
     {
-     if( len_<=len )
+     if( len_ > len )
+       {
+        recreate(len_);
+       }
+     else
        {
         len=len_;
-
-        return;
        }
-
-     recreate(len_);
     }
 
    bool extend(ulen len_)
@@ -176,23 +177,17 @@ class TempArray : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   void apply(FuncInit func_init) { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply_const(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse(FuncInit func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse_const(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
  };
 
 } // namespace CCore

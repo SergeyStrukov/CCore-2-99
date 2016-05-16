@@ -120,7 +120,7 @@ struct ArrayBase
     return ret;
    }
 
-  static H * Alloc(ulen maxlen)  requires ( ArrayAlgo_core<Algo,T> )
+  static H * Alloc(ulen maxlen) requires ( ArrayAlgo_core<Algo,T> )
    {
     ulen mem_len=LenOf(maxlen,sizeof (T),Delta);
 

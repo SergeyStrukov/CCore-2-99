@@ -257,15 +257,13 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
      Base::Extend_swap(ptr.getPtr(),dotype.getLen(),objs);
     }
 
-   template <class Creator>
-   AtomicRefArray(DoCreate dotype,Creator creator)
+   AtomicRefArray(DoCreate dotype,CreatorType<T> creator)
     : AtomicRefArrayBase<T,Algo>(dotype.getMaxLen())
     {
      Base::Extend(ptr.getPtr(),dotype.getLen(),creator);
     }
 
-   template <class Builder>
-   AtomicRefArray(DoBuildType,Builder builder)
+   AtomicRefArray(DoBuildType,BuilderType<T> builder)
     : AtomicRefArrayBase<T,Algo>(builder.getLen())
     {
      Base::Extend(ptr.getPtr(),builder);
@@ -453,14 +451,12 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
      return extend_swap(objs.len,objs.ptr);
     }
 
-   template <class Creator>
-   PtrLen<T> extend(ulen delta_len,Creator creator)
+   PtrLen<T> extend(ulen delta_len,CreatorType<T> creator)
     {
      return Base::Extend(provide(delta_len),delta_len,creator);
     }
 
-   template <class Builder>
-   PtrLen<T> extend(Builder builder)
+   PtrLen<T> extend(BuilderType<T> builder)
     {
      return Base::Extend(provide(builder.getLen()),builder);
     }
@@ -493,25 +489,20 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
      return Base::Append_swap(provide(),obj);
     }
 
-   template <class Creator>
-   T * append(Creator creator)
+   T * append(CreatorType<T> creator)
     {
      return Base::Append(provide(),creator);
     }
 
    // apply
 
-   template <class FuncInit>
-   void apply_modify(FuncInit func_init) { Algon::ApplyToRange(modify(),func_init); }
+   void apply_modify(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(modify(),func_init); }
 
-   template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse_modify(FuncInit func_init) { Algon::ApplyToRange(modifyReverse(),func_init); }
+   void applyReverse_modify(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(modifyReverse(),func_init); }
 
-   template <class FuncInit>
-   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
    // swap/move objects
 

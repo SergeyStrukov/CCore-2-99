@@ -109,23 +109,17 @@ class SimpleArray : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   void apply(FuncInit func_init) { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   void apply_const(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse(FuncInit func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   template <class FuncInit>
-   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   void applyReverse_const(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
    // swap/move objects
 
