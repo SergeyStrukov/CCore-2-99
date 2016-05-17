@@ -54,7 +54,7 @@ struct UIntSlowMulAlgo
 template <UIntType UInt>
 UIntSlowMulAlgo<UInt>::DoubleUMul::DoubleUMul(UInt a,UInt b)
  {
-  static_assert( (Bits%2)==0 ,"CCore::Math::UIntSlowMulAlgo<UInt,E> : odd bits number");
+  static_assert( (Bits%2)==0 ,"CCore::Math::UIntSlowMulAlgo<UInt> : odd bits number");
 
   const unsigned Bits2 = Bits/2 ;
 

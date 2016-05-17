@@ -399,14 +399,12 @@ class Collector : NoCopy
      return extend_swap(objs.len,objs.ptr);
     }
 
-   template <class Creator>
-   PtrLen<T> extend(ulen delta_len,Creator creator)
+   PtrLen<T> extend(ulen delta_len,CreatorType<T> creator)
     {
      return Base::Extend(provide(delta_len),delta_len,creator);
     }
 
-   template <class Builder>
-   PtrLen<T> extend(Builder builder)
+   PtrLen<T> extend(BuilderType<T> builder)
     {
      return Base::Extend(provide(builder.getLen()),builder);
     }
@@ -439,8 +437,7 @@ class Collector : NoCopy
      return Base::Append_swap(provide(),obj);
     }
 
-   template <class Creator>
-   T * append(Creator creator)
+   T * append(CreatorType<T> creator)
     {
      return Base::Append(provide(),creator);
     }
