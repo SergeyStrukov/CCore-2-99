@@ -36,20 +36,14 @@ template <class P> class PrintCount;
 
 /* struct PrintOutAdapter<P> */
 
-template <class P>
-struct PrintOutAdapter
+template <class P> requires ( PrinterType<Meta::UnRef<typename P::PrintOutType> > )
+struct PrintOutAdapter<P>
  {
   using PrintOutType = typename P::PrintOutType ;
  };
 
 template <>
 struct PrintOutAdapter<NoPrintType>
- {
-  using PrintOutType = void ;
- };
-
-template <>
-struct PrintOutAdapter<const NoPrintType>
  {
   using PrintOutType = void ;
  };

@@ -1,7 +1,7 @@
 /* Printf.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -17,9 +17,9 @@
 
 namespace CCore {
 
-/* struct PrintDevBase */
+/* struct PrintfDevBase */
 
-const char * PrintDevBase::Find(const char *format,char ch)
+const char * PrintfDevBase::Find(const char *format,char ch)
  {
   for(; NotFound(*format,ch) ;format++);
 

@@ -41,15 +41,11 @@ inline unsigned long long GetTextDesc(unsigned long long value) { return value; 
 
 /* classes */
 
-template <int Sw,class T> struct PrintOptAdapters;
-
-template <int Sw,class T> struct PrintAdapters;
-
 template <class T> struct PrintOptAdapter;
 
 template <class T> struct PrintAdapter;
 
-struct PrintDevBase;
+struct PrintfDevBase;
 
 template <class P> class PrintfDev;
 
@@ -57,21 +53,10 @@ template <class P> class PutobjDev;
 
 template <class OptType,class T> struct BindOptType;
 
-/* struct PrintOptAdapters<int Sw,T> */
+/* struct PrintOptAdapter<T> */
 
-template <class T>
-struct PrintOptAdapters<2,T>
- {
-  using PrintOptType = typename PrintProxy<T>::OptType ;
- };
-
-template <class T>
-struct PrintOptAdapters<1,T>
- {
- };
-
-template <class T>
-struct PrintOptAdapters<0,T>
+template <class T> requires ( No_ProxyType<PrintProxy<T> > )
+struct PrintOptAdapter<T>
  {
   static const T & GetObj();
 
@@ -80,17 +65,93 @@ struct PrintOptAdapters<0,T>
   using PrintOptType = typename PrintProxy<S>::OptType ;
  };
 
-/* struct PrintAdapters<int Sw,T> */
+template <class T> requires ( Has_ProxyType<PrintProxy<T> > && No_OptType<PrintProxy<T> > )
+struct PrintOptAdapter<T>
+ {
+  // empty
+ };
 
-template <class T>
-struct PrintAdapters<2,T>
+template <class T> requires ( Has_ProxyType<PrintProxy<T> > && Has_OptType<PrintProxy<T> > )
+struct PrintOptAdapter<T>
+ {
+  using PrintOptType = typename PrintProxy<T>::OptType ;
+ };
+
+/* struct PrintAdapter<T> */
+
+template <class T> requires ( No_ProxyType<PrintProxy<T> > )
+struct PrintAdapter<T>
+ {
+  template <PrinterType P,class S>
+  static void PrintDesc(P &out,const char *ptr,const char *lim,S s)
+   {
+    PrintAdapter<S>::Print(out,ptr,lim,s);
+   }
+
+  template <PrinterType P,class OptType,class S>
+  static void PrintDesc(P &out,const OptType &opt,S s)
+   {
+    PrintAdapter<S>::Print(out,opt,s);
+   }
+
+  template <PrinterType P,class S>
+  static void PrintDesc(P &out,S s)
+   {
+    PrintAdapter<S>::Print(out,s);
+   }
+
+
+  static void Print(PrinterType &out,const char *ptr,const char *lim,const T &t)
+   {
+    PrintDesc(out,ptr,lim,GetTextDesc(t));
+   }
+
+  static void Print(PrinterType &out,const AnyType &opt,const T &t)
+   {
+    PrintDesc(out,opt,GetTextDesc(t));
+   }
+
+  static void Print(PrinterType &out,const T &t)
+   {
+    PrintDesc(out,GetTextDesc(t));
+   }
+ };
+
+template <class T> requires ( Has_ProxyType<PrintProxy<T> > && No_OptType<PrintProxy<T> > )
+struct PrintAdapter<T>
+ {
+  using ProxyType = typename PrintProxy<T>::ProxyType ;
+
+  static void Print(PrinterType &out,const char *,const char *,const T &t)
+   {
+    ProxyType proxy(t);
+
+    proxy.print(out.printRef());
+   }
+
+  static void Print(PrinterType &out,const AnyType &,const T &t)
+   {
+    ProxyType proxy(t);
+
+    proxy.print(out.printRef());
+   }
+
+  static void Print(PrinterType &out,const T &t)
+   {
+    ProxyType proxy(t);
+
+    proxy.print(out.printRef());
+   }
+ };
+
+template <class T> requires ( Has_ProxyType<PrintProxy<T> > && Has_OptType<PrintProxy<T> > )
+struct PrintAdapter<T>
  {
   using ProxyType = typename PrintProxy<T>::ProxyType ;
 
   using OptType = typename PrintProxy<T>::OptType ;
 
-  template <class P>
-  static void Print(P &out,const char *ptr,const char *lim,const T &t)
+  static void Print(PrinterType &out,const char *ptr,const char *lim,const T &t)
    {
     OptType opt(ptr,lim);
     ProxyType proxy(t);
@@ -98,113 +159,30 @@ struct PrintAdapters<2,T>
     proxy.print(out.printRef(),opt);
    }
 
-  template <class P>
-  static void Print(P &out,const OptType &opt,const T &t)
+  static void Print(PrinterType &out,const OptType &opt,const T &t)
    {
     ProxyType proxy(t);
 
     proxy.print(out.printRef(),opt);
    }
 
-  template <class P>
-  static void Print(P &out,const T &t)
+  static void Print(PrinterType &out,const T &t)
    {
-    OptType opt;
+    OptType opt{};
     ProxyType proxy(t);
 
     proxy.print(out.printRef(),opt);
    }
  };
 
-template <class T>
-struct PrintAdapters<1,T>
- {
-  using ProxyType = typename PrintProxy<T>::ProxyType ;
+/* struct PrintfDevBase */
 
-  template <class P>
-  static void Print(P &out,const char *,const char *,const T &t)
-   {
-    ProxyType proxy(t);
-
-    proxy.print(out.printRef());
-   }
-
-  template <class P,class OptType>
-  static void Print(P &out,const OptType &,const T &t)
-   {
-    ProxyType proxy(t);
-
-    proxy.print(out.printRef());
-   }
-
-  template <class P>
-  static void Print(P &out,const T &t)
-   {
-    ProxyType proxy(t);
-
-    proxy.print(out.printRef());
-   }
- };
-
-template <class T>
-struct PrintAdapters<0,T>
- {
-  template <class P,class S>
-  static void PrintDesc(P &out,const char *ptr,const char *lim,S s)
-   {
-    PrintAdapter<S>::Print(out,ptr,lim,s);
-   }
-
-  template <class P,class OptType,class S>
-  static void PrintDesc(P &out,const OptType &opt,S s)
-   {
-    PrintAdapter<S>::Print(out,opt,s);
-   }
-
-  template <class P,class S>
-  static void PrintDesc(P &out,S s)
-   {
-    PrintAdapter<S>::Print(out,s);
-   }
-
-
-  template <class P>
-  static void Print(P &out,const char *ptr,const char *lim,const T &t)
-   {
-    PrintDesc(out,ptr,lim,GetTextDesc(t));
-   }
-
-  template <class P,class OptType>
-  static void Print(P &out,const OptType &opt,const T &t)
-   {
-    PrintDesc(out,opt,GetTextDesc(t));
-   }
-
-  template <class P>
-  static void Print(P &out,const T &t)
-   {
-    PrintDesc(out,GetTextDesc(t));
-   }
- };
-
-/* struct PrintOptAdapter<T> */
-
-template <class T>
-struct PrintOptAdapter : PrintOptAdapters<ProxySwitch<PrintProxy<T> >,T> {};
-
-/* struct PrintAdapter<T> */
-
-template <class T>
-struct PrintAdapter : PrintAdapters<ProxySwitch<PrintProxy<T> >,T> {};
-
-/* struct PrintDevBase */
-
-struct PrintDevBase : NoCopy
+struct PrintfDevBase : NoCopy
  {
   static const char OpenFormat  = '#' ;
   static const char CloseFormat = ';' ;
 
-  static bool NotFound(char cur,char ch) { return cur && cur!=ch ;  }
+  static bool NotFound(char cur,char ch) { return cur && cur!=ch ; }
 
   static const char * Find(const char *format,char ch);
 
@@ -217,7 +195,7 @@ struct PrintDevBase : NoCopy
 
     OptStr(const char *ptr_,const char *lim_) : ptr(ptr_),lim(lim_) {}
 
-    template <class P,class T>
+    template <PrinterType P,class T>
     void print(P &out,const T &t) const
      {
       if( !ptr )
@@ -234,8 +212,8 @@ struct PrintDevBase : NoCopy
 
 /* class PrintfDev<P> */
 
-template <class P>
-class PrintfDev : PrintDevBase
+template <class P> requires ( PrinterType<Meta::UnRef<P> > )
+class PrintfDev<P> : PrintfDevBase
  {
    P out;
    const char *format;
@@ -319,7 +297,7 @@ class PrintfDev : PrintDevBase
     }
  };
 
-template <class P>
+template <class P> requires ( PrinterType<Meta::UnRef<P> > )
 auto PrintfDev<P>::find() -> OptStr // ^aaaaaa##aaaaaaaaaaaa#opt;
  {
   for(;;)
@@ -383,8 +361,8 @@ class PrintfDev<void>
 
 /* class PutobjDev<P> */
 
-template <class P>
-class PutobjDev : NoCopy
+template <class P> requires ( PrinterType<Meta::UnRef<P> > )
+class PutobjDev<P> : NoCopy
  {
    P out;
 
@@ -523,8 +501,7 @@ struct BindOptType
 
   BindOptType(const OptType &opt_,const T &t_) : opt(opt_),t(t_) {}
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     PrintAdapter<T>::Print(out,opt,t);
    }
@@ -543,7 +520,7 @@ void Printf(P &&out,const char *format,const TT & ... tt) CCORE_NOINLINE ;
 template <class P,class ... TT>
 void Printf(P &&out,const char *format,const TT & ... tt)
  {
-  PrintfDev<PrintOutType<Meta::UnRef<P> > > dev(out,format);
+  PrintfDev<PrintOutType<Meta::UnConst<Meta::UnRef<P> > > > dev(out,format);
 
   dev(tt...);
  }
@@ -556,7 +533,7 @@ void Putobj(P &&out,const TT & ... tt) CCORE_NOINLINE ;
 template <class P,class ... TT>
 void Putobj(P &&out,const TT & ... tt)
  {
-  PutobjDev<PrintOutType<Meta::UnRef<P> > > dev(out);
+  PutobjDev<PrintOutType<Meta::UnConst<Meta::UnRef<P> > > > dev(out);
 
   dev(tt...);
  }
@@ -569,7 +546,7 @@ void Putch(P &&out,TT ... tt) CCORE_NOINLINE ;
 template <class P,class ... TT>
 void Putch(P &&out,TT ... tt)
  {
-  PutobjDev<PrintOutType<Meta::UnRef<P> > > dev(out);
+  PutobjDev<PrintOutType<Meta::UnConst<Meta::UnRef<P> > > > dev(out);
 
   dev.put(tt...);
  }
@@ -585,8 +562,7 @@ struct PrintProxy<MSec>
 
     explicit ProxyType(MSec time) : time_msec(+time) {}
 
-    template <class P>
-    void print(P &out) const
+    void print(PrinterType &out) const
      {
       if( time_msec<1000 )
         {

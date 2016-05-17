@@ -55,7 +55,7 @@ enum IntShowSign
   IntShowSignDefault = IntShowMinus
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 void Parse_empty(Dev &dev,IntShowSign &ret)
  {
   if( ParseChar_try(dev,'+') )
@@ -79,7 +79,7 @@ enum IntAlign
   IntAlignDefault = IntAlignRight
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 void Parse_empty(Dev &dev,IntAlign &ret)
  {
   typename Dev::Peek peek(dev);
@@ -112,7 +112,7 @@ enum IntShowBase
   IntShowBaseDefault = IntShowNoBase
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 void Parse_IntBase(Dev &dev,unsigned &base,IntShowBase &show_base)
  {
   if( ParseChar_try(dev,'.') )
@@ -312,8 +312,7 @@ class IntToStr : NoCopy
 
    PtrLen<const char> getSuffix() const { return Range_const(split,lim); }
 
-   template <class P>
-   void print(P &out,ulen width,IntAlign align) const
+   void print(PrinterType &out,ulen width,IntAlign align) const
     {
      auto str=getStr();
 
@@ -371,8 +370,7 @@ class UIntPrint
 
    using PrintOptType = IntPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      IntToStr dev(opt.base,opt.show_sign,opt.show_base);
 
@@ -395,8 +393,7 @@ class SIntPrint
 
    using PrintOptType = IntPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      IntToStr dev(opt.base,opt.show_sign,opt.show_base);
 
@@ -460,8 +457,7 @@ class PrintDumpType
 
       explicit Engine(ulen width_) : dev(16),width(width_) {}
 
-      template <class P>
-      void print(P &out,PtrLen<const UInt> data)
+      void print(PrinterType &out,PtrLen<const UInt> data)
        {
         if( +data )
           {
@@ -481,8 +477,7 @@ class PrintDumpType
        }
     };
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      opt.correct<UInt>();
 
@@ -507,7 +502,7 @@ template <UIntType UInt>
 PrintDumpType<UInt> PrintDump(const UInt *ptr,ulen len) { return PrintDumpType<UInt>(Range(ptr,len)); }
 
 template <UIntType UInt>
-PrintDumpType<UInt> PrintDump(PtrLen<UInt> data) { return PrintDumpType<UInt>(Range_const(data)); }
+PrintDumpType<UInt> PrintDump(PtrLen<UInt> data) { return PrintDumpType<UInt>(data); }
 
 template <UIntType UInt>
 PrintDumpType<UInt> PrintDump(PtrLen<const UInt> data) { return PrintDumpType<UInt>(data); }

@@ -1,7 +1,7 @@
 /* PrintCon.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -55,12 +55,6 @@ class PrintCon : public PrintBase
 
 template <>
 struct PrintOutAdapter<ConType>
- {
-  using PrintOutType = PrintCon ;
- };
-
-template <>
-struct PrintOutAdapter<const ConType>
  {
   using PrintOutType = PrintCon ;
  };

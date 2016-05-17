@@ -49,8 +49,7 @@ class RepeatChar
 
    RepeatChar(ulen count_,char ch_) : count(count_),ch(ch_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      out.put(ch,count);
     }
@@ -67,7 +66,7 @@ enum StrAlign
   StrAlignDefault = StrAlignRight
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 void Parse_empty(Dev &dev,StrAlign &ret)
  {
   typename Dev::Peek peek(dev);
@@ -142,8 +141,7 @@ class StrPrint
 
    using PrintOptType = StrPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      if( ulen extra=getExtra(opt.width,opt.quoted) )
        {
@@ -221,8 +219,7 @@ class Title
 
    using PrintOptType = TitlePrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      out.put(opt.border,opt.off);
      out.put(' ');
@@ -267,8 +264,7 @@ class TextDivider
 
    using PrintOptType = TextDividerPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      out.put(opt.border,opt.width);
     }
