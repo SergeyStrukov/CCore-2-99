@@ -1,7 +1,7 @@
 /* test2031.Printf.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -31,8 +31,7 @@ class Test : NoCopy
 
    Test() : val(54321) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"#.h;",val);
     }
@@ -51,6 +50,8 @@ template<>
 bool Testit<2031>::Main()
  {
   Printf(Con,"#;\n",PrintTitle(12345));
+
+  Printf(Con,"#; #; #;\n",MakeTuple(1,2,3));
 
   Test test;
 

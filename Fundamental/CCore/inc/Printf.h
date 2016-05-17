@@ -222,63 +222,37 @@ class PrintfDev<P> : PrintfDevBase
 
    OptStr find();
 
-   // step_tuple
+   // expand
 
-   void step_tuple(const Tuple<> &) {}
+   void expand(const Tuple<> &) {}
 
    template <class T>
-   void step_tuple(const Tuple<T> &tuple) { step(tuple.first); }
+   void expand(const Tuple<T> &tuple) { (*this) += tuple.first ; }
 
    template <class T,class S,class ... TT>
-   void step_tuple(const Tuple<T,S,TT...> &tuple)
+   void expand(const Tuple<T,S,TT...> &tuple)
     {
-     step(tuple.first);
-     step_tuple(tuple.rest);
+     (*this) += tuple.first ;
+
+     expand(tuple.rest);
     }
 
-   // step
+   // operator +=
 
    template <class T>
-   void step(const T &t)
+   PrintfDev<P> & operator += (const T &t)
     {
      find().print(out,t);
+
+     return *this;
     }
 
    template <class ... TT>
-   void step(const Tuple<TT...> &tuple)
+   PrintfDev<P> & operator += (const Tuple<TT...> &tuple)
     {
-     step_tuple(tuple);
-    }
+     expand(tuple);
 
-   // print
-
-   void print() {}
-
-   template <class T1,class ... TT>
-   void print(const T1 &t1,const TT & ... tt)
-    {
-     step(t1);
-
-     print(tt...);
-    }
-
-   template <class T1,class T2,class ... TT>
-   void print(const T1 &t1,const T2 &t2,const TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-
-     print(tt...);
-    }
-
-   template <class T1,class T2,class T3,class ... TT>
-   void print(const T1 &t1,const T2 &t2,const T3 &t3,const TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-     step(t3);
-
-     print(tt...);
+     return *this;
     }
 
   public:
@@ -291,7 +265,7 @@ class PrintfDev<P> : PrintfDevBase
    template <class ... TT>
    void operator () (const TT & ... tt)
     {
-     print(tt...);
+     (void)( (*this) += ... += tt );
 
      while( *format ) find();
     }
@@ -370,61 +344,44 @@ class PutobjDev<P> : NoCopy
 
    // step_tuple
 
-   void step_tuple(const Tuple<> &) {}
+   void expand(const Tuple<> &) {}
 
    template <class T>
-   void step_tuple(const Tuple<T> &tuple) { step(tuple.first); }
+   void expand(const Tuple<T> &tuple) { (*this) += tuple.first ; }
 
    template <class T,class S,class ... TT>
-   void step_tuple(const Tuple<T,S,TT...> &tuple)
+   void expand(const Tuple<T,S,TT...> &tuple)
     {
-     step(tuple.first);
-     step_tuple(tuple.rest);
+     (*this) += tuple.first ;
+
+     expand(tuple.rest);
     }
 
-   // step
+   // operator +=
 
    template <class T>
-   void step(const T &t)
+   PutobjDev<P> & operator += (const T &t)
     {
      PrintAdapter<T>::Print(out,t);
+
+     return *this;
     }
 
    template <class ... TT>
-   void step(const Tuple<TT...> &tuple)
+   PutobjDev<P> & operator += (const Tuple<TT...> &tuple)
     {
-     step_tuple(tuple);
+     expand(tuple);
+
+     return *this;
     }
 
-   // print
+   // operator <<
 
-   void print() {}
-
-   template <class T1,class ... TT>
-   void print(const T1 &t1,const TT & ... tt)
+   PutobjDev<P> & operator << (char ch)
     {
-     step(t1);
+     out.put(ch);
 
-     print(tt...);
-    }
-
-   template <class T1,class T2,class ... TT>
-   void print(const T1 &t1,const T2 &t2,const TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-
-     print(tt...);
-    }
-
-   template <class T1,class T2,class T3,class ... TT>
-   void print(const T1 &t1,const T2 &t2,const T3 &t3,const TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-     step(t3);
-
-     print(tt...);
+     return *this;
     }
 
   public:
@@ -437,38 +394,15 @@ class PutobjDev<P> : NoCopy
    template <class ... TT>
    void operator () (const TT & ... tt)
     {
-     print(tt...);
+     (void)( (*this) += ... += tt );
     }
 
    // put
 
-   void put() {}
-
-   template <class ... TT>
-   void put(char ch1,TT ... cch)
+   template <class ... CC>
+   void put(CC ... cc)
     {
-     out.put(ch1);
-
-     put(cch...);
-    }
-
-   template <class ... TT>
-   void put(char ch1,char ch2,TT ... cch)
-    {
-     out.put(ch1);
-     out.put(ch2);
-
-     put(cch...);
-    }
-
-   template <class ... TT>
-   void put(char ch1,char ch2,char ch3,TT ... cch)
-    {
-     out.put(ch1);
-     out.put(ch2);
-     out.put(ch3);
-
-     put(cch...);
+     (void)( (*this) << ... << cc );
     }
  };
 
@@ -477,6 +411,13 @@ class PutobjDev<P> : NoCopy
 template <>
 class PutobjDev<void>
  {
+   // operator <<
+
+   PutobjDev<void> & operator << (char)
+    {
+     return *this;
+    }
+
   public:
 
    template <class S>
@@ -485,10 +426,13 @@ class PutobjDev<void>
    template <class ... TT>
    void operator () (const TT & ...) {}
 
-   void put() {}
+   // put
 
-   template <class ... TT>
-   void put(char,TT ... cch) { put(cch...); }
+   template <class ... CC>
+   void put(CC ... cc)
+    {
+     (void)( (*this) << ... << cc );
+    }
  };
 
 /* struct BindOptType<OptType,T> */
@@ -540,15 +484,15 @@ void Putobj(P &&out,const TT & ... tt)
 
 /* Putch() */
 
-template <class P,class ... TT>
-void Putch(P &&out,TT ... tt) CCORE_NOINLINE ;
+template <class P,class ... CC>
+void Putch(P &&out,CC ... cc) CCORE_NOINLINE ;
 
-template <class P,class ... TT>
-void Putch(P &&out,TT ... tt)
+template <class P,class ... CC>
+void Putch(P &&out,CC ... cc)
  {
   PutobjDev<PrintOutType<Meta::UnConst<Meta::UnRef<P> > > > dev(out);
 
-  dev.put(tt...);
+  dev.put(cc...);
  }
 
 /* struct PrintProxy<MSec> */
