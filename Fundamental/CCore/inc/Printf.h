@@ -77,6 +77,22 @@ struct PrintOptAdapter<T>
   using PrintOptType = typename PrintProxy<T>::OptType ;
  };
 
+/* concept ProxyPrintType<Proxy> */
+
+template <class Proxy>
+concept bool ProxyPrintType = requires(PrintBase &out,Proxy obj)
+ {
+  obj.print(out);
+ } ;
+
+/* concept ProxyOptPrintType<Proxy,Opt> */
+
+template <class Proxy,class Opt>
+concept bool ProxyOptPrintType = requires(PrintBase &out,Proxy obj,Opt opt)
+ {
+  obj.print(out,opt);
+ } ;
+
 /* struct PrintAdapter<T> */
 
 template <class T> requires ( No_ProxyType<PrintProxy<T> > )
@@ -95,7 +111,7 @@ struct PrintAdapter<T>
    }
 
   template <PrinterType P,class S>
-  static void PrintDesc(P &out,S s)
+  static auto PrintDesc(P &out,S s) -> decltype( PrintAdapter<S>::Print(out,s) )
    {
     PrintAdapter<S>::Print(out,s);
    }
@@ -111,7 +127,7 @@ struct PrintAdapter<T>
     PrintDesc(out,opt,GetTextDesc(t));
    }
 
-  static void Print(PrinterType &out,const T &t)
+  static auto Print(PrinterType &out,const T &t) -> decltype( PrintDesc(out,GetTextDesc(t)) )
    {
     PrintDesc(out,GetTextDesc(t));
    }
@@ -136,7 +152,7 @@ struct PrintAdapter<T>
     proxy.print(out.printRef());
    }
 
-  static void Print(PrinterType &out,const T &t)
+  static void Print(PrinterType &out,const T &t) requires ( ProxyPrintType<ProxyType> )
    {
     ProxyType proxy(t);
 
@@ -166,7 +182,7 @@ struct PrintAdapter<T>
     proxy.print(out.printRef(),opt);
    }
 
-  static void Print(PrinterType &out,const T &t)
+  static void Print(PrinterType &out,const T &t) requires ( ProxyOptPrintType<ProxyType,OptType> )
    {
     OptType opt{};
     ProxyType proxy(t);
@@ -174,6 +190,29 @@ struct PrintAdapter<T>
     proxy.print(out.printRef(),opt);
    }
  };
+
+/* concept PrintableType<T> */
+
+template <class T>
+concept bool PrintableType2 = requires(PrintBase &out,const T &t)
+ {
+  PrintAdapter<T>::Print(out,t);
+ } ;
+
+template <class T>
+struct PrintableTypeCtor
+ {
+  enum RetType { Ret = PrintableType2<T> };
+ };
+
+template <class ... TT>
+struct PrintableTypeCtor<Tuple<TT...> >
+ {
+  enum RetType { Ret = ( true && ... && PrintableTypeCtor< Meta::UnConst<Meta::UnRef<TT> > >::Ret ) };
+ };
+
+template <class T>
+concept bool PrintableType = (bool)PrintableTypeCtor<T>::Ret ;
 
 /* struct PrintfDevBase */
 
@@ -458,10 +497,10 @@ BindOptType<OptType,T> BindOpt(const OptType &opt,const T &t) { return BindOptTy
 
 /* Printf() */
 
-template <class P,class ... TT>
+template <class P,PrintableType ... TT>
 void Printf(P &&out,const char *format,const TT & ... tt) CCORE_NOINLINE ;
 
-template <class P,class ... TT>
+template <class P,PrintableType ... TT>
 void Printf(P &&out,const char *format,const TT & ... tt)
  {
   PrintfDev<PrintOutType<Meta::UnConst<Meta::UnRef<P> > > > dev(out,format);
@@ -471,10 +510,10 @@ void Printf(P &&out,const char *format,const TT & ... tt)
 
 /* Putobj() */
 
-template <class P,class ... TT>
+template <class P,PrintableType ... TT>
 void Putobj(P &&out,const TT & ... tt) CCORE_NOINLINE ;
 
-template <class P,class ... TT>
+template <class P,PrintableType ... TT>
 void Putobj(P &&out,const TT & ... tt)
  {
   PutobjDev<PrintOutType<Meta::UnConst<Meta::UnRef<P> > > > dev(out);
