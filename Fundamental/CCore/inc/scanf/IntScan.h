@@ -16,6 +16,8 @@
 #ifndef CCore_inc_scanf_IntScan_h
 #define CCore_inc_scanf_IntScan_h
 
+#include <CCore/inc/StrParse.h>
+
 #include <CCore/inc/scanf/ScanTools.h>
 
 namespace CCore {
@@ -56,7 +58,7 @@ enum IntScanBase
   IntScanDefault = IntScanNone
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 bool Parse_try(Dev &dev,IntScanBase &ret)
  {
   typename Dev::Peek peek(dev);
@@ -232,6 +234,10 @@ class DetectIntFormat : NoCopy
 
    template <class S>
    explicit DetectIntFormat(S &inp);
+
+   using ScanInpType = DetectIntFormat<Len> & ;
+
+   ScanInpType scanRef() { return *this; }
 
    IntScanBase getFormat() const { return scan_base; }
 
@@ -455,8 +461,7 @@ struct IntScanAlgo
  {
   // Hex
 
-  template <class S>
-  static void ScanHex(S &inp,SUInt &ret,bool minus)
+  static void ScanHex(ScannerType &inp,SUInt &ret,bool minus)
    {
     if( +inp )
       {
@@ -511,8 +516,7 @@ struct IntScanAlgo
       }
    }
 
-  template <class S>
-  static void ScanHex(S &inp,SUInt &ret)
+  static void ScanHex(ScannerType &inp,SUInt &ret)
    {
     if( +inp )
       {
@@ -533,8 +537,7 @@ struct IntScanAlgo
 
   // Bin
 
-  template <class S>
-  static void ScanBin(S &inp,SUInt &ret,bool minus)
+  static void ScanBin(ScannerType &inp,SUInt &ret,bool minus)
    {
     if( +inp )
       {
@@ -589,8 +592,7 @@ struct IntScanAlgo
       }
    }
 
-  template <class S>
-  static void ScanBin(S &inp,SUInt &ret)
+  static void ScanBin(ScannerType &inp,SUInt &ret)
    {
     if( +inp )
       {
@@ -611,8 +613,7 @@ struct IntScanAlgo
 
   // 0X
 
-  template <class S>
-  static void Scan0X(S &inp,SUInt &ret,bool minus)
+  static void Scan0X(ScannerType &inp,SUInt &ret,bool minus)
    {
     PassChars(inp,'0');
     PassOneOfChar(inp, [] (char ch) { return ch=='x' || ch=='X'; } );
@@ -648,8 +649,7 @@ struct IntScanAlgo
       }
    }
 
-  template <class S>
-  static void Scan0X(S &inp,SUInt &ret)
+  static void Scan0X(ScannerType &inp,SUInt &ret)
    {
     if( +inp )
       {
@@ -670,8 +670,7 @@ struct IntScanAlgo
 
   // base
 
-  template <class S>
-  static void ScanBase(S &inp,SUInt &ret,unsigned base,bool minus)
+  static void ScanBase(ScannerType &inp,SUInt &ret,unsigned base,bool minus)
    {
     if( +inp )
       {
@@ -704,8 +703,7 @@ struct IntScanAlgo
       }
    }
 
-  template <class S>
-  static void ScanBase(S &inp,SUInt &ret,unsigned base)
+  static void ScanBase(ScannerType &inp,SUInt &ret,unsigned base)
    {
     if( +inp )
       {
@@ -726,8 +724,7 @@ struct IntScanAlgo
 
   // any
 
-  template <class S>
-  static void ScanAny(S &inp,SUInt &ret) // Hex | Bin | 0X | Base(10)
+  static void ScanAny(ScannerType &inp,SUInt &ret) // Hex | Bin | 0X | Base(10)
    {
     DetectIntFormat<Acc::Bits+10> detect(inp);
 
@@ -749,8 +746,7 @@ struct IntScanAlgo
 
   // opt
 
-  template <class S>
-  static void Scan(S &inp,IntScanOpt opt,SUInt &ret)
+  static void Scan(ScannerType &inp,IntScanOpt opt,SUInt &ret)
    {
     switch( opt.scan_base )
       {
@@ -786,8 +782,7 @@ class UIntScan : NoCopy
 
    explicit UIntScan(UInt &var_) : var(var_) {}
 
-   template <class S>
-   void scan(S &inp,IntScanOpt opt)
+   void scan(ScannerType &inp,IntScanOpt opt)
     {
      var=0;
 
@@ -806,8 +801,7 @@ class SIntScan : NoCopy
 
    explicit SIntScan(SInt &var_) : var(var_) {}
 
-   template <class S>
-   void scan(S &inp,IntScanOpt opt)
+   void scan(ScannerType &inp,IntScanOpt opt)
     {
      var=0;
 

@@ -1,7 +1,7 @@
 /* StringScan.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -17,6 +17,7 @@
 
 #include <CCore/inc/Sort.h>
 #include <CCore/inc/Cmp.h>
+
 #include <CCore/inc/algon/BinarySearch.h>
 
 namespace CCore {
@@ -54,7 +55,7 @@ PtrLen<StrLen> StringSetScan::Select(PtrLen<StrLen> r,ulen off)
 StringSetScan::StringSetScan(std::initializer_list<const char *> zstr_list)
  : list(zstr_list)
  {
-  IncrSort(Range(list), [] (StrLen a,StrLen b) { return StrLess(a,b); } );
+  IncrSort(Range(list),StrLess);
  }
 
 StringSetScan::~StringSetScan()

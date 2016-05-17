@@ -17,6 +17,8 @@
 #define CCore_inc_StringScan_h
 
 #include <CCore/inc/String.h>
+#include <CCore/inc/StrParse.h>
+
 #include <CCore/inc/scanf/ScanTools.h>
 
 namespace CCore {
@@ -42,7 +44,7 @@ enum StringScanType
   StringScanDefault = StringScanToPunct
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 bool Parse_try(Dev &dev,StringScanType &ret)
  {
   typename Dev::Peek peek(dev);
@@ -92,8 +94,7 @@ class StringScan : NoCopy
 
   private:
 
-   template <class S>
-   void scanQuote(S &inp)
+   void scanQuote(ScannerType &inp)
     {
      PassChars(inp,'"');
 
@@ -120,8 +121,7 @@ class StringScan : NoCopy
      inp.fail();
     }
 
-   template <class S>
-   void scanToSpace(S &inp)
+   void scanToSpace(ScannerType &inp)
     {
      PrintString out;
 
@@ -130,8 +130,7 @@ class StringScan : NoCopy
      ret=out.close();
     }
 
-   template <class S>
-   void scanToPunct(S &inp)
+   void scanToPunct(ScannerType &inp)
     {
      PrintString out;
 
@@ -144,8 +143,7 @@ class StringScan : NoCopy
 
    explicit StringScan(String &ret_) : ret(ret_) {}
 
-   template <class S>
-   void scan(S &inp,StringScanOpt opt)
+   void scan(ScannerType &inp,StringScanOpt opt)
     {
      ret=Empty;
 
@@ -182,8 +180,7 @@ class StringSetScan : NoCopy
 
    operator ulen() const { return index; }
 
-   template <class S>
-   void scan(S &inp)
+   void scan(ScannerType &inp)
     {
      index=0;
 

@@ -1,7 +1,7 @@
 /* IntScan.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -14,8 +14,6 @@
 //----------------------------------------------------------------------------------------
 
 #include <CCore/inc/scanf/IntScan.h>
-
-#include <CCore/inc/StrParse.h>
 
 namespace CCore {
 
