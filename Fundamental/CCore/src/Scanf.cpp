@@ -1,7 +1,7 @@
 /* Scanf.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -17,9 +17,9 @@
 
 namespace CCore {
 
-/* struct ScanDevBase */
+/* struct ScanfDevBase */
 
-const char * ScanDevBase::Find(const char *format,char ch)
+const char * ScanfDevBase::Find(const char *format,char ch)
  {
   for(; NotFound(*format,ch) ;format++);
 

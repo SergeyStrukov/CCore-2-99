@@ -1,7 +1,7 @@
 /* Scanf.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -34,8 +34,7 @@ struct ScanProxy<EndOfScanType>
    {
     explicit ProxyType(EndOfScanType &) {}
 
-    template <class S>
-    void scan(S &inp)
+    void scan(ScannerType &inp)
      {
       if( +inp ) inp.fail();
      }
@@ -44,15 +43,11 @@ struct ScanProxy<EndOfScanType>
 
 /* classes */
 
-template <int Sw,class T> struct ScanOptAdapters;
-
-template <int Sw,class T> struct ScanAdapters;
-
 template <class T> struct ScanOptAdapter;
 
 template <class T> struct ScanAdapter;
 
-struct ScanDevBase;
+struct ScanfDevBase;
 
 template <class S> class ScanfDev;
 
@@ -62,35 +57,85 @@ template <class OptType,class T> struct BindScanOptType;
 
 template <class T,class ProxySet> struct ScanProxySet;
 
-/* struct ScanOptAdapters<int Sw,T> */
+/* struct ScanOptAdapter<T> */
 
-template <class T>
-struct ScanOptAdapters<2,T>
+template <class T> requires ( No_ProxyType<ScanProxy<T> > )
+struct ScanOptAdapter<T>
+ {
+  // empty
+ };
+
+template <class T> requires ( Has_ProxyType<ScanProxy<T> > && No_OptType<ScanProxy<T> > )
+struct ScanOptAdapter<T>
+ {
+  // empty
+ };
+
+template <class T> requires ( Has_ProxyType<ScanProxy<T> > && Has_OptType<ScanProxy<T> > )
+struct ScanOptAdapter<T>
  {
   using ScanOptType = typename ScanProxy<T>::OptType ;
  };
 
-template <class T>
-struct ScanOptAdapters<1,T>
+/* concept ProxyScanType<Proxy> */
+
+template <class Proxy>
+concept bool ProxyScanType = requires(ScanBase &inp,Proxy obj)
  {
+  obj.scan(inp);
+ } ;
+
+/* concept ProxyOptScanType<Proxy,Opt> */
+
+template <class Proxy,class Opt>
+concept bool ProxyOptScanType = requires(ScanBase &inp,Proxy obj,Opt opt)
+ {
+  obj.scan(inp,opt);
+ } ;
+
+/* struct ScanAdapter<T> */
+
+template <class T> requires ( No_ProxyType<ScanProxy<T> > )
+struct ScanAdapter<T>
+ {
+  // empty
  };
 
-template <class T>
-struct ScanOptAdapters<0,T>
+template <class T> requires ( Has_ProxyType<ScanProxy<T> > && No_OptType<ScanProxy<T> > )
+struct ScanAdapter<T>
  {
+  using ProxyType = typename ScanProxy<T>::ProxyType ;
+
+  static void Scan(ScannerType &inp,const char *,const char *,T &t)
+   {
+    ProxyType proxy(t);
+
+    proxy.scan(inp.scanRef());
+   }
+
+  static void Scan(ScannerType &inp,const AnyType &,T &t)
+   {
+    ProxyType proxy(t);
+
+    proxy.scan(inp.scanRef());
+   }
+
+  static void Scan(ScannerType &inp,T &t) requires ( ProxyScanType<ProxyType> )
+   {
+    ProxyType proxy(t);
+
+    proxy.scan(inp.scanRef());
+   }
  };
 
-/* struct ScanAdapters<int Sw,T> */
-
-template <class T>
-struct ScanAdapters<2,T>
+template <class T> requires ( Has_ProxyType<ScanProxy<T> > && Has_OptType<ScanProxy<T> > )
+struct ScanAdapter<T>
  {
   using ProxyType = typename ScanProxy<T>::ProxyType ;
 
   using OptType = typename ScanProxy<T>::OptType ;
 
-  template <class S>
-  static void Scan(S &inp,const char *ptr,const char *lim,T &t)
+  static void Scan(ScannerType &inp,const char *ptr,const char *lim,T &t)
    {
     OptType opt(ptr,lim);
     ProxyType proxy(t);
@@ -98,72 +143,48 @@ struct ScanAdapters<2,T>
     proxy.scan(inp.scanRef(),opt);
    }
 
-  template <class S>
-  static void Scan(S &inp,const OptType &opt,T &t)
+  static void Scan(ScannerType &inp,const OptType &opt,T &t)
    {
     ProxyType proxy(t);
 
     proxy.scan(inp.scanRef(),opt);
    }
 
-  template <class S>
-  static void Scan(S &inp,T &t)
+  static void Scan(ScannerType &inp,T &t) requires ( ProxyOptScanType<ProxyType,OptType> )
    {
-    OptType opt;
+    OptType opt{};
     ProxyType proxy(t);
 
     proxy.scan(inp.scanRef(),opt);
    }
  };
 
+/* concept ScanableType<T> */
+
 template <class T>
-struct ScanAdapters<1,T>
+concept bool ScanableType2 = requires(ScanBase &inp,T &t)
  {
-  using ProxyType = typename ScanProxy<T>::ProxyType ;
+  ScanAdapter<T>::Scan(inp,t);
+ } ;
 
-  template <class S>
-  static void Scan(S &inp,const char *,const char *,T &t)
-   {
-    ProxyType proxy(t);
+template <class T>
+struct ScanableTypeCtor
+ {
+  enum RetType { Ret = ScanableType2<T> };
+ };
 
-    proxy.scan(inp.scanRef());
-   }
-
-  template <class S,class OptType>
-  static void Scan(S &inp,const OptType &,T &t)
-   {
-    ProxyType proxy(t);
-
-    proxy.scan(inp.scanRef());
-   }
-
-  template <class S>
-  static void Scan(S &inp,T &t)
-   {
-    ProxyType proxy(t);
-
-    proxy.scan(inp.scanRef());
-   }
+template <class ... TT>
+struct ScanableTypeCtor<Tuple<TT...> >
+ {
+  enum RetType { Ret = ( true && ... && ScanableTypeCtor< Meta::UnRef<TT> >::Ret ) };
  };
 
 template <class T>
-struct ScanAdapters<0,T>
- {
- };
+concept bool ScanableType = (bool)ScanableTypeCtor<Meta::UnRef<T> >::Ret ;
 
-/* struct ScanOptAdapter<T> */
+/* struct ScanfDevBase */
 
-template <class T>
-struct ScanOptAdapter : ScanOptAdapters<ProxySwitch<ScanProxy<T> >,T> {};
-
-/* struct ScanAdapter<T> */
-
-template <class T>
-struct ScanAdapter : ScanAdapters<ProxySwitch<ScanProxy<T> >,T> {};
-
-/* struct ScanDevBase */
-
-struct ScanDevBase : NoCopy
+struct ScanfDevBase : NoCopy
  {
   static const char OpenFormat  = '#' ;
   static const char CloseFormat = ';' ;
@@ -181,7 +202,7 @@ struct ScanDevBase : NoCopy
 
     OptStr(const char *ptr_,const char *lim_) : ptr(ptr_),lim(lim_) {}
 
-    template <class S,class T>
+    template <ScannerType S,class T>
     void scan(S &inp,T &t) const
      {
       if( !ptr )
@@ -194,7 +215,7 @@ struct ScanDevBase : NoCopy
         }
      }
 
-    template <class S>
+    template <ScannerType S>
     void scan(S &inp) const
      {
       if( !ptr )
@@ -211,8 +232,8 @@ struct ScanDevBase : NoCopy
 
 /* class ScanfDev<S> */
 
-template <class S>
-class ScanfDev : ScanDevBase
+template <class S> requires ( ScannerType<Meta::UnRef<S> > )
+class ScanfDev<S> : ScanfDevBase
  {
    S inp;
    const char *format;
@@ -225,63 +246,37 @@ class ScanfDev : ScanDevBase
 
    OptStr find();
 
-   // step_tuple
+   // expand
 
-   void step_tuple(Tuple<> &) {}
+   void expand(Tuple<> &) {}
 
    template <class T>
-   void step_tuple(Tuple<T> &tuple) { step(tuple.first); }
+   void expand(Tuple<T> &tuple) { (*this) >> tuple.first ; }
 
    template <class T1,class T2,class ... TT>
-   void step_tuple(Tuple<T1,T2,TT...> &tuple)
+   void expand(Tuple<T1,T2,TT...> &tuple)
     {
-     step(tuple.first);
-     step_tuple(tuple.rest);
+     (*this) >> tuple.first ;
+
+     expand(tuple.rest);
     }
 
-   // step
+   // operator >>
 
    template <class T>
-   void step(T &t)
+   ScanfDev<S> & operator >> (T &t)
     {
      find().scan(inp,t);
+
+     return *this;
     }
 
    template <class ... TT>
-   void step(Tuple<TT...> &tuple)
+   ScanfDev<S> & operator >> (Tuple<TT...> &tuple)
     {
-     step_tuple(tuple);
-    }
+     expand(tuple);
 
-   // scan
-
-   void scan() {}
-
-   template <class T1,class ... TT>
-   void scan(T1 &t1,TT & ... tt)
-    {
-     step(t1);
-
-     scan(tt...);
-    }
-
-   template <class T1,class T2,class ... TT>
-   void scan(T1 &t1,T2 &t2,TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-
-     scan(tt...);
-    }
-
-   template <class T1,class T2,class T3,class ... TT>
-   void scan(T1 &t1,T2 &t2,T3 &t3,TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-     step(t3);
-
-     scan(tt...);
+     return *this;
     }
 
   public:
@@ -294,13 +289,13 @@ class ScanfDev : ScanDevBase
    template <class ... TT>
    void operator () (TT & ... tt)
     {
-     scan(tt...);
+     (void)( (*this) >> ... >> tt );
 
      if( *format ) find().scan(inp);
     }
  };
 
-template <class S>
+template <class S> requires ( ScannerType<Meta::UnRef<S> > )
 void ScanfDev<S>::match(char ch)
  {
   if( ch==' ' )
@@ -313,13 +308,13 @@ void ScanfDev<S>::match(char ch)
     }
  }
 
-template <class S>
+template <class S> requires ( ScannerType<Meta::UnRef<S> > )
 void ScanfDev<S>::match(const char *ptr,ulen len)
  {
   for(char ch : Range(ptr,len) ) match(ch);
  }
 
-template <class S>
+template <class S> requires ( ScannerType<Meta::UnRef<S> > )
 auto ScanfDev<S>::find() -> OptStr // ^aaaaaa##aaaaaaaaaaaa#opt;
  {
   for(;;)
@@ -369,70 +364,44 @@ auto ScanfDev<S>::find() -> OptStr // ^aaaaaa##aaaaaaaaaaaa#opt;
 
 /* class ScanobjDev<S> */
 
-template <class S>
-class ScanobjDev : NoCopy
+template <class S> requires ( ScannerType<Meta::UnRef<S> > )
+class ScanobjDev<S> : NoCopy
  {
    S inp;
 
   private:
 
-   // step_tuple
+   // expand
 
-   void step_tuple(const Tuple<> &) {}
+   void expand(const Tuple<> &) {}
 
    template <class T>
-   void step_tuple(Tuple<T> &tuple) { step(tuple.first); }
+   void expand(Tuple<T> &tuple) { (*this) >> tuple.first ; }
 
    template <class T1,class T2,class ... TT>
-   void step_tuple(Tuple<T1,T2,TT...> &tuple)
+   void expand(Tuple<T1,T2,TT...> &tuple)
     {
-     step(tuple.first);
-     step_tuple(tuple.rest);
+     (*this) >> tuple.first ;
+
+     expand(tuple.rest);
     }
 
-   // step
+   // operator >>
 
    template <class T>
-   void step(T &t)
+   ScanobjDev<S> & operator >> (T &t)
     {
      ScanAdapter<T>::Scan(inp,t);
+
+     return *this;
     }
 
    template <class ... TT>
-   void step(Tuple<TT...> &tuple)
+   ScanobjDev<S> & operator >> (Tuple<TT...> &tuple)
     {
-     step_tuple(tuple);
-    }
+     expand(tuple);
 
-   // scan
-
-   void scan() {}
-
-   template <class T1,class ... TT>
-   void scan(T1 &t1,TT & ... tt)
-    {
-     step(t1);
-
-     scan(tt...);
-    }
-
-   template <class T1,class T2,class ... TT>
-   void scan(T1 &t1,T2 &t2,TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-
-     scan(tt...);
-    }
-
-   template <class T1,class T2,class T3,class ... TT>
-   void scan(T1 &t1,T2 &t2,T3 &t3,TT & ... tt)
-    {
-     step(t1);
-     step(t2);
-     step(t3);
-
-     scan(tt...);
+     return *this;
     }
 
   public:
@@ -445,7 +414,7 @@ class ScanobjDev : NoCopy
    template <class ... TT>
    void operator () (TT & ... tt)
     {
-     scan(tt...);
+     (void)( (*this) >> ... >> tt );
     }
  };
 
@@ -459,8 +428,7 @@ struct BindScanOptType
 
   BindScanOptType(const OptType &opt_,T &t_) : opt(opt_),t(t_) {}
 
-  template <class S>
-  void scan(S &inp)
+  void scan(ScannerType &inp)
    {
     ScanAdapter<T>::Scan(inp,opt,t);
    }
@@ -482,8 +450,7 @@ struct ScanProxySet : ScanOptAdapter<ProxySet>
 
     explicit ProxyType(T &ret_) : ret(ret_) {}
 
-    template <class S>
-    void scan(S &inp)
+    void scan(ScannerType &inp)
      {
       ProxySet set;
 
@@ -492,8 +459,7 @@ struct ScanProxySet : ScanOptAdapter<ProxySet>
       set.map(ret);
      }
 
-    template <class S,class OptType>
-    void scan(S &inp,const OptType &opt)
+    void scan(ScannerType &inp,const AnyType &opt)
      {
       ProxySet set;
 
@@ -506,26 +472,26 @@ struct ScanProxySet : ScanOptAdapter<ProxySet>
 
 /* Scanf() */
 
-template <class S,class ... TT>
+template <class S,ScanableType ... TT>
 void Scanf(S &&inp,const char *format,TT && ... tt) CCORE_NOINLINE ;
 
-template <class S,class ... TT>
+template <class S,ScanableType ... TT>
 void Scanf(S &&inp,const char *format,TT && ... tt)
  {
-  ScanfDev<ScanInpType<Meta::UnRef<S> > > dev(inp,format);
+  ScanfDev<ScanInpType<Meta::UnConst<Meta::UnRef<S> > > > dev(inp,format);
 
   dev(tt...);
  }
 
 /* Scanobj() */
 
-template <class S,class ... TT>
+template <class S,ScanableType ... TT>
 void Scanobj(S &&inp,TT && ... tt) CCORE_NOINLINE ;
 
-template <class S,class ... TT>
+template <class S,ScanableType ... TT>
 void Scanobj(S &&inp,TT && ... tt)
  {
-  ScanobjDev<ScanInpType<Meta::UnRef<S> > > dev(inp);
+  ScanobjDev<ScanInpType<Meta::UnConst<Meta::UnRef<S> > > > dev(inp);
 
   dev(tt...);
  }

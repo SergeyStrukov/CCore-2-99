@@ -1,7 +1,7 @@
 /* ScanBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -30,8 +30,8 @@ class ScanString;
 
 /* struct ScanInpAdapter<S> */
 
-template <class S>
-struct ScanInpAdapter
+template <class S> requires ( ScannerType<Meta::UnRef<typename S::ScanInpType> > )
+struct ScanInpAdapter<S>
  {
   using ScanInpType = typename S::ScanInpType ;
  };

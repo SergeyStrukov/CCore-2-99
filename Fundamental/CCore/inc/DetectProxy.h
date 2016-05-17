@@ -46,11 +46,6 @@ concept bool Has_OptType = requires()
 template <class T>
 concept bool No_OptType = !Has_OptType<T> ;
 
-/* const ProxySwitch<T> */
-
-template <class T>
-const int ProxySwitch = Has_ProxyType<T>?(Has_OptType<T>?2:1):0 ;
-
 } // namespace CCore
 
 #endif

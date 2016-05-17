@@ -1,7 +1,7 @@
 /* ScanTools.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -20,6 +20,26 @@
 
 namespace CCore {
 
+/* concept CharStreamType<S> */
+
+template <class S>
+concept bool CharStreamType = requires(S &obj,const S &cobj)
+ {
+  { +cobj } -> bool ;
+
+  { *cobj } -> char ;
+
+  ++obj;
+ } ;
+
+/* concept CharFailStreamType<S> */
+
+template <class S>
+concept bool CharFailStreamType = CharStreamType<S> && requires(S &obj)
+ {
+  obj.fail();
+ } ;
+
 /* CharBaseValue() */
 
 inline int CharBaseValue(char ch,unsigned base)
@@ -33,16 +53,14 @@ inline int CharBaseValue(char ch,unsigned base)
 
 /* SkipSpace() */
 
-template <class S>
-void SkipSpace(S &inp)
+void SkipSpace(CharStreamType &inp)
  {
   for(; +inp && CharIsSpace(*inp) ;++inp);
  }
 
 /* ProbeChar() */
 
-template <class S>
-bool ProbeChar(S &inp,char ch)
+bool ProbeChar(CharStreamType &inp,char ch)
  {
   if( +inp )
     {
@@ -65,7 +83,7 @@ void PassChars(S &)
   // do nothing
  }
 
-template <class S,class C,class ... CC>
+template <CharFailStreamType S,class C,class ... CC>
 void PassChars(S &inp,C ch,CC ... cc)
  {
   if( +inp && (*inp)==char(ch) )
@@ -82,8 +100,7 @@ void PassChars(S &inp,C ch,CC ... cc)
 
 /* PassOneOfChar() */
 
-template <class S,class Func>
-void PassOneOfChar(S &inp,Func func)
+void PassOneOfChar(CharFailStreamType &inp,FuncType<bool,char> func)
  {
   if( +inp && func(*inp) )
     {
@@ -97,8 +114,7 @@ void PassOneOfChar(S &inp,Func func)
 
 /* SkipAllOfChar() */
 
-template <class S,class Func>
-void SkipAllOfChar(S &inp,Func func)
+void SkipAllOfChar(CharStreamType &inp,FuncType<bool,char> func)
  {
   for(; +inp && func(*inp) ;++inp);
  }

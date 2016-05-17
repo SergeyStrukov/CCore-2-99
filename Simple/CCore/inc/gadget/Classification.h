@@ -259,6 +259,30 @@ concept bool PrinterType = requires(P &out,char ch,ulen len,const char *str)
   out.flush();
  } ;
 
+/* concept ScannerType<S> */
+
+template <class S>
+concept bool ScannerType = requires(S &obj,const S &cobj)
+ {
+  typename S::ScanInpType;
+
+  { obj.scanRef() } -> typename S::ScanInpType ;
+
+  { +cobj } -> bool ;
+
+  { !cobj } -> bool ;
+
+  { *cobj } -> char ;
+
+  ++obj;
+
+  { cobj.isOk() } -> bool ;
+
+  { cobj.isFailed() } -> bool ;
+
+  obj.fail();
+ } ;
+
 } // namespace CCore
 
 #endif

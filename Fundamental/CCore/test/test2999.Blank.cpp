@@ -15,6 +15,8 @@
 
 #include <CCore/test/test.h>
 
+#include <typeinfo>
+
 namespace App {
 
 namespace Private_2999 {
