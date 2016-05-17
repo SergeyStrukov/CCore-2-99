@@ -1,7 +1,7 @@
 /* CharProp.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -17,7 +17,6 @@
 #define CCore_inc_CharProp_h
 
 #include <CCore/inc/Printf.h>
-#include <CCore/inc/StrParse.h>
 
 namespace CCore {
 
@@ -243,7 +242,7 @@ int CharHexValue(Char ch) { return CharCode(ch).hexValue(); }
 
 /* ParseSpace() */
 
-template <class Dev>
+template <CharPeekType Dev>
 void ParseSpace(Dev &dev)
  {
   for(;;++dev)

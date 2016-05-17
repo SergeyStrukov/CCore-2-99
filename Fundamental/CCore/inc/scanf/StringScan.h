@@ -17,7 +17,6 @@
 #define CCore_inc_StringScan_h
 
 #include <CCore/inc/String.h>
-#include <CCore/inc/StrParse.h>
 
 #include <CCore/inc/scanf/ScanTools.h>
 

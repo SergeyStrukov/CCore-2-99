@@ -16,8 +16,6 @@
 #ifndef CCore_inc_scanf_IntScan_h
 #define CCore_inc_scanf_IntScan_h
 
-#include <CCore/inc/StrParse.h>
-
 #include <CCore/inc/scanf/ScanTools.h>
 
 namespace CCore {
@@ -215,25 +213,19 @@ class DetectIntFormat : NoCopy
        }
     }
 
-   template <class S>
-   IntScanBase finish(int max_dig,S &inp);
+   IntScanBase finish(int max_dig,ScannerType &inp);
 
-   template <class S>
-   IntScanBase detect_0X(S &inp);
+   IntScanBase detect_0X(ScannerType &inp);
 
-   template <class S>
-   IntScanBase detect_0(S &inp);
+   IntScanBase detect_0(ScannerType &inp);
 
-   template <class S>
-   IntScanBase detect_nosign(S &inp);
+   IntScanBase detect_nosign(ScannerType &inp);
 
-   template <class S>
-   IntScanBase detect(S &inp);
+   IntScanBase detect(ScannerType &inp);
 
   public:
 
-   template <class S>
-   explicit DetectIntFormat(S &inp);
+   explicit DetectIntFormat(ScannerType &inp);
 
    using ScanInpType = DetectIntFormat<Len> & ;
 
@@ -261,8 +253,7 @@ class DetectIntFormat : NoCopy
  };
 
 template <ulen Len>
-template <class S>
-IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
+IntScanBase DetectIntFormat<Len>::finish(int max_dig,ScannerType &inp)
  {
   bool bin_flag=false;
 
@@ -302,8 +293,7 @@ IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
  }
 
 template <ulen Len>
-template <class S>
-IntScanBase DetectIntFormat<Len>::detect_0X(S &inp)
+IntScanBase DetectIntFormat<Len>::detect_0X(ScannerType &inp)
  {
   if( +inp )
     {
@@ -344,8 +334,7 @@ IntScanBase DetectIntFormat<Len>::detect_0X(S &inp)
  }
 
 template <ulen Len>
-template <class S>
-IntScanBase DetectIntFormat<Len>::detect_0(S &inp)
+IntScanBase DetectIntFormat<Len>::detect_0(ScannerType &inp)
  {
   if( +inp )
     {
@@ -377,8 +366,7 @@ IntScanBase DetectIntFormat<Len>::detect_0(S &inp)
  }
 
 template <ulen Len>
-template <class S>
-IntScanBase DetectIntFormat<Len>::detect_nosign(S &inp)
+IntScanBase DetectIntFormat<Len>::detect_nosign(ScannerType &inp)
  {
   if( +inp )
     {
@@ -419,8 +407,7 @@ IntScanBase DetectIntFormat<Len>::detect_nosign(S &inp)
  }
 
 template <ulen Len>
-template <class S>
-IntScanBase DetectIntFormat<Len>::detect(S &inp)
+IntScanBase DetectIntFormat<Len>::detect(ScannerType &inp)
  {
   if( +inp )
     {
@@ -444,8 +431,7 @@ IntScanBase DetectIntFormat<Len>::detect(S &inp)
  }
 
 template <ulen Len>
-template <class S>
-DetectIntFormat<Len>::DetectIntFormat(S &inp)
+DetectIntFormat<Len>::DetectIntFormat(ScannerType &inp)
  {
   cur=Range(buf);
 
