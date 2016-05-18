@@ -1,7 +1,7 @@
 /* CompactList.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -201,13 +201,13 @@ class CompactList : NoCopy
    // apply
 
    template <class FuncInit>
-   void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInit func_init) { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    // swap/move objects
 
@@ -601,22 +601,22 @@ class CompactList2 : NoCopy
    // apply
 
    template <class FuncInit>
-   void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInit func_init) { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void applyReverse(FuncInit func_init) { Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInit func_init) { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    template <class FuncInit>
-   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    template <class FuncInit>
-   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse_const(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    // swap/move objects
 
@@ -1087,22 +1087,22 @@ class CompactCircularList : NoCopy
    // apply
 
    template <class FuncInit>
-   void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInit func_init) { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    template <class FuncInit>
-   void applyReverse(FuncInit func_init) { Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInit func_init) { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    template <class FuncInit>
-   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    template <class FuncInit>
-   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse_const(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    // swap/move objects
 

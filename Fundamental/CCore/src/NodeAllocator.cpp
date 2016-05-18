@@ -1,7 +1,7 @@
 /* NodeAllocator.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -77,7 +77,7 @@ MemBlockPool::MemBlockPool(ulen len_,ulen align_of,ulen alloc_count_)
      Printf(Exception,"CCore::MemBlockPool::MemBlockPool(len=#;,...) : too large len",len_);
     }
 
-  alloc_count=Min<ulen>(alloc_count_,(MaxULen-Delta)/len);
+  alloc_count=Min<ulen>(Max<ulen>(alloc_count_,1),(MaxULen-Delta)/len);
 
   if( !alloc_count )
     {

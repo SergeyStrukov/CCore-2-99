@@ -30,6 +30,7 @@ obj/CapString.o \
 obj/CharProp.o \
 obj/CheckPlatformBase.o \
 obj/CheckedData.o \
+obj/Classification.o \
 obj/ClientWindow.o \
 obj/CmdInput.o \
 obj/Cmp.o \
@@ -181,6 +182,7 @@ obj/NodeAllocator.o \
 obj/Nothing.o \
 obj/ObjHost.o \
 obj/ObjectDomain.o \
+obj/OpAddHelper.o \
 obj/Optional.o \
 obj/OwnPtr.o \
 obj/PKE.o \
@@ -395,6 +397,7 @@ obj/CapString.s \
 obj/CharProp.s \
 obj/CheckPlatformBase.s \
 obj/CheckedData.s \
+obj/Classification.s \
 obj/ClientWindow.s \
 obj/CmdInput.s \
 obj/Cmp.s \
@@ -546,6 +549,7 @@ obj/NodeAllocator.s \
 obj/Nothing.s \
 obj/ObjHost.s \
 obj/ObjectDomain.s \
+obj/OpAddHelper.s \
 obj/Optional.s \
 obj/OwnPtr.s \
 obj/PKE.s \
@@ -760,6 +764,7 @@ obj/CapString.dep \
 obj/CharProp.dep \
 obj/CheckPlatformBase.dep \
 obj/CheckedData.dep \
+obj/Classification.dep \
 obj/ClientWindow.dep \
 obj/CmdInput.dep \
 obj/Cmp.dep \
@@ -911,6 +916,7 @@ obj/NodeAllocator.dep \
 obj/Nothing.dep \
 obj/ObjHost.dep \
 obj/ObjectDomain.dep \
+obj/OpAddHelper.dep \
 obj/Optional.dep \
 obj/OwnPtr.dep \
 obj/PKE.dep \
@@ -1198,6 +1204,9 @@ obj/CheckPlatformBase.o : ../../Simple/CCore/src/base/CheckPlatformBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CheckedData.o : ../../Applied/CCore/src/net/CheckedData.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Classification.o : ../../Simple/CCore/src/gadget/Classification.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ClientWindow.o : ../../Desktop/CCore/src/video/ClientWindow.cpp
@@ -1651,6 +1660,9 @@ obj/ObjHost.o : ../../Fundamental/CCore/src/ObjHost.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ObjectDomain.o : ../../Fundamental/CCore/src/ObjectDomain.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/OpAddHelper.o : ../../Simple/CCore/src/gadget/OpAddHelper.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Optional.o : ../../Fundamental/CCore/src/Optional.cpp
@@ -2288,6 +2300,9 @@ obj/CheckPlatformBase.s : ../../Simple/CCore/src/base/CheckPlatformBase.cpp
 obj/CheckedData.s : ../../Applied/CCore/src/net/CheckedData.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Classification.s : ../../Simple/CCore/src/gadget/Classification.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ClientWindow.s : ../../Desktop/CCore/src/video/ClientWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2739,6 +2754,9 @@ obj/ObjHost.s : ../../Fundamental/CCore/src/ObjHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ObjectDomain.s : ../../Fundamental/CCore/src/ObjectDomain.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/OpAddHelper.s : ../../Simple/CCore/src/gadget/OpAddHelper.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Optional.s : ../../Fundamental/CCore/src/Optional.cpp
@@ -3376,6 +3394,9 @@ obj/CheckPlatformBase.dep : ../../Simple/CCore/src/base/CheckPlatformBase.cpp
 obj/CheckedData.dep : ../../Applied/CCore/src/net/CheckedData.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CheckedData.o $< -MF $@
 
+obj/Classification.dep : ../../Simple/CCore/src/gadget/Classification.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Classification.o $< -MF $@
+
 obj/ClientWindow.dep : ../../Desktop/CCore/src/video/ClientWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ClientWindow.o $< -MF $@
 
@@ -3828,6 +3849,9 @@ obj/ObjHost.dep : ../../Fundamental/CCore/src/ObjHost.cpp
 
 obj/ObjectDomain.dep : ../../Fundamental/CCore/src/ObjectDomain.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ObjectDomain.o $< -MF $@
+
+obj/OpAddHelper.dep : ../../Simple/CCore/src/gadget/OpAddHelper.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/OpAddHelper.o $< -MF $@
 
 obj/Optional.dep : ../../Fundamental/CCore/src/Optional.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Optional.o $< -MF $@

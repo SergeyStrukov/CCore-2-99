@@ -1,7 +1,7 @@
 /* NodeAllocator.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -33,7 +33,7 @@ template <class Node> class NodeAllocator;
 
 class MemBlockPool;
 
-template <class Node> class NodePoolAllocator;
+template <NothrowDtorType Node> class NodePoolAllocator;
 
 /* class NodeAllocator<Node> */
 
@@ -73,7 +73,7 @@ class NodeAllocator : NoCopy
    // methods
 
    template <class ... SS>
-   Node * alloc(SS && ... ss)
+   Node * alloc(SS && ... ss) requires ( ConstructibleType<Node,SS...> )
     {
      Node *ret=new Node( std::forward<SS>(ss)... );
 
@@ -271,16 +271,16 @@ class MemBlockPool : NoCopy
     }
  };
 
+/* concept MemBlockPool_LenCheck<ulen Len,ulen AlignOf> */
+
 template <ulen Len,ulen AlignOf>
-const bool MemBlockPool_LenCheck = MemBlockPool::LenCheckCtor<Len,AlignOf>::Ret ;
+concept bool MemBlockPool_LenCheck = (bool)MemBlockPool::LenCheckCtor<Len,AlignOf>::Ret ;
 
 /* class NodePoolAllocator<Node> */
 
-template <class Node>
+template <NothrowDtorType Node>
 class NodePoolAllocator : NoCopy
  {
-   static_assert( MemBlockPool_LenCheck<sizeof (Node),alignof (Node)> ,"CCore::NodePoolAllocator<Node> : bad Node");
-
    MemBlockPool pool;
 
    ulen count;
@@ -289,7 +289,7 @@ class NodePoolAllocator : NoCopy
 
    // constructors
 
-   explicit NodePoolAllocator(ulen pool_count=MemBlockPool::DefaultCount) noexcept
+   explicit NodePoolAllocator(ulen pool_count=MemBlockPool::DefaultCount) noexcept requires ( MemBlockPool_LenCheck<sizeof (Node),alignof (Node)> )
     : pool(sizeof (Node),alignof (Node),pool_count),
       count(0)
     {
@@ -325,7 +325,7 @@ class NodePoolAllocator : NoCopy
    // methods
 
    template <class ... SS>
-   Node * alloc(SS && ... ss)
+   Node * alloc(SS && ... ss) requires ( ConstructibleType<Node,SS...> )
     {
      MemBlockPool::AllocGuard guard(pool);
 
@@ -342,7 +342,7 @@ class NodePoolAllocator : NoCopy
     {
      count--;
 
-     node->~Node(); // assume no-throw
+     node->~Node();
 
      pool.free(node);
     }

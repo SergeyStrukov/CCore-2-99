@@ -1,7 +1,7 @@
 /* CompactNodeAllocator.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,16 +23,16 @@ namespace CCore {
 
 /* classes */
 
-template <class Node> class CompactNodeAllocator;
+template <NothrowDtorType Node> class CompactNodeAllocator;
 
 /* class CompactNodeAllocator<Node> */
 
-template <class Node>
+template <NothrowDtorType Node>
 class CompactNodeAllocator : NoCopy
  {
    using ListAlgo = DLink<CollectorHeader>::LinearAlgo<&CollectorHeader::link> ;
 
-   struct Flags
+   struct Flags // not using both, warning supression
     {
      enum NoThrowFlagType
       {
@@ -121,7 +121,7 @@ class CompactNodeAllocator : NoCopy
    // methods
 
    template <class ... SS>
-   Node * alloc(SS && ... ss)
+   Node * alloc(SS && ... ss) requires ( ConstructibleType<Node,SS...> )
     {
      Node *ret=Base::Append_fill(provide(), std::forward<SS>(ss)... );
 

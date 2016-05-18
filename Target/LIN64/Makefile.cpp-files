@@ -9,6 +9,7 @@
 ../../Simple/CCore/src/DynObject.cpp
 ../../Simple/CCore/src/Fifo.cpp
 ../../Simple/CCore/src/FunctorType.cpp
+../../Simple/CCore/src/gadget/Classification.cpp
 ../../Simple/CCore/src/gadget/CreateAt.cpp
 ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 ../../Simple/CCore/src/gadget/ExceptionType.cpp
@@ -24,6 +25,7 @@
 ../../Simple/CCore/src/gadget/NoCopy.cpp
 ../../Simple/CCore/src/gadget/Nothing.cpp
 ../../Simple/CCore/src/gadget/NoThrowFlags.cpp
+../../Simple/CCore/src/gadget/OpAddHelper.cpp
 ../../Simple/CCore/src/gadget/Place.cpp
 ../../Simple/CCore/src/gadget/PosSub.cpp
 ../../Simple/CCore/src/gadget/PtrLen.cpp

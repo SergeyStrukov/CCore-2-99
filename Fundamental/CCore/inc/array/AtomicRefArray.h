@@ -496,13 +496,13 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
 
    // apply
 
-   void apply_modify(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(modify(),func_init); }
+   auto apply_modify(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(modify(),func_init); }
 
-   void apply(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   void applyReverse_modify(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(modifyReverse(),func_init); }
+   auto applyReverse_modify(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(modifyReverse(),func_init); }
 
-   void applyReverse(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
    // swap/move objects
 

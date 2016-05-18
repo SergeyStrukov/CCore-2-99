@@ -1,7 +1,7 @@
 /* TaskMemStack.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -229,22 +229,22 @@ class StackArray : NoCopy
    // apply
 
    template <class FuncInit>
-   void apply(FuncInit func_init) { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInit func_init) { return Algon::ApplyToRange(Range(*this),func_init); }
 
    template <class FuncInit>
-   void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
    template <class FuncInit>
-   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
    template <class FuncInit>
-   void applyReverse(FuncInit func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInit func_init) { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
    template <class FuncInit>
-   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInit func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
    template <class FuncInit>
-   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse_const(FuncInit func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
  };
 
 template <class T,class Algo>

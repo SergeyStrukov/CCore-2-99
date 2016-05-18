@@ -109,17 +109,17 @@ class SimpleArray : NoCopy
 
    // apply
 
-   void apply(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   void apply(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   void apply_const(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   void applyReverse(FuncInitArgType<T &> func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   void applyReverse(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   void applyReverse_const(FuncInitArgType<const T &> func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
    // swap/move objects
 
