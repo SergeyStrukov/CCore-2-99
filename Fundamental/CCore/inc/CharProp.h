@@ -20,6 +20,11 @@
 
 namespace CCore {
 
+/* concept CharCodeType<Char> */
+
+template <class Char>
+concept bool CharCodeType = Meta::OneOf<Char,char,signed char,unsigned char> ;
+
 /* CutLine() */
 
 StrLen CutLine(StrLen &text);
@@ -38,12 +43,8 @@ class ASCIICode
 
    using CodeType = uint8 ;
 
-   template <class Char> struct Map;
-
    static char InverseMap(CodeType code) { return char(code); }
 
-   //
-   // Char ch -> code
    //
    // (CodeType)InverseMap(code) == code
    //
@@ -92,8 +93,7 @@ class ASCIICode
 
    ASCIICode() : code(0) {}
 
-   template <class Char>
-   explicit ASCIICode(Char ch) : code( Map<Char>(ch) ) {}
+   explicit ASCIICode(CharCodeType ch) : code(ch) {}
 
    // properties
 
@@ -133,8 +133,7 @@ class ASCIICode
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      if( code>=32 && code!=127 )
        {
@@ -157,36 +156,6 @@ class ASCIICode
     }
  };
 
-template <>
-struct ASCIICode::Map<char>
- {
-  CodeType code;
-
-  Map(char ch) : code(ch) {}
-
-  operator CodeType() const { return code; }
- };
-
-template <>
-struct ASCIICode::Map<signed char>
- {
-  CodeType code;
-
-  Map(signed char ch) : code(ch) {}
-
-  operator CodeType() const { return code; }
- };
-
-template <>
-struct ASCIICode::Map<unsigned char>
- {
-  CodeType code;
-
-  Map(unsigned char ch) : code(ch) {}
-
-  operator CodeType() const { return code; }
- };
-
 /* type CharCode */
 
 using CharCode = ASCIICode ;
@@ -203,8 +172,7 @@ class PrintCString
 
    using PrintOptType = StrPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      if( opt.quoted ) out.put('"');
 
@@ -216,29 +184,21 @@ class PrintCString
 
 /* functions */
 
-template <class Char>
-bool CharIsSpecial(Char ch) { return CharCode(ch).isSpecial(); }
+bool CharIsSpecial(CharCodeType ch) { return CharCode(ch).isSpecial(); }
 
-template <class Char>
-bool CharIsVisible(Char ch) { return CharCode(ch).isVisible(); }
+bool CharIsVisible(CharCodeType ch) { return CharCode(ch).isVisible(); }
 
-template <class Char>
-bool CharIsPrintable(Char ch) { return CharCode(ch).isPrintable(); }
+bool CharIsPrintable(CharCodeType ch) { return CharCode(ch).isPrintable(); }
 
-template <class Char>
-bool CharIsSpace(Char ch) { return CharCode(ch).isSpace(); }
+bool CharIsSpace(CharCodeType ch) { return CharCode(ch).isSpace(); }
 
-template <class Char>
-bool CharIsPunct(Char ch) { return CharCode(ch).isPunct(); }
+bool CharIsPunct(CharCodeType ch) { return CharCode(ch).isPunct(); }
 
-template <class Char>
-bool CharIsSpaceOrPunct(Char ch) { return CharCode(ch).isSpaceOrPunct(); }
+bool CharIsSpaceOrPunct(CharCodeType ch) { return CharCode(ch).isSpaceOrPunct(); }
 
-template <class Char>
-int CharDecValue(Char ch) { return CharCode(ch).decValue(); }
+int CharDecValue(CharCodeType ch) { return CharCode(ch).decValue(); }
 
-template <class Char>
-int CharHexValue(Char ch) { return CharCode(ch).hexValue(); }
+int CharHexValue(CharCodeType ch) { return CharCode(ch).hexValue(); }
 
 /* ParseSpace() */
 
