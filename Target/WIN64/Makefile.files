@@ -145,6 +145,7 @@ obj/Layout.o \
 obj/Len.o \
 obj/LineInput.o \
 obj/List.o \
+obj/ListCursor.o \
 obj/LockObject.o \
 obj/Locked.o \
 obj/Log.o \
@@ -512,6 +513,7 @@ obj/Layout.s \
 obj/Len.s \
 obj/LineInput.s \
 obj/List.s \
+obj/ListCursor.s \
 obj/LockObject.s \
 obj/Locked.s \
 obj/Log.s \
@@ -879,6 +881,7 @@ obj/Layout.dep \
 obj/Len.dep \
 obj/LineInput.dep \
 obj/List.dep \
+obj/ListCursor.dep \
 obj/LockObject.dep \
 obj/Locked.dep \
 obj/Log.dep \
@@ -1549,6 +1552,9 @@ obj/LineInput.o : ../../Applied/CCore/src/LineInput.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/List.o : ../../Fundamental/CCore/src/List.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ListCursor.o : ../../Fundamental/CCore/src/ListCursor.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/LockObject.o : ../../Simple/CCore/src/gadget/LockObject.cpp
@@ -2645,6 +2651,9 @@ obj/LineInput.s : ../../Applied/CCore/src/LineInput.cpp
 obj/List.s : ../../Fundamental/CCore/src/List.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ListCursor.s : ../../Fundamental/CCore/src/ListCursor.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/LockObject.s : ../../Simple/CCore/src/gadget/LockObject.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3738,6 +3747,9 @@ obj/LineInput.dep : ../../Applied/CCore/src/LineInput.cpp
 
 obj/List.dep : ../../Fundamental/CCore/src/List.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/List.o $< -MF $@
+
+obj/ListCursor.dep : ../../Fundamental/CCore/src/ListCursor.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ListCursor.o $< -MF $@
 
 obj/LockObject.dep : ../../Simple/CCore/src/gadget/LockObject.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LockObject.o $< -MF $@

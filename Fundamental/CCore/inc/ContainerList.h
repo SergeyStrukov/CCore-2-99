@@ -18,15 +18,12 @@
 
 #include <CCore/inc/NodeAllocator.h>
 #include <CCore/inc/List.h>
+#include <CCore/inc/ListCursor.h>
 #include <CCore/inc/algon/ApplyToRange.h>
 
 namespace CCore {
 
 /* classes */
-
-template <class Cur,class T> struct ListCursor;
-
-template <class Cur,class T> struct ListCountCursor;
 
 template <NothrowDtorType T,template <class Node> class Allocator=NodeAllocator> class LinearSList;
 
@@ -34,70 +31,11 @@ template <NothrowDtorType T,template <class Node> class Allocator=NodeAllocator>
 
 template <NothrowDtorType T,template <class Node> class Allocator=NodeAllocator> class CircularSList;
 
-template <class T,template <class Node> class Allocator=NodeAllocator> class LinearDList;
+template <NothrowDtorType T,template <class Node> class Allocator=NodeAllocator> class LinearDList;
 
-template <class T,template <class Node> class Allocator=NodeAllocator> class LinearDList2;
+template <NothrowDtorType T,template <class Node> class Allocator=NodeAllocator> class LinearDList2;
 
-template <class T,template <class Node> class Allocator=NodeAllocator> class CircularDList;
-
-/* struct ListCursor<Cur,T> */
-
-template <class Cur,class T>
-struct ListCursor
- {
-  Cur cur;
-
-  ListCursor() : cur(0) {}
-
-  ListCursor(const Cur &cur_) : cur(cur_) {}
-
-  // object ptr
-
-  void * operator + () const { return +cur; }
-
-  bool operator ! () const { return !cur; }
-
-  T * getPtr() const { return &cur->obj; }
-
-  T & operator * () const { return cur->obj; }
-
-  T * operator -> () const { return &cur->obj; }
-
-  // cursor
-
-  void operator ++ () { ++cur; }
- };
-
-/* struct ListCountCursor<Cur,T> */
-
-template <class Cur,class T>
-struct ListCountCursor
- {
-  Cur cur;
-  ulen count;
-
-  ListCountCursor() : cur(0),count(0) {}
-
-  ListCountCursor(const Cur &cur_,ulen count_) : cur(cur_),count(count_) {}
-
-  // object ptr
-
-  ulen operator + () const { return count; }
-
-  bool operator ! () const { return !count; }
-
-  T * getPtr() const { return &cur->obj; }
-
-  T & operator * () const { return cur->obj; }
-
-  T * operator -> () const { return &cur->obj; }
-
-  // cursor
-
-  void operator ++ () { ++cur; count--; }
-
-  bool operator != (ListCountCursor<Cur,T> obj) const { return count!=obj.count; }
- };
+template <NothrowDtorType T,template <class Node> class Allocator=NodeAllocator> class CircularDList;
 
 /* class LinearSList<T,Allocator> */
 
@@ -707,7 +645,7 @@ ulen CircularSList<T,Allocator>::erase()
 
 /* class LinearDList<T,Allocator> */
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 class LinearDList : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -783,32 +721,7 @@ class LinearDList : NoCopy
    const T * getTop_const() const { return GetObject(list.top); }
 
    template <class S>
-   struct Cur
-    {
-     typename Algo::Cur cur;
-
-     Cur() : cur(0) {}
-
-     Cur(typename Algo::Cur cur_) : cur(cur_) {}
-
-     // object ptr
-
-     void * operator + () const { return +cur; }
-
-     bool operator ! () const { return !cur; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; }
-
-     void operator -- () { --cur; }
-    };
+   using Cur = ListCursor<typename Algo::Cur,S> ;
 
    Cur<T> getStart() { return list.start(); }
 
@@ -817,33 +730,7 @@ class LinearDList : NoCopy
    Cur<const T> getStart_const() const { return list.start(); }
 
    template <class S>
-   struct CountCur
-    {
-     typename Algo::Cur cur;
-     ulen count;
-
-     CountCur() : cur(0),count(0) {}
-
-     CountCur(typename Algo::Cur cur_,ulen count_) : cur(cur_),count(count_) {}
-
-     // object ptr
-
-     ulen operator + () const { return count; }
-
-     bool operator ! () const { return !count; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; count--; }
-
-     bool operator != (CountCur<S> obj) const { return count!=obj.count; }
-    };
+   using CountCur = ListCountCursor<typename Algo::Cur,S> ;
 
    CountCur<T> begin() { return CountCur<T>(list.start(),getCount()); }
 
@@ -856,13 +743,13 @@ class LinearDList : NoCopy
    // ins/del
 
    template <class ... SS>
-   T * ins(SS && ... ss);
+   T * ins(SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    template <class S,class ... SS>
-   T * insBefore(Cur<S> pos,SS && ... ss); // +pos
+   T * insBefore(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insAfter(Cur<S> pos,SS && ... ss); // +pos
+   T * insAfter(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    bool del();
 
@@ -873,14 +760,11 @@ class LinearDList : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
    // swap/move objects
 
@@ -897,7 +781,7 @@ class LinearDList : NoCopy
     }
  };
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 void LinearDList<T,Allocator>::destroy(Node *node)
  {
   while( node )
@@ -910,9 +794,9 @@ void LinearDList<T,Allocator>::destroy(Node *node)
     }
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
-T * LinearDList<T,Allocator>::ins(SS && ... ss)
+T * LinearDList<T,Allocator>::ins(SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -921,9 +805,9 @@ T * LinearDList<T,Allocator>::ins(SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * LinearDList<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss)
+T * LinearDList<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -932,9 +816,9 @@ T * LinearDList<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * LinearDList<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss)
+T * LinearDList<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
 
@@ -943,20 +827,20 @@ T * LinearDList<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 bool LinearDList<T,Allocator>::del()
  {
   return allocator.free(list.del());
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S>
 void LinearDList<T,Allocator>::delAndMove(Cur<S> &pos)
  {
   allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 ulen LinearDList<T,Allocator>::erase()
  {
   Node *node=list.top;
@@ -972,7 +856,7 @@ ulen LinearDList<T,Allocator>::erase()
 
 /* class LinearDList2<T,Allocator> */
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 class LinearDList2 : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -1054,32 +938,7 @@ class LinearDList2 : NoCopy
    const T * getLast_const() const { return GetObject(list.last); }
 
    template <class S>
-   struct Cur
-    {
-     typename Algo::Cur cur;
-
-     Cur() : cur(0) {}
-
-     Cur(typename Algo::Cur cur_) : cur(cur_) {}
-
-     // object ptr
-
-     void * operator + () const { return +cur; }
-
-     bool operator ! () const { return !cur; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; }
-
-     void operator -- () { --cur; }
-    };
+   using Cur = ListCursor<typename Algo::Cur,S> ;
 
    Cur<T> getStart() { return list.start(); }
 
@@ -1088,32 +947,7 @@ class LinearDList2 : NoCopy
    Cur<const T> getStart_const() const { return list.start(); }
 
    template <class S>
-   struct RevCur
-    {
-     typename Algo::RevCur cur;
-
-     RevCur() : cur(0) {}
-
-     RevCur(typename Algo::RevCur cur_) : cur(cur_) {}
-
-     // object ptr
-
-     void * operator + () const { return +cur; }
-
-     bool operator ! () const { return !cur; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; }
-
-     void operator -- () { --cur; }
-    };
+   using RevCur = ListCursor<typename Algo::RevCur,S> ;
 
    RevCur<T> getStartReverse() { return list.start_rev(); }
 
@@ -1122,33 +956,7 @@ class LinearDList2 : NoCopy
    RevCur<const T> getStartReverse_const() const { return list.start_rev(); }
 
    template <class S>
-   struct CountCur
-    {
-     typename Algo::Cur cur;
-     ulen count;
-
-     CountCur() : cur(0),count(0) {}
-
-     CountCur(typename Algo::Cur cur_,ulen count_) : cur(cur_),count(count_) {}
-
-     // object ptr
-
-     ulen operator + () const { return count; }
-
-     bool operator ! () const { return !count; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; count--; }
-
-     bool operator != (CountCur<S> obj) const { return count!=obj.count; }
-    };
+   using CountCur = ListCountCursor<typename Algo::Cur,S> ;
 
    CountCur<T> begin() { return CountCur<T>(list.start(),getCount()); }
 
@@ -1159,33 +967,7 @@ class LinearDList2 : NoCopy
    CountCur<const T> end() const { return CountCur<const T>(); }
 
    template <class S>
-   struct RevCountCur
-    {
-     typename Algo::RevCur cur;
-     ulen count;
-
-     RevCountCur() : cur(0),count(0) {}
-
-     RevCountCur(typename Algo::RevCur cur_,ulen count_) : cur(cur_),count(count_) {}
-
-     // object ptr
-
-     ulen operator + () const { return count; }
-
-     bool operator ! () const { return !count; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; count--; }
-
-     bool operator != (RevCountCur<S> obj) const { return count!=obj.count; }
-    };
+   using RevCountCur = ListCountCursor<typename Algo::RevCur,S> ;
 
    RevCountCur<T> rbegin() { return RevCountCur<T>(list.start_rev(),getCount()); }
 
@@ -1200,7 +982,7 @@ class LinearDList2 : NoCopy
     {
      RevCountCur<S> cur;
 
-     ReverseAdapter(RevCountCur<S> cur_) : cur(cur_) {}
+     ReverseAdapter(const RevCountCur<S> &cur_) : cur(cur_) {}
 
      RevCountCur<S> begin() const { return cur; }
 
@@ -1216,22 +998,22 @@ class LinearDList2 : NoCopy
    // ins/del
 
    template <class ... SS>
-   T * insFirst(SS && ... ss);
+   T * insFirst(SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    template <class ... SS>
-   T * insLast(SS && ... ss);
+   T * insLast(SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    template <class S,class ... SS>
-   T * insBefore(Cur<S> pos,SS && ... ss); // +pos
+   T * insBefore(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insBefore(RevCur<S> pos,SS && ... ss); // +pos
+   T * insBefore(RevCur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insAfter(Cur<S> pos,SS && ... ss); // +pos
+   T * insAfter(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insAfter(RevCur<S> pos,SS && ... ss); // +pos
+   T * insAfter(RevCur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    bool delFirst();
 
@@ -1247,23 +1029,17 @@ class LinearDList2 : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse(FuncInit func_init) { return Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse_const(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    // swap/move objects
 
@@ -1280,7 +1056,7 @@ class LinearDList2 : NoCopy
     }
  };
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 void LinearDList2<T,Allocator>::destroy(Node *node)
  {
   while( node )
@@ -1293,9 +1069,9 @@ void LinearDList2<T,Allocator>::destroy(Node *node)
     }
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
-T * LinearDList2<T,Allocator>::insFirst(SS && ... ss)
+T * LinearDList2<T,Allocator>::insFirst(SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1304,9 +1080,9 @@ T * LinearDList2<T,Allocator>::insFirst(SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
-T * LinearDList2<T,Allocator>::insLast(SS && ... ss)
+T * LinearDList2<T,Allocator>::insLast(SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1315,9 +1091,9 @@ T * LinearDList2<T,Allocator>::insLast(SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * LinearDList2<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss)
+T * LinearDList2<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1326,9 +1102,9 @@ T * LinearDList2<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * LinearDList2<T,Allocator>::insBefore(RevCur<S> pos,SS && ... ss)
+T * LinearDList2<T,Allocator>::insBefore(RevCur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1337,9 +1113,9 @@ T * LinearDList2<T,Allocator>::insBefore(RevCur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * LinearDList2<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss)
+T * LinearDList2<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1348,9 +1124,9 @@ T * LinearDList2<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * LinearDList2<T,Allocator>::insAfter(RevCur<S> pos,SS && ... ss)
+T * LinearDList2<T,Allocator>::insAfter(RevCur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1359,33 +1135,33 @@ T * LinearDList2<T,Allocator>::insAfter(RevCur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 bool LinearDList2<T,Allocator>::delFirst()
  {
   return allocator.free(list.del_first());
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 bool LinearDList2<T,Allocator>::delLast()
  {
   return allocator.free(list.del_last());
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S>
 void LinearDList2<T,Allocator>::delAndMove(Cur<S> &pos)
  {
   allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S>
 void LinearDList2<T,Allocator>::delAndMove(RevCur<S> &pos)
  {
   allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 ulen LinearDList2<T,Allocator>::erase()
  {
   Node *node=list.first;
@@ -1401,7 +1177,7 @@ ulen LinearDList2<T,Allocator>::erase()
 
 /* class CircularDList<T,Allocator> */
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 class CircularDList : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -1477,32 +1253,7 @@ class CircularDList : NoCopy
    const T * getTop_const() const { return GetObject(list.top); }
 
    template <class S>
-   struct Cur
-    {
-     typename Algo::Cur cur;
-
-     Cur() : cur(0) {}
-
-     Cur(typename Algo::Cur cur_) : cur(cur_) {}
-
-     // object ptr
-
-     void * operator + () const { return +cur; }
-
-     bool operator ! () const { return !cur; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; }
-
-     void operator -- () { --cur; }
-    };
+   using Cur = ListCursor<typename Algo::Cur,S> ;
 
    Cur<T> getStart() { return list.start(); }
 
@@ -1511,32 +1262,7 @@ class CircularDList : NoCopy
    Cur<const T> getStart_const() const { return list.start(); }
 
    template <class S>
-   struct RevCur
-    {
-     typename Algo::RevCur cur;
-
-     RevCur() : cur(0) {}
-
-     RevCur(typename Algo::RevCur cur_) : cur(cur_) {}
-
-     // object ptr
-
-     void * operator + () const { return +cur; }
-
-     bool operator ! () const { return !cur; }
-
-     S * getPtr() const { return &cur->obj; }
-
-     S & operator * () const { return cur->obj; }
-
-     S * operator -> () const { return &cur->obj; }
-
-     // cursor
-
-     void operator ++ () { ++cur; }
-
-     void operator -- () { --cur; }
-    };
+   using RevCur = ListCursor<typename Algo::RevCur,S> ;
 
    RevCur<T> getStartReverse() { return list.start_rev(); }
 
@@ -1544,34 +1270,21 @@ class CircularDList : NoCopy
 
    RevCur<const T> getStartReverse_const() const { return list.start_rev(); }
 
-   template <class S>
-   struct CountCur
+   struct FreeCur
     {
      Node *node;
-     ulen count;
 
-     CountCur() : node(0),count(0) {}
+     FreeCur() : node(0) {}
 
-     CountCur(Node *node_,ulen count_) : node(node_),count(count_) {}
+     FreeCur(Node *node_) : node(node_) {}
 
-     // object ptr
+     Node * operator -> () const { return node; }
 
-     ulen operator + () const { return count; }
-
-     bool operator ! () const { return !count; }
-
-     S * getPtr() const { return &node->obj; }
-
-     S & operator * () const { return node->obj; }
-
-     S * operator -> () const { return &node->obj; }
-
-     // cursor
-
-     void operator ++ () { node=Algo::Link(node).next; count--; }
-
-     bool operator != (CountCur<S> obj) const { return count!=obj.count; }
+     void operator ++ () { node=Algo::Link(node).next; }
     };
+
+   template <class S>
+   using CountCur = ListCountCursor<FreeCur,S> ;
 
    CountCur<T> begin() { return CountCur<T>(list.top,getCount()); }
 
@@ -1581,16 +1294,13 @@ class CircularDList : NoCopy
 
    CountCur<const T> end() const { return CountCur<const T>(); }
 
-   template <class S>
-   struct RevCountCur
+   struct RevFreeCur
     {
      Node *node;
-     ulen count;
 
-     RevCountCur() : node(0),count(0) {}
+     RevFreeCur() : node(0) {}
 
-     RevCountCur(Node *top,ulen count_)
-      : count(count_)
+     RevFreeCur(Node *top)
       {
        if( top )
          node=Algo::Link(top).prev;
@@ -1598,24 +1308,13 @@ class CircularDList : NoCopy
          node=0;
       }
 
-     // object ptr
+     Node * operator -> () const { return node; }
 
-     ulen operator + () const { return count; }
-
-     bool operator ! () const { return !count; }
-
-     S * getPtr() const { return &node->obj; }
-
-     S & operator * () const { return node->obj; }
-
-     S * operator -> () const { return &node->obj; }
-
-     // cursor
-
-     void operator ++ () { node=Algo::Link(node).prev; count--; }
-
-     bool operator != (RevCountCur<S> obj) const { return count!=obj.count; }
+     void operator ++ () { node=Algo::Link(node).prev; }
     };
+
+   template <class S>
+   using RevCountCur = ListCountCursor<RevFreeCur,S> ;
 
    RevCountCur<T> rbegin() { return RevCountCur<T>(list.top,getCount()); }
 
@@ -1630,7 +1329,7 @@ class CircularDList : NoCopy
     {
      RevCountCur<S> cur;
 
-     ReverseAdapter(RevCountCur<S> cur_) : cur(cur_) {}
+     ReverseAdapter(const RevCountCur<S> &cur_) : cur(cur_) {}
 
      RevCountCur<S> begin() const { return cur; }
 
@@ -1646,22 +1345,22 @@ class CircularDList : NoCopy
    // ins/del
 
    template <class ... SS>
-   T * insFirst(SS && ... ss);
+   T * insFirst(SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    template <class ... SS>
-   T * insLast(SS && ... ss);
+   T * insLast(SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    template <class S,class ... SS>
-   T * insBefore(Cur<S> pos,SS && ... ss); // +pos
+   T * insBefore(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insBefore(RevCur<S> &pos,SS && ... ss); // +pos
+   T * insBefore(RevCur<S> &pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insAfter(Cur<S> &pos,SS && ... ss); // +pos
+   T * insAfter(Cur<S> &pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    template <class S,class ... SS>
-   T * insAfter(RevCur<S> pos,SS && ... ss); // +pos
+   T * insAfter(RevCur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ; // +pos
 
    bool delFirst();
 
@@ -1681,23 +1380,17 @@ class CircularDList : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
+   auto apply_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStart(),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse(FuncInit func_init) { return Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse_const(FuncInit func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
+   auto applyReverse_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(getStartReverse(),func_init); }
 
    // swap/move objects
 
@@ -1714,7 +1407,7 @@ class CircularDList : NoCopy
     }
  };
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 void CircularDList<T,Allocator>::destroy(Node *node)
  {
   if( !node ) return;
@@ -1731,9 +1424,9 @@ void CircularDList<T,Allocator>::destroy(Node *node)
     }
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
-T * CircularDList<T,Allocator>::insFirst(SS && ... ss)
+T * CircularDList<T,Allocator>::insFirst(SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1742,9 +1435,9 @@ T * CircularDList<T,Allocator>::insFirst(SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
-T * CircularDList<T,Allocator>::insLast(SS && ... ss)
+T * CircularDList<T,Allocator>::insLast(SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1753,9 +1446,9 @@ T * CircularDList<T,Allocator>::insLast(SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * CircularDList<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss)
+T * CircularDList<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1764,9 +1457,9 @@ T * CircularDList<T,Allocator>::insBefore(Cur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * CircularDList<T,Allocator>::insBefore(RevCur<S> &pos,SS && ... ss)
+T * CircularDList<T,Allocator>::insBefore(RevCur<S> &pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1775,9 +1468,9 @@ T * CircularDList<T,Allocator>::insBefore(RevCur<S> &pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * CircularDList<T,Allocator>::insAfter(Cur<S> &pos,SS && ... ss)
+T * CircularDList<T,Allocator>::insAfter(Cur<S> &pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss)... );
 
@@ -1786,9 +1479,9 @@ T * CircularDList<T,Allocator>::insAfter(Cur<S> &pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S,class ... SS>
-T * CircularDList<T,Allocator>::insAfter(RevCur<S> pos,SS && ... ss)
+T * CircularDList<T,Allocator>::insAfter(RevCur<S> pos,SS && ... ss) requires ( ConstructibleType<T,SS...> )
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
 
@@ -1797,33 +1490,33 @@ T * CircularDList<T,Allocator>::insAfter(RevCur<S> pos,SS && ... ss)
   return &node->obj;
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 bool CircularDList<T,Allocator>::delFirst()
  {
   return allocator.free(list.del_first());
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 bool CircularDList<T,Allocator>::delLast()
  {
   return allocator.free(list.del_last());
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S>
 void CircularDList<T,Allocator>::delAndMove(Cur<S> &pos)
  {
   allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 template <class S>
 void CircularDList<T,Allocator>::delAndMove(RevCur<S> &pos)
  {
   allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
-template <class T,template <class Node> class Allocator>
+template <NothrowDtorType T,template <class Node> class Allocator>
 ulen CircularDList<T,Allocator>::erase()
  {
   Node *node=list.top;

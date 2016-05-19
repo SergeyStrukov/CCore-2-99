@@ -100,6 +100,7 @@
 ../../Fundamental/CCore/src/InterfaceHost.cpp
 ../../Fundamental/CCore/src/Job.cpp
 ../../Fundamental/CCore/src/List.cpp
+../../Fundamental/CCore/src/ListCursor.cpp
 ../../Fundamental/CCore/src/math/UIntSlowMulAlgo.cpp
 ../../Fundamental/CCore/src/MemBase_general.cpp
 ../../Fundamental/CCore/src/MemSpaceHeap.cpp
