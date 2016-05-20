@@ -8,7 +8,6 @@ PTPServerLog.txt
 PTPSecureServerLog.txt
 ARMLog.txt
 eclipse/*
-Labs/*
 VideoLabs/FontLab/freetype/*
 
 # Compiled Object files

@@ -1,0 +1,41 @@
+OBJ_LIST = \
+./main.o \
+
+
+ASM_LIST = \
+./main.s \
+
+
+DEP_LIST = \
+./main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+./main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+./main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+./main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+
