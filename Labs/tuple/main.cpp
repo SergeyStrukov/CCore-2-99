@@ -8,45 +8,6 @@ namespace App {
 
 using namespace CCore;
 
-/* struct PickTypeBox<T> */
-
-template <class T>
-struct PickTypeBox
- {
-  PickTypeBox<T> operator << (PickTypeBox<AnyType>);
-
-  using Type = T ;
- };
-
-/* struct PickTypeInd<int Ind> */
-
-template <int Ind>
-struct PickTypeInd
- {
-  PickTypeInd<Ind-1> operator << (AnyType);
- };
-
-template <>
-struct PickTypeInd<1>
- {
-  template <class T>
-  PickTypeBox<T> operator << (PickTypeBox<T>);
- };
-
-/* type PickType<int Ind,TT> */
-
-template <int Ind,class ... TT>
-using PickType = typename decltype( ( PickTypeInd<Ind>() << ... << PickTypeBox<TT>() ) )::Type ;
-
-/* struct TypeFactory<TT> */
-
-template <class ... TT>
-struct TypeFactory
- {
-  template <int Ind>
-  using Type = PickType<Ind,TT...> ;
- };
-
 /* type EraseType<T> */
 
 template <class T>
@@ -68,34 +29,37 @@ struct TupleIndexList
 template <class ... TT>
 struct TupleFactory
  {
-  template <int Ind>
-  using Type = typename TypeFactory<TT...>::template Type<Ind> ;
-
-  template <int Ind>
+  template <int Ind,class T>
   struct Field
    {
-    Type<Ind> field;
+    T field;
 
     Field() {}
 
-    explicit Field(const Type<Ind> &t) : field(t) {}
+    explicit Field(const T &t) : field(t) {}
    };
 
+  template <int I,class T>
+  static Field<I,T> * Cast(Field<I,T> *ptr) { return ptr; }
+
+  template <int I,class T>
+  static const Field<I,T> * Cast(const Field<I,T> *ptr) { return ptr; }
+
   template <int ... IList>
-  struct Tuple : Field<IList>...
+  struct Tuple : Field<IList,TT>...
    {
     Tuple() {}
 
-    explicit Tuple(const TT & ... tt) : Field<IList>(tt)... {}
+    explicit Tuple(const TT & ... tt) : Field<IList,TT>(tt)... {}
 
     template <int I>
-    auto & ref() { return ((Field<I> *)this)->field; }
+    auto & ref() { return Cast<I>(this)->field; }
 
     template <int I>
-    auto & ref() const { return ((const Field<I> *)this)->field; }
+    auto & ref() const { return Cast<I>(this)->field; }
 
     template <int I>
-    auto & ref_const() const { return ((const Field<I> *)this)->field; }
+    auto & ref_const() const { return Cast<I>(this)->field; }
 
     template <FuncInitArgType<TT & ...> FuncInit>
     auto call(FuncInit func_init)
@@ -134,7 +98,7 @@ int main()
 
   //t.ref<1>()=1;
   //t.ref<2>()=2;
-  t.ref<3>()=30;
+  t.ref<3>() *= 10 ;
 
   t.call( [] (short a,int b,long c) { Printf(Con,"#; #; #;\n",a,b,c); } );
 
