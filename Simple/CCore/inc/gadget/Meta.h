@@ -33,23 +33,17 @@ template <class T> struct DefType;
 
 template <class T,T Val> struct DefConst;
 
+template <int Ind> struct IndexBox;
+
+template <class T> struct TypeBox;
+
 template <class T> struct ToConstCtor;
 
 template <bool Cond,class T1,class T2> struct SelectCtor;
 
-template <class T1,class T2> struct IsSameCtor;
-
-template <class T,class ... TT> struct OneOfCtor;
-
-template <class T> struct IsUIntCtor;
-
 template <class T> struct UIntBitsCtor_extra;
 
 template <class T> struct UIntBitsCtor;
-
-template <class T> struct IsSIntCtor;
-
-template <class Ptr> struct PtrObjTypeCtor;
 
 template <class T> struct SIntToUInt_extra;
 
@@ -95,6 +89,26 @@ struct DefConst
   static const T Ret = Val ;
  };
 
+/* struct IndexBox<int Ind> */
+
+template <int Ind>
+struct IndexBox
+ {
+  enum ValueType { Value = Ind };
+
+  constexpr operator int() const { return Ind; }
+ };
+
+/* struct TypeBox<T> */
+
+template <class T>
+struct TypeBox
+ {
+  using Type = T ;
+
+  static T Get();
+ };
+
 /* struct ToConstCtor<T> */
 
 template <class T>
@@ -133,98 +147,41 @@ struct SelectCtor<false,T1,T2>
 template <bool Cond,class T1,class T2>
 using Select = typename SelectCtor<Cond,T1,T2>::Ret ;
 
-/* struct IsSameCtor<T1,T2> */
-
-template <class T1,class T2>
-struct IsSameCtor
- {
-  enum RetType { Ret = false };
- };
-
-template <class T>
-struct IsSameCtor<T,T>
- {
-  enum RetType { Ret = true };
- };
-
 /* const IsSame<T1,T2> */
 
 template <class T1,class T2>
-const bool IsSame = IsSameCtor<T1,T2>::Ret ;
-
-/* struct OneOfCtor<T,TT> */
+const bool IsSame = false ;
 
 template <class T>
-struct OneOfCtor<T>
- {
-  enum RetType { Ret = false };
- };
-
-template <class T,class S,class ... TT>
-struct OneOfCtor<T,S,TT...>
- {
-  enum RetType { Ret = OneOfCtor<T,TT...>::Ret };
- };
-
-template <class T,class ... TT>
-struct OneOfCtor<T,T,TT...>
- {
-  enum RetType { Ret = true };
- };
+const bool IsSame<T,T> = true ;
 
 /* const OneOf<T,TT> */
 
 template <class T,class ... TT>
-const bool OneOf = OneOfCtor<T,TT...>::Ret ;
-
-/* struct IsUIntCtor<T> */
-
-template <class T>
-struct IsUIntCtor
- {
-  enum RetType { Ret = ExtraInt::Prop<T>::IsUnsigned };
- };
-
-template <>
-struct IsUIntCtor<unsigned char>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsUIntCtor<unsigned short>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsUIntCtor<unsigned int>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsUIntCtor<unsigned long>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsUIntCtor<unsigned long long>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsUIntCtor<char>
- {
-  enum RetType { Ret = ( char(-1)>=0 ) };
- };
+const bool OneOf = ( ... || IsSame<T,TT> ) ;
 
 /* const IsUInt<T> */
 
 template <class T>
-const bool IsUInt = IsUIntCtor<T>::Ret ;
+const bool IsUInt = ExtraInt::Prop<T>::IsUnsigned ;
+
+template <>
+const bool IsUInt<char> = ( char(-1)>=0 ) ;
+
+template <>
+const bool IsUInt<unsigned char> = true ;
+
+template <>
+const bool IsUInt<unsigned short> = true ;
+
+template <>
+const bool IsUInt<unsigned int> = true ;
+
+template <>
+const bool IsUInt<unsigned long> = true ;
+
+template <>
+const bool IsUInt<unsigned long long> = true ;
 
 /* struct UIntBitsCtor_extra<T> */
 
@@ -282,54 +239,28 @@ const unsigned UIntBits = UIntBitsCtor<T>::Ret ;
 template <class UInt>
 const unsigned HexWidth = (UIntBits<UInt> +3)/4 ;
 
-/* struct IsSIntCtor<T> */
-
-template <class T>
-struct IsSIntCtor
- {
-  enum RetType { Ret = ExtraInt::Prop<T>::IsSigned };
- };
-
-template <>
-struct IsSIntCtor<signed char>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsSIntCtor<short>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsSIntCtor<int>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsSIntCtor<long>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsSIntCtor<long long>
- {
-  enum RetType { Ret = true };
- };
-
-template <>
-struct IsSIntCtor<char>
- {
-  enum RetType { Ret = ( char(-1)<0 ) };
- };
-
 /* const IsSInt<T> */
 
 template <class T>
-const bool IsSInt = IsSIntCtor<T>::Ret ;
+const bool IsSInt = ExtraInt::Prop<T>::IsSigned ;
+
+template <>
+const bool IsSInt<char> = ( char(-1)<0 ) ;
+
+template <>
+const bool IsSInt<signed char> = true ;
+
+template <>
+const bool IsSInt<short> = true ;
+
+template <>
+const bool IsSInt<int> = true ;
+
+template <>
+const bool IsSInt<long> = true ;
+
+template <>
+const bool IsSInt<long long> = true ;
 
 /* const IsSUInt<T> */
 
@@ -346,20 +277,10 @@ using UnRef = typename std::remove_reference<T>::type ;
 template <class T>
 using UnConst = typename std::remove_const<T>::type ;
 
-/* struct PtrObjTypeCtor<Ptr> */
-
-template <class Ptr>
-struct PtrObjTypeCtor
- {
-  static Ptr & GetObj();
-
-  using Ret = UnRef<decltype( *GetObj() )> ;
- };
-
 /* type PtrObjType<Ptr> */
 
 template <class Ptr>
-using PtrObjType = typename PtrObjTypeCtor<Ptr>::Ret ;
+using PtrObjType = UnRef<decltype( * TypeBox<Ptr &>::Get() )> ;
 
 /* const IsEnum<E> */
 

@@ -81,10 +81,13 @@ struct TupleFactory
   using Ret = decltype( ( TupleIndexList<>() + ... + EraseType<TT>() ).template apply<TupleFactory>() ) ;
  };
 
-/* type Tuple<TT> */
+/* struct Tuple<TT> */
 
 template <class ... TT>
-using Tuple = typename TupleFactory<TT...>::Ret ;
+struct Tuple : TupleFactory<TT...>::Ret
+ {
+  using TupleFactory<TT...>::Ret::Ret;
+ };
 
 } // namespace App
 
