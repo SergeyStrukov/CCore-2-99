@@ -29,6 +29,8 @@ template <class T,T Val> const T Const = Val ;
 
 struct Empty;
 
+template <class T> struct EmptyBox;
+
 template <class T> struct DefType;
 
 template <class T,T Val> struct DefConst;
@@ -37,13 +39,13 @@ template <int Ind> struct IndexBox;
 
 template <class T> struct TypeBox;
 
+template <int ... IList> struct IndexListBox;
+
 template <class T> struct ToConstCtor;
 
 template <bool Cond,class T1,class T2> struct SelectCtor;
 
-template <class T> struct UIntBitsCtor_extra;
-
-template <class T> struct UIntBitsCtor;
+template <class S,class T> struct CommonTypeCtor;
 
 template <class T> struct SIntToUInt_extra;
 
@@ -57,11 +59,9 @@ template <class T> struct PromoteSInt_extra;
 
 template <class SInt> struct PromoteSInt;
 
-template <class ... TT> struct IndexOfCtor;
+template <class T,unsigned Ret,bool Ok> struct IndexOfBox;
 
-template <unsigned Index,class ... TT> struct SelectListCtor;
-
-template <class S,class T> struct CommonTypeCtor;
+template <class T,unsigned Index,bool Ok> struct SelectListBox;
 
 template <class Split,class ... TT> struct SplitTypeListCtor;
 
@@ -70,6 +70,13 @@ template <class Skip,ulen Count,class ... TT> struct SkipTypeListCtor;
 /* struct Empty */
 
 struct Empty
+ {
+ };
+
+/* struct EmptyBox<T> */
+
+template <class T>
+struct EmptyBox
  {
  };
 
@@ -108,6 +115,24 @@ struct TypeBox
 
   static T Get();
  };
+
+/* type EraseType<T> */
+
+template <class T>
+using EraseType = int ;
+
+/* struct IndexListBox<int ... IList> */
+
+template <int ... IList>
+struct IndexListBox
+ {
+  IndexListBox<IList...,1+sizeof ... (IList)> operator + (int);
+ };
+
+/* type IndexList<TT> */
+
+template <class ... TT>
+using IndexList = decltype( ( IndexListBox<>() + ... + EraseType<TT>() ) ) ;
 
 /* struct ToConstCtor<T> */
 
@@ -183,56 +208,36 @@ const bool IsUInt<unsigned long> = true ;
 template <>
 const bool IsUInt<unsigned long long> = true ;
 
-/* struct UIntBitsCtor_extra<T> */
+/* const UIntBits_extra_char<T> */
 
 template <class T>
-struct UIntBitsCtor_extra
- {
-  enum RetType { Ret = ExtraInt::Prop<T>::Bits };
- };
+const unsigned UIntBits_extra_char = EmptyBox<T>::Ret ;
 
-/* struct UIntBitsCtor<T> */
+template <class T> requires ( IsSame<T,char> && char(-1)>=0 )
+const unsigned UIntBits_extra_char<T> = Bits::unsigned_char ;
 
-template <class T> requires ( ExtraInt::Prop<T>::IsUnsigned )
-struct UIntBitsCtor<T> : UIntBitsCtor_extra<T> {};
-
-template <>
-struct UIntBitsCtor<unsigned char>
- {
-  enum RetType { Ret = Bits::unsigned_char };
- };
-
-template <>
-struct UIntBitsCtor<unsigned short>
- {
-  enum RetType { Ret = Bits::unsigned_short };
- };
-
-template <>
-struct UIntBitsCtor<unsigned int>
- {
-  enum RetType { Ret = Bits::unsigned_int };
- };
-
-template <>
-struct UIntBitsCtor<unsigned long>
- {
-  enum RetType { Ret = Bits::unsigned_long };
- };
-
-template <>
-struct UIntBitsCtor<unsigned long long>
- {
-  enum RetType { Ret = Bits::unsigned_long_long };
- };
-
-template <>
-struct UIntBitsCtor<char> : Select<( char(-1)<0 ), Empty , UIntBitsCtor<unsigned char> > {};
+template <class T> requires ( !IsSame<T,char> && (bool)ExtraInt::Prop<T>::IsUnsigned )
+const unsigned UIntBits_extra_char<T> = ExtraInt::Prop<T>::Bits ;
 
 /* const UIntBits<T> */
 
 template <class T>
-const unsigned UIntBits = UIntBitsCtor<T>::Ret ;
+const unsigned UIntBits = UIntBits_extra_char<T> ;
+
+template <>
+const unsigned UIntBits<unsigned char> = Bits::unsigned_char ;
+
+template <>
+const unsigned UIntBits<unsigned short> = Bits::unsigned_short ;
+
+template <>
+const unsigned UIntBits<unsigned int> = Bits::unsigned_int ;
+
+template <>
+const unsigned UIntBits<unsigned long> = Bits::unsigned_long ;
+
+template <>
+const unsigned UIntBits<unsigned long long> = Bits::unsigned_long_long ;
 
 /* const HexWidth<UInt> */
 
@@ -281,6 +286,19 @@ using UnConst = typename std::remove_const<T>::type ;
 
 template <class Ptr>
 using PtrObjType = UnRef<decltype( * TypeBox<Ptr &>::Get() )> ;
+
+/* struct CommonTypeCtor<S,T> */
+
+template <class T>
+struct CommonTypeCtor<T,T>
+ {
+  using Ret = T ;
+ };
+
+/* type CommonType<S,T> */
+
+template <class S,class T>
+using CommonType = typename CommonTypeCtor<S,T>::Ret ;
 
 /* const IsEnum<E> */
 
@@ -368,7 +386,7 @@ struct SIntToUInt_extra
 
 /* struct SIntToUInt<SInt> */
 
-template <class T> requires ( ExtraInt::Prop<T>::IsSigned )
+template <class T> requires ( (bool)ExtraInt::Prop<T>::IsSigned )
 struct SIntToUInt<T> : SIntToUInt_extra<T> {};
 
 template <>
@@ -419,7 +437,7 @@ struct PromoteUInt_extra
 
 /* struct PromoteUInt<UInt> */
 
-template <class T> requires ( ExtraInt::Prop<T>::IsUnsigned )
+template <class T> requires ( (bool)ExtraInt::Prop<T>::IsUnsigned )
 struct PromoteUInt<T> : PromoteUInt_extra<T> {};
 
 template <>
@@ -466,7 +484,7 @@ struct PromoteSInt_extra
 
 /* struct PromoteSInt<SInt> */
 
-template <class T> requires ( ExtraInt::Prop<T>::IsSigned )
+template <class T> requires ( (bool)ExtraInt::Prop<T>::IsSigned )
 struct PromoteSInt<T> : PromoteSInt_extra<T> {};
 
 template <>
@@ -507,56 +525,60 @@ struct PromoteSInt<long long>
 template <>
 struct PromoteSInt<char> : Select<( char(-1)<0 ), PromoteSInt<int> , Empty > {};
 
-/* struct IndexOfCtor<TT> */
+/* struct IndexOfBox<T,unsigned Ret,bool Ok> */
 
-template <class T,class ... TT>
-struct IndexOfCtor<T,T,TT...>
+template <class T,unsigned Ret=1,bool Ok=false>
+struct IndexOfBox
  {
-  enum RetType : unsigned { Ret = 1 } ;
+  constexpr IndexOfBox<T,Ret,true> operator + (TypeBox<T>) { return {}; }
+
+  template <class S>
+  constexpr IndexOfBox<T,Ret+1,false> operator + (TypeBox<S>) { return {}; }
  };
 
-template <class T,class S,class ... TT>
-struct IndexOfCtor<T,S,TT...>
+template <class T,unsigned Ret>
+struct IndexOfBox<T,Ret,true>
  {
-  enum RetType : unsigned { Ret = 1+IndexOfCtor<T,TT...>::Ret } ;
+  template <class S>
+  constexpr IndexOfBox<T,Ret,true> operator + (TypeBox<S>) { return {}; }
+
+  constexpr operator unsigned() const { return Ret; }
  };
 
 /* const IndexOf<TT> */
 
-template <class ... TT>
-const unsigned IndexOf = IndexOfCtor<TT...>::Ret ;
+template <class T,class ... TT>
+const unsigned IndexOf = ( IndexOfBox<T>() + ... + TypeBox<TT>() ) ;
 
-/* struct SelectListCtor<unsigned Index,TT> */
+/* struct SelectListBox<T,unsigned Index,bool Ok> */
 
-template <unsigned Index,class T,class ... TT>
-struct SelectListCtor<Index,T,TT...>
+template <class T,unsigned Index,bool Ok=false>
+struct SelectListBox
  {
-  using Ret = typename SelectListCtor<Index-1,TT...>::Ret ;
+  template <class S>
+  SelectListBox<T,Index-1,false> operator + (TypeBox<S>);
  };
 
-template <class T,class ... TT>
-struct SelectListCtor<0,T,TT...>
+template <class T>
+struct SelectListBox<T,0,false>
  {
-  using Ret = T ;
+  template <class S>
+  SelectListBox<S,0,true> operator + (TypeBox<S>);
+ };
+
+template <class T>
+struct SelectListBox<T,0,true>
+ {
+  template <class S>
+  SelectListBox<T,0,true> operator + (TypeBox<S>);
+
+  using Type = T ;
  };
 
 /* type SelectList<unsigned Index,TT> */
 
 template <unsigned Index,class ... TT>
-using SelectList = typename SelectListCtor<Index,TT...>::Ret ;
-
-/* struct CommonTypeCtor<S,T> */
-
-template <class T>
-struct CommonTypeCtor<T,T>
- {
-  using Ret = T ;
- };
-
-/* type CommonType<S,T> */
-
-template <class S,class T>
-using CommonType = typename CommonTypeCtor<S,T>::Ret ;
+using SelectList = typename decltype( ( SelectListBox<void,Index>() + ... + TypeBox<TT>() ) )::Type ;
 
 /* type SplitTypeList<Split,TT> */
 

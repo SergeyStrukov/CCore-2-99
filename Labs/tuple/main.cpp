@@ -8,26 +8,12 @@ namespace App {
 
 using namespace CCore;
 
-/* type EraseType<T> */
-
-template <class T>
-using EraseType = int ;
-
-/* struct TupleIndexList<int ... IList> */
-
-template <int ... IList>
-struct TupleIndexList
- {
-  TupleIndexList<IList...,1+sizeof ... (IList)> operator + (int);
-
-  template <class Factory>
-  typename Factory::template Tuple<IList...> apply();
- };
-
 /* struct TupleFactory<TT> */
 
-template <class ... TT>
-struct TupleFactory
+template <class IList,class ... TT> struct TupleFactory;
+
+template <class ... TT,int ... IList>
+struct TupleFactory<Meta::IndexListBox<IList...>,TT...>
  {
   template <int Ind,class T>
   struct Field
@@ -45,7 +31,6 @@ struct TupleFactory
   template <int I,class T>
   static const Field<I,T> * Cast(const Field<I,T> *ptr) { return ptr; }
 
-  template <int ... IList>
   struct Tuple : Field<IList,TT>...
    {
     Tuple() {}
@@ -77,16 +62,17 @@ struct TupleFactory
       return func( ref<IList>()... );
      }
    };
-
-  using Ret = decltype( ( TupleIndexList<>() + ... + EraseType<TT>() ).template apply<TupleFactory>() ) ;
  };
 
 /* struct Tuple<TT> */
 
 template <class ... TT>
-struct Tuple : TupleFactory<TT...>::Ret
+using TupleAlias = typename TupleFactory< Meta::IndexList<TT...> ,TT...>::Tuple ;
+
+template <class ... TT>
+struct Tuple : TupleAlias<TT...>
  {
-  using TupleFactory<TT...>::Ret::Ret;
+  using TupleAlias<TT...>::TupleAlias;
  };
 
 } // namespace App
@@ -97,6 +83,8 @@ using namespace App;
 
 int main()
  {
+  Meta::IndexList<short,int,long>();
+
   App::Tuple<short,int,long> t(1,2,3);
 
   //t.ref<1>()=1;
