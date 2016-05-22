@@ -69,9 +69,9 @@ template <class POD,class ... TT> struct PacketExtType;
 
 struct PacketDeepExtCtor;
 
-template <ulen Index,class ... TT> struct PacketDeepExt;
+template <unsigned Index,class ... TT> struct PacketDeepExt;
 
-template <ulen Index,class POD,class ... TT> struct PacketForgetExt;
+template <unsigned Index,class POD,class ... TT> struct PacketForgetExt;
 
 template <class POD,class ... TT> class Packet;
 
@@ -494,14 +494,14 @@ struct PacketDeepExtCtor
    };
  };
 
-/* PacketDeepExt<ulen Index,TT> */
+/* PacketDeepExt<unsigned Index,TT> */
 
-template <ulen Index,class ... TT>
+template <unsigned Index,class ... TT>
 struct PacketDeepExt : Meta::SkipTypeList<PacketDeepExtCtor,Index-1,TT...> {};
 
-/* struct PacketForgetExt<ulen Index,POD,TT> */
+/* struct PacketForgetExt<unsigned Index,POD,TT> */
 
-template <ulen Index,class POD,class ... TT>
+template <unsigned Index,class POD,class ... TT>
 struct PacketForgetExt
  {
   struct Skip
@@ -592,13 +592,13 @@ class Packet
      return ret;
     }
 
-   template<ulen Index>
+   template<unsigned Index>
    typename PacketDeepExt<Index,TT...>::GetType * getDeepExt()
     {
      return PacketDeepExt<Index,TT...>::Get(packet);
     }
 
-   template<ulen Index>
+   template<unsigned Index>
    typename PacketForgetExt<Index,POD,TT...>::RetType forgetExt()
     {
      return Replace_null(packet);

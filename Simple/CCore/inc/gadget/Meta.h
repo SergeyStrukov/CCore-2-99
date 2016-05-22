@@ -35,9 +35,11 @@ template <class T> struct DefType;
 
 template <class T,T Val> struct DefConst;
 
-template <int Ind> struct IndexBox;
-
 template <class T> struct TypeBox;
+
+template <class ... TT> struct TypeListBox;
+
+template <int Ind> struct IndexBox;
 
 template <int ... IList> struct IndexListBox;
 
@@ -61,11 +63,13 @@ template <class SInt> struct PromoteSInt;
 
 template <class T,unsigned Ret,bool Ok> struct IndexOfBox;
 
+template <unsigned Index,class ... TT> struct SelectListCtor;
+
 template <class T,unsigned Index,bool Ok> struct SelectListBox;
 
 template <class Split,class ... TT> struct SplitTypeListCtor;
 
-template <class Skip,ulen Count,class ... TT> struct SkipTypeListCtor;
+template <class Skip,unsigned Count,class ... TT> struct SkipTypeListCtor;
 
 /* struct Empty */
 
@@ -96,16 +100,6 @@ struct DefConst
   static const T Ret = Val ;
  };
 
-/* struct IndexBox<int Ind> */
-
-template <int Ind>
-struct IndexBox
- {
-  enum ValueType { Value = Ind };
-
-  constexpr operator int() const { return Ind; }
- };
-
 /* struct TypeBox<T> */
 
 template <class T>
@@ -114,6 +108,24 @@ struct TypeBox
   using Type = T ;
 
   static T Get();
+ };
+
+/* struct TypeListBox<TT> */
+
+template <class ... TT>
+struct TypeListBox
+ {
+  using Type = TypeListBox<TT...> ;
+ };
+
+/* struct IndexBox<int Ind> */
+
+template <int Ind>
+struct IndexBox
+ {
+  enum ValueType { Value = Ind };
+
+  constexpr operator int() const { return Ind; }
  };
 
 /* type EraseType<T> */
@@ -550,6 +562,27 @@ struct IndexOfBox<T,Ret,true>
 template <class T,class ... TT>
 const unsigned IndexOf = ( IndexOfBox<T>() + ... + TypeBox<TT>() ) ;
 
+/* struct SelectListCtor<unsigned Index,TT> */
+
+template <unsigned Index,class T,class ... TT>
+struct SelectListCtor<Index,T,TT...>
+ {
+  using Ret = typename SelectListCtor<Index-1,TT...>::Ret ;
+ };
+
+template <class T,class ... TT>
+struct SelectListCtor<0,T,TT...>
+ {
+  using Ret = T ;
+ };
+
+/* type SelectList<unsigned Index,TT> */
+
+template <unsigned Index,class ... TT>
+using SelectList = typename SelectListCtor<Index,TT...>::Ret ;
+
+#if 0 // gcc bugged
+
 /* struct SelectListBox<T,unsigned Index,bool Ok> */
 
 template <class T,unsigned Index,bool Ok=false>
@@ -580,6 +613,8 @@ struct SelectListBox<T,0,true>
 template <unsigned Index,class ... TT>
 using SelectList = typename decltype( ( SelectListBox<void,Index>() + ... + TypeBox<TT>() ) )::Type ;
 
+#endif
+
 /* type SplitTypeList<Split,TT> */
 
 template <class Split,class ... TT>
@@ -609,12 +644,12 @@ struct SplitTypeListCtor<Split,T,TT...>
   using Ret = Ext<> ;
  };
 
-/* type SkipTypeList<Skip,ulen Count,TT> */
+/* type SkipTypeList<Skip,unsigned Count,TT> */
 
-template <class Skip,ulen Count,class ... TT>
+template <class Skip,unsigned Count,class ... TT>
 using SkipTypeList = typename SkipTypeListCtor<Skip,Count,TT...>::Ret ;
 
-/* struct SkipTypeListCtor<Skip,ulen Count,TT> */
+/* struct SkipTypeListCtor<Skip,unsigned Count,TT> */
 
 template <class Skip>
 struct SkipTypeListCtor<Skip,0>
@@ -628,7 +663,7 @@ struct SkipTypeListCtor<Skip,0,T,TT...>
   using Ret = typename Skip::template Ctor<T,TT...> ;
  };
 
-template <class Skip,ulen Count,class T,class ... TT>
+template <class Skip,unsigned Count,class T,class ... TT>
 struct SkipTypeListCtor<Skip,Count,T,TT...>
  {
   using Ret = SkipTypeList<Skip,Count-1,TT...> ;
