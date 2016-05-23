@@ -22,118 +22,126 @@ namespace CCore {
 
 /* classes */
 
+template <class IList,class ... TT> struct TupleFactory;
+
 template <class ... TT> struct Tuple;
+
+template <class IList,class ... TT> struct ForwardTupleFactory;
 
 template <class ... TT> struct ForwardTuple;
 
+/* struct TupleFactory<TT> */
+
+template <class ... TT,int ... IList>
+struct TupleFactory<Meta::IndexListBox<IList...>,TT...>
+ {
+  template <int Ind,class T>
+  struct Field
+   {
+    T field;
+
+    Field() {}
+
+    explicit Field(const T &t) : field(t) {}
+   };
+
+  template <int I,class T>
+  static Field<I,T> * Cast(Field<I,T> *ptr) { return ptr; }
+
+  template <int I,class T>
+  static const Field<I,T> * Cast(const Field<I,T> *ptr) { return ptr; }
+
+  struct Tuple : Field<IList,TT>...
+   {
+    Tuple() {}
+
+    explicit Tuple(const TT & ... tt) requires ( sizeof ... (TT) > 0 ) : Field<IList,TT>(tt)... {}
+
+    template <int I>
+    auto & ref() { return Cast<I>(this)->field; }
+
+    template <int I>
+    auto & ref() const { return Cast<I>(this)->field; }
+
+    template <int I>
+    auto & ref_const() const { return Cast<I>(this)->field; }
+
+    template <FuncInitArgType<TT & ...> FuncInit>
+    auto call(FuncInit func_init)
+     {
+      FunctorTypeOf<FuncInit> func(func_init);
+
+      return func( ref<IList>()... );
+     }
+
+    template <FuncInitArgType<const TT & ...> FuncInit>
+    auto call(FuncInit func_init) const
+     {
+      FunctorTypeOf<FuncInit> func(func_init);
+
+      return func( ref<IList>()... );
+     }
+   };
+ };
+
 /* struct Tuple<TT> */
 
-template <>
-struct Tuple<>
+template <class ... TT>
+using TupleAlias = typename TupleFactory< Meta::IndexList<TT...> ,TT...>::Tuple ;
+
+template <class ... TT>
+struct Tuple : TupleAlias<TT...>
  {
-  Tuple() {}
-
-  template <FuncInitArgType<> FuncInit>
-  void call(FuncInit func_init)
-   {
-    FunctorTypeOf<FuncInit> func(func_init);
-
-    func();
-   }
+  using TupleAlias<TT...>::TupleAlias;
  };
 
-template <class T>
-struct Tuple<T>
+/* struct ForwardTupleFactory<TT> */
+
+template <class ... TT,int ... IList>
+struct ForwardTupleFactory<Meta::IndexListBox<IList...>,TT...>
  {
-  T first;
-
-  Tuple() : first() {}
-
-  Tuple(const T &t) : first(t) {}
-
-  template <FuncInitArgType<T &> FuncInit>
-  void call(FuncInit func_init)
+  template <int Ind,class T>
+  struct Field
    {
-    FunctorTypeOf<FuncInit> func(func_init);
+    T &&field;
 
-    func(first);
-   }
- };
+    explicit Field(T &&t) : field( std::forward<T>(t) ) {}
 
-template <class T,class S,class ... RR>
-struct Tuple<T,S,RR...>
- {
-  T first;
-  Tuple<S,RR...> rest;
+    Field(const Field<Ind,T> &obj) : field( std::forward<T>(obj.field) ) {}
+   };
 
-  Tuple() {}
+  template <int I,class T>
+  static Field<I,T> * Cast(Field<I,T> *ptr) { return ptr; }
 
-  Tuple(const T &t,const S &s,const RR & ... rr) : first(t),rest(s,rr...) {}
+  template <int I,class T>
+  static const Field<I,T> * Cast(const Field<I,T> *ptr) { return ptr; }
 
-  template <FuncInitArgType<T &,S &,RR & ...> FuncInit>
-  void call(FuncInit func_init)
+  struct Tuple : Field<IList,TT>...
    {
-    FunctorTypeOf<FuncInit> func(func_init);
+    explicit Tuple(TT && ... tt) : Field<IList,TT>( std::forward<TT>(tt) )... {}
 
-    T &first_=first;
+    template <int I>
+    auto && ref() const { return Cast<I>(this)->field; }
 
-    rest.call( [&] (S &s,RR & ... rr) { func(first_,s,rr...); } );
-   }
+    template <FuncInitArgType<TT && ...> FuncInit>
+    auto call(FuncInit func_init) const
+     {
+      FunctorTypeOf<FuncInit> func(func_init);
+
+      return func( std::forward<TT>(ref<IList>())... );
+     }
+   };
  };
 
 /* struct ForwardTuple<TT> */
 
-template <>
-struct ForwardTuple<>
+template <class ... TT>
+using ForwardTupleAlias = typename ForwardTupleFactory< Meta::IndexList<TT...> ,TT...>::Tuple ;
+
+template <class ... TT>
+struct ForwardTuple : ForwardTupleAlias<TT...>
  {
-  ForwardTuple() {}
-
-  template <FuncInitArgType<> FuncInit>
-  void call(FuncInit func_init)
-   {
-    FunctorTypeOf<FuncInit> func(func_init);
-
-    func();
-   }
- };
-
-template <class T>
-struct ForwardTuple<T>
- {
-  T &&first;
-
-  ForwardTuple(T &&t) : first( std::forward<T>(t) ) {}
-
-  ForwardTuple(const ForwardTuple<T> &obj) : first( std::forward<T>(obj.first) ) {}
-
-  template <FuncInitArgType<T &&> FuncInit>
-  void call(FuncInit func_init)
-   {
-    FunctorTypeOf<FuncInit> func(func_init);
-
-    func( std::forward<T>(first) );
-   }
- };
-
-template <class T,class S,class ... RR>
-struct ForwardTuple<T,S,RR...>
- {
-  T &&first;
-  ForwardTuple<S,RR...> rest;
-
-  ForwardTuple(T &&t,S &&s,RR && ... rr) : first( std::forward<T>(t) ),rest( std::forward<S>(s) , std::forward<RR>(rr)... ) {}
-
-  ForwardTuple(const ForwardTuple<T,S,RR...> &obj) : first( std::forward<T>(obj.first) ),rest(obj.rest) {}
-
-  template <FuncInitArgType<T &&,S &&,RR && ...> FuncInit>
-  void call(FuncInit func_init)
-   {
-    FunctorTypeOf<FuncInit> func(func_init);
-
-    T &&first_=first;
-
-    rest.call( [&] (S &&s,RR && ... rr) { func( std::forward<T>(first_) , std::forward<S>(s) , std::forward<RR>(rr)... ); } );
-   }
+  using ForwardTupleAlias<TT...>::ForwardTupleAlias;
  };
 
 /* MakeTuple() */

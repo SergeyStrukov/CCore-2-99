@@ -176,7 +176,7 @@ struct ScanableTypeCtor
 template <class ... TT>
 struct ScanableTypeCtor<Tuple<TT...> >
  {
-  enum RetType { Ret = ( true && ... && ScanableTypeCtor< Meta::UnRef<TT> >::Ret ) };
+  enum RetType { Ret = ( ... && ScanableTypeCtor< Meta::UnRef<TT> >::Ret ) };
  };
 
 template <class T>
@@ -248,17 +248,10 @@ class ScanfDev<S> : ScanfDevBase
 
    // expand
 
-   void expand(Tuple<> &) {}
-
-   template <class T>
-   void expand(Tuple<T> &tuple) { (*this) >> tuple.first ; }
-
-   template <class T1,class T2,class ... TT>
-   void expand(Tuple<T1,T2,TT...> &tuple)
+   template <class ... TT>
+   void expand(Tuple<TT...> &tuple)
     {
-     (*this) >> tuple.first ;
-
-     expand(tuple.rest);
+     tuple.call( [this] (TT & ...tt) { ( (*this) >> ... >> tt ); } );
     }
 
    // operator >>
@@ -373,17 +366,10 @@ class ScanobjDev<S> : NoCopy
 
    // expand
 
-   void expand(const Tuple<> &) {}
-
-   template <class T>
-   void expand(Tuple<T> &tuple) { (*this) >> tuple.first ; }
-
-   template <class T1,class T2,class ... TT>
-   void expand(Tuple<T1,T2,TT...> &tuple)
+   template <class ... TT>
+   void expand(Tuple<TT...> &tuple)
     {
-     (*this) >> tuple.first ;
-
-     expand(tuple.rest);
+     tuple.call( [this] (TT & ...tt) { ( (*this) >> ... >> tt ); } );
     }
 
    // operator >>

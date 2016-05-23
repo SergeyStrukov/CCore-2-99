@@ -208,7 +208,7 @@ struct PrintableTypeCtor
 template <class ... TT>
 struct PrintableTypeCtor<Tuple<TT...> >
  {
-  enum RetType { Ret = ( true && ... && PrintableTypeCtor< Meta::UnConst<Meta::UnRef<TT> > >::Ret ) };
+  enum RetType { Ret = ( ... && PrintableTypeCtor< Meta::UnConst<Meta::UnRef<TT> > >::Ret ) };
  };
 
 template <class T>
@@ -263,17 +263,10 @@ class PrintfDev<P> : PrintfDevBase
 
    // expand
 
-   void expand(const Tuple<> &) {}
-
-   template <class T>
-   void expand(const Tuple<T> &tuple) { (*this) += tuple.first ; }
-
-   template <class T,class S,class ... TT>
-   void expand(const Tuple<T,S,TT...> &tuple)
+   template <class ... TT>
+   void expand(const Tuple<TT...> &tuple)
     {
-     (*this) += tuple.first ;
-
-     expand(tuple.rest);
+     tuple.call( [this] (const TT & ...tt) { ( (*this) += ... += tt ); } );
     }
 
    // operator +=
@@ -381,19 +374,12 @@ class PutobjDev<P> : NoCopy
 
   private:
 
-   // step_tuple
+   // expand
 
-   void expand(const Tuple<> &) {}
-
-   template <class T>
-   void expand(const Tuple<T> &tuple) { (*this) += tuple.first ; }
-
-   template <class T,class S,class ... TT>
-   void expand(const Tuple<T,S,TT...> &tuple)
+   template <class ... TT>
+   void expand(const Tuple<TT...> &tuple)
     {
-     (*this) += tuple.first ;
-
-     expand(tuple.rest);
+     tuple.call( [this] (const TT & ...tt) { ( (*this) += ... += tt ); } );
     }
 
    // operator +=

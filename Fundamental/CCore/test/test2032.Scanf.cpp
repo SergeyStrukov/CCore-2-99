@@ -1,7 +1,7 @@
 /* test2032.Scanf.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -163,7 +163,7 @@ void test3()
 
   Scanf(scan," #; #;",test4);
 
-  Printf(Con,"#; #;\n",test4.first,test4.rest.first);
+  Printf(Con,"#; #;\n",test4.ref<1>(),test4.ref<2>());
 
 
   if( scan.isFailed() )
