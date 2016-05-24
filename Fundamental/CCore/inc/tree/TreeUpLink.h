@@ -38,7 +38,7 @@ template <class T,class K> struct TreeUpLink;
 template <class T,class K>
 struct TreeUpLink
  {
-  T *lo; // == this for same-key nodes
+  T *lo; // == cur for same-key nodes
   T *hi;
   T *up;
   K key; // non-unique
@@ -329,6 +329,60 @@ struct TreeUpLink<T,K>::BinAlgo
     return 0;
    }
 
+  // struct Cur
+
+  struct Cur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { T *lo=Link(ptr).lo; return Cur( (lo!=ptr)?lo:0 ); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct RevCur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { T *lo=Link(ptr).lo; return RevCur( (lo!=ptr)?lo:0 ); }
+   };
+
   // struct Root
 
   struct Root
@@ -346,6 +400,10 @@ struct TreeUpLink<T,K>::BinAlgo
     T * operator + () const { return root; }
 
     bool operator ! () const { return !root; }
+
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
 
     // find
 

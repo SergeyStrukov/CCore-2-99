@@ -1,7 +1,7 @@
 /* CompactMap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -25,7 +25,7 @@ namespace CCore {
 
 template <class K,class T,class KRef=K> class CompactRBTreeMap;
 
-template <class K,class T> class CompactRadixTreeMap;
+template <UIntType K,NothrowDtorType T> class CompactRadixTreeMap;
 
 /* class CompactRBTreeMap<K,T,KRef> */
 
@@ -461,7 +461,7 @@ void CompactRBTreeMap<K,T,KRef>::applyDecr(FuncInit func_init) const
 
 /* class CompactRadixTreeMap<K,T> */
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 class CompactRadixTreeMap : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -497,17 +497,10 @@ class CompactRadixTreeMap : NoCopy
      return Algo::Link(node).key;
     }
 
-   template <class Func>
-   static void ApplyIncr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyIncr_const(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr_const(Node *node,Func &func);
+   static K GetKey(Node &node)
+    {
+     return Algo::Link(&node).key;
+    }
 
   public:
 
@@ -657,7 +650,7 @@ class CompactRadixTreeMap : NoCopy
     };
 
    template <class ... SS>
-   Result find_or_add(K key,SS && ... ss);
+   Result find_or_add(K key,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    bool del(K key);
 
@@ -672,23 +665,23 @@ class CompactRadixTreeMap : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init);
+   template <FuncInitArgType<K,T &> FuncInit>
+   auto applyIncr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init);
+   template <FuncInitArgType<K,T &> FuncInit>
+   auto applyDecr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init) const;
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyIncr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init) const;
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyDecr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyIncr_const(FuncInit func_init) const { applyIncr(func_init); }
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyIncr_const(FuncInit func_init) const { return applyIncr(func_init); }
 
-   template <class FuncInit>
-   void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyDecr_const(FuncInit func_init) const { return applyDecr(func_init); }
 
    // swap/move objects
 
@@ -707,7 +700,7 @@ class CompactRadixTreeMap : NoCopy
     }
  };
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 void CompactRadixTreeMap<K,T>::delNode(Node *node)
  {
   Node *todel=allocator.todel();
@@ -722,65 +715,9 @@ void CompactRadixTreeMap<K,T>::delNode(Node *node)
   allocator.del();
  }
 
-template <class K,class T>
-template <class Func>
-void CompactRadixTreeMap<K,T>::ApplyIncr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <class K,class T>
-template <class Func>
-void CompactRadixTreeMap<K,T>::ApplyDecr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <class K,class T>
-template <class Func>
-void CompactRadixTreeMap<K,T>::ApplyIncr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <class K,class T>
-template <class Func>
-void CompactRadixTreeMap<K,T>::ApplyDecr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 template <class ... SS>
-auto CompactRadixTreeMap<K,T>::find_or_add(K key,SS && ... ss) -> Result
+auto CompactRadixTreeMap<K,T>::find_or_add(K key,SS && ... ss) -> Result requires ( ConstructibleType<T,SS...> )
  {
   key_range.guard(key);
 
@@ -795,7 +732,7 @@ auto CompactRadixTreeMap<K,T>::find_or_add(K key,SS && ... ss) -> Result
   return Result(&node->obj,true);
  }
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 bool CompactRadixTreeMap<K,T>::del(K key)
  {
   if( Node *node=root.del(key) )
@@ -808,7 +745,7 @@ bool CompactRadixTreeMap<K,T>::del(K key)
   return false;
  }
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 bool CompactRadixTreeMap<K,T>::delMin()
  {
   if( Node *node=root.delMin() )
@@ -821,7 +758,7 @@ bool CompactRadixTreeMap<K,T>::delMin()
   return false;
  }
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 bool CompactRadixTreeMap<K,T>::delMax()
  {
   if( Node *node=root.delMax() )
@@ -834,7 +771,7 @@ bool CompactRadixTreeMap<K,T>::delMax()
   return false;
  }
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 template <class S>
 bool CompactRadixTreeMap<K,T>::del(NodePtr<S> node_ptr)
  {
@@ -850,7 +787,7 @@ bool CompactRadixTreeMap<K,T>::del(NodePtr<S> node_ptr)
   return false;
  }
 
-template <class K,class T>
+template <UIntType K,NothrowDtorType T>
 ulen CompactRadixTreeMap<K,T>::erase()
  {
   root.init();
@@ -858,48 +795,48 @@ ulen CompactRadixTreeMap<K,T>::erase()
   return allocator.erase();
  }
 
-template <class K,class T>
-template <class FuncInit>
-void CompactRadixTreeMap<K,T>::applyIncr(FuncInit func_init)
+template <UIntType K,NothrowDtorType T>
+template <FuncInitArgType<K,T &> FuncInit>
+auto CompactRadixTreeMap<K,T>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
-  ApplyIncr(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T>
-template <class FuncInit>
-void CompactRadixTreeMap<K,T>::applyDecr(FuncInit func_init)
+template <UIntType K,NothrowDtorType T>
+template <FuncInitArgType<K,T &> FuncInit>
+auto CompactRadixTreeMap<K,T>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
-  ApplyDecr(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T>
-template <class FuncInit>
-void CompactRadixTreeMap<K,T>::applyIncr(FuncInit func_init) const
+template <UIntType K,NothrowDtorType T>
+template <FuncInitArgType<K,const T &> FuncInit>
+auto CompactRadixTreeMap<K,T>::applyIncr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
-  ApplyIncr_const(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T>
-template <class FuncInit>
-void CompactRadixTreeMap<K,T>::applyDecr(FuncInit func_init) const
+template <UIntType K,NothrowDtorType T>
+template <FuncInitArgType<K,const T &> FuncInit>
+auto CompactRadixTreeMap<K,T>::applyDecr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
-  ApplyDecr_const(node,func);
+  return Algon::GetResult(func);
  }
 
 } // namespace CCore
