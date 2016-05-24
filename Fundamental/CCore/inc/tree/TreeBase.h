@@ -1,7 +1,7 @@
 /* TreeBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,6 +23,18 @@ namespace CCore {
 /* functions */
 
 void RadixTreeBrokenAbort();
+
+/* concept TreeKeyTypes<K,KRef> */
+
+template <class K,class KRef>
+concept bool TreeKeyTypes = requires(K &obj,const K &cobj,KRef a)
+ {
+  requires ( NothrowCopyCtorType<KRef> ) ;
+
+  requires ( CmpableType<K> ) ;
+
+  { Cmp(a,cobj) } -> CmpResult ;
+ } ;
 
 } // namespace CCore
 

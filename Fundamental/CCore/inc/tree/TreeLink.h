@@ -44,13 +44,13 @@ struct TreeLink
 
   using Node = TreeLink<T,K> ;
 
-  template <TreeLink<T,K> T::* LinkMember,class KRef=K> struct BinAlgo;
+  template <TreeLink<T,K> T::* LinkMember,class KRef=K> requires ( TreeKeyTypes<K,KRef> ) struct BinAlgo;
 
   template <TreeLink<T,K> T::* LinkMember> requires ( UIntType<K> ) struct RadixAlgo;
  };
 
 template <class T,class K>
-template <TreeLink<T,K> T::* LinkMember,class KRef>
+template <TreeLink<T,K> T::* LinkMember,class KRef> requires ( TreeKeyTypes<K,KRef> )
 struct TreeLink<T,K>::BinAlgo
  {
    // node!=0
@@ -64,15 +64,6 @@ struct TreeLink<T,K>::BinAlgo
 
     link.lo=lo;
     link.hi=hi;
-   }
-
-  static void Link(T *node,T *lo,T *hi,KRef key)
-   {
-    Node &link=Link(node);
-
-    link.lo=lo;
-    link.hi=hi;
-    link.key=key;
    }
 
   // Find
@@ -167,7 +158,8 @@ struct TreeLink<T,K>::BinAlgo
 
   // Locate
 
-  static T ** Locate(T **root_ptr,KRef key)
+  template <class Ref>
+  static T ** Locate(T **root_ptr,Ref key) requires ( Meta::OneOf<Ref,KRef,const K &> )
    {
     while( T *root=*root_ptr )
       {
@@ -327,7 +319,7 @@ struct TreeLink<T,K>::BinAlgo
     DelRoot(Locate(root_ptr,Link(node).key));
    }
 
-  template <class TestFunc,class DelFunc>
+  template <FuncType<bool,T *> TestFunc,FuncArgType<T *> DelFunc>
   static void DelIf(T **root_ptr,TestFunc test_func,DelFunc del_func) // root_ptr!=0
    {
     if( T *root=*root_ptr )
@@ -436,7 +428,7 @@ struct TreeLink<T,K>::BinAlgo
 
     void del(T *node) { Del(&root,node); }
 
-    template <class TestFunc,class DelFunc>
+    template <FuncType<bool,T *> TestFunc,FuncArgType<T *> DelFunc>
     void delIf(TestFunc test_func,DelFunc del_func) { DelIf(&root,test_func,del_func); }
    };
  };
@@ -447,11 +439,24 @@ struct TreeLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
  {
   using BinAlgo<LinkMember,K>::Link;
 
+  using Root = typename BinAlgo<LinkMember,K>::Root ;
+
   // Med()
 
   static K Med(K kmin,K kmax) // kmin<kmax
    {
     return K( kmin+(kmax-kmin-1)/2 );
+   }
+
+  // LinkKey()
+
+  static void LinkKey(T *node,T *lo,T *hi,K key)
+   {
+    Node &link=Link(node);
+
+    link.lo=lo;
+    link.hi=hi;
+    link.key=key;
    }
 
   // class PrepareIns
@@ -630,7 +635,7 @@ struct TreeLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
 
      void complete_none(T *node)
       {
-       Link(node,lo,hi,key);
+       LinkKey(node,lo,hi,key);
 
        *root_ptr=node;
       }
@@ -658,7 +663,7 @@ struct TreeLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
        prepare(root_ptr,key,0,MaxUInt<K>);
       }
 
-     PrepareIns(typename BinAlgo<LinkMember,K>::Root &root,K key)
+     PrepareIns(Root &root,K key)
       {
        prepare(&root.root,key,0,MaxUInt<K>);
       }
@@ -668,7 +673,7 @@ struct TreeLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
        prepare(root_ptr,key,kmin,kmax);
       }
 
-     PrepareIns(typename BinAlgo<LinkMember,K>::Root &root,K key,K kmin,K kmax)
+     PrepareIns(Root &root,K key,K kmin,K kmax)
       {
        prepare(&root.root,key,kmin,kmax);
       }

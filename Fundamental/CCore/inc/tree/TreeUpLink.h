@@ -45,13 +45,13 @@ struct TreeUpLink
 
   using Node = TreeUpLink<T,K> ;
 
-  template <TreeUpLink<T,K> T::* LinkMember,class KRef=K> struct BinAlgo;
+  template <TreeUpLink<T,K> T::* LinkMember,class KRef=K> requires ( TreeKeyTypes<K,KRef> ) struct BinAlgo;
 
   template <TreeUpLink<T,K> T::* LinkMember> requires ( UIntType<K> ) struct RadixAlgo;
  };
 
 template <class T,class K>
-template <TreeUpLink<T,K> T::* LinkMember,class KRef>
+template <TreeUpLink<T,K> T::* LinkMember,class KRef> requires ( TreeKeyTypes<K,KRef> )
 struct TreeUpLink<T,K>::BinAlgo
  {
    // node!=0
@@ -92,7 +92,7 @@ struct TreeUpLink<T,K>::BinAlgo
 
        if( link.lo==root )
          {
-          if( key==link.key ) return root;
+          if( Cmp(key,link.key)==0 ) return root;
 
           return 0;
          }
@@ -137,7 +137,7 @@ struct TreeUpLink<T,K>::BinAlgo
 
        if( link.lo==root )
          {
-          if( key<=link.key ) candidate=root;
+          if( Cmp(key,link.key)<=0 ) candidate=root;
 
           break;
          }
@@ -182,7 +182,7 @@ struct TreeUpLink<T,K>::BinAlgo
 
        if( link.lo==root )
          {
-          if( key>=link.key ) candidate=root;
+          if( Cmp(key,link.key)>=0 ) candidate=root;
 
           break;
          }
