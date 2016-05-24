@@ -1,7 +1,7 @@
 /* TreeMap.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -23,7 +23,7 @@ namespace CCore {
 
 void GuardKeyOutOfRange()
  {
-  Printf(Exception,"CCore::KeyRange<K>::guard(...) : key is out of range");
+  Printf(Exception,"CCore::KeyRange<...>::guard(...) : key is out of range");
  }
 
 } // namespace CCore

@@ -20,6 +20,8 @@
 #include <CCore/inc/Tree.h>
 #include <CCore/inc/FunctorType.h>
 
+#include <CCore/inc/algon/ApplyToRange.h>
+
 namespace CCore {
 
 /* function */
@@ -32,7 +34,7 @@ template <class K,class T,class KRef=K,template <class Node> class Allocator=Nod
 
 template <UIntType K> struct KeyRange;
 
-template <class K,class T,template <class Node> class Allocator=NodeAllocator> class RadixTreeMap;
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator=NodeAllocator> class RadixTreeMap;
 
 /* class RBTreeMap<K,T,KRef,Allocator> */
 
@@ -470,7 +472,7 @@ struct KeyRange
 
 /* class RadixTreeMap<K,T,Allocator> */
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 class RadixTreeMap : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -666,7 +668,7 @@ class RadixTreeMap : NoCopy
     };
 
    template <class ... SS>
-   Result find_or_add(K key,SS && ... ss);
+   Result find_or_add(K key,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    bool del(K key);
 
@@ -681,27 +683,27 @@ class RadixTreeMap : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init);
+   template <FuncInitArgType<K,T &> FuncInit>
+   auto applyIncr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init);
+   template <FuncInitArgType<K,T &> FuncInit>
+   auto applyDecr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init) const;
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyIncr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init) const;
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyDecr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyIncr_const(FuncInit func_init) const { applyIncr(func_init); }
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyIncr_const(FuncInit func_init) const { return applyIncr(func_init); }
 
-   template <class FuncInit>
-   void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
+   template <FuncInitArgType<K,const T &> FuncInit>
+   auto applyDecr_const(FuncInit func_init) const { return applyDecr(func_init); }
 
    // delIf
 
-   template <class FuncInit>
+   template <FuncInitType<bool,K,T &> FuncInit>
    void delIf(FuncInit func_init);
 
    // swap/move objects
@@ -721,7 +723,7 @@ class RadixTreeMap : NoCopy
     }
  };
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 void RadixTreeMap<K,T,Allocator>::destroy(Node *node)
  {
   if( node )
@@ -733,7 +735,7 @@ void RadixTreeMap<K,T,Allocator>::destroy(Node *node)
     }
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class Func>
 void RadixTreeMap<K,T,Allocator>::ApplyIncr(Node *node,Func &func)
  {
@@ -747,7 +749,7 @@ void RadixTreeMap<K,T,Allocator>::ApplyIncr(Node *node,Func &func)
     }
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class Func>
 void RadixTreeMap<K,T,Allocator>::ApplyDecr(Node *node,Func &func)
  {
@@ -761,7 +763,7 @@ void RadixTreeMap<K,T,Allocator>::ApplyDecr(Node *node,Func &func)
     }
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class Func>
 void RadixTreeMap<K,T,Allocator>::ApplyIncr_const(Node *node,Func &func)
  {
@@ -775,7 +777,7 @@ void RadixTreeMap<K,T,Allocator>::ApplyIncr_const(Node *node,Func &func)
     }
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class Func>
 void RadixTreeMap<K,T,Allocator>::ApplyDecr_const(Node *node,Func &func)
  {
@@ -789,9 +791,9 @@ void RadixTreeMap<K,T,Allocator>::ApplyDecr_const(Node *node,Func &func)
     }
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
-auto RadixTreeMap<K,T,Allocator>::find_or_add(K key,SS && ... ss) -> Result
+auto RadixTreeMap<K,T,Allocator>::find_or_add(K key,SS && ... ss) -> Result requires ( ConstructibleType<T,SS...> )
  {
   key_range.guard(key);
 
@@ -806,25 +808,25 @@ auto RadixTreeMap<K,T,Allocator>::find_or_add(K key,SS && ... ss) -> Result
   return Result(&node->obj,true);
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 bool RadixTreeMap<K,T,Allocator>::del(K key)
  {
   return allocator.free(root.del(key));
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 bool RadixTreeMap<K,T,Allocator>::delMin()
  {
   return allocator.free(root.delMin());
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 bool RadixTreeMap<K,T,Allocator>::delMax()
  {
   return allocator.free(root.delMax());
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class S>
 bool RadixTreeMap<K,T,Allocator>::del(NodePtr<S> node_ptr)
  {
@@ -840,7 +842,7 @@ bool RadixTreeMap<K,T,Allocator>::del(NodePtr<S> node_ptr)
   return false;
  }
 
-template <class K,class T,template <class Node> class Allocator>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 ulen RadixTreeMap<K,T,Allocator>::erase()
  {
   Node *ptr=root.root;
@@ -854,52 +856,60 @@ ulen RadixTreeMap<K,T,Allocator>::erase()
   return ret;
  }
 
-template <class K,class T,template <class Node> class Allocator>
-template <class FuncInit>
-void RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init)
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
+template <FuncInitArgType<K,T &> FuncInit>
+auto RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
   Node *node=root.root;
 
   ApplyIncr(node,func);
+
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,template <class Node> class Allocator>
-template <class FuncInit>
-void RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init)
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
+template <FuncInitArgType<K,T &> FuncInit>
+auto RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
   Node *node=root.root;
 
   ApplyDecr(node,func);
+
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,template <class Node> class Allocator>
-template <class FuncInit>
-void RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init) const
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
+template <FuncInitArgType<K,const T &> FuncInit>
+auto RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
   Node *node=root.root;
 
   ApplyIncr_const(node,func);
+
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,template <class Node> class Allocator>
-template <class FuncInit>
-void RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init) const
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
+template <FuncInitArgType<K,const T &> FuncInit>
+auto RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
   Node *node=root.root;
 
   ApplyDecr_const(node,func);
+
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,template <class Node> class Allocator>
-template <class FuncInit>
+template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
+template <FuncInitType<bool,K,T &> FuncInit>
 void RadixTreeMap<K,T,Allocator>::delIf(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
