@@ -508,17 +508,10 @@ class RadixTreeMap : NoCopy
      return Algo::Link(node).key;
     }
 
-   template <class Func>
-   static void ApplyIncr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyIncr_const(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr_const(Node *node,Func &func);
+   static K GetKey(Node &node)
+    {
+     return Algo::Link(&node).key;
+    }
 
   public:
 
@@ -736,62 +729,6 @@ void RadixTreeMap<K,T,Allocator>::destroy(Node *node)
  }
 
 template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
-template <class Func>
-void RadixTreeMap<K,T,Allocator>::ApplyIncr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
-template <class Func>
-void RadixTreeMap<K,T,Allocator>::ApplyDecr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
-template <class Func>
-void RadixTreeMap<K,T,Allocator>::ApplyIncr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
-template <class Func>
-void RadixTreeMap<K,T,Allocator>::ApplyDecr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <UIntType K,NothrowDtorType T,template <class Node> class Allocator>
 template <class ... SS>
 auto RadixTreeMap<K,T,Allocator>::find_or_add(K key,SS && ... ss) -> Result requires ( ConstructibleType<T,SS...> )
  {
@@ -862,9 +799,7 @@ auto RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
-
-  ApplyIncr(node,func);
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
   return Algon::GetResult(func);
  }
@@ -875,9 +810,7 @@ auto RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
-
-  ApplyDecr(node,func);
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
   return Algon::GetResult(func);
  }
@@ -888,9 +821,7 @@ auto RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
-
-  ApplyIncr_const(node,func);
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
   return Algon::GetResult(func);
  }
@@ -901,9 +832,7 @@ auto RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
-
-  ApplyDecr_const(node,func);
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
   return Algon::GetResult(func);
  }

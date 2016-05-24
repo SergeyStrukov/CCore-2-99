@@ -213,6 +213,54 @@ concept bool CursorCastType = requires(R &obj,Meta::ToConst<R> &cobj)
   ++obj;
  } ;
 
+/* concept RecursorType<R> */
+
+template <class R>
+concept bool RecursorType = requires(Meta::ToConst<R> &cobj)
+ {
+  requires ( NothrowCopyableType<R> ) ;
+
+  { +cobj } -> bool ;
+
+  *cobj;
+
+  { cobj.prev() } -> R ;
+
+  { cobj.next() } -> R ;
+ } ;
+
+/* concept RecursorOverType<R,T> */
+
+template <class R,class T>
+concept bool RecursorOverType = requires(Meta::ToConst<R> &cobj)
+ {
+  requires ( NothrowCopyableType<R> ) ;
+
+  { +cobj } -> bool ;
+
+  { *cobj } -> T ;
+
+  { cobj.prev() } -> R ;
+
+  { cobj.next() } -> R ;
+ } ;
+
+/* concept RecursorOverType<R,T> */
+
+template <class R,class T>
+concept bool RecursorCastType = requires(Meta::ToConst<R> &cobj)
+ {
+  requires ( NothrowCopyableType<R> ) ;
+
+  { +cobj } -> bool ;
+
+  T(*cobj);
+
+  { cobj.prev() } -> R ;
+
+  { cobj.next() } -> R ;
+ } ;
+
 /* concept RanType<Ran> */
 
 template <class Ran>

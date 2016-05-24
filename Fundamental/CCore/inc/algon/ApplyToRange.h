@@ -59,6 +59,54 @@ auto ApplyToRange(R r,FuncInit func_init) requires( FuncInitType<FuncInit,bool,M
   return GetResult(func);
  }
 
+template <class R,class Func>
+void ApplyToRange_rec(R r,Func &func)
+ {
+  if( +r )
+    {
+     ApplyToRange_rec(r.prev(),func);
+
+     func(*r);
+
+     ApplyToRange_rec(r.next(),func);
+    }
+ }
+
+template <RecursorType R,FuncInitArgType<Meta::PtrObjType<R> &> FuncInit>
+auto ApplyToRange(R r,FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+
+  ApplyToRange_rec(r,func);
+
+  return GetResult(func);
+ }
+
+template <class R,class Func>
+bool CondApplyToRange_rec(R r,Func &func)
+ {
+  if( +r )
+    {
+     if( !CondApplyToRange_rec(r.prev(),func) ) return false;
+
+     if( !func(*r) ) return false;
+
+     if( !CondApplyToRange_rec(r.next(),func) ) return false;
+    }
+
+  return true;
+ }
+
+template <RecursorType R,FuncInitArgType<Meta::PtrObjType<R> &> FuncInit>
+auto ApplyToRange(R r,FuncInit func_init) requires( FuncInitType<FuncInit,bool,Meta::PtrObjType<R> &> )
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+
+  CondApplyToRange_rec(r,func);
+
+  return GetResult(func);
+ }
+
 } // namespace Algon
 } // namespace CCore
 

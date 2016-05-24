@@ -372,6 +372,60 @@ struct TreeLink<T,K>::BinAlgo
     T * node() const { return *node_ptr; }
    };
 
+  // struct Cur
+
+  struct Cur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { return Cur(Link(ptr).lo); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct RevCur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { return RevCur(Link(ptr).lo); }
+   };
+
   // struct Root
 
   struct Root
@@ -389,6 +443,10 @@ struct TreeLink<T,K>::BinAlgo
     T * operator + () const { return root; }
 
     bool operator ! () const { return !root; }
+
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
 
     // find
 
