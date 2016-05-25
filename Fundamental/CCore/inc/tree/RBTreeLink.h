@@ -1,7 +1,7 @@
 /* RBTreeLink.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -34,17 +34,22 @@ struct RBTreeLink
   K key; // unique
   RBFlag flag;
 
+  RBTreeLink() {}
+
+  template <class ... SS>
+  explicit RBTreeLink(SS && ... ss) : key( std::forward<SS>(ss)... ) {}
+
   using Node = RBTreeLink<T,K> ;
 
-  template <RBTreeLink<T,K> T::* LinkMember,class KRef=K> struct BaseAlgo;
+  template <RBTreeLink<T,K> T::* LinkMember,class KRef=K> requires ( RBTreeKeyTypes<K,KRef> ) struct BaseAlgo;
 
-  template <RBTreeLink<T,K> T::* LinkMember,class KRef=K> struct Algo;
+  template <RBTreeLink<T,K> T::* LinkMember,class KRef=K,void (*CopyKeyFunc)(K &,KRef)=DoCopyKey> requires ( RBTreeKeyTypes<K,KRef> ) struct Algo;
 
-  template <RBTreeLink<T,K> T::* LinkMember,class KRef=K> struct AltAlgo;
+  template <RBTreeLink<T,K> T::* LinkMember,class KRef=K,void (*CopyKeyFunc)(K &,KRef)=DoCopyKey> requires ( RBTreeKeyTypes<K,KRef> ) struct AltAlgo;
  };
 
 template <class T,class K>
-template <RBTreeLink<T,K> T::* LinkMember,class KRef>
+template <RBTreeLink<T,K> T::* LinkMember,class KRef> requires ( RBTreeKeyTypes<K,KRef> )
 struct RBTreeLink<T,K>::BaseAlgo
  {
    // node!=0
@@ -141,6 +146,60 @@ struct RBTreeLink<T,K>::BaseAlgo
     return candidate;
    }
 
+  // struct Cur
+
+  struct Cur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { return Cur(Link(ptr).lo); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct RevCur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { return RevCur(Link(ptr).lo); }
+   };
+
   // struct Check
 
   struct Check
@@ -217,7 +276,7 @@ struct RBTreeLink<T,K>::BaseAlgo
       return ret;
      }
 
-    void run(T *root) // root!=0
+    void run(T *root) requires ( OpCmpType<K> ) // root!=0
      {
       Node &link=Link(root);
 
@@ -273,13 +332,17 @@ struct RBTreeLink<T,K>::BaseAlgo
  };
 
 template <class T,class K>
-template <RBTreeLink<T,K> T::* LinkMember,class KRef>
+template <RBTreeLink<T,K> T::* LinkMember,class KRef,void (*CopyKeyFunc)(K &,KRef)> requires ( RBTreeKeyTypes<K,KRef> )
 struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
  {
    // node!=0
    // root_ptr!=0
 
   using BaseAlgo<LinkMember,KRef>::Link;
+
+  using Cur = typename BaseAlgo<LinkMember,KRef>::Cur ;
+
+  using RevCur = typename BaseAlgo<LinkMember,KRef>::RevCur ;
 
   // class PerformDelMin
 
@@ -623,9 +686,10 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
 
   // class PerformDel
 
+  template <class Ref>
   class PerformDel : NoCopy
    {
-     KRef key;
+     Ref key;
 
     private:
 
@@ -1268,7 +1332,7 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
 
      T *found;
 
-     PerformDel(T **root_ptr,KRef key_) : key(key_),found(0) { perform(root_ptr); }
+     PerformDel(T **root_ptr,Ref key_) : key(key_),found(0) { perform(root_ptr); }
    };
 
   // Del
@@ -1287,9 +1351,10 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
     return perform.found;
    }
 
-  static T * Del(T **root_ptr,KRef key)
+  template <class Ref>
+  static T * Del(T **root_ptr,Ref key) requires ( Meta::OneOf<Ref,KRef,const K &> )
    {
-    PerformDel perform(root_ptr,key);
+    PerformDel<Ref> perform(root_ptr,key);
 
     return perform.found;
    }
@@ -1316,6 +1381,10 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
     T * operator + () const { return root; }
 
     bool operator ! () const { return !root; }
+
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
 
     // find
 
@@ -1366,7 +1435,7 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
 
        linkN.lo=0;
        linkN.hi=0;
-       linkN.key=key;
+       CopyKeyFunc(linkN.key,key);
        linkN.flag=RBFlag_BlackBlack;
       }
 
@@ -1505,7 +1574,7 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
 
           linkN.lo=P;
           linkN.hi=G;
-          linkN.key=key;
+          CopyKeyFunc(linkN.key,key);
           linkN.flag=RBFlag_RedRed;
 
           linkG.lo=0;
@@ -1529,7 +1598,7 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
 
           linkN.hi=P;
           linkN.lo=G;
-          linkN.key=key;
+          CopyKeyFunc(linkN.key,key);
           linkN.flag=RBFlag_RedRed;
 
           linkG.hi=0;
@@ -1841,13 +1910,17 @@ struct RBTreeLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
  };
 
 template <class T,class K>
-template <RBTreeLink<T,K> T::* LinkMember,class KRef>
-struct RBTreeLink<T,K>::AltAlgo : Algo<LinkMember,KRef>
+template <RBTreeLink<T,K> T::* LinkMember,class KRef,void (*CopyKeyFunc)(K &,KRef)> requires ( RBTreeKeyTypes<K,KRef> )
+struct RBTreeLink<T,K>::AltAlgo : Algo<LinkMember,KRef,CopyKeyFunc>
  {
    // node!=0
    // root_ptr!=0
 
-  using Algo<LinkMember,KRef>::Link;
+  using Algo<LinkMember,KRef,CopyKeyFunc>::Link;
+
+  using Cur = typename Algo<LinkMember,KRef,CopyKeyFunc>::Cur ;
+
+  using RevCur = typename Algo<LinkMember,KRef,CopyKeyFunc>::RevCur ;
 
   // struct Root
 
@@ -1867,27 +1940,31 @@ struct RBTreeLink<T,K>::AltAlgo : Algo<LinkMember,KRef>
 
     bool operator ! () const { return !root; }
 
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
+
     // find
 
-    T * find(KRef key) const { return Algo<LinkMember,KRef>::Find(root,key); }
+    T * find(KRef key) const { return Algo<LinkMember,KRef,CopyKeyFunc>::Find(root,key); }
 
-    T * findMin() const { return Algo<LinkMember,KRef>::FindMin(root); }
+    T * findMin() const { return Algo<LinkMember,KRef,CopyKeyFunc>::FindMin(root); }
 
-    T * findMin(KRef key) const { return Algo<LinkMember,KRef>::FindMin(root,key); }
+    T * findMin(KRef key) const { return Algo<LinkMember,KRef,CopyKeyFunc>::FindMin(root,key); }
 
-    T * findMax() const { return Algo<LinkMember,KRef>::FindMax(root); }
+    T * findMax() const { return Algo<LinkMember,KRef,CopyKeyFunc>::FindMax(root); }
 
-    T * findMax(KRef key) const { return Algo<LinkMember,KRef>::FindMax(root,key); }
+    T * findMax(KRef key) const { return Algo<LinkMember,KRef,CopyKeyFunc>::FindMax(root,key); }
 
     // del
 
-    T * delMin() { return Algo<LinkMember,KRef>::DelMin(&root); }
+    T * delMin() { return Algo<LinkMember,KRef,CopyKeyFunc>::DelMin(&root); }
 
-    T * delMax() { return Algo<LinkMember,KRef>::DelMax(&root); }
+    T * delMax() { return Algo<LinkMember,KRef,CopyKeyFunc>::DelMax(&root); }
 
-    T * del(KRef key) { return Algo<LinkMember,KRef>::Del(&root,key); }
+    T * del(KRef key) { return Algo<LinkMember,KRef,CopyKeyFunc>::Del(&root,key); }
 
-    void del(T *node) { Algo<LinkMember,KRef>::Del(&root,node); }
+    void del(T *node) { Algo<LinkMember,KRef,CopyKeyFunc>::Del(&root,node); }
    };
 
   // class PrepareIns
@@ -1947,7 +2024,7 @@ struct RBTreeLink<T,K>::AltAlgo : Algo<LinkMember,KRef>
 
        linkN.lo=0;
        linkN.hi=0;
-       linkN.key=key;
+       CopyKeyFunc(linkN.key,key);
        linkN.flag=RBFlag_BlackBlack;
       }
 
@@ -2067,7 +2144,7 @@ struct RBTreeLink<T,K>::AltAlgo : Algo<LinkMember,KRef>
 
        linkN.lo=C;
        linkN.hi=P;
-       linkN.key=key;
+       CopyKeyFunc(linkN.key,key);
        linkN.flag=RBFlag_RedRed;
 
        linkP.lo=0;
@@ -2083,7 +2160,7 @@ struct RBTreeLink<T,K>::AltAlgo : Algo<LinkMember,KRef>
 
        linkN.hi=C;
        linkN.lo=P;
-       linkN.key=key;
+       CopyKeyFunc(linkN.key,key);
        linkN.flag=RBFlag_RedRed;
 
        linkP.hi=0;

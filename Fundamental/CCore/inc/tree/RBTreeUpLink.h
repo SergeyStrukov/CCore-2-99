@@ -1,7 +1,7 @@
 /* RBTreeUpLink.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -35,15 +35,20 @@ struct RBTreeUpLink
   K key; // unique
   RBFlag flag;
 
+  RBTreeUpLink() {}
+
+  template <class ... SS>
+  explicit RBTreeUpLink(SS && ... ss) : key( std::forward<SS>(ss)... ) {}
+
   using Node = RBTreeUpLink<T,K> ;
 
-  template <RBTreeUpLink<T,K> T::* LinkMember,class KRef=K> struct BaseAlgo;
+  template <RBTreeUpLink<T,K> T::* LinkMember,class KRef=K> requires ( RBTreeKeyTypes<K,KRef> ) struct BaseAlgo;
 
-  template <RBTreeUpLink<T,K> T::* LinkMember,class KRef=K> struct Algo;
+  template <RBTreeUpLink<T,K> T::* LinkMember,class KRef=K,void (*CopyKeyFunc)(K &,KRef)=DoCopyKey> requires ( RBTreeKeyTypes<K,KRef> ) struct Algo;
  };
 
 template <class T,class K>
-template <RBTreeUpLink<T,K> T::* LinkMember,class KRef>
+template <RBTreeUpLink<T,K> T::* LinkMember,class KRef> requires ( RBTreeKeyTypes<K,KRef> )
 struct RBTreeUpLink<T,K>::BaseAlgo
  {
    // node!=0
@@ -141,6 +146,60 @@ struct RBTreeUpLink<T,K>::BaseAlgo
     return candidate;
    }
 
+  // struct Cur
+
+  struct Cur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { return Cur(Link(ptr).lo); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct RevCur
+   {
+    T *ptr;
+
+    // constructors
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -> () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { return RevCur(Link(ptr).lo); }
+   };
+
   // struct Check
 
   struct Check
@@ -217,7 +276,7 @@ struct RBTreeUpLink<T,K>::BaseAlgo
       return ret;
      }
 
-    void run(T *root,T *parent) // root!=0
+    void run(T *root,T *parent) requires ( OpCmpType<K> ) // root!=0
      {
       Node &link=Link(root);
 
@@ -275,13 +334,17 @@ struct RBTreeUpLink<T,K>::BaseAlgo
  };
 
 template <class T,class K>
-template <RBTreeUpLink<T,K> T::* LinkMember,class KRef>
+template <RBTreeUpLink<T,K> T::* LinkMember,class KRef,void (*CopyKeyFunc)(K &,KRef)> requires ( RBTreeKeyTypes<K,KRef> )
 struct RBTreeUpLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
  {
    // node!=0
    // root_ptr!=0
 
   using BaseAlgo<LinkMember,KRef>::Link;
+
+  using Cur = typename BaseAlgo<LinkMember,KRef>::Cur ;
+
+  using RevCur = typename BaseAlgo<LinkMember,KRef>::RevCur ;
 
 #if 0
 
@@ -2909,6 +2972,10 @@ struct RBTreeUpLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
 
     bool operator ! () const { return !root; }
 
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
+
     // find
 
     T * find(KRef key) const { return BaseAlgo<LinkMember,KRef>::Find(root,key); }
@@ -3003,7 +3070,7 @@ struct RBTreeUpLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
        linkN.up=up;
        linkN.lo=0;
        linkN.hi=0;
-       linkN.key=key;
+       CopyKeyFunc(linkN.key,key);
        linkN.flag=RBFlag_BlackBlack;
       }
 
@@ -3147,7 +3214,7 @@ struct RBTreeUpLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
           linkN.up=Replace(linkG.up,N);
           linkN.lo=P;
           linkN.hi=G;
-          linkN.key=key;
+          CopyKeyFunc(linkN.key,key);
           linkN.flag=RBFlag_RedRed;
 
           linkG.lo=0;
@@ -3174,7 +3241,7 @@ struct RBTreeUpLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
           linkN.up=Replace(linkG.up,N);
           linkN.hi=P;
           linkN.lo=G;
-          linkN.key=key;
+          CopyKeyFunc(linkN.key,key);
           linkN.flag=RBFlag_RedRed;
 
           linkG.hi=0;

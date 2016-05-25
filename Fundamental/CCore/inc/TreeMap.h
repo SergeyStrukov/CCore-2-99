@@ -28,9 +28,14 @@ namespace CCore {
 
 void GuardKeyOutOfRange();
 
+/* concept RBTreeMapKeyTypes<K,KRef> */
+
+template <class K,class KRef>
+concept bool RBTreeMapKeyTypes = RBTreeKeyTypes<K,KRef> && requires(const KRef &ref) { K(ref); } ;
+
 /* classes */
 
-template <class K,class T,class KRef=K,template <class Node> class Allocator=NodeAllocator> class RBTreeMap;
+template <NothrowDtorType K,NothrowDtorType T,class KRef=K,template <class Node> class Allocator=NodeAllocator> requires ( RBTreeMapKeyTypes<K,KRef> ) class RBTreeMap;
 
 template <UIntType K> struct KeyRange;
 
@@ -38,7 +43,7 @@ template <UIntType K,NothrowDtorType T,template <class Node> class Allocator=Nod
 
 /* class RBTreeMap<K,T,KRef,Allocator> */
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 class RBTreeMap : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -47,10 +52,10 @@ class RBTreeMap : NoCopy
      T obj;
 
      template <class ... SS>
-     explicit Node(SS && ... ss) : obj( std::forward<SS>(ss)... ) {}
+     explicit Node(const KRef &key,SS && ... ss) : link(key),obj( std::forward<SS>(ss)... ) {}
     };
 
-   using Algo = typename RBTreeLink<Node,K>::template Algo<&Node::link,KRef> ;
+   using Algo = typename RBTreeLink<Node,K>::template Algo<&Node::link,KRef,NoCopyKey> ;
 
    Allocator<Node> allocator;
 
@@ -72,17 +77,10 @@ class RBTreeMap : NoCopy
      return Algo::Link(node).key;
     }
 
-   template <class Func>
-   static void ApplyIncr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyIncr_const(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr_const(Node *node,Func &func);
+   static const K & GetKey(Node &node)
+    {
+     return Algo::Link(&node).key;
+    }
 
   public:
 
@@ -227,7 +225,7 @@ class RBTreeMap : NoCopy
     };
 
    template <class ... SS>
-   Result find_or_add(KRef key,SS && ... ss);
+   Result find_or_add(KRef key,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    bool del(KRef key);
 
@@ -242,23 +240,23 @@ class RBTreeMap : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init);
+   template <FuncInitArgType<const K &,T &> FuncInit>
+   auto applyIncr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init);
+   template <FuncInitArgType<const K &,T &> FuncInit>
+   auto applyDecr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init) const;
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyIncr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init) const;
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyDecr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyIncr_const(FuncInit func_init) const { applyIncr(func_init); }
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyIncr_const(FuncInit func_init) const { return applyIncr(func_init); }
 
-   template <class FuncInit>
-   void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyDecr_const(FuncInit func_init) const { return applyDecr(func_init); }
 
    // swap/move objects
 
@@ -275,7 +273,7 @@ class RBTreeMap : NoCopy
     }
  };
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 void RBTreeMap<K,T,KRef,Allocator>::destroy(Node *node)
  {
   if( node )
@@ -287,96 +285,40 @@ void RBTreeMap<K,T,KRef,Allocator>::destroy(Node *node)
     }
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class Func>
-void RBTreeMap<K,T,KRef,Allocator>::ApplyIncr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class Func>
-void RBTreeMap<K,T,KRef,Allocator>::ApplyDecr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class Func>
-void RBTreeMap<K,T,KRef,Allocator>::ApplyIncr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class Func>
-void RBTreeMap<K,T,KRef,Allocator>::ApplyDecr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 template <class ... SS>
-auto RBTreeMap<K,T,KRef,Allocator>::find_or_add(KRef key,SS && ... ss) -> Result
+auto RBTreeMap<K,T,KRef,Allocator>::find_or_add(KRef key,SS && ... ss) -> Result requires ( ConstructibleType<T,SS...> )
  {
   typename Algo::PrepareIns prepare(root,key);
 
   if( Node *node=prepare.found ) return Result(&node->obj,false);
 
-  Node *node=allocator.alloc( std::forward<SS>(ss)... );
+  Node *node=allocator.alloc( key , std::forward<SS>(ss)... );
 
   prepare.complete(node);
 
   return Result(&node->obj,true);
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 bool RBTreeMap<K,T,KRef,Allocator>::del(KRef key)
  {
   return allocator.free(root.del(key));
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 bool RBTreeMap<K,T,KRef,Allocator>::delMin()
  {
   return allocator.free(root.delMin());
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 bool RBTreeMap<K,T,KRef,Allocator>::delMax()
  {
   return allocator.free(root.delMax());
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 template <class S>
 bool RBTreeMap<K,T,KRef,Allocator>::del(NodePtr<S> node_ptr)
  {
@@ -392,7 +334,7 @@ bool RBTreeMap<K,T,KRef,Allocator>::del(NodePtr<S> node_ptr)
   return false;
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
 ulen RBTreeMap<K,T,KRef,Allocator>::erase()
  {
   Node *ptr=root.root;
@@ -406,48 +348,48 @@ ulen RBTreeMap<K,T,KRef,Allocator>::erase()
   return ret;
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class FuncInit>
-void RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init)
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,T &> FuncInit>
+auto RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
-  ApplyIncr(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class FuncInit>
-void RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init)
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,T &> FuncInit>
+auto RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
-  ApplyDecr(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class FuncInit>
-void RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init) const
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,const T &> FuncInit>
+auto RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
-  ApplyIncr_const(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,class KRef,template <class Node> class Allocator>
-template <class FuncInit>
-void RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init) const
+template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,const T &> FuncInit>
+auto RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
-  ApplyDecr_const(node,func);
+  return Algon::GetResult(func);
  }
 
 /* struct KeyRange<K> */

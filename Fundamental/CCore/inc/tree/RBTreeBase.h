@@ -1,7 +1,7 @@
 /* RBTreeBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -20,6 +20,26 @@
 
 namespace CCore {
 
+/* concept RBTreeKeyTypes<K,KRef> */
+
+template <class K,class KRef>
+concept bool RBTreeKeyTypes = requires(K &obj,const K &cobj,KRef a)
+ {
+  requires ( NothrowCopyCtorType<KRef> ) ;
+
+  requires ( CmpableType<K> ) ;
+
+  { Cmp(a,cobj) } -> CmpResult ;
+ } ;
+
+/* concept CopyKeyTypes<K,KRef> */
+
+template <class K,class KRef>
+concept bool CopyKeyTypes = requires(K &key,KRef ref)
+ {
+  { key=ref } noexcept ;
+ } ;
+
 /* functions */
 
 void GuardRBTreeCheckFailed(const char *text);
@@ -28,6 +48,12 @@ inline void GuardRBTreeCheck(bool cond,const char *text)
  {
   if( !cond ) GuardRBTreeCheckFailed(text);
  }
+
+template <class K,class KRef>
+void DoCopyKey(K &key,KRef ref) requires ( CopyKeyTypes<K,KRef> ) { key=ref; }
+
+template <class K,class KRef>
+void NoCopyKey(K &,KRef) {}
 
 /* classes */
 
