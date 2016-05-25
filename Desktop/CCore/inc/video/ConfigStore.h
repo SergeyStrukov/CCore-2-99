@@ -22,7 +22,7 @@
 #include <CCore/inc/video/RefVal.h>
 
 #include <CCore/inc/TypeSwitch.h>
-#include <CCore/inc/TreeMap.h>
+#include <CCore/inc/CompactMap.h>
 
 namespace CCore {
 namespace Video {
@@ -195,8 +195,6 @@ class ConfigItem : NoCopy
 
 class ConfigMap : NoCopy
  {
-   bool modified = false ;
-
    struct Key : CmpComparable<Key>
     {
      String name;
@@ -210,7 +208,13 @@ class ConfigMap : NoCopy
      CmpResult objCmp(const Key &obj) const { return StrCmp(Range(name),Range(obj.name)); }
     };
 
-   RBTreeMap<Key,ConfigItem,const Key &,NodePoolAllocator> map;
+   friend CmpResult Cmp(StrLen name,const Key &obj) { return StrCmp(name,Range(obj.name)); }
+
+  private:
+
+   bool modified = false ;
+
+   CompactRBTreeMap<Key,ConfigItem,StrLen> map;
 
   private:
 

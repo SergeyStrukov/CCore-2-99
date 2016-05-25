@@ -104,9 +104,7 @@ StrLen ConfigItem::getDDLTypeName() const
 
 ConfigItem & ConfigMap::find_or_add(StrLen name)
  {
-  Key key(name);
-
-  auto result=map.find_or_add(key);
+  auto result=map.find_or_add(name);
 
   return *result.obj;
  }
@@ -346,9 +344,7 @@ struct ConfigMap::AddItem
 template <class T>
 void ConfigMap::add(StrLen name,const T &value)
  {
-  Key key(name);
-
-  auto result=map.find_or_add(key);
+  auto result=map.find_or_add(name);
 
   if( !result.new_flag )
     {
