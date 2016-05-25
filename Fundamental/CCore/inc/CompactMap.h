@@ -23,13 +23,13 @@ namespace CCore {
 
 /* classes */
 
-template <class K,class T,class KRef=K> class CompactRBTreeMap;
+template <NothrowDtorType K,NothrowDtorType T,class KRef=K> requires ( RBTreeMapKeyTypes<K,KRef> ) class CompactRBTreeMap;
 
 template <UIntType K,NothrowDtorType T> class CompactRadixTreeMap;
 
 /* class CompactRBTreeMap<K,T,KRef> */
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 class CompactRBTreeMap : NoCopy
  {
    struct Node : MemBase_nocopy
@@ -38,10 +38,10 @@ class CompactRBTreeMap : NoCopy
      T obj;
 
      template <class ... SS>
-     explicit Node(SS && ... ss) : obj( std::forward<SS>(ss)... ) {}
+     explicit Node(const KRef &key,SS && ... ss) : link(key),obj( std::forward<SS>(ss)... ) {}
     };
 
-   using Algo = typename RBTreeUpLink<Node,K>::template Algo<&Node::link,KRef> ;
+   using Algo = typename RBTreeUpLink<Node,K>::template Algo<&Node::link,KRef,NoCopyKey> ;
 
    CompactNodeAllocator<Node> allocator;
 
@@ -63,17 +63,10 @@ class CompactRBTreeMap : NoCopy
      return Algo::Link(node).key;
     }
 
-   template <class Func>
-   static void ApplyIncr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyIncr_const(Node *node,Func &func);
-
-   template <class Func>
-   static void ApplyDecr_const(Node *node,Func &func);
+   static const K & GetKey(Node &node)
+    {
+     return Algo::Link(&node).key;
+    }
 
   public:
 
@@ -218,7 +211,7 @@ class CompactRBTreeMap : NoCopy
     };
 
    template <class ... SS>
-   Result find_or_add(KRef key,SS && ... ss);
+   Result find_or_add(KRef key,SS && ... ss) requires ( ConstructibleType<T,SS...> ) ;
 
    bool del(KRef key);
 
@@ -233,23 +226,23 @@ class CompactRBTreeMap : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init);
+   template <FuncInitArgType<const K &,T &> FuncInit>
+   auto applyIncr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init);
+   template <FuncInitArgType<const K &,T &> FuncInit>
+   auto applyDecr(FuncInit func_init);
 
-   template <class FuncInit>
-   void applyIncr(FuncInit func_init) const;
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyIncr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyDecr(FuncInit func_init) const;
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyDecr(FuncInit func_init) const;
 
-   template <class FuncInit>
-   void applyIncr_const(FuncInit func_init) const { applyIncr(func_init); }
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyIncr_const(FuncInit func_init) const { return applyIncr(func_init); }
 
-   template <class FuncInit>
-   void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
+   template <FuncInitArgType<const K &,const T &> FuncInit>
+   auto applyDecr_const(FuncInit func_init) const { return applyDecr(func_init); }
 
    // swap/move objects
 
@@ -266,7 +259,7 @@ class CompactRBTreeMap : NoCopy
     }
  };
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 void CompactRBTreeMap<K,T,KRef>::delNode(Node *node)
  {
   Node *todel=allocator.todel();
@@ -281,78 +274,22 @@ void CompactRBTreeMap<K,T,KRef>::delNode(Node *node)
   allocator.del();
  }
 
-template <class K,class T,class KRef>
-template <class Func>
-void CompactRBTreeMap<K,T,KRef>::ApplyIncr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <class K,class T,class KRef>
-template <class Func>
-void CompactRBTreeMap<K,T,KRef>::ApplyDecr(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <class K,class T,class KRef>
-template <class Func>
-void CompactRBTreeMap<K,T,KRef>::ApplyIncr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyIncr(Algo::Link(node).lo,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyIncr(Algo::Link(node).hi,func);
-    }
- }
-
-template <class K,class T,class KRef>
-template <class Func>
-void CompactRBTreeMap<K,T,KRef>::ApplyDecr_const(Node *node,Func &func)
- {
-  if( node )
-    {
-     ApplyDecr(Algo::Link(node).hi,func);
-
-     func(GetKey(node),(const T &)node->obj);
-
-     ApplyDecr(Algo::Link(node).lo,func);
-    }
- }
-
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 template <class ... SS>
-auto CompactRBTreeMap<K,T,KRef>::find_or_add(KRef key,SS && ... ss) -> Result
+auto CompactRBTreeMap<K,T,KRef>::find_or_add(KRef key,SS && ... ss) -> Result requires ( ConstructibleType<T,SS...> )
  {
   typename Algo::PrepareIns prepare(root,key);
 
   if( Node *node=prepare.found ) return Result(&node->obj,false);
 
-  Node *node=allocator.alloc( std::forward<SS>(ss)... );
+  Node *node=allocator.alloc( key , std::forward<SS>(ss)... );
 
   prepare.complete(node);
 
   return Result(&node->obj,true);
  }
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 bool CompactRBTreeMap<K,T,KRef>::del(KRef key)
  {
   if( Node *node=root.del(key) )
@@ -365,7 +302,7 @@ bool CompactRBTreeMap<K,T,KRef>::del(KRef key)
   return false;
  }
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 bool CompactRBTreeMap<K,T,KRef>::delMin()
  {
   if( Node *node=root.delMin() )
@@ -378,7 +315,7 @@ bool CompactRBTreeMap<K,T,KRef>::delMin()
   return false;
  }
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 bool CompactRBTreeMap<K,T,KRef>::delMax()
  {
   if( Node *node=root.delMax() )
@@ -391,7 +328,7 @@ bool CompactRBTreeMap<K,T,KRef>::delMax()
   return false;
  }
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 template <class S>
 bool CompactRBTreeMap<K,T,KRef>::del(NodePtr<S> node_ptr)
  {
@@ -407,7 +344,7 @@ bool CompactRBTreeMap<K,T,KRef>::del(NodePtr<S> node_ptr)
   return false;
  }
 
-template <class K,class T,class KRef>
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
 ulen CompactRBTreeMap<K,T,KRef>::erase()
  {
   root.init();
@@ -415,48 +352,48 @@ ulen CompactRBTreeMap<K,T,KRef>::erase()
   return allocator.erase();
  }
 
-template <class K,class T,class KRef>
-template <class FuncInit>
-void CompactRBTreeMap<K,T,KRef>::applyIncr(FuncInit func_init)
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,T &> FuncInit>
+auto CompactRBTreeMap<K,T,KRef>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
-  ApplyIncr(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,class KRef>
-template <class FuncInit>
-void CompactRBTreeMap<K,T,KRef>::applyDecr(FuncInit func_init)
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,T &> FuncInit>
+auto CompactRBTreeMap<K,T,KRef>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),node.obj); } );
 
-  ApplyDecr(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,class KRef>
-template <class FuncInit>
-void CompactRBTreeMap<K,T,KRef>::applyIncr(FuncInit func_init) const
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,const T &> FuncInit>
+auto CompactRBTreeMap<K,T,KRef>::applyIncr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
-  ApplyIncr_const(node,func);
+  return Algon::GetResult(func);
  }
 
-template <class K,class T,class KRef>
-template <class FuncInit>
-void CompactRBTreeMap<K,T,KRef>::applyDecr(FuncInit func_init) const
+template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )
+template <FuncInitArgType<const K &,const T &> FuncInit>
+auto CompactRBTreeMap<K,T,KRef>::applyDecr(FuncInit func_init) const
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
-  Node *node=root.root;
+  Algon::ApplyToRange(root.start_rev(), [&func] (Node &node) { return func(GetKey(node),(const T &)node.obj); } );
 
-  ApplyDecr_const(node,func);
+  return Algon::GetResult(func);
  }
 
 /* class CompactRadixTreeMap<K,T> */
