@@ -73,8 +73,6 @@ template <class Box> struct PacketDeepExtBox;
 
 template <unsigned Index,class ... TT> requires ( Index > 0 && Index <= sizeof ... (TT) ) struct PacketDeepExt;
 
-template <unsigned Index,class POD,class ... TT> struct PacketForgetExtCtor;
-
 template <class POD,class ... TT> class Packet;
 
 class PacketCanceller;
@@ -491,23 +489,15 @@ struct PacketDeepExtBox<Meta::TypeListBox<T,TT...> >
   static T * Get(PacketHeader *packet) { return packet->getDeepExt<T,TT...>(); }
  };
 
-/* PacketDeepExt<unsigned Index,TT> */
+/* struct PacketDeepExt<unsigned Index,TT> */
 
 template <unsigned Index,class ... TT> requires ( Index > 0 && Index <= sizeof ... (TT) )
-struct PacketDeepExt : PacketDeepExtBox<Meta::TypeSubList<Index-1,(sizeof ... (TT)+1-Index),TT...> > {};
-
-/* struct PacketForgetExtCtor<unsigned Index,POD,TT> */
-
-template <unsigned Index,class POD,class ... TT>
-struct PacketForgetExtCtor
- {
-  using Ret = PacketBox<POD,Meta::TypeSubList<Index,(sizeof ... (TT)-Index),TT...> > ;
- };
+struct PacketDeepExt : PacketDeepExtBox<Meta::PartTypeList<Index-1,TT...> > {};
 
 /* type PacketForgetExt<unsigned Index,POD,TT> */
 
 template <unsigned Index,class POD,class ... TT> requires ( Index <= sizeof ... (TT) )
-using PacketForgetExt = typename PacketForgetExtCtor<Index,POD,TT...>::Ret ;
+using PacketForgetExt = PacketBox<POD,Meta::PartTypeList<Index,TT...> > ;
 
 /* class Packet<POD,TT> */
 
