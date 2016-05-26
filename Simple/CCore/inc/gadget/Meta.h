@@ -31,17 +31,11 @@ struct Empty;
 
 template <class T> struct EmptyBox;
 
+template <class T> struct TypeBox;
+
 template <class T> struct DefType;
 
 template <class T,T Val> struct DefConst;
-
-template <class T> struct TypeBox;
-
-template <class ... TT> struct TypeListBox;
-
-template <int Ind> struct IndexBox;
-
-template <int ... IList> struct IndexListBox;
 
 template <class T> struct ToConstCtor;
 
@@ -61,18 +55,6 @@ template <class T> struct PromoteSInt_extra;
 
 template <class SInt> struct PromoteSInt;
 
-template <class T,unsigned Ret,bool Ok> struct IndexOfBox;
-
-template <unsigned Index,class ... TT> struct SelectListCtor;
-
-template <class T,unsigned Index,bool Ok> struct SelectListBox;
-
-template <class T,class Box> struct PrependTypeListBoxCtor;
-
-template <class ... TT> struct PopTypeList;
-
-template <unsigned Off,unsigned Len,class ... TT> struct TypeSubListCtor;
-
 /* struct Empty */
 
 struct Empty
@@ -84,6 +66,16 @@ struct Empty
 template <class T>
 struct EmptyBox
  {
+ };
+
+/* struct TypeBox<T> */
+
+template <class T>
+struct TypeBox
+ {
+  using Type = T ;
+
+  static T Get();
  };
 
 /* struct DefType<T> */
@@ -101,52 +93,6 @@ struct DefConst
  {
   static const T Ret = Val ;
  };
-
-/* struct TypeBox<T> */
-
-template <class T>
-struct TypeBox
- {
-  using Type = T ;
-
-  static T Get();
- };
-
-/* struct TypeListBox<TT> */
-
-template <class ... TT>
-struct TypeListBox
- {
-  using Type = TypeListBox<TT...> ;
- };
-
-/* struct IndexBox<int Ind> */
-
-template <int Ind>
-struct IndexBox
- {
-  enum ValueType { Value = Ind };
-
-  constexpr operator int() const { return Ind; }
- };
-
-/* type EraseType<T> */
-
-template <class T>
-using EraseType = int ;
-
-/* struct IndexListBox<int ... IList> */
-
-template <int ... IList>
-struct IndexListBox
- {
-  IndexListBox<IList...,1+sizeof ... (IList)> operator + (int);
- };
-
-/* type IndexList<TT> */
-
-template <class ... TT>
-using IndexList = decltype( ( IndexListBox<>() + ... + EraseType<TT>() ) ) ;
 
 /* struct ToConstCtor<T> */
 
@@ -538,146 +484,6 @@ struct PromoteSInt<long long>
 
 template <>
 struct PromoteSInt<char> : Select<( char(-1)<0 ), PromoteSInt<int> , Empty > {};
-
-/* struct IndexOfBox<T,unsigned Ret,bool Ok> */
-
-template <class T,unsigned Ret=1,bool Ok=false>
-struct IndexOfBox
- {
-  constexpr IndexOfBox<T,Ret,true> operator + (TypeBox<T>) { return {}; }
-
-  template <class S>
-  constexpr IndexOfBox<T,Ret+1,false> operator + (TypeBox<S>) { return {}; }
- };
-
-template <class T,unsigned Ret>
-struct IndexOfBox<T,Ret,true>
- {
-  template <class S>
-  constexpr IndexOfBox<T,Ret,true> operator + (TypeBox<S>) { return {}; }
-
-  constexpr operator unsigned() const { return Ret; }
- };
-
-/* const IndexOf<TT> */
-
-template <class T,class ... TT>
-const unsigned IndexOf = ( IndexOfBox<T>() + ... + TypeBox<TT>() ) ;
-
-/* struct SelectListCtor<unsigned Index,TT> */
-
-template <unsigned Index,class T,class ... TT>
-struct SelectListCtor<Index,T,TT...>
- {
-  using Ret = typename SelectListCtor<Index-1,TT...>::Ret ;
- };
-
-template <class T,class ... TT>
-struct SelectListCtor<0,T,TT...>
- {
-  using Ret = T ;
- };
-
-/* type SelectList<unsigned Index,TT> */
-
-template <unsigned Index,class ... TT>
-using SelectList = typename SelectListCtor<Index,TT...>::Ret ;
-
-#if 0 // gcc bugged
-
-/* struct SelectListBox<T,unsigned Index,bool Ok> */
-
-template <class T,unsigned Index,bool Ok=false>
-struct SelectListBox
- {
-  template <class S>
-  SelectListBox<T,Index-1,false> operator + (TypeBox<S>);
- };
-
-template <class T>
-struct SelectListBox<T,0,false>
- {
-  template <class S>
-  SelectListBox<S,0,true> operator + (TypeBox<S>);
- };
-
-template <class T>
-struct SelectListBox<T,0,true>
- {
-  template <class S>
-  SelectListBox<T,0,true> operator + (TypeBox<S>);
-
-  using Type = T ;
- };
-
-/* type SelectList<unsigned Index,TT> */
-
-template <unsigned Index,class ... TT>
-using SelectList = typename decltype( ( SelectListBox<void,Index>() + ... + TypeBox<TT>() ) )::Type ;
-
-#endif
-
-/* struct PrependTypeListBoxCtor<T,Box> */
-
-template <class T,class ... TT>
-struct PrependTypeListBoxCtor<T,TypeListBox<TT...> >
- {
-  using Ret = TypeListBox<T,TT...> ;
- };
-
-/* type PrependTypeListBox */
-
-template <class T,class Box>
-using PrependTypeListBox = typename PrependTypeListBoxCtor<T,Box>::Ret ;
-
-/* struct PopTypeList<TT> */
-
-template <class T>
-struct PopTypeList<T>
- {
-  using Start = TypeListBox<> ;
-
-  using Last = T ;
- };
-
-template <class T,class ... TT>
-struct PopTypeList<T,TT...>
- {
-  using Start = PrependTypeListBox<T,typename PopTypeList<TT...>::Start> ;
-
-  using Last = typename PopTypeList<TT...>::Last ;
- };
-
-/* type TypeSubList<Off,Len,TT> */
-
-template <unsigned Off,unsigned Len,class ... TT> requires ( Off+Len <= sizeof ... (TT) )
-using TypeSubList = typename TypeSubListCtor<Off,Len,TT...>::Ret ;
-
-/* struct TypeSubListCtor<Off,Len,TT> */
-
-template <unsigned Off,unsigned Len,class T,class ... TT>
-struct TypeSubListCtor<Off,Len,T,TT...>
- {
-  using Ret = TypeSubList<Off-1,Len,TT...> ;
- };
-
-template <unsigned Len,class T,class ... TT>
-struct TypeSubListCtor<0,Len,T,TT...>
- {
-  using Ret = Meta::PrependTypeListBox<T,TypeSubList<0,Len-1,TT...> > ;
- };
-
-template <class T,class ... TT>
-struct TypeSubListCtor<0,0,T,TT...>
- {
-  using Ret = Meta::TypeListBox<> ;
- };
-
-template <>
-struct TypeSubListCtor<0,0>
- {
-  using Ret = Meta::TypeListBox<> ;
- };
 
 } // namespace Meta
 } // namespace CCore

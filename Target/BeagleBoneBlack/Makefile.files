@@ -151,6 +151,7 @@ obj/MemSpaceHeap.o \
 obj/MergeSort.o \
 obj/MersenneTwister.o \
 obj/Meta.o \
+obj/MetaList.o \
 obj/ModEngine.o \
 obj/Move.o \
 obj/MultiEvent.o \
@@ -486,6 +487,7 @@ obj/MemSpaceHeap.s \
 obj/MergeSort.s \
 obj/MersenneTwister.s \
 obj/Meta.s \
+obj/MetaList.s \
 obj/ModEngine.s \
 obj/Move.s \
 obj/MultiEvent.s \
@@ -821,6 +823,7 @@ obj/MemSpaceHeap.dep \
 obj/MergeSort.dep \
 obj/MersenneTwister.dep \
 obj/Meta.dep \
+obj/MetaList.dep \
 obj/ModEngine.dep \
 obj/Move.dep \
 obj/MultiEvent.dep \
@@ -1473,6 +1476,9 @@ obj/MersenneTwister.o : ../../Fundamental/CCore/src/MersenneTwister.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Meta.o : ../../Simple/CCore/src/gadget/Meta.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MetaList.o : ../../Simple/CCore/src/gadget/MetaList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ModEngine.o : ../../Applied/CCore/src/math/ModEngine.cpp
@@ -2473,6 +2479,9 @@ obj/MersenneTwister.s : ../../Fundamental/CCore/src/MersenneTwister.cpp
 obj/Meta.s : ../../Simple/CCore/src/gadget/Meta.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MetaList.s : ../../Simple/CCore/src/gadget/MetaList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ModEngine.s : ../../Applied/CCore/src/math/ModEngine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3470,6 +3479,9 @@ obj/MersenneTwister.dep : ../../Fundamental/CCore/src/MersenneTwister.cpp
 
 obj/Meta.dep : ../../Simple/CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Meta.o $< -MF $@
+
+obj/MetaList.dep : ../../Simple/CCore/src/gadget/MetaList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MetaList.o $< -MF $@
 
 obj/ModEngine.dep : ../../Applied/CCore/src/math/ModEngine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ModEngine.o $< -MF $@

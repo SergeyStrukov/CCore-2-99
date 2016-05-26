@@ -132,7 +132,7 @@ class StepEval : public Ctx
     };
 
    template <class T>
-   static const int CallIndex = FuncArgType<T,StepEval &,StepId>?2:(FuncArgType<T,StepEval &>?1:0) ;
+   static const unsigned CallIndex = FuncArgType<T,StepEval &,StepId>?2:(FuncArgType<T,StepEval &>?1:0) ;
 
    template <class T>
    struct CallMain : Meta::SelectList<CallIndex<T>, CallMain_0<T> , CallMain_1<T> , CallMain_2<T> > {};

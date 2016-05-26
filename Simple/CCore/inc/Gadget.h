@@ -26,6 +26,7 @@
 #include <CCore/inc/gadget/Len.h>
 #include <CCore/inc/gadget/Locked.h>
 #include <CCore/inc/gadget/Meta.h>
+#include <CCore/inc/gadget/MetaList.h>
 #include <CCore/inc/gadget/MSec.h>
 #include <CCore/inc/gadget/NegBool.h>
 #include <CCore/inc/gadget/NoCopy.h>

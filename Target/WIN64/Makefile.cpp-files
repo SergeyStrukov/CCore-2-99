@@ -20,6 +20,7 @@
 ../../Simple/CCore/src/gadget/Locked.cpp
 ../../Simple/CCore/src/gadget/LockObject.cpp
 ../../Simple/CCore/src/gadget/Meta.cpp
+../../Simple/CCore/src/gadget/MetaList.cpp
 ../../Simple/CCore/src/gadget/MSec.cpp
 ../../Simple/CCore/src/gadget/NegBool.cpp
 ../../Simple/CCore/src/gadget/NoCopy.cpp

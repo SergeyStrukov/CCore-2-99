@@ -161,6 +161,7 @@ obj/MergeSort.o \
 obj/MersenneTwister.o \
 obj/MessageWindow.o \
 obj/Meta.o \
+obj/MetaList.o \
 obj/ModEngine.o \
 obj/Mouse.o \
 obj/Move.o \
@@ -529,6 +530,7 @@ obj/MergeSort.s \
 obj/MersenneTwister.s \
 obj/MessageWindow.s \
 obj/Meta.s \
+obj/MetaList.s \
 obj/ModEngine.s \
 obj/Mouse.s \
 obj/Move.s \
@@ -897,6 +899,7 @@ obj/MergeSort.dep \
 obj/MersenneTwister.dep \
 obj/MessageWindow.dep \
 obj/Meta.dep \
+obj/MetaList.dep \
 obj/ModEngine.dep \
 obj/Mouse.dep \
 obj/Move.dep \
@@ -1600,6 +1603,9 @@ obj/MessageWindow.o : ../../Desktop/CCore/src/video/MessageWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Meta.o : ../../Simple/CCore/src/gadget/Meta.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MetaList.o : ../../Simple/CCore/src/gadget/MetaList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ModEngine.o : ../../Applied/CCore/src/math/ModEngine.cpp
@@ -2699,6 +2705,9 @@ obj/MessageWindow.s : ../../Desktop/CCore/src/video/MessageWindow.cpp
 obj/Meta.s : ../../Simple/CCore/src/gadget/Meta.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MetaList.s : ../../Simple/CCore/src/gadget/MetaList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ModEngine.s : ../../Applied/CCore/src/math/ModEngine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3795,6 +3804,9 @@ obj/MessageWindow.dep : ../../Desktop/CCore/src/video/MessageWindow.cpp
 
 obj/Meta.dep : ../../Simple/CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Meta.o $< -MF $@
+
+obj/MetaList.dep : ../../Simple/CCore/src/gadget/MetaList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MetaList.o $< -MF $@
 
 obj/ModEngine.dep : ../../Applied/CCore/src/math/ModEngine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ModEngine.o $< -MF $@
