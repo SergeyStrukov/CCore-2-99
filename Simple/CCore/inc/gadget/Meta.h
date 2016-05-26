@@ -67,9 +67,11 @@ template <unsigned Index,class ... TT> struct SelectListCtor;
 
 template <class T,unsigned Index,bool Ok> struct SelectListBox;
 
-template <class Split,class ... TT> struct SplitTypeListCtor;
+template <class T,class Box> struct PrependTypeListBoxCtor;
 
-template <class Skip,unsigned Count,class ... TT> struct SkipTypeListCtor;
+template <class ... TT> struct PopTypeList;
+
+template <unsigned Off,unsigned Len,class ... TT> struct TypeSubListCtor;
 
 /* struct Empty */
 
@@ -615,58 +617,66 @@ using SelectList = typename decltype( ( SelectListBox<void,Index>() + ... + Type
 
 #endif
 
-/* type SplitTypeList<Split,TT> */
+/* struct PrependTypeListBoxCtor<T,Box> */
 
-template <class Split,class ... TT>
-using SplitTypeList = typename SplitTypeListCtor<Split,TT...>::Ret ;
-
-/* struct SplitTypeListCtor<Split,TT> */
-
-template <class Split,class T>
-struct SplitTypeListCtor<Split,T>
+template <class T,class ... TT>
+struct PrependTypeListBoxCtor<T,TypeListBox<TT...> >
  {
-  using Last = typename Split::template Last<T> ;
-
-  template <class ... SS>
-  using Ext = typename Last::template Start<SS...> ;
-
-  using Ret = Ext<> ;
+  using Ret = TypeListBox<T,TT...> ;
  };
 
-template <class Split,class T,class ... TT>
-struct SplitTypeListCtor<Split,T,TT...>
+/* type PrependTypeListBox */
+
+template <class T,class Box>
+using PrependTypeListBox = typename PrependTypeListBoxCtor<T,Box>::Ret ;
+
+/* struct PopTypeList<TT> */
+
+template <class T>
+struct PopTypeList<T>
  {
-  using Last = typename SplitTypeListCtor<Split,TT...>::Last ;
+  using Start = TypeListBox<> ;
 
-  template <class ... SS>
-  using Ext = typename SplitTypeListCtor<Split,TT...>::template Ext<SS...,T> ;
-
-  using Ret = Ext<> ;
+  using Last = T ;
  };
 
-/* type SkipTypeList<Skip,unsigned Count,TT> */
-
-template <class Skip,unsigned Count,class ... TT>
-using SkipTypeList = typename SkipTypeListCtor<Skip,Count,TT...>::Ret ;
-
-/* struct SkipTypeListCtor<Skip,unsigned Count,TT> */
-
-template <class Skip>
-struct SkipTypeListCtor<Skip,0>
+template <class T,class ... TT>
+struct PopTypeList<T,TT...>
  {
-  using Ret = typename Skip::template Ctor<> ;
+  using Start = PrependTypeListBox<T,typename PopTypeList<TT...>::Start> ;
+
+  using Last = typename PopTypeList<TT...>::Last ;
  };
 
-template <class Skip,class T,class ... TT>
-struct SkipTypeListCtor<Skip,0,T,TT...>
+/* type TypeSubList<Off,Len,TT> */
+
+template <unsigned Off,unsigned Len,class ... TT> requires ( Off+Len <= sizeof ... (TT) )
+using TypeSubList = typename TypeSubListCtor<Off,Len,TT...>::Ret ;
+
+/* struct TypeSubListCtor<Off,Len,TT> */
+
+template <unsigned Off,unsigned Len,class T,class ... TT>
+struct TypeSubListCtor<Off,Len,T,TT...>
  {
-  using Ret = typename Skip::template Ctor<T,TT...> ;
+  using Ret = TypeSubList<Off-1,Len,TT...> ;
  };
 
-template <class Skip,unsigned Count,class T,class ... TT>
-struct SkipTypeListCtor<Skip,Count,T,TT...>
+template <unsigned Len,class T,class ... TT>
+struct TypeSubListCtor<0,Len,T,TT...>
  {
-  using Ret = SkipTypeList<Skip,Count-1,TT...> ;
+  using Ret = Meta::PrependTypeListBox<T,TypeSubList<0,Len-1,TT...> > ;
+ };
+
+template <class T,class ... TT>
+struct TypeSubListCtor<0,0,T,TT...>
+ {
+  using Ret = Meta::TypeListBox<> ;
+ };
+
+template <>
+struct TypeSubListCtor<0,0>
+ {
+  using Ret = Meta::TypeListBox<> ;
  };
 
 } // namespace Meta

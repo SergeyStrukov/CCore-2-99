@@ -65,13 +65,15 @@ class PacketBuf;
 
 class PacketHeader;
 
+template <class POD,class Box> struct PacketBoxCtor;
+
 template <class POD,class ... TT> struct PacketExtType;
 
-struct PacketDeepExtCtor;
+template <class Box> struct PacketDeepExtBox;
 
-template <unsigned Index,class ... TT> struct PacketDeepExt;
+template <unsigned Index,class ... TT> requires ( Index > 0 && Index <= sizeof ... (TT) ) struct PacketDeepExt;
 
-template <unsigned Index,class POD,class ... TT> struct PacketForgetExt;
+template <unsigned Index,class POD,class ... TT> struct PacketForgetExtCtor;
 
 template <class POD,class ... TT> class Packet;
 
@@ -432,6 +434,19 @@ class PacketHeader : NoCopy
    Place<void> getRaw() { return pbuf.getRaw(); }
  };
 
+/* struct PacketBoxCtor<POD,Box> */
+
+template <class POD,class ... TT>
+struct PacketBoxCtor<POD,Meta::TypeListBox<TT...> >
+ {
+  using Ret = Packet<POD,TT...> ;
+ };
+
+/* type PacketBox<POD,Box> */
+
+template <class POD,class Box>
+using PacketBox = typename PacketBoxCtor<POD,Box>::Ret ;
+
 /* struct PacketExtType<POD,TT> */
 
 template <class POD>
@@ -457,61 +472,42 @@ struct PacketExtType<POD,TT...,T>
 template <class POD,class ... TT>
 struct PacketExtType
  {
-  struct Split
-   {
-    template <class T>
-    struct Last
-     {
-      template <class ... SS>
-      struct Start
-       {
-        using TopType = T ;
+  using Pop = Meta::PopTypeList<TT...> ;
 
-        using PopType = Packet<POD,SS...> ;
-       };
-     };
-   };
+  using TopType = typename Pop::Last ;
 
-  using Temp = Meta::SplitTypeList<Split,TT...> ;
-
-  using TopType = typename Temp::TopType ;
-
-  using PopType = typename Temp::PopType ;
+  using PopType = PacketBox<POD,typename Pop::Start> ;
  };
 
 #endif
 
-/* struct PacketDeepExtCtor */
+/* struct PacketDeepExtBox<Box> */
 
-struct PacketDeepExtCtor
+template <class T,class ... TT>
+struct PacketDeepExtBox<Meta::TypeListBox<T,TT...> >
  {
-  template <class S,class ... SS>
-  struct Ctor
-   {
-    using GetType = S ;
+  using GetType = T ;
 
-    static S * Get(PacketHeader *packet) { return packet->getDeepExt<S,SS...>(); }
-   };
+  static T * Get(PacketHeader *packet) { return packet->getDeepExt<T,TT...>(); }
  };
 
 /* PacketDeepExt<unsigned Index,TT> */
 
-template <unsigned Index,class ... TT>
-struct PacketDeepExt : Meta::SkipTypeList<PacketDeepExtCtor,Index-1,TT...> {};
+template <unsigned Index,class ... TT> requires ( Index > 0 && Index <= sizeof ... (TT) )
+struct PacketDeepExt : PacketDeepExtBox<Meta::TypeSubList<Index-1,(sizeof ... (TT)+1-Index),TT...> > {};
 
-/* struct PacketForgetExt<unsigned Index,POD,TT> */
+/* struct PacketForgetExtCtor<unsigned Index,POD,TT> */
 
 template <unsigned Index,class POD,class ... TT>
-struct PacketForgetExt
+struct PacketForgetExtCtor
  {
-  struct Skip
-   {
-    template <class ... SS>
-    using Ctor = Packet<POD,SS...> ;
-   };
-
-  using RetType = Meta::SkipTypeList<Skip,Index,TT...> ;
+  using Ret = PacketBox<POD,Meta::TypeSubList<Index,(sizeof ... (TT)-Index),TT...> > ;
  };
+
+/* type PacketForgetExt<unsigned Index,POD,TT> */
+
+template <unsigned Index,class POD,class ... TT> requires ( Index <= sizeof ... (TT) )
+using PacketForgetExt = typename PacketForgetExtCtor<Index,POD,TT...>::Ret ;
 
 /* class Packet<POD,TT> */
 
@@ -599,7 +595,7 @@ class Packet
     }
 
    template<unsigned Index>
-   typename PacketForgetExt<Index,POD,TT...>::RetType forgetExt()
+   PacketForgetExt<Index,POD,TT...> forgetExt()
     {
      return Replace_null(packet);
     }
