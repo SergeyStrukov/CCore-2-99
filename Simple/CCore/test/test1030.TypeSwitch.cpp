@@ -1,7 +1,7 @@
 /* test1030.TypeSwitch.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -74,59 +74,20 @@ struct PrintCaseList<Meta::CaseList<CC...> >
    }
  };
 
-/* struct PrintSplit<CaseList,ulen Len> */
-
-template <class CaseList,ulen Len>
-struct PrintSplit
- {
-  template <class P>
-  static void Print(P &out)
-   {
-    PrintSplit<CaseList,Len-1>::Print(out);
-
-    Printf(out,"-----\n\n");
-
-    PrintCaseList<typename Meta::SplitCaseOf<Len,CaseList>::First>::Print(out);
-
-    Putch(out,'\n');
-
-    PrintCaseList<typename Meta::SplitCaseOf<Len,CaseList>::Last>::Print(out);
-   }
- };
-
-template <class CaseList>
-struct PrintSplit<CaseList,0>
- {
-  template <class P>
-  static void Print(P &out)
-   {
-    PrintCaseList<typename Meta::SplitCaseOf<0,CaseList>::First>::Print(out);
-
-    Putch(out,'\n');
-
-    PrintCaseList<typename Meta::SplitCaseOf<0,CaseList>::Last>::Print(out);
-   }
- };
-
 /* struct MakeCaseList<unsigned Len> */
 
 template <unsigned Len>
 struct MakeCaseList
  {
-  using Ret = typename Meta::CaseListJoin<typename MakeCaseList<Len-1>::Ret,Meta::CaseList<Meta::Case<unsigned,Len,Node<Len> > > >::Ret ;
+  using Box = typename MakeCaseList<Len-1>::Box::template Extend< Meta::Case<unsigned,Len,Node<Len> > > ;
+
+  using Ret = Meta::CaseListBox<Box> ;
 
   static void test1()
    {
     PrintCon out;
 
     PrintCaseList<Ret>::Print(out);
-   }
-
-  static void test2()
-   {
-    PrintCon out;
-
-    PrintSplit<Ret,Len>::Print(out);
    }
 
   struct Ctx
@@ -147,7 +108,7 @@ struct MakeCaseList
      }
    };
 
-  static void test3()
+  static void test2()
    {
     for(unsigned sw=0; sw<=Len ;sw++)
       Meta::TypeSwitch<Ret>::Switch(sw,Ctx());
@@ -157,6 +118,8 @@ struct MakeCaseList
 template <>
 struct MakeCaseList<0>
  {
+  using Box = Meta::TypeListBox<> ;
+
   using Ret = Meta::CaseList<> ;
  };
 
@@ -167,12 +130,7 @@ void test1()
 
 void test2()
  {
-  MakeCaseList<20>::test2();
- }
-
-void test3()
- {
-  MakeCaseList<100>::test3();
+  MakeCaseList<100>::test2();
  }
 
 } // namespace Private_1030
@@ -187,9 +145,8 @@ const char *const Testit<1030>::Name="Test1030 TypeSwitch";
 template<>
 bool Testit<1030>::Main()
  {
-  //test1();
-  //test2();
-  //test3();
+  test1();
+  test2();
 
   return true;
  }

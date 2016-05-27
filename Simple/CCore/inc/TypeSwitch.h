@@ -25,36 +25,6 @@ namespace Meta {
 
 template <SUIntType SUInt,SUInt Val,class T> struct Case;
 
-template <class ... CC> struct CaseList;
-
-template <class ... CC> struct SplitCaseList0;
-
-template <class ... CC> struct SplitCaseList1;
-
-template <class ... CC> struct SplitCaseList2;
-
-template <class ... CC> struct SplitCaseList3;
-
-template <class ... CC> struct SplitCaseList4;
-
-template <class ... CC> struct SplitCaseList5;
-
-template <unsigned Off,class CaseList> struct SplitCaseOf;
-
-template <class CaseList> struct CaseListExtend;
-
-template <class CaseList1,class CaseList2> struct CaseListJoin;
-
-template <unsigned Off,class ... CC> struct SplitCaseList;
-
-template <class CaseList> struct TypeSwitch;
-
-template <class Case> struct CaseTypeCtor;
-
-template <class CaseList,class T> struct CaseValCtor;
-
-template <class CaseList> struct CaseListMaxSizeofCtor;
-
 /* struct Case<SUInt,SUInt Val,class T> */
 
 template <SUIntType SUInt,SUInt Val_,class T>
@@ -67,17 +37,51 @@ struct Case
   using Type = T ;
  };
 
+//----------------------------------------------------------------------------------------
+
+/* const IsCaseType<C> */
+
+template <class C>
+const bool IsCaseType = false ;
+
+template <SUIntType SUInt,SUInt Val,class T>
+const bool IsCaseType<Case<SUInt,Val,T> > = true ;
+
+/* concept CaseType<C> */
+
+template <class C>
+concept bool CaseType = IsCaseType<C> ;
+
+/* classes */
+
+template <class Box> struct CaseListBoxCtor;
+
+template <CaseType ... CC> struct CaseList;
+
+/* struct CaseListBoxCtor<Box> */
+
+template <CaseType ... CC>
+struct CaseListBoxCtor<TypeListBox<CC...> >
+ {
+  using Ret = CaseList<CC...> ;
+ };
+
+/* type CaseListBox<Box> */
+
+template <class Box>
+using CaseListBox = typename CaseListBoxCtor<Box>::Ret ;
+
 /* struct CaseList<CC> */
 
-template <class ... CC>
+template <CaseType ... CC>
 struct CaseList
  {
   static const unsigned Len = sizeof ... (CC) ;
 
-  using Split = SplitCaseList<Len/2,CC...> ;
+  using Split = SplitTypeList<Len/2,CC...> ;
 
-  using First = typename Split::First ;
-  using Last  = typename Split::Last ;
+  using First = CaseListBox<typename Split::First> ;
+  using Last  = CaseListBox<typename Split::Last> ;
 
   using SwType = CommonType<typename First::SwType,typename Last::SwType> ;
  };
@@ -107,123 +111,32 @@ struct CaseList<C1,C2>
   using SwType = CommonType<typename First::SwType,typename Last::SwType> ;
  };
 
-/* struct SplitCaseList0<CC> */
+//----------------------------------------------------------------------------------------
 
-template <class ... CC>
-struct SplitCaseList0
- {
-  using First = CaseList<> ;
-  using Last = CaseList<CC...> ;
- };
+/* const IsCaseListType<CaseList> */
 
-/* struct SplitCaseList1<CC> */
+template <class CaseList>
+const bool IsCaseListType = false ;
 
-template <class C1,class ... CC>
-struct SplitCaseList1<C1,CC...>
- {
-  using First = CaseList<C1> ;
-  using Last = CaseList<CC...> ;
- };
+template <CaseType ... CC>
+const bool IsCaseListType<CaseList<CC...> > = true ;
 
-/* struct SplitCaseList2<CC> */
+/* concept CaseListType<CaseList> */
 
-template <class C1,class C2,class ... CC>
-struct SplitCaseList2<C1,C2,CC...>
- {
-  using First = CaseList<C1,C2> ;
-  using Last = CaseList<CC...> ;
- };
+template <class CaseList>
+concept bool CaseListType = IsCaseListType<CaseList> ;
 
-/* struct SplitCaseList3<CC> */
+/* classes */
 
-template <class C1,class C2,class C3,class ... CC>
-struct SplitCaseList3<C1,C2,C3,CC...>
- {
-  using First = CaseList<C1,C2,C3> ;
-  using Last = CaseList<CC...> ;
- };
+template <CaseListType CaseList> struct TypeSwitch;
 
-/* struct SplitCaseList4<CC> */
+template <CaseListType CaseList,class T> struct CaseValCtor;
 
-template <class C1,class C2,class C3,class C4,class ... CC>
-struct SplitCaseList4<C1,C2,C3,C4,CC...>
- {
-  using First = CaseList<C1,C2,C3,C4> ;
-  using Last = CaseList<CC...> ;
- };
-
-/* struct SplitCaseList5<CC> */
-
-template <class C1,class C2,class C3,class C4,class C5,class ... CC>
-struct SplitCaseList5<C1,C2,C3,C4,C5,CC...>
- {
-  using First = CaseList<C1,C2,C3,C4,C5> ;
-  using Last = CaseList<CC...> ;
- };
-
-/* struct SplitCaseOf<unsigned Off,CaseList> */
-
-template <unsigned Off,class ... CC>
-struct SplitCaseOf<Off,CaseList<CC...> > : SplitCaseList<Off,CC...> {};
-
-/* struct CaseListExtend<CaseList> */
-
-template <class ... CC>
-struct CaseListExtend<CaseList<CC...> >
- {
-  template <class ... TT>
-  struct Extend
-   {
-    using Ret = CaseList<CC...,TT...> ;
-   };
- };
-
-/* struct CaseListJoin<CaseList1,CaseList2> */
-
-template <class CaseList1,class ... CC>
-struct CaseListJoin<CaseList1,CaseList<CC...> >
- {
-  using Extend = typename CaseListExtend<CaseList1>::template Extend<CC...> ;
-  using Ret = typename Extend::Ret ;
- };
-
-/* struct SplitCaseList<unsigned Off,CC> */
-
-template <unsigned Off,class ... CC>
-struct SplitCaseList
- {
-  static const unsigned A = Off/2 ;
-  static const unsigned B = Off-A ;
-
-  using SplitA = SplitCaseList<A,CC...> ;
-
-  using SplitB = SplitCaseOf<B,typename SplitA::Last> ;
-
-  using First = typename CaseListJoin<typename SplitA::First,typename SplitB::First>::Ret ;
-  using Last = typename SplitB::Last ;
- };
-
-template <class ... CC>
-struct SplitCaseList<0,CC...> : SplitCaseList0<CC...> {};
-
-template <class ... CC>
-struct SplitCaseList<1,CC...> : SplitCaseList1<CC...> {};
-
-template <class ... CC>
-struct SplitCaseList<2,CC...> : SplitCaseList2<CC...> {};
-
-template <class ... CC>
-struct SplitCaseList<3,CC...> : SplitCaseList3<CC...> {};
-
-template <class ... CC>
-struct SplitCaseList<4,CC...> : SplitCaseList4<CC...> {};
-
-template <class ... CC>
-struct SplitCaseList<5,CC...> : SplitCaseList5<CC...> {};
+template <CaseListType CaseList> struct CaseListMaxSizeofCtor;
 
 /* struct TypeSwitch<CaseList> */
 
-template <class CaseList>
+template <CaseListType CaseList>
 struct TypeSwitch
  {
   using SwType = typename CaseList::SwType ;
@@ -258,6 +171,11 @@ struct TypeSwitch
 template <>
 struct TypeSwitch<CaseList<> >
  {
+  template <SUIntType SUInt,class Ctx,class RetType=typename Ctx::RetType>
+  static RetType Switch(SUInt val,Ctx ctx)
+   {
+    return ctx.defcall(val);
+   }
  };
 
 template <SUIntType SUInt,SUInt Val1,class T1>
@@ -503,38 +421,28 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
-/* struct CaseTypeCtor<Case> */
-
-template <SUIntType SUInt,SUInt Val,class T>
-struct CaseTypeCtor< Case<SUInt,Val,T> > : DefType<T> {};
-
-/* type CaseType<Case> */
-
-template <class Case>
-using CaseType = typename CaseTypeCtor<Case>::Ret ;
-
 /* struct CaseValCtor<CaseList,T> */
 
-template <class T,class S,SUIntType SUInt,SUInt Val,class ... CC>
+template <class T,class S,SUIntType SUInt,SUInt Val,CaseType ... CC>
 struct CaseValCtor< CaseList< Case<SUInt,Val,S> ,CC...> ,T>
  : Select< IsSame<T,S> , DefConst<SUInt,Val> , CaseValCtor< CaseList<CC...> ,T> > {};
 
 /* const CaseVal<CaseList,T> */
 
-template <class CaseList,class T>
+template <CaseListType CaseList,class T>
 const auto CaseVal = CaseValCtor<CaseList,T>::Ret ;
 
 /* struct CaseListMaxSizeofCtor<CaseList> */
 
-template <class ... CC>
+template <CaseType ... CC>
 struct CaseListMaxSizeofCtor< CaseList<CC...> >
  {
-  static constexpr ulen Ret = Max_cast( sizeof (CaseType<CC>) ... ) ;
+  static constexpr ulen Ret = Max_cast( sizeof (typename CC::Type) ... ) ;
  };
 
 /* const CaseListMaxSizeof<CaseList> */
 
-template <class CaseList>
+template <CaseListType CaseList>
 const ulen CaseListMaxSizeof = CaseListMaxSizeofCtor<CaseList>::Ret ;
 
 } // namespace Meta
