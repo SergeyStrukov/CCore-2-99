@@ -1,7 +1,7 @@
 /* SysCon.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -71,7 +71,7 @@ class ImpCon : public ConBase
           {
            count-=len;
 
-           fifo.get(count, [] (char *,ulen) {} );
+           fifo.get(count, [] (const char *,ulen) {} );
           }
 
         fifo.put(str);

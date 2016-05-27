@@ -26,10 +26,17 @@
 
   #define writestr(str) fputs(str, stderr)
 
+<SRC>/libstdc++-v3/src/c++11/random.cc   <--- replace
+
+  #if 0 // def _GLIBCXX_HAVE_UNISTD_H
+
+<SRC>/libstdc++-v3/include/std/type_traits   <--- replace
+
+  # if 0 // defined (__UINT_LEAST16_TYPE__) && defined(__UINT_LEAST32_TYPE__)
 
 <SRC>/libstdc++-v3/configure
 
-  gcc_no_link=no             at some place // after need_version=unknown at 10457
+  gcc_no_link=no             at some place // after need_version=unknown at 10556
 
-  # at "No support for this host/target combination" 70718
+  # at "No support for this host/target combination" 78196
 

@@ -1,7 +1,7 @@
 /* stdint.h */ 
 /*----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -134,7 +134,7 @@ typedef unsigned  uintptr_t;
  
 /* max types limits */ 
 
-#define INTMAX_MAX       __INT_MAX_MAX__
+#define INTMAX_MAX       __INTMAX_MAX__
 #define INTMAX_MIN       (-INTMAX_MAX-INTMAX_C(1))
 #define UINTMAX_MAX      (UINTMAX_C(2)*INTMAX_MAX+UINTMAX_C(1))
  

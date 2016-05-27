@@ -1,7 +1,7 @@
 # Makefile.tools
 #----------------------------------------------------------------------------------------
 #
-#  Project: CCore 2.00
+#  Project: CCore 3.00
 #
 #  Tag: Target/BeagleBoneBlack
 #
@@ -29,17 +29,17 @@ CAT = /usr/bin/cat
 
 TOUCH = /usr/bin/touch
 
-CC_ = /opt/BeagleBoneBlack/bin/arm-g++.exe
+CC_ = /opt/BBB-6.1.0/bin/arm-g++.exe
 
 CC = @$(ECHO) CC $< ; $(CC_)
 
 LD = @$(ECHO) LD $@ ; $(CC_)
 
-AS_ = /opt/BeagleBoneBlack/bin/arm-as.exe
+AS_ = /opt/BBB-6.1.0/bin/arm-as.exe
 
 AS = @$(ECHO) AS $< ; $(AS_)
 
-AR_ = /opt/BeagleBoneBlack/bin/arm-ar.exe
+AR_ = /opt/BBB-6.1.0/bin/arm-ar.exe
 
 AR = @$(ECHO) AR $@ ; $(AR_)
 
@@ -55,6 +55,7 @@ NOWARN = -Wno-non-virtual-dtor \
          -Wno-enum-compare \
          -Wno-missing-field-initializers \
          -Wno-delete-non-virtual-dtor \
+         -Wno-misleading-indentation \
 
 
 CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) \
@@ -66,7 +67,7 @@ CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) \
 
 CPUOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -mno-unaligned-access
 
-CCOPT = -c -std=c++14 $(CPUOPT) -fwrapv -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+CCOPT = -c -std=c++1z -fconcepts $(CPUOPT) -fwrapv -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
 
 ASOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard
 

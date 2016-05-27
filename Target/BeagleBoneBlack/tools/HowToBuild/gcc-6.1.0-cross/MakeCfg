@@ -1,11 +1,11 @@
 # MakeCfg
 
-CONFIGURE = ../../gcc-5.2.0-cross/configure
+CONFIGURE = ../../gcc-6.1.0-cross/configure
 
 OPT = --program-prefix=arm-                                         \
-      --prefix=/opt/BeagleBoneBlack                                 \
-      --with-local-prefix=/opt/BeagleBoneBlack/arm-eabielf          \
-      --with-sysroot=/opt/BeagleBoneBlack/sysroot                   \
+      --prefix=/opt/BBB-6.1.0                                       \
+      --with-local-prefix=/opt/BBB-6.1.0/arm-eabielf                \
+      --with-sysroot=/opt/BBB-6.1.0/sysroot                         \
       --with-arch=armv7-a                                           \
       --with-fpu=vfpv3                                              \
       --with-float-abi=hard                                         \
