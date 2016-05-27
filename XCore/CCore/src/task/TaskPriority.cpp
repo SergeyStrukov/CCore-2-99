@@ -1,7 +1,7 @@
 /* TaskPriority.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -23,7 +23,7 @@ PrintTaskPriority::PrintOptType::PrintOptType(const char *ptr,const char *lim)
  {
   StrParse dev(ptr,lim);
 
-  ParseUInt_empty(dev,width,0);
+  ParseUInt_empty(dev,width,0u);
 
   Parse_empty(dev,align);
 
