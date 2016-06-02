@@ -32,7 +32,7 @@ struct InterfaceCaster;
 
 struct InterfaceHost;
 
-template <class T> class InterfaceCasterTo;
+template <UnidType T> class InterfaceCasterTo;
 
 /* concept Has_InterfaceName<T> */
 
@@ -73,7 +73,7 @@ struct InterfaceHost
  {
   virtual void requestInterface(InterfaceCaster &caster) { caster.cast(this); }
 
-  template <class T>
+  template <UnidType T>
   T * pickInterface()
    {
     InterfaceCasterTo<T> caster;
@@ -83,7 +83,7 @@ struct InterfaceHost
     return caster;
    }
 
-  template <class T>
+  template <UnidType T>
   T * takeInterface(StrLen from)
    {
     T *ret=pickInterface<T>();
@@ -96,7 +96,7 @@ struct InterfaceHost
 
 /* class InterfaceCasterTo<T> */
 
-template <class T>
+template <UnidType T>
 class InterfaceCasterTo : public InterfaceCaster
  {
    T *ret;

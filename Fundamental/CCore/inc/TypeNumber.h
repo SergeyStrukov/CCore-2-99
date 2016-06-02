@@ -1,7 +1,7 @@
 /* TypeNumber.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -29,24 +29,13 @@ PlanInitNode * GetPlanInitNode_TypeNumber();
 
 class TypeNumber;
 
-template <class T> class TypeNumberOf;
+template <UnidType T> class TypeNumberOf;
 
 /* class TypeNumber */
 
 class TypeNumber
  {
    ulen number;
-
-   static bool OneOf(TypeNumber) { return false; }
-
-   static bool OneOf(TypeNumber tn,TypeNumber tn1) { return tn==tn1; }
-
-   static bool OneOf(TypeNumber tn,TypeNumber tn1,TypeNumber tn2) { return tn==tn1 || tn==tn2 ; }
-
-   static bool OneOf(TypeNumber tn,TypeNumber tn1,TypeNumber tn2,TypeNumber tn3) { return tn==tn1 || tn==tn2 || tn==tn3 ; }
-
-   template <class T,class ... TT>
-   static bool OneOf(TypeNumber tn,T t,TT ... tt) { return tn==t || OneOf(tn,tt...) ; }
 
   protected:
 
@@ -63,12 +52,12 @@ class TypeNumber
    bool operator != (TypeNumber obj) const { return number!=obj.number; }
 
    template <class ... TT>
-   bool oneOf() const { return OneOf(*this,TypeNumberOf<TT>()...); }
+   bool oneOf() const { return ( ... || ( (*this) == TypeNumberOf<TT>() ) ); }
  };
 
 /* class TypeNumberOf<T> */
 
-template <class T>
+template <UnidType T>
 class TypeNumberOf : public TypeNumber
  {
    class Init
@@ -89,7 +78,7 @@ class TypeNumberOf : public TypeNumber
    TypeNumberOf() : TypeNumber(Number) {}
  };
 
-template <class T>
+template <UnidType T>
 typename TypeNumberOf<T>::Init TypeNumberOf<T>::Number CCORE_INITPRI_3 ;
 
 } // namespace CCore

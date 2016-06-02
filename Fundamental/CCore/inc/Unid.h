@@ -1,7 +1,7 @@
 /* Unid.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -25,10 +25,6 @@ namespace CCore {
 /* classes */
 
 struct Unid;
-
-template <class T> struct UnidOf;
-
-class UnidRegister;
 
 /* struct Unid */
 
@@ -55,9 +51,23 @@ struct Unid
    }
  };
 
-/* struct UnidOf<T> */
+/* concept UnidType<T> */
 
 template <class T>
+concept bool UnidType = requires()
+ {
+  { T::TypeUnid } -> const Unid & ;
+ } ;
+
+/* classes */
+
+template <UnidType T> struct UnidOf;
+
+class UnidRegister;
+
+/* struct UnidOf<T> */
+
+template <UnidType T>
 struct UnidOf
  {
   static const Unid & Get() { return T::TypeUnid; }
@@ -83,7 +93,7 @@ class UnidRegister : NoCopy
 
    ~UnidRegister();
 
-   template <class T>
+   template <UnidType T>
    ulen getTypeId() { return find_or_add(UnidOf<T>::Get()); }
  };
 

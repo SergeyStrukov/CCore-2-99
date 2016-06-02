@@ -1,7 +1,7 @@
 /* HeapEngine.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -21,13 +21,29 @@
 
 namespace CCore {
 
+/* concept HeapType<Heap> */
+
+template <class Heap>
+concept bool HeapType = requires(Heap obj,void *mem,ulen len,const void *cmem)
+ {
+  { obj.alloc(len) } -> Space ;
+
+  { obj.free(mem) } -> ulen ;
+
+  { obj.extend(mem,len) } -> DeltaLen ;
+
+  { obj.shrink(mem,len) } -> DeltaLen ;
+
+  { obj.getLen(cmem) } -> ulen ;
+ } ;
+
 /* classes */
 
-template <class Heap> class HeapEngine;
+template <HeapType Heap> class HeapEngine;
 
 /* class HeapEngine<Heap> */
 
-template <class Heap>
+template <HeapType Heap>
 class HeapEngine : NoCopy
  {
    Mutex mutex;
@@ -92,7 +108,7 @@ class HeapEngine : NoCopy
    void getPeak(MemStatData &ret);
  };
 
-template <class Heap>
+template <HeapType Heap>
 template <class ... SS>
 HeapEngine<Heap>::HeapEngine(TextLabel name,SS && ... ss)
  : mutex(name),
@@ -101,12 +117,12 @@ HeapEngine<Heap>::HeapEngine(TextLabel name,SS && ... ss)
  {
  }
 
-template <class Heap>
+template <HeapType Heap>
 HeapEngine<Heap>::~HeapEngine()
  {
  }
 
-template <class Heap>
+template <HeapType Heap>
 void * HeapEngine<Heap>::alloc(ulen len)
  {
   Mutex::Lock lock(mutex);
@@ -125,7 +141,7 @@ void * HeapEngine<Heap>::alloc(ulen len)
   return 0;
  }
 
-template <class Heap>
+template <HeapType Heap>
 ulen HeapEngine<Heap>::getLen(const void *mem)
  {
   if( !mem ) return 0;
@@ -135,7 +151,7 @@ ulen HeapEngine<Heap>::getLen(const void *mem)
   return heap.getLen(mem);
  }
 
-template <class Heap>
+template <HeapType Heap>
 void HeapEngine<Heap>::free(void *mem)
  {
   if( !mem ) return;
@@ -147,7 +163,7 @@ void HeapEngine<Heap>::free(void *mem)
   delStat(len);
  }
 
-template <class Heap>
+template <HeapType Heap>
 bool HeapEngine<Heap>::extend(void *mem,ulen len)
  {
   if( !mem ) return false;
@@ -168,7 +184,7 @@ bool HeapEngine<Heap>::extend(void *mem,ulen len)
   return result.ok;
  }
 
-template <class Heap>
+template <HeapType Heap>
 bool HeapEngine<Heap>::shrink(void *mem,ulen len)
  {
   if( !mem ) return false;
@@ -182,7 +198,7 @@ bool HeapEngine<Heap>::shrink(void *mem,ulen len)
   return result.ok;
  }
 
-template <class Heap>
+template <HeapType Heap>
 void HeapEngine<Heap>::setLim(ulen limit_)
  {
   Mutex::Lock lock(mutex);
@@ -190,7 +206,7 @@ void HeapEngine<Heap>::setLim(ulen limit_)
   limit=limit_;
  }
 
-template <class Heap>
+template <HeapType Heap>
 void HeapEngine<Heap>::getStat(MemStatData &ret)
  {
   Mutex::Lock lock(mutex);
@@ -198,7 +214,7 @@ void HeapEngine<Heap>::getStat(MemStatData &ret)
   ret=stat;
  }
 
-template <class Heap>
+template <HeapType Heap>
 void HeapEngine<Heap>::getPeak(MemStatData &ret)
  {
   Mutex::Lock lock(mutex);
