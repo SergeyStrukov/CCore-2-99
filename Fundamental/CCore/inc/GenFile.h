@@ -1,7 +1,7 @@
 /* GenFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -73,8 +73,7 @@ class FileOpenFlagsTextDesc
 
    explicit FileOpenFlagsTextDesc(FileOpenFlags oflags_) : oflags(oflags_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      PrintBits<uint32>(out,oflags)
                       (Open_Read      ,"Read")
@@ -188,8 +187,7 @@ class FileMultiError : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      auto r=Range(list,len);
 

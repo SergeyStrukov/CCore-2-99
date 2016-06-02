@@ -1,7 +1,7 @@
 /* DeferCall.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental
 //
@@ -367,7 +367,7 @@ class DeferInput : NoCopy
 
    typename Algo::Top list;
 
-   template <class ... TT>
+   template <CopyCtorType ... TT>
    class DeferMethod : public DeferBase
     {
       void (S::* method)(TT... tt);
@@ -398,7 +398,7 @@ class DeferInput : NoCopy
        }
     };
 
-   template <class FuncInit>
+   template <FuncInitArgType<S &> FuncInit>
    class DeferFunc : public DeferBase
     {
       FuncInit func_init;
@@ -441,19 +441,19 @@ class DeferInput : NoCopy
    // post
 
    template <class ... TT>
-   DeferCouple create(void (S::* method)(TT... tt),const TT & ... tt)
+   DeferCouple create(void (S::* method)(TT... tt),const TT & ... tt) requires ( ... && CopyCtorType<TT> )
     {
      return DeferCouple(defer_queue,new(defer_queue) DeferMethod<TT...>(this,method,tt...));
     }
 
    template <class ... TT>
-   void post(void (S::* method)(TT... tt),const TT & ... tt)
+   void post(void (S::* method)(TT... tt),const TT & ... tt) requires ( ... && CopyCtorType<TT> )
     {
      create(method,tt...).post();
     }
 
    template <class ... TT>
-   void post_first(void (S::* method)(TT... tt),const TT & ... tt)
+   void post_first(void (S::* method)(TT... tt),const TT & ... tt) requires ( ... && CopyCtorType<TT> )
     {
      create(method,tt...).post_first();
     }
@@ -461,38 +461,38 @@ class DeferInput : NoCopy
    // try post
 
    template <class ... TT>
-   DeferCouple try_create(void (S::* method)(TT... tt),const TT & ... tt)
+   DeferCouple try_create(void (S::* method)(TT... tt),const TT & ... tt) requires ( ... && CopyCtorType<TT> )
     {
      return DeferCouple(defer_queue,new(JustTry,defer_queue) DeferMethod<TT...>(this,method,tt...));
     }
 
    template <class ... TT>
-   void try_post(void (S::* method)(TT... tt),const TT & ... tt)
+   void try_post(void (S::* method)(TT... tt),const TT & ... tt) requires ( ... && CopyCtorType<TT> )
     {
      try_create(method,tt...).try_post();
     }
 
    template <class ... TT>
-   void try_post_first(void (S::* method)(TT... tt),const TT & ... tt)
+   void try_post_first(void (S::* method)(TT... tt),const TT & ... tt) requires ( ... && CopyCtorType<TT> )
     {
      try_create(method,tt...).try_post_first();
     }
 
    // post interface
 
-   template <class FuncInit>
-   DeferCouple create(FuncInit func_init) // func(S &)
+   template <FuncInitArgType<S &> FuncInit>
+   DeferCouple create(FuncInit func_init)
     {
      return DeferCouple(defer_queue,new(defer_queue) DeferFunc<FuncInit>(this,func_init));
     }
 
-   template <class FuncInit>
+   template <FuncInitArgType<S &> FuncInit>
    void post(FuncInit func_init)
     {
      create(func_init).post();
     }
 
-   template <class FuncInit>
+   template <FuncInitArgType<S &> FuncInit>
    void post_first(FuncInit func_init)
     {
      create(func_init).post_first();
@@ -500,19 +500,19 @@ class DeferInput : NoCopy
 
    // try post interface
 
-   template <class FuncInit>
-   DeferCouple try_create(FuncInit func_init) // func(S &)
+   template <FuncInitArgType<S &> FuncInit>
+   DeferCouple try_create(FuncInit func_init)
     {
      return DeferCouple(defer_queue,new(JustTry,defer_queue) DeferFunc<FuncInit>(this,func_init));
     }
 
-   template <class FuncInit>
+   template <FuncInitArgType<S &> FuncInit>
    void try_post(FuncInit func_init)
     {
      try_create(func_init).try_post();
     }
 
-   template <class FuncInit>
+   template <FuncInitArgType<S &> FuncInit>
    void try_post_first(FuncInit func_init)
     {
      try_create(func_init).try_post_first();

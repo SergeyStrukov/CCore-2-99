@@ -60,6 +60,8 @@ using FunctorTypeOf = typename FunctorTypeOfCtor<FuncInit>::Ret ;
 template <class FuncInit,class R,class ... AA>
 concept bool FuncInitType = requires(FuncInit func_init)
  {
+  requires ( CopyCtorType<FuncInit> );
+
   FunctorTypeOf<FuncInit>(func_init);
 
   requires ( FuncType<FunctorTypeOf<FuncInit>,R,AA...> );
@@ -70,6 +72,8 @@ concept bool FuncInitType = requires(FuncInit func_init)
 template <class FuncInit,class ... AA>
 concept bool FuncInitArgType = requires(FuncInit func_init)
  {
+  requires ( CopyCtorType<FuncInit> );
+
   FunctorTypeOf<FuncInit>(func_init);
 
   requires ( FuncArgType<FunctorTypeOf<FuncInit>,AA...> );
