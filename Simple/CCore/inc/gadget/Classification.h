@@ -54,6 +54,9 @@ concept bool ConstCharType = Meta::OneOf<T,const char,const unsigned char> ;
 template <class T>
 concept bool ULenType = Meta::IsSame<T,ulen> ;
 
+template <class T,class S>
+concept bool IsType = Meta::IsSame<T,S> ;
+
 
 template <class T>
 concept bool EnumType = Meta::IsEnum<T> ;

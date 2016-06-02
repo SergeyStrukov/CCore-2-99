@@ -1,7 +1,7 @@
 /* ElementPool.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -17,6 +17,7 @@
 #define CCore_inc_ElementPool_h
 
 #include <CCore/inc/List.h>
+
 #include <CCore/inc/array/ArrayAlgo.h>
 
 namespace CCore {
@@ -111,8 +112,6 @@ class ElementPool : NoCopy
    template <class T>
    Place<void> alloc(ulen len)
     {
-     static_assert( Meta::HasTrivDtor<T> ,"CCore::ElementPool::createArray...<T>(...) : T must have a trivial destructor");
-
      return pool.alloc(LenOf(len,sizeof (T)));
     }
 
@@ -122,15 +121,13 @@ class ElementPool : NoCopy
 
      explicit Out(char *ptr_) : ptr(ptr_) {}
 
-     void operator () () {}
-
-     void operator () (StrLen str) { str.copyTo(ptr); ptr+=str.len; }
-
-     template <class ... TT>
-     void operator () (StrLen str,TT ... tt)
+     Out & operator += (StrLen str)
       {
-       (*this)(str);
-       (*this)(tt...);
+       str.copyTo(ptr);
+
+       ptr+=str.len;
+
+       return *this;
       }
     };
 
@@ -142,7 +139,7 @@ class ElementPool : NoCopy
 
      Out out(base);
 
-     out(tt...);
+     ( out += ... += tt );
 
      return StrLen(base,len);
     }
@@ -160,11 +157,9 @@ class ElementPool : NoCopy
 
    // methods
 
-   template <class T,class ... SS>
-   T * create(SS && ... ss)
+   template <TrivDtorType T,class ... SS>
+   T * create(SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
-     static_assert( Meta::HasTrivDtor<T> ,"CCore::ElementPool::create<T>(...) : T must have a trivial destructor");
-
      return new(pool.alloc(sizeof (T))) T( std::forward<SS>(ss)... );
     }
 
@@ -180,15 +175,15 @@ class ElementPool : NoCopy
 
    // createArray
 
-   template <class T>
-   PtrLen<T> createArray(ulen len)
+   template <TrivDtorType T>
+   PtrLen<T> createArray(ulen len) requires ( DefaultCtorType<T> )
     {
      using Algo = ArrayAlgo<T> ;
 
      return Algo::Create_default(alloc<T>(len),len);
     }
 
-   template <class T,class Creator>
+   template <TrivDtorType T,CreatorType<T> Creator>
    PtrLen<T> createArray(ulen len,Creator creator)
     {
      using Algo = ArrayAlgo<T> ;
@@ -196,60 +191,60 @@ class ElementPool : NoCopy
      return Algo::Create(alloc<T>(len),len,creator);
     }
 
-   template <class T>
-   PtrLen<T> createArray_raw(ulen len)
+   template <TrivDtorType T>
+   PtrLen<T> createArray_raw(ulen len) requires ( DefaultCtorType<T> )
     {
      using Algo = ArrayAlgo<T> ;
 
      return Algo::Create_raw(alloc<T>(len),len);
     }
 
-   template <class T,class ... SS>
-   PtrLen<T> createArray_fill(ulen len,SS && ... ss)
+   template <TrivDtorType T,class ... SS>
+   PtrLen<T> createArray_fill(ulen len,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      using Algo = ArrayAlgo<T> ;
 
      return Algo::Create_fill(alloc<T>(len),len, std::forward<SS>(ss)... );
     }
 
-   template <class T>
-   PtrLen<T> createArray_copy(ulen len,const T src[])
+   template <TrivDtorType T>
+   PtrLen<T> createArray_copy(ulen len,const T src[]) requires ( CopyCtorType<T> )
     {
      using Algo = ArrayAlgo<T> ;
 
      return Algo::Create_copy(alloc<T>(len),len,src);
     }
 
-   template <class T>
-   PtrLen<T> createArray_copy(PtrLen<const T> src)
+   template <TrivDtorType T>
+   PtrLen<T> createArray_copy(PtrLen<const T> src) requires ( CopyCtorType<T> )
     {
      return createArray_copy(src.len,src.ptr);
     }
 
-   template <class T,class S>
-   PtrLen<T> createArray_cast(ulen len,const S src[])
+   template <TrivDtorType T,class S>
+   PtrLen<T> createArray_cast(ulen len,const S src[]) requires ( ConstructibleType<T,const S> )
     {
      using Algo = ArrayAlgo<T> ;
 
      return Algo::Create_cast(alloc<T>(len),len,src);
     }
 
-   template <class T,class S>
-   PtrLen<T> createArray_cast(PtrLen<const S> src)
+   template <TrivDtorType T,class S>
+   PtrLen<T> createArray_cast(PtrLen<const S> src) requires ( ConstructibleType<T,const S> )
     {
      return createArray_cast(src.len,src.ptr);
     }
 
-   template <class T>
-   PtrLen<T> createArray_swap(ulen len,T objs[])
+   template <TrivDtorType T>
+   PtrLen<T> createArray_swap(ulen len,T objs[]) requires ( DefaultCtorType<T> )
     {
      using Algo = ArrayAlgo<T> ;
 
      return Algo::Create_swap(alloc<T>(len),len,objs);
     }
 
-   template <class T>
-   PtrLen<T> createArray_swap(PtrLen<T> objs)
+   template <TrivDtorType T>
+   PtrLen<T> createArray_swap(PtrLen<T> objs) requires ( DefaultCtorType<T> )
     {
      return createArray_swap(objs.len,objs.ptr);
     }

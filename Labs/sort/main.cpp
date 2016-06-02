@@ -17,41 +17,66 @@ using namespace CCore;
 
 template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct SmartInsSort;
 
-/**/
+/* IndexSmartInsSort() */
 
-template <RanType Ran,SortContextType<Ran> Ctx>
-struct SmartInsIndexCtx
+template <class Ind,class Len,class Func>
+void IndexSmartInsSort2(Ind *ind,Len len,Ind *spare,Func less)
  {
-  Ran base;
-  Ctx ctx;
-  ulen delta;
+  // TODO
+ }
 
-  SmartInsIndexCtx(Ran base_,Ctx ctx_,ulen delta_) : base(base_),ctx(ctx_),delta(delta_) {}
-
-  template <class ExtCtx>
-  SmartInsIndexCtx(Ran base_,ExtCtx extctx,ulen delta_) : base(base_),ctx(extctx.ctx),delta(delta_) {}
-
-  template <class Ind>
-  void swap(Ind *a,Ind *b) { CopySwap(*a,*b); CopySwap(a[delta],b[delta]); }
-
-  template <class Ind>
-  bool less(const Ind *a,const Ind *b) const { return ctx.less(base+(*a),base+(*b)); }
- };
-
-template <class Ran,class Ctx>
-struct SmartInsPickCtxCtor
+template <class Ind,class Len,class Func>
+void TopSmartIns(Ind *ind,Len len,Len top,Func less)
  {
-  using Ret = SmartInsIndexCtx<Ran,Ctx> ;
- };
+  // TODO
+ }
 
-template <class Ran,class Ctx>
-struct SmartInsPickCtxCtor<Ran,SmartInsIndexCtx<Ran,Ctx> >
+template <class Ind,class Len,class Func>
+void IndexSmartInsSort(Ind *ind,Len len,Func less)
  {
-  using Ret = SmartInsIndexCtx<Ran,Ctx> ;
- };
+  Len len2=len/2;
 
-template <class Ran,class Ctx>
-using SmartInsPickCtx = typename SmartInsPickCtxCtor<Ran,Ctx>::Ret ;
+  // 1
+
+  for(Len i=0; i<len2 ;i+=2)
+    {
+     if( less(ind[i+1],ind[i]) ) Swap(ind[i],ind[i+1]);
+    }
+
+  // 2
+
+  IndexSmartInsSort2(ind,len2,ind+len,less);
+
+  // 3
+
+  Len total=5,top=1,eps=0;
+
+  while( total<=len )
+    {
+     TopSmartIns(ind,total,top,less);
+
+     top=(2*top-1)+eps;
+
+     eps=4-eps;
+
+     total+=2*top+2;
+    }
+
+  Len delta=(total-len+1)/2;
+
+  if( top>=delta )
+    {
+     top-=delta;
+     total-=2*delta;
+
+     TopSmartIns(ind,total,top,less);
+
+     if( total<len )
+       {
+        TopSmartIns(ind,len,Len(0),less);
+       }
+    }
+ }
 
 /* class SmartInsSort */
 
@@ -107,16 +132,7 @@ template <RanType Ran,SortContextType<Ran> Ctx>
 template <ULenType Len>
 bool SmartInsSort<Ran,Ctx>::Sort(Ran a,Len len,Ctx ctx,Ind ind[])
  {
-  Len len2=len/2;
-
-  for(Len i=0; i<len2 ;i++)
-    {
-     if( ctx.less(a+ind[i],a+ind[i+len2]) ) CopySwap(ind[i],ind[i+len2]);
-    }
-
-  SmartInsSort<Ind *,SmartInsPickCtx<Ran,Ctx> >::Sort(ind,len2,{a,ctx,len2});
-
-  // TODO
+  IndexSmartInsSort(ind,len, [a,ctx] (Ind i,Ind j) { return ctx.less(a+i,a+j); } );
 
   return true;
  }
