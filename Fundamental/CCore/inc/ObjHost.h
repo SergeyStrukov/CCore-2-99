@@ -1,7 +1,7 @@
 /* ObjHost.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -40,11 +40,11 @@ class ObjHost;
 
 struct ObjInfo;
 
-template <class T> struct ObjInfo_if;
+template <UnidType T> struct ObjInfo_if;
 
 struct ObjInfo_obj;
 
-template <class T> struct ObjInfo_obj_if;
+template <UnidType T> struct ObjInfo_obj_if;
 
 class ObjHook;
 
@@ -52,9 +52,39 @@ class ObjMaster;
 
 class ObjMaster_delete;
 
+/* concept ObjInfoType<Info> */
+
+template <class Info,bool Lock>
+concept bool ObjInfoType3 = !Lock || requires(Info info)
+ {
+  { info.getObj() } -> ObjBase * ;
+ } ;
+
+template <class Info,class Extra>
+concept bool ObjInfoType2 = requires(ObjBase *obj,StrLen name,Extra ext)
+ {
+  Extra(obj);
+
+  { !ext } -> bool ;
+
+  Info(obj,name,ext);
+ } ;
+
+template <class Info>
+concept bool ObjInfoType = requires()
+ {
+  typename Info::Extra;
+
+  { Info::Lock } -> bool ;
+
+  requires ( ObjInfoType2<Info,typename Info::Extra> );
+
+  requires ( ObjInfoType3<Info,Info::Lock> );
+ } ;
+
 /* class ObjBase */
 
-class ObjBase : public MemBase_nocopy , public InterfaceHost
+class ObjBase : public NoCopyBase<MemBase,InterfaceHost>
  {
    AntiSem asem;
    RBTreeUpLink<ObjBase,StrKey> link;
@@ -96,26 +126,11 @@ class ObjHost : NoCopy
 
    friend class ObjHook;
 
-   template <class Func>
-   void apply(Func &func,ObjBase *obj)
-    {
-     if( obj )
-       {
-        func(obj);
-
-        apply(func,Algo::Link(obj).lo);
-        apply(func,Algo::Link(obj).hi);
-       }
-    }
-
-   template <class FuncInit>
-   void apply(FuncInit func_init) // locked operation
+   auto apply(FuncInitArgType<ObjBase &> func_init) // locked operation
     {
      Mutex::Lock lock(mutex);
 
-     FunctorTypeOf<FuncInit> func(func_init);
-
-     apply(func,root.root);
+     return Algon::ApplyToRange(root.start(),func_init);
     }
 
    template <bool Lock> struct ListLock;
@@ -138,7 +153,7 @@ class ObjHost : NoCopy
 
    static ObjHost & Default();
 
-   template <class Info> class List;
+   template <ObjInfoType Info> class List;
  };
 
 template <>
@@ -146,7 +161,7 @@ struct ObjHost::ListLock<true>
  {
   static void Lock(ObjBase *obj) { obj->asem.inc(); }
 
-  template <class Info>
+  template <ObjInfoType Info>
   static void Unlock(PtrLen<Info> r)
    {
     for(Info &obj : r ) obj.getObj()->asem.dec();
@@ -158,13 +173,13 @@ struct ObjHost::ListLock<false>
  {
   static void Lock(ObjBase *) {}
 
-  template <class Info>
+  template <ObjInfoType Info>
   static void Unlock(PtrLen<Info>) {}
  };
 
 /* class ObjHost::List<Info> */
 
-template <class Info>
+template <ObjInfoType Info>
 class ObjHost::List : NoCopy
  {
    ElementPool pool;
@@ -196,7 +211,7 @@ class ObjHost::List : NoCopy
 
    void build(ObjHost &host=Default())
     {
-     host.apply( [this] (ObjBase *obj) { add(obj); } );
+     host.apply( [this] (ObjBase &obj) { add(&obj); } );
     }
 
    const Info * getPtr() const { return infos.getPtr(); }
@@ -224,8 +239,7 @@ struct ObjInfo
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;",name);
    }
@@ -233,7 +247,7 @@ struct ObjInfo
 
 /* struct ObjInfo_if<T> */
 
-template <class T>
+template <UnidType T>
 struct ObjInfo_if
  {
   enum LockFlagType { Lock = false };
@@ -257,8 +271,7 @@ struct ObjInfo_if
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;",name);
    }
@@ -287,8 +300,7 @@ struct ObjInfo_obj
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;",name);
    }
@@ -296,7 +308,7 @@ struct ObjInfo_obj
 
 /* struct ObjInfo_obj_if<T> */
 
-template <class T>
+template <UnidType T>
 struct ObjInfo_obj_if
  {
   enum LockFlagType { Lock = true };
@@ -328,8 +340,7 @@ struct ObjInfo_obj_if
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;",name);
    }
@@ -375,10 +386,10 @@ class ObjHook : NoCopy
 
    void requestInterface(InterfaceCaster &caster) { if( obj ) obj->requestInterface(caster); }
 
-   template <class T>
+   template <UnidType T>
    T * cast() const { return obj?obj->pickInterface<T>():0; }
 
-   template <class T>
+   template <UnidType T>
    T * cast_guarded() const
     {
      T *ret=cast<T>();
@@ -388,7 +399,7 @@ class ObjHook : NoCopy
      return ret;
     }
 
-   template <class T>
+   template <UnidType T>
    operator T * () const { return cast_guarded<T>(); }
 
    // copy objects

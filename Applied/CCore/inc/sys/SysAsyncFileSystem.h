@@ -1,7 +1,7 @@
 /* SysAsyncFileSystem.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -124,7 +124,7 @@ struct AsyncFileSystem
 
     explicit State(StrLen dev_name) : hook(JustTry,dev_name) {}
 
-    operator AsyncFileSystemDevice * () { return hook.cast<AsyncFileSystemDevice>(); }
+    operator AsyncFileSystemDevice * ();
    };
 
   InitStorage<sizeof (State)> storage;
@@ -188,6 +188,8 @@ struct AsyncFileSystemDevice
 
   virtual void exec2(ObjHook &hook,Packet<uint8,AsyncFileSystem::FileExt> packet,StrLen dir,StrLen program)=0;
  };
+
+inline AsyncFileSystem::State::operator AsyncFileSystemDevice * () { return hook.cast<AsyncFileSystemDevice>(); }
 
 } // namespace Sys
 } // namespace CCore
