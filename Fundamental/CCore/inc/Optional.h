@@ -1,7 +1,7 @@
 /* Optional.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental
 //
@@ -38,7 +38,7 @@ class Optional : NoCopy
 
    using Algo = TreeLink<Node,unsigned>::RadixAlgo<&Node::link> ;
 
-   template <class T>
+   template <NothrowDtorType T>
    struct ObjNode : Node
     {
      T obj;
@@ -64,10 +64,10 @@ class Optional : NoCopy
 
    ~Optional() { Destroy(root.root); }
 
-   template <unsigned slot,class T>
+   template <unsigned slot,NothrowDtorType T>
    T * try_take();
 
-   template <unsigned slot,class T>
+   template <unsigned slot,NothrowDtorType T>
    T * take();
  };
 
@@ -77,7 +77,7 @@ T * Optional::GetObject(Node *node)
   return &(static_cast<ObjNode<T> *>(node)->obj);
  }
 
-template <unsigned slot,class T>
+template <unsigned slot,NothrowDtorType T>
 T * Optional::try_take()
  {
   if( Node *node=root.find(slot) ) return GetObject<T>(node);
@@ -85,7 +85,7 @@ T * Optional::try_take()
   return 0;
  }
 
-template <unsigned slot,class T>
+template <unsigned slot,NothrowDtorType T>
 T * Optional::take()
  {
   Algo::PrepareIns prepare(root,slot,0,max_slot);
