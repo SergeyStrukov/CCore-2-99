@@ -249,6 +249,16 @@ concept bool RangeableType = requires(T &obj) { Range(obj); } ;
 template <class T,class S>
 concept bool TypeRangeableType = requires(T &obj) { { Range(obj) } -> PtrLen<S> ; } ;
 
+/* concept ConstRangeableType<T> */
+
+template <class T>
+concept bool ConstRangeableType = requires(const T &obj) { Range_const(obj); } ;
+
+/* concept TypeRangeableType<T,S> */
+
+template <class T,class S>
+concept bool ConstTypeRangeableType = requires(const T &obj) { { Range_const(obj) } -> PtrLen<const S> ; } ;
+
 /* begin()/end() */
 
 auto begin(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }

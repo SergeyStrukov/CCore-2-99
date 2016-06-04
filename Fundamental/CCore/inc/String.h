@@ -1,7 +1,7 @@
 /* String.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -27,6 +27,8 @@ class String;
 
 class PrintString;
 
+struct StrLenCast;
+
 template <unsigned Count> class StringSumBuilder;
 
 /* class String */
@@ -43,8 +45,7 @@ class String
 
    String(StrLen str) : data(DoCopy(str.len),str.ptr) {}
 
-   template <class Builder>
-   String(DoBuildType,Builder builder) : data(DoBuild,builder) {}
+   String(DoBuildType,BuilderType<char> builder) : data(DoBuild,builder) {}
 
    ~String() {}
 
@@ -60,8 +61,7 @@ class String
 
    using PrintOptType = StrPrintOpt ;
 
-   template <class P>
-   void print(P &obj,PrintOptType opt) const
+   void print(PrinterType &obj,PrintOptType opt) const
     {
      StrPrint proxy(Range(*this));
 
@@ -110,22 +110,35 @@ class PrintString : public PrintBase
    void cleanup();
  };
 
+/* struct StrLenCast */
+
+struct StrLenCast
+ {
+  template <ConstTypeRangeableType<char> T>
+  static StrLen Cast(const T &t) { return Range_const(t); }
+
+  static StrLen Cast(StrLen t) { return t; }
+
+  static StrLen Cast(const char *t) { return t; }
+ };
+
+/* concept StrLenCastableType<T> */
+
+template <class T>
+concept bool StrLenCastableType = requires(const T &obj)
+ {
+  StrLenCast::Cast(obj);
+ } ;
+
 /* class StringSumBuilder<unsigned Count> */
 
 template <unsigned Count>
-class StringSumBuilder
+class StringSumBuilder : StrLenCast
  {
    StrLen list[Count];
    ulen len;
 
   private:
-
-   template <class T>
-   static StrLen Cast(const T &t) { return Range_const(t); }
-
-   static StrLen Cast(StrLen t) { return t; }
-
-   static StrLen Cast(const char *t) { return t; }
 
    ulen countLen() const
     {
@@ -139,7 +152,7 @@ class StringSumBuilder
   public:
 
    template <class ... TT>
-   explicit StringSumBuilder(const TT & ... tt)
+   explicit StringSumBuilder(const TT & ... tt) requires ( ... && StrLenCastableType<TT> )
     : list{ Cast(tt) ... }
     {
      len=countLen();
@@ -173,7 +186,7 @@ class StringSumBuilder<0>
 
 /* functions */
 
-template <class ... TT>
+template <PrintableType ... TT>
 String Stringf(const char *format,const TT & ... tt)
  {
   PrintString out;
@@ -183,7 +196,7 @@ String Stringf(const char *format,const TT & ... tt)
   return out.close();
  }
 
-template <class ... TT>
+template <PrintableType ... TT>
 String StringCat(const TT & ... tt)
  {
   PrintString out;
@@ -193,14 +206,13 @@ String StringCat(const TT & ... tt)
   return out.close();
  }
 
-template <class ... TT>
+template <StrLenCastableType ... TT>
 String StringSum(const TT & ... tt)
  {
   return String(DoBuild,StringSumBuilder<sizeof ... (TT)>(tt...));
  }
 
-template <class T>
-String operator + (const String &a,const T &t) { return StringSum(a,t); }
+String operator + (const String &a,const StrLenCastableType &t) { return StringSum(a,t); }
 
 } // namespace CCore
 

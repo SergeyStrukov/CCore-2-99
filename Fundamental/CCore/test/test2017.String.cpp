@@ -1,7 +1,7 @@
 /* test2017.String.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -60,6 +60,8 @@ bool Testit<2017>::Main()
   for(ulen i=5000; i<6000 ;i++) Printf(out,"------------------ #; ----------------------\n",i);
 
   try { Putobj(Con,out.close()); } catch(CatchType) {}
+
+  Putobj(Con,StringSum("abc","123","def"));
 
   return true;
  }
