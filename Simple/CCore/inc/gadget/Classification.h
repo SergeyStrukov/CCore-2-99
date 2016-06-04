@@ -57,6 +57,9 @@ concept bool ULenType = Meta::IsSame<T,ulen> ;
 template <class T,class S>
 concept bool IsType = Meta::IsSame<T,S> ;
 
+template <class T,class ... TT>
+concept bool OneOfTypes = Meta::OneOf<T,TT...> ;
+
 template <class T,class S>
 concept bool IsDerivedFrom = Meta::IsBaseOf<S,T> ;
 

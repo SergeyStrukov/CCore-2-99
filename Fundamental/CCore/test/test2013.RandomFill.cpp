@@ -1,7 +1,7 @@
 /* test2013.RandomFill.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -36,6 +36,14 @@ class Gen
    using UnitType = uint8 ;
 
    UnitType next() { count++; return 0xFF; }
+
+   uint8 next8() { return 0; }
+
+   uint16 next16() { return 0; }
+
+   uint32 next32() { return 0; }
+
+   uint64 next64() { return 0; }
  };
 
 /* functions */

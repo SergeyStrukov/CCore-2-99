@@ -1,7 +1,7 @@
 /* Path.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -87,9 +87,9 @@ struct PathBase
 
   struct ToSuffix;
 
-  template <bool Is(char ch),class To> struct ForwardScan;
+  template <bool Is(char ch),OneOfTypes<ToPrefix,ToPrefixDel,ToSuffix> To> struct ForwardScan;
 
-  template <bool Is(char ch),class To> struct BackwardScan;
+  template <bool Is(char ch),OneOfTypes<ToPrefix,ToPrefixDel,ToSuffix> To> struct BackwardScan;
  };
 
 struct PathBase::ToPrefix
@@ -157,7 +157,7 @@ struct PathBase::ToSuffix
    }
  };
 
-template <bool Is(char ch),class To>
+template <bool Is(char ch),OneOfTypes<PathBase::ToPrefix,PathBase::ToPrefixDel,PathBase::ToSuffix> To>
 struct PathBase::ForwardScan : To
  {
   using To::set;
@@ -176,7 +176,7 @@ struct PathBase::ForwardScan : To
    }
  };
 
-template <bool Is(char ch),class To>
+template <bool Is(char ch),OneOfTypes<PathBase::ToPrefix,PathBase::ToPrefixDel,PathBase::ToSuffix> To>
 struct PathBase::BackwardScan : To
  {
   using To::set;

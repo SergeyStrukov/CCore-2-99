@@ -21,6 +21,26 @@
 
 namespace CCore {
 
+/* concept RandomCoreType<T> */
+
+template <class T>
+concept bool RandomCoreType = requires()
+ {
+  typename T::UnitType;
+
+  requires ( UIntType<typename T::UnitType> );
+
+  { &T::next } -> typename T::UnitType (T::*)() ;
+
+  { &T::next8 } -> uint8 (T::*)() ;
+
+  { &T::next16 } -> uint16 (T::*)() ;
+
+  { &T::next32 } -> uint32 (T::*)() ;
+
+  { &T::next64 } -> uint64 (T::*)() ;
+ } ;
+
 /* classes */
 
 template <UIntType UInt> struct RandomFill_gen;
@@ -45,7 +65,7 @@ struct RandomFill_gen
   template <unsigned DstBit,unsigned SrcBit>
   using Extra = Meta::Select<( DstBit>SrcBit ), Extra_loop<DstBit,SrcBit> , Extra_last<DstBit,SrcBit> > ;
 
-  template <class T>
+  template <RandomCoreType T>
   static UInt Do(T &random);
  };
 
@@ -53,7 +73,7 @@ template <UIntType UInt>
 template <unsigned DstBit,unsigned SrcBit>
 struct RandomFill_gen<UInt>::Extra_loop
  {
-  template <class T>
+  template <RandomCoreType T>
   static void Do(UInt &ret,T &random)
    {
     const unsigned Delta=Meta::UIntBits<typename T::UnitType>;
@@ -68,12 +88,12 @@ template <UIntType UInt>
 template <unsigned DstBit,unsigned SrcBit>
 struct RandomFill_gen<UInt>::Extra_last
  {
-  template <class T>
+  template <RandomCoreType T>
   static void Do(UInt &,T &) {}
  };
 
 template <UIntType UInt>
-template <class T>
+template <RandomCoreType T>
 UInt RandomFill_gen<UInt>::Do(T &random)
  {
   UInt ret=UInt(random.next());
@@ -91,29 +111,25 @@ struct RandomFill : RandomFill_gen<UInt> {};
 template <>
 struct RandomFill<uint8>
  {
-  template <class T>
-  static uint8 Do(T &random) { return random.next8(); }
+  static uint8 Do(RandomCoreType &random) { return random.next8(); }
  };
 
 template <>
 struct RandomFill<uint16>
  {
-  template <class T>
-  static uint16 Do(T &random) { return random.next16(); }
+  static uint16 Do(RandomCoreType &random) { return random.next16(); }
  };
 
 template <>
 struct RandomFill<uint32>
  {
-  template <class T>
-  static uint32 Do(T &random) { return random.next32(); }
+  static uint32 Do(RandomCoreType &random) { return random.next32(); }
  };
 
 template <>
 struct RandomFill<uint64>
  {
-  template <class T>
-  static uint64 Do(T &random) { return random.next64(); }
+  static uint64 Do(RandomCoreType &random) { return random.next64(); }
  };
 
 /* struct RandomSelect<UInt> */
@@ -166,7 +182,7 @@ class RandomBase : NoCopy
  {
   private:
 
-   T & getObj() { return *static_cast<T *>(this); }
+   T & getObj() requires ( RandomCoreType<T> ) { return *static_cast<T *>(this); }
 
   public:
 
