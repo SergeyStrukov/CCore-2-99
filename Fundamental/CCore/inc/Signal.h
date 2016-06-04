@@ -1,7 +1,7 @@
 /* Signal.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental
 //
@@ -57,6 +57,7 @@ class Signal : NoCopy
    void ins(Node *node)
     {
      list.ins(node);
+
      count++;
     }
 
@@ -100,7 +101,7 @@ class Signal : NoCopy
 
       // constructors
 
-      template <class S>
+      template <IsDerivedFrom<ConnectorBase> S>
       explicit ConnectorBase(void (S::* call)(TT ... tt)) : Node(static_cast<void (Node::*)(TT ... tt)>(call)) {}
 
       ~ConnectorBase() {} // disconnect() must be called in the destructor of a derived class
@@ -221,6 +222,7 @@ class SignalInterface : NoCopy
    void ins(Node *node)
     {
      list.ins(node);
+
      count++;
     }
 
@@ -252,8 +254,8 @@ class SignalInterface : NoCopy
 
    // methods
 
-   template <class FuncInit>
-   void assert(FuncInit func_init); // func(I &)
+   template <FuncInitArgType<I &> FuncInit>
+   void assert(FuncInit func_init);
 
    // class ConnectorBase
 
@@ -306,7 +308,7 @@ SignalInterface<I>::~SignalInterface()
  }
 
 template <class I>
-template <class FuncInit>
+template <FuncInitArgType<I &> FuncInit>
 void SignalInterface<I>::assert(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
