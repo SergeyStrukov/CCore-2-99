@@ -439,7 +439,7 @@ struct IPAddress
    }
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 void ParseIPAddress(Dev &dev,IPAddress &ret)
  {
   uint8 b0,b1,b2,b3;
@@ -505,7 +505,7 @@ struct EthHeader
     // [i|o|I|O]
     //
 
-    template <class Dev>
+    template <CharPeekType Dev>
     static void ParseInbound(Dev &dev,bool &inbound)
      {
       typename Dev::Peek peek(dev);
@@ -729,7 +729,7 @@ struct IPHeader
     // [i|o|I|O][x|X]
     //
 
-    template <class Dev>
+    template <CharPeekType Dev>
     static void ParseInbound(Dev &dev,bool &inbound)
      {
       typename Dev::Peek peek(dev);
@@ -750,7 +750,7 @@ struct IPHeader
         }
      }
 
-    template <class Dev>
+    template <CharPeekType Dev>
     void ParseExtra(Dev &dev,bool &extra)
      {
       typename Dev::Peek peek(dev);

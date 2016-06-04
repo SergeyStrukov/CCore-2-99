@@ -57,7 +57,7 @@ struct PrintTaskPriority
     PriAlignDefault = PriAlignRight
    };
 
-  template <class Dev>
+  template <CharPeekType Dev>
   static void Parse_empty(Dev &dev,PriAlign &ret)
    {
     typename Dev::Peek peek(dev);

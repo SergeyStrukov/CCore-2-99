@@ -87,7 +87,7 @@ struct UDPoint
    }
  };
 
-template <class Dev>
+template <CharPeekType Dev>
 void ParseUDPoint(Dev &dev,UDPoint &ret)
  {
   UDPoint temp;

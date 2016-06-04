@@ -139,7 +139,7 @@ class StrParse
 
 /* functions */
 
-template <class Dev>
+template <CharPeekType Dev>
 void ParseChar(Dev &dev,char ch)
  {
   typename Dev::Peek peek(dev);
@@ -150,7 +150,7 @@ void ParseChar(Dev &dev,char ch)
     ++dev;
  }
 
-template <class Dev>
+template <CharPeekType Dev>
 bool ParseChar_try(Dev &dev,char ch)
  {
   typename Dev::Peek peek(dev);
@@ -167,7 +167,7 @@ bool ParseChar_try(Dev &dev,char ch)
     }
  }
 
-template <class Dev>
+template <CharPeekType Dev>
 void ParseChar_empty(Dev &dev,char &ret,char defval)
  {
   typename Dev::Peek peek(dev);
@@ -186,7 +186,7 @@ void ParseChar_empty(Dev &dev,char &ret,char defval)
 
 /* functions */
 
-template <class Dev,UIntType UInt>
+template <CharPeekType Dev,UIntType UInt>
 bool ParseUIntSetup(Dev &dev,UInt &acc)
  {
   typename Dev::Peek peek(dev);
@@ -204,7 +204,7 @@ bool ParseUIntSetup(Dev &dev,UInt &acc)
   return true;
  }
 
-template <class Dev,UIntType UInt>
+template <CharPeekType Dev,UIntType UInt>
 UInt ParseUIntDo(Dev &dev,UInt acc,UInt minval,UInt maxval)
  {
   UInt a=maxval/10;
@@ -240,7 +240,7 @@ UInt ParseUIntDo(Dev &dev,UInt acc,UInt minval,UInt maxval)
   return acc;
  }
 
-template <class Dev,UIntType UInt,UIntType UInt1,UIntType UInt2>
+template <CharPeekType Dev,UIntType UInt,UIntType UInt1,UIntType UInt2>
 void ParseUInt(Dev &dev,UInt &ret,UInt1 minval_,UInt2 maxval_)
  {
   UInt minval=minval_;
@@ -260,19 +260,19 @@ void ParseUInt(Dev &dev,UInt &ret,UInt1 minval_,UInt2 maxval_)
     }
  }
 
-template <class Dev,UIntType UInt,UIntType UInt1>
+template <CharPeekType Dev,UIntType UInt,UIntType UInt1>
 void ParseUInt(Dev &dev,UInt &ret,UInt1 maxval)
  {
   ParseUInt(dev,ret,0u,maxval);
  }
 
-template <class Dev,UIntType UInt>
+template <CharPeekType Dev,UIntType UInt>
 void ParseUInt(Dev &dev,UInt &ret)
  {
   ParseUInt(dev,ret,0u,MaxUInt<UInt>);
  }
 
-template <class Dev,UIntType UInt,UIntType UInt1,UIntType UInt2,UIntType UInt3>
+template <CharPeekType Dev,UIntType UInt,UIntType UInt1,UIntType UInt2,UIntType UInt3>
 void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval_,UInt2 minval_,UInt3 maxval_)
  {
   UInt defval=defval_;
@@ -300,13 +300,13 @@ void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval_,UInt2 minval_,UInt3 maxval
     }
  }
 
-template <class Dev,UIntType UInt,UIntType UInt1,UIntType UInt2>
+template <CharPeekType Dev,UIntType UInt,UIntType UInt1,UIntType UInt2>
 void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval,UInt2 maxval)
  {
   ParseUInt_empty(dev,ret,defval,0u,maxval);
  }
 
-template <class Dev,UIntType UInt,UIntType UInt1>
+template <CharPeekType Dev,UIntType UInt,UIntType UInt1>
 void ParseUInt_empty(Dev &dev,UInt &ret,UInt1 defval)
  {
   ParseUInt_empty(dev,ret,defval,0u,MaxUInt<UInt>);
