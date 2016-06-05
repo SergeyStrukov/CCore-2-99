@@ -1,7 +1,7 @@
 /* PlanInit.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -20,15 +20,33 @@
 
 namespace CCore {
 
+/* concept PlanInitObjectType<T> */
+
+template <class T>
+concept bool PlanInitObjectType = NothrowDtorType<T> && requires()
+ {
+  { T::GetTag() } -> const char * ;
+ } ;
+
 /* classes */
 
 class PlanInitNode;
 
 template <PlanInitNode * GetPtr()> struct PlanInitReq;
 
-template <class ... RR> class PlanInitReqList;
+/* concept PlanInitReqType<R> */
 
-template <class T,class ... RR> class PlanInitObject;
+template <class R>
+concept bool PlanInitReqType = requires()
+ {
+  { R::GetPtr() } -> PlanInitNode * ;
+ } ;
+
+/* classes */
+
+template <PlanInitReqType ... RR> class PlanInitReqList;
+
+template <PlanInitObjectType T,PlanInitReqType ... RR> class PlanInitObject;
 
 /* class PlanInitNode */
 
@@ -78,7 +96,7 @@ struct PlanInitReq
 
 /* class PlanInitReqList<RR> */
 
-template <class ... RR>
+template <PlanInitReqType ... RR>
 class PlanInitReqList : NoCopy
  {
    PlanInitNode * req_list[sizeof ... (RR)];
@@ -102,7 +120,7 @@ class PlanInitReqList<> : NoCopy
 
 /* class PlanInitObject<T,RR> */
 
-template <class T,class ... RR>
+template <PlanInitObjectType T,PlanInitReqType ... RR>
 class PlanInitObject : PlanInitReqList<RR...> , public PlanInitNode
  {
    InitExitObject<T> obj;

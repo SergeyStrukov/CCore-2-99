@@ -1,7 +1,7 @@
 /* RadixHeap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -37,7 +37,27 @@ class RadixHeapStore_large;
 
 class RadixHeapStore;
 
-template <class Mem> class RadixHeap;
+/* concept HeapMemType<Mem> */
+
+template <class Mem>
+concept bool HeapMemType = requires(Mem &mem,const Mem &cmem,bool clean,ulen blen,RadixHeapBlock *block)
+ {
+  mem.cleanup(clean);
+
+  { cmem.getMaxStoreLen() } -> ulen ;
+
+  { mem.alloc(blen) } -> RadixHeapBlock * ;
+
+  mem.free(block);
+
+  { mem.extend(block,blen) } -> bool ;
+
+  { mem.shrink(block,blen) } -> ulen ;
+ } ;
+
+/* classes */
+
+template <HeapMemType Mem> class RadixHeap;
 
 /* struct RadixHeapBlock */
 
@@ -338,7 +358,7 @@ class RadixHeapStore : NoCopy
  //  };
  //
 
-template <class Mem>
+template <HeapMemType Mem>
 class RadixHeap : NoCopy
  {
    Mem large_mem;
@@ -394,7 +414,7 @@ class RadixHeap : NoCopy
    DeltaLen shrink(void *mem,ulen len); // mem!=0
  };
 
-template <class Mem>
+template <HeapMemType Mem>
 Space RadixHeap<Mem>::alloc(ulen len)
  {
   if( TooLarge(len) ) return Nothing;
@@ -430,7 +450,7 @@ Space RadixHeap<Mem>::alloc(ulen len)
     }
  }
 
-template <class Mem>
+template <HeapMemType Mem>
 ulen RadixHeap<Mem>::getLen(const void *mem)
  {
   const RadixHeapBlock *block=RadixHeapBlock::GetBlock(mem);
@@ -438,7 +458,7 @@ ulen RadixHeap<Mem>::getLen(const void *mem)
   return block->getMemLen();
  }
 
-template <class Mem>
+template <HeapMemType Mem>
 ulen RadixHeap<Mem>::free(void *mem)
  {
   RadixHeapBlock *block=RadixHeapBlock::Unlock(mem);
@@ -489,7 +509,7 @@ ulen RadixHeap<Mem>::free(void *mem)
   return ret;
  }
 
-template <class Mem>
+template <HeapMemType Mem>
 DeltaLen RadixHeap<Mem>::extend(void *mem,ulen len)
  {
   RadixHeapBlock *block=RadixHeapBlock::Unlock(mem);
@@ -547,7 +567,7 @@ DeltaLen RadixHeap<Mem>::extend(void *mem,ulen len)
   return Nothing;
  }
 
-template <class Mem>
+template <HeapMemType Mem>
 DeltaLen RadixHeap<Mem>::shrink(void *mem,ulen len)
  {
   RadixHeapBlock *block=RadixHeapBlock::Unlock(mem);
