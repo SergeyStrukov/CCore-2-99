@@ -1,7 +1,7 @@
 /* Starter.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -24,9 +24,17 @@ namespace CCore {
 
 void GuardStarterRunLock();
 
+/* concept StarterFuncType<T> */
+
+template <class T>
+concept bool StarterFuncType = NothrowDefaultCtorType<T> &&
+                               NothrowDtorType<T> &&
+                               NothrowCopyableType<T> &&
+                               FuncArgType<T> ;
+
 /* classes */
 
-template <class T> class Starter;
+template <StarterFuncType T> class Starter;
 
 /* class Starter<T> */
 
@@ -34,7 +42,7 @@ template <class T> class Starter;
  // assume T has no-throw default, copy and assign
  //
 
-template <class T>
+template <StarterFuncType T>
 class Starter : public Funchor_nocopy
  {
    T obj;
@@ -103,7 +111,7 @@ class Starter : public Funchor_nocopy
    class Run;
  };
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::setObj(const T &obj_)
  {
   Mutex::Lock lock(mutex);
@@ -119,7 +127,7 @@ bool Starter<T>::setObj(const T &obj_)
   return false;
  }
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::setTerminate(unsigned terminate_task_count_)
  {
   Mutex::Lock lock(mutex);
@@ -139,7 +147,7 @@ bool Starter<T>::setTerminate(unsigned terminate_task_count_)
   return false;
  }
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::doClear()
  {
   obj=T();
@@ -158,7 +166,7 @@ bool Starter<T>::doClear()
   return false;
  }
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::clearObj(Sem *stop_sem_)
  {
   bool give;
@@ -181,7 +189,7 @@ bool Starter<T>::clearObj(Sem *stop_sem_)
   return true;
  }
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::getObj(T &ret)
  {
   bool give=false;
@@ -208,7 +216,7 @@ bool Starter<T>::getObj(T &ret)
   return true;
  }
 
-template <class T>
+template <StarterFuncType T>
 Sem * Starter<T>::decCount()
  {
   Sem *ret;
@@ -231,7 +239,7 @@ Sem * Starter<T>::decCount()
   return ret;
  }
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::start(const T &obj_)
  {
   if( setObj(obj_) )
@@ -244,7 +252,7 @@ bool Starter<T>::start(const T &obj_)
   return false;
  }
 
-template <class T>
+template <StarterFuncType T>
 void Starter<T>::stop(Sem &stop_sem)
  {
   sem.take();
@@ -252,7 +260,7 @@ void Starter<T>::stop(Sem &stop_sem)
   if( !clearObj(&stop_sem) ) stop_sem.take();
  }
 
-template <class T>
+template <StarterFuncType T>
 void Starter<T>::terminate(unsigned task_count)
  {
   if( !task_count ) return;
@@ -272,7 +280,7 @@ void Starter<T>::terminate(unsigned task_count)
   stop(stop_terminate_sem);
  }
 
-template <class T>
+template <StarterFuncType T>
 bool Starter<T>::take(T &ret)
  {
   sem.take();
@@ -284,13 +292,13 @@ bool Starter<T>::take(T &ret)
   return ret_flag;
  }
 
-template <class T>
+template <StarterFuncType T>
 void Starter<T>::complete()
  {
   if( Sem *stop_sem=decCount() ) stop_sem->give();
  }
 
-template <class T>
+template <StarterFuncType T>
 Starter<T>::Starter()
  : obj(),
    mutex("Starter.mutex"),
@@ -308,14 +316,14 @@ Starter<T>::Starter()
   run_lock=0;
  }
 
-template <class T>
+template <StarterFuncType T>
 Starter<T>::~Starter()
  {
  }
 
 /* class Starter<T>::Start */
 
-template <class T>
+template <StarterFuncType T>
 class Starter<T>::Start : NoCopy
  {
    Starter<T> *starter;
@@ -342,7 +350,7 @@ class Starter<T>::Start : NoCopy
 
 /* class Starter<T>::Take */
 
-template <class T>
+template <StarterFuncType T>
 class Starter<T>::Take : NoCopy
  {
    Starter<T> &starter;
@@ -364,7 +372,7 @@ class Starter<T>::Take : NoCopy
     }
  };
 
-template <class T>
+template <StarterFuncType T>
 void Starter<T>::job()
  {
   for(;;)
@@ -383,7 +391,7 @@ void Starter<T>::job()
  // Only single Run per Starter
  //
 
-template <class T>
+template <StarterFuncType T>
 class Starter<T>::Run : NoCopy
  {
    Starter<T> &starter;
