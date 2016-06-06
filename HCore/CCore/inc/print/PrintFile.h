@@ -1,7 +1,7 @@
 /* PrintFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -66,8 +66,8 @@ class PrintFile : public PrintBase
 
    RawFileToPrint file;
    SafeBuf buf;
+   bool no_flush_exception = false ;
    FileError flush_error;
-   bool no_flush_exception;
 
   private:
 
@@ -91,15 +91,7 @@ class PrintFile : public PrintBase
 
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
 
-   void disableExceptions()
-    {
-     if( !no_flush_exception )
-       {
-        no_flush_exception=true;
-
-        flush_error=FileError_Ok;
-       }
-    }
+   void disableExceptions();
 
    void soft_close(FileMultiError &errout);
 

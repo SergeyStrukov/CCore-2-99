@@ -1,7 +1,7 @@
 /* PrintFile.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -88,14 +88,12 @@ void PrintFile::do_flush(char *ptr,ulen len)
  }
 
 PrintFile::PrintFile() noexcept
- : buf(BufLen),
-   no_flush_exception(false)
+ : buf(BufLen)
  {
  }
 
 PrintFile::PrintFile(StrLen file_name,FileOpenFlags oflags)
- : buf(BufLen),
-   no_flush_exception(false)
+ : PrintFile()
  {
   open(file_name,oflags);
  }
@@ -123,6 +121,16 @@ void PrintFile::open(StrLen file_name,FileOpenFlags oflags)
     }
 
   no_flush_exception=false;
+ }
+
+void PrintFile::disableExceptions()
+ {
+  if( !no_flush_exception )
+    {
+     no_flush_exception=true;
+
+     flush_error=FileError_Ok;
+    }
  }
 
 void PrintFile::soft_close(FileMultiError &errout)

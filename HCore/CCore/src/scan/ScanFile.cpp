@@ -1,7 +1,7 @@
 /* ScanFile.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -88,7 +88,7 @@ ScanFile::ScanFile() noexcept
  }
 
 ScanFile::ScanFile(StrLen file_name,bool disable_exceptions)
- : buf(BufLen)
+ : ScanFile()
  {
   open(file_name,disable_exceptions);
  }
@@ -117,6 +117,8 @@ void ScanFile::open(StrLen file_name,bool disable_exceptions)
 
   reset();
 
+  no_underflow_exception=false;
+
   if( disable_exceptions ) disableExceptions();
 
   pump();
@@ -137,8 +139,6 @@ void ScanFile::soft_close(FileMultiError &errout)
   if( isOpened() )
     {
      if( no_underflow_exception ) errout.add(underflow_error);
-
-     no_underflow_exception=false;
 
      file.close(errout);
 

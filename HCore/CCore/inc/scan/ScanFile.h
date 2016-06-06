@@ -63,8 +63,8 @@ class ScanFile : public ScanBase
 
    RawFileToScan file;
    SafeBuf buf;
-   FileError underflow_error;
    bool no_underflow_exception = false ;
+   FileError underflow_error;
 
   private:
 
