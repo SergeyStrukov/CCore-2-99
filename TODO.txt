@@ -8,4 +8,6 @@ MetaList.h
 
 SaveLoad.h
 
+BinaryFile.h
+
 ------------------------------------------------

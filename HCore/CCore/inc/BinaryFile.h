@@ -1,7 +1,7 @@
 /* BinaryFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -29,17 +29,17 @@ class BinaryFile;
 
 /* class BinaryFile */
 
-class BinaryFile : NoCopy , public PutDevBase<BinaryFile>
+class BinaryFile : public NoCopyBase< PutDevBase<BinaryFile> >
  {
    static const ulen BufLen = 64_KByte ;
 
    RawFileToPrint file;
    DynArray<uint8> buf;
+   bool no_flush_exception = false ;
    FileError flush_error;
-   bool no_flush_exception;
 
    PtrLen<uint8> out;
-   bool has_data;
+   bool has_data = false ;
 
   private:
 
@@ -61,15 +61,7 @@ class BinaryFile : NoCopy , public PutDevBase<BinaryFile>
 
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
 
-   void disableExceptions()
-    {
-     if( !no_flush_exception )
-       {
-        no_flush_exception=true;
-
-        flush_error=FileError_Ok;
-       }
-    }
+   void disableExceptions();
 
    void soft_close(FileMultiError &errout);
 

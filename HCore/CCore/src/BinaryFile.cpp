@@ -1,7 +1,7 @@
 /* BinaryFile.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -35,14 +35,11 @@ void BinaryFile::provide()
  }
 
 BinaryFile::BinaryFile() noexcept
- : no_flush_exception(false),
-   has_data(false)
  {
  }
 
 BinaryFile::BinaryFile(StrLen file_name,FileOpenFlags oflags)
- : no_flush_exception(false),
-   has_data(false)
+ : BinaryFile()
  {
   open(file_name,oflags);
  }
@@ -72,6 +69,18 @@ void BinaryFile::open(StrLen file_name,FileOpenFlags oflags)
     }
 
   no_flush_exception=false;
+  out=Empty;
+  has_data=false;
+ }
+
+void BinaryFile::disableExceptions()
+ {
+  if( !no_flush_exception )
+    {
+     no_flush_exception=true;
+
+     flush_error=FileError_Ok;
+    }
  }
 
 void BinaryFile::soft_close(FileMultiError &errout)
