@@ -6,12 +6,6 @@ MetaList.h
 
 ------------------------------------------------
 
-ObjectDomain.h
-
 SaveLoad.h
-
-StepEval.h
-
-Current -> Starter.h
 
 ------------------------------------------------

@@ -245,7 +245,7 @@ struct ObjectDomain::ObjNode : ObjBase
   T obj;
 
   template <class ... SS>
-  ObjNode(ObjectDomain *domain,ulen ref_count,SS && ... ss)
+  ObjNode(ObjectDomain *domain,ulen ref_count,SS && ... ss) requires ( ConstructibleType<T,SS...> )
    : ObjBase(ref_count),
      obj( std::forward<SS>(ss)... )
    {
@@ -294,7 +294,7 @@ class ObjectDomain::ExtPtr
     }
 
    template <class ... SS>
-   explicit ExtPtr(ObjectDomain *domain,SS && ... ss)
+   explicit ExtPtr(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      node=New<ObjNode<T>,AllocInit>(domain, domain,1, std::forward<SS>(ss)... );
     }
@@ -376,7 +376,7 @@ class ObjectDomain::IntPtr // default copying
    IntPtr(const WeakPtr<T> &obj) : node(obj.node) {}
 
    template <class ... SS>
-   explicit IntPtr(ObjectDomain *domain,SS && ... ss)
+   explicit IntPtr(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      node=New<ObjNode<T>,AllocInit>(domain, domain,0, std::forward<SS>(ss)... );
     }
@@ -435,7 +435,7 @@ class ObjectDomain::WeakPtr // default copying
    WeakPtr(const IntPtr<T> &obj) : node(obj.node) {}
 
    template <class ... SS>
-   explicit WeakPtr(ObjectDomain *domain,SS && ... ss)
+   explicit WeakPtr(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      node=New<ObjNode<T>,AllocInit>(domain, domain,0, std::forward<SS>(ss)... );
     }
@@ -492,7 +492,7 @@ class ObjectDomain::OwnPtr : NoCopy
   public:
 
    template <class ... SS>
-   explicit OwnPtr(ObjectDomain *domain,SS && ... ss)
+   explicit OwnPtr(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      node=New<Node,AllocInit>(domain, domain, std::forward<SS>(ss)... );
     }
@@ -543,7 +543,7 @@ class DeleteObjNode : NoCopy
   public:
 
    template <class ... SS>
-   explicit DeleteObjNode(ObjectDomain *domain,SS && ... ss)
+   explicit DeleteObjNode(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     : ptr(domain, std::forward<SS>(ss)... )
     {
     }
@@ -594,7 +594,10 @@ class ExtDelObjPtr
    ExtDelObjPtr(const IntDelObjPtr<T> &obj) : ptr(obj.ptr) {}
 
    template <class ... SS>
-   ExtDelObjPtr(ObjectDomain *domain,SS && ... ss) : ptr(domain, domain, std::forward<SS>(ss)... ) {}
+   ExtDelObjPtr(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
+    : ptr(domain, domain, std::forward<SS>(ss)... )
+    {
+    }
 
    ~ExtDelObjPtr() {}
 
@@ -659,7 +662,10 @@ class IntDelObjPtr
    IntDelObjPtr(const ExtDelObjPtr<T> &obj) : ptr(obj.ptr) {}
 
    template <class ... SS>
-   IntDelObjPtr(ObjectDomain *domain,SS && ... ss) : ptr(domain, domain, std::forward<SS>(ss)... ) {}
+   IntDelObjPtr(ObjectDomain *domain,SS && ... ss) requires ( ConstructibleType<T,SS...> )
+    : ptr(domain, domain, std::forward<SS>(ss)... )
+    {
+    }
 
    void nullify() { ptr.nullify(); }
 

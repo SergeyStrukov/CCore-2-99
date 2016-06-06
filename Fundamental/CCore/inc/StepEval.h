@@ -248,13 +248,13 @@ class StepEval : public Ctx
    using Ctx::getAlloc;
 
    template <class FuncInit>
-   Node<FunctorTypeOf<FuncInit> > * createNode(FuncInit func_init,StepId dep,bool gated)
+   auto createNode(FuncInit func_init,StepId dep,bool gated)
     {
      return New<Node<FunctorTypeOf<FuncInit> > >(getAlloc(),func_init,dep,gated);
     }
 
    template <class FuncInit>
-   GateNode<FunctorTypeOf<FuncInit> > * createGateNode(FuncInit func_init,StepId dep,Gate *gate)
+   auto createGateNode(FuncInit func_init,StepId dep,Gate *gate)
     {
      return New<GateNode<FunctorTypeOf<FuncInit> > >(getAlloc(),func_init,dep,gate);
     }
@@ -291,7 +291,7 @@ class StepEval : public Ctx
       ~Gate();
 
       template <class FuncInit>
-      RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+      auto createStep(FuncInit func_init,StepId dep={0}); // dep executes after
 
       void delay(StepId dep) { createStep(EmptyStep(),dep); }
 
@@ -360,7 +360,7 @@ class StepEval : public Ctx
    Gate * createGate(OpenFuncInit openfunc_init,FuncInit func_init);
 
    template <class FuncInit>
-   RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+   auto createStep(FuncInit func_init,StepId dep={0}); // dep executes after
 
    void run();
  };
@@ -420,7 +420,7 @@ StepEval<Ctx>::Gate::~Gate()
 
 template <class Ctx>
 template <class FuncInit>
-auto StepEval<Ctx>::Gate::createStep(FuncInit func_init,StepId dep) -> RetStep<FunctorTypeOf<FuncInit> >
+auto StepEval<Ctx>::Gate::createStep(FuncInit func_init,StepId dep)
  {
   if( opened )
     {
@@ -505,7 +505,7 @@ auto StepEval<Ctx>::createGate(OpenFuncInit openfunc_init,FuncInit func_init) ->
 
 template <class Ctx>
 template <class FuncInit>
-auto StepEval<Ctx>::createStep(FuncInit func_init,StepId dep) -> RetStep<FunctorTypeOf<FuncInit> >
+auto StepEval<Ctx>::createStep(FuncInit func_init,StepId dep)
  {
   auto *node=createNode(func_init,dep,false);
 
