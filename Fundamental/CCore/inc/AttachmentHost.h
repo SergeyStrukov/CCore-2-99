@@ -1,7 +1,7 @@
 /* AttachmentHost.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental
 //
@@ -156,22 +156,20 @@ void AttachmentHost<T>::detach()
 template <class T>
 AttachmentHost<T>::Hook::Hook(AttachmentHost<T> &host)
  {
-  {
-   Mutex::Lock lock(host.mutex);
+  Mutex::Lock lock(host.mutex);
 
-   if( host.enable )
-     {
-      obj=host.obj;
-      asem=&host.asem;
-     }
-   else
-     {
-      obj=0;
-      asem=0;
-     }
+  if( host.enable )
+    {
+     obj=host.obj;
+     asem=&host.asem;
+    }
+  else
+    {
+     obj=0;
+     asem=0;
+    }
 
-   if( obj ) asem->inc();
-  }
+  if( obj ) asem->inc();
  }
 
 template <class T>
