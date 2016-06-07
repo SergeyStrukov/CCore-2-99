@@ -1,7 +1,7 @@
 /* Event.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -48,9 +48,11 @@ class Event : public Funchor_nocopy
 
    // constructors
 
-   explicit Event(int flag=false); // bool is assumed
+   explicit Event(bool flag=false);
 
    explicit Event(TextLabel name,bool flag=false);
+
+   explicit Event(const char *name) : Event(TextLabel(name)) {}
 
    ~Event();
 

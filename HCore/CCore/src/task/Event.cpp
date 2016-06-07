@@ -1,7 +1,7 @@
 /* Event.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -77,7 +77,7 @@ bool Event::begin_trigger(bool &ret)
     }
  }
 
-Event::Event(int flag)
+Event::Event(bool flag)
  {
   init(flag);
  }
