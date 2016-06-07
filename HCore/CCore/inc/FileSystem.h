@@ -1,7 +1,7 @@
 /* FileSystem.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -18,7 +18,7 @@
 
 #include <CCore/inc/sys/SysFileSystem.h>
 
-#include <CCore/inc/FunctorType.h>
+#include <CCore/inc/algon/ApplyToRange.h>
 
 namespace CCore {
 
@@ -80,12 +80,14 @@ class FileSystem::DirCursor : NoCopy
 
    FileType getFileType() const;
 
-   template <class FuncInit>
-   void apply(FuncInit func_init) // func(StrLen file_name,FileType file_type)
+   template <FuncInitArgType<StrLen,FileType> FuncInit>
+   auto apply(FuncInit func_init)
     {
      FunctorTypeOf<FuncInit> func(func_init);
 
      while( next() ) func(getFileName(),getFileType());
+
+     return Algon::GetResult(func);
     }
  };
 

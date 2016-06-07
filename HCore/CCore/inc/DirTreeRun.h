@@ -22,6 +22,28 @@
 
 namespace CCore {
 
+/* concept DirTreeProcType<Proc> */
+
+template <class Proc,class DataType>
+concept bool DirTreeProcType2 = requires(Proc &obj,StrLen path,DataType *data)
+ {
+  { obj.dir(path) } -> DataType * ;
+
+  { obj.dir(path,path,data) } -> DataType * ;
+
+  obj.file(path,path,data);
+
+  obj.enddir(path,path,data);
+ } ;
+
+template <class Proc>
+concept bool DirTreeProcType = requires()
+ {
+  typename Proc::DataType;
+
+  requires ( DirTreeProcType2<Proc,typename Proc::DataType> );
+ } ;
+
 /* classes */
 
 class DirTreeRun;
@@ -70,8 +92,7 @@ class DirTreeRun : NoCopyBase<PathBase>
 
    StrLen pathOfRoot(char buf[MaxPathLen+1]) { return fs.pathOf(root,buf); }
 
-   template <class Proc>
-   void apply(Proc &proc);
+   void apply(DirTreeProcType &proc);
  };
 
 class DirTreeRun::Path : NoCopy
@@ -122,7 +143,7 @@ class DirTreeRun::Node : public MemBase_nocopy
    DataType * getData() const { return static_cast<DataType *>(data); }
  };
 
-template <class Proc>
+template <DirTreeProcType Proc>
 void DirTreeRun::apply(Proc &proc)
  {
   using DataType = typename Proc::DataType ;
