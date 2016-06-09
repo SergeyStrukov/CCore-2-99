@@ -95,16 +95,10 @@ struct FileName
 
   operator const char * () const { return buf.getZStr(); }
 
-  template <class T>
-  bool set(T str)
+  template <class ... TT>
+  bool set(TT ... tt)
    {
-    return +buf.add(str,Null);
-   }
-
-  template <class T1,class T2>
-  bool set(T1 str1,T2 str2)
-   {
-    return +buf.add(str1,str2,Null);
+    return +buf.add(tt...,Null);
    }
  };
 
