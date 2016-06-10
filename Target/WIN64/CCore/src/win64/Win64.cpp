@@ -1,7 +1,7 @@
 /* Win64.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -16,6 +16,16 @@
 #include <CCore/inc/win64/Win64.h>
 
 namespace Win64 {
+
+/* PtrAdd() */
+
+inline char * CastPtr(void *ptr) { return static_cast<char *>(ptr); }
+
+inline const char * CastPtr(const void *ptr) { return static_cast<const char *>(ptr); }
+
+inline void * PtrAdd(void *ptr,ulen_t delta) { return CastPtr(ptr)+delta; }
+
+inline const void * PtrAdd(const void *ptr,ulen_t delta) { return CastPtr(ptr)+delta; }
 
 /* adapters */
 

@@ -1,7 +1,7 @@
 /* Win64.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -612,11 +612,11 @@ codepage_t WIN64_API GetConsoleOutputCP(void);
 
 /* SetConsoleMode() */
 
-bool_t WIN64_API SetConsoleMode(handle_t h_con,flags_t modes);
+bool_t WIN64_API SetConsoleMode(handle_t h_con, flags_t modes);
 
 /* GetConsoleMode() */
 
-bool_t WIN64_API GetConsoleMode(handle_t h_con,flags_t *modes);
+bool_t WIN64_API GetConsoleMode(handle_t h_con, flags_t *modes);
 
 /* ReadConsoleInputA() */
 
@@ -878,7 +878,7 @@ ushortlen_t WIN64_API GetFullPathNameA(const char *path,
 
 const socket_t InvalidSocket = -1 ;
 
-/* const InvalidULen */
+/* const InvalidUShortLen */
 
 const ushortlen_t InvalidUShortLen = ushortlen_t(-1) ;
 
@@ -1177,16 +1177,6 @@ handle_t WIN64_API CreateSemaphoreA(SecurityAttributes *,
 bool_t WIN64_API ReleaseSemaphore(handle_t h_sem, sem_count_t delta, sem_count_t *prev_count);
 
 } // extern "C"
-
-/* PtrAdd() */
-
-inline char * CastPtr(void *ptr) { return static_cast<char *>(ptr); }
-
-inline const char * CastPtr(const void *ptr) { return static_cast<const char *>(ptr); }
-
-inline void * PtrAdd(void *ptr,ulen_t delta) { return CastPtr(ptr)+delta; }
-
-inline const void * PtrAdd(const void *ptr,ulen_t delta) { return CastPtr(ptr)+delta; }
 
 /* adapters */
 
