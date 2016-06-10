@@ -1106,7 +1106,6 @@ obj/XPoint.dep \
 
 
 ASM_OBJ_LIST = \
-obj/IntegerFastAlgo.s.o \
 obj/IntelAES.s.o \
 obj/IntelCPUID.s.o \
 obj/IntelRandom.s.o \
@@ -4418,9 +4417,6 @@ obj/XPoint.dep : ../../Applied/CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/XPoint.o $< -MF $@
 
 
-
-obj/IntegerFastAlgo.s.o : ../../Target/WIN64/CCore/src/math/IntegerFastAlgo.s
-	$(AS) $(ASOPT) $< -o $@
 
 obj/IntelAES.s.o : ../../Target/WIN64/CCore/src/crypton/IntelAES.s
 	$(AS) $(ASOPT) $< -o $@

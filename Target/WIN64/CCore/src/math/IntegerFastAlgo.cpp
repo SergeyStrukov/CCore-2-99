@@ -1,7 +1,7 @@
 /* IntegerFastAlgo.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -124,27 +124,6 @@ CmpResult IntegerFastAlgo::Cmp_(const Unit *a,ulen na,const Unit *b,ulen nb) noe
 
   return Sign(a,na);
  }
-
-#if 0
-
- // Fake code
-
-unsigned IntegerFastAlgo::CountZeroMSB(Unit) noexcept
- {
-  return 0;
- }
-
-unsigned IntegerFastAlgo::CountZeroLSB(Unit) noexcept
- {
-  return 0;
- }
-
-Unit IntegerFastAlgo::DoubleUDiv(Unit,Unit,Unit) noexcept
- {
-  return 0;
- }
-
-#endif
 
  // const operators
 
