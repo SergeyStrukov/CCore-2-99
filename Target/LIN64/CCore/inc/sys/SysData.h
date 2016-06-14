@@ -1,7 +1,7 @@
 /* SysData.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/LIN64
 //
@@ -34,13 +34,9 @@ struct SysData
 
   void * getMem() { return &storage; }
 
-  template <class T>
-  T * getObj()
+  template <PODType T>
+  T * getObj() requires ( sizeof (T) <= Len )
    {
-    static_assert( Meta::IsPOD<T> ,"CCore::Sys::SysData::getObj<T>() : T must be POD");
-
-    static_assert( sizeof (T) <= Len ,"CCore::Sys::SysData::getObj<T>() : T is too large");
-
     return static_cast<T *>(getMem());
    }
  };

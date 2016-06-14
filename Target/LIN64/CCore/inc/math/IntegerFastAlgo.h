@@ -18,6 +18,7 @@
 
 #include <CCore/inc/Cmp.h>
 #include <CCore/inc/Swap.h>
+#include <CCore/inc/base/Quick.h>
 
 #include <gmp.h>
 
@@ -78,11 +79,24 @@ struct IntegerFastAlgo
 
   static CmpResult SignCmp(Unit a,Unit b) { return LessCmp(SUnit(a),SUnit(b)); }
 
-  static unsigned CountZeroMSB(Unit a) noexcept;
+  static unsigned CountZeroMSB(Unit a) noexcept
+   {
+    if( !a ) return UnitBits;
 
-  static unsigned CountZeroLSB(Unit a) noexcept;
+    return UnitBits-1-Quick::ScanMSBit(a);
+   }
 
-  static Unit DoubleUDiv(Unit hi,Unit lo,Unit den) noexcept; // hi<den
+  static unsigned CountZeroLSB(Unit a) noexcept
+   {
+    if( !a ) return UnitBits;
+
+    return Quick::ScanLSBit(a);
+   }
+
+  static Unit DoubleUDiv(Unit hi,Unit lo,Unit den) noexcept // hi<den
+   {
+    return Quick::UIntMulFunc<uint64>::Div(hi,lo,den);
+   }
 
   // const operators
 
