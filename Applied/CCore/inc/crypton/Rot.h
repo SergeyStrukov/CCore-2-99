@@ -1,7 +1,7 @@
 /* Rot.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -23,7 +23,7 @@ namespace Crypton {
 
 /* Ror...() */
 
-template <class UInt,unsigned UIntBits>
+template <UIntType UInt,unsigned UIntBits>
 UInt Ror_gen(UInt a,unsigned n) // 0 < n < UIntBits
  {
   return UInt( (a>>n)|(a<<(UIntBits-n)) );
@@ -39,7 +39,7 @@ inline uint64 Ror64(uint64 a,unsigned n) { return Ror_gen<uint64,64>(a,n); }
 
 /* Rol...() */
 
-template <class UInt,unsigned UIntBits>
+template <UIntType UInt,unsigned UIntBits>
 UInt Rol_gen(UInt a,unsigned n) // 0 < n < UIntBits
  {
   return UInt( (a>>(UIntBits-n))|(a<<n) );

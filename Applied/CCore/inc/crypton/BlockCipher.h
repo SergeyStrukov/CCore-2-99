@@ -1,7 +1,7 @@
 /* BlockCipher.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -25,13 +25,32 @@ namespace Crypton {
 
 void GuardNoCipherKey();
 
+/* concept CipherFuncType<T> */
+
+template <class T>
+concept bool CipherFuncType = requires(T func,const uint8 *src,uint8 *dst)
+ {
+  { T::BlockLen } -> ulen ;
+  { T::KeyLen } -> ulen ;
+
+  { T::GetName() } -> const char * ;
+
+  func.key(src);
+
+  func.unkey();
+
+  func.apply(src,dst);
+
+  func.apply(dst);
+ } ;
+
 /* classes */
 
-template <class T> class BlockCipher;
+template <CipherFuncType T> class BlockCipher;
 
 /* class BlockCipher<T> */
 
-template <class T>
+template <CipherFuncType T>
 class BlockCipher : NoCopy
  {
   public:

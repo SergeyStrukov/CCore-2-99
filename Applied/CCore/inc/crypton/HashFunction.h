@@ -25,15 +25,34 @@ namespace Crypton {
 
 void GuardNoHashKey();
 
+/* concept HashFuncType<T> */
+
+template <class T>
+concept bool HashFuncType = requires(T func,const uint8 *data,ulen len,uint8 *digest)
+ {
+  { T::DigestLen } -> ulen ;
+  { T::BlockLen } -> ulen ;
+
+  { T::GetName() } -> const char * ;
+
+  func.reset();
+
+  func.forget();
+
+  func.add(data,len);
+
+  func.finish(digest);
+ } ;
+
 /* classes */
 
-template <class T> class HashFunction;
+template <HashFuncType T> class HashFunction;
 
-template <class T,ulen L=T::DigestLen> class KeyedHashFunction;
+template <HashFuncType T,ulen L=T::DigestLen> class KeyedHashFunction;
 
 /* class HashFunction<T> */
 
-template <class T>
+template <HashFuncType T>
 class HashFunction : NoCopy
  {
   public:
@@ -71,7 +90,7 @@ class HashFunction : NoCopy
 
 /* class KeyedHashFunction<T,L> */
 
-template <class T,ulen L>
+template <HashFuncType T,ulen L>
 class KeyedHashFunction : NoCopy
  {
   public:
