@@ -82,8 +82,6 @@ class BinaryFile : public NoCopyBase< PutDevBase<BinaryFile> >
 
    void do_put(const uint8 *ptr,ulen len);
 
-   PtrLen<uint8> do_putRange(ulen len);
-
    void flush();
  };
 

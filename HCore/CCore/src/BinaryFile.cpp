@@ -127,13 +127,6 @@ void BinaryFile::do_put(const uint8 *ptr,ulen len)
     }
  }
 
-PtrLen<uint8> BinaryFile::do_putRange(ulen)
- {
-  Printf(Exception,"CCore::BinaryFile::do_putRange(...) : not supported");
-
-  return Nothing;
- }
-
 void BinaryFile::flush()
  {
   if( !has_data ) return;

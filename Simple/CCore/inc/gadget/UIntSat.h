@@ -26,6 +26,8 @@ namespace CCore {
 
 template <UIntType UInt> struct UIntSat;
 
+template <UIntType UInt,UInt ... CC> struct UIntConstAddCtor;
+
 /* struct UIntSat<UInt> */
 
 template <UIntType UInt>
@@ -71,10 +73,29 @@ struct UIntSat
   bool operator >= (UInt lim) const { return value>=lim || overflow ; }
  };
 
-/* const UIntConstAdd<UInt,UInt A,UInt B> */
+/* const UIntConstAdd2<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B> requires ( A <= MaxUInt<UInt> - B )
-const UInt UIntConstAdd = A + B ;
+const UInt UIntConstAdd2 = A + B ;
+
+/* const UIntConstAdd<UInt,UInt CC> */
+
+template <UIntType UInt,UInt ... CC>
+const UInt UIntConstAdd = UIntConstAddCtor<UInt,CC...>::Ret ;
+
+/* struct UIntConstAddCtor<UInt,UInt CC> */
+
+template <UIntType UInt>
+struct UIntConstAddCtor<UInt>
+ {
+  enum RetType : UInt { Ret = 0 } ;
+ };
+
+template <UIntType UInt,UInt C,UInt ... CC>
+struct UIntConstAddCtor<UInt,C,CC...>
+ {
+  enum RetType : UInt { Ret = UIntConstAdd2<UInt,C,UIntConstAdd<UInt,CC...> > } ;
+ };
 
 /* const UIntConstMul<UInt,UInt A,UInt B> */
 

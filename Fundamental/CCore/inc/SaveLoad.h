@@ -20,6 +20,82 @@
 
 namespace CCore {
 
+/* concept CoreSaveDevType<Dev> */
+
+template <class Dev>
+concept bool CoreSaveDevType = requires(Dev &dev,uint8 val,const uint8 *ptr,ulen len)
+ {
+  dev.do_put(val);
+
+  dev.do_put(ptr,len);
+ } ;
+
+/* concept CoreRangeSaveDevType<Dev> */
+
+template <class Dev>
+concept bool CoreRangeSaveDevType = CoreSaveDevType<Dev> && requires(Dev &dev,ulen len)
+ {
+  { dev.do_putRange(len) } -> PtrLen<uint8> ;
+ } ;
+
+/* concept SaveDevType<Dev> */
+
+template <class Dev>
+concept bool SaveDevType = requires(Dev &dev,uint8 val,const uint8 *ptr,ulen len,PtrLen<const uint8> buf)
+ {
+  dev.put(val);
+
+  dev.put(ptr,len);
+
+  dev.put(buf);
+ } ;
+
+/* concept RangeSaveDevType<Dev> */
+
+template <class Dev>
+concept bool RangeSaveDevType = SaveDevType<Dev> && requires(Dev &dev,ulen len)
+ {
+  { dev.putRange(len) } -> PtrLen<uint8> ;
+ } ;
+
+/* concept CoreLoadDevType<Dev> */
+
+template <class Dev>
+concept bool CoreLoadDevType = requires(Dev &dev,uint8 *ptr,ulen len)
+ {
+  { dev.do_get() } -> uint8 ;
+
+  dev.do_get(ptr,len);
+ } ;
+
+/* concept CoreRangeLoadDevType<Dev> */
+
+template <class Dev>
+concept bool CoreRangeLoadDevType = CoreLoadDevType<Dev> && requires(Dev &dev,ulen len)
+ {
+  { dev.do_getRange(len) } -> PtrLen<const uint8> ;
+ } ;
+
+/* concept LoadDevType<Dev> */
+
+template <class Dev>
+concept bool LoadDevType = requires(Dev &dev,uint8 *ptr,ulen len,PtrLen<uint8> buf)
+ {
+  { dev.get() } -> uint8 ;
+
+  dev.get(ptr,len);
+
+  dev.get(buf);
+ } ;
+
+/* concept RangeLoadDevType<Dev> */
+
+template <class Dev>
+concept bool RangeLoadDevType = LoadDevType<Dev> && requires(Dev &dev,ulen len)
+ {
+  { dev.getRange(len) } -> PtrLen<const uint8> ;
+ } ;
+
 /* code template */
 
  //
@@ -27,13 +103,13 @@ namespace CCore {
  //
  //   enum { SaveLoadLen = SaveLenCounter<>::SaveLoadLen };
  //
- //   template <class Dev>
+ //   template <(Range)SaveDevType Dev>
  //   void save(Dev &dev) const
  //    {
  //     dev.template use<BeOrder>();
  //    }
  //
- //   template <class Dev>
+ //   template <(Range)LoadDevType Dev>
  //   void load(Dev &dev)
  //    {
  //     dev.template use<BeOrder>();
@@ -52,7 +128,7 @@ void ProxyLoad(T &obj,Dev &dev)
   obj=proxy.get();
  }
 
-template <class R,class Dev>
+template <CursorType R,class Dev>
 void SaveRange(R r,Dev &dev)
  {
   for(; +r ;++r) dev(*r);
@@ -64,7 +140,7 @@ void SaveRange(const T *ptr,ulen len,Dev &dev)
   SaveRange(Range(ptr,len),dev);
  }
 
-template <class R,class Dev>
+template <CursorType R,class Dev>
 void LoadRange(R r,Dev &dev)
  {
   for(; +r ;++r) dev(*r);
@@ -76,7 +152,7 @@ void LoadRange(T *ptr,ulen len,Dev &dev)
   LoadRange(Range(ptr,len),dev);
  }
 
-template <class Custom,class R,class Dev>
+template <class Custom,CursorType R,class Dev>
 void SaveRange_use(R r,Dev &dev)
  {
   for(; +r ;++r) dev.template use<Custom>(*r);
@@ -88,7 +164,7 @@ void SaveRange_use(const T *ptr,ulen len,Dev &dev)
   SaveRange_use<Custom>(Range(ptr,len),dev);
  }
 
-template <class Custom,class R,class Dev>
+template <class Custom,CursorType R,class Dev>
 void LoadRange_use(R r,Dev &dev)
  {
   for(; +r ;++r) dev.template use<Custom>(*r);
@@ -136,10 +212,6 @@ class CountPutDev;
 
 template <class T> struct Get_SaveLoadLenCtor;
 
-template <bool has_SaveLoadLen,class T> struct SaveLenCounters;
-
-template <bool has_SaveLoadLen,class T,class ... TT> struct SaveLenCounters2;
-
 template <class ... TT> struct SaveLenCounter;
 
 template <bool has_SaveLoadLen,class T,class ... TT> struct SplitLoads;
@@ -184,14 +256,12 @@ struct SaveLoadBe16
 
   enum { SaveLoadLen = 2 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(buf,2);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(buf,2);
    }
@@ -239,14 +309,12 @@ struct SaveLoadBe32
 
   enum { SaveLoadLen = 4 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(buf,4);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(buf,4);
    }
@@ -306,14 +374,12 @@ struct SaveLoadBe64
 
   enum { SaveLoadLen = 8 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(buf,8);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(buf,8);
    }
@@ -355,14 +421,12 @@ struct SaveLoadLe16
 
   enum { SaveLoadLen = 2 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(buf,2);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(buf,2);
    }
@@ -410,14 +474,12 @@ struct SaveLoadLe32
 
   enum { SaveLoadLen = 4 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(buf,4);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(buf,4);
    }
@@ -477,14 +539,12 @@ struct SaveLoadLe64
 
   enum { SaveLoadLen = 8 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(buf,8);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(buf,8);
    }
@@ -666,13 +726,13 @@ class PutDevBase
 
    // put
 
-   void put(uint8 value) { getDev()->do_put(value); }
+   void put(uint8 value) requires ( CoreSaveDevType<Dev> ) { getDev()->do_put(value); }
 
-   void put(const uint8 *ptr,ulen len) { getDev()->do_put(ptr,len); }
+   void put(const uint8 *ptr,ulen len) requires ( CoreSaveDevType<Dev> ) { getDev()->do_put(ptr,len); }
 
-   void put(PtrLen<const uint8> data) { getDev()->do_put(data.ptr,data.len); }
+   void put(PtrLen<const uint8> data) requires ( CoreSaveDevType<Dev> ) { getDev()->do_put(data.ptr,data.len); }
 
-   PtrLen<uint8> putRange(ulen len) { return getDev()->do_putRange(len); } // may return Nothing
+   PtrLen<uint8> putRange(ulen len) requires ( CoreRangeSaveDevType<Dev> ) { return getDev()->do_putRange(len); } // may return Empty
 
    // save
 
@@ -707,13 +767,13 @@ class GetDevBase
 
    // get
 
-   uint8 get() { return getDev()->do_get(); }
+   uint8 get() requires ( CoreLoadDevType<Dev> ) { return getDev()->do_get(); }
 
-   void get(uint8 *ptr,ulen len) { getDev()->do_get(ptr,len); }
+   void get(uint8 *ptr,ulen len) requires ( CoreLoadDevType<Dev> ) { getDev()->do_get(ptr,len); }
 
-   void get(PtrLen<uint8> buf) { getDev()->do_get(buf.ptr,buf.len); }
+   void get(PtrLen<uint8> buf) requires ( CoreLoadDevType<Dev> ) { getDev()->do_get(buf.ptr,buf.len); }
 
-   PtrLen<const uint8> getRange(ulen len) { return getDev()->do_getRange(len); } // may return Nothing
+   PtrLen<const uint8> getRange(ulen len) requires ( CoreRangeLoadDevType<Dev> ) { return getDev()->do_getRange(len); } // may return Empty
 
    // load
 
@@ -753,6 +813,8 @@ class BufPutDev : public PutDevBase<BufPutDev>
 
    PtrLen<uint8> do_putRange(ulen len) { PtrLen<uint8> ret(buf,len); buf+=len; return ret; }
 
+   // getRest()
+
    uint8 * getRest() const { return buf; }
  };
 
@@ -774,6 +836,8 @@ class BufGetDev : public GetDevBase<BufGetDev>
 
    PtrLen<const uint8> do_getRange(ulen len) { PtrLen<const uint8> ret(buf,len); buf+=len; return ret; }
 
+   // getRest()
+
    const uint8 * getRest() const { return buf; }
  };
 
@@ -787,15 +851,27 @@ class CountPutDev : public PutDevBase<CountPutDev>
 
    CountPutDev() {}
 
-   // methods
-
    operator ULenSat() const { return count; }
+
+   // methods
 
    void do_put(uint8) { count+=1u; }
 
    void do_put(const uint8 *,ulen len) { count+=len; }
 
-   PtrLen<uint8> do_putRange(ulen len) { count+=len; return Nothing; }
+   PtrLen<uint8> do_putRange(ulen len) { count+=len; return Empty; }
+
+   // Count()
+
+   template <class T>
+   static ULenSat Count(const T &t)
+    {
+     CountPutDev dev;
+
+     dev(t);
+
+     return dev;
+    }
  };
 
 /* concept Has_SaveLoadLen<T> */
@@ -830,74 +906,28 @@ struct Get_SaveLoadLenCtor<uint64> { enum RetType : ulen { Ret = 8 }; };
 template <Has_SaveLoadLen T>
 const ulen Get_SaveLoadLen = Get_SaveLoadLenCtor<T>::Ret ;
 
-/* struct SaveLenCounters<bool has_SaveLoadLen,T> */
-
-template <class T>
-struct SaveLenCounters<true,T>
- {
-  enum FlagType { Has_SaveLoadLen = true };
-
-  enum LenType : ulen { SaveLoadLen = Get_SaveLoadLen<T> };
-
-  static ULenSat Count(const T &) { return ulen(SaveLoadLen); }
- };
-
-template <class T>
-struct SaveLenCounters<false,T>
- {
-  enum FlagType { Has_SaveLoadLen = false };
-
-  static ULenSat Count(const T &t)
-   {
-    CountPutDev dev;
-
-    dev(t);
-
-    return dev;
-   }
- };
-
-/* struct SaveLenCounters2<bool has_SaveLoadLen,T,TT> */
-
-template <class T,class ... TT>
-struct SaveLenCounters2<true,T,TT...>
- {
-  enum FlagType { Has_SaveLoadLen = true };
-
-  enum LenType : ulen { SaveLoadLen = UIntConstAdd<ulen,Get_SaveLoadLen<T>,SaveLenCounter<TT...>::SaveLoadLen> };
-
-  static ULenSat Count(const T &,const TT & ...) { return ulen(SaveLoadLen); }
- };
-
-template <class T,class ... TT>
-struct SaveLenCounters2<false,T,TT...>
- {
-  enum FlagType { Has_SaveLoadLen = false };
-
-  static ULenSat Count(const T &t,const TT & ... tt)
-   {
-    return SaveLenCounter<T>::Count(t)+SaveLenCounter<TT...>::Count(tt...);
-   }
- };
-
 /* struct SaveLenCounter<TT> */
 
-template <>
-struct SaveLenCounter<>
+template <class ... TT>
+struct SaveLenCounter
+ {
+  enum FlagType { Has_SaveLoadLen = false };
+
+  static ULenSat Count(const TT & ... tt)
+   {
+    return ( ULenSat() + ... + CountPutDev::Count(tt) );
+   }
+ };
+
+template <class ... TT> requires ( ... && Has_SaveLoadLen<TT> )
+struct SaveLenCounter<TT...>
  {
   enum FlagType { Has_SaveLoadLen = true };
 
-  enum LenType : ulen { SaveLoadLen = 0 };
+  enum LenType : ulen { SaveLoadLen = UIntConstAdd<ulen,Get_SaveLoadLen<TT>...> };
 
-  static ULenSat Count() { return ulen(SaveLoadLen); }
+  static ULenSat Count(const TT & ...) { return ulen(SaveLoadLen); }
  };
-
-template <class T>
-struct SaveLenCounter<T> : SaveLenCounters<Has_SaveLoadLen<T>,T> {};
-
-template <class T,class S,class ... TT>
-struct SaveLenCounter<T,S,TT...>
- : SaveLenCounters2< Has_SaveLoadLen<T> && SaveLenCounter<S,TT...>::Has_SaveLoadLen ,T,S,TT...> {};
 
 /* struct SplitLoads<bool has_SaveLoadLen,TT> */
 
@@ -1025,6 +1055,8 @@ class RangeGetDev
     {
      if( range.len<len )
        {
+        Range(ptr,len).set_null();
+
         nok=true;
        }
      else
@@ -1035,19 +1067,21 @@ class RangeGetDev
 
    void get(PtrLen<uint8> buf) { get(buf.ptr,buf.len); }
 
-   PtrLen<const uint8> getRange(ulen len) // may return Nothing
+   PtrLen<const uint8> getRange(ulen len) // may return Empty
     {
      if( range.len<len )
        {
         nok=true;
 
-        return Nothing;
+        return Empty;
        }
      else
        {
         return range+=len;
        }
     }
+
+   // getRest()
 
    PtrLen<const uint8> getRest() const { return range; }
 
@@ -1066,7 +1100,7 @@ class RangeGetDev
        {
         nok=true;
 
-        return Nothing;
+        return Empty;
        }
      else
        {
