@@ -96,6 +96,18 @@ concept bool RangeLoadDevType = LoadDevType<Dev> && requires(Dev &dev,ulen len)
   { dev.getRange(len) } -> PtrLen<const uint8> ;
  } ;
 
+/* concept ExtraLoadDevType<Dev> */
+
+template <class Dev>
+concept bool ExtraLoadDevType = RangeLoadDevType<Dev> && requires(Dev &dev,ulen len)
+ {
+  { dev.getFinalRange() } -> PtrLen<const uint8> ;
+
+  { dev.getFinalRange(len) } -> PtrLen<const uint8> ;
+
+  dev.fail();
+ };
+
 /* code template */
 
  //
@@ -929,63 +941,15 @@ struct SaveLenCounter<TT...>
   static ULenSat Count(const TT & ...) { return ulen(SaveLoadLen); }
  };
 
-/* struct SplitLoads<bool has_SaveLoadLen,TT> */
+/* concept BufLoadableType<T> */
 
-template <class T,class ... TT>
-struct SplitLoads<true,T,TT...>
+template <class T>
+concept bool BufLoadableType = Has_SaveLoadLen<T> && ( OneOfTypes<T,uint8,uint16,uint32,uint64> ||
+requires(T &obj,BufGetDev &dev)
  {
-  T &first;
-  SplitLoad<TT...> rest;
+  obj.load(dev);
 
-  SplitLoads(T &t,TT & ... tt) : first(t),rest(tt...) {}
-
-  template <class Custom,class Dev>
-  void use(Dev &dev)
-   {
-    rest.template use_const<Custom>(dev,first);
-   }
-
-  template <class Custom,class Dev,class ... SS>
-  void use_const(Dev &dev,SS & ... ss)
-   {
-    rest.template use_const<Custom>(dev,ss...,first);
-   }
-
-  template <class Custom,class Dev,class ... SS>
-  void use_rest(Dev &dev,SS & ... ss)
-   {
-    rest.template use_rest<Custom>(dev,ss...,first);
-   }
- };
-
-template <class T,class ... TT>
-struct SplitLoads<false,T,TT...>
- {
-  T &first;
-  SplitLoad<TT...> rest;
-
-  SplitLoads(T &t,TT & ... tt) : first(t),rest(tt...) {}
-
-  template <class Custom,class Dev>
-  void use(Dev &dev)
-   {
-    rest.template use_rest<Custom>(dev,first);
-   }
-
-  template <class Custom,class Dev,class ... SS>
-  void use_const(Dev &dev,SS & ... ss)
-   {
-    dev.template use_const<Custom>(ss...);
-
-    rest.template use_rest<Custom>(dev,first);
-   }
-
-  template <class Custom,class Dev,class ... SS>
-  void use_rest(Dev &dev,SS & ... ss)
-   {
-    rest.template use_rest<Custom>(dev,ss...,first);
-   }
- };
+ } ) ;
 
 /* struct SplitLoad<TT> */
 
@@ -1000,9 +964,9 @@ struct SplitLoad<>
    }
 
   template <class Custom,class Dev,class ... SS>
-  void use_const(Dev &dev,SS & ... ss)
+  void use_buf(Dev &dev,SS & ... ss)
    {
-    dev.template use_const<Custom>(ss...);
+    dev.template use_buf<Custom>(ss...);
    }
 
   template <class Custom,class Dev,class ... SS>
@@ -1012,10 +976,60 @@ struct SplitLoad<>
    }
  };
 
-template <class T,class ... TT>
-struct SplitLoad<T,TT...> : SplitLoads<Has_SaveLoadLen<T>,T,TT...>
+template <BufLoadableType T,class ... TT>
+struct SplitLoad<T,TT...>
  {
-  explicit SplitLoad(T &t,TT & ... tt) : SplitLoads<Has_SaveLoadLen<T>,T,TT...>(t,tt...) {}
+  T &first;
+  SplitLoad<TT...> rest;
+
+  SplitLoad(T &t,TT & ... tt) : first(t),rest(tt...) {}
+
+  template <class Custom,class Dev>
+  void use(Dev &dev)
+   {
+    rest.template use_buf<Custom>(dev,first);
+   }
+
+  template <class Custom,class Dev,class ... SS>
+  void use_buf(Dev &dev,SS & ... ss)
+   {
+    rest.template use_buf<Custom>(dev,ss...,first);
+   }
+
+  template <class Custom,class Dev,class ... SS>
+  void use_rest(Dev &dev,SS & ... ss)
+   {
+    rest.template use_rest<Custom>(dev,ss...,first);
+   }
+ };
+
+template <class T,class ... TT>
+struct SplitLoad<T,TT...>
+ {
+  T &first;
+  SplitLoad<TT...> rest;
+
+  SplitLoad(T &t,TT & ... tt) : first(t),rest(tt...) {}
+
+  template <class Custom,class Dev>
+  void use(Dev &dev)
+   {
+    rest.template use_rest<Custom>(dev,first);
+   }
+
+  template <class Custom,class Dev,class ... SS>
+  void use_buf(Dev &dev,SS & ... ss)
+   {
+    dev.template use_buf<Custom>(ss...);
+
+    rest.template use_rest<Custom>(dev,first);
+   }
+
+  template <class Custom,class Dev,class ... SS>
+  void use_rest(Dev &dev,SS & ... ss)
+   {
+    rest.template use_rest<Custom>(dev,ss...,first);
+   }
  };
 
 /* class RangeGetDev */
@@ -1115,10 +1129,10 @@ class RangeGetDev
    // split load
 
    template <class Custom>
-   void use_const() {}
+   void use_buf() {}
 
    template <class Custom,class T,class ... TT>
-   void use_const(T &t,TT & ... tt)
+   void use_buf(T &t,TT & ... tt)
     {
      const uint8 *buf=getRange(SaveLenCounter<T,TT...>::SaveLoadLen).ptr;
 

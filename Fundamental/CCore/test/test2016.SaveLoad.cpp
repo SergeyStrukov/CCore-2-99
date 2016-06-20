@@ -1,7 +1,7 @@
 /* test2016.SaveLoad.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundmental Mini
 //
@@ -18,6 +18,8 @@
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/PrintSet.h>
 
+#include <typeinfo>
+
 namespace App {
 
 namespace Private_2016 {
@@ -33,20 +35,17 @@ struct Fixed
 
   enum { SaveLoadLen = SaveLenCounter<uint8,uint16,uint32,uint64>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(a,b,c,d);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(a,b,c,d);
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"{a=#;,b=#;,c=#;,d=#;}",a,b,c,d);
    }
@@ -110,24 +109,21 @@ struct Variable
     for(ulen i=0; i<len ;i++) buf[i]=il.begin()[i];
    }
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(len);
 
     dev.put(buf,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(len);
 
     dev.get(buf,len);
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;",PrintSet(Range(buf,len)));
    }
@@ -172,6 +168,107 @@ void test2()
   Printf(Con,"#; #; #;\n",v2[0],v2[1],v2[2]);
  }
 
+/* class TestGetDev */
+
+class TestGetDev
+ {
+   RangeGetDev dev;
+
+  public:
+
+   explicit TestGetDev(PtrLen<const uint8> range) : dev(range) {}
+
+   // get
+
+   uint8 get() { return dev.get(); }
+
+   void get(uint8 *ptr,ulen len) { dev.get(ptr,len); }
+
+   void get(PtrLen<uint8> buf) { dev.get(buf); }
+
+   PtrLen<const uint8> getRange(ulen len) { return dev.getRange(len); }
+
+   // extra
+
+   PtrLen<const uint8> getFinalRange() { return dev.getFinalRange(); }
+
+   PtrLen<const uint8> getFinalRange(ulen len) { return dev.getFinalRange(len); }
+
+   void fail() { dev.fail(); }
+
+   // split load
+
+   template <class Custom>
+   void use_buf() {}
+
+   template <class Custom,class T,class ... TT>
+   void use_buf(T &t,TT & ... tt)
+    {
+     Printf(Con,"use_buf() #; #;\n",typeid(T).name(),1+sizeof ... (TT));
+
+     const uint8 *buf=getRange(SaveLenCounter<T,TT...>::SaveLoadLen).ptr;
+
+     if( !dev ) return;
+
+     BufGetDev dev(buf);
+
+     dev.use<Custom>(t,tt...);
+    }
+
+   template <class Custom>
+   void use_rest() {}
+
+   template <class Custom,class T,class ... TT>
+   void use_rest(T &t,TT & ... tt)
+    {
+     Printf(Con,"use_rest() #; #;\n",typeid(T).name(),1+sizeof ... (TT));
+
+     LoadAdapter<T,Custom>::Load(t,*this);
+
+     use<Custom>(tt...);
+    }
+
+   template <class Custom>
+   void use() {}
+
+   template <class Custom,class T,class ... TT>
+   void use(T &t,TT & ... tt)
+    {
+     SplitLoad<T,TT...> split(t,tt...);
+
+     split.template use<Custom>(*this);
+    }
+
+   template <class ... TT>
+   void operator () (TT & ... tt)
+    {
+     use<NeOrder>(tt...);
+    }
+ };
+
+/* test3() */
+
+void test3()
+ {
+  Fixed f{1,2,3,4};
+  Variable v{1,2,3};
+
+  uint8 buf[100];
+
+  BufPutDev putdev(buf);
+
+  putdev(f,f,v,f,v);
+
+  TestGetDev getdev(Range_const(buf));
+
+  Fixed f1,f2,f3;
+  Variable v1,v2;
+
+  getdev(f1,f2,v1,f3,v2);
+
+  Printf(Con,"#; #; #; #; #;\n",f1,f2,f3,v1,v2);
+ }
+
 } // namespace Private_2016
 
 using namespace Private_2016;
@@ -186,6 +283,7 @@ bool Testit<2016>::Main()
  {
   test1();
   test2();
+  test3();
 
   return true;
  }
