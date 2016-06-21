@@ -1,7 +1,7 @@
 /* FuncTask.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied Mini
 //
@@ -28,13 +28,13 @@ void GuardRunFuncTaskFailed();
 
 /* classes */
 
-template <class FuncInit> class FuncTask;
+template <FuncInitArgType<> FuncInit> class FuncTask;
 
 class TaskExitGuard;
 
 /* class FuncTask<FuncInit> */
 
-template <class FuncInit>
+template <FuncInitArgType<> FuncInit>
 class FuncTask : public Task
  {
    FuncInit func_init;
@@ -96,7 +96,7 @@ class TaskExitGuard : NoCopy
 
 /* RunFuncTask() */
 
-template <class FuncInit,class ... TT>
+template <FuncInitArgType<> FuncInit,class ... TT>
 void RunFuncTask(const FuncInit &func_init,TT ... tt)
  {
   FuncTask<FuncInit> *task=new FuncTask<FuncInit>(func_init,tt...);
@@ -104,7 +104,7 @@ void RunFuncTask(const FuncInit &func_init,TT ... tt)
   if( !task->run_or_exit() ) GuardRunFuncTaskFailed();
  }
 
-template <class FuncInit,class ... TT>
+template <FuncInitArgType<> FuncInit,class ... TT>
 void RunFuncTask(const FuncInit &func_init,Function<void (void)> exit_function,TT ... tt)
  {
   TaskExitGuard guard(exit_function);
