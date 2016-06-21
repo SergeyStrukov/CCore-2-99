@@ -1,7 +1,7 @@
 /* AsyncBinaryFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -28,7 +28,7 @@ class AsyncBinaryFile;
 
 /* class AsyncBinaryFile */
 
-class AsyncBinaryFile : NoCopy , public PutDevBase<AsyncBinaryFile>
+class AsyncBinaryFile : public NoCopyBase<PutDevBase<AsyncBinaryFile> >
  {
    AsyncFile file;
 
@@ -46,17 +46,19 @@ class AsyncBinaryFile : NoCopy , public PutDevBase<AsyncBinaryFile>
 
    // constructors
 
-   AsyncBinaryFile();
+   AsyncBinaryFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
-   explicit AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   explicit AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
-   AsyncBinaryFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags=Open_ToWrite);
+   AsyncBinaryFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
    ~AsyncBinaryFile();
 
    // methods
 
    bool isOpened() const { return file.isOpened(); }
+
+   void setFinalTimeout(MSec t) { file.setFinalTimeout(t); }
 
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
 
@@ -90,8 +92,6 @@ class AsyncBinaryFile : NoCopy , public PutDevBase<AsyncBinaryFile>
     }
 
    void do_put(const uint8 *ptr,ulen len);
-
-   PtrLen<uint8> do_putRange(ulen len);
 
    void flush();
  };

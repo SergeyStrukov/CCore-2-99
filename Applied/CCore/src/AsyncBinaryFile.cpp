@@ -1,7 +1,7 @@
 /* AsyncBinaryFile.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -33,16 +33,19 @@ void AsyncBinaryFile::provide()
   buf_len=out.len;
  }
 
-AsyncBinaryFile::AsyncBinaryFile()
+AsyncBinaryFile::AsyncBinaryFile(MSec timeout,ulen max_packets)
+ : file(timeout,max_packets)
  {
  }
 
-AsyncBinaryFile::AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags)
+AsyncBinaryFile::AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags,MSec timeout,ulen max_packets)
+ : file(timeout,max_packets)
  {
   open(file_name,oflags);
  }
 
-AsyncBinaryFile::AsyncBinaryFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags)
+AsyncBinaryFile::AsyncBinaryFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags,MSec timeout,ulen max_packets)
+ : file(timeout,max_packets)
  {
   open(dev_name,dev_file_name,oflags);
  }
@@ -92,13 +95,6 @@ void AsyncBinaryFile::do_put(const uint8 *ptr,ulen len)
 
      (out+=delta).copy( (src+=delta).ptr );
     }
- }
-
-PtrLen<uint8> AsyncBinaryFile::do_putRange(ulen)
- {
-  Printf(Exception,"AsyncBinaryFile::do_putRange(...) : not supported");
-
-  return Nothing;
  }
 
 void AsyncBinaryFile::flush()
