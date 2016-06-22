@@ -1,7 +1,7 @@
 /* Elf.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -137,8 +137,7 @@ struct Header
     return cpu_type==cpu_type_;
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"file type   = #;\n"
                "elf version = #;\n"
@@ -199,8 +198,7 @@ struct PrintSectType
       }
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     if( const char *zstr=getStr() )
       {
@@ -221,8 +219,7 @@ struct PrintSectFlags
 
   explicit PrintSectFlags(uint32 flags_) : flags(flags_) {}
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     if( flags&SectFlag_code )
       Putobj(out,"CODE");
@@ -259,8 +256,7 @@ struct SectHeader
     return (flags&SectFlag_alloc) && (type!=SectType_no_data) && size!=0 ;
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"address     = #9.hi;\n"
                "data offset = #9.hi;\n"
@@ -285,8 +281,7 @@ struct LoadHeader : Header
 
   enum { SaveLoadLen = 52 };
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(RangeLoadDevType &dev)
    {
     dev.template use<Custom>(elf0,
                              elf1,
@@ -322,8 +317,7 @@ struct LoadSectHeader : SectHeader
 
   enum { SaveLoadLen = 40 };
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<Custom>(name_off,
                              type,
@@ -373,24 +367,38 @@ class Take : NoCopy
     }
  };
 
+/* concept ParseDevType<Dev> */
+
+template <class Dev>
+concept bool ParseDevType = requires(Dev &dev,const Header &header,ulen index,StrLen name,const SectHeader &sect,PtrLen<const uint8> data)
+ {
+  dev(header);
+
+  dev(index,name,sect);
+
+  dev(index,name,sect,data);
+
+  dev();
+ } ;
+
 /* functions */
 
-//
-// class Dev
-//  {
-//   public:
-//
-//    void operator () (const Elf::Header &header);
-//
-//    void operator () (ulen index,StrLen name,const Elf::SectHeader &sect);
-//
-//    void operator () (ulen index,StrLen name,const Elf::SectHeader &sect,PtrLen<const uint8> data);
-//
-//    void operator () ();
-//  };
-//
+ //
+ // class Dev
+ //  {
+ //   public:
+ //
+ //    void operator () (const Elf::Header &header);
+ //
+ //    void operator () (ulen index,StrLen name,const Elf::SectHeader &sect);
+ //
+ //    void operator () (ulen index,StrLen name,const Elf::SectHeader &sect,PtrLen<const uint8> data);
+ //
+ //    void operator () ();
+ //  };
+ //
 
-template <class Custom,class Dev>
+template <class Custom,ParseDevType Dev>
 void Parse(Dev &dev,PtrLen<const uint8> map)
  {
   Take take(map);
