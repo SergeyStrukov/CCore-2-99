@@ -78,6 +78,10 @@ class ServerProc : public Net::PTP::ServerProc , ServerProcBase
 
    char get();
 
+   bool get(MSec timeout,char &ret) { return con.get(timeout,ret); }
+
+   bool get(TimeScope time_scope,char &ret) { return con.get(time_scope,ret); }
+
    void put(char ch) { con.put(ch); }
 
    void put(const char *str,ulen len) { con.put(str,len); }

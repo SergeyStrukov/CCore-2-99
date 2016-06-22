@@ -246,6 +246,7 @@ obj/RBTreeUpLink.o \
 obj/RadixHeap.o \
 obj/Random.o \
 obj/ReadCon.o \
+obj/ReadConType.o \
 obj/RefArray.o \
 obj/RefObjectBase.o \
 obj/RefPtr.o \
@@ -615,6 +616,7 @@ obj/RBTreeUpLink.s \
 obj/RadixHeap.s \
 obj/Random.s \
 obj/ReadCon.s \
+obj/ReadConType.s \
 obj/RefArray.s \
 obj/RefObjectBase.s \
 obj/RefPtr.s \
@@ -984,6 +986,7 @@ obj/RBTreeUpLink.dep \
 obj/RadixHeap.dep \
 obj/Random.dep \
 obj/ReadCon.dep \
+obj/ReadConType.dep \
 obj/RefArray.dep \
 obj/RefObjectBase.dep \
 obj/RefPtr.dep \
@@ -1857,6 +1860,9 @@ obj/Random.o : ../../Fundamental/CCore/src/Random.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ReadCon.o : ../../HCore/CCore/src/ReadCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ReadConType.o : ../../Applied/CCore/src/ReadConType.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/RefArray.o : ../../Fundamental/CCore/src/array/RefArray.cpp
@@ -2959,6 +2965,9 @@ obj/Random.s : ../../Fundamental/CCore/src/Random.cpp
 obj/ReadCon.s : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ReadConType.s : ../../Applied/CCore/src/ReadConType.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/RefArray.s : ../../Fundamental/CCore/src/array/RefArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4058,6 +4067,9 @@ obj/Random.dep : ../../Fundamental/CCore/src/Random.cpp
 
 obj/ReadCon.dep : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ReadCon.o $< -MF $@
+
+obj/ReadConType.dep : ../../Applied/CCore/src/ReadConType.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ReadConType.o $< -MF $@
 
 obj/RefArray.dep : ../../Fundamental/CCore/src/array/RefArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RefArray.o $< -MF $@

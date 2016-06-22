@@ -1,7 +1,7 @@
 /* LineInput.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -18,16 +18,17 @@
 
 #include <CCore/inc/TimeScope.h>
 #include <CCore/inc/CharProp.h>
+#include <CCore/inc/ReadConType.h>
 
 namespace CCore {
 
 /* classes */
 
-template <class ReadCon,ulen MaxLen=80> class LineInput;
+template <ReadConType ReadCon,ulen MaxLen=80> class LineInput;
 
 /* class LineInput<ReadCon,ulen MaxLen> */
 
-template <class ReadCon,ulen MaxLen>
+template <ReadConType ReadCon,ulen MaxLen>
 class LineInput : NoCopy
  {
    ReadCon con;
@@ -51,7 +52,7 @@ class LineInput : NoCopy
    bool get(TimeScope time_scope,PtrLen<const char> &ret);
  };
 
-template <class ReadCon,ulen MaxLen>
+template <ReadConType ReadCon,ulen MaxLen>
 bool LineInput<ReadCon,MaxLen>::process(char ch,PtrLen<const char> &ret)
  {
   switch( ch )
@@ -90,7 +91,7 @@ bool LineInput<ReadCon,MaxLen>::process(char ch,PtrLen<const char> &ret)
   return false;
  }
 
-template <class ReadCon,ulen MaxLen>
+template <ReadConType ReadCon,ulen MaxLen>
 PtrLen<const char> LineInput<ReadCon,MaxLen>::get()
  {
   PtrLen<const char> ret;
@@ -100,7 +101,7 @@ PtrLen<const char> LineInput<ReadCon,MaxLen>::get()
   return ret;
  }
 
-template <class ReadCon,ulen MaxLen>
+template <ReadConType ReadCon,ulen MaxLen>
 bool LineInput<ReadCon,MaxLen>::get(TimeScope time_scope,PtrLen<const char> &ret)
  {
   for(;;)

@@ -19,6 +19,7 @@
 #include <CCore/inc/Cmp.h>
 #include <CCore/inc/Array.h>
 #include <CCore/inc/CharProp.h>
+#include <CCore/inc/ReadConType.h>
 
 namespace CCore {
 
@@ -26,7 +27,7 @@ namespace CCore {
 
 class CmdInput;
 
-template <class ReadCon,ulen MaxArgLen=80> class CmdInputCon;
+template <ReadConType ReadCon,ulen MaxArgLen=80> class CmdInputCon;
 
 /* class CmdInput */
 
@@ -197,7 +198,7 @@ class CmdInput : NoCopy
 
 /* class CmdInputCon<ReadCon,ulen MaxArgLen> */
 
-template <class ReadCon,ulen MaxArgLen>
+template <ReadConType ReadCon,ulen MaxArgLen>
 class CmdInputCon : NoCopy
  {
    CmdInput input;
@@ -227,7 +228,7 @@ class CmdInputCon : NoCopy
    void command(SS && ... ss);
  };
 
-template <class ReadCon,ulen MaxArgLen>
+template <ReadConType ReadCon,ulen MaxArgLen>
 bool CmdInputCon<ReadCon,MaxArgLen>::inputArg()
  {
   arg_len=0;
@@ -274,7 +275,7 @@ bool CmdInputCon<ReadCon,MaxArgLen>::inputArg()
     }
  }
 
-template <class ReadCon,ulen MaxArgLen>
+template <ReadConType ReadCon,ulen MaxArgLen>
 template <class ... SS>
 CmdInputCon<ReadCon,MaxArgLen>::CmdInputCon(CmdInput::Target &target,StrLen prompt_str_,SS && ... ss)
  : input(target),
@@ -284,12 +285,12 @@ CmdInputCon<ReadCon,MaxArgLen>::CmdInputCon(CmdInput::Target &target,StrLen prom
  {
  }
 
-template <class ReadCon,ulen MaxArgLen>
+template <ReadConType ReadCon,ulen MaxArgLen>
 CmdInputCon<ReadCon,MaxArgLen>::~CmdInputCon()
  {
  }
 
-template <class ReadCon,ulen MaxArgLen>
+template <ReadConType ReadCon,ulen MaxArgLen>
 template <class ... SS>
 void CmdInputCon<ReadCon,MaxArgLen>::command(SS && ... ss)
  {

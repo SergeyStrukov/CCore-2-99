@@ -1,7 +1,7 @@
 /* FileName.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -75,14 +75,18 @@ class FileName::Out : NoCopy
      out+=str.len;
     }
 
-   void operator () () {}
-
-   template <class T,class ... TT>
-   void operator () (T t,TT ... tt)
+   template <class T>
+   Out & operator << (T t)
     {
      put(t);
 
-     (*this)(tt...);
+     return *this;
+    }
+
+   template <class ... TT>
+   void operator () (TT ... tt)
+    {
+     ( (*this) << ... << tt );
     }
  };
 

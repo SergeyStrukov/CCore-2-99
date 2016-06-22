@@ -1,7 +1,7 @@
 /* FileName.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -96,8 +96,7 @@ class FileName : NoCopy
 
    StrLen getFile() const { return getStr().part(off); }
 
-   template <class P>
-   void printPos(P &out,TextPos pos) { Putobj(out,getFile(),pos); }
+   void printPos(PrinterType &out,TextPos pos) { Putobj(out,getFile(),pos); }
 
    // swap/move objects
 

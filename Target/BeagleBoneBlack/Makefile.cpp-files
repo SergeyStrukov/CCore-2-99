@@ -236,6 +236,7 @@
 ../../Applied/CCore/src/PerTask.cpp
 ../../Applied/CCore/src/print/PrintAsyncFile.cpp
 ../../Applied/CCore/src/print/PrintPTPCon.cpp
+../../Applied/CCore/src/ReadConType.cpp
 ../../Applied/CCore/src/scan/ScanAsyncFile.cpp
 ../../Applied/CCore/src/sys/SysAsyncFile.cpp
 ../../Applied/CCore/src/sys/SysAsyncFileSystem.cpp
