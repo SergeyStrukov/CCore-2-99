@@ -1,7 +1,7 @@
 /* PacketPool.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -54,28 +54,28 @@ PacketHeader * AllocPacket_raw_short(TimeScope time_scope);
 
 void DetachPacketBufs();
 
-template <class POD>
+template <PODType POD>
 Packet<POD> TryAllocPacket() { return TryAllocPacket_raw(); }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> AllocPacket() { return AllocPacket_raw(); } // may return 0
 
-template <class POD>
+template <PODType POD>
 Packet<POD> AllocPacket(MSec timeout) { return AllocPacket_raw(timeout); }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> AllocPacket(TimeScope time_scope) { return AllocPacket_raw(time_scope); }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> TryAllocPacket_short() { return TryAllocPacket_raw_short(); }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> AllocPacket_short() { return AllocPacket_raw_short(); } // never return 0
 
-template <class POD>
+template <PODType POD>
 Packet<POD> AllocPacket_short(MSec timeout) { return AllocPacket_raw_short(timeout); }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> AllocPacket_short(TimeScope time_scope) { return AllocPacket_raw_short(time_scope); }
 
 /* classes */

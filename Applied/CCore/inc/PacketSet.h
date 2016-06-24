@@ -1,7 +1,7 @@
 /* PacketSet.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -28,7 +28,7 @@ const unsigned DefaultMaxPackets = 50 ;
 
 struct PacketSetExt;
 
-template <class POD> class PacketSet;
+template <PODType POD> class PacketSet;
 
 /* struct PacketSetExt */
 
@@ -67,7 +67,7 @@ struct PacketSetExt : PacketCanceller
 
 /* class PacketSet<POD> */
 
-template <class POD>
+template <PODType POD>
 class PacketSet : public Funchor_nocopy
  {
   public:
@@ -196,7 +196,7 @@ class PacketSet : public Funchor_nocopy
    Packet<POD> enlist(ExtTop &ext_list,Packet<POD> packet);
  };
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::add(Packet<POD,PacketSetExt> packet)
  {
   Mutex::Lock lock(mutex);
@@ -208,7 +208,7 @@ void PacketSet<POD>::add(Packet<POD,PacketSetExt> packet)
   list.ins(ext);
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::add(ExtTop &ext_list,Packet<POD,PacketSetExt> packet)
  {
   Mutex::Lock lock(mutex);
@@ -220,7 +220,7 @@ void PacketSet<POD>::add(ExtTop &ext_list,Packet<POD,PacketSetExt> packet)
   list.ins(ext);
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::del(Packet<POD,PacketSetExt> packet)
  {
   Mutex::Lock lock(mutex);
@@ -232,7 +232,7 @@ void PacketSet<POD>::del(Packet<POD,PacketSetExt> packet)
   list.del(ext);
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::buildCancel(ExtTop &cancel_list)
  {
   Mutex::Lock lock(mutex);
@@ -247,7 +247,7 @@ void PacketSet<POD>::buildCancel(ExtTop &cancel_list)
     }
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::buildCancel(ExtTop &ext_list,ExtTop &cancel_list)
  {
   Mutex::Lock lock(mutex);
@@ -265,13 +265,13 @@ void PacketSet<POD>::buildCancel(ExtTop &ext_list,ExtTop &cancel_list)
     }
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::DoCancel(ExtTop &cancel_list)
  {
   while( PacketSetExt *ext=cancel_list.top ) ext->cancel();
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::cancel()
  {
   ExtTop cancel_list;
@@ -281,7 +281,7 @@ void PacketSet<POD>::cancel()
   DoCancel(cancel_list);
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::complete(PacketHeader *packet_)
  {
   Packet<POD,PacketSetExt> packet=packet_;
@@ -293,7 +293,7 @@ void PacketSet<POD>::complete(PacketHeader *packet_)
   rsem.give();
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::complete_external(PacketHeader *packet_)
  {
   Packet<POD,PacketSetExt> packet=packet_;
@@ -305,7 +305,7 @@ void PacketSet<POD>::complete_external(PacketHeader *packet_)
   asem.dec();
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::prepare(Packet<POD> packet)
  {
   Packet<POD,PacketSetExt> packet2=Push(packet,function_complete());
@@ -315,7 +315,7 @@ Packet<POD> PacketSet<POD>::prepare(Packet<POD> packet)
   return packet2.template forgetExt<1>();
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::prepare(ExtTop &ext_list,Packet<POD> packet)
  {
   Packet<POD,PacketSetExt> packet2=Push(packet,function_complete());
@@ -325,7 +325,7 @@ Packet<POD> PacketSet<POD>::prepare(ExtTop &ext_list,Packet<POD> packet)
   return packet2.template forgetExt<1>();
  }
 
-template <class POD>
+template <PODType POD>
 PacketSet<POD>::PacketSet(ulen max_packets)
  : rsem("PacketSet",max_packets),
    asem("PacketSet"),
@@ -333,7 +333,7 @@ PacketSet<POD>::PacketSet(ulen max_packets)
  {
  }
 
-template <class POD>
+template <PODType POD>
 PacketSet<POD>::PacketSet(TextLabel name,ulen max_packets)
  : rsem(name,max_packets),
    asem(name),
@@ -341,7 +341,7 @@ PacketSet<POD>::PacketSet(TextLabel name,ulen max_packets)
  {
  }
 
-template <class POD>
+template <PODType POD>
 PacketSet<POD>::~PacketSet()
  {
   cancel_and_wait();
@@ -349,7 +349,7 @@ PacketSet<POD>::~PacketSet()
   asem.wait();
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::try_get()
  {
   if( !rsem.try_take() ) return Nothing;
@@ -366,7 +366,7 @@ Packet<POD> PacketSet<POD>::try_get()
   return prepare(packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get()
  {
   rsem.take();
@@ -383,7 +383,7 @@ Packet<POD> PacketSet<POD>::get()
   return prepare(packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get(TimeScope time_scope)
  {
   if( !rsem.take(time_scope) ) return Nothing;
@@ -400,7 +400,7 @@ Packet<POD> PacketSet<POD>::get(TimeScope time_scope)
   return prepare(packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get(MSec timeout)
  {
   TimeScope time_scope(timeout);
@@ -408,7 +408,7 @@ Packet<POD> PacketSet<POD>::get(MSec timeout)
   return get(time_scope);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::try_get_short()
  {
   if( !rsem.try_take() ) return Nothing;
@@ -425,7 +425,7 @@ Packet<POD> PacketSet<POD>::try_get_short()
   return prepare(packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get_short()
  {
   rsem.take();
@@ -433,7 +433,7 @@ Packet<POD> PacketSet<POD>::get_short()
   return prepare(AllocPacket_short<POD>());
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get_short(TimeScope time_scope)
  {
   if( !rsem.take(time_scope) ) return Nothing;
@@ -450,7 +450,7 @@ Packet<POD> PacketSet<POD>::get_short(TimeScope time_scope)
   return prepare(packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get_short(MSec timeout)
  {
   TimeScope time_scope(timeout);
@@ -458,7 +458,7 @@ Packet<POD> PacketSet<POD>::get_short(MSec timeout)
   return get_short(time_scope);
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::cancel_and_wait()
  {
   cancel();
@@ -466,7 +466,7 @@ void PacketSet<POD>::cancel_and_wait()
   rsem.wait();
  }
 
-template <class POD>
+template <PODType POD>
 bool PacketSet<POD>::wait(TimeScope time_scope)
  {
   if( rsem.wait(time_scope) ) return true;
@@ -476,7 +476,7 @@ bool PacketSet<POD>::wait(TimeScope time_scope)
   return false;
  }
 
-template <class POD>
+template <PODType POD>
 bool PacketSet<POD>::wait(MSec timeout)
  {
   if( rsem.wait(timeout) ) return true;
@@ -486,7 +486,7 @@ bool PacketSet<POD>::wait(MSec timeout)
   return false;
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::try_get(ExtTop &ext_list)
  {
   if( !rsem.try_take() ) return Nothing;
@@ -503,7 +503,7 @@ Packet<POD> PacketSet<POD>::try_get(ExtTop &ext_list)
   return prepare(ext_list,packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get(ExtTop &ext_list)
  {
   rsem.take();
@@ -520,7 +520,7 @@ Packet<POD> PacketSet<POD>::get(ExtTop &ext_list)
   return prepare(ext_list,packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get(ExtTop &ext_list,TimeScope time_scope)
  {
   if( !rsem.take(time_scope) ) return Nothing;
@@ -537,7 +537,7 @@ Packet<POD> PacketSet<POD>::get(ExtTop &ext_list,TimeScope time_scope)
   return prepare(ext_list,packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get(ExtTop &ext_list,MSec timeout)
  {
   TimeScope time_scope(timeout);
@@ -545,7 +545,7 @@ Packet<POD> PacketSet<POD>::get(ExtTop &ext_list,MSec timeout)
   return get(ext_list,time_scope);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::try_get_short(ExtTop &ext_list)
  {
   if( !rsem.try_take() ) return Nothing;
@@ -562,7 +562,7 @@ Packet<POD> PacketSet<POD>::try_get_short(ExtTop &ext_list)
   return prepare(ext_list,packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get_short(ExtTop &ext_list)
  {
   rsem.take();
@@ -570,7 +570,7 @@ Packet<POD> PacketSet<POD>::get_short(ExtTop &ext_list)
   return prepare(ext_list,AllocPacket_short<POD>());
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get_short(ExtTop &ext_list,TimeScope time_scope)
  {
   if( !rsem.take(time_scope) ) return Nothing;
@@ -587,7 +587,7 @@ Packet<POD> PacketSet<POD>::get_short(ExtTop &ext_list,TimeScope time_scope)
   return prepare(ext_list,packet);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::get_short(ExtTop &ext_list,MSec timeout)
  {
   TimeScope time_scope(timeout);
@@ -595,7 +595,7 @@ Packet<POD> PacketSet<POD>::get_short(ExtTop &ext_list,MSec timeout)
   return get_short(ext_list,time_scope);
  }
 
-template <class POD>
+template <PODType POD>
 void PacketSet<POD>::cancel(ExtTop &ext_list)
  {
   ExtTop cancel_list;
@@ -605,7 +605,7 @@ void PacketSet<POD>::cancel(ExtTop &ext_list)
   DoCancel(cancel_list);
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::enlist(Packet<POD> packet)
  {
   asem.inc();
@@ -617,7 +617,7 @@ Packet<POD> PacketSet<POD>::enlist(Packet<POD> packet)
   return packet2.template forgetExt<1>();
  }
 
-template <class POD>
+template <PODType POD>
 Packet<POD> PacketSet<POD>::enlist(ExtTop &ext_list,Packet<POD> packet)
  {
   asem.inc();

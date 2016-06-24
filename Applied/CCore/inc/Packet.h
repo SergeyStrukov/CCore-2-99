@@ -73,7 +73,7 @@ template <class Box> struct PacketDeepExtBox;
 
 template <unsigned Index,class ... TT> requires ( Index > 0 && Index <= sizeof ... (TT) ) struct PacketDeepExt;
 
-template <class POD,class ... TT> class Packet;
+template <PODType POD,class ... TT> class Packet;
 
 class PacketCanceller;
 
@@ -366,7 +366,7 @@ class PacketHeader : NoCopy
    Place<void> getExtBase() { return PlaceAt(this)+Delta(); }
 
    template <class T,class ... SS>
-   T * pushExt(SS && ... ss)
+   T * pushExt(SS && ... ss) requires ( NothrowDtorType<T> && ConstructibleType<T,SS...> )
     {
      static_assert( sizeof (T)<=MaxPacketExtLen ,"CCore::PacketHeader::pushExt<T>(...) : T is too large");
 
@@ -501,13 +501,9 @@ using PacketForgetExt = PacketBox<POD,Meta::PartTypeList<Index,TT...> > ;
 
 /* class Packet<POD,TT> */
 
-template <class POD,class ... TT> // T1, T2, ... , Ttop
+template <PODType POD,class ... TT> // T1, T2, ... , Ttop
 class Packet
  {
-   static_assert( Meta::IsPOD<POD> ,"CCore::Packet<POD,...> : POD must be POD");
-
-  private:
-
    PacketHeader *packet;
 
   public:
@@ -555,7 +551,7 @@ class Packet
    // ext
 
    template <class T,class ... SS>
-   Packet<POD,TT...,T> pushExt(SS && ... ss)
+   Packet<POD,TT...,T> pushExt(SS && ... ss) requires ( NothrowDtorType<T> && ConstructibleType<T,SS...> )
     {
      PacketHeader *ret=Replace_null(packet);
 
@@ -700,6 +696,14 @@ void DropPacketExt(PacketHeader *packet_)
   packet.popExt().complete();
  }
 
+/* concept PacketType<P> */
+
+template <class P>
+concept bool PacketType = requires(P packet)
+ {
+  { GetPacketHeader(packet) } -> PacketHeader * ;
+ } ;
+
 /* class PacketCanceller */
 
 class PacketCanceller : NoCopy
@@ -709,8 +713,7 @@ class PacketCanceller : NoCopy
 
   public:
 
-   template <class P>
-   explicit PacketCanceller(P packet_) : packet(GetPacketHeader(packet_)) {}
+   explicit PacketCanceller(PacketType packet_) : packet(GetPacketHeader(packet_)) {}
 
    bool getCancelFunction() { return packet->getCancelFunction(cancel_function)==Packet_HasCancelFunction; }
 
@@ -780,11 +783,9 @@ class PacketList : NoCopy
 
    void put_first(PacketHeader *packet);
 
-   template <class P>
-   void put(P packet) { put(GetPacketHeader(packet)); }
+   void put(PacketType packet) { put(GetPacketHeader(packet)); }
 
-   template <class P>
-   void put_first(P packet) { put_first(GetPacketHeader(packet)); }
+   void put_first(PacketType packet) { put_first(GetPacketHeader(packet)); }
 
    // get
 
@@ -796,8 +797,7 @@ class PacketList : NoCopy
 
    void del(PacketHeader *packet);
 
-   template <class P>
-   void del(P packet) { del(GetPacketHeader(packet)); }
+   void del(PacketType packet) { del(GetPacketHeader(packet)); }
 
    // methods
 
