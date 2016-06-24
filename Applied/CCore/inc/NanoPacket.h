@@ -1,7 +1,7 @@
 /* NanoPacket.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -31,19 +31,17 @@ void NanoPacketPoolExitAbort();
 
 /* classes */
 
-template <class POD> class NanoPacket;
+template <PODType POD> class NanoPacket;
 
-template <class POD> class NanoPacketList;
+template <PODType POD> class NanoPacketList;
 
-template <class POD> class NanoPacketPool;
+template <PODType POD> class NanoPacketPool;
 
 /* class NanoPacket<POD> */
 
-template <class POD>
+template <PODType POD>
 class NanoPacket
  {
-   static_assert( Meta::IsPOD<POD> ,"CCore::NanoPacket<POD> : POD must be POD");
-
    using NanoPacketFunction = Function<void (NanoPacket<POD> packet)> ;
 
    struct Header
@@ -122,7 +120,7 @@ class NanoPacket
 
 /* class NanoPacketList<POD> */
 
-template <class POD>
+template <PODType POD>
 class NanoPacketList : NoCopy
  {
    typename NanoPacket<POD>::Algo::Top list;
@@ -209,7 +207,7 @@ class NanoPacketList : NoCopy
 
 /* class NanoPacketPool<POD> */
 
-template <class POD>
+template <PODType POD>
 class NanoPacketPool : FastMutexBase , public Funchor
  {
    NanoPacketList<POD> list;
