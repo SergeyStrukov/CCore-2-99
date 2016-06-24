@@ -26,11 +26,16 @@
 
 namespace CCore {
 
+/* concept LogableType<T> */
+
+template <class T>
+concept bool LogableType = PrintableType<T> && NothrowCopyableType<T> ;
+
 /* classes */
 
-template <class Src,class Type> class LogCategory_enum;
+template <EnumType Src,EnumType Type> class LogCategory_enum;
 
-template <class Src,class Type> class LogFilter_enum;
+template <EnumType Src,EnumType Type> class LogFilter_enum;
 
 class LogStamp;
 
@@ -42,13 +47,13 @@ template <class Cat,class Stamp> class LogMsgBase;
 
 template <class Cat,class Stamp> class LogStorage;
 
-template <class Cat,class Stamp,class ... TT> class LogMsg;
+template <class Cat,class Stamp,LogableType ... TT> class LogMsg;
 
 template <class Cat,class Stamp,class Filter,class Mutex=NoMutex> class UserLog;
 
 /* class LogCategory_enum<Src,Type> */
 
-template <class Src,class Type> // Src and Type are uint5 enums
+template <EnumType Src,EnumType Type> // Src and Type are uint5 enums
 class LogCategory_enum
  {
    unsigned value;
@@ -64,19 +69,18 @@ class LogCategory_enum
      unsigned src=src_;
      unsigned type=type_;
 
-     value=((src&31)<<5)|(type&31);
+     value=((src&31u)<<5)|(type&31u);
     }
 
    // methods
 
-   Src getSource() const { return Src((value>>5)&31); }
+   Src getSource() const { return Src((value>>5)&31u); }
 
-   Type getType() const { return Type(value&31); }
+   Type getType() const { return Type(value&31u); }
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"#;:#;",getSource(),getType());
     }
@@ -84,7 +88,7 @@ class LogCategory_enum
 
 /* class LogFilter_enum<Src,Type> */
 
-template <class Src,class Type> // Src and Type are uint5 enums
+template <EnumType Src,EnumType Type> // Src and Type are uint5 enums
 class LogFilter_enum
  {
    // disable masks
@@ -142,8 +146,7 @@ class LogStamp
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"#;) [#;,#6r;]",num,PrintTime(time_sec),time_clock);
     }
@@ -194,8 +197,7 @@ class LogCounter
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"total = #;",total);
 
@@ -486,7 +488,7 @@ class LogMsg<Cat,Stamp> : public LogMsgBase<Cat,Stamp>
    LogMsg(Cat cat,const char *format_) : LogMsgBase<Cat,Stamp>(cat),format(format_) {}
  };
 
-template <class Cat,class Stamp,class T,class ... TT>
+template <class Cat,class Stamp,LogableType T,LogableType ... TT>
 class LogMsg<Cat,Stamp,T,TT...> : public LogMsgBase<Cat,Stamp>
  {
    const char *format;
@@ -575,7 +577,7 @@ class UserLog : NoCopy
    class Access;
 
    template <class ... TT>
-   void operator () (Cat cat,const char *format,const TT & ... tt);
+   void operator () (Cat cat,const char *format,const TT & ... tt) requires ( ... && LogableType<TT> ) ;
 
    // cursor
 
@@ -624,7 +626,7 @@ class UserLog<Cat,Stamp,Filter,Mutex>::Access : NoCopy
 
 template <class Cat,class Stamp,class Filter,class Mutex>
 template <class ... TT>
-void UserLog<Cat,Stamp,Filter,Mutex>::operator () (Cat cat,const char *format,const TT & ... tt)
+void UserLog<Cat,Stamp,Filter,Mutex>::operator () (Cat cat,const char *format,const TT & ... tt) requires ( ... && LogableType<TT> )
  {
   using MsgType = LogMsg<Cat,Stamp,TT...> ;
 
@@ -733,8 +735,7 @@ class UserLog<Cat,Stamp,Filter,Mutex>::PrintFunc
     {
     }
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      LogCounter cnt;
 

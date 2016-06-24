@@ -1,7 +1,7 @@
 /* EventRecorder.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied Mini
 //
@@ -24,6 +24,7 @@
 #include <CCore/inc/Tree.h>
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/TextLabel.h>
+#include <CCore/inc/algon/ApplyToRange.h>
 
 namespace CCore {
 
@@ -38,6 +39,24 @@ const unsigned DefaultGuardCount = 1'000'000 ;
 using EventTimeType = uint32 ;
 
 using EventIdType = uint16 ;
+
+/* concept EventType<T> */
+
+template <class T>
+concept bool EventType = PODType<T> && requires()
+ {
+  { &T::time } -> EventTimeType T::* ;
+
+  { &T::id } -> EventIdType T::* ;
+ } ;
+
+/* concept EventInitArg<T,SS> */
+
+template <class T,class ... SS>
+concept bool EventInitArg = EventType<T> && requires(T &obj,EventTimeType time,EventIdType id,SS && ... ss)
+ {
+  obj.init(time,id, std::forward<SS>(ss)... );
+ } ;
 
 /* functions */
 
@@ -57,7 +76,7 @@ class EventMetaInfo;
 
 class EventIdNode;
 
-template <class T> class EventId;
+template <EventType T> class EventId;
 
 class EventTypeIdNode;
 
@@ -232,16 +251,15 @@ class EventMetaInfo : NoCopy
        }
     }
 
-   template <class Dev>
-   static void Save(const String &name,Dev &dev)
+   static void Save(const String &name,SaveDevType &dev)
     {
      dev.template use<BeOrder>((uint32)name.getLen());
 
-     SaveRange_use<BeOrder>(Mutate<const uint8>(Range(name)),dev);
+     dev.put(Mutate<const uint8>(Range(name)));
     }
 
-   template <class Dev,class Array>
-   static void SaveArray(const Array &array,Dev &dev)
+   template <class Array>
+   static void SaveArray(const Array &array,SaveDevType &dev)
     {
      dev.template use<BeOrder>((uint32)array.getLen());
 
@@ -260,8 +278,7 @@ class EventMetaInfo : NoCopy
 
      // save/load object
 
-     template <class Dev>
-     void save(Dev &dev) const
+     void save(SaveDevType &dev) const
       {
        dev.template use<BeOrder>(link.key);
 
@@ -272,8 +289,7 @@ class EventMetaInfo : NoCopy
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        if( marker!=EventMarker_None )
          Printf(out,"  #; = #; [#;]\n",name,link.key,marker);
@@ -299,32 +315,6 @@ class EventMetaInfo : NoCopy
      private:
 
       static void Destroy(ValueDesc *ptr);
-
-      template <class Dev>
-      static void SaveValues(ValueDesc *ptr,Dev &dev)
-       {
-        if( ptr )
-          {
-           SaveValues(Algo::Link(ptr).lo,dev);
-
-           dev.template use<BeOrder>(*ptr);
-
-           SaveValues(Algo::Link(ptr).hi,dev);
-          }
-       }
-
-      template <class P>
-      static void PrintValues(P &out,ValueDesc *ptr)
-       {
-        if( ptr )
-          {
-           PrintValues(out,Algo::Link(ptr).lo);
-
-           ptr->print(out);
-
-           PrintValues(out,Algo::Link(ptr).hi);
-          }
-       }
 
      public:
 
@@ -362,8 +352,7 @@ class EventMetaInfo : NoCopy
 
       // save/load object
 
-      template <class Dev>
-      void save(Dev &dev) const
+      void save(SaveDevType &dev) const
        {
         dev.template use<BeOrder>((uint8)kind);
 
@@ -371,7 +360,7 @@ class EventMetaInfo : NoCopy
 
         dev.template use<BeOrder>((uint32)count);
 
-        SaveValues(root.root,dev);
+        Algon::ApplyToRange(root.start(), [&dev] (const ValueDesc &desc) { dev(desc); } );
        }
 
       // swap/move objects
@@ -398,18 +387,16 @@ class EventMetaInfo : NoCopy
 
       // print object
 
-      template <class P>
-      void print(P &out) const
+      void print(PrinterType &out) const
        {
         Printf(out,"#; #;\n {\n",kind,name);
 
-        PrintValues(out,root.root);
+        Algon::ApplyToRange(root.start(), [&out] (const ValueDesc &desc) { Putobj(out,desc); } );
 
         Printf(out," }\n\n");
        }
 
-      template <class P>
-      void print(P &out,uint32 value) const
+      void print(PrinterType &out,uint32 value) const
        {
         if( String *name=findValueName(value) )
           {
@@ -441,16 +428,14 @@ class EventMetaInfo : NoCopy
 
       // save/load object
 
-      template <class Dev>
-      void save(Dev &dev) const
+      void save(SaveDevType &dev) const
        {
         dev.template use<BeOrder>((uint8)kind,id);
 
         Save(name,dev);
        }
 
-      template <class Dev>
-      void save(Dev &dev,const EventMetaInfo &info,void *ptr) const
+      void save(SaveDevType &dev,const EventMetaInfo &info,void *ptr) const
        {
         ptr=offset(ptr);
 
@@ -546,8 +531,7 @@ class EventMetaInfo : NoCopy
 
       // print object
 
-      template <class P>
-      void print(P &out,const EventMetaInfo &info) const
+      void print(PrinterType &out,const EventMetaInfo &info) const
        {
         switch( kind )
           {
@@ -565,8 +549,7 @@ class EventMetaInfo : NoCopy
         Printf(out," #;;\n",name);
        }
 
-      template <class P>
-      void print(P &out,const EventMetaInfo &info,void *ptr,ulen off) const
+      void print(PrinterType &out,const EventMetaInfo &info,void *ptr,ulen off) const
        {
         ptr=offset(ptr);
 
@@ -699,15 +682,14 @@ class EventMetaInfo : NoCopy
 
       // save/load object
 
-      template <class Dev>
-      void save(Dev &dev) const
+      void save(SaveDevType &dev) const
        {
         Save(name,dev);
+
         SaveArray(field_list,dev);
        }
 
-      template <class Dev>
-      void save(Dev &dev,const EventMetaInfo &info,void *ptr) const
+      void save(SaveDevType &dev,const EventMetaInfo &info,void *ptr) const
        {
         for(const auto &desc : field_list ) desc.save(dev,info,ptr);
        }
@@ -739,8 +721,7 @@ class EventMetaInfo : NoCopy
 
       // print object
 
-      template <class P>
-      void print(P &out,const EventMetaInfo &info) const
+      void print(PrinterType &out,const EventMetaInfo &info) const
        {
         Printf(out,"struct #;\n {\n",name);
 
@@ -749,8 +730,7 @@ class EventMetaInfo : NoCopy
         Printf(out," }\n\n");
        }
 
-      template <class P>
-      void print(P &out,const EventMetaInfo &info,void *ptr,ulen off=0) const
+      void print(PrinterType &out,const EventMetaInfo &info,void *ptr,ulen off=0) const
        {
         if( !off ) Printf(out,"event #;\n {\n",name);
 
@@ -801,14 +781,12 @@ class EventMetaInfo : NoCopy
 
       // save/load object
 
-      template <class Dev>
-      void save(Dev &dev) const
+      void save(SaveDevType &dev) const
        {
         dev.template use<BeOrder>(struct_id,class_id,save_len);
        }
 
-      template <class Dev>
-      void save(Dev &dev,const EventMetaInfo &info,void *ptr) const
+      void save(SaveDevType &dev,const EventMetaInfo &info,void *ptr) const
        {
         info.getStruct(struct_id).save(dev,info,ptr);
        }
@@ -870,8 +848,7 @@ class EventMetaInfo : NoCopy
 
    // save/load object
 
-   template <class Dev>
-   void save(Dev &dev) const
+   void save(SaveDevType &dev) const
     {
      dev.template use<BeOrder>(time_freq);
 
@@ -880,16 +857,14 @@ class EventMetaInfo : NoCopy
      SaveArray(event_list,dev);
     }
 
-   template <class Dev>
-   void saveEvent(Dev &dev,const EventDesc &desc,void *ptr) const
+   void saveEvent(SaveDevType &dev,const EventDesc &desc,void *ptr) const
     {
      desc.save(dev,*this,ptr);
     }
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"#;\n\nfreq = #;\n\n",Title("Event record"),time_freq);
 
@@ -911,8 +886,7 @@ class EventMetaInfo : NoCopy
      Printf(out,"#;\n\n",TextDivider());
     }
 
-   template <class P>
-   void printEvent(P &out,const EventDesc &desc,void *ptr) const
+   void printEvent(PrinterType &out,const EventDesc &desc,void *ptr) const
     {
      getStruct(desc.getStructId()).print(out,*this,ptr);
     }
@@ -950,7 +924,7 @@ class EventIdNode
 
 /* class EventId<T> */
 
-template <class T>
+template <EventType T>
 class EventId
  {
    static EventIdNode Node;
@@ -960,7 +934,7 @@ class EventId
    static EventIdType GetId() { return Node.getId(); }
  };
 
-template <class T>
+template <EventType T>
 EventIdNode EventId<T>::Node(T::Register,sizeof (T));
 
 /* class EventTypeIdNode */
@@ -1103,10 +1077,8 @@ class EventRecorder : public EventMetaInfo
     }
 
    template <class T,class ... SS>
-   void add(SS && ... ss)
+   void add(SS && ... ss) requires ( EventInitArg<T,SS...> )
     {
-     static_assert( Meta::IsPOD<T> ,"CCore::EventRecorder<Algo>::add(...) : T must be POD");
-
      static_assert( RecordAlign%alignof(T)==0 ,"CCore::EventRecorder<Algo>::add(...) : T has too large alignment");
 
      const ulen len=Align(sizeof (T),RecordAlign);
@@ -1125,7 +1097,7 @@ class EventRecorder : public EventMetaInfo
        }
     }
 
-   template <class FuncInit>
+   template <FuncInitArgType<const EventRecorder &,const EventDesc &,void *> FuncInit>
    void parse(FuncInit func_init) const
     {
      ulen off=0;
@@ -1148,8 +1120,7 @@ class EventRecorder : public EventMetaInfo
 
    // save/load object
 
-   template <class Dev>
-   void save(Dev &dev) const
+   void save(SaveDevType &dev) const
     {
      EventMetaInfo::save(dev);
 
@@ -1164,8 +1135,7 @@ class EventRecorder : public EventMetaInfo
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      EventMetaInfo::print(out);
 
@@ -1257,7 +1227,7 @@ class EventRecorderHost : NoCopy
     };
 
    template <class T,class ... SS>
-   void add(SS && ... ss)
+   void add(SS && ... ss) requires ( EventInitArg<T,SS...> )
     {
      if( Recorder *obj=lock() )
        {
