@@ -1,7 +1,7 @@
 /* PerTask.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied Mini
 //
@@ -25,6 +25,37 @@
 
 namespace CCore {
 
+/* concept TOCType<TOC> */
+
+template <class ObjectType,class BuilderType>
+concept bool TOCType2 = requires(ObjectType &obj,BuilderType &builder)
+ {
+  { builder.create() } -> ObjectType * ;
+ } ;
+
+template <class TOC>
+concept bool TOCType = UnidType<TOC> && requires()
+ {
+  typename TOC::ObjectType;
+  typename TOC::BuilderType;
+
+  requires ( TOCType2<typename TOC::ObjectType,typename TOC::BuilderType> );
+ } ;
+
+/* concept FullTOCType<TOC> */
+
+template <class ObjectType>
+concept bool FullTOCType2 = requires(ObjectType &obj)
+ {
+  obj.destroy();
+ } ;
+
+template <class TOC>
+concept bool FullTOCType = TOCType<TOC> && requires()
+ {
+  requires ( FullTOCType2<typename TOC::ObjectType> );
+ } ;
+
 /* GetPlanInitNode_...() */
 
 PlanInitNode * GetPlanInitNode_PerTask();
@@ -39,9 +70,9 @@ class PerTask;
 
 class DestroyPerTask;
 
-template <class TOC> class PerTaskObjectScope;
+template <TOCType TOC> class PerTaskObjectScope;
 
-template <class TOC> class TaskObjectBuild;
+template <TOCType TOC> class TaskObjectBuild;
 
 /* class PerTask */
 
@@ -88,7 +119,6 @@ class PerTask : public MemBase_nocopy
        return obj=TryCreate(slot_id);
       }
 
-
      void destroy(ulen slot_id)
       {
        if( obj ) Destroy(slot_id,Replace_null(obj));
@@ -101,7 +131,7 @@ class PerTask : public MemBase_nocopy
 
    static UnidRegister & GetRegister();
 
-   template <class TOC>
+   template <TOCType TOC>
    struct TaskObjectSlotId
     {
      class SlotId : NoCopy
@@ -136,7 +166,7 @@ class PerTask : public MemBase_nocopy
 
      private:
 
-      template <class TOC>
+      template <TOCType TOC>
       static void * CreateFunc(void *builder_)
        {
         typename TOC::BuilderType *builder=static_cast<typename TOC::BuilderType *>(builder_);
@@ -146,7 +176,7 @@ class PerTask : public MemBase_nocopy
         return obj;
        }
 
-      template <class TOC>
+      template <FullTOCType TOC>
       static void DestroyFunc(void *obj)
        {
         static_cast<typename TOC::ObjectType *>(obj)->destroy();
@@ -158,7 +188,7 @@ class PerTask : public MemBase_nocopy
 
       bool isTaken() const { return builder!=0; }
 
-      template <class TOC>
+      template <FullTOCType TOC>
       void init(typename TOC::BuilderType *builder_)
        {
         builder=builder_;
@@ -215,7 +245,7 @@ class PerTask : public MemBase_nocopy
 
    static PerTask * Peak() noexcept;
 
-   template <class TOC>
+   template <TOCType TOC>
    typename TOC::ObjectType * getTaskObject()
     {
      ulen slot_id=TaskObjectSlotId<TOC>::Id;
@@ -223,7 +253,7 @@ class PerTask : public MemBase_nocopy
      return static_cast<typename TOC::ObjectType *>(take(slot_id).getObj(slot_id));
     }
 
-   template <class TOC>
+   template <TOCType TOC>
    typename TOC::ObjectType * tryGetTaskObject() noexcept
     {
      ulen slot_id=TaskObjectSlotId<TOC>::Id;
@@ -231,7 +261,7 @@ class PerTask : public MemBase_nocopy
      return static_cast<typename TOC::ObjectType *>(take(slot_id).tryGetObj(slot_id));
     }
 
-   template <class TOC>
+   template <TOCType TOC>
    void destroyTaskObject()
     {
      ulen slot_id=TaskObjectSlotId<TOC>::Id;
@@ -239,7 +269,7 @@ class PerTask : public MemBase_nocopy
      take(slot_id).destroy(slot_id);
     }
 
-   template <class TOC>
+   template <FullTOCType TOC>
    static void SetBuilder(typename TOC::BuilderType *builder)
     {
      BuilderSlot bslot;
@@ -249,14 +279,14 @@ class PerTask : public MemBase_nocopy
      SetBuilder(TaskObjectSlotId<TOC>::Id,bslot);
     }
 
-   template <class TOC>
+   template <TOCType TOC>
    static void ClearBuilder()
     {
      ClearBuilder(TaskObjectSlotId<TOC>::Id);
     }
  };
 
-template <class TOC>
+template <TOCType TOC>
 typename PerTask::TaskObjectSlotId<TOC>::SlotId PerTask::TaskObjectSlotId<TOC>::Id CCORE_INITPRI_3 ;
 
 /* class DestroyPerTask */
@@ -270,13 +300,13 @@ class DestroyPerTask : NoCopy
 
 /* GetTaskObject<TOC>() */
 
-template <class TOC>
+template <TOCType TOC>
 typename TOC::ObjectType * GetTaskObject()
  {
   return PerTask::Get()->getTaskObject<TOC>();
  }
 
-template <class TOC>
+template <TOCType TOC>
 typename TOC::ObjectType * TryGetTaskObject() noexcept
  {
   if( PerTask *obj=PerTask::TryGet() ) return obj->tryGetTaskObject<TOC>();
@@ -286,7 +316,7 @@ typename TOC::ObjectType * TryGetTaskObject() noexcept
 
 /* class PerTaskObjectScope<TOC> */
 
-template <class TOC>
+template <TOCType TOC>
 class PerTaskObjectScope : NoCopy
  {
    void destroy()
@@ -309,7 +339,7 @@ class PerTaskObjectScope : NoCopy
 
 /* class TaskObjectBuild<TOC> */
 
-template <class TOC>
+template <TOCType TOC>
 class TaskObjectBuild : NoCopy
  {
    using BuilderType = typename TOC::BuilderType ;

@@ -44,7 +44,7 @@ class TaskMemStack;
 
 class TaskMemStackAllocGuard;
 
-template <class T> class StackObject;
+template <NothrowDtorType T> class StackObject;
 
 template <class T,class Algo=ArrayAlgo<T> > class StackArray;
 
@@ -139,7 +139,7 @@ class TaskMemStackAllocGuard : NoCopy
 
 /* class StackObject<T> */
 
-template <class T>
+template <NothrowDtorType T>
 class StackObject : NoCopy
  {
    T *ptr;
@@ -149,7 +149,7 @@ class StackObject : NoCopy
    // constructors
 
    template <class ... SS>
-   explicit StackObject(SS && ... ss)
+   explicit StackObject(SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      TaskMemStackAllocGuard mem(sizeof (T));
 
@@ -228,23 +228,17 @@ class StackArray : NoCopy
 
    // apply
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) { return Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   auto apply(FuncInit func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   auto apply_const(FuncInit func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
+   auto apply_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(Range(*this),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse(FuncInit func_init) { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInitArgType<T &> func_init) { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse(FuncInit func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
 
-   template <class FuncInit>
-   auto applyReverse_const(FuncInit func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   auto applyReverse_const(FuncInitArgType<const T &> func_init) const { return Algon::ApplyToRange(RangeReverse(*this),func_init); }
  };
 
 template <class T,class Algo>
