@@ -40,24 +40,6 @@ using EventTimeType = uint32 ;
 
 using EventIdType = uint16 ;
 
-/* concept EventType<T> */
-
-template <class T>
-concept bool EventType = PODType<T> && requires()
- {
-  { &T::time } -> EventTimeType T::* ;
-
-  { &T::id } -> EventIdType T::* ;
- } ;
-
-/* concept EventInitArg<T,SS> */
-
-template <class T,class ... SS>
-concept bool EventInitArg = EventType<T> && requires(T &obj,EventTimeType time,EventIdType id,SS && ... ss)
- {
-  obj.init(time,id, std::forward<SS>(ss)... );
- } ;
-
 /* functions */
 
 void WaitAtomicZero(Atomic &count);
@@ -65,28 +47,6 @@ void WaitAtomicZero(Atomic &count);
 /* classes */
 
 //enum EventMarker;
-
-struct EventRecordPos;
-
-struct EventPrefix;
-
-template <class T> class EventEnumValue;
-
-class EventMetaInfo;
-
-class EventIdNode;
-
-template <EventType T> class EventId;
-
-class EventTypeIdNode;
-
-template <class T> class EventTypeId;
-
-struct EventControl;
-
-template <class Algo> class EventRecorder;
-
-template <class Recorder,unsigned GuardCount=DefaultGuardCount> class EventRecorderHost;
 
 /* enum EventMarker */
 
@@ -121,6 +81,37 @@ enum EventMarker
 
 const char * GetTextDesc(EventMarker marker);
 
+/* concept EventValue<T> */
+
+template <class T,class V>
+concept bool EventValue2 = OneOfTypes<V,uint8,uint16,uint32> && requires()
+ {
+  { T::Base } -> V ;
+  { T::Lim } -> V ;
+
+  requires ( T::Base < T::Lim );
+
+  { T::Marker } -> EventMarker ;
+ } ;
+
+template <class T>
+concept bool EventValue = requires()
+ {
+  typename T::ValueType;
+
+  requires ( EventValue2<T,typename T::ValueType> );
+ } ;
+
+/* classes */
+
+struct EventRecordPos;
+
+struct EventPrefix;
+
+template <EventValue T> class EventEnumValue;
+
+class EventMetaInfo;
+
 /* struct EventRecordPos */
 
 struct EventRecordPos
@@ -150,10 +141,12 @@ struct EventPrefix // each event type must be layout-compatible with EventPrefix
  //  };
  //
 
-template <class T>
+template <EventValue T>
 class EventEnumValue
  {
    using ValueType = typename T::ValueType ;
+
+   static const ulen Len = UIntConstMul<ulen,T::Lim-T::Base,sizeof (TextLabel)> ;
 
    ValueType value;
 
@@ -162,7 +155,7 @@ class EventEnumValue
    static Sys::Atomic Next;
    static Sys::Atomic Total;
 
-   static InitStorage<(T::Lim-T::Base)*sizeof (TextLabel)> Storage;
+   static InitStorage<Len> Storage;
 
    static ValueType Reserve(TextLabel name);
 
@@ -176,16 +169,16 @@ class EventEnumValue
    static void Append(Desc &desc);
  };
 
-template <class T>
+template <EventValue T>
 Sys::Atomic EventEnumValue<T>::Next{T::Base};
 
-template <class T>
+template <EventValue T>
 Sys::Atomic EventEnumValue<T>::Total{0};
 
-template <class T>
-InitStorage<(T::Lim-T::Base)*sizeof (TextLabel)> EventEnumValue<T>::Storage;
+template <EventValue T>
+InitStorage<EventEnumValue<T>::Len> EventEnumValue<T>::Storage;
 
-template <class T>
+template <EventValue T>
 auto EventEnumValue<T>::Reserve(TextLabel name) -> ValueType
  {
   ValueType ret=Next++;
@@ -204,7 +197,7 @@ auto EventEnumValue<T>::Reserve(TextLabel name) -> ValueType
   return T::Lim;
  }
 
-template <class T>
+template <EventValue T>
 template <class Desc>
 void EventEnumValue<T>::Append(Desc &desc)
  {
@@ -775,7 +768,7 @@ class EventMetaInfo : NoCopy
        }
 
       template <class T>
-      void classId() { class_id_func=&EventId<T>::GetId; }
+      void classId();
 
       void setClassId() { if( class_id_func ) class_id=class_id_func(); }
 
@@ -892,6 +885,50 @@ class EventMetaInfo : NoCopy
     }
  };
 
+/* concept EventType<T> */
+
+template <class T>
+concept bool EventType = PODType<T> && requires()
+ {
+  { &T::time } -> EventTimeType T::* ;
+
+  { &T::id } -> EventIdType T::* ;
+
+  { &T::Register } -> void (*)(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ } ;
+
+/* concept EventInitArg<T,SS> */
+
+template <class T,class ... SS>
+concept bool EventInitArg = EventType<T> && requires(T &obj,EventTimeType time,EventIdType id,SS && ... ss)
+ {
+  obj.init(time,id, std::forward<SS>(ss)... );
+ } ;
+
+/* concept RegisterEventType<T> */
+
+template <class T>
+concept bool RegisterEventType = requires(EventMetaInfo &info)
+ {
+  { &T::Register } -> EventIdType (*)(EventMetaInfo &info);
+ } ;
+
+/* classes */
+
+class EventIdNode;
+
+template <EventType T> class EventId;
+
+class EventTypeIdNode;
+
+template <RegisterEventType T> class EventTypeId;
+
+struct EventControl;
+
+template <class Algo> class EventRecorder;
+
+template <class Recorder,unsigned GuardCount=DefaultGuardCount> class EventRecorderHost;
+
 /* class EventIdNode */
 
 class EventIdNode
@@ -937,6 +974,9 @@ class EventId
 template <EventType T>
 EventIdNode EventId<T>::Node(T::Register,sizeof (T));
 
+template <class T>
+void EventMetaInfo::EventDesc::classId() { class_id_func=&EventId<T>::GetId; }
+
 /* class EventTypeIdNode */
 
 class EventTypeIdNode
@@ -974,7 +1014,7 @@ class EventTypeIdNode
 
 /* class EventTypeId<T> */
 
-template <class T>
+template <RegisterEventType T>
 class EventTypeId
  {
    static EventTypeIdNode Node;
@@ -986,7 +1026,7 @@ class EventTypeId
    static EventIdType GetId(EventMetaInfo &info) { return Node.getId(info); }
  };
 
-template <class T>
+template <RegisterEventType T>
 EventTypeIdNode EventTypeId<T>::Node(T::Register);
 
 /* struct EventControl */
