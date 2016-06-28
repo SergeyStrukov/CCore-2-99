@@ -1,7 +1,7 @@
 /* DDLChar.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -121,8 +121,7 @@ class PrintPos
 
    PrintPos(FileId *file_id_,TextPos pos_) : file_id(file_id_),pos(pos_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrintBase &out) const
     {
      file_id->printPos(out,pos);
     }

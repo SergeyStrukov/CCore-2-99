@@ -1,7 +1,7 @@
 /* DDLParser.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -147,8 +147,7 @@ struct Atom
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( ac )
       {
@@ -194,8 +193,7 @@ class ParserContext : Context
 
    Element_BODY * parseText(FileId *file_id,StrLen text);
 
-   template <class Func>
-   BodyNode * do_parseFile(StrLen file_name,Func func);
+   BodyNode * do_parseFile(StrLen file_name,FuncType<Element_BODY *,FileId *,StrLen> func);
 
   protected:
 
@@ -267,7 +265,7 @@ class ElementContext
     }
 
    template <class T,class ... SS>
-   T * create(SS && ... ss)
+   T * create(SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      return ctx->pool.create<T>( std::forward<SS>(ss)... );
     }

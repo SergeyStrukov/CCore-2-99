@@ -68,6 +68,8 @@ CCORE_INITPRI_0
         
         DDL::CharProp::Object;
         
+        DDL::Map::AlignMulTable<N>::Object;
+        
         --------------
         
         DefaultDesktopPtr DefaultDesktop;

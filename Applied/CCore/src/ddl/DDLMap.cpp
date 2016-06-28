@@ -1,7 +1,7 @@
 /* DDLMap.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -48,7 +48,7 @@ class Map::AlignMulTable : NoCopy
  };
 
 template <ulen N>
-Map::AlignMulTable<N> Map::AlignMulTable<N>::Object;
+Map::AlignMulTable<N> Map::AlignMulTable<N>::Object CCORE_INITPRI_3 ;
 
 template <>
 class Map::AlignMulTable<1>

@@ -1,7 +1,7 @@
 /* DDLEngine.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -24,13 +24,45 @@
 namespace CCore {
 namespace DDL {
 
+/* concept FileNameType<FileName> */
+
+template <class FileName>
+concept bool FileNameType = MovableType<FileName> && requires(FileName &obj,PrintBase &out,TextPos pos,StrLen path,StrLen file_name)
+ {
+  FileName();
+
+  FileName(file_name);
+
+  FileName(path,file_name);
+
+  { +obj } -> bool ;
+
+  { !obj } -> bool ;
+
+  { obj.getStr() } -> StrLen ;
+
+  { obj.getPath() } -> StrLen ;
+
+  { obj.getFile() } -> StrLen ;
+
+  obj.printPos(out,pos);
+ } ;
+
+/* concept FileTextType<FileText> */
+
+template <class FileText>
+concept bool FileTextType = ConstTypeRangeableType<FileText,uint8> && requires(StrLen file_name,ulen max_len)
+ {
+  FileText(file_name,max_len);
+ } ;
+
 /* classes */
 
 struct EngineResult;
 
 class TextEngine;
 
-template <class FileName,class FileText> class FileEngine;
+template <FileNameType FileName,FileTextType FileText> class FileEngine;
 
 /* struct EngineResult */
 
@@ -75,7 +107,7 @@ class TextEngine : ParserContext
 
 /* class FileEngine<FileName,FileText> */
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 class FileEngine : ParserContext
  {
    struct FileRec : FileId , MemBase_nocopy
@@ -139,7 +171,7 @@ class FileEngine : ParserContext
    EngineResult process(StrLen file_name);
  };
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 void FileEngine<FileName,FileText>::Destroy(FileRec *rec)
  {
   if( rec )
@@ -151,13 +183,13 @@ void FileEngine<FileName,FileText>::Destroy(FileRec *rec)
     }
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 auto FileEngine<FileName,FileText>::Make(FileRec *rec) -> File
  {
   return File(rec,rec->getText());
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 auto FileEngine<FileName,FileText>::open(FileName &file_name) -> File
  {
   StrKey key(file_name.getStr());
@@ -182,7 +214,7 @@ auto FileEngine<FileName,FileText>::open(FileName &file_name) -> File
   return Make(rec);
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 auto FileEngine<FileName,FileText>::openFile(StrLen file_name_) -> File
  {
   inc_count=0;
@@ -199,7 +231,7 @@ auto FileEngine<FileName,FileText>::openFile(StrLen file_name_) -> File
   return open(file_name);
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 auto FileEngine<FileName,FileText>::openFile(FileId *file_id,const Token &name) -> File
  {
   if( inc_count>=max_inc )
@@ -227,7 +259,7 @@ auto FileEngine<FileName,FileText>::openFile(FileId *file_id,const Token &name) 
   return open(file_name);
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 FileEngine<FileName,FileText>::FileEngine(PrintBase &msg,ulen mem_cap,ulen max_files_,ulen max_inc_,ulen max_file_len_)
  : ParserContext(msg,mem_cap),
    max_files(max_files_),
@@ -238,13 +270,13 @@ FileEngine<FileName,FileText>::FileEngine(PrintBase &msg,ulen mem_cap,ulen max_f
  {
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 FileEngine<FileName,FileText>::~FileEngine()
  {
   Destroy(root.root);
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 EngineResult FileEngine<FileName,FileText>::process(StrLen file_name,StrLen pretext)
  {
   if( BodyNode *body_node=parseFile(file_name,pretext) )
@@ -258,7 +290,7 @@ EngineResult FileEngine<FileName,FileText>::process(StrLen file_name,StrLen pret
   return Nothing;
  }
 
-template <class FileName,class FileText>
+template <FileNameType FileName,FileTextType FileText>
 EngineResult FileEngine<FileName,FileText>::process(StrLen file_name)
  {
   if( BodyNode *body_node=parseFile(file_name) )

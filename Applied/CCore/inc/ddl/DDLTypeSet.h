@@ -1,7 +1,7 @@
 /* DDLTypeSet.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -138,7 +138,7 @@ class FindNodeMap : NoCopy
       }
     };
 
-   struct Rec : NoCopy , CmpComparable<Rec>
+   struct Rec : NoCopyBase<CmpComparable<Rec> >
     {
      ulen ind;
      DynArray<StrLen> names;

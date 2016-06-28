@@ -1,7 +1,7 @@
 /* DDLParser.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -475,8 +475,7 @@ Element_BODY * ParserContext::parseText(FileId *file_id,StrLen text)
   return 0;
  }
 
-template <class Func>
-BodyNode * ParserContext::do_parseFile(StrLen file_name,Func func)
+BodyNode * ParserContext::do_parseFile(StrLen file_name,FuncType<Element_BODY *,FileId *,StrLen> func)
  {
   ReportExceptionTo<PrintBase> report(error.getMsg());
 
