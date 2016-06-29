@@ -1,7 +1,7 @@
 /* DDLEval.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -171,8 +171,7 @@ struct ConstResult
     PrintOptType(EvalResult &result_) : result(result_) {}
    };
 
-  template <class P>
-  void print(P &out,PrintOptType opt) const;
+  void print(PrinterType &out,PrintOptType opt) const;
  };
 
 /* struct LenResult */
@@ -188,8 +187,7 @@ struct LenResult
     value=value_;
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#; = #;",*node,value);
    }
@@ -225,8 +223,7 @@ struct PrintName
   template <class Node>
   explicit PrintName(Node *node) : scope(node->parent),depth(node->depth),name(node->name.getStr()) {}
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     TempArray<ScopeNode *,25> temp(depth);
 
@@ -259,14 +256,12 @@ struct PrintType
 
   PrintType(EvalResult &result_,TypeNode *type_,ulen cap_=100) : result(result_),type(type_),cap(cap_) {}
 
-  template <class P>
-  void operator () (P &out,TypeNode::Base *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::Base *type_ptr) const
    {
     Putobj(out,type_ptr->type);
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::Ptr *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::Ptr *type_ptr) const
    {
     if( cap )
       {
@@ -278,8 +273,7 @@ struct PrintType
       }
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::PolyPtr *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::PolyPtr *type_ptr) const
    {
     if( cap )
       {
@@ -304,8 +298,7 @@ struct PrintType
       }
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::Array *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::Array *type_ptr) const
    {
     if( cap )
       {
@@ -317,8 +310,7 @@ struct PrintType
       }
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::ArrayLen *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::ArrayLen *type_ptr) const
    {
     auto len=result.getLen(type_ptr->len_node);
 
@@ -332,14 +324,12 @@ struct PrintType
       }
    }
 
-  template <class P>
-  void operator () (P &out,StructNode *struct_node) const
+  void operator () (PrinterType &out,StructNode *struct_node) const
    {
     Printf(out,"struct #;",PrintName(struct_node));
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     ElaborateAnyPtr(*this,out,TypeAdapter(type).ptr);
    }
@@ -357,20 +347,18 @@ struct PrintValue
   PrintValue(EvalResult &result_,TypeNode *type_,const Value &value_,ulen off_=0)
    : result(result_),type(type_),value(value_),off(off_) {}
 
-  template <class T,class P>
+  template <class T,PrinterType P>
   void op(P &out,TypeNode::Base::Type type) const
    {
     Printf(out,"#;(#;) #;",RepeatChar(off,' '),type,value.get<T>());
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::Base *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::Base *type_ptr) const
    {
     ExtBaseType(*this,type_ptr->type,out,type_ptr->type);
    }
 
-  template <class P>
-  static void PrintPtr(P &out,EvalResult &result,PtrNode *ptr_node,ulen cap=100)
+  static void PrintPtr(PrinterType &out,EvalResult &result,PtrNode *ptr_node,ulen cap=100)
    {
     if( PtrNode *parent=ptr_node->parent )
       {
@@ -398,8 +386,7 @@ struct PrintValue
       }
    }
 
-  template <class P>
-  void printPtr(P &out) const
+  void printPtr(PrinterType &out) const
    {
     Ptr ptr=value.get<Ptr>();
 
@@ -421,20 +408,17 @@ struct PrintValue
       }
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::Ptr *) const
+  void operator () (PrinterType &out,TypeNode::Ptr *) const
    {
     printPtr(out);
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::PolyPtr *) const
+  void operator () (PrinterType &out,TypeNode::PolyPtr *) const
    {
     printPtr(out);
    }
 
-  template <class P>
-  void printArray(P &out,TypeNode *type) const
+  void printArray(PrinterType &out,TypeNode *type) const
    {
     PtrLen<Value> data=value.get<Block>().data;
 
@@ -481,20 +465,17 @@ struct PrintValue
       }
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::Array *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::Array *type_ptr) const
    {
     printArray(out,type_ptr->type_node);
    }
 
-  template <class P>
-  void operator () (P &out,TypeNode::ArrayLen *type_ptr) const
+  void operator () (PrinterType &out,TypeNode::ArrayLen *type_ptr) const
    {
     printArray(out,type_ptr->type_node);
    }
 
-  template <class P>
-  void operator () (P &out,StructNode *struct_node) const
+  void operator () (PrinterType &out,StructNode *struct_node) const
    {
     PtrLen<Value> data=value.get<Block>().data;
 
@@ -553,15 +534,13 @@ struct PrintValue
       }
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     ElaborateAnyPtr(*this,out,TypeAdapter(type).ptr);
    }
  };
 
-template <class P>
-void ConstResult::print(P &out,PrintOptType opt) const
+void ConstResult::print(PrinterType &out,PrintOptType opt) const
  {
   Printf(out,"#; #; = #;",PrintType(opt.result,type),PrintName(node),PrintValue(opt.result,type,value));
  }
