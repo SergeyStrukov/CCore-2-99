@@ -1,7 +1,7 @@
 /* DDLTypes.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -26,28 +26,21 @@ namespace DDL {
 
 /* functions */
 
-template <class UInt>
+template <UIntType UInt>
 bool AddOverflow(UInt a,UInt b)
  {
-  static_assert( Meta::IsUInt<UInt> ,"CCore::DDL::AddOverflow(UInt,UInt) : UInt must be an unsigned integral type");
-
   return a>MaxUInt<UInt>-b;
  }
 
-template <class UInt>
+template <UIntType UInt>
 bool MulOverflow(UInt a,UInt b)
  {
-  static_assert( Meta::IsUInt<UInt> ,"CCore::DDL::MulOverflow(UInt,UInt) : UInt must be an unsigned integral type");
-
   return a && b>MaxUInt<UInt>/a ;
  }
 
-template <class UInt,class S>
+template <UIntType UInt,UIntType S>
 bool CastOverflow(UInt &a,S b)
  {
-  static_assert( Meta::IsUInt<UInt> ,"CCore::DDL::CastOverflow(UInt &,S) : UInt must be an unsigned integral type");
-  static_assert( Meta::IsUInt<S> ,"CCore::DDL::CastOverflow(UInt &,S) : S must be an unsigned integral type");
-
   if( b<=MaxUInt<UInt> )
     {
      a=(UInt)b;
@@ -64,7 +57,7 @@ bool CastOverflow(UInt &a,S b)
 
 /* classes */
 
-template <class T,class SUInt> struct IntType;
+template <class T,SUIntType SUInt> struct IntType;
 
 struct Text;
 
@@ -74,7 +67,7 @@ struct SLen;
 
 /* struct IntType<T,SUInt> */
 
-template <class T,class SUInt>
+template <class T,SUIntType SUInt>
 struct IntType
  {
   using ValueType = SUInt ;
@@ -85,11 +78,8 @@ struct IntType
 
   bool operator ! () const { return !value; }
 
-  template <class S>
-  void cast(S value_)
+  void cast(SUIntType value_)
    {
-    static_assert( Meta::IsSUInt<S> ,"CCore::DDL::IntType::cast(S) : S must be an integral type");
-
     value=(SUInt)value_;
    }
 
@@ -132,8 +122,7 @@ struct IntType
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Putobj(out,value);
    }
@@ -145,88 +134,77 @@ struct imp_sint8 : IntType<imp_sint8,sint8>
  {
   imp_sint8() { cast(0); }
 
-  template <class S>
-  explicit imp_sint8(S value) { cast(value); }
+  explicit imp_sint8(SUIntType value) { cast(value); }
  };
 
 struct imp_uint8 : IntType<imp_uint8,uint8>
  {
   imp_uint8() { cast(0); }
 
-  template <class S>
-  explicit imp_uint8(S value) { cast(value); }
+  explicit imp_uint8(SUIntType value) { cast(value); }
  };
 
 struct imp_sint16 : IntType<imp_sint16,sint16>
  {
   imp_sint16() { cast(0); }
 
-  template <class S>
-  explicit imp_sint16(S value) { cast(value); }
+  explicit imp_sint16(SUIntType value) { cast(value); }
  };
 
 struct imp_uint16 : IntType<imp_uint16,uint16>
  {
   imp_uint16() { cast(0); }
 
-  template <class S>
-  explicit imp_uint16(S value) { cast(value); }
+  explicit imp_uint16(SUIntType value) { cast(value); }
  };
 
 struct imp_sint32 : IntType<imp_sint32,sint32>
  {
   imp_sint32() { cast(0); }
 
-  template <class S>
-  explicit imp_sint32(S value) { cast(value); }
+  explicit imp_sint32(SUIntType value) { cast(value); }
  };
 
 struct imp_uint32 : IntType<imp_uint32,uint32>
  {
   imp_uint32() { cast(0); }
 
-  template <class S>
-  explicit imp_uint32(S value) { cast(value); }
+  explicit imp_uint32(SUIntType value) { cast(value); }
  };
 
 struct imp_sint64 : IntType<imp_sint64,sint64>
  {
   imp_sint64() { cast(0); }
 
-  template <class S>
-  explicit imp_sint64(S value) { cast(value); }
+  explicit imp_sint64(SUIntType value) { cast(value); }
  };
 
 struct imp_uint64 : IntType<imp_uint64,uint64>
  {
   imp_uint64() { cast(0); }
 
-  template <class S>
-  explicit imp_uint64(S value) { cast(value); }
+  explicit imp_uint64(SUIntType value) { cast(value); }
  };
 
 struct imp_sint : IntType<imp_sint,sint_type>
  {
   imp_sint() { cast(0); }
 
-  template <class S>
-  explicit imp_sint(S value) { cast(value); }
+  explicit imp_sint(SUIntType value) { cast(value); }
  };
 
 struct imp_uint : IntType<imp_uint,uint_type>
  {
   imp_uint() { cast(0); }
 
-  template <class S>
-  explicit imp_uint(S value) { cast(value); }
+  explicit imp_uint(SUIntType value) { cast(value); }
  };
 
 struct imp_ulen : IntType<imp_ulen,ulen_type>
  {
   imp_ulen() { cast(0); }
 
-  template <class S>
-  explicit imp_ulen(S value) { cast(value); }
+  explicit imp_ulen(SUIntType value) { cast(value); }
  };
 
 using imp_int = imp_sint ;
@@ -245,8 +223,7 @@ struct Text
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Putobj(out,str);
    }
@@ -278,8 +255,7 @@ struct IP
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;.#;.#;.#;",address[0],address[1],address[2],address[3]);
    }
@@ -335,8 +311,7 @@ struct SLen
 
   // cast
 
-  template <class UInt>
-  void cast_uint(UInt value,Flag flag_)
+  void cast_uint(UIntType value,Flag flag_)
    {
     if( CastOverflow(len,value) )
       flag=Error;
@@ -344,7 +319,7 @@ struct SLen
       flag=flag_;
    }
 
-  template <class UInt,class SInt>
+  template <UIntType UInt,SIntType SInt>
   void cast_sint(SInt value)
    {
     if( value<0 )
@@ -372,11 +347,8 @@ struct SLen
     cast_sint<unsigned>(value);
    }
 
-  template <class S>
-  explicit SLen(S value)
+  explicit SLen(SUIntType value)
    {
-    static_assert( Meta::IsSUInt<S> ,"CCore::DDL::SLen::SLen(S) : S must be an integral type");
-
     cast(value);
    }
 
@@ -474,8 +446,7 @@ struct SLen
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( flag )
       {

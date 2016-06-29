@@ -1,7 +1,7 @@
 /* DDLSemantic.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -169,7 +169,7 @@ class ExtContext
    FileId * getFileId() { return file_id; }
 
    template <class T,class ... SS>
-   T * create(SS && ... ss)
+   T * create(SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
      return ctx->pool.create<T>( std::forward<SS>(ss)... );
     }
@@ -288,8 +288,7 @@ struct NameNodeList : NoCopy
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Putobj(out,posName());
    }
@@ -329,8 +328,7 @@ struct NameRefNode : NoCopy
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Putobj(out,posName());
    }
@@ -428,8 +426,7 @@ struct LenNode : NoCopy
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"length #;",PrintPos(file_id,pos));
    }
@@ -1015,8 +1012,7 @@ struct AliasNode : NodeBase<AliasNode>
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"type #;",name);
    }
@@ -1043,8 +1039,7 @@ struct ConstNode : NodeBase<ConstNode>
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"const #;",name);
    }
@@ -1087,8 +1082,7 @@ struct FieldNode : NoCopy
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"default field #;",name);
    }
@@ -1146,8 +1140,7 @@ struct StructNode : NodeBase<StructNode>
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"struct #;",name);
    }
@@ -1271,8 +1264,7 @@ class NameLinkMap : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      if( name )
        Printf(out,"scope #;",*name);

@@ -85,8 +85,7 @@ struct PosName
     str=token.str.part(1);
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#; #.q;",PrintPos(file_id,pos),str);
    }
