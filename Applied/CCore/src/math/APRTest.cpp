@@ -1,7 +1,7 @@
 /* APRTest.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -342,8 +342,7 @@ void Jacobi::GuardLog()
   Printf(Exception,"CCore::Math::APRTest::Jacobi::GuardLog() : internal");
  }
 
-template <class Func>
-void Jacobi::addLog(unsigned p,Func func) const
+void Jacobi::addLog(unsigned p,FuncArgType<unsigned,unsigned> func) const
  {
   AddLogReport report(prime,p);
 

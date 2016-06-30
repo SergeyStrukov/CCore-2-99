@@ -1,7 +1,7 @@
 /* APRTest.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -92,8 +92,7 @@ class SmallPrimesSet // odd subsequent SmallPrimes 3, 5, 7, ...
 
   private:
 
-   template <class Func>
-   void forPrimes(Func &func) const
+   void forPrimes(FuncArgType<unsigned> &func) const
     {
      auto r=Range(flags);
 
@@ -112,7 +111,7 @@ class SmallPrimesSet // odd subsequent SmallPrimes 3, 5, 7, ...
 
    bool next();
 
-   template <class FuncInit>
+   template <FuncInitArgType<unsigned> FuncInit>
    void forOddPrimes(FuncInit func_init) const
     {
      FunctorTypeOf<FuncInit> func(func_init);
@@ -120,7 +119,7 @@ class SmallPrimesSet // odd subsequent SmallPrimes 3, 5, 7, ...
      forPrimes(func);
     }
 
-   template <class FuncInit>
+   template <FuncInitArgType<unsigned> FuncInit>
    void forAllPrimes(FuncInit func_init) const
     {
      FunctorTypeOf<FuncInit> func(func_init);
@@ -197,8 +196,7 @@ class PrimeQ : public CmpComparable<PrimeQ>
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"q = #; : 1 + 2",prime);
 
@@ -209,8 +207,7 @@ class PrimeQ : public CmpComparable<PrimeQ>
 
    // print cpp
 
-   template <class P>
-   void printCpp(P &out) const
+   void printCpp(PrinterType &out) const
     {
      Printf(out,"{ #;u , #;u }",prime,set_number);
     }
@@ -239,8 +236,7 @@ class Jacobi : QModEngine
 
    static void GuardLog();
 
-   template <class Func>
-   void addLog(unsigned p,Func func) const; // para-usable
+   void addLog(unsigned p,FuncArgType<unsigned,unsigned> func) const; // para-usable
 
    class LogCountTable;
 
@@ -310,8 +306,7 @@ class JacobiSumTable
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"  q = #;\n  set_number = #;\n",prime_q,set_number);
 
@@ -330,8 +325,7 @@ class JacobiSumTable
 
    // print cpp
 
-   template <class P>
-   void printCpp(P &out) const
+   void printCpp(PrinterType &out) const
     {
      if( prime_p>2 )
        {
@@ -343,8 +337,7 @@ class JacobiSumTable
        }
     }
 
-   template <class P>
-   void printCpp_jtable(P &out) const
+   void printCpp_jtable(PrinterType &out) const
     {
      if( prime_p>2 )
        {
@@ -408,8 +401,7 @@ class PrimeP
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Printf(out,"p = #;\n\n",prime);
 
@@ -418,14 +410,12 @@ class PrimeP
 
    // print cpp
 
-   template <class P>
-   void printCpp(P &out) const
+   void printCpp(PrinterType &out) const
     {
      Printf(out,"{ #;u , Range(JSet_#;) }",prime,prime);
     }
 
-   template <class P>
-   void printCpp_jset(P &out) const
+   void printCpp_jset(PrinterType &out) const
     {
      for(auto r=Range(jset); +r ;++r)
        {
@@ -489,8 +479,7 @@ class DataGen : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      for(const PrimeQ &q : qset ) Printf(out,"#;\n------------\n\n",q);
 
@@ -499,8 +488,7 @@ class DataGen : NoCopy
 
    // print cpp
 
-   template <class P>
-   void printCpp(P &out) const
+   void printCpp(PrinterType &out) const
     {
      Putobj(out,"/* APRTestData.gen.cpp */\n\n");
 
