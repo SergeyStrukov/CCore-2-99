@@ -1,7 +1,7 @@
 /* IntegerSlowAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -26,17 +26,17 @@ namespace Math {
 
 /* classes */
 
-template <class UInt,unsigned Shift> struct RShiftConst_shift;
+template <UIntType UInt,unsigned Shift> struct RShiftConst_shift;
 
-template <class UInt> struct RShiftConst_zero;
+template <UIntType UInt> struct RShiftConst_zero;
 
-template <class UInt,class DUInt=Meta::DoubleUInt<UInt> > struct IntegerSlowMulAlgo;
+template <UIntType UInt,class DUInt=Meta::DoubleUInt<UInt> > struct IntegerSlowMulAlgo;
 
-template <class UInt> struct IntegerSlowAlgo;
+template <UIntType UInt> struct IntegerSlowAlgo;
 
 /* struct RShiftConst_shift<UInt,unsigned Shift> */
 
-template <class UInt,unsigned Shift>
+template <UIntType UInt,unsigned Shift>
 struct RShiftConst_shift
  {
   static UInt Do(UInt val) { return UInt( val>>Shift ); }
@@ -44,7 +44,7 @@ struct RShiftConst_shift
 
 /* struct RShiftConst_zero<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 struct RShiftConst_zero
  {
   static UInt Do(UInt) { return 0; }
@@ -52,12 +52,12 @@ struct RShiftConst_zero
 
 /* type RShiftConst<UInt,unsigned Shift,unsigned UIntBits> */
 
-template <class UInt,unsigned Shift,unsigned UIntBits=Meta::UIntBits<UInt> >
+template <UIntType UInt,unsigned Shift,unsigned UIntBits=Meta::UIntBits<UInt> >
 using RShiftConst = Meta::Select<( Shift<UIntBits ), RShiftConst_shift<UInt,Shift> , RShiftConst_zero<UInt> > ;
 
 /* struct IntegerSlowMulAlgo<UInt,DUInt> */
 
-template <class UInt,class DUInt>
+template <UIntType UInt,class DUInt>
 struct IntegerSlowMulAlgo
  {
   struct DoubleUMul
@@ -71,7 +71,7 @@ struct IntegerSlowMulAlgo
   static UInt DoubleUDiv(UInt hi,UInt lo,UInt den); // hi<den
  };
 
-template <class UInt,class DUInt>
+template <UIntType UInt,class DUInt>
 IntegerSlowMulAlgo<UInt,DUInt>::DoubleUMul::DoubleUMul(UInt a,UInt b)
  {
   const unsigned Bits = Meta::UIntBits<UInt> ;
@@ -82,7 +82,7 @@ IntegerSlowMulAlgo<UInt,DUInt>::DoubleUMul::DoubleUMul(UInt a,UInt b)
   hi=UInt(c>>Bits);
  }
 
-template <class UInt,class DUInt>
+template <UIntType UInt,class DUInt>
 UInt IntegerSlowMulAlgo<UInt,DUInt>::DoubleUDiv(UInt hi,UInt lo,UInt den)
  {
   const unsigned Bits = Meta::UIntBits<UInt> ;
@@ -94,14 +94,14 @@ UInt IntegerSlowMulAlgo<UInt,DUInt>::DoubleUDiv(UInt hi,UInt lo,UInt den)
 
 /* struct IntegerSlowMulAlgo<UInt,void> */
 
-template <class UInt>
+template <UIntType UInt>
 struct IntegerSlowMulAlgo<UInt,void> : UIntSlowMulAlgo<UInt>
  {
  };
 
 /* struct IntegerSlowAlgo<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 struct IntegerSlowAlgo : IntegerSlowMulAlgo<UInt>
  {
   using DoubleUMul = typename IntegerSlowMulAlgo<UInt>::DoubleUMul ;
@@ -241,25 +241,25 @@ struct IntegerSlowAlgo : IntegerSlowMulAlgo<UInt>
 
  // functions
 
-template <class UInt>
+template <UIntType UInt>
 UInt IntegerSlowAlgo<UInt>::SignExt(Unit a)
  {
   return Unit( -(a>>(UnitBits-1)) );
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt IntegerSlowAlgo<UInt>::SignExt(const Unit *a,ulen na)
  {
   return (na>0)?SignExt(a[na-1]):0;
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::SignCmp(Unit a,Unit b)
  {
   return UCmp(Unit(a-MSBit),Unit(b-MSBit));
  }
 
-template <class UInt>
+template <UIntType UInt>
 unsigned IntegerSlowAlgo<UInt>::CountZeroMSB(Unit a)
  {
   if( !a ) return UnitBits;
@@ -290,7 +290,7 @@ unsigned IntegerSlowAlgo<UInt>::CountZeroMSB(Unit a)
   return ret;
  }
 
-template <class UInt>
+template <UIntType UInt>
 unsigned IntegerSlowAlgo<UInt>::CountZeroLSB(Unit a)
  {
   if( !a ) return UnitBits;
@@ -323,7 +323,7 @@ unsigned IntegerSlowAlgo<UInt>::CountZeroLSB(Unit a)
 
  // private functions
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::Add(Unit &b,Unit a,Unit c)
  {
   a+=c;
@@ -332,7 +332,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::Add(Unit &b,Unit a,Unit c)
   return (b<a)|(a<c);
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::Sub(Unit &b,Unit a,Unit c)
  {
   a+=c;
@@ -344,7 +344,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::Sub(Unit &b,Unit a,Unit c)
   return ret;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::RevSub(Unit &b,Unit a,Unit c)
  {
   Unit d=b+c;
@@ -355,13 +355,13 @@ UInt/* c */ IntegerSlowAlgo<UInt>::RevSub(Unit &b,Unit a,Unit c)
   return ret;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt IntegerSlowAlgo<UInt>::LShift(Unit hi,Unit lo,unsigned shift)
  {
   return Unit( (hi<<shift)|(lo>>(UnitBits-shift)) );
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt IntegerSlowAlgo<UInt>::RShift(Unit hi,Unit lo,unsigned shift)
  {
   return Unit( (hi<<(UnitBits-shift))|(lo>>shift) );
@@ -369,13 +369,13 @@ UInt IntegerSlowAlgo<UInt>::RShift(Unit hi,Unit lo,unsigned shift)
 
  // private operators
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::UCmp(Unit a,Unit b)
  {
   return LessCmp(a,b);
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::UCmp_(const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   for(; na>nb ;na--)
@@ -387,7 +387,7 @@ CmpResult IntegerSlowAlgo<UInt>::UCmp_(const Unit *a,ulen na,const Unit *b,ulen 
   return CmpEqual;
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::Cmp_(const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( na==nb )
@@ -423,7 +423,7 @@ CmpResult IntegerSlowAlgo<UInt>::Cmp_(const Unit *a,ulen na,const Unit *b,ulen n
 
  // const operators
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::USign(const Unit *a,ulen na)
  {
   for(; na>0 ;na--) if( a[na-1]!=0 ) return CmpGreater;
@@ -431,7 +431,7 @@ CmpResult IntegerSlowAlgo<UInt>::USign(const Unit *a,ulen na)
   return CmpEqual;
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::Sign(const Unit *a,ulen na)
  {
   if( na>0 )
@@ -450,13 +450,13 @@ CmpResult IntegerSlowAlgo<UInt>::Sign(const Unit *a,ulen na)
     }
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::UCmp(const Unit *a,const Unit *b,ulen nab)
  {
   return UCmp_(a,nab,b,nab);
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::UCmp(const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( na<nb ) return -UCmp_(b,nb,a,na);
@@ -464,13 +464,13 @@ CmpResult IntegerSlowAlgo<UInt>::UCmp(const Unit *a,ulen na,const Unit *b,ulen n
   return UCmp_(a,na,b,nb);
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::Cmp(const Unit *a,const Unit *b,ulen nab)
  {
   return Cmp_(a,nab,b,nab);
  }
 
-template <class UInt>
+template <UIntType UInt>
 CmpResult IntegerSlowAlgo<UInt>::Cmp(const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( na<nb ) return -Cmp_(b,nb,a,na);
@@ -478,7 +478,7 @@ CmpResult IntegerSlowAlgo<UInt>::Cmp(const Unit *a,ulen na,const Unit *b,ulen nb
   return Cmp_(a,na,b,nb);
  }
 
-template <class UInt>
+template <UIntType UInt>
 ulen IntegerSlowAlgo<UInt>::UNormalize(const Unit *a,ulen na)
  {
   for(; na>0 && a[na-1]==0 ;na--);
@@ -486,7 +486,7 @@ ulen IntegerSlowAlgo<UInt>::UNormalize(const Unit *a,ulen na)
   return na;
  }
 
-template <class UInt>
+template <UIntType UInt>
 ulen IntegerSlowAlgo<UInt>::Normalize(const Unit *a,ulen na)
  {
   while( na>=2 )
@@ -505,33 +505,20 @@ ulen IntegerSlowAlgo<UInt>::Normalize(const Unit *a,ulen na)
 
  // additive operators
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::UNeg(Unit *a,ulen na)
  {
   Unit c=0;
 
   for(; na>0 ;a++,na--)
     {
-#if 0 // ICE workaround
-
      c=RevSub(*a,0,c);
-
-#else
-
-     Unit d=(*a)+c;
-     Unit ret=( (d|c)!=0 );
-
-     (*a)=-d;
-
-     c=ret;
-
-#endif
     }
 
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::Neg(Unit *a,ulen na)
  {
   if( na==0 ) return 0;
@@ -544,7 +531,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::Neg(Unit *a,ulen na)
   return aext;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::UAddUnit(Unit *a,ulen na,Unit b)
  {
   if( na==0 ) return b;
@@ -559,7 +546,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::UAddUnit(Unit *a,ulen na,Unit b)
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::AddUnit(Unit *a,ulen na,Unit b)
  {
   if( na==0 ) return b;
@@ -569,7 +556,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::AddUnit(Unit *a,ulen na,Unit b)
   return aext+UAddUnit(a,na,b);
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::USubUnit(Unit *a,ulen na,Unit b)
  {
   if( na==0 ) return b;
@@ -584,7 +571,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::USubUnit(Unit *a,ulen na,Unit b)
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::SubUnit(Unit *a,ulen na,Unit b)
  {
   if( na==0 ) return Unit(-b);
@@ -594,7 +581,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::SubUnit(Unit *a,ulen na,Unit b)
   return aext-USubUnit(a,na,b);
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::UNegAddUnit(Unit *a,ulen na,Unit b)
  {
   if( na==0 ) return Unit(-b);
@@ -609,7 +596,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::UNegAddUnit(Unit *a,ulen na,Unit b)
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::NegAddUnit(Unit *a,ulen na,Unit b)
  {
   if( na==0 ) return b;
@@ -619,7 +606,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::NegAddUnit(Unit *a,ulen na,Unit b)
   return -aext-UNegAddUnit(a,na,b);
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::UAdd(Unit *restrict b,const Unit *a,ulen nab)
  {
   Unit c=0;
@@ -632,7 +619,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::UAdd(Unit *restrict b,const Unit *a,ulen nab)
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::Add(Unit *restrict b,ulen nb,const Unit *a,ulen na)
  {
   if( na==0 ) return SignExt(b,nb);
@@ -656,7 +643,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::Add(Unit *restrict b,ulen nb,const Unit *a,
   return bext;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::USub(Unit *restrict b,const Unit *a,ulen nab)
  {
   Unit c=0;
@@ -669,7 +656,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::USub(Unit *restrict b,const Unit *a,ulen nab)
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::Sub(Unit *restrict b,ulen nb,const Unit *a,ulen na)
  {
   if( na==0 ) return SignExt(b,nb);
@@ -693,7 +680,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::Sub(Unit *restrict b,ulen nb,const Unit *a,
   return bext;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::URevSub(Unit *restrict b,const Unit *a,ulen nab)
  {
   Unit c=0;
@@ -706,7 +693,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::URevSub(Unit *restrict b,const Unit *a,ulen n
   return c;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::RevSub(Unit *restrict b,ulen nb,const Unit *a,ulen na)
  {
   if( na==0 ) return Neg(b,nb);
@@ -732,7 +719,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::RevSub(Unit *restrict b,ulen nb,const Unit 
 
  // shift operators
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::ULShift(Unit *a,ulen na,unsigned shift)
  {
   if( na==0 ) return 0;
@@ -749,7 +736,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::ULShift(Unit *a,ulen na,unsigned shift)
   return ret;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::LShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift)
  {
   if( nab==0 ) return 0;
@@ -764,7 +751,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::LShift(Unit *restrict b,const Unit *a,ulen 
   return LShift(SignExt(a[nab-1]),a[nab-1],shift);
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::UShiftUp(Unit *a,ulen na,ulen delta,unsigned shift)
  {
   if( na==0 ) return 0;
@@ -781,7 +768,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::UShiftUp(Unit *a,ulen na,ulen delta,unsigne
   return ret;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* msu */ IntegerSlowAlgo<UInt>::ShiftUp(Unit *a,ulen na,ulen delta,unsigned shift)
  {
   if( na==0 ) return 0;
@@ -798,7 +785,7 @@ UInt/* msu */ IntegerSlowAlgo<UInt>::ShiftUp(Unit *a,ulen na,ulen delta,unsigned
   return ret;
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::URShift(Unit *a,ulen na,unsigned shift)
  {
   if( na==0 ) return;
@@ -811,7 +798,7 @@ void IntegerSlowAlgo<UInt>::URShift(Unit *a,ulen na,unsigned shift)
   a[na-1]>>=shift;
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::RShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift)
  {
   if( nab==0 ) return;
@@ -824,7 +811,7 @@ void IntegerSlowAlgo<UInt>::RShift(Unit *restrict b,const Unit *a,ulen nab,unsig
   b[nab-1]=RShift(SignExt(a[nab-1]),a[nab-1],shift);
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::UShiftDown(Unit *a,ulen na,ulen delta,unsigned shift)
  {
   if( na==0 ) return;
@@ -836,7 +823,7 @@ void IntegerSlowAlgo<UInt>::UShiftDown(Unit *a,ulen na,ulen delta,unsigned shift
   a[na]=Unit( a[delta+na]>>shift );
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::ShiftDown(Unit *a,ulen na,ulen delta,unsigned shift)
  {
   if( na==0 ) return;
@@ -850,7 +837,7 @@ void IntegerSlowAlgo<UInt>::ShiftDown(Unit *a,ulen na,ulen delta,unsigned shift)
 
  // multiplicative operators
 
-template <class UInt>
+template <UIntType UInt>
 struct IntegerSlowAlgo<UInt>::MulAcc
  {
   Unit lo;
@@ -906,7 +893,7 @@ struct IntegerSlowAlgo<UInt>::MulAcc
    }
  };
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::UMul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( na==0 || nb==0 )
@@ -984,7 +971,7 @@ void IntegerSlowAlgo<UInt>::UMul(Unit *restrict c,const Unit *a,ulen na,const Un
   c[na+nb-1]=acc.hi;
  }
 
-template <class UInt>
+template <UIntType UInt>
 UInt/* c */ IntegerSlowAlgo<UInt>::UMac(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( na==0 || nb==0 ) return 0;
@@ -1062,7 +1049,7 @@ UInt/* c */ IntegerSlowAlgo<UInt>::UMac(Unit *restrict c,const Unit *a,ulen na,c
   return carry;
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::UMulLo(Unit *restrict c,ulen nc,const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( nc==0 ) return;
@@ -1163,7 +1150,7 @@ void IntegerSlowAlgo<UInt>::UMulLo(Unit *restrict c,ulen nc,const Unit *a,ulen n
   c[na+nb-1]=acc.hi;
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::USq(Unit *restrict c,const Unit *a,ulen na)
  {
   if( na==0 ) return;
@@ -1206,7 +1193,7 @@ void IntegerSlowAlgo<UInt>::USq(Unit *restrict c,const Unit *a,ulen na)
   c[2*na-1]=acc.hi;
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::Mul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb)
  {
   if( na==0 || nb==0 )
@@ -1229,7 +1216,7 @@ void IntegerSlowAlgo<UInt>::Mul(Unit *restrict c,const Unit *a,ulen na,const Uni
     }
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::Sq(Unit *restrict c,const Unit *a,ulen na)
  {
   if( na==0 ) return;
@@ -1245,13 +1232,13 @@ void IntegerSlowAlgo<UInt>::Sq(Unit *restrict c,const Unit *a,ulen na)
 
  // data functions
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::Null(Unit *a,ulen na)
  {
   Range(a,na).set_null();
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::MoveUp(Unit *a,ulen na,ulen delta)
  {
   if( na==0 || delta==0 ) return;
@@ -1259,7 +1246,7 @@ void IntegerSlowAlgo<UInt>::MoveUp(Unit *a,ulen na,ulen delta)
   for(; na>0 ;na--) a[delta+na-1]=a[na-1];
  }
 
-template <class UInt>
+template <UIntType UInt>
 void IntegerSlowAlgo<UInt>::MoveDown(Unit *a,ulen na,ulen delta)
  {
   if( na==0 || delta==0 ) return;
