@@ -36,10 +36,10 @@ template <class T>
 concept bool SIntType = Meta::IsSInt<T> ;
 
 template <class T>
-concept bool S2sIntType = Meta::IsSInt<T> && Is2sComplementArithmetic ;
+concept bool S2sIntType = SIntType<T> && Is2sComplementArithmetic ;
 
 template <class T>
-concept bool SUIntType = Meta::IsSUInt<T> ;
+concept bool SUIntType = SIntType<T> || UIntType<T> ;
 
 
 template <class T>

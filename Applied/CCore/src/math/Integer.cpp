@@ -24,27 +24,27 @@ namespace Math {
 
 void GuardBitsOfOverflow()
  {
-  Printf(Exception,"CCore::Math::Integer<Algo,ArrayType,ArrayAlgoType>::BitsOf::total() : overflow");
+  Printf(Exception,"CCore::Math::Integer<...>::BitsOf::total() : overflow");
  }
 
 void GuardIntegerInverseNotNormalized()
  {
-  Printf(Exception,"CCore::Math::IntegerInverse<Algo,ArrayAlgoType> : not normalized");
+  Printf(Exception,"CCore::Math::IntegerInverse<...> : not normalized");
  }
 
 void GuardIntegerInverseOverflow()
  {
-  Printf(Exception,"CCore::Math::IntegerInverse<Algo,ArrayAlgoType> : overflow");
+  Printf(Exception,"CCore::Math::IntegerInverse<...> : overflow");
  }
 
 void GuardIntegerZeroDivide()
  {
-  Printf(Exception,"CCore::Math::IntegerDivider<Algo,ArrayAlgoType> : zero divide");
+  Printf(Exception,"CCore::Math::IntegerDivider<...> : zero divide");
  }
 
 void GuardIntegerBadString()
  {
-  Printf(Exception,"CCore::Math::IntegerFromString<Integer> : bad string");
+  Printf(Exception,"CCore::Math::IntegerFromString<...> : bad string");
  }
 
 void GuardAddLenOverflow_ulen(ulen a,ulen b)
@@ -59,12 +59,12 @@ void GuardAddLenOverflow_ulen()
 
 void GuardQSymEven()
  {
-  Printf(Exception,"CCore::Math::GCDAlgo<Algo>::UnsignedQSym(a,b) : b is even");
+  Printf(Exception,"CCore::Math::GCDAlgo<...>::UnsignedQSym(a,b) : b is even");
  }
 
 void GuardQSymNotCoprime()
  {
-  Printf(Exception,"CCore::Math::GCDAlgo<Algo>::UnsignedQSym(a,b) : a and b are not coprime");
+  Printf(Exception,"CCore::Math::GCDAlgo<...>::UnsignedQSym(a,b) : a and b are not coprime");
  }
 
 /* struct IntegerPrintOpt */
