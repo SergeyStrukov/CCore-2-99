@@ -122,6 +122,12 @@ struct MoveAdapter<T>
   static T * Move(T *obj,Place<void> place) { return CopyMove(obj,place); }
  };
 
+/* concept ReplaceableType<T> */
+
+template <class T>
+concept bool ReplaceableType = Has_objMove<T> || Has_ToMoveCtor<T> || MoveCtorType<T>
+                            || ( Has_objSwap<T> && NothrowDefaultCtorType<T> ) || CopyCtorType<T> ;
+
 /* Move() */
 
 template <class T>

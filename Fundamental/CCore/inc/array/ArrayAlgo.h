@@ -494,7 +494,7 @@ struct ArrayAlgo_class : ArrayAlgoBase<T>
     Default_no_throw = Flags::Default_no_throw,
     Copy_no_throw = Flags::Copy_no_throw,
 
-    MoveTo_exist = true
+    MoveTo_exist = ReplaceableType<T>
    };
 
   static PtrLen<T> Create_raw(Place<void> place,ulen len) requires ( DefaultCtorType<T> )
@@ -555,7 +555,7 @@ struct ArrayAlgo_class : ArrayAlgoBase<T>
   //  MoveTo() : no-throw
   //
 
-  static PtrLen<T> MoveTo(T *ptr,ulen len,Place<void> place) noexcept
+  static PtrLen<T> MoveTo(T *ptr,ulen len,Place<void> place) noexcept requires ( ReplaceableType<T> )
    {
     PtrLen<T> ret(place,len);
 

@@ -169,65 +169,55 @@ struct ArrayBase
 
   // provide
 
-  struct ProvideMove_move
+  static H * Provide_do(H *ptr,ulen extra_len) requires ( ArrayAlgo_core<Algo,T> && (bool)Algo::MoveTo_exist )
    {
-    static H * Do(H *ptr,ulen extra_len) requires ( ArrayAlgo_move<Algo,T> ) // ptr is not default
-     {
-      ulen maxlen=Algo::ProvideLen(ptr->len,ptr->maxlen,extra_len);
+    ulen maxlen=Algo::ProvideLen(ptr->len,ptr->maxlen,extra_len);
 
-      ulen mem_len=LenOf(maxlen,sizeof (T),Delta);
+    ulen mem_len=LenOf(maxlen,sizeof (T),Delta);
 
-      if( Algo::MemExtend(ptr,mem_len) )
-        {
-         ptr->maxlen=maxlen;
+    if( Algo::MemExtend(ptr,mem_len) )
+      {
+       ptr->maxlen=maxlen;
 
-         return ptr;
-        }
+       return ptr;
+      }
 
-      H *ret=Alloc(maxlen,mem_len);
+    H *ret=Alloc(maxlen,mem_len);
 
-      ulen len=ptr->len;
+    ulen len=ptr->len;
 
-      Algo::MoveTo(GetPtr(ptr),len,PlaceAt(ret)+Delta);
+    Algo::MoveTo(GetPtr(ptr),len,PlaceAt(ret)+Delta);
 
-      ret->len=len;
+    ret->len=len;
 
-      Free(ptr);
+    Free(ptr);
 
-      return ret;
-     }
-   };
+    return ret;
+   }
 
-  struct ProvideMove_no_move
+  static H * Provide_do(H *ptr,ulen extra_len) requires ( ArrayAlgo_core<Algo,T> && !Algo::MoveTo_exist )
    {
-    static H * Do(H *ptr,ulen extra_len)
-     {
-      GuardArrayOverflow(ptr->len,ptr->maxlen,extra_len);
+    GuardArrayOverflow(ptr->len,ptr->maxlen,extra_len);
 
-      return 0;
-     }
-   };
+    return 0;
+   }
 
   static H * Provide_one(H *ptr) requires ( ArrayAlgo_core<Algo,T> ) // provides not default ptr with room for 1 element
    {
-    using ProvideMove = Meta::Select< Algo::MoveTo_exist , ProvideMove_move , ProvideMove_no_move > ;
-
     if( GetExtraLen(ptr) ) return ptr;
 
     if( ptr->maxlen==0 ) return Create(1);
 
-    return ProvideMove::Do(ptr,1);
+    return Provide_do(ptr,1);
    }
 
   static H * Provide(H *ptr,ulen extra_len) requires ( ArrayAlgo_core<Algo,T> ) // provides not default ptr with room for extra_len elements
    {
-    using ProvideMove = Meta::Select< Algo::MoveTo_exist , ProvideMove_move , ProvideMove_no_move > ;
-
     if( ptr->maxlen==0 ) return Create(extra_len);
 
     if( extra_len<=GetExtraLen(ptr) ) return ptr;
 
-    return ProvideMove::Do(ptr,extra_len);
+    return Provide_do(ptr,extra_len);
    }
 
   // shrink

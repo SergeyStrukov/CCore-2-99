@@ -1,7 +1,7 @@
 /* Bridge.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -122,9 +122,9 @@ class Bridge : NoCopy
    PacketFormat to_client_format;
 
    Server server;
-   DynArray<Client,ArrayAlgo_mini<Client> > clients;
+   DynArray<Client> clients;
 
-   DynArray<ObjMaster,ArrayAlgo_mini<ObjMaster> > masters;
+   DynArray<ObjMaster> masters;
 
    enum Events
     {
