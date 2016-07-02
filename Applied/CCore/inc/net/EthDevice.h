@@ -1,7 +1,7 @@
 /* EthDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -76,8 +76,7 @@ struct EthTxExt
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"-> #; #;",dst,type);
    }
@@ -99,8 +98,7 @@ struct EthRxExt
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#; <- #; #;",dst,src,type);
    }

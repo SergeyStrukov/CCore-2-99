@@ -1,7 +1,7 @@
 /* PacketEndpointDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -153,8 +153,7 @@ class PointDesc : NoCopy
 
    using PrintOptType = StrPrintOpt ;
 
-   template <class P>
-   void print(P &out,PrintOptType opt) const
+   void print(PrinterType &out,PrintOptType opt) const
     {
      Putobj(out,BindOpt(opt,str));
     }

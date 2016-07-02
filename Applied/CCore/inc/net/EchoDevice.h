@@ -1,7 +1,7 @@
 /* EchoDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -31,7 +31,7 @@ class EchoDevice;
 
 /* class EchoDevice */
 
-class EchoDevice : NoCopy , public PacketMultipointDevice::InboundProc , public PacketMultipointDevice::ConnectionProc
+class EchoDevice : public NoCopyBase<PacketMultipointDevice::InboundProc,PacketMultipointDevice::ConnectionProc>
  {
   public:
 
