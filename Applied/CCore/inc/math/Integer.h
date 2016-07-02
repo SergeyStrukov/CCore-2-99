@@ -25,7 +25,7 @@ namespace Math {
 /* concept IntAlgo<Algo> */
 
 template <class Algo,UIntType Unit>
-concept bool IntAlgo2 = requires(const Unit *a,const Unit *b,ulen n,Unit A,Unit B,Unit C)
+concept bool IntAlgo2 = requires(Unit *c,const Unit *a,const Unit *b,ulen n,ulen m,ulen k,Unit A,Unit B,Unit C,unsigned shift)
  {
   // consts
 
@@ -59,59 +59,55 @@ concept bool IntAlgo2 = requires(const Unit *a,const Unit *b,ulen n,Unit A,Unit 
 
   { Algo::Normalize(a,n) } -> ulen ;
 
-#if 0
-
   // additive operators
 
-/ static Unit/* c */ UNeg(Unit *a,ulen na);
+  { Algo::UNeg(c,n) } -> Unit ;
 
-! static Unit/* msu */ Neg(Unit *a,ulen na);
+  { Algo::Neg(c,n) } -> Unit ;
 
-/ static Unit/* c */ UAddUnit(Unit *a,ulen na,Unit b);
+  { Algo::UAddUnit(c,n,A) } -> Unit ;
 
-/ static Unit/* c */ USubUnit(Unit *a,ulen na,Unit b);
+  { Algo::USubUnit(c,n,A) } -> Unit ;
 
-/ static Unit/* c */ UAdd(Unit *restrict b,const Unit *a,ulen nab);
+  { Algo::UAdd(c,b,n) } -> Unit ;
 
-! static Unit/* msu */ Add(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb>=na
+  { Algo::Add(c,n,b,m) } -> Unit ;
 
-/ static Unit/* c */ USub(Unit *restrict b,const Unit *a,ulen nab);
+  { Algo::USub(c,b,n) } -> Unit ;
 
-! static Unit/* msu */ Sub(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb>=na
+  { Algo::Sub(c,n,b,m) } -> Unit ;
 
-! static Unit/* msu */ RevSub(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb>=na
+  { Algo::RevSub(c,n,b,m) } -> Unit ;
 
   // shift operators
 
-/ static Unit/* msu */ ULShift(Unit *a,ulen na,unsigned shift); // 0<shift<UnitBits
+  { Algo::ULShift(c,n,shift) } -> Unit ;
 
-! static Unit/* msu */ LShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift); // 0<shift<UnitBits
+  { Algo::LShift(c,b,n,shift) } -> Unit ;
 
-! static Unit/* msu */ ShiftUp(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0<shift<UnitBits
+  { Algo::ShiftUp(c,n,m,shift) } -> Unit ;
 
-! static void RShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift); // 0<shift<UnitBits
+  Algo::RShift(c,b,n,shift);
 
-! static void ShiftDown(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0<shift<UnitBits
+  Algo::ShiftDown(c,n,m,shift);
 
   // multiplicative operators
 
-/ static void UMul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+  Algo::UMul(c,a,n,b,m);
 
-/ static void UMulLo(Unit *restrict c,ulen nc,const Unit *a,ulen na,const Unit *b,ulen nb); // nc<=na+nb
+  Algo::UMulLo(c,k,a,n,b,m);
 
-! static void Mul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+  Algo::Mul(c,a,n,b,m);
 
-! static void Sq(Unit *restrict c,const Unit *a,ulen na); // nc==2*na
+  Algo::Sq(c,a,n);
 
   // data functions
 
-! static void Null(Unit *a,ulen na);
+  Algo::Null(c,n);
 
-! static void MoveUp(Unit *a,ulen na,ulen delta); // a[na+delta]
+  Algo::MoveUp(c,n,m);
 
-! static void MoveDown(Unit *a,ulen na,ulen delta); // a[na+delta]
-
-#endif
+  Algo::MoveDown(c,n,m);
  } ;
 
 template <class Algo>
