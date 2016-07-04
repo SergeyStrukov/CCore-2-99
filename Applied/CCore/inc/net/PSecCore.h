@@ -21,6 +21,7 @@
 #include <CCore/inc/BlockFifo.h>
 #include <CCore/inc/Timer.h>
 #include <CCore/inc/Unid.h>
+#include <CCore/inc/Random.h>
 
 #include <CCore/inc/crypton/BlockCipher.h>
 #include <CCore/inc/crypton/HashFunction.h>
@@ -127,7 +128,7 @@ template <class Exp> class DHGroup;
 
 struct AbstractRandomGen;
 
-template <class Rand> class RandomGen;
+template <RandomType Random> class RandomGen;
 
 struct LifeLim;
 
@@ -436,12 +437,12 @@ struct AbstractRandomGen : MemBase_nocopy
   virtual void fill(PtrLen<uint8> buf)=0;
  };
 
-/* class RandomGen<Rand> */
+/* class RandomGen<Random> */
 
-template <class Rand>
+template <RandomType Random>
 class RandomGen : public AbstractRandomGen
  {
-   Rand rand;
+   Random rand;
 
   public:
 

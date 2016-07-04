@@ -1,7 +1,7 @@
 /* testInt.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -41,9 +41,9 @@ class TestInteger : TestIntBase
 
   private:
 
-   Int getInt() { return RandomInt(select(0,SLen),getBase()); }
+   Int getInt() { return RandomInt(select(0,SLen),getRandom()); }
 
-   Int getMInt() { return RandomInt(select(0,MLen),getBase()); }
+   Int getMInt() { return RandomInt(select(0,MLen),getRandom()); }
 
    static bool CoPrime(Int a,Int b)
     {

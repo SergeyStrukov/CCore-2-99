@@ -18,6 +18,7 @@
 
 #include <CCore/inc/Array.h>
 #include <CCore/inc/Cmp.h>
+#include <CCore/inc/Random.h>
 
 namespace CCore {
 namespace Math {
@@ -2434,7 +2435,7 @@ class RandomInteger : public Integer
 
   public:
 
-   template <class Random>
+   template <RandomType Random>
    RandomInteger(ulen n,Random &random) : Integer(DoBuild,Builder<Random>(n,random)) {}
 
    ~RandomInteger() {}

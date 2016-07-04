@@ -1,7 +1,7 @@
 /* testIntBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -38,7 +38,7 @@ class TestIntBase : NoCopy
 
    TestIntBase() {}
 
-   TestIntBase & getBase() { return *this; }
+   Random & getRandom() { return gen; }
 
    unsigned select(unsigned a,unsigned b) { return gen.select(a,b); }
 

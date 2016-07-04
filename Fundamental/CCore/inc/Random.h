@@ -237,6 +237,21 @@ class Random : public MersenneTwister::Gen<MersenneTwister::MT19937> , public Ra
     }
  };
 
+/* concept RandomType<T> */
+
+template <class T>
+concept bool RandomType = IsDerivedFrom<T,RandomBase<T> > && requires(T &obj,PtrLen<const uint8> data)
+ {
+  T();
+
+  obj.warp(data);
+
+  { obj.next8() } -> uint8 ;
+  { obj.next16() } -> uint16 ;
+  { obj.next32() } -> uint32 ;
+  { obj.next64() } -> uint64 ;
+ } ;
+
 } // namespace CCore
 
 #endif
