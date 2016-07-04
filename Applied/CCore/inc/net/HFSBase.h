@@ -1,7 +1,7 @@
 /* HFSBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -149,14 +149,12 @@ struct FileId
 
   enum { SaveLoadLen = SaveLenCounter<uint32,uint64,uint64>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(slot,number,clock);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(slot,number,clock);
    }
@@ -181,14 +179,12 @@ struct OpenInput // + uint8 path[len];
 
   enum { SaveLoadLen = SaveLenCounter<FlagType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(open_flags,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(open_flags,len);
    }
@@ -211,14 +207,12 @@ struct OpenOutput
 
   enum { SaveLoadLen = SaveLenCounter<FileId,FileLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_id,file_len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_id,file_len);
    }
@@ -242,14 +236,12 @@ struct ReadInput
 
   enum { SaveLoadLen = SaveLenCounter<FileId,FileLenType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_id,off,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_id,off,len);
    }
@@ -274,14 +266,12 @@ struct ReadOutput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<FileLenType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(off,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(off,len);
    }
@@ -307,14 +297,12 @@ struct WriteInput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<FileId,FileLenType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_id,off,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_id,off,len);
    }
@@ -336,14 +324,12 @@ struct WriteOutput
 
   enum { SaveLoadLen = SaveLenCounter<FileLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_len);
    }
@@ -366,14 +352,12 @@ struct CloseInput
 
   enum { SaveLoadLen = SaveLenCounter<BoolType,FileId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(preserve_file,file_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(preserve_file,file_id);
    }
@@ -397,14 +381,12 @@ struct PathInput // + uint8 path[len];
 
   enum { SaveLoadLen = SaveLenCounter<LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(len);
    }
@@ -426,14 +408,12 @@ struct GetFileTypeOutput
 
   enum { SaveLoadLen = SaveLenCounter<FlagType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(type);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(type);
    }
@@ -456,14 +436,12 @@ struct GetFileListOutput
 
   enum { SaveLoadLen = SaveLenCounter<FileId,FileLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_id,file_len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_id,file_len);
    }
@@ -488,14 +466,12 @@ struct DeleteDirInput // + uint8 path[len];
 
   enum { SaveLoadLen = SaveLenCounter<BoolType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(recursive,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(recursive,len);
    }
@@ -515,8 +491,7 @@ struct SaveLoadPath
 
   // save/load object
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     LenType len=LenType(path.len);
 
@@ -525,8 +500,7 @@ struct SaveLoadPath
     dev.put(path);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(RangeLoadDevType &dev)
    {
     LenType len=0;
 
@@ -556,14 +530,12 @@ struct RenameInput
 
   // save/load object
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(allow_overwrite,old_path,new_path);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(RangeLoadDevType &dev)
    {
     dev.template use<BeOrder>(allow_overwrite,old_path,new_path);
    }
@@ -586,14 +558,12 @@ struct ExecInput
 
   // save/load object
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(dir,program,arg);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(RangeLoadDevType &dev)
    {
     dev.template use<BeOrder>(dir,program,arg);
    }
@@ -614,14 +584,12 @@ struct Exec2Input
 
   // save/load object
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(dir,program);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(RangeLoadDevType &dev)
    {
     dev.template use<BeOrder>(dir,program);
    }
@@ -643,14 +611,12 @@ struct Exec2Output
 
   enum { SaveLoadLen = SaveLenCounter<FileId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_id);
    }
@@ -672,14 +638,12 @@ struct GetFileUpdateTimeOutput
 
   enum { SaveLoadLen = SaveLenCounter<CmpFileTimeType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(file_time);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(file_time);
    }
