@@ -1,7 +1,7 @@
 /* NetBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied Mini
 //
@@ -133,22 +133,19 @@ struct EthType
 
   enum { SaveLoadLen = 2 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(type);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(type);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( type )
       {
@@ -180,22 +177,19 @@ struct IProto
 
   enum { SaveLoadLen = 1 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev(proto);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev(proto);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( proto )
       {
@@ -227,22 +221,19 @@ struct ARPType
 
   enum { SaveLoadLen = 2 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(type);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(type);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( type )
       {
@@ -274,22 +265,19 @@ struct ICMPEchoType
 
   enum { SaveLoadLen = 1 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev(type);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev(type);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( type )
       {
@@ -346,22 +334,19 @@ struct MACAddress
 
   enum { SaveLoadLen = 6 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.put(address,6);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.get(address,6);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#2.16i;:#2.16i;:#2.16i;:#2.16i;:#2.16i;:#2.16i;",
                 address[0],address[1],address[2],address[3],address[4],address[5]);
@@ -401,22 +386,19 @@ struct IPAddress
 
   enum { SaveLoadLen = 4 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(address);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(address);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     SaveLoadBe32 temp(address);
 
@@ -425,8 +407,7 @@ struct IPAddress
 
   // scan object
 
-  template <class S>
-  void scan(S &inp)
+  void scan(ScannerType &inp)
    {
     uint8 b0;
     uint8 b1;
@@ -475,14 +456,12 @@ struct EthHeader
 
   enum { SaveLoadLen = 14 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev(dst,src,type);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev(dst,src,type);
    }
@@ -527,8 +506,7 @@ struct EthHeader
      }
    };
 
-  template <class P>
-  void print(P &out,PrintOptType opt) const
+  void print(PrinterType &out,PrintOptType opt) const
    {
     if( opt.inbound )
       Printf(out,"#; <- #; #;",dst,src,type);
@@ -697,14 +675,12 @@ struct IPHeader
 
   enum { SaveLoadLen = 20 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(vhl,tos,len,id,flags_offset,ttl,proto,check_sum,src,dst);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(vhl,tos,len,id,flags_offset,ttl,proto,check_sum,src,dst);
    }
@@ -771,8 +747,7 @@ struct IPHeader
      }
    };
 
-  template <class P>
-  void print(P &out,PrintOptType opt) const
+  void print(PrinterType &out,PrintOptType opt) const
    {
     if( opt.inbound )
       Printf(out,"#; <- #; #; len=#;",dst,src,proto,len);
@@ -869,14 +844,12 @@ struct ARPacket
 
   enum { SaveLoadLen = 28 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(mac_type,ip_type,mac_len,ip_len,type,src_mac,src_ip,dst_mac,dst_ip);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(mac_type,ip_type,mac_len,ip_len,type,src_mac,src_ip,dst_mac,dst_ip);
    }
@@ -922,22 +895,19 @@ struct ICMPEcho
 
   enum { SaveLoadLen = 8 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(type,code,check_sum,id,num);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(type,code,check_sum,id,num);
    }
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     if( code )
       Printf(out,"#; code=#; id=#; num=#;",type,code,id,num);
@@ -983,14 +953,12 @@ struct UDPHeader
 
   enum { SaveLoadLen = 8 };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(src_port,dst_port,len,check_sum);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(src_port,dst_port,len,check_sum);
    }
