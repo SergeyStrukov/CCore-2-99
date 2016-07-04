@@ -1,7 +1,7 @@
 /* NoPrimeTest.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -156,7 +156,7 @@ struct NoPrimeTest
       }
    };
 
-  template <class Random>
+  template <RandomType Random>
   static bool RandomTest(Integer P,ulen count,Random &random)
    {
     if( P==2 ) return true;
