@@ -190,7 +190,7 @@ template <class T> void Used(T &) {}
 
 /* OptimizeBarrier() */
 
-void OptimizeBarrier(void *ptr,ulen len);
+void OptimizeBarrier(void *ptr,ulen len) noexcept;
 
 } // namespace CCore
 

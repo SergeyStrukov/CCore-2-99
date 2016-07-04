@@ -1,7 +1,7 @@
 /* NanoIPDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -167,8 +167,7 @@ struct IPTxExt
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"-> #; #;",dst,proto);
    }
@@ -192,8 +191,7 @@ struct UDPTxExt
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#; -> #;:#;",src_port,dst,dst_port);
    }
@@ -388,8 +386,7 @@ class TxPrepareList : public Funchor_nocopy
 
    bool put(PacketHeader *packet,PacketFunction function);
 
-   template <class P>
-   bool put(P packet,PacketFunction function) { return put(GetPacketHeader(packet),function); }
+   bool put(PacketType packet,PacketFunction function) { return put(GetPacketHeader(packet),function); }
 
    void prepare();
  };
@@ -816,8 +813,7 @@ class NanoIPDevice : public ObjBase , public Funchor , EthProc
 
    // send
 
-   template <class P>
-   bool send_prepare(P packet,PacketFunction function)
+   bool send_prepare(PacketType packet,PacketFunction function)
     {
      if( prepare_list.put(packet,function) )
        {
@@ -831,8 +827,7 @@ class NanoIPDevice : public ObjBase , public Funchor , EthProc
        }
     }
 
-   template <class P>
-   void send_prepare_or_complete(P packet,PacketFunction function)
+   void send_prepare_or_complete(PacketType packet,PacketFunction function)
     {
      if( prepare_list.put(packet,function) )
        {

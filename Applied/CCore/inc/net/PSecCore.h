@@ -22,6 +22,8 @@
 #include <CCore/inc/Timer.h>
 #include <CCore/inc/Unid.h>
 
+#include <CCore/inc/crypton/BlockCipher.h>
+#include <CCore/inc/crypton/HashFunction.h>
 #include <CCore/inc/crypton/Forget.h>
 
 #include <CCore/inc/net/XPoint.h>
@@ -109,11 +111,11 @@ struct AlgoLen;
 
 struct AbstractCryptFunc;
 
-template <class Crypt> class CryptFunc;
+template <Crypton::CipherType Crypt> class CryptFunc;
 
 struct AbstractHashFunc;
 
-template <class Hash> class HashFunc;
+template <Crypton::HashType Hash> class HashFunc;
 
 struct AbstractKeyGen;
 
@@ -188,7 +190,7 @@ struct AbstractCryptFunc : MemBase_nocopy
 
 /* class CryptFunc<Crypt> */
 
-template <class Crypt>
+template <Crypton::CipherType Crypt>
 class CryptFunc : public AbstractCryptFunc
  {
    Crypt crypt;
@@ -241,7 +243,7 @@ struct AbstractHashFunc : MemBase_nocopy
 
 /* class HashFunc<Hash> */
 
-template <class Hash>
+template <Crypton::HashType Hash>
 class HashFunc : public AbstractHashFunc
  {
    Hash hash;

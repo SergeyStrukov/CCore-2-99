@@ -1,7 +1,7 @@
 /* SHA.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -73,7 +73,7 @@ struct SHA64Word
     Word hi = 0 ;
     Word lo = 0 ;
 
-    TotalType() {}
+    TotalType() noexcept {}
 
     void operator = (Word lo_)
      {
@@ -176,7 +176,7 @@ struct SHA1Param : SHA32Word
 
     // public
 
-    State() {}
+    State() noexcept {}
 
     void reset()
      {
@@ -246,7 +246,7 @@ struct SHA256Param : SHA32Word
 
     // public
 
-    State() {}
+    State() noexcept {}
 
     void reset()
      {
@@ -346,7 +346,7 @@ struct SHA512Param : SHA64Word
 
     // public
 
-    State() {}
+    State() noexcept {}
 
     void reset()
      {
@@ -514,13 +514,13 @@ struct SHA
 
   // methods
 
-  void reset()
+  void reset() noexcept
    {
     block.reset();
     state.reset();
    }
 
-  void forget()
+  void forget() noexcept
    {
     block.forget();
     state.forget();

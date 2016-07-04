@@ -1,7 +1,7 @@
 /* Forget.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -24,19 +24,19 @@ namespace Crypton {
 /* functions */
 
 template <class T>
-void PrepareForget(T &obj)
+void PrepareForget(T &obj) noexcept
  {
   obj=T();
  }
 
 template <class T,ulen Len>
-void PrepareForget(T (&obj)[Len])
+void PrepareForget(T (&obj)[Len]) noexcept
  {
   for(ulen i=0; i<Len ;i++) PrepareForget(obj[i]);
  }
 
 template <class T>
-void Forget(T &obj)
+void Forget(T &obj) noexcept
  {
   PrepareForget(obj);
 
@@ -44,7 +44,7 @@ void Forget(T &obj)
  }
 
 template <class T>
-void ForgetRange(PtrLen<T> data)
+void ForgetRange(PtrLen<T> data) noexcept
  {
   data.set_null();
 

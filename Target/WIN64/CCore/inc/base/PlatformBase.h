@@ -1,7 +1,7 @@
 /* PlatformBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -190,7 +190,7 @@ template <class T> void Used(T &) {}
 
 /* OptimizeBarrier() */
 
-void OptimizeBarrier(void *ptr,ulen len);
+void OptimizeBarrier(void *ptr,ulen len) noexcept;
 
 } // namespace CCore
 

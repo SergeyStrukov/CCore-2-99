@@ -27,7 +27,7 @@ void GuardNoCipherKey();
 
 /* concept CipherFuncType<T> */
 
-template <class T>
+template <NothrowDtorType T>
 concept bool CipherFuncType = requires(T func,const uint8 *src,uint8 *dst)
  {
   { T::BlockLen } -> ulen ;
@@ -35,9 +35,11 @@ concept bool CipherFuncType = requires(T func,const uint8 *src,uint8 *dst)
 
   { T::GetName() } -> const char * ;
 
+  T();
+
   func.key(src);
 
-  func.unkey();
+  { func.unkey() } noexcept;
 
   func.apply(src,dst);
 
@@ -104,6 +106,29 @@ class BlockCipher : NoCopy
      func.apply(src_dst);
     }
  };
+
+/* concept CipherType<T> */
+
+template <NothrowDtorType T>
+concept bool CipherType = requires(T &obj,const T &cobj,const uint8 *src,uint8 *dst)
+ {
+  { T::BlockLen } -> ulen ;
+  { T::KeyLen } -> ulen ;
+
+  { T::GetName() } -> const char * ;
+
+  T();
+
+  T(src);
+
+  obj.key(src);
+
+  obj.unkey();
+
+  cobj.apply(src,dst);
+
+  cobj.apply(dst);
+ } ;
 
 } // namespace Crypton
 } // namespace CCore

@@ -1,7 +1,7 @@
 /* AES.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -616,7 +616,7 @@ struct AES : AESBase
     KeyExpansion<KeyWordLen,RoundKeyWordLen>(round_key);
    }
 
-  void unkey()
+  void unkey() noexcept
    {
     Forget(round_key);
    }
@@ -664,7 +664,7 @@ struct AESInverse : AESBase
     KeyExpansion<KeyWordLen,RoundKeyWordLen>(round_key);
    }
 
-  void unkey()
+  void unkey() noexcept
    {
     Forget(round_key);
    }

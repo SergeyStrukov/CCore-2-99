@@ -1,7 +1,7 @@
 /* MD5.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -108,9 +108,9 @@ struct MD5Core
 
   // methods
 
-  void reset();
+  void reset() noexcept;
 
-  void forget()
+  void forget() noexcept
    {
     state.forget();
     buf.forget();

@@ -1,7 +1,7 @@
 /* SingleEchoDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -31,7 +31,7 @@ class SingleEchoDevice;
 
 /* class SingleEchoDevice */
 
-class SingleEchoDevice : NoCopy , public PacketEndpointDevice::InboundProc , public PacketEndpointDevice::ConnectionProc
+class SingleEchoDevice : NoCopyBase<PacketEndpointDevice::InboundProc,PacketEndpointDevice::ConnectionProc>
  {
   public:
 

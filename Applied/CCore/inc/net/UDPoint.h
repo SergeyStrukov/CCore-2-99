@@ -1,7 +1,7 @@
 /* UDPoint.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied Mini
 //
@@ -68,16 +68,14 @@ struct UDPoint
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;:#;",address,port);
    }
 
   // scan object
 
-  template <class S>
-  void scan(S &inp)
+  void scan(ScannerType &inp)
    {
     UDPoint temp;
 

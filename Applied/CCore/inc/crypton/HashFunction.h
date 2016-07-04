@@ -1,7 +1,7 @@
 /* HashFunction.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -27,7 +27,7 @@ void GuardNoHashKey();
 
 /* concept HashFuncType<T> */
 
-template <class T>
+template <NothrowDtorType T>
 concept bool HashFuncType = requires(T func,const uint8 *data,ulen len,uint8 *digest)
  {
   { T::DigestLen } -> ulen ;
@@ -35,9 +35,11 @@ concept bool HashFuncType = requires(T func,const uint8 *data,ulen len,uint8 *di
 
   { T::GetName() } -> const char * ;
 
-  func.reset();
+  T();
 
-  func.forget();
+  { func.reset() } noexcept;
+
+  { func.forget() } noexcept;
 
   func.add(data,len);
 
@@ -256,6 +258,43 @@ class KeyedHashFunction : NoCopy
      hash2.forget();
     }
  };
+
+/* concept HashType<T> */
+
+template <NothrowDtorType T>
+concept bool HashType = requires(T &obj,const uint8 *ptr,ulen len,PtrLen<const uint8> data,uint8 *digest)
+ {
+  { T::DigestLen } -> ulen ;
+  { T::BlockLen } -> ulen ;
+
+  { T::GetName() } -> const char * ;
+
+  T();
+
+  obj.reset();
+
+  obj.add(ptr,len);
+
+  obj.add(data);
+
+  obj.finish(digest);
+ } ;
+
+/* concept KeyedHashType<T> */
+
+template <class T>
+concept bool KeyedHashType = HashType<T> && requires(T &obj,const uint8 *ptr,ulen len,PtrLen<const uint8> data)
+ {
+  T(ptr,len);
+
+  T(data);
+
+  obj.key(ptr,len);
+
+  obj.key(data);
+
+  obj.unkey();
+ } ;
 
 } // namespace Crypton
 } // namespace CCore

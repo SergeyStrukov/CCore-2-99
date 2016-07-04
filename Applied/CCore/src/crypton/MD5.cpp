@@ -1,7 +1,7 @@
 /* MD5.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -341,7 +341,7 @@ void MD5Core::Buf::finish(Func func)
 
 /* class MD5Core */
 
-void MD5Core::reset()
+void MD5Core::reset() noexcept
  {
   state.reset();
   buf.reset();
