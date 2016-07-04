@@ -1,7 +1,7 @@
 /* PSecKey.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -209,14 +209,12 @@ struct CryptAlgoSelect
 
   enum { SaveLoadLen = SaveLenCounter<uint8,uint8,uint8>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(crypt_id,hash_id,dhg_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(crypt_id,hash_id,dhg_id);
    }
@@ -263,14 +261,12 @@ struct SessionKeyParam
 
   enum { SaveLoadLen = SaveLenCounter<uint16,uint32,uint32>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(keyset_len,ttl,utl);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(keyset_len,ttl,utl);
    }

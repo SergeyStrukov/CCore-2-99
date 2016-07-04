@@ -1,7 +1,7 @@
 /* DHExp.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -572,6 +572,20 @@ void DHExp<DHMod,Algo>::pow(const uint8 x[GLen],uint8 gx[GLen])
 
   save(gx);
  }
+
+/* concept DHExpType<T> */
+
+template <class T>
+concept bool DHExpType = requires(T &obj,const uint8 *a,const uint8 *x,uint8 *y)
+ {
+  { T::GLen } -> ulen ;
+
+  T();
+
+  obj.pow(a,x,y);
+
+  obj.pow(x,y);
+ } ;
 
 } // namespace Crypton
 } // namespace CCore

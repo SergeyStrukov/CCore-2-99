@@ -25,6 +25,7 @@
 
 #include <CCore/inc/crypton/BlockCipher.h>
 #include <CCore/inc/crypton/HashFunction.h>
+#include <CCore/inc/crypton/DHExp.h>
 #include <CCore/inc/crypton/Forget.h>
 
 #include <CCore/inc/net/XPoint.h>
@@ -120,11 +121,11 @@ template <Crypton::HashType Hash> class HashFunc;
 
 struct AbstractKeyGen;
 
-template <class Exp> class KeyGen;
+template <Crypton::DHExpType Exp> class KeyGen;
 
 struct AbstractDHGroup;
 
-template <class Exp> class DHGroup;
+template <Crypton::DHExpType Exp> class DHGroup;
 
 struct AbstractRandomGen;
 
@@ -298,7 +299,7 @@ struct AbstractKeyGen : MemBase_nocopy
 
 /* class KeyGen<Exp> */
 
-template <class Exp>
+template <Crypton::DHExpType Exp>
 class KeyGen : public AbstractKeyGen
  {
    static const ulen GLen = Exp::GLen ;
@@ -397,7 +398,7 @@ struct AbstractDHGroup : MemBase_nocopy
 
 /* class DHGroup<Exp> */
 
-template <class Exp>
+template <Crypton::DHExpType Exp>
 class DHGroup : public AbstractDHGroup
  {
    Exp exp;
@@ -486,11 +487,9 @@ struct LifeLim
     return !ttl || !utl ;
    }
 
-  template <class UInt>
-  void use(UInt use_count) { PosDec(utl,use_count); }
+  void use(UIntType use_count) { PosDec(utl,use_count); }
 
-  template <class UInt>
-  void tick(UInt dtime) { PosDec(ttl,dtime); }
+  void tick(UIntType dtime) { PosDec(ttl,dtime); }
  };
 
 /* struct MasterKey */
@@ -722,14 +721,12 @@ class KeySet : NoCopy
 
      void move(Key &obj);
 
-     template <class UInt>
-     void use(UInt use_count)
+     void use(UIntType use_count)
       {
        if( state<KeyDead ) life_lim.use(use_count);
       }
 
-     template <class UInt>
-     void tick(UInt dtime)
+     void tick(UIntType dtime)
       {
        if( state<KeyDead ) life_lim.tick(dtime);
       }
@@ -747,8 +744,7 @@ class KeySet : NoCopy
 
      void reset() { timeout=RepeatTimeout; }
 
-     template <class UInt>
-     void tick(UInt dtime) { PosDec(timeout,dtime); }
+     void tick(UIntType dtime) { PosDec(timeout,dtime); }
     };
 
    struct Rec
