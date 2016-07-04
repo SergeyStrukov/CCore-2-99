@@ -31,7 +31,7 @@ class SingleEchoDevice;
 
 /* class SingleEchoDevice */
 
-class SingleEchoDevice : NoCopyBase<PacketEndpointDevice::InboundProc,PacketEndpointDevice::ConnectionProc>
+class SingleEchoDevice : public NoCopyBase<PacketEndpointDevice::InboundProc,PacketEndpointDevice::ConnectionProc>
  {
   public:
 

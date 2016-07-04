@@ -1,7 +1,7 @@
 /* PSec.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -165,14 +165,12 @@ class PacketProcessor : public MemBase_nocopy
 
      enum { SaveLoadLen = SaveLenCounter<SequenceNumber,KeyIndex,PadLen,PacketType>::SaveLoadLen  };
 
-     template <class Dev>
-     void save(Dev &dev) const
+     void save(SaveDevType &dev) const
       {
        dev.template use<BeOrder>(sequence_number,key_index,pad_len,type);
       }
 
-     template <class Dev>
-     void load(Dev &dev)
+     void load(LoadDevType &dev)
       {
        dev.template use<BeOrder>(sequence_number,key_index,pad_len,type);
       }
@@ -301,7 +299,7 @@ class PacketProcessor : public MemBase_nocopy
 
 class EndpointDevice : public ObjBase , public PacketEndpointDevice
  {
-   class Engine : NoCopy , public InboundProc , public ConnectionProc
+   class Engine : public NoCopyBase<InboundProc,ConnectionProc>
     {
       PacketEndpointDevice *dev;
 
@@ -474,7 +472,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       void outbound(XPoint point,Engine *engine,Packet<uint8> packet,Packets type,PacketList &list);
     };
 
-   class Engine : NoCopy , public InboundProc , public ConnectionProc
+   class Engine : public NoCopyBase<InboundProc,ConnectionProc>
     {
       PacketMultipointDevice *dev;
 
@@ -584,8 +582,8 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
 
    bool getStat(XPoint point,StatInfo &ret) const { return engine.getStat(point,ret); }
 
-   template <class FuncInit>
-   void processStat(FuncInit func_init) const // func(XPoint point,StatInfo &temp_copy)
+   template <FuncInitArgType<XPoint,StatInfo &> FuncInit>
+   void processStat(FuncInit func_init) const
     {
      FunctorTypeOf<FuncInit> func(func_init);
 

@@ -1,7 +1,7 @@
 /* PKE.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -375,7 +375,7 @@ class ClientNegotiant : NoCopy
       void getSessionKey(MasterKeyPtr &ret) { ret=std::move(neg_data.skey); }
     };
 
-   class Engine : NoCopy , public PacketEndpointDevice::InboundProc
+   class Engine : public NoCopyBase<PacketEndpointDevice::InboundProc>
     {
       PacketEndpointDevice *dev;
 
@@ -530,7 +530,7 @@ class ServerNegotiant : NoCopy
       bool tick(PacketList &list); // true to del
     };
 
-   class Engine : NoCopy , PacketMultipointDevice::InboundProc
+   class Engine : public NoCopyBase<PacketMultipointDevice::InboundProc>
     {
       PacketMultipointDevice *dev;
       PortManager *port_manager;

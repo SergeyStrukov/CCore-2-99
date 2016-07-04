@@ -1,7 +1,7 @@
 /* PSec.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -840,8 +840,7 @@ class MultipointDevice::PointList : NoCopy
      if( PointNode *node=obj.detach() ) points.ins_last(node);
     }
 
-   template <class Func>
-   void consume(Func func) // func(XPoint)
+   void consume(FuncArgType<XPoint> func)
     {
      while( PointNode *node=points.del_first() )
        {
