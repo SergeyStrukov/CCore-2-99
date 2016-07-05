@@ -22,6 +22,21 @@ namespace CCore {
 namespace Net {
 namespace PTP {
 
+/* concept TimeoutType<T> */
+
+template <class T>
+concept bool TimeoutType = OneOfTypes<T,MSec,TimeScope> ;
+
+/* concept FillType<T> */
+
+template <class T>
+concept bool FillType = requires(T &obj,PtrLen<uint8> buf)
+ {
+  { obj.getLen() } -> ulen ;
+
+  obj.fill(buf);
+ } ;
+
 /* functions */
 
 bool GuardSupportNoPacket(ExceptionType ex,const char *name);
@@ -96,10 +111,9 @@ struct TransStatus
     return false;
    }
 
-  template <class TimeoutType>
   bool guard(ExceptionType ex,ClientDevice *client,PacketSet<uint8> &pset,const char *name,TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id);
 
-  template <ExtType Ext,class TimeoutType>
+  template <ExtType Ext>
   bool guard(ExceptionType ex,ClientDevice *client,PacketSet<uint8> &pset,const char *name,TimeoutType timeout)
    {
     return guard(ex,client,pset,name,timeout,Ext::ServiceId,Ext::FunctionId);
@@ -142,7 +156,7 @@ class Support : public Funchor_nocopy
 
    Support(ClientDevice *client_,PacketSet<uint8> &pset_) : client(client_),pset(pset_) {}
 
-   template <class TimeoutType,class ... SS>
+   template <class ... SS>
    bool perform(TimeoutType timeout,SS ... ss)
     {
      Packet<uint8> packet=pset.get(timeout);
@@ -165,8 +179,8 @@ class Support : public Funchor_nocopy
      return result.ok;
     }
 
-   template <class TimeoutType,class Fill,class ... SS>
-   bool perform_fill(TimeoutType timeout,Fill &fill,SS ... ss)
+   template <class ... SS>
+   bool perform_fill(TimeoutType timeout,FillType &fill,SS ... ss)
     {
      Packet<uint8> packet=pset.get(timeout);
 
@@ -212,7 +226,6 @@ class Support : public Funchor_nocopy
      return result.ok;
     }
 
-   template <class TimeoutType>
    bool guard(ExceptionType ex,const char *name,TimeoutType timeout)
     {
      return result.template guard<Ext>(ex,client,pset,name,timeout);
@@ -256,7 +269,6 @@ class Support_Exist : NoCopy
 
    Support_Exist(ClientDevice *client,PacketSet<uint8> &pset) : support(client,pset) {}
 
-   template <class TimeoutType>
    bool perform(TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id)
     {
      return support.perform(timeout,service_id,function_id);
@@ -304,7 +316,6 @@ class Support_ErrorDesc : NoCopy
 
    Support_ErrorDesc(ClientDevice *client,PacketSet<uint8> &pset) : support(client,pset) {}
 
-   template <class TimeoutType>
    bool perform(TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id,ErrorIdType error_id)
     {
      return support.perform(timeout,service_id,function_id,error_id);
@@ -313,7 +324,6 @@ class Support_ErrorDesc : NoCopy
    StrLen getDesc() const { return support.result.getDesc(); }
  };
 
-template <class TimeoutType>
 bool TransStatus::guard(ExceptionType ex,ClientDevice *client,PacketSet<uint8> &pset,const char *name,TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id)
  {
   if( ok ) return true;
@@ -355,13 +365,11 @@ class Support_Seed : NoCopy
 
    Support_Seed(ClientDevice *client,PacketSet<uint8> &pset) : support(client,pset) {}
 
-   template <class TimeoutType>
    bool perform(TimeoutType timeout)
     {
      return support.perform(timeout);
     }
 
-   template <class TimeoutType>
    void perform_guarded(TimeoutType timeout)
     {
      if( !perform(timeout) ) support.guard(Exception,"CCore::Net::PTP::Support_Seed::perform(...)",timeout);
@@ -411,14 +419,12 @@ class Support_Echo : NoCopy
 
    Support_Echo(ClientDevice *client,PacketSet<uint8> &pset) : support(client,pset) {}
 
-   template <class TimeoutType,class Fill>
-   bool perform(TimeoutType timeout,uint32 delay_msec,Fill &fill)
+   bool perform(TimeoutType timeout,uint32 delay_msec,FillType &fill)
     {
      return support.perform_fill(timeout,fill,delay_msec);
     }
 
-   template <class TimeoutType,class Fill>
-   void perform_guarded(TimeoutType timeout,uint32 delay_msec,Fill &fill)
+   void perform_guarded(TimeoutType timeout,uint32 delay_msec,FillType &fill)
     {
      if( !perform(timeout,delay_msec,fill) ) support.guard(Exception,"CCore::Net::PTP::Support_Echo::perform(...)",timeout);
     }
