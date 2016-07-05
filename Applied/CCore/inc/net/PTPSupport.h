@@ -1,7 +1,7 @@
 /* PTPSupport.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -34,7 +34,7 @@ bool GuardSupportError(ExceptionType ex,const char *name,StrLen str);
 
 struct TransStatus;
 
-template <class Ext,class Result> class Support;
+template <ExtType Ext,class Result> class Support;
 
 class Support_Exist;
 
@@ -81,7 +81,7 @@ struct TransStatus
     error_id=Error_Unknown;
    }
 
-  template <class Ext>
+  template <ExtType Ext>
   bool set(Ext *ext)
    {
     if( ext->isOk() )
@@ -99,7 +99,7 @@ struct TransStatus
   template <class TimeoutType>
   bool guard(ExceptionType ex,ClientDevice *client,PacketSet<uint8> &pset,const char *name,TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id);
 
-  template <class Ext,class TimeoutType>
+  template <ExtType Ext,class TimeoutType>
   bool guard(ExceptionType ex,ClientDevice *client,PacketSet<uint8> &pset,const char *name,TimeoutType timeout)
    {
     return guard(ex,client,pset,name,timeout,Ext::ServiceId,Ext::FunctionId);
@@ -108,7 +108,7 @@ struct TransStatus
 
 /* class Support<Ext,Result> */
 
-template <class Ext,class Result>
+template <ExtType Ext,class Result>
 class Support : public Funchor_nocopy
  {
    ClientDevice *client;

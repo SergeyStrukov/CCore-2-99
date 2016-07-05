@@ -1,7 +1,7 @@
 /* HFSFileSystemDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -45,7 +45,7 @@ class FileSystemDevice : public ObjBase , public Funchor , public Sys::AsyncFile
 
    static void CompleteFile(Sys::AsyncFileSystem::FileExt *ext2,FileError fe);
 
-   template <class Ext>
+   template <PTP::ExtType Ext>
    static FileError MakeError(Ext *ext,FileError fe)
     {
      switch( ext->result )
@@ -83,7 +83,7 @@ class FileSystemDevice : public ObjBase , public Funchor , public Sys::AsyncFile
 
    PacketFunction function_complete_exec2() { return FunctionOf(this,&FileSystemDevice::complete_exec2); }
 
-   template <class Ext>
+   template <PTP::ExtType Ext>
    void complete_ext(PacketHeader *packet_)
     {
      Packet<uint8,Sys::AsyncFileSystem::ErrorExt,Ext> packet=packet_;
@@ -103,7 +103,7 @@ class FileSystemDevice : public ObjBase , public Funchor , public Sys::AsyncFile
      packet.popExt().complete();
     }
 
-   template <class Ext>
+   template <PTP::ExtType Ext>
    PacketFunction function_complete_ext() { return FunctionOf(this,&FileSystemDevice::complete_ext<Ext>); }
 
    class FileState;

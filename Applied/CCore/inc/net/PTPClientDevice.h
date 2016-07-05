@@ -1,7 +1,7 @@
 /* PTPClientDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -615,8 +615,7 @@ struct Tailed
 
   // load object
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(ExtraLoadDevType &dev)
    {
     dev.template use<BeOrder>(output);
 
@@ -740,6 +739,41 @@ struct ExistExt : ExtBase<ServiceId,FunctionId_Exist>
 
 namespace PTP {
 
+/* concept ExtType<Ext> */
+
+template <class Ext,class OutputType>
+concept bool ExtType2 = requires(Ext &obj,const OutputType &output)
+ {
+  obj.done(output);
+ } ;
+
+template <class Ext>
+concept bool ExtType = requires(Ext &obj,Packet<uint8,Ext> packet,TransResult result,ErrorIdType error_id)
+ {
+  { Ext::ServiceId } -> ServiceIdType ;
+  { Ext::FunctionId } -> FunctionIdType ;
+
+  { &Ext::result } -> TransResult Ext::* ;
+  { &Ext::error_id } -> ErrorIdType Ext::* ;
+
+  { Ext::GetMoveFlag(packet) } -> MoveFlagType ;
+
+  { obj.isOk() } -> bool ;
+
+  obj.reset();
+
+  obj.setOk();
+
+  obj.fail(result);
+
+  obj.error(error_id);
+
+  typename Ext::InputType;
+  typename Ext::OutputType;
+
+  requires ( ExtType2<Ext,typename Ext::OutputType> );
+ } ;
+
 /* class ClientDevice */
 
 class ClientDevice : public ObjBase , public Funchor
@@ -750,7 +784,7 @@ class ClientDevice : public ObjBase , public Funchor
 
   private:
 
-   template <class Ext>
+   template <ExtType Ext>
    static void Complete(PacketHeader *packet);
 
    void complete_Session(PacketHeader *packet);
@@ -793,10 +827,10 @@ class ClientDevice : public ObjBase , public Funchor
 
    // generic transactions
 
-   template <class Ext>
+   template <ExtType Ext>
    void start(Packet<uint8,Ext> packet,const typename Ext::InputType &input);
 
-   template <class Ext>
+   template <ExtType Ext>
    void start_format(Packet<uint8,Ext> packet,const typename Ext::InputType &input);
 
    struct FormatResult
@@ -813,16 +847,16 @@ class ClientDevice : public ObjBase , public Funchor
      bool noRoom() const { return format.max_data==0; }
     };
 
-   template <class Ext>
+   template <ExtType Ext>
    static PacketFormat GetFormat();
 
-   template <class Ext>
+   template <ExtType Ext>
    static FormatResult GetFormat(ulen max_outbound_info_len);
 
-   template <class Ext>
+   template <ExtType Ext>
    FormatResult getFormat() { return GetFormat<Ext>(getMaxOutboundInfoLen()); }
 
-   template <class Ext>
+   template <ExtType Ext>
    PacketFormat getFormat_guarded(const char *name)
     {
      auto result=getFormat<Ext>();
@@ -865,7 +899,7 @@ class ClientDevice : public ObjBase , public Funchor
    void detach() { engine.detach(); }
  };
 
-template <class Ext>
+template <ExtType Ext>
 void ClientDevice::Complete(PacketHeader *packet_)
  {
   Packet<uint8,Ext,TransExt> packet2=packet_;
@@ -948,7 +982,7 @@ void ClientDevice::Complete(PacketHeader *packet_)
     }
  }
 
-template <class Ext>
+template <ExtType Ext>
 void ClientDevice::start(Packet<uint8,Ext> packet,const typename Ext::InputType &input)
  {
   ServiceFunction serv_func(Ext::ServiceId,Ext::FunctionId);
@@ -977,7 +1011,7 @@ void ClientDevice::start(Packet<uint8,Ext> packet,const typename Ext::InputType 
     }
  }
 
-template <class Ext>
+template <ExtType Ext>
 void ClientDevice::start_format(Packet<uint8,Ext> packet,const typename Ext::InputType &input)
  {
   ServiceFunction serv_func(Ext::ServiceId,Ext::FunctionId);
@@ -995,7 +1029,7 @@ void ClientDevice::start_format(Packet<uint8,Ext> packet,const typename Ext::Inp
   start(packet2.template forgetExt<1>());
  }
 
-template <class Ext>
+template <ExtType Ext>
 PacketFormat ClientDevice::GetFormat()
  {
   PacketFormat ret;
@@ -1007,7 +1041,7 @@ PacketFormat ClientDevice::GetFormat()
   return ret;
  }
 
-template <class Ext>
+template <ExtType Ext>
 ClientDevice::FormatResult ClientDevice::GetFormat(ulen max_outbound_info_len)
  {
   PacketFormat ret;
