@@ -1,7 +1,7 @@
 /* PTPBoot.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -188,7 +188,7 @@ void BootClient::boot(AddressType entry_point,FlagType flags)
 
 /* class BootInfo::PTPServerProc */
 
-class BootInfo::PTPServerProc : NoCopy , public ServerProc
+class BootInfo::PTPServerProc : public NoCopyBase<ServerProc>
  {
    ObjHook hook;
 
@@ -338,8 +338,7 @@ struct BootInfo::PTPServerProc::WriteInputTailed
 
   // load object
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(ExtraLoadDevType &dev)
    {
     dev(base);
 
@@ -368,8 +367,7 @@ struct BootInfo::PTPServerProc::ErrorDescOutput
 
   // save object
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev(base);
 

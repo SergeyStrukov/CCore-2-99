@@ -1,7 +1,7 @@
 /* PTPBootBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -71,14 +71,12 @@ struct AllocInput
 
   enum { SaveLoadLen = SaveLenCounter<AddressType,AddressType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(address,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(address,len);
    }
@@ -100,14 +98,12 @@ struct AllocOutput
 
   enum { SaveLoadLen = SaveLenCounter<IndexType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(index);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(index);
    }
@@ -133,14 +129,12 @@ struct WriteInput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<IndexType,AddressType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(index,off,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(index,off,len);
    }
@@ -163,14 +157,12 @@ struct BootInput
 
   enum { SaveLoadLen = SaveLenCounter<AddressType,FlagType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(entry_point,flags);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(entry_point,flags);
    }

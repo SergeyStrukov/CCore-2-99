@@ -1,7 +1,7 @@
 /* PTPConBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -91,14 +91,12 @@ struct ConId
 
   enum { SaveLoadLen = SaveLenCounter<uint32,uint64,uint64>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(slot,number,clock);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(slot,number,clock);
    }
@@ -150,14 +148,12 @@ struct TriggerMask
 
   enum { SaveLoadLen = 8*SaveLenCounter<uint32>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     SaveRange_use<BeOrder>(Range(mask),dev);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     LoadRange_use<BeOrder>(Range(mask),dev);
    }
@@ -190,14 +186,12 @@ struct OpenInput // + uint8 name[len];
 
   enum { SaveLoadLen = SaveLenCounter<uint32,uint32,TriggerMask,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(write_timeout_msec,read_timeout_msec,trigger_mask,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(write_timeout_msec,read_timeout_msec,trigger_mask,len);
    }
@@ -219,14 +213,12 @@ struct OpenOutput
 
   enum { SaveLoadLen = SaveLenCounter<ConId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(con_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(con_id);
    }
@@ -250,14 +242,12 @@ struct ReadInput
 
   enum { SaveLoadLen = SaveLenCounter<ConId,uint32,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(con_id,number,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(con_id,number,len);
    }
@@ -282,14 +272,12 @@ struct ReadOutput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<uint32,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(number,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(number,len);
    }
@@ -315,14 +303,12 @@ struct WriteInput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<ConId,uint32,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(con_id,number,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(con_id,number,len);
    }
@@ -344,14 +330,12 @@ struct CloseInput
 
   enum { SaveLoadLen = SaveLenCounter<ConId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(con_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(con_id);
    }

@@ -1,7 +1,7 @@
 /* PTPBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -93,14 +93,12 @@ struct TransId
 
   enum { SaveLoadLen = SaveLenCounter<uint64,uint64>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(number,clock);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(number,clock);
    }
@@ -125,14 +123,12 @@ struct PacketPrefix3
 
   enum { SaveLoadLen = SaveLenCounter<PacketType,TransId,SlotId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(type,trans_id,client_slot);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(type,trans_id,client_slot);
    }
@@ -158,14 +154,12 @@ struct PacketPrefix4
 
   enum { SaveLoadLen = SaveLenCounter<PacketType,TransId,SlotId,SlotId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(type,trans_id,client_slot,server_slot);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(type,trans_id,client_slot,server_slot);
    }
@@ -187,14 +181,12 @@ struct Packet_CALL3 // + uint8 info[len];
 
   enum { SaveLoadLen = SaveLenCounter<InfoLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(len);
    }
@@ -217,14 +209,12 @@ struct Packet_RET3 // + uint8 info[len];
 
   enum { SaveLoadLen = SaveLenCounter<SlotId,InfoLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(server_slot,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(server_slot,len);
    }
@@ -246,14 +236,12 @@ struct Packet_RET4 // + uint8 info[len];
 
   enum { SaveLoadLen = SaveLenCounter<InfoLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(len);
    }
@@ -276,14 +264,12 @@ struct Packet_RECALL3 // + uint8 info[len];
 
   enum { SaveLoadLen = SaveLenCounter<RecallNumber,InfoLenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(recall_number,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(recall_number,len);
    }
@@ -305,14 +291,12 @@ struct Packet_control3
 
   enum { SaveLoadLen = SaveLenCounter<SlotId>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(server_slot);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(server_slot);
    }
