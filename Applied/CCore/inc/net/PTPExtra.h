@@ -1,7 +1,7 @@
 /* PTPExtra.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -70,14 +70,12 @@ struct ServiceFunction
 
   enum { SaveLoadLen = SaveLenCounter<ServiceIdType,FunctionIdType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(service_id,function_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(service_id,function_id);
    }
@@ -100,14 +98,12 @@ struct Result
 
   enum { SaveLoadLen = SaveLenCounter<ServiceFunction,ErrorIdType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(serv_func,error_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(serv_func,error_id);
    }
@@ -125,11 +121,9 @@ struct Empty
 
   enum { SaveLoadLen = 0 };
 
-  template <class Dev>
-  void save(Dev &) const {}
+  void save(SaveDevType &) const {}
 
-  template <class Dev>
-  void load(Dev &) {}
+  void load(LoadDevType &) {}
  };
 
 } // namespace PTP

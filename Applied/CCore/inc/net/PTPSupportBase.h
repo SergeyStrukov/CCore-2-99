@@ -1,7 +1,7 @@
 /* PTPSupportBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -77,14 +77,12 @@ struct LenInput
 
   enum { SaveLoadLen = SaveLenCounter<LenType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(to_server_info_len,to_client_info_len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(to_server_info_len,to_client_info_len);
    }
@@ -108,14 +106,12 @@ struct LenOutput
 
   enum { SaveLoadLen = SaveLenCounter<LenType,LenType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(to_server_info_len,to_client_info_len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(to_server_info_len,to_client_info_len);
    }
@@ -138,14 +134,12 @@ struct SeedOutput
 
   enum { SaveLoadLen = SaveLenCounter<uint64,uint64>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(seed1,seed2);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(seed1,seed2);
    }
@@ -170,14 +164,12 @@ struct EchoInput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<uint32,uint8>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(delay_msec,len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(delay_msec,len);
    }
@@ -201,14 +193,12 @@ struct EchoOutput // + uint8 data[len];
 
   enum { SaveLoadLen = SaveLenCounter<uint8>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(len);
    }
@@ -233,14 +223,12 @@ struct ErrorDescInput
 
   enum { SaveLoadLen = SaveLenCounter<ServiceIdType,FunctionIdType,ErrorIdType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(service_id,function_id,error_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(service_id,function_id,error_id);
    }
@@ -264,14 +252,12 @@ struct ErrorDescOutput // + uint8 str[len];
 
   enum { SaveLoadLen = SaveLenCounter<uint8>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(len);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(len);
    }
@@ -295,14 +281,12 @@ struct ExistInput
 
   enum { SaveLoadLen = SaveLenCounter<ServiceIdType,FunctionIdType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(service_id,function_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(service_id,function_id);
    }
@@ -327,14 +311,12 @@ struct ExistOutput
 
   enum { SaveLoadLen = SaveLenCounter<ServiceIdType,FunctionIdType,ErrorIdType>::SaveLoadLen };
 
-  template <class Dev>
-  void save(Dev &dev) const
+  void save(SaveDevType &dev) const
    {
     dev.template use<BeOrder>(service_id,function_id,error_id);
    }
 
-  template <class Dev>
-  void load(Dev &dev)
+  void load(LoadDevType &dev)
    {
     dev.template use<BeOrder>(service_id,function_id,error_id);
    }

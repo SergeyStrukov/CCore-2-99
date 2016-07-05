@@ -1,7 +1,7 @@
 /* PTPEchoTest.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -31,7 +31,7 @@ class EchoTest;
 
 /* class EchoTest */
 
-class EchoTest : NoCopy , public ServerProc
+class EchoTest : public NoCopyBase<ServerProc>
  {
    ObjHook hook;
 
@@ -84,8 +84,7 @@ struct EchoTest::Ext : ExtBase<EchoTest::ServiceId,EchoTest::FunctionId,MovePack
 
     enum { SaveLoadLen = SaveLenCounter<uint32>::SaveLoadLen };
 
-    template <class Dev>
-    void save(Dev &dev) const
+    void save(SaveDevType &dev) const
      {
       dev.template use<BeOrder>(len);
      }
@@ -97,8 +96,7 @@ struct EchoTest::Ext : ExtBase<EchoTest::ServiceId,EchoTest::FunctionId,MovePack
 
     // load object
 
-    template <class Dev>
-    void load(Dev &dev)
+    void load(ExtraLoadDevType &dev)
      {
       info=dev.getFinalRange();
      }
