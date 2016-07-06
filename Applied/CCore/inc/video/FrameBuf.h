@@ -1,7 +1,7 @@
 /* FrameBuf.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -36,7 +36,7 @@ class GrayGlyph;
 
 class RGBGlyph;
 
-template <class RawColor> class FrameBuf;
+template <RawColorType RawColor> class FrameBuf;
 
 /* struct ColorPlane */
 
@@ -184,9 +184,31 @@ class RGBGlyph : ColorPlane
     }
  };
 
+/* concept BoolPattern<Pattern> */
+
+template <NothrowCopyableType Pattern>
+concept bool BoolPattern = requires(const Pattern &cobj,Coord x)
+ {
+  { cobj.dX() } -> Coord ;
+
+  { cobj[x] } -> bool ;
+ } ;
+
+/* concept BoolGlyph<Glyph> */
+
+template <NothrowCopyableType Glyph>
+concept bool BoolGlyph = requires(const Glyph &cobj,Coord y)
+ {
+  { cobj.dY() } -> Coord ;
+
+  cobj[y];
+
+  requires ( BoolPattern<decltype( cobj[y] )> );
+ } ;
+
 /* class FrameBuf<RawColor> */
 
-template <class RawColor>
+template <RawColorType RawColor>
 class FrameBuf : protected ColorPlane
  {
   protected:
@@ -221,18 +243,15 @@ class FrameBuf : protected ColorPlane
 
    static void HLine(Raw *ptr,Coord len,RawColor color);
 
-   template <class Blender>
-   static void HLine(Raw *ptr,Coord len,Blender blender);
+   static void HLine(Raw *ptr,Coord len,BlenderType blender);
 
    static void Save(Raw *ptr,Coord len,RawColor buf[/* len */]);
 
    static void Load(Raw *ptr,Coord len,const RawColor buf[/* len */]);
 
-   template <class Pattern>
-   static void HLine(Raw *ptr,Pattern pat,RawColor back,RawColor fore);
+   static void HLine(Raw *ptr,BoolPattern pat,RawColor back,RawColor fore);
 
-   template <class Pattern>
-   static void HLine(Raw *ptr,Pattern pat,RawColor fore);
+   static void HLine(Raw *ptr,BoolPattern pat,RawColor fore);
 
    static void HLine_mono(Raw *ptr,const uint8 *base,unsigned bitoff,Coord dx,RawColor color);
 
@@ -248,16 +267,7 @@ class FrameBuf : protected ColorPlane
 
    FrameBuf(const ColorPlane &plane) : ColorPlane(plane) {}
 
-   FrameBuf(const FrameBuf<RawColor> &buf,Pane pane) // unsafe
-    {
-     if( +pane )
-       {
-        raw=buf.place(pane.getBase());
-        dx=pane.dx;
-        dy=pane.dy;
-        dline=buf.dline;
-       }
-    }
+   FrameBuf(const FrameBuf<RawColor> &buf,Pane pane); // unsafe
 
    // properties
 
@@ -287,8 +297,7 @@ class FrameBuf : protected ColorPlane
 
    void block_unsafe(Pane pane,VColor vc) { block_unsafe(pane,RawColor(vc)); }
 
-   template <class Blender>
-   void block_unsafe(Pane pane,Blender blender);
+   void block_unsafe(Pane pane,BlenderType blender);
 
    void block_unsafe(Pane pane,VColor vc,Clr alpha);
 
@@ -296,11 +305,9 @@ class FrameBuf : protected ColorPlane
 
    void load_unsafe(Pane pane,const RawColor buf[/* pane.getArea() */]);
 
-   template <class Glyph>
-   void glyph_unsafe(Point p,Glyph gly,RawColor back,RawColor fore);
+   void glyph_unsafe(Point p,BoolGlyph gly,RawColor back,RawColor fore);
 
-   template <class Glyph>
-   void glyph_unsafe(Point p,Glyph gly,RawColor fore);
+   void glyph_unsafe(Point p,BoolGlyph gly,RawColor fore);
 
    void glyph_unsafe(Point p,MonoGlyph gly,RawColor color);
 
@@ -324,8 +331,7 @@ class FrameBuf : protected ColorPlane
 
    void block_safe(Pane pane,VColor vc) { block_safe(pane,RawColor(vc)); }
 
-   template <class Blender>
-   void block_safe(Pane pane,Blender blender);
+   void block_safe(Pane pane,BlenderType blender);
 
    void block_safe(Pane pane,VColor vc,Clr alpha);
 
@@ -336,34 +342,32 @@ class FrameBuf : protected ColorPlane
    void glyph_safe(Point p,RGBGlyph gly,VColor vc,GammaFunc gamma,bool bgr);
  };
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::HLine(Raw *ptr,Coord len,RawColor color)
  {
   for(; len>0 ;len--,ptr=NextX(ptr)) color.copyTo(ptr);
  }
 
-template <class RawColor>
-template <class Blender>
-void FrameBuf<RawColor>::HLine(Raw *ptr,Coord len,Blender blender)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::HLine(Raw *ptr,Coord len,BlenderType blender)
  {
   for(; len>0 ;len--,ptr=NextX(ptr)) RawColor::BlendTo(blender,ptr);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::Save(Raw *ptr,Coord len,RawColor buf[])
  {
   for(; len>0 ;len--,ptr=NextX(ptr),buf++) buf->copyFrom(ptr);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::Load(Raw *ptr,Coord len,const RawColor buf[])
  {
   for(; len>0 ;len--,ptr=NextX(ptr),buf++) buf->copyTo(ptr);
  }
 
-template <class RawColor>
-template <class Pattern>
-void FrameBuf<RawColor>::HLine(Raw *ptr,Pattern pat,RawColor back,RawColor fore)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPattern pat,RawColor back,RawColor fore)
  {
   Coord bdx=pat.dX();
 
@@ -374,9 +378,8 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,Pattern pat,RawColor back,RawColor fore)
       back.copyTo(ptr);
  }
 
-template <class RawColor>
-template <class Pattern>
-void FrameBuf<RawColor>::HLine(Raw *ptr,Pattern pat,RawColor fore)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPattern pat,RawColor fore)
  {
   Coord bdx=pat.dX();
 
@@ -385,7 +388,7 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,Pattern pat,RawColor fore)
       fore.copyTo(ptr);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::HLine_mono(Raw *ptr,const uint8 *base,unsigned bitoff,Coord dx,RawColor color)
  {
   struct Bits
@@ -426,7 +429,7 @@ void FrameBuf<RawColor>::HLine_mono(Raw *ptr,const uint8 *base,unsigned bitoff,C
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::HLine(Raw *ptr,const Clr *base,Coord dx,VColor vc,GammaFunc gamma)
  {
   RawColor color(vc);
@@ -448,7 +451,7 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,const Clr *base,Coord dx,VColor vc,Gamma
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::HLine_rgb(Raw *ptr,const Clr *base,Coord dx,VColor vc,GammaFunc gamma)
  {
   for(; dx>0 ;dx--,ptr=NextX(ptr),base+=3)
@@ -459,7 +462,7 @@ void FrameBuf<RawColor>::HLine_rgb(Raw *ptr,const Clr *base,Coord dx,VColor vc,G
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::HLine_bgr(Raw *ptr,const Clr *base,Coord dx,VColor vc,GammaFunc gamma)
  {
   for(; dx>0 ;dx--,ptr=NextX(ptr),base+=3)
@@ -470,7 +473,19 @@ void FrameBuf<RawColor>::HLine_bgr(Raw *ptr,const Clr *base,Coord dx,VColor vc,G
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
+FrameBuf<RawColor>::FrameBuf(const FrameBuf<RawColor> &buf,Pane pane)
+ {
+  if( +pane )
+    {
+     raw=buf.place(pane.getBase());
+     dx=pane.dx;
+     dy=pane.dy;
+     dline=buf.dline;
+    }
+ }
+
+template <RawColorType RawColor>
 RawColor FrameBuf<RawColor>::pixel_unsafe(Point p) const
  {
   RawColor ret;
@@ -480,13 +495,13 @@ RawColor FrameBuf<RawColor>::pixel_unsafe(Point p) const
   return ret;
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::pixel_unsafe(Point p,RawColor color)
  {
   color.copyTo(place(p));
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::block_unsafe(Pane pane,RawColor color)
  {
   if( !pane ) return;
@@ -501,9 +516,8 @@ void FrameBuf<RawColor>::block_unsafe(Pane pane,RawColor color)
   HLine(ptr,pane.dx,color);
  }
 
-template <class RawColor>
-template <class Blender>
-void FrameBuf<RawColor>::block_unsafe(Pane pane,Blender blender)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::block_unsafe(Pane pane,BlenderType blender)
  {
   if( !pane ) return;
 
@@ -517,7 +531,7 @@ void FrameBuf<RawColor>::block_unsafe(Pane pane,Blender blender)
   HLine(ptr,pane.dx,blender);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::block_unsafe(Pane pane,VColor vc,Clr alpha)
  {
   if( !pane ) return;
@@ -534,7 +548,7 @@ void FrameBuf<RawColor>::block_unsafe(Pane pane,VColor vc,Clr alpha)
   HLine(ptr,pane.dx,blender);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::save_unsafe(Pane pane,RawColor buf[])
  {
   if( !pane ) return;
@@ -549,7 +563,7 @@ void FrameBuf<RawColor>::save_unsafe(Pane pane,RawColor buf[])
   Save(ptr,pane.dx,buf);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::load_unsafe(Pane pane,const RawColor buf[])
  {
   if( !pane ) return;
@@ -564,9 +578,8 @@ void FrameBuf<RawColor>::load_unsafe(Pane pane,const RawColor buf[])
   Load(ptr,pane.dx,buf);
  }
 
-template <class RawColor>
-template <class Glyph>
-void FrameBuf<RawColor>::glyph_unsafe(Point p,Glyph gly,RawColor back,RawColor fore)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyph gly,RawColor back,RawColor fore)
  {
   Coord bdy=gly.dY();
 
@@ -583,9 +596,8 @@ void FrameBuf<RawColor>::glyph_unsafe(Point p,Glyph gly,RawColor back,RawColor f
   HLine(ptr,gly[by],back,fore);
  }
 
-template <class RawColor>
-template <class Glyph>
-void FrameBuf<RawColor>::glyph_unsafe(Point p,Glyph gly,RawColor fore)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyph gly,RawColor fore)
  {
   Coord bdy=gly.dY();
 
@@ -602,7 +614,7 @@ void FrameBuf<RawColor>::glyph_unsafe(Point p,Glyph gly,RawColor fore)
   HLine(ptr,gly[by],fore);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_unsafe(Point p,MonoGlyph gly,RawColor color)
  {
   Coord dy=gly.dY();
@@ -620,7 +632,7 @@ void FrameBuf<RawColor>::glyph_unsafe(Point p,MonoGlyph gly,RawColor color)
   HLine_mono(ptr,base,gly.bitOff(),gly.dX(),color);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_unsafe(Point p,GrayGlyph gly,VColor vc,GammaFunc gamma)
  {
   Coord dy=gly.dY();
@@ -638,7 +650,7 @@ void FrameBuf<RawColor>::glyph_unsafe(Point p,GrayGlyph gly,VColor vc,GammaFunc 
   HLine(ptr,base,gly.dX(),vc,gamma);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_rgb_unsafe(Point p,RGBGlyph gly,VColor vc,GammaFunc gamma)
  {
   Coord dy=gly.dY();
@@ -656,7 +668,7 @@ void FrameBuf<RawColor>::glyph_rgb_unsafe(Point p,RGBGlyph gly,VColor vc,GammaFu
   HLine_rgb(ptr,base,gly.dX(),vc,gamma);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_bgr_unsafe(Point p,RGBGlyph gly,VColor vc,GammaFunc gamma)
  {
   Coord dy=gly.dY();
@@ -674,7 +686,7 @@ void FrameBuf<RawColor>::glyph_bgr_unsafe(Point p,RGBGlyph gly,VColor vc,GammaFu
   HLine_bgr(ptr,base,gly.dX(),vc,gamma);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::test()
  {
   if( dx<=0 || dy<=0 ) return;
@@ -725,44 +737,43 @@ void FrameBuf<RawColor>::test()
   }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::erase(RawColor color)
  {
   block_unsafe(getPane(),color);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::erase(VColor vc,Clr alpha)
  {
   block_unsafe(getPane(),vc,alpha);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::pixel_safe(Point p,RawColor color)
  {
   if( p>=Null && p<getSize() ) pixel_unsafe(p,color);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::block_safe(Pane pane,RawColor color)
  {
   block_unsafe(Inf(pane,getPane()),color);
  }
 
-template <class RawColor>
-template <class Blender>
-void FrameBuf<RawColor>::block_safe(Pane pane,Blender blender)
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::block_safe(Pane pane,BlenderType blender)
  {
   block_unsafe(Inf(pane,getPane()),blender);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::block_safe(Pane pane,VColor vc,Clr alpha)
  {
   block_unsafe(Inf(pane,getPane()),vc,alpha);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_safe(Point p,MonoGlyph gly,RawColor color)
  {
   Pane pane=Inf(getPane(),gly.getPane(p));
@@ -773,7 +784,7 @@ void FrameBuf<RawColor>::glyph_safe(Point p,MonoGlyph gly,RawColor color)
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_safe(Point p,GrayGlyph gly,VColor vc,GammaFunc gamma)
  {
   Pane pane=Inf(getPane(),gly.getPane(p));
@@ -784,7 +795,7 @@ void FrameBuf<RawColor>::glyph_safe(Point p,GrayGlyph gly,VColor vc,GammaFunc ga
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void FrameBuf<RawColor>::glyph_safe(Point p,RGBGlyph gly,VColor vc,GammaFunc gamma,bool bgr)
  {
   Pane pane=Inf(getPane(),gly.getPane(p));

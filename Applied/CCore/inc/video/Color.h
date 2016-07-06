@@ -1,7 +1,7 @@
 /* Color.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -260,6 +260,16 @@ class TripleBlender
    Clr blendB(Clr b) const { return (alpha_b<MaxClr)?Blend(b,alpha_b,src_b,gamma):src_b; }
  };
 
+/* concept BlenderType<Blender> */
+
+template <NothrowCopyableType Blender>
+concept bool BlenderType = requires(Blender &obj,Clr c)
+ {
+  { obj.blendR(c) } -> Clr ;
+  { obj.blendG(c) } -> Clr ;
+  { obj.blendB(c) } -> Clr ;
+ } ;
+
 /* class RawColor16 */
 
 class RawColor16
@@ -292,8 +302,7 @@ class RawColor16
 
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
 
-   template <class Blender>
-   static void BlendTo(Blender blender,Raw dst[RawCount])
+   static void BlendTo(BlenderType blender,Raw dst[RawCount])
     {
      Raw raw=dst[0];
 
@@ -304,8 +313,7 @@ class RawColor16
      dst[0]=Pack565(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
 
-   template <class Blender>
-   void blend(Blender blender) { BlendTo(blender,color); }
+   void blend(BlenderType blender) { BlendTo(blender,color); }
 
    void blend(Clr alpha,VColor vc) { blend(Blender(alpha,vc)); }
  };
@@ -338,16 +346,14 @@ class RawColor24
 
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; color[1]=src[1]; color[2]=src[2]; }
 
-   template <class Blender>
-   static void BlendTo(Blender blender,Raw dst[RawCount])
+   static void BlendTo(BlenderType blender,Raw dst[RawCount])
     {
      dst[0]=blender.blendR(dst[0]);
      dst[1]=blender.blendG(dst[1]);
      dst[2]=blender.blendB(dst[2]);
     }
 
-   template <class Blender>
-   void blend(Blender blender) { BlendTo(blender,color); }
+   void blend(BlenderType blender) { BlendTo(blender,color); }
 
    void blend(Clr alpha,VColor vc) { blend(Blender(alpha,vc)); }
  };
@@ -380,16 +386,14 @@ class RawColor24Inv
 
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; color[1]=src[1]; color[2]=src[2]; }
 
-   template <class Blender>
-   static void BlendTo(Blender blender,Raw dst[RawCount])
+   static void BlendTo(BlenderType blender,Raw dst[RawCount])
     {
      dst[0]=blender.blendB(dst[0]);
      dst[1]=blender.blendG(dst[1]);
      dst[2]=blender.blendR(dst[2]);
     }
 
-   template <class Blender>
-   void blend(Blender blender) { BlendTo(blender,color); }
+   void blend(BlenderType blender) { BlendTo(blender,color); }
 
    void blend(Clr alpha,VColor vc) { blend(Blender(alpha,vc)); }
  };
@@ -424,8 +428,7 @@ class RawColor32
 
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
 
-   template <class Blender>
-   static void BlendTo(Blender blender,Raw dst[RawCount])
+   static void BlendTo(BlenderType blender,Raw dst[RawCount])
     {
      Raw raw=dst[0];
 
@@ -436,8 +439,7 @@ class RawColor32
      dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
 
-   template <class Blender>
-   void blend(Blender blender) { BlendTo(blender,color); }
+   void blend(BlenderType blender) { BlendTo(blender,color); }
 
    void blend(Clr alpha,VColor vc) { blend(Blender(alpha,vc)); }
  };
@@ -472,8 +474,7 @@ class RawColor32Inv
 
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
 
-   template <class Blender>
-   static void BlendTo(Blender blender,Raw dst[RawCount])
+   static void BlendTo(BlenderType blender,Raw dst[RawCount])
     {
      Raw raw=dst[0];
 
@@ -484,11 +485,44 @@ class RawColor32Inv
      dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
 
-   template <class Blender>
-   void blend(Blender blender) { BlendTo(blender,color); }
+   void blend(BlenderType blender) { BlendTo(blender,color); }
 
    void blend(Clr alpha,VColor vc) { blend(Blender(alpha,vc)); }
  };
+
+/* concept RawColorType<RawColor> */
+
+template <class RawColor,class Raw>
+concept bool RawColorType2 = requires(RawColor &obj,RawColor &cobj,Raw *dst,const Raw *src,Blender blender)
+ {
+  cobj.copyTo(dst);
+
+  obj.copyFrom(src);
+
+  RawColor::BlendTo(blender,dst);
+ } ;
+
+template <NothrowCopyableType RawColor>
+concept bool RawColorType = requires(RawColor &obj,Clr alpha,VColor vc,Clr r,Clr g,Clr b,Blender blender)
+ {
+  typename RawColor::Raw;
+
+  { RawColor::RawCount } -> unsigned ;
+
+  RawColor();
+
+  RawColor(vc);
+
+  obj.set(vc);
+
+  obj.set(r,g,b);
+
+  obj.blend(alpha,vc);
+
+  obj.blend(blender);
+
+  requires ( RawColorType2<RawColor,typename RawColor::Raw> );
+ } ;
 
 } // namespace Video
 } // namespace CCore
