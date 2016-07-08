@@ -22,7 +22,7 @@ namespace App {
 void MCoordEditWindow::showVal()
  {
   MCoord a=IntRShift(value,MPoint::Precision);
-  MCoord b=IntMask(value,MPoint::One-1);
+  MCoord b=IntMask(value,MPoint::One-1u);
   MCoord d=MPoint::One;
 
   unsigned n=MPoint::Precision-(+cfg.precision);

@@ -148,8 +148,7 @@ struct Coordinate
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Putobj(out,x);
    }
@@ -247,8 +246,7 @@ struct BasePoint
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"(#;,#;)",x,y);
    }
@@ -315,7 +313,7 @@ inline MCoord Fraction(MCoord value,unsigned prec=0) // prec <= MPoint::Precisio
 
 inline Coord RoundUpLen(MCoord dx)
  {
-  return IntRShift(dx+MPoint::One-1,MPoint::Precision);
+  return To16( IntRShift(dx+MPoint::One-1,MPoint::Precision) );
  }
 
 /* Prod() */
@@ -370,6 +368,8 @@ struct Ratio
 
   friend Ratio operator / (Ratio a,Ratio b)
    {
+    IntGuard( b.value!=0 );
+
     return Ratio( MCoord( IntLShift(DCoord(a.value),Precision)/b.value ) );
    }
 
@@ -396,12 +396,7 @@ struct Ratio
    }
  };
 
-inline Ratio Rational(MCoord a,MCoord b)
- {
-  IntGuard( b!=0 );
-
-  return Ratio( MCoord( IntLShift(DCoord(a),Ratio::Precision)/b ) );
- }
+inline Ratio Rational(MCoord a,MCoord b) { return Ratio(a)/Ratio(b); }
 
 inline Ratio XdivY(Point size) { return Rational(size.x,size.y); }
 
@@ -513,8 +508,7 @@ struct Pane
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"(#; +#;,#; +#;)",x,dx,y,dy);
    }

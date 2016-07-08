@@ -29,37 +29,37 @@ inline void IntGuard(bool cond) { if( !cond ) IntGuardAssert(); }
 
 /* functions */
 
-template <class SInt>
+template <SIntType SInt>
 auto IntDist(SInt a,SInt b) // a <= b
  {
   return SIntFunc<SInt>::Dist(a,b);
  }
 
-template <class SInt,class UInt>
+template <SIntType SInt,UIntType UInt>
 auto IntMovePos(SInt a,UInt delta)
  {
   return SIntFunc<SInt>::MovePos(a,delta);
  }
 
-template <class SInt,class UInt>
+template <SIntType SInt,UIntType UInt>
 auto IntMoveNeg(SInt a,UInt delta)
  {
   return SIntFunc<SInt>::MoveNeg(a,delta);
  }
 
-template <class SInt,class UInt>
+template <SIntType SInt,UIntType UInt>
 auto IntMove(SInt a,SInt e,UInt delta)
  {
   return SIntFunc<SInt>::Move(a,e,delta);
  }
 
-template <class SInt>
+template <SIntType SInt>
 auto IntAbs(SInt a,SInt b)
  {
-  return (a<=b)?IntDist(a,b):IntDist(b,a);
+  return (a<b)?IntDist(a,b):IntDist(b,a);
  }
 
-template <class SInt>
+template <SIntType SInt>
 auto IntAbs(SInt a)
  {
   return IntAbs<SInt>(a,0);
@@ -71,43 +71,43 @@ auto IntAbs(SInt a)
  // Can be substituted to provide checked operations.
  //
 
-template <class SInt>
+template <SIntType SInt>
 SInt IntAdd(SInt a,SInt b) { return a+b; } // may overflow
 
-template <class SInt>
+template <SIntType SInt>
 SInt IntSub(SInt a,SInt b) { return a-b; } // may overflow
 
-template <class SInt>
+template <SIntType SInt>
 SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 
-template <class SInt>
-SInt IntDiv(SInt a,SInt b) { return a/b; } // may crash
+template <SIntType SInt>
+SInt IntDiv(SInt a,SInt b) { return a/b; } // may overflow OR crash
 
  //
  // Can be substituted to provide the proper semantic.
  //
 
-template <class SInt>
+template <SIntType SInt>
 SInt IntLShift(SInt a,unsigned s) { return SIntFunc<SInt>::LShift(a,s); }
 
-template <class SInt>
+template <SIntType SInt>
 SInt IntRShift(SInt a,unsigned s) { return SIntFunc<SInt>::RShift(a,s); }
 
-template <class SInt,class UInt>
+template <SIntType SInt,UIntType UInt>
 SInt IntMask(SInt a,UInt mask) { return SIntFunc<SInt>::Mask(a,mask); }
 
 /* sint16 functions */
 
 template <SIntType SInt>
-sint16 To16(SInt x) { IntGuard( x>=-32768 && x<=32767 ); return (sint16)x; }
+sint16 To16(SInt x) { IntGuard( x>=-32768 && x<=32767 ); return sint16(x); }
 
-inline sint16 IntAdd(sint16 a,sint16 b) { return To16(sint32(a)+sint32(b)); }
+inline sint16 IntAdd(sint16 a,sint16 b) { return To16( sint32(a)+sint32(b) ); }
 
-inline sint16 IntSub(sint16 a,sint16 b) { return To16(sint32(a)-sint32(b)); }
+inline sint16 IntSub(sint16 a,sint16 b) { return To16( sint32(a)-sint32(b) ); }
 
-inline sint16 IntMul(sint16 a,sint16 b) { return To16(sint32(a)*sint32(b)); }
+inline sint16 IntMul(sint16 a,sint16 b) { return To16( sint32(a)*sint32(b) ); }
 
-inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return To16(sint32(a)/sint32(b)); }
+inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return To16( sint32(a)/sint32(b) ); }
 
 /* classes */
 
@@ -131,13 +131,11 @@ class DownBits
      shift=0;
     }
 
-   template <class UInt1>
-   explicit DownBits(UInt1 b) { init(b); }
+   explicit DownBits(UIntType b) { init(b); }
 
    operator UInt() const { return value; }
 
-   template <UIntType UInt1>
-   void init(UInt1 b)
+   void init(UIntType b)
     {
      unsigned bits=UIntBitsOf(b);
 
@@ -153,8 +151,7 @@ class DownBits
        }
     }
 
-   template <UIntType UInt1>
-   UInt operator () (UInt1 a) const
+   UInt operator () (UIntType a) const
     {
      return UInt(a>>shift);
     }
