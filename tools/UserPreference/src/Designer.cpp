@@ -802,7 +802,7 @@ void DesignerWindow::layout()
   // font_edit color_edit
 
   {
-   Pane pane(psor,max_dx,max_dy);
+   Pane pane(psor,{max_dx,max_dy});
 
    font_edit.setPlace(pane);
    color_edit.setPlace(pane);
@@ -813,7 +813,7 @@ void DesignerWindow::layout()
   {
    Point s=string_edit.getMinSize();
 
-   Pane pane(psor,Max(s.x,max_dx),s.y);
+   Pane pane(psor,{Max(s.x,max_dx),s.y});
 
    string_edit.setPlace(pane);
   }

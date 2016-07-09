@@ -441,8 +441,6 @@ struct Pane
       }
    }
 
-  Pane(Coord x,Coord y,Point size) : Pane(x,y,size.x,size.y) {}
-
   Pane(Point base,Coord dx,Coord dy) : Pane(base.x,base.y,dx,dy) {}
 
   Pane(Point base,Point size) : Pane(base.x,base.y,size.x,size.y) {}
@@ -566,9 +564,9 @@ inline Pane Inf(Pane a,Pane b)
 
 inline Pane Envelope(Point a,Point b) { return PaneBaseLim(Inf(a,b),Sup(a,b).addXY(1)); }
 
-
 inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
 
+/* Split...() */
 
 inline Pane SplitX(Coord delta,Pane &pane)
  {
@@ -638,6 +636,8 @@ inline Pane TrySplitY(Pane &pane,Coord delta)
 
   return Empty;
  }
+
+/* Multi Sup() & Inf() */
 
 template <class T,class ... TT>
 T Sup(T a,T b,T c,TT ... tt)

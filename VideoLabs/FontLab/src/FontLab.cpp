@@ -553,7 +553,7 @@ void FontLab::layout()
 
   base={delta,Coord(font_size.dy+2*delta)};
 
-  clip_pane=Pane(base+Point(10,10),50,30);
+  clip_pane=Pane(base+Point(10,10),{50,30});
  }
 
 void FontLab::draw(DrawBuf buf,bool drag_active) const

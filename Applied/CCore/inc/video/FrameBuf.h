@@ -279,7 +279,7 @@ class FrameBuf : protected ColorPlane
 
    Coord dY() const { return dy; }
 
-   Pane getPane() const { return Pane(0,0,dx,dy); }
+   Pane getPane() const { return Pane(Null,dx,dy); }
 
    Point getSize() const { return Point(dx,dy); }
 

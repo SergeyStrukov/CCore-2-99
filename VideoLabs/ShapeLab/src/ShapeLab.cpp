@@ -611,7 +611,7 @@ void ShapeLab2::layout()
 
   Point es=edit.getMinSize();
 
-  edit.setPlace(Pane(10,350,es));
+  edit.setPlace(Pane({10,350},es));
 
   check.setPlace(Pane({Coord(es.x+30),360},20));
  }

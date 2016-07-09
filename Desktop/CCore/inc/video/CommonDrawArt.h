@@ -136,7 +136,7 @@ class CommonDrawArt
 
      Coord d=Coord( 2*len+1 );
 
-     block(Pane(p.subXY(len),d,d),color);
+     block(Pane(p.subXY(len),d),color);
     }
 
    // path

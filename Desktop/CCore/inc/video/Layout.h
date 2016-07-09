@@ -197,7 +197,7 @@ class Pointsor
    template <class W>
    void placeX(W &window,Coord dx,Coord dy)
     {
-     window.setPlace(Pane(cutX(dx),dx,dy));
+     window.setPlace(Pane(cutX(dx),{dx,dy}));
     }
 
    template <class W>
@@ -215,7 +215,7 @@ class Pointsor
    template <class W>
    void placeY(W &window,Coord dx,Coord dy)
     {
-     window.setPlace(Pane(cutY(dy),dx,dy));
+     window.setPlace(Pane(cutY(dy),{dx,dy}));
     }
 
    template <class W>
@@ -273,7 +273,7 @@ class Pointsor
    template <class W,class Func>
    void placeX(W &window,Coord dx,Coord dy,Func func)
     {
-     window.setPlace(func(Pane(cutX(dx),dx,dy)));
+     window.setPlace(func(Pane(cutX(dx),{dx,dy})));
     }
 
    template <class W,class Func>
@@ -291,7 +291,7 @@ class Pointsor
    template <class W,class Func>
    void placeY(W &window,Coord dx,Coord dy,Func func)
     {
-     window.setPlace(func(Pane(cutY(dy),dx,dy)));
+     window.setPlace(func(Pane(cutY(dy),{dx,dy})));
     }
 
    template <class W,class Func>

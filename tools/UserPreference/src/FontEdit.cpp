@@ -563,7 +563,7 @@ void FontEditWindow::layout()
   // progress
 
   {
-   Pane pane(Null,size.x,+cfg.progress_dy);
+   Pane pane(Null,{size.x,+cfg.progress_dy});
 
    progress.setPlace(pane);
   }
