@@ -1,7 +1,7 @@
 /* SimpleConsole.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -25,9 +25,9 @@ namespace Video {
 
 class DefaultFont;
 
-template <class RawColor> class CharPanel;
+template <RawColorType RawColor> class CharPanel;
 
-template <class RawColor> class SimpleConsole;
+template <RawColorType RawColor> class SimpleConsole;
 
 /* class DefaultFont */
 
@@ -86,7 +86,7 @@ class DefaultFont
 
 /* class CharPanel<RawColor> */
 
-template <class RawColor>
+template <RawColorType RawColor>
 class CharPanel : NoCopy
  {
    FrameBuf<RawColor> out;
@@ -138,7 +138,7 @@ class CharPanel : NoCopy
    void clearMarker(Point p);
  };
 
-template <class RawColor>
+template <RawColorType RawColor>
 void CharPanel<RawColor>::init(FrameBuf<RawColor> out_)
  {
   out=out_;
@@ -151,13 +151,13 @@ void CharPanel<RawColor>::init(FrameBuf<RawColor> out_)
   out.erase(back);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void CharPanel<RawColor>::eraseLine(Coord y)
  {
   out.block_unsafe(row(y),back);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void CharPanel<RawColor>::eraseLineLine(Coord y)
  {
   Pane pane=row(y);
@@ -167,13 +167,13 @@ void CharPanel<RawColor>::eraseLineLine(Coord y)
   out.block_unsafe(pane,line);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void CharPanel<RawColor>::operator () (Point p,char ch)
  {
   out.glyph_unsafe(Base(p),DefaultFont(ch),back,fore);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void CharPanel<RawColor>::setMarker(Point p)
  {
   Pane cell=Cell(p);
@@ -183,7 +183,7 @@ void CharPanel<RawColor>::setMarker(Point p)
   out.glyph_unsafe(cell.getBase(),DefaultFont(),marker);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void CharPanel<RawColor>::clearMarker(Point p)
  {
   out.load_unsafe(Cell(p),backup);
@@ -191,7 +191,7 @@ void CharPanel<RawColor>::clearMarker(Point p)
 
 /* class SimpleConsole<RawColor> */
 
-template <class RawColor>
+template <RawColorType RawColor>
 class SimpleConsole : NoCopy
  {
    CharPanel<RawColor> panel;
@@ -225,7 +225,7 @@ class SimpleConsole : NoCopy
    void toggleMarker();
  };
 
-template <class RawColor>
+template <RawColorType RawColor>
 void SimpleConsole<RawColor>::newLine()
  {
   pos.x=0;
@@ -249,7 +249,7 @@ void SimpleConsole<RawColor>::newLine()
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void SimpleConsole<RawColor>::printChar(char ch)
  {
   switch( ch )
@@ -269,7 +269,7 @@ void SimpleConsole<RawColor>::printChar(char ch)
     }
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void SimpleConsole<RawColor>::init(FrameBuf<RawColor> out)
  {
   pos=Null;
@@ -278,7 +278,7 @@ void SimpleConsole<RawColor>::init(FrameBuf<RawColor> out)
   panel.init(out);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void SimpleConsole<RawColor>::print(PtrLen<const char> str)
  {
   if( !panel ) return;
@@ -290,7 +290,7 @@ void SimpleConsole<RawColor>::print(PtrLen<const char> str)
   if( marker ) panel.setMarker(pos);
  }
 
-template <class RawColor>
+template <RawColorType RawColor>
 void SimpleConsole<RawColor>::toggleMarker()
  {
   if( !panel ) return;
