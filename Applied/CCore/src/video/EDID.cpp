@@ -1,7 +1,7 @@
 /* EDID.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -75,7 +75,7 @@ EDIDRangeLimitsDesc::EDIDRangeLimitsDesc(const uint8 buf[18])
   min_hrate=buf[7];
   max_hrate=buf[8];
 
-  max_pixel_clock=buf[9]*uint32(10000);
+  max_pixel_clock=buf[9]*uint32(10'000);
  }
 
 /* struct EDIDExtDesc */

@@ -1,7 +1,7 @@
 /* EDID.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -98,8 +98,7 @@ struct EDIDTimingDesc
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"H: len = #; blank = #; sync-off = #; sync-pulse = #;\n",hlen,hblank,hsync_off,hsync_pulse);
     Printf(out,"V: len = #; blank = #; sync-off = #; sync-pulse = #;\n",vlen,vblank,vsync_off,vsync_pulse);
@@ -154,8 +153,7 @@ struct EDIDRangeLimitsDesc
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"min V-Rate = #; Hz\n",min_vrate);
     Printf(out,"max V-Rate = #; Hz\n",max_vrate);
@@ -182,8 +180,7 @@ struct EDIDExtDesc
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( type )
       {
@@ -231,8 +228,7 @@ struct EDIDBlockDesc
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     switch( index )
       {
@@ -269,8 +265,7 @@ struct EDIDBlock
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"vendor = #;\n",StrLen(Range(vendor_name)));
     Printf(out,"product id = #;\n",product_id);
