@@ -2,14 +2,14 @@
 
 --- Infrastructure -------------------------------------------------------------
 
-ApplicationBase.h    +
-ClientWindow.h       +
-DrawBuf.h            +
-FrameWindow.h        +       
-Keyboard.h           +
-Mouse.h              +
-SubWindow.h          +
-UserAction.h         +
+ApplicationBase.h    
+ClientWindow.h       
+DrawBuf.h            
+FrameWindow.h               
+Keyboard.h           +    
+Mouse.h              +         
+SubWindow.h          
+UserAction.h         +   
 
 --- Drawing --------------------------------------------------------------------
 
@@ -40,6 +40,7 @@ RefVal.h             +
 Layout.h             +
 Incremental.h        +
 ProgressScale.h      +
+Picture.h
 
 FontDatabase.h       +
 FontParam.h          +

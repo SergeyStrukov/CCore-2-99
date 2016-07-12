@@ -1,7 +1,7 @@
 /* Mouse.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -53,8 +53,7 @@ class PrintMouseKey
 
    explicit PrintMouseKey(MouseKey mkey_) : mkey(mkey_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      PrintBits<unsigned>(out,mkey)
                         (MouseKey_Left ,"Left" )

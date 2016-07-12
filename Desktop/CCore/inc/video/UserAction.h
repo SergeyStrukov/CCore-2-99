@@ -1,7 +1,7 @@
 /* UserAction.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -76,8 +76,7 @@ class UserAction
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Printf(out,"(#;,#;)",vkey,kmod);
       }
@@ -93,8 +92,7 @@ class UserAction
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Printf(out,"(#;,#;,#;)",vkey,kmod,repeat);
       }
@@ -108,8 +106,7 @@ class UserAction
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Printf(out,"(#;)",CharCode(ch));
       }
@@ -124,8 +121,7 @@ class UserAction
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Printf(out,"(#;,#;)",CharCode(ch),repeat);
       }
@@ -140,8 +136,7 @@ class UserAction
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Printf(out,"(#;,#;)",point,mkey);
       }
@@ -157,8 +152,7 @@ class UserAction
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Printf(out,"(#;,#;,#;)",point,mkey,delta);
       }
@@ -593,8 +587,8 @@ class UserAction
 
    // dispatch
 
-   template <class T,class Func>
-   void dispatch(T &obj,Func func) const  // func(UserAction)
+   template <class T>
+   void dispatch(T &obj,FuncArgType<UserAction> func) const
     {
      switch( type )
        {
@@ -631,8 +625,7 @@ class UserAction
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      switch( type )
        {

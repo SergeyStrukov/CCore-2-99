@@ -1,7 +1,7 @@
 /* Keyboard.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -175,8 +175,7 @@ class PrintKeyMod
 
    explicit PrintKeyMod(KeyMod kmod_) : kmod(kmod_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      PrintBits<unsigned>(out,kmod)
                         (KeyMod_Shift     ,"Shift"     )
