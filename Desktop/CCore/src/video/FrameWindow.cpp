@@ -1,7 +1,7 @@
 /* FrameWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -35,7 +35,7 @@ const char * GetTextDesc(CmdDisplay cmd_display)
 
 /* struct CopyFunction */
 
-void CopyFunction::copy(PtrLen<const char> text)
+void CopyFunction::copy(StrLen text)
  {
   Replace_min(buf.len,text.len);
 

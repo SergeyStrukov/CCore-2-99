@@ -1,7 +1,7 @@
 /* Desktop.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/LIN64
 //
@@ -2800,7 +2800,7 @@ class X11Host : public WindowHost , WindowDispatcher
        }
     }
 
-   virtual void textFromClipboard(Function<void (PtrLen<const char>)> func)
+   virtual void textFromClipboard(Function<void (StrLen)> func)
     {
      const char *format="CCore::Video::Private_Desktop::X11Host::textFromClipboard(...) : #;";
 

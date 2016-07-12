@@ -1,7 +1,7 @@
 /* FrameWindow.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -33,6 +33,8 @@ struct CopyFunction;
 
 struct Desktop;
 
+class InterruptFunction;
+
 class WindowHost;
 
 class FrameWindow;
@@ -63,13 +65,13 @@ struct CopyFunction : public Funchor
 
   // methods
 
-  void copy(PtrLen<const char> text);
+  void copy(StrLen text);
 
   void cutEOL();
 
   // functions
 
-  Function<void (PtrLen<const char>)> function_copy() { return FunctionOf(this,&CopyFunction::copy); }
+  Function<void (StrLen)> function_copy() { return FunctionOf(this,&CopyFunction::copy); }
  };
 
 /* struct Desktop */
@@ -199,7 +201,7 @@ class WindowHost : public MemBase_nocopy
 
    virtual void textToClipboard(StrLen text)=0;
 
-   virtual void textFromClipboard(Function<void (PtrLen<const char>)> func)=0;
+   virtual void textFromClipboard(Function<void (StrLen)> func)=0;
  };
 
 /* class FrameWindow */

@@ -1,7 +1,7 @@
 /* Desktop.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -1938,7 +1938,7 @@ class WindowsHost : public WindowHost
      put.commit(Win64::ClipboardFormat_Text);
     }
 
-   virtual void textFromClipboard(Function<void (PtrLen<const char>)> func)
+   virtual void textFromClipboard(Function<void (StrLen)> func)
     {
      Clipboard cbd(hWnd);
      GetFromClipboard get(Win64::ClipboardFormat_Text);

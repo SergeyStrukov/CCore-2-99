@@ -5,7 +5,7 @@
 ApplicationBase.h    
 ClientWindow.h       
 DrawBuf.h            
-FrameWindow.h               
+FrameWindow.h        +       
 Keyboard.h           +    
 Mouse.h              +         
 SubWindow.h          
