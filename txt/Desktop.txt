@@ -4,11 +4,11 @@
 
 ApplicationBase.h    
 ClientWindow.h       
-DrawBuf.h            
+DrawBuf.h            +            
 FrameWindow.h        +       
 Keyboard.h           +    
 Mouse.h              +         
-SubWindow.h          
+SubWindow.h          +        
 UserAction.h         +   
 
 --- Drawing --------------------------------------------------------------------

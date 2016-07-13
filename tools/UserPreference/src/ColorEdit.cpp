@@ -264,7 +264,7 @@ class ColorEditWindow::TextToColor : public Funchor
      return false;
     }
 
-   void text(PtrLen<const char> str)
+   void text(StrLen str)
     {
      ScanString inp(str);
 
@@ -280,7 +280,7 @@ class ColorEditWindow::TextToColor : public Funchor
        }
     }
 
-   Function<void (PtrLen<const char>)> function_text() { return FunctionOf(this,&TextToColor::text); }
+   Function<void (StrLen)> function_text() { return FunctionOf(this,&TextToColor::text); }
  };
 
 bool ColorEditWindow::past(VColor &ret)

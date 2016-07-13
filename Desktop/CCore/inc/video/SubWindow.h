@@ -1,7 +1,7 @@
 /* SubWindow.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -19,6 +19,7 @@
 #include <CCore/inc/video/FrameWindow.h>
 #include <CCore/inc/video/DrawBuf.h>
 
+#include <CCore/inc/InterfaceHost.h>
 #include <CCore/inc/List.h>
 
 namespace CCore {
@@ -51,7 +52,7 @@ struct SubWindowHost
 
   virtual Point getScreenOrigin()=0;
 
-  virtual void redraw(Pane pane)=0; // relative host window coords
+  virtual void redraw(Pane pane)=0; // relative host coords
 
   virtual void setFocus(SubWindow *sub_win)=0;
 
@@ -62,12 +63,12 @@ struct SubWindowHost
 
 /* class SubWindow */
 
-class SubWindow : public NoCopyBase<MemBase,UserInput>
+class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
  {
    DLink<SubWindow> link;
    WindowList *list = 0 ;
 
-   Pane place; // relative parent window coords
+   Pane place; // relative host coords
 
    SubWindowHost &host;
 
@@ -408,25 +409,20 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
 
    // user input
 
-   template <class Func>
-   void react(UserAction action,Func func);
+   void react(UserAction action,FuncArgType<UserAction> func);
 
-   template <class Func>
-   void react_Keyboard(UserAction action,Func func);
+   void react_Keyboard(UserAction action,FuncArgType<UserAction> func);
 
-   template <class Func>
-   void react_Mouse(UserAction action,Func func);
+   void react_Mouse(UserAction action,FuncArgType<UserAction> func);
 
-   template <class Func>
-   void react_Move(Point point,MouseKey mkey,Func func);
+   void react_Move(Point point,MouseKey mkey,FuncArgType<UserAction> func);
 
-   template <class Func>
-   void react_Leave(Func func);
+   void react_Leave(FuncArgType<UserAction> func);
 
    virtual void react(UserAction action);
  };
 
-template <class Func>
+template <FuncArgType<UserAction> Func>
 void WindowList::react(UserAction action,Func func)
  {
   if( action.fromKeyboard() )
@@ -462,8 +458,7 @@ void WindowList::react(UserAction action,Func func)
     }
  }
 
-template <class Func>
-void WindowList::react_Keyboard(UserAction action,Func func)
+void WindowList::react_Keyboard(UserAction action,FuncArgType<UserAction> func)
  {
   if( focus )
     {
@@ -514,8 +509,7 @@ void WindowList::react_Keyboard(UserAction action,Func func)
     }
  }
 
-template <class Func>
-void WindowList::react_Mouse(UserAction action,Func func)
+void WindowList::react_Mouse(UserAction action,FuncArgType<UserAction> func)
  {
   if( enable_click )
     {
@@ -559,8 +553,7 @@ void WindowList::react_Mouse(UserAction action,Func func)
     }
  }
 
-template <class Func>
-void WindowList::react_Move(Point point,MouseKey mkey,Func func)
+void WindowList::react_Move(Point point,MouseKey mkey,FuncArgType<UserAction> func)
  {
   if( SubWindow *sub_win=find(point) )
     {
@@ -587,13 +580,12 @@ void WindowList::react_Move(Point point,MouseKey mkey,Func func)
        }
      else
        {
-        func(UserAction::Create_Move(point,mkey));
+        UserInputFunc(func).put_Move(point,mkey);
        }
     }
  }
 
-template <class Func>
-void WindowList::react_Leave(Func func)
+void WindowList::react_Leave(FuncArgType<UserAction> func)
  {
   if( enter )
     {
@@ -601,7 +593,7 @@ void WindowList::react_Leave(Func func)
     }
   else
     {
-     func(UserAction::Create_Leave());
+     UserInputFunc(func).put_Leave();
     }
  }
 

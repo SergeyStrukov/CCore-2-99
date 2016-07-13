@@ -31,6 +31,8 @@ class UserAction;
 
 struct UserInput;
 
+template <FuncArgType<UserAction> Func> struct UserInputFuncBind;
+
 /* class UserAction */
 
 class UserAction
@@ -848,6 +850,26 @@ struct UserInput
 
   void put_Wheel(Point point,MouseKey mkey,Coord delta) { react(UserAction::Create_Wheel(point,mkey,delta)); }
  };
+
+/* struct UserInputFuncBind<Func> */
+
+template <FuncArgType<UserAction> Func>
+struct UserInputFuncBind : UserInput
+ {
+  Func func;
+
+  explicit UserInputFuncBind(const Func &func_) : func(func_) {}
+
+  virtual void react(UserAction action) final
+   {
+    func(action);
+   }
+ };
+
+/* UserInputFunc() */
+
+template <FuncArgType<UserAction> Func>
+UserInputFuncBind<Func> UserInputFunc(const Func &func) { return UserInputFuncBind<Func>(func); }
 
 } // namespace Video
 } // namespace CCore

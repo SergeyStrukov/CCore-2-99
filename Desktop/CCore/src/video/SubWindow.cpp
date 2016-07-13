@@ -1,7 +1,7 @@
 /* SubWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -223,10 +223,18 @@ void WindowList::focusPrev()
 
 void WindowList::focusOn(Point point)
  {
-  if( SubWindow *sub_win=find(point) )
-    {
-     if( sub_win->askFocus() ) sub_win->setFocus();
-    }
+  for(auto cur=list.start(); +cur ;++cur)
+    if( cur->place.contains(point) )
+      {
+       SubWindow *sub_win=cur.ptr;
+
+       if( sub_win->askFocus() )
+         {
+          sub_win->setFocus();
+
+          return;
+         }
+      }
  }
 
  // draw
@@ -382,7 +390,7 @@ void WindowList::bottomTabFocus()
       {
        case FocusOk : cur->setFocus(); return;
 
-       case FocusTab : cur->setFocus(); cur->topTabFocus(); return;
+       case FocusTab : cur->setFocus(); cur->bottomTabFocus(); return;
       }
  }
 
