@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_FixedWindow_h
 #define CCore_inc_video_FixedWindow_h
 
-#include <CCore/inc/video/ClientWindow.h>
+#include <CCore/inc/video/SubWindow.h>
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/FrameGuards.h>
 #include <CCore/inc/video/RefVal.h>
@@ -155,7 +155,9 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
    Shape shape;
 
-   ClientWindow *client = 0 ;
+   SubWindow *client = 0 ;
+
+   AliveControl *client_ac = &AliveControl::Default ;
 
    Point size;
 
@@ -339,16 +341,11 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        }
     }
 
-   ClientWindow & getClient()
+   SubWindow & getClient()
     {
      guardClient();
 
      return *client;
-    }
-
-   SubWindow & getClientSub()
-    {
-     return getClient().getSubWindow();
     }
 
    void shade(FrameBuf<DesktopColor> &buf)
@@ -449,11 +446,12 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      connector_updateConfig.connect(update);
     }
 
-   void bindClient(ClientWindow &client_)
+   void bindClient(SubWindow &client_)
     {
      guardDead();
 
      client=&client_;
+     client_ac=client_.getAliveControl();
     }
 
    void createMain(Pane pane,const String &title)
@@ -489,7 +487,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
    void destroy()
     {
-     if( client && client->askDestroy() )
+     if( client_ac->askDestroy() )
        {
         host->destroy();
 
@@ -503,14 +501,14 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         shape.layout(size);
 
-        if( client ) client->getSubWindow().setPlace(shape.getClient());
+        if( client ) client->setPlace(shape.getClient());
        }
 
      redraw( [this] (FrameBuf<DesktopColor> &buf)
                     {
                      try { shape.draw(buf); } catch(CatchType) {}
 
-                     getClientSub().forward_draw(buf,shape.hit_type==HitFrame_Move);
+                     getClient().forward_draw(buf,shape.hit_type==HitFrame_Move);
 
                      shade(buf);
 
@@ -523,7 +521,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
     {
      redraw( [this] (FrameBuf<DesktopColor> &buf)
                     {
-                     getClientSub().forward_draw(buf,shape.hit_type==HitFrame_Move);
+                     getClient().forward_draw(buf,shape.hit_type==HitFrame_Move);
 
                      shade(buf);
 
@@ -536,7 +534,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
     {
      redraw( [this,pane] (FrameBuf<DesktopColor> &buf)
                          {
-                          getClientSub().forward_draw(buf,pane,shape.hit_type==HitFrame_Move);
+                          getClient().forward_draw(buf,pane,shape.hit_type==HitFrame_Move);
 
                           shade(buf);
 
@@ -579,7 +577,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
     {
      if( shape.has_focus )
        {
-        getClientSub().gainFocus();
+        getClient().gainFocus();
        }
     }
 
@@ -612,16 +610,16 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      host->trackMouseHover();
      host->trackMouseLeave();
 
-     if( client ) client->alive();
+     client_ac->alive();
 
-     getClientSub().open();
+     getClient().open();
     }
 
    virtual void dead()
     {
-     getClientSub().close();
+     getClient().close();
 
-     if( client ) client->dead();
+     client_ac->dead();
     }
 
    virtual void askClose()
@@ -657,7 +655,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
      redrawFrame();
 
-     getClientSub().gainFocus();
+     getClient().gainFocus();
     }
 
    virtual void looseFocus()
@@ -666,7 +664,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
      redrawFrame();
 
-     getClientSub().looseFocus();
+     getClient().looseFocus();
     }
 
    // mouse
@@ -679,7 +677,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         client_capture=false;
 
-        getClientSub().looseCapture();
+        getClient().looseCapture();
        }
     }
 
@@ -691,7 +689,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
         case HitFrame_Close : host->setMouseShape(Mouse_Stop); break;
 
-        default: host->setMouseShape(getClientSub().forward_getMouseShape(point,kmod));
+        default: host->setMouseShape(getClient().forward_getMouseShape(point,kmod));
        }
     }
 
@@ -710,7 +708,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
     {
      if( action.fromKeyboard() )
        {
-        getClientSub().react(action);
+        getClient().react(action);
        }
      else
        {
@@ -720,29 +718,29 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
         if( client_capture || shape.getClient().contains(point) )
           {
-           getClientSub().forward_react(action);
+           getClient().forward_react(action);
           }
        }
     }
 
    void react_Key(VKey vkey,KeyMod kmod)
     {
-     if( !forwardKey(vkey,kmod) ) getClientSub().put_Key(vkey,kmod);
+     if( !forwardKey(vkey,kmod) ) getClient().put_Key(vkey,kmod);
     }
 
    void react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
     {
-     if( !forwardKey(vkey,kmod,repeat) ) getClientSub().put_Key(vkey,kmod,repeat);
+     if( !forwardKey(vkey,kmod,repeat) ) getClient().put_Key(vkey,kmod,repeat);
     }
 
    void react_KeyUp(VKey vkey,KeyMod kmod)
     {
-     if( !forwardKeyUp(vkey,kmod) ) getClientSub().put_KeyUp(vkey,kmod);
+     if( !forwardKeyUp(vkey,kmod) ) getClient().put_KeyUp(vkey,kmod);
     }
 
    void react_KeyUp(VKey vkey,KeyMod kmod,unsigned repeat)
     {
-     if( !forwardKeyUp(vkey,kmod,repeat) ) getClientSub().put_KeyUp(vkey,kmod,repeat);
+     if( !forwardKeyUp(vkey,kmod,repeat) ) getClient().put_KeyUp(vkey,kmod,repeat);
     }
 
    void react_LeftClick(Point point,MouseKey mkey)
@@ -753,7 +751,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
          {
           if( client_capture || shape.getClient().contains(point) )
             {
-             getClientSub().forward().put_LeftClick(point,mkey);
+             getClient().forward().put_LeftClick(point,mkey);
             }
          }
         break;
@@ -783,7 +781,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
          {
           if( client_capture || shape.getClient().contains(point) )
             {
-             getClientSub().forward().put_LeftUp(point,mkey);
+             getClient().forward().put_LeftUp(point,mkey);
             }
          }
        }
@@ -821,17 +819,17 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
             {
              client_enter=true;
 
-             getClientSub().forward().put_Move(point,mkey);
+             getClient().forward().put_Move(point,mkey);
             }
           else
             {
-             if( client_capture ) getClientSub().forward().put_Move(point,mkey);
+             if( client_capture ) getClient().forward().put_Move(point,mkey);
 
              if( client_enter )
                {
                 client_enter=false;
 
-                getClientSub().put_Leave();
+                getClient().put_Leave();
                }
             }
          }
@@ -853,7 +851,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         client_enter=false;
 
-        getClientSub().put_Leave();
+        getClient().put_Leave();
        }
     }
 

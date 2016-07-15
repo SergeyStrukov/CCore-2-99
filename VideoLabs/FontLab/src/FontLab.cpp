@@ -277,10 +277,9 @@ void FontSelector::react_Key(VKey vkey,KeyMod kmod)
 
 FontSelectorWindow::FontSelectorWindow(Desktop *desktop,const DragWindow::ConfigType &drag_cfg,const FontSelector::Config &cfg)
  : frame(desktop,drag_cfg),
-   win(frame,cfg),
-   client(win)
+   win(frame,cfg)
  {
-  frame.bindClient(client);
+  frame.bindClient(win);
  }
 
 FontSelectorWindow::~FontSelectorWindow()

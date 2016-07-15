@@ -20,11 +20,26 @@
 namespace CCore {
 namespace Video {
 
+/* struct AliveControl */
+
+const Unid AliveControl::TypeUnid={{0x9E69'313D,0x4224'80B3,0x07C8'56A4,0xEDEE'48BC,0x755F'B369,0xA322'6252,0x5495'352E,0xEA70'2BF5}};
+
+AliveControl AliveControl::Default CCORE_INITPRI_3 ;
+
 /* class SubWindow */
+
+const Unid SubWindow::TypeUnid={{0x481F'20C2,0x2D18'4DF6,0x65BB'3A86,0x3B27'6E54,0x73F3'B26C,0xCFF3'9083,0xDDD3'D794,0x129C'3D4B}};
 
 SubWindow::~SubWindow()
  {
   if( list ) list->del(this);
+ }
+
+AliveControl * SubWindow::getAliveControl()
+ {
+  if( AliveControl *ret=pickInterface<AliveControl>() ) return ret;
+
+  return &AliveControl::Default;
  }
 
 /* class WindowList */

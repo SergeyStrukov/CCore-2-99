@@ -34,22 +34,19 @@ class Application;
 
 /* class Client */
 
-class Client : public ClientWindow
+class Client : ShapeLab::Config , public ShapeLab , public AliveControl
  {
-   ShapeLab::Config cfg;
-
-   ShapeLab window;
-
   public:
 
    Client(SubWindowHost &host,FontBuilder &fb)
-    : cfg(fb),
-      window(host,cfg)
+    : ShapeLab::Config(fb),
+      ShapeLab(host,*this)
     {
-     sub_win=&window;
     }
 
    ~Client() {}
+
+   // AliveControl
 
    virtual void alive()
     {

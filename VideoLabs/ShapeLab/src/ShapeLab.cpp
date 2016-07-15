@@ -558,7 +558,6 @@ ShapeLab2::ShapeLab2(SubWindowHost &host,const Config &cfg_)
 
    dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
    test(dialog,cfg.test_cfg),
-   dialog_client(test),
 
    msg_window(host.getFrame()->getDesktop(),cfg.msg_cfg),
 
@@ -577,7 +576,7 @@ ShapeLab2::ShapeLab2(SubWindowHost &host,const Config &cfg_)
 
   progress.setTotal(100);
 
-  dialog.bindClient(dialog_client);
+  dialog.bindClient(test);
 
   edit.printf("#;","This is a line editor text");
 

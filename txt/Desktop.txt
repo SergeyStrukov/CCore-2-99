@@ -3,7 +3,6 @@
 --- Infrastructure -------------------------------------------------------------
 
 ApplicationBase.h    
-ClientWindow.h       
 DrawBuf.h            +            
 FrameWindow.h        +       
 Keyboard.h           +    
@@ -13,47 +12,47 @@ UserAction.h         +
 
 --- Drawing --------------------------------------------------------------------
 
-GammaTable.h         +
+GammaTable.h         
 
-CommonDrawArt.h      +
+CommonDrawArt.h      
 DrawAlgo.h              ?
-DrawTools.h          +
-CurveDriver.h        +
+DrawTools.h          
+CurveDriver.h        
 
-ColorField.h         +
-FigureLib.h          +
+ColorField.h         
+FigureLib.h          
 SmoothAlgo.h            ?      
-SmoothDrawArt.h      +      
+SmoothDrawArt.h            
 
 --- Font -----------------------------------------------------------------------
 
-Font.h               +
-FreeType.h           +
-FreeTypeFont.h       +
+Font.h               
+FreeType.h           
+FreeTypeFont.h       
 
 --- Tools ----------------------------------------------------------------------
 
-DesktopKey.h         +
-FrameGuards.h        +
-Info.h               +
-RefVal.h             +
-Layout.h             +
-Incremental.h        +
-ProgressScale.h      +
+DesktopKey.h         
+FrameGuards.h        
+Info.h               
+RefVal.h             
+Layout.h             
+Incremental.h        
+ProgressScale.h      
 Picture.h
 
-FontDatabase.h       +
-FontParam.h          +
-ConfigStore.h        +     
-UserPreference.h     +
+FontDatabase.h       
+FontParam.h          
+ConfigStore.h             
+UserPreference.h     
 
 --- Window ---------------------------------------------------------------------
 
-DragWindow.h         +
-FixedWindow.h        +
+DragWindow.h         
+FixedWindow.h        
 ShapeLib.h              ?
 WindowLib.h             ?
-MessageWindow.h      +
-WindowReport.h       +
+MessageWindow.h      
+WindowReport.h       
 
 -------------------------------------------------------------------------------- 

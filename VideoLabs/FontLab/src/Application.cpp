@@ -30,23 +30,6 @@ struct Param;
 
 class Application;
 
-/* class Client */
-
-class Client : public ClientWindow
- {
-   FontLab lab;
-
-  public:
-
-   Client(SubWindowHost &host,const FontLab::Config &cfg,FontSelectorWindow &selector)
-    : lab(host,cfg,selector)
-    {
-     sub_win=&lab;
-    }
-
-   ~Client() {}
- };
-
 /* struct Param */
 
 struct Param
@@ -76,7 +59,7 @@ class Application : public ApplicationBase
    FontSelectorWindow selector;
 
    ExceptionClient exception_client;
-   Client client;
+   FontLab client;
 
   private:
 

@@ -30,19 +30,6 @@ struct Param;
 
 class Application;
 
-/* class Client */
-
-class Client : public ClientWindow
- {
-   Test test;
-
-  public:
-
-   Client(SubWindowHost &host,const Test::Config &cfg) : test(host,cfg) { sub_win=&test; }
-
-   ~Client() {}
- };
-
 /* struct Param */
 
 struct Param : WindowReportParam
@@ -63,7 +50,7 @@ class Application : public ApplicationBase
    DragWindow main_win;
 
    ExceptionClient exception_client;
-   Client client;
+   Test client;
 
   private:
 

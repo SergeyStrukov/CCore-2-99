@@ -305,10 +305,9 @@ void TestWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 TestFrame::TestFrame(Desktop *desktop,const UserPreference &pref,Signal<> &update)
  : DragWindow(desktop,pref.getDragWindowConfig(),update),
-   test(*this,pref),
-   client(test)
+   test(*this,pref)
  {
-  bindClient(client);
+  bindClient(test);
  }
 
 TestFrame::~TestFrame()

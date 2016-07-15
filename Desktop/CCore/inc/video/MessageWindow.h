@@ -196,8 +196,6 @@ class MessageWindow : public FixedWindow
 
    MessageSubWindow sub_win;
 
-   ClientFromSubWindow client;
-
    int btn_id = Button_Cancel ;
 
    SignalConnector<MessageWindow,int> connector_finish;

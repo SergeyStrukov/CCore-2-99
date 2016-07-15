@@ -255,7 +255,6 @@
 ../../Applied/CCore/src/video/VideoConsole.cpp
 ../../Applied/CCore/src/video/VideoDevice.cpp
 ../../Desktop/CCore/src/video/ApplicationBase.cpp
-../../Desktop/CCore/src/video/ClientWindow.cpp
 ../../Desktop/CCore/src/video/ColorField.cpp
 ../../Desktop/CCore/src/video/CommonDrawArt.cpp
 ../../Desktop/CCore/src/video/ConfigStore.cpp

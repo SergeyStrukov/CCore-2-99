@@ -30,19 +30,6 @@ struct Param;
 
 class Application;
 
-/* class Client */
-
-class Client : public ClientWindow
- {
-   DrawLab window;
-
-  public:
-
-   explicit Client(SubWindowHost &host) : window(host) { sub_win=&window; }
-
-   ~Client() {}
- };
-
 /* struct Param */
 
 struct Param : WindowReportParam
@@ -61,7 +48,7 @@ class Application : public ApplicationBase
    DragWindow main_win;
 
    ExceptionClient exception_client;
-   Client client;
+   DrawLab client;
 
   private:
 

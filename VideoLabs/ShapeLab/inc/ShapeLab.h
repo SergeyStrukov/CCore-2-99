@@ -351,7 +351,6 @@ class ShapeLab2 : public SubWindow
 
    FixedWindow dialog;
    TestDialog test;
-   ClientFromSubWindow dialog_client;
 
    // message
 

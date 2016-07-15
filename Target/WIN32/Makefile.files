@@ -31,7 +31,6 @@ obj/CharProp.o \
 obj/CheckPlatformBase.o \
 obj/CheckedData.o \
 obj/Classification.o \
-obj/ClientWindow.o \
 obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
@@ -397,7 +396,6 @@ obj/CharProp.s \
 obj/CheckPlatformBase.s \
 obj/CheckedData.s \
 obj/Classification.s \
-obj/ClientWindow.s \
 obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
@@ -763,7 +761,6 @@ obj/CharProp.dep \
 obj/CheckPlatformBase.dep \
 obj/CheckedData.dep \
 obj/Classification.dep \
-obj/ClientWindow.dep \
 obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
@@ -1200,9 +1197,6 @@ obj/CheckedData.o : ../../Applied/CCore/src/net/CheckedData.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Classification.o : ../../Simple/CCore/src/gadget/Classification.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ClientWindow.o : ../../Desktop/CCore/src/video/ClientWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CmdInput.o : ../../Applied/CCore/src/CmdInput.cpp
@@ -2293,9 +2287,6 @@ obj/CheckedData.s : ../../Applied/CCore/src/net/CheckedData.cpp
 obj/Classification.s : ../../Simple/CCore/src/gadget/Classification.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ClientWindow.s : ../../Desktop/CCore/src/video/ClientWindow.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
 obj/CmdInput.s : ../../Applied/CCore/src/CmdInput.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3383,9 +3374,6 @@ obj/CheckedData.dep : ../../Applied/CCore/src/net/CheckedData.cpp
 
 obj/Classification.dep : ../../Simple/CCore/src/gadget/Classification.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Classification.o $< -MF $@
-
-obj/ClientWindow.dep : ../../Desktop/CCore/src/video/ClientWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ClientWindow.o $< -MF $@
 
 obj/CmdInput.dep : ../../Applied/CCore/src/CmdInput.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CmdInput.o $< -MF $@

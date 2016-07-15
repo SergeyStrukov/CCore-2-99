@@ -297,8 +297,8 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
 
 ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowReportBase &report_)
  : SubWindow(host),
-   cfg(cfg_),
    report(report_),
+   cfg(cfg_),
 
    list(*this),
    yscroll(list,cfg.scroll_cfg),
@@ -739,7 +739,7 @@ void ExceptionClient::show() noexcept
  {
   if( in_loop )
     {
-     window.reposition();
+     reposition();
 
      alert.assert();
     }

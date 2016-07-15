@@ -32,25 +32,6 @@ class PrefGuard;
 
 class Application;
 
-/* class Client */
-
-class Client : public ClientWindow
- {
-   DesignerWindow designer;
-
-  public:
-
-   Client(SubWindowHost &host,const DesignerWindow::ConfigType &cfg,Preference &pref)
-    : designer(host,cfg,pref)
-    {
-     sub_win=&designer;
-    }
-
-   ~Client()
-    {
-    }
- };
-
 /* struct Param */
 
 struct Param
@@ -98,7 +79,7 @@ class Application : public ApplicationBase
    DragWindow main_win;
 
    ExceptionClient exception_client;
-   Client client;
+   DesignerWindow client;
 
   private:
 

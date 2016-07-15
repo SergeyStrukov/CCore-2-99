@@ -81,8 +81,6 @@ struct ClientApplication
 
      SubWindow client;
 
-     ClientFromSubWindow client_win;
-
     private:
 
      virtual void clearException() noexcept
@@ -136,11 +134,10 @@ struct ClientApplication
         title(title_),
         main_win(param.desktop,param.drag_cfg),
         exception_client(main_win,param.exception_cfg,report),
-        client(main_win,param.client_cfg, std::forward<TT>(tt)... ),
-        client_win(client)
+        client(main_win,param.client_cfg, std::forward<TT>(tt)... )
       {
        main_win.bindAlertClient(exception_client);
-       main_win.bindClient(client_win);
+       main_win.bindClient(client);
       }
 
      template <class P,class ... TT>
@@ -150,11 +147,10 @@ struct ClientApplication
         title(title_),
         main_win(param.desktop,param.drag_cfg,update),
         exception_client(main_win,param.exception_cfg,report),
-        client(main_win,update, std::forward<TT>(tt)... ),
-        client_win(client)
+        client(main_win,update, std::forward<TT>(tt)... )
       {
        main_win.bindAlertClient(exception_client);
-       main_win.bindClient(client_win);
+       main_win.bindClient(client);
       }
 
      ~Application()

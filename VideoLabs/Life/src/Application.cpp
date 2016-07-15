@@ -30,19 +30,6 @@ struct Param;
 
 class Application;
 
-/* class Client */
-
-class Client : public ClientWindow
- {
-   Life life;
-
-  public:
-
-   explicit Client(SubWindowHost &host) : life(host) { sub_win=&life; }
-
-   ~Client() {}
- };
-
 /* struct Param */
 
 struct Param : WindowReportParam
@@ -62,7 +49,7 @@ class Application : public ApplicationBase
    DragWindow main_win;
 
    ExceptionClient exception_client;
-   Client client;
+   Life client;
 
   private:
 

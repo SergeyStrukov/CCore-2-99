@@ -126,11 +126,13 @@ class ExceptionWindow : public SubWindow
 
    using ConfigType = Config ;
 
+  protected:
+
+   WindowReportBase &report;
+
   private:
 
    const Config &cfg;
-
-   WindowReportBase &report;
 
    WindowList list;
 
@@ -322,9 +324,7 @@ void WindowReportOf<Shape>::modalLoop()
 
   ExceptionWindow sub_win(main_win,cfg,*this);
 
-  ClientFromSubWindow client(sub_win);
-
-  main_win.bindClient(client);
+  main_win.bindClient(sub_win);
 
   Point max_size=main_win.getDesktop()->getScreenSize();
 
@@ -339,12 +339,8 @@ using WindowReport = WindowReportOf<DragShape> ;
 
 /* class ExceptionClient */
 
-class ExceptionClient : public ClientWindow
+class ExceptionClient : public ExceptionWindow , public AliveControl
  {
-   WindowReportBase &report;
-
-   ExceptionWindow window;
-
    bool in_loop = false ;
 
    Signal<> alert;
@@ -352,12 +348,9 @@ class ExceptionClient : public ClientWindow
   public:
 
    template <class W>
-   ExceptionClient(W &parent,const ExceptionWindow::Config &cfg,WindowReportBase &report_)
-    : report(report_),
-      window(parent,cfg,report_)
+   ExceptionClient(W &parent,const ExceptionWindow::Config &cfg,WindowReportBase &report)
+    : ExceptionWindow(parent,cfg,report)
     {
-     sub_win=&window;
-
      parent.connectAlert(alert);
     }
 
@@ -375,7 +368,7 @@ class ExceptionClient : public ClientWindow
 
    void afterLoop() noexcept;
 
-   // base
+   // AliveControl
 
    virtual void alive();
  };

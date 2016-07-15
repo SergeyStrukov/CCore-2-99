@@ -38,6 +38,8 @@ enum FocusType
 
 struct SubWindowHost;
 
+struct AliveControl;
+
 class SubWindow;
 
 class WindowList;
@@ -61,6 +63,30 @@ struct SubWindowHost
   virtual void releaseMouse(SubWindow *sub_win)=0;
  };
 
+/* struct AliveControl */
+
+struct AliveControl
+ {
+  static const Unid TypeUnid;
+
+  virtual void alive()
+   {
+    // do nothing
+   }
+
+  virtual void dead()
+   {
+    // do nothing
+   }
+
+  virtual bool askDestroy()
+   {
+    return true;
+   }
+
+  static AliveControl Default;
+ };
+
 /* class SubWindow */
 
 class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
@@ -77,9 +103,13 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
   public:
 
+   static const Unid TypeUnid;
+
    explicit SubWindow(SubWindowHost &host_) : host(host_) {}
 
    virtual ~SubWindow();
+
+   AliveControl * getAliveControl(); // non-null
 
    // methods
 

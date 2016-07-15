@@ -116,8 +116,6 @@ class TestFrame : public DragWindow
  {
    TestWindow test;
 
-   ClientFromSubWindow client;
-
   public:
 
    TestFrame(Desktop *desktop,const UserPreference &pref,Signal<> &update);

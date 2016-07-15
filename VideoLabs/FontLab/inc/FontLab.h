@@ -174,16 +174,13 @@ class Progress : public IncrementalProgress
     {
       Client sub_win;
 
-      ClientFromSubWindow client;
-
      public:
 
       Frame(Desktop *desktop,const FixedWindow::ConfigType &cfg)
        : FixedWindow(desktop,cfg),
-         sub_win(*this),
-         client(sub_win)
+         sub_win(*this)
        {
-        bindClient(client);
+        bindClient(sub_win);
        }
 
       virtual ~Frame()
@@ -264,8 +261,6 @@ class FontSelectorWindow : NoCopy
    DragWindow frame;
 
    FontSelector win;
-
-   ClientFromSubWindow client;
 
   public:
 

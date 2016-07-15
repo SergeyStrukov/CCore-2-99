@@ -283,11 +283,10 @@ MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg_)
  : FixedWindow(desktop,cfg_.frame_cfg),
    cfg(cfg_),
    sub_win(*this,cfg.msg_cfg),
-   client(sub_win),
 
    connector_finish(this,&MessageWindow::finish,sub_win.finish)
  {
-  bindClient(client);
+  bindClient(sub_win);
  }
 
 MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg,Signal<> &update)

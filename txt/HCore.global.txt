@@ -80,6 +80,8 @@ CCORE_INITPRI_0
         
         EmptyPicture Object;
         
+        AliveControl::Default;
+        
         --------------
         
         GlobalObjects
