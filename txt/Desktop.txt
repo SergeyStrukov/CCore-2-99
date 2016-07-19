@@ -2,7 +2,7 @@
 
 --- Infrastructure -------------------------------------------------------------
 
-ApplicationBase.h    
+ApplicationBase.h    + 
 DrawBuf.h            +            
 FrameWindow.h        +       
 Keyboard.h           +    
@@ -32,14 +32,14 @@ FreeTypeFont.h
 
 --- Tools ----------------------------------------------------------------------
 
-DesktopKey.h         
-FrameGuards.h        
-Info.h               
-RefVal.h             
+DesktopKey.h         +        
+FrameGuards.h        +
+ProgressScale.h      +      
 Layout.h             
-Incremental.h        
-ProgressScale.h      
-Picture.h
+Incremental.h        +        
+Info.h               +
+Picture.h            +
+RefVal.h             
 
 FontDatabase.h       
 FontParam.h          

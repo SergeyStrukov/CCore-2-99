@@ -1,7 +1,7 @@
 /* ProgressScale.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -23,11 +23,11 @@ namespace Video {
 
 /* classes */
 
-template <class UInt> class ProgressScale;
+template <UIntType UInt> class ProgressScale;
 
 /* class ProgressScale<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 class ProgressScale
  {
    unsigned shift;

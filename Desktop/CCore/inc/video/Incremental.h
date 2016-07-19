@@ -1,7 +1,7 @@
 /* Incremental.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -40,11 +40,27 @@ void GuardIncrementalInProgress();
 
 struct IncrementalProgress;
 
+/* concept StepBuilder<Step,T> */
+
+template <class Step,class T>
+concept bool StepBuilder = requires(Step &obj,T &t,IncrementalProgress &progress)
+ {
+  Step();
+
+  { obj.start(t) } -> StepResult ;
+
+  { obj(progress,t) } -> StepResult ;
+
+  { obj.erase() } noexcept;
+ } ;
+
+/* classes */
+
 class IncrementalNode;
 
 class IncrementalDriver;
 
-template <class T,class Step> class IncrementalBuilder;
+template <class T,StepBuilder<T> Step> class IncrementalBuilder;
 
 /* struct IncrementalProgress */
 
@@ -133,7 +149,7 @@ class Step
 
 #endif
 
-template <class T,class Step>
+template <class T,StepBuilder<T> Step>
 class IncrementalBuilder : IncrementalNode
  {
    IncrementalProgress &progress;
@@ -159,19 +175,19 @@ class IncrementalBuilder : IncrementalNode
    Signal<bool> complete; // ok
  };
 
-template <class T,class Step>
+template <class T,StepBuilder<T> Step>
 IncrementalBuilder<T,Step>::IncrementalBuilder(IncrementalProgress &progress_)
  : progress(progress_)
  {
  }
 
-template <class T,class Step>
+template <class T,StepBuilder<T> Step>
 IncrementalBuilder<T,Step>::~IncrementalBuilder()
  {
   cancel();
  }
 
-template <class T,class Step>
+template <class T,StepBuilder<T> Step>
 void IncrementalBuilder<T,Step>::start(T &obj_)
  {
   if( obj )
@@ -223,7 +239,7 @@ void IncrementalBuilder<T,Step>::start(T &obj_)
   obj=&obj_;
  }
 
-template <class T,class Step>
+template <class T,StepBuilder<T> Step>
 void IncrementalBuilder<T,Step>::step(TimeScope time_scope)
  {
   if( !obj ) return;
@@ -269,7 +285,7 @@ void IncrementalBuilder<T,Step>::step(TimeScope time_scope)
     }
  }
 
-template <class T,class Step>
+template <class T,StepBuilder<T> Step>
 void IncrementalBuilder<T,Step>::cancel() noexcept
  {
   if( !obj ) return;

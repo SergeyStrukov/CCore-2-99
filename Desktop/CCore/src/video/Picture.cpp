@@ -1,7 +1,7 @@
 /* Picture.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -32,7 +32,7 @@ class EmptyPicture : public PictureBase
 
    // AbstractPicture
 
-   virtual ulen getCount() const { return 0; }
+   virtual ulen getCount() const { return 1; }
 
    virtual Point getSize() const { return {8,8}; }
 
