@@ -12,7 +12,7 @@ UserAction.h         +
 
 --- Drawing --------------------------------------------------------------------
 
-GammaTable.h         
+GammaTable.h         +    
 
 CommonDrawArt.h      
 DrawAlgo.h              ?
@@ -28,7 +28,7 @@ SmoothDrawArt.h
 
 Font.h               +        
 FreeType.h           +
-FreeTypeFont.h       
+FreeTypeFont.h       +
 
 --- Tools ----------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 /* GammaTable.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -22,18 +22,18 @@ namespace Video {
 
 /* class GammaTable */
 
-template <class T>
+template <UIntType T>
 void GammaTable::Fill(PtrLen<T> table,double order)
  {
   double M=table.len-1;
-  double V=T(-1);
+  double V=MaxUInt<T>;
 
   for(ulen i=0; i<table.len ;i++)
     {
      double x=i/M;
      double y=pow(x,order);
 
-     table[i]=T(round(V*y));
+     table[i]=T( round(V*y) );
     }
  }
 

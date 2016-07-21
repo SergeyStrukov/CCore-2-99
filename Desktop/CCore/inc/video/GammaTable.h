@@ -1,7 +1,7 @@
 /* GammaTable.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -37,7 +37,7 @@ class GammaTable : NoCopy
 
   private:
 
-   template <class T>
+   template <UIntType T>
    static void Fill(PtrLen<T> table,double order);
 
   public:

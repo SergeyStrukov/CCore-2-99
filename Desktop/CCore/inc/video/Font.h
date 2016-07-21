@@ -266,7 +266,7 @@ struct AbstractFont
 
   virtual ulen position(AbstractSparseString &str,Point point) const =0; // 1-based cell index, 0 -- before the first
 
-  virtual TextSize text(AbstractSparseString &str,ulen pos) const =0; // 0-based, implementation-defined if out of range
+  virtual TextSize text(AbstractSparseString &str,ulen pos) const =0; // 0-based, implementation-defined if pos is out of range
 
   virtual ulen fit(AbstractSparseString &str,Coord full_dx) const =0; // 0-based
 

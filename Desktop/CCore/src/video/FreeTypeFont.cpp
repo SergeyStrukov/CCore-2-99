@@ -1,7 +1,7 @@
 /* FreeTypeFont.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -272,8 +272,7 @@ class FreeTypeFont::Base : public FontBase
 
   private:
 
-   template <class Func>
-   void textRun(AbstractSparseString &str,Func func) const
+   void textRun(AbstractSparseString &str,FuncArgType<CharX> func) const
     {
      if( cfg.use_kerning )
        {
@@ -287,8 +286,7 @@ class FreeTypeFont::Base : public FontBase
        }
     }
 
-   template <class Func>
-   void textRun(AbstractSparseString &str,ulen pos,Func func) const
+   void textRun(AbstractSparseString &str,ulen pos,FuncArgType<CharX> func) const
     {
      if( cfg.use_kerning )
        {
@@ -322,8 +320,7 @@ class FreeTypeFont::Base : public FontBase
        }
     }
 
-   template <class Func>
-   void textRunWhile(AbstractSparseString &str,Func func) const
+   void textRunWhile(AbstractSparseString &str,FuncType<bool,CharX> func) const
     {
      if( cfg.use_kerning )
        {
@@ -341,7 +338,7 @@ class FreeTypeFont::Base : public FontBase
     {
      if( font_size.skew )
        {
-        Coord delta=Coord( (font_size.skew*MCoord(point.y))/font_size.dy ); // (skew/dy)*y
+        Coord delta=To16( (font_size.skew*MCoord(point.y))/font_size.dy ); // (skew/dy)*y
 
         return point.x-delta;
        }
@@ -354,6 +351,8 @@ class FreeTypeFont::Base : public FontBase
    ulen fitBase(AbstractSparseString &str,Coord base_dx) const
     {
      ulen ret=0;
+
+     if( base_dx<0 ) return ret;
 
      textRunWhile(str,[&] (CharX cx)
                           {
@@ -387,7 +386,7 @@ class FreeTypeFont::Base : public FontBase
        {
         IndexType index=0;
 
-        str.apply( [&] (PtrLen<const char> str)
+        str.apply( [&] (StrLen str)
                        {
                         if( ret )
                           {
@@ -418,7 +417,7 @@ class FreeTypeFont::Base : public FontBase
        }
      else
        {
-        str.apply( [&] (PtrLen<const char> str)
+        str.apply( [&] (StrLen str)
                        {
                         if( ret )
                           {
