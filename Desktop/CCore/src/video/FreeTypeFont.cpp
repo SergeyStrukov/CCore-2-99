@@ -294,31 +294,31 @@ class FreeTypeFont::Base : public FontBase
        {
         IndexType index=0;
 
-        str.applyCharWhile( [this,&index,&pos,func] (char ch)
-                                                    {
-                                                     if( !pos ) return false;
+        str.applyChar( [this,&index,&pos,func] (char ch)
+                                               {
+                                                if( !pos ) return false;
 
-                                                     pos--;
+                                                pos--;
 
-                                                     func( table_text(index,ch) );
+                                                func( table_text(index,ch) );
 
-                                                     return true;
+                                                return true;
 
-                                                    } );
+                                               } );
        }
      else
        {
-        str.applyCharWhile( [this,&pos,func] (char ch)
-                                             {
-                                              if( !pos ) return false;
+        str.applyChar( [this,&pos,func] (char ch)
+                                        {
+                                         if( !pos ) return false;
 
-                                              pos--;
+                                         pos--;
 
-                                              func( table_text(ch) );
+                                         func( table_text(ch) );
 
-                                              return true;
+                                         return true;
 
-                                             } );
+                                        } );
        }
     }
 
@@ -329,11 +329,11 @@ class FreeTypeFont::Base : public FontBase
        {
         IndexType index=0;
 
-        str.applyCharWhile( [this,&index,func] (char ch) { return func( table_text(index,ch) ); } );
+        str.applyChar( [this,&index,func] (char ch) { return func( table_text(index,ch) ); } );
        }
      else
        {
-        str.applyCharWhile( [this,func] (char ch) { return func( table_text(ch) ); } );
+        str.applyChar( [this,func] (char ch) { return func( table_text(ch) ); } );
        }
     }
 
@@ -511,11 +511,11 @@ class FreeTypeFont::Base : public FontBase
        {
         IndexType index=0;
 
-        str.applyCharWhile( [&] (char ch) { return text(buf,base,index,ch,vc); } );
+        str.applyChar( [&] (char ch) { return text(buf,base,index,ch,vc); } );
        }
      else
        {
-        str.applyCharWhile( [&] (char ch) { return text(buf,base,ch,vc); } );
+        str.applyChar( [&] (char ch) { return text(buf,base,ch,vc); } );
        }
     }
 

@@ -111,15 +111,15 @@ concept bool NothrowCopyableType = Meta::IsNothrowCopyable<T> ;
 template <class T,class ... SS>
 concept bool ConstructibleType = requires(SS && ... ss) { T( std::forward<SS>(ss)... ); } ;
 
-/* concept FuncType<Func,R,AA> */
-
-template <class Func,class R,class ... AA>
-concept bool FuncType = requires(Func func,AA && ... aa) { { func( std::forward<AA>(aa)... ) } -> R ; } ;
-
 /* concept FuncArgType<Func,AA> */
 
 template <class Func,class ... AA>
 concept bool FuncArgType = requires(Func func,AA && ... aa) { func( std::forward<AA>(aa)... ); } ;
+
+/* concept FuncType<Func,R,AA> */
+
+template <class Func,class R,class ... AA>
+concept bool FuncType = FuncArgType<Func,AA...> && requires(Func func,AA && ... aa) { { func( std::forward<AA>(aa)... ) } -> R ; } ;
 
 /* concept OpLessType<T> */
 

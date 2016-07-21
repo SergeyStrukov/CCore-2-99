@@ -191,17 +191,17 @@ class DefFont : public FontBase
 
         if( y>=dy || y<=-DefaultFont::DY ) return;
 
-        str.applyCharWhile( [&] (char ch)
-                                {
-                                 if( x>=dx ) return false;
+        str.applyChar( [&] (char ch)
+                           {
+                            if( x>=dx ) return false;
 
-                                 text(x,y,ch,color);
+                            text(x,y,ch,color);
 
-                                 x+=DefaultFont::DX;
+                            x+=DefaultFont::DX;
 
-                                 return true;
+                            return true;
 
-                                } );
+                           } );
        }
 
       void text(Coord px,Coord py,TextPlace place,AbstractSparseString &str,DesktopColor color)
@@ -327,7 +327,7 @@ void SingleString::restart()
   first=true;
  }
 
-PtrLen<const char> SingleString::next()
+StrLen SingleString::next()
  {
   if( first )
     {
@@ -380,7 +380,7 @@ void DoubleString::restart()
   ind=1;
  }
 
-PtrLen<const char> DoubleString::next()
+StrLen DoubleString::next()
  {
   switch( ind )
     {

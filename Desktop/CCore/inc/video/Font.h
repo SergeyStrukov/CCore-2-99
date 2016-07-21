@@ -19,7 +19,7 @@
 #include <CCore/inc/video/DrawBuf.h>
 
 #include <CCore/inc/RefObjectBase.h>
-#include <CCore/inc/FunctorType.h>
+#include <CCore/inc/algon/ApplyToRange.h>
 
 namespace CCore {
 namespace Video {
@@ -118,7 +118,7 @@ struct AbstractSparseString
 
   virtual void restart()=0;
 
-  virtual PtrLen<const char> next()=0;
+  virtual StrLen next()=0;
 
   virtual void cutSuffix(ulen len)=0;
 
@@ -126,8 +126,8 @@ struct AbstractSparseString
 
   // helper
 
-  template <class FuncInit>
-  void apply(FuncInit func_init)
+  template <FuncInitArgType<StrLen> FuncInit>
+  auto apply(FuncInit func_init)
    {
     restart();
 
@@ -135,16 +135,18 @@ struct AbstractSparseString
 
     for(;;)
       {
-       PtrLen<const char> r=next();
+       StrLen r=next();
 
        if( !r ) break;
 
        func(r);
       }
+
+    return Algon::GetResult(func);
    }
 
-  template <class FuncInit>
-  void applyChar(FuncInit func_init)
+  template <FuncInitArgType<char> FuncInit>
+  auto applyChar(FuncInit func_init)
    {
     restart();
 
@@ -152,16 +154,18 @@ struct AbstractSparseString
 
     for(;;)
       {
-       PtrLen<const char> r=next();
+       StrLen r=next();
 
        if( !r ) break;
 
        for(char ch : r ) func(ch);
       }
+
+    return Algon::GetResult(func);
    }
 
-  template <class FuncInit>
-  void applyWhile(FuncInit func_init)
+  template <FuncInitType<bool,StrLen> FuncInit>
+  auto apply(FuncInit func_init)
    {
     restart();
 
@@ -169,16 +173,18 @@ struct AbstractSparseString
 
     for(;;)
       {
-       PtrLen<const char> r=next();
+       StrLen r=next();
 
        if( !r ) break;
 
        if( !func(r) ) break;
       }
+
+    return Algon::GetResult(func);
    }
 
-  template <class FuncInit>
-  void applyCharWhile(FuncInit func_init)
+  template <FuncInitType<bool,char> FuncInit>
+  auto applyChar(FuncInit func_init)
    {
     restart();
 
@@ -186,12 +192,14 @@ struct AbstractSparseString
 
     for(;;)
       {
-       PtrLen<const char> r=next();
+       StrLen r=next();
 
        if( !r ) break;
 
-       for(char ch : r ) if( !func(ch) ) return;
+       for(char ch : r ) if( !func(ch) ) return Algon::GetResult(func);
       }
+
+    return Algon::GetResult(func);
    }
 
   ULenSat countLen();
@@ -214,7 +222,7 @@ class SingleString : public AbstractSparseString
 
    virtual void restart();
 
-   virtual PtrLen<const char> next();
+   virtual StrLen next();
 
    virtual void cutSuffix(ulen len);
 
@@ -239,7 +247,7 @@ class DoubleString : public AbstractSparseString
 
    virtual void restart();
 
-   virtual PtrLen<const char> next();
+   virtual StrLen next();
 
    virtual void cutSuffix(ulen len);
 

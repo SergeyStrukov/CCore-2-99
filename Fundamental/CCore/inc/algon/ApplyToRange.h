@@ -49,8 +49,8 @@ auto ApplyToRange(R r,FuncInit func_init)
   return GetResult(func);
  }
 
-template <CursorType R,FuncInitArgType<Meta::PtrObjType<R> &> FuncInit>
-auto ApplyToRange(R r,FuncInit func_init) requires( FuncInitType<FuncInit,bool,Meta::PtrObjType<R> &> )
+template <CursorType R,FuncInitType<bool,Meta::PtrObjType<R> &> FuncInit>
+auto ApplyToRange(R r,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
@@ -97,8 +97,8 @@ bool CondApplyToRange_rec(R r,Func &func)
   return true;
  }
 
-template <RecursorType R,FuncInitArgType<Meta::PtrObjType<R> &> FuncInit>
-auto ApplyToRange(R r,FuncInit func_init) requires( FuncInitType<FuncInit,bool,Meta::PtrObjType<R> &> )
+template <RecursorType R,FuncInitType<bool,Meta::PtrObjType<R> &> FuncInit>
+auto ApplyToRange(R r,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
