@@ -1,7 +1,7 @@
 /* FreeType.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -156,7 +156,7 @@ Face::Face(FT_Library lib,Mutex &mutex_,StrLen file_name,FT_Long index)
 
   if( error )
     {
-     Printf(Exception,"CCore::Video::FreeType::Face::Face(...,#.q;,...) : #;",out.get(),Error(error));
+     Printf(Exception,"CCore::Video::FreeType::Face::Face(...,#.q;,#;) : #;",file_name,index,Error(error));
     }
  }
 
@@ -210,7 +210,7 @@ Face::Face(FT_Library lib,Mutex &mutex_,StrLen dir,StrLen file_name,FT_Long inde
 
   if( error )
     {
-     Printf(Exception,"CCore::Video::FreeType::Face::Face(...,#.q;,...) : #;",out.get(),Error(error));
+     Printf(Exception,"CCore::Video::FreeType::Face::Face(...,#.q;,#.q;,#;) : #;",dir,file_name,index,Error(error));
     }
  }
 
@@ -238,7 +238,7 @@ void Face::setPixelSize(Coord dx,Coord dy)
  {
   if( FT_Error error = FT_Set_Pixel_Sizes(face,dx,dy) )
     {
-     Printf(Exception,"CCore::Video::FreeType::Face::setPixelSize(...) : #;",Error(error));
+     Printf(Exception,"CCore::Video::FreeType::Face::setPixelSize(#;,#;) : #;",dx,dy,Error(error));
     }
  }
 
@@ -246,7 +246,7 @@ void Face::setFixedSize(FT_Int index)
  {
   if( FT_Error error = FT_Select_Size(face,index) )
     {
-     Printf(Exception,"CCore::Video::FreeType::Face::setFixedSize(...) : #;",Error(error));
+     Printf(Exception,"CCore::Video::FreeType::Face::setFixedSize(#;) : #;",index,Error(error));
     }
  }
 

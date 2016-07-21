@@ -1,7 +1,7 @@
 /* FreeType.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -67,8 +67,7 @@ class Error
 
    explicit Error(FT_Error error_) : error(error_) {}
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      if( const char *desc=GetDesc(error) )
        {

@@ -1,7 +1,7 @@
 /* Font.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -32,23 +32,9 @@ class DefFont : public FontBase
 
       explicit WorkBuf(const DrawBuf &buf) : DrawBuf(buf) {}
 
-      template <class Pattern>
-      static void Line(Raw *ptr,Pattern pat,Coord len,DesktopColor color) // len > 0
-       {
-        Coord gx=0;
+      // char
 
-        if( pat[gx] ) color.copyTo(ptr);
-
-        while( ++gx<len )
-          {
-           ptr=NextX(ptr);
-
-           if( pat[gx] ) color.copyTo(ptr);
-          }
-       }
-
-      template <class Pattern>
-      static void Line(Raw *ptr,Pattern pat,Coord gx,Coord len,DesktopColor color) // len > 0
+      static void Line(Raw *ptr,BoolPattern pat,Coord gx,Coord len,DesktopColor color) // len > 0
        {
         Coord lim=gx+len;
 
@@ -62,9 +48,14 @@ class DefFont : public FontBase
           }
        }
 
+      static void Line(Raw *ptr,BoolPattern pat,Coord len,DesktopColor color) // len > 0
+       {
+        Line(ptr,pat,0,len,color);
+       }
+
       void text(Coord x,Coord y,char ch,DesktopColor color) //  x < dx , y < dy , y > -DefaultFont::DY
        {
-        if( x<=-DefaultFont::DX ) return;
+        if( x <= -DefaultFont::DX ) return;
 
         DefaultFont glyph(ch);
 
@@ -118,6 +109,8 @@ class DefFont : public FontBase
              }
           }
        }
+
+      // text
 
       static Point Prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str)
        {
@@ -315,7 +308,7 @@ ULenSat AbstractSparseString::countLen()
  {
   ULenSat ret;
 
-  apply( [&ret] (PtrLen<const char> str) { ret+=str.len; } );
+  apply( [&ret] (StrLen str) { ret+=str.len; } );
 
   return ret;
  }
