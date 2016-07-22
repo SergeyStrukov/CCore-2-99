@@ -1,7 +1,7 @@
 /* CommonDrawArt.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -39,8 +39,7 @@ void CommonDrawArt::WorkBuf::Prepare(Coord &a,Coord &b,Coord d)
     }
  }
 
-template <class Plot>
-void CommonDrawArt::WorkBuf::lineY(Coord abx,Coord ay,Coord by,Plot plot)
+void CommonDrawArt::WorkBuf::lineY(Coord abx,Coord ay,Coord by,RawPlotType plot)
  {
   if( abx>=0 && abx<dx )
     {
@@ -62,8 +61,7 @@ void CommonDrawArt::WorkBuf::lineY(Coord abx,Coord ay,Coord by,Plot plot)
     }
  }
 
-template <class Plot>
-void CommonDrawArt::WorkBuf::lineX(Coord aby,Coord ax,Coord bx,Plot plot)
+void CommonDrawArt::WorkBuf::lineX(Coord aby,Coord ax,Coord bx,RawPlotType plot)
  {
   if( aby>=0 && aby<dy )
     {
@@ -85,8 +83,7 @@ void CommonDrawArt::WorkBuf::lineX(Coord aby,Coord ax,Coord bx,Plot plot)
     }
  }
 
-template <class Plot>
-void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
+void CommonDrawArt::WorkBuf::line(Point a,Point b,RawPlotType plot)
  {
   Coord ex;
   Coord ey;

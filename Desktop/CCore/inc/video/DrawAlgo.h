@@ -19,13 +19,12 @@
 #include <CCore/inc/video/Point.h>
 #include <CCore/inc/video/Color.h>
 #include <CCore/inc/video/DrawTools.h>
+#include <CCore/inc/video/CurveDriver.h>
 
 #include <CCore/inc/Array.h>
 #include <CCore/inc/TaskMemStack.h>
 
 #include <CCore/inc/algon/SortUnique.h>
-
-#include <CCore/inc/video/CurveDriver.h>
 
 namespace CCore {
 namespace Video {
@@ -39,7 +38,7 @@ inline bool PointNear(Point a,Point b) { return PointNear(a.x,b.x) && PointNear(
 
 /* DistDir() */
 
-template <class SInt,class UInt>
+template <SIntType SInt,UIntType UInt>
 bool DistDir(SInt &e,UInt &s,SInt a,SInt b)
  {
   if( a<b )
@@ -63,22 +62,22 @@ bool DistDir(SInt &e,UInt &s,SInt a,SInt b)
 
 /* Direct() */
 
-template <class SInt>
+template <SIntType SInt>
 SInt Direct(SInt e,SInt a) { return (e>0)?a:(-a); }
 
 /* classes */
 
-template <class UInt> class LineDriverBase;
+template <UIntType UInt> class LineDriverBase;
 
 class LineDriver;
 
 class LineDriver2;
 
-template <class UInt> class LineAlphaFunc;
+template <UIntType UInt> class LineAlphaFunc;
 
-template <class UInt> class LineAlphaFunc2;
+template <UIntType UInt> class LineAlphaFunc2;
 
-template <class UInt> class SmoothLineDriver;
+template <UIntType UInt> class SmoothLineDriver;
 
 struct LineEnd;
 
@@ -94,11 +93,9 @@ class SolidBorderSection;
 
 /* class LineDriverBase<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 class LineDriverBase
  {
-   static_assert( Meta::IsUInt<UInt> ,"CCore::Video::DrawAlgo::LineDriverBase<UInt> : UInt must be an unsigned integral type");
-
   protected:
 
    UInt sx;
@@ -262,10 +259,9 @@ class LineDriver : public LineDriverBase<uCoord>
    static Result Clip(Coord x,Coord e,Coord d);
  };
 
-/* Line(Point a,Point b,...) */
+/* Line(Point a,Point b,PlotType plot) */
 
-template <class Plot>
-void Line(Point a,Point b,Plot plot) // [a,b) , plot(Point p)
+void Line(Point a,Point b,PlotType plot) // [a,b)
  {
   Coord ex;
   Coord ey;
@@ -385,11 +381,19 @@ struct LineEnd
   bool ok;
  };
 
+/* concept LineEndFuncType<Func,Plot> */
+
+template <NothrowCopyableType Func,PlotType Plot>
+concept bool LineEndFuncType = requires(Func &obj,Point ext,Point first,Plot plot)
+ {
+  obj(ext,first,plot);
+ } ;
+
 /* class LinePlotter */
 
 class LinePlotter
  {
-   static const uMCoord Step = uMCoord(1)<<MPoint::Precision ;
+   static const uMCoord Step = MPoint::One ;
 
    MCoord ex;
    MCoord ey;
@@ -594,7 +598,7 @@ class LinePlotter
 
   public:
 
-   template <class Func,class Plot>
+   template <PlotType Plot,LineEndFuncType<Plot> Func>
    LineEnd run(Func func,MPoint a,MPoint b,Plot plot)
     {
      if( !DistDir(ex,sx,a.x,b.x) )
@@ -623,25 +627,27 @@ class LinePlotter
     }
  };
 
-/* Line(...,MPoint a,MPoint b,...) */
+/* Line(func,MPoint a,MPoint b,PlotType plot) */
 
-template <class Func,class Plot>
-LineEnd Line(Func func,MPoint a,MPoint b,Plot plot) // func(ext,first,plot) (a,b)
+template <PlotType Plot,LineEndFuncType<Plot> Func>
+LineEnd Line(Func func,MPoint a,MPoint b,Plot plot) // (a,b)
  {
   LinePlotter plotter;
 
   return plotter.run(func,a,b,plot);
  }
 
-/* LineFirst/LineNext(...,MPoint a,MPoint b,...) */
+/* LineFirst(MPoint a,MPoint b,PlotType plot) */
 
-template <class Plot>
+template <PlotType Plot>
 LineEnd LineFirst(MPoint a,MPoint b,Plot plot) // [a,b)
  {
   return Line( [] (Point E,Point,Plot plot) { plot(E); } ,a,b,plot);
  }
 
-template <class Plot>
+/* LineNext(LineEnd end,MPoint a,MPoint b,PlotType plot) */
+
+template <PlotType Plot>
 LineEnd LineNext(LineEnd end,MPoint a,MPoint b,Plot plot) // [a,b)
  {
   Point A=a.toPoint();
@@ -702,8 +708,7 @@ LineEnd LineNext(LineEnd end,MPoint a,MPoint b,Plot plot) // [a,b)
 
 /* Path() */
 
-template <class Plot>
-void Path(PtrStepLen<const MPoint> curve,Plot plot) // plot(Point p)
+void Path(PtrStepLen<const MPoint> curve,PlotType plot)
  {
   MPoint a=curve[0];
   MPoint b=curve[1];
@@ -780,8 +785,7 @@ void Path(PtrStepLen<const MPoint> curve,Plot plot) // plot(Point p)
 
 /* CurvePath() */
 
-template <class Map,class Plot>
-void CurvePath(PtrLen<const Point> dots,Map map,Plot plot) // plot(Point p)
+void CurvePath(PtrLen<const Point> dots,MapType map,PlotType plot)
  {
   switch( dots.len )
     {
@@ -850,8 +854,7 @@ void CurvePath(PtrLen<const Point> dots,Map map,Plot plot) // plot(Point p)
 
 /* CurveLoop() */
 
-template <class Map,class Plot>
-void CurveLoop(PtrLen<const Point> dots,Map map,Plot plot) // plot(Point p)
+void CurveLoop(PtrLen<const Point> dots,MapType map,PlotType plot)
  {
   switch( dots.len )
     {
@@ -1012,7 +1015,7 @@ void CurveLoop(PtrLen<const Point> dots,Map map,Plot plot) // plot(Point p)
 
 /* class LineAlphaFunc<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 class LineAlphaFunc
  {
   protected:
@@ -1182,7 +1185,7 @@ class LineAlphaFunc
 
 /* class SmoothLineDriver<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 class SmoothLineDriver
  {
   private:
@@ -1311,7 +1314,7 @@ void LineSmooth(Point a,Point b,SPlot plot) // [a,b) , plot(Point p) , plot(Poin
 
 /* class LineAlphaFunc2<UInt> */
 
-template <class UInt>
+template <UIntType UInt>
 class LineAlphaFunc2 : LineAlphaFunc<UInt>
  {
    using Num = typename LineAlphaFunc<UInt>::Num ;

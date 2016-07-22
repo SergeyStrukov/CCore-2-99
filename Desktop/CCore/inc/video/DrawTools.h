@@ -1,7 +1,7 @@
 /* DrawTools.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -21,6 +21,27 @@
 namespace CCore {
 namespace Video {
 
+/* concept PointSetTypes<TT> */
+
+template <class ... TT>
+concept bool PointSetTypes = ( ... && IsType<TT,Point> ) ;
+
+/* concept PlotType<Plot> */
+
+template <NothrowCopyableType Plot>
+concept bool PlotType = requires(Plot &obj,Point p)
+ {
+  obj(p);
+ } ;
+
+/* concept MapType<Map> */
+
+template <NothrowCopyableType Map>
+concept bool MapType = requires(Map &obj,Point p)
+ {
+  { obj(p) } -> Point ;
+ } ;
+
 /* enum SolidFlag */
 
 enum SolidFlag
@@ -31,7 +52,7 @@ enum SolidFlag
 
 /* enum HalfFlag */
 
-enum HalfFlag // clock-conterwise
+enum HalfFlag // contraclockwise
  {
   HalfPos,
   HalfNeg,
@@ -49,7 +70,7 @@ struct PaneSub;
 
 struct CircleSpline
  {
-  Point buf[12];
+  Point buf[12]; // contraclockwise
 
   CircleSpline(Point center,Coord radius); // radius > 0
 
@@ -60,9 +81,9 @@ struct CircleSpline
 
 struct PaneBorder
  {
-  Point buf[4];
+  Point buf[4]; // contraclockwise
 
-  explicit PaneBorder(Pane pane);
+  explicit PaneBorder(Pane pane); // +pane
 
   Point topLeft() const { return buf[0]; }
 
@@ -79,8 +100,9 @@ struct PaneBorder
 
 struct PaneSub
  {
-  Pane top;
-  Pane bottom;
+  Pane top;    // full width
+  Pane bottom; // full width
+
   Pane left;
   Pane right;
 

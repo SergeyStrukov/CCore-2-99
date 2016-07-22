@@ -14,15 +14,16 @@ UserAction.h         +
 
 GammaTable.h         +    
 
-CommonDrawArt.h      
+DrawTools.h          +          
+CurveDriver.h        +
 DrawAlgo.h              ?
-DrawTools.h          
-CurveDriver.h        
+CommonDrawArt.h      +
 
 ColorField.h         
-FigureLib.h          
 SmoothAlgo.h            ?      
-SmoothDrawArt.h            
+SmoothDrawArt.h
+            
+FigureLib.h          
 
 --- Font -----------------------------------------------------------------------
 

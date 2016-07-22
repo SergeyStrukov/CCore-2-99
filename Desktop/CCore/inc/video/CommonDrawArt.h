@@ -1,7 +1,7 @@
 /* CommonDrawArt.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -23,6 +23,14 @@
 
 namespace CCore {
 namespace Video {
+
+/* concept RawPlotType<Plot> */
+
+template <NothrowCopyableType Plot>
+concept bool RawPlotType = requires(Plot &obj,DesktopColor::Raw *ptr)
+ {
+  obj(ptr);
+ } ;
 
 /* classes */
 
@@ -96,14 +104,11 @@ class CommonDrawArt
 
       // FrameBuf coord
 
-      template <class Plot>
-      void lineY(Coord abx,Coord ay,Coord by,Plot plot); // [a,b) , plot(Raw *ptr)
+      void lineY(Coord abx,Coord ay,Coord by,RawPlotType plot); // [a,b) , plot(Raw *ptr)
 
-      template <class Plot>
-      void lineX(Coord aby,Coord ax,Coord bx,Plot plot); // [a,b) , plot(Raw *ptr)
+      void lineX(Coord aby,Coord ax,Coord bx,RawPlotType plot); // [a,b) , plot(Raw *ptr)
 
-      template <class Plot>
-      void line(Point a,Point b,Plot plot); // [a,b) , plot(Raw *ptr)
+      void line(Point a,Point b,RawPlotType plot); // [a,b) , plot(Raw *ptr)
 
       void lineY(Coord abx,Coord ay,Coord by,DesktopColor color); // [a,b)
 
@@ -144,7 +149,7 @@ class CommonDrawArt
    void path(PtrLen<const Point> dots,DesktopColor color);
 
    template <class ... TT>
-   void path(DesktopColor color,TT ... tt)
+   void path(DesktopColor color,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -154,7 +159,7 @@ class CommonDrawArt
    void loop(PtrLen<const Point> dots,DesktopColor color);
 
    template <class ... TT>
-   void loop(DesktopColor color,TT ... tt)
+   void loop(DesktopColor color,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -164,7 +169,7 @@ class CommonDrawArt
    void curvePath(PtrLen<const Point> dots,DesktopColor color);
 
    template <class ... TT>
-   void curvePath(DesktopColor color,TT ... tt)
+   void curvePath(DesktopColor color,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -174,7 +179,7 @@ class CommonDrawArt
    void curveLoop(PtrLen<const Point> dots,DesktopColor color);
 
    template <class ... TT>
-   void curveLoop(DesktopColor color,TT ... tt)
+   void curveLoop(DesktopColor color,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -186,7 +191,7 @@ class CommonDrawArt
    void path_smooth(PtrLen<const Point> dots,VColor vc);
 
    template <class ... TT>
-   void path_smooth(VColor vc,TT ... tt)
+   void path_smooth(VColor vc,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -196,7 +201,7 @@ class CommonDrawArt
    void loop_smooth(PtrLen<const Point> dots,VColor vc);
 
    template <class ... TT>
-   void loop_smooth(VColor vc,TT ... tt)
+   void loop_smooth(VColor vc,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -206,7 +211,7 @@ class CommonDrawArt
    void curvePath_smooth(PtrLen<const Point> dots,VColor vc);
 
    template <class ... TT>
-   void curvePath_smooth(VColor vc,TT ... tt)
+   void curvePath_smooth(VColor vc,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -216,7 +221,7 @@ class CommonDrawArt
    void curveLoop_smooth(PtrLen<const Point> dots,VColor vc);
 
    template <class ... TT>
-   void curveLoop_smooth(VColor vc,TT ... tt)
+   void curveLoop_smooth(VColor vc,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -228,7 +233,7 @@ class CommonDrawArt
    void solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color);
 
    template <class ... TT>
-   void solid(SolidFlag flag,DesktopColor color,TT ... tt)
+   void solid(SolidFlag flag,DesktopColor color,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 
@@ -238,7 +243,7 @@ class CommonDrawArt
    void curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color);
 
    template <class ... TT>
-   void curveSolid(SolidFlag flag,DesktopColor color,TT ... tt)
+   void curveSolid(SolidFlag flag,DesktopColor color,TT ... tt) requires ( PointSetTypes<TT...> )
     {
      Point temp[sizeof ... (TT)]={ tt... };
 

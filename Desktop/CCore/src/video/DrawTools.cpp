@@ -1,7 +1,7 @@
 /* DrawTools.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -28,17 +28,17 @@ CircleSpline::CircleSpline(Point center,Coord radius)
   Coord y=Coord( UIntFunc<uMCoord>::SqRoot(Sq<uMCoord>(radius)-Sq<uMCoord>(x),radius) );
 
   buf[0]=center+Point(0,radius);
-  buf[1]=center+Point(-x,y);
-  buf[2]=center+Point(-y,x);
-  buf[3]=center+Point(-radius,0);
-  buf[4]=center+Point(-y,-x);
-  buf[5]=center+Point(-x,-y);
+  buf[1]=center+Point(x,y);
+  buf[2]=center+Point(y,x);
+  buf[3]=center+Point(radius,0);
+  buf[4]=center+Point(y,-x);
+  buf[5]=center+Point(x,-y);
   buf[6]=center+Point(0,-radius);
-  buf[7]=center+Point(x,-y);
-  buf[8]=center+Point(y,-x);
-  buf[9]=center+Point(radius,0);
-  buf[10]=center+Point(y,x);
-  buf[11]=center+Point(x,y);
+  buf[7]=center+Point(-x,-y);
+  buf[8]=center+Point(-y,-x);
+  buf[9]=center+Point(-radius,0);
+  buf[10]=center+Point(-y,x);
+  buf[11]=center+Point(-x,y);
  }
 
 /* struct PaneBorder */
