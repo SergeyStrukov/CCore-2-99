@@ -34,6 +34,22 @@ concept bool PlotType = requires(Plot &obj,Point p)
   obj(p);
  } ;
 
+/* concept SmoothPlotType<SPlot> */
+
+template <NothrowCopyableType SPlot>
+concept bool SmoothPlotType = PlotType<SPlot> && requires(SPlot &obj,Point p,unsigned alpha)
+ {
+  obj(p,alpha);
+ } ;
+
+/* concept HPlotType<HPlot> */
+
+template <NothrowCopyableType HPlot>
+concept bool HPlotType = PlotType<HPlot> && requires(HPlot &obj,Coord y,Coord a,Coord b)
+ {
+  obj(y,a,b);
+ } ;
+
 /* concept MapType<Map> */
 
 template <NothrowCopyableType Map>

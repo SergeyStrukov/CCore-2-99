@@ -36,10 +36,11 @@ FreeTypeFont.h       +
 DesktopKey.h         +        
 FrameGuards.h        +
 ProgressScale.h      +      
-Layout.h             
 Incremental.h        +        
 Info.h               +
 Picture.h            +
+
+Layout.h             
 RefVal.h             
 
 FontDatabase.h       

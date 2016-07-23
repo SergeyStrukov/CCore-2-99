@@ -259,7 +259,7 @@ class LineDriver : public LineDriverBase<uCoord>
    static Result Clip(Coord x,Coord e,Coord d);
  };
 
-/* Line(Point a,Point b,PlotType plot) */
+/* Line() */
 
 void Line(Point a,Point b,PlotType plot) // [a,b)
  {
@@ -627,25 +627,25 @@ class LinePlotter
     }
  };
 
-/* Line(func,MPoint a,MPoint b,PlotType plot) */
+/* Line() */
 
 template <PlotType Plot,LineEndFuncType<Plot> Func>
-LineEnd Line(Func func,MPoint a,MPoint b,Plot plot) // (a,b)
+LineEnd Connect(Func func,MPoint a,MPoint b,Plot plot) // (a,b)
  {
   LinePlotter plotter;
 
   return plotter.run(func,a,b,plot);
  }
 
-/* LineFirst(MPoint a,MPoint b,PlotType plot) */
+/* LineFirst() */
 
 template <PlotType Plot>
 LineEnd LineFirst(MPoint a,MPoint b,Plot plot) // [a,b)
  {
-  return Line( [] (Point E,Point,Plot plot) { plot(E); } ,a,b,plot);
+  return Connect( [] (Point E,Point,Plot plot) { plot(E); } ,a,b,plot);
  }
 
-/* LineNext(LineEnd end,MPoint a,MPoint b,PlotType plot) */
+/* LineNext() */
 
 template <PlotType Plot>
 LineEnd LineNext(LineEnd end,MPoint a,MPoint b,Plot plot) // [a,b)
@@ -703,7 +703,7 @@ LineEnd LineNext(LineEnd end,MPoint a,MPoint b,Plot plot) // [a,b)
                          }
                       } ;
 
-  return Line(func,a,b,plot);
+  return Connect(func,a,b,plot);
  }
 
 /* Path() */
@@ -1037,8 +1037,7 @@ class LineAlphaFunc
 
       Num(uint16 value_) : value(value_) {}
 
-      template <class T>
-      static void Prepare(T &a,T &b) requires ( Meta::UIntBits<T> > 16 )
+      static void Prepare(UInt &a,UInt &b) requires ( Meta::UIntBits<UInt> > 16 )
        {
         if( UInt c=a>>16 )
           {
@@ -1049,8 +1048,7 @@ class LineAlphaFunc
           }
        }
 
-      template <class T>
-      static void Prepare(T &,T &) requires ( Meta::UIntBits<T> <= 16 )
+      static void Prepare(UInt &,UInt &) requires ( Meta::UIntBits<UInt> <= 16 )
        {
        }
 
@@ -1089,20 +1087,17 @@ class LineAlphaFunc
 
       friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
 
-      template <class Ret=Num>
-      static Ret Make(MCoord a) requires ( MPoint::Precision == Ret::Precision ) // [0,2)
+      static Num Make(MCoord a) requires ( MPoint::Precision == Precision ) // [0,2)
        {
         return uint16( a );
        }
 
-      template <class Ret=Num>
-      static Ret Make(MCoord a) requires ( MPoint::Precision < Ret::Precision ) // [0,2)
+      static Num Make(MCoord a) requires ( MPoint::Precision < Precision ) // [0,2)
        {
         return uint16( a )<<(Precision-MPoint::Precision);
        }
 
-      template <class Ret=Num>
-      static Ret Make(MCoord a) requires ( MPoint::Precision > Ret::Precision ) // [0,2)
+      static Num Make(MCoord a) requires ( MPoint::Precision > Precision ) // [0,2)
        {
         return uint16( a>>(MPoint::Precision-Precision) );
        }
@@ -1228,10 +1223,9 @@ class SmoothLineDriver
    unsigned alpha3() const { return func.alpha1(sx-delta,sx,sy); }
  };
 
-/* LineSmooth(Point a,Point b,...) */
+/* LineSmooth() */
 
-template <class SPlot>
-void LineSmooth(Point a,Point b,SPlot plot) // [a,b) , plot(Point p) , plot(Point p,unsigned alpha)
+void LineSmooth(Point a,Point b,SmoothPlotType plot) // [a,b)
  {
   Coord ex;
   Coord ey;
@@ -1908,10 +1902,9 @@ class LinePlotter2
     }
  };
 
-/* LineSmooth(MPoint a,MPoint b,...) */
+/* LineSmooth() */
 
-template <class SPlot>
-bool LineSmooth(MPoint a,MPoint b,SPlot plot) // [a,b]
+bool LineSmooth(MPoint a,MPoint b,SmoothPlotType plot) // [a,b]
  {
   LinePlotter2 plotter;
 
@@ -1920,8 +1913,7 @@ bool LineSmooth(MPoint a,MPoint b,SPlot plot) // [a,b]
 
 /* PathSmooth() */
 
-template <class SPlot>
-void PathSmooth(PtrStepLen<const MPoint> curve,SPlot plot)
+void PathSmooth(PtrStepLen<const MPoint> curve,SmoothPlotType plot)
  {
   MPoint a=curve[0];
   MPoint b=curve[1];
@@ -1984,8 +1976,7 @@ void PathSmooth(PtrStepLen<const MPoint> curve,SPlot plot)
 
 /* CurvePathSmooth() */
 
-template <class Map,class SPlot>
-void CurvePathSmooth(PtrLen<const Point> dots,Map map,SPlot plot) // plot(Point p) , plot(Point p,unsigned alpha)
+void CurvePathSmooth(PtrLen<const Point> dots,MapType map,SmoothPlotType plot)
  {
   switch( dots.len )
     {
@@ -2054,8 +2045,7 @@ void CurvePathSmooth(PtrLen<const Point> dots,Map map,SPlot plot) // plot(Point 
 
 /* CurveLoopSmooth() */
 
-template <class Map,class SPlot>
-void CurveLoopSmooth(PtrLen<const Point> dots,Map map,SPlot plot) // plot(Point p) , plot(Point p,unsigned alpha)
+void CurveLoopSmooth(PtrLen<const Point> dots,MapType map,SmoothPlotType plot)
  {
   switch( dots.len )
     {
@@ -2216,8 +2206,7 @@ void CurveLoopSmooth(PtrLen<const Point> dots,Map map,SPlot plot) // plot(Point 
 
 /* Circle() */
 
-template <class Plot>
-void Circle(Point a,Coord radius,Plot plot) // plot(Point p)
+void Circle(Point a,Coord radius,PlotType plot)
  {
   if( radius<0 ) return;
 
@@ -2277,8 +2266,9 @@ void Circle(Point a,Coord radius,Plot plot) // plot(Point p)
     }
  }
 
-template <class HPlot>
-void Ball(Point a,Coord radius,HPlot plot) // plot(Point p) , plot(Coord y,Coord a,Coord b)
+/* Ball() */
+
+void Ball(Point a,Coord radius,HPlotType plot)
  {
   if( radius<0 ) return;
 
@@ -2554,8 +2544,7 @@ class CurveBorder : NoCopy
 
   public:
 
-   template <class Map>
-   CurveBorder(PtrLen<const Point> dots,Map map)
+   CurveBorder(PtrLen<const Point> dots,MapType map)
     {
      CurveLoop(dots,map, [this] (Point p) { store.append_copy(p); } );
     }
@@ -2673,8 +2662,7 @@ class SolidBorderSection : NoCopy
 
 /* Solid() */
 
-template <class Map,class HPlot>
-void Solid(PtrLen<const Point> dots,Map map,SolidFlag flag,HPlot plot) // plot(Point p) , plot(Coord y,Coord a,Coord b)
+void Solid(PtrLen<const Point> dots,MapType map,SolidFlag flag,HPlotType plot)
  {
   if( dots.len==0 ) return;
 
@@ -2692,8 +2680,7 @@ void Solid(PtrLen<const Point> dots,Map map,SolidFlag flag,HPlot plot) // plot(P
 
 /* SolidBorder() */
 
-template <class HPlot>
-void SolidBorder(PtrLen<const Point> dots,SolidFlag flag,HPlot plot) // plot(Point p) , plot(Coord y,Coord a,Coord b)
+void SolidBorder(PtrLen<const Point> dots,SolidFlag flag,HPlotType plot)
  {
   if( dots.len==0 ) return;
 
