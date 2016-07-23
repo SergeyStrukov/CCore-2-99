@@ -1529,9 +1529,9 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
 
 class LinePlotter2
  {
-   static const uMCoord Step = uMCoord(1)<<MPoint::Precision ;
+   static const uMCoord Step = MPoint::One ;
 
-   static const MCoord Half = MCoord(1)<<(MPoint::Precision-1) ;
+   static const MCoord Half = MPoint::Half ;
 
    MCoord ex;
    MCoord ey;
@@ -1557,9 +1557,7 @@ class LinePlotter2
 
    static unsigned AlphaDelta(MCoord delta)
     {
-     const MCoord M = MCoord(1)<<MPoint::Precision ;
-
-     return unsigned( (M-delta)>>(MPoint::Precision-ClrBits) );
+     return unsigned( (MPoint::One-delta)>>(MPoint::Precision-ClrBits) );
     }
 
    static unsigned AlphaPart(unsigned alpha,MCoord part)
@@ -1567,8 +1565,7 @@ class LinePlotter2
      return unsigned( (alpha*uMCoord(part))>>MPoint::Precision );
     }
 
-   template <class SPlot>
-   bool lineY(MPoint a,MPoint b,SPlot plot)
+   bool lineY(MPoint a,MPoint b,SmoothPlotType plot)
     {
      auto count=LineDriver2::Count1(a.y,b.y);
 
@@ -1629,8 +1626,7 @@ class LinePlotter2
      return true;
     }
 
-   template <class SPlot>
-   bool lineX(MPoint a,MPoint b,SPlot plot)
+   bool lineX(MPoint a,MPoint b,SmoothPlotType plot)
     {
      auto count=LineDriver2::Count1(a.x,b.x);
 
@@ -1701,8 +1697,7 @@ class LinePlotter2
      A.y=MPoint::RShift(a.y);
     }
 
-   template <class SPlot>
-   void plotX(LineAlphaFunc2<uMCoord> &func,MPoint a,Point A,SPlot plot)
+   void plotX(LineAlphaFunc2<uMCoord> &func,MPoint a,Point A,SmoothPlotType plot)
     {
      MCoord delta=Delta(ey,a.y);
 
@@ -1713,8 +1708,7 @@ class LinePlotter2
      plot(Point(A.x,A.y+2*ey),func.alpha2(-delta));
     }
 
-   template <class SPlot>
-   bool lineToX(MPoint a,MPoint b,SPlot plot)
+   bool lineToX(MPoint a,MPoint b,SmoothPlotType plot)
     {
      auto count=LineDriver2::Count1(a.x,b.x);
 
@@ -1791,8 +1785,7 @@ class LinePlotter2
      A.x=MPoint::RShift(a.x);
     }
 
-   template <class SPlot>
-   void plotY(LineAlphaFunc2<uMCoord> &func,MPoint a,Point A,SPlot plot)
+   void plotY(LineAlphaFunc2<uMCoord> &func,MPoint a,Point A,SmoothPlotType plot)
     {
      MCoord delta=Delta(ex,a.x);
 
@@ -1803,8 +1796,7 @@ class LinePlotter2
      plot(Point(A.x+2*ex,A.y),func.alpha2(-delta));
     }
 
-   template <class SPlot>
-   bool lineToY(MPoint a,MPoint b,SPlot plot)
+   bool lineToY(MPoint a,MPoint b,SmoothPlotType plot)
     {
      auto count=LineDriver2::Count1(a.y,b.y);
 
@@ -1873,8 +1865,7 @@ class LinePlotter2
 
   public:
 
-   template <class SPlot>
-   bool run(MPoint a,MPoint b,SPlot plot)
+   bool run(MPoint a,MPoint b,SmoothPlotType plot)
     {
      if( !DistDir(ex,sx,a.x,b.x) )
        {
