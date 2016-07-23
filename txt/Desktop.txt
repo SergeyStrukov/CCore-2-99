@@ -16,7 +16,7 @@ GammaTable.h         +
 
 DrawTools.h          +          
 CurveDriver.h        +
-DrawAlgo.h              ?
+DrawAlgo.h           +
 CommonDrawArt.h      +
 
 ColorField.h         

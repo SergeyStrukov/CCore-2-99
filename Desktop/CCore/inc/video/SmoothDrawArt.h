@@ -1,7 +1,7 @@
 /* SmoothDrawArt.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -1918,6 +1918,11 @@ class DrawArt
  };
 
 } // namespace Smooth
+
+/* type SmoothDrawArt */
+
+using SmoothDrawArt = Smooth::DrawArt ;
+
 } // namespace Video
 } // namespace CCore
 

@@ -2388,8 +2388,7 @@ class SolidSection : NoCopy
 
    static void Step(PtrLen<Line *> set);
 
-   template <class HPlot>
-   void fill(Coord bottom,Coord top,PtrLen<Line *> set,SolidFlag flag,HPlot plot)
+   void fill(Coord bottom,Coord top,PtrLen<Line *> set,SolidFlag flag,HPlotType plot)
     {
      for(; bottom<top ;bottom++)
        {
@@ -2430,8 +2429,7 @@ class SolidSection : NoCopy
 
   public:
 
-   template <class Map>
-   SolidSection(PtrLen<const Point> dots,Map map)
+   SolidSection(PtrLen<const Point> dots,MapType map)
     : path(dots.len),
       sect(dots.len),
       line_buf(dots.len),
@@ -2468,8 +2466,7 @@ class SolidSection : NoCopy
 
    ~SolidSection();
 
-   template <class HPlot>
-   void fill(SolidFlag flag,HPlot plot)
+   void fill(SolidFlag flag,HPlotType plot)
     {
      ulen off=0;
      ulen lim=0;
@@ -2576,8 +2573,7 @@ class SolidBorderSection : NoCopy
 
    static void Sort(PtrLen<Line *> set);
 
-   template <class HPlot>
-   void fill(Coord y,PtrLen<Line *> set,SolidFlag flag,HPlot plot)
+   void fill(Coord y,PtrLen<Line *> set,SolidFlag flag,HPlotType plot)
     {
      Sort(set);
 
@@ -2617,8 +2613,7 @@ class SolidBorderSection : NoCopy
 
    ~SolidBorderSection();
 
-   template <class HPlot>
-   void fill(SolidFlag flag,HPlot plot)
+   void fill(SolidFlag flag,HPlotType plot)
     {
      ulen off=split;
      ulen lim=split;
