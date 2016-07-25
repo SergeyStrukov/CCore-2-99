@@ -1,7 +1,7 @@
 /* FigureLib.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -20,109 +20,109 @@ namespace Video {
 
 /* struct DrawPoints */
 
-void DrawPoints::Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
+void DrawPoints::Path(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
   art.path(dots,width,vc);
  }
 
-void DrawPoints::Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
+void DrawPoints::Loop(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
   art.loop(dots,width,vc);
  }
 
-void DrawPoints::Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawPoints::Path(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
   art.path(dots,half_flag,width,vc);
  }
 
-void DrawPoints::Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawPoints::Loop(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
   art.loop(dots,half_flag,width,vc);
  }
 
-void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
+void DrawPoints::Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
  {
   art.solid(dots,solid_flag,vc);
  }
 
-void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field)
+void DrawPoints::Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field)
  {
   art.solid(dots,solid_flag,field);
  }
 
-void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
+void DrawPoints::Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
  {
   art.solid(dots,solid_flag,field);
  }
 
-void DrawPoints::CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
+void DrawPoints::CurvePath(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
   art.curvePath(dots,width,vc);
  }
 
-void DrawPoints::CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
+void DrawPoints::CurveLoop(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
   art.curveLoop(dots,width,vc);
  }
 
-void DrawPoints::CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawPoints::CurvePath(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
   art.curvePath(dots,half_flag,width,vc);
  }
 
-void DrawPoints::CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawPoints::CurveLoop(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
   art.curveLoop(dots,half_flag,width,vc);
  }
 
-void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
+void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
  {
   art.curveSolid(dots,solid_flag,vc);
  }
 
-void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field)
+void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field)
  {
   art.curveSolid(dots,solid_flag,field);
  }
 
-void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
+void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
  {
   art.curveSolid(dots,solid_flag,field);
  }
 
 /* struct DrawDots */
 
-void DrawDots::CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor vc)
+void DrawDots::CurvePath(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,MCoord width,VColor vc)
  {
   art.curvePath(dots,width,vc);
  }
 
-void DrawDots::CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor vc)
+void DrawDots::CurveLoop(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,MCoord width,VColor vc)
  {
   art.curveLoop(dots,width,vc);
  }
 
-void DrawDots::CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawDots::CurvePath(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
   art.curvePath(dots,half_flag,width,vc);
  }
 
-void DrawDots::CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawDots::CurveLoop(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
   art.curveLoop(dots,half_flag,width,vc);
  }
 
-void DrawDots::CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,VColor vc)
+void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,VColor vc)
  {
   art.curveSolid(dots,solid_flag,vc);
  }
 
-void DrawDots::CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,const TwoField &field)
+void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const TwoField &field)
  {
   art.curveSolid(dots,solid_flag,field);
  }
 
-void DrawDots::CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,const RadioField &field)
+void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const RadioField &field)
  {
   art.curveSolid(dots,solid_flag,field);
  }
@@ -213,15 +213,15 @@ FigureButton::FigureButton(MCoord x0,MCoord x5,MCoord y0,MCoord y4,MCoord ex)
   MCoord x4=x5-fx;
 
   buf[0]={{x2,y0},Smooth::DotBreak};
-  buf[1]={{x1,y1},Smooth::DotSimple};
-  buf[2]={{x0,y2},Smooth::DotSimple};
-  buf[3]={{x1,y3},Smooth::DotSimple};
+  buf[1]={{x1,y1}};
+  buf[2]={{x0,y2}};
+  buf[3]={{x1,y3}};
   buf[4]={{x2,y4},Smooth::DotBreak};
 
   buf[5]={{x3,y4},Smooth::DotBreak};
-  buf[6]={{x4,y3},Smooth::DotSimple};
-  buf[7]={{x5,y2},Smooth::DotSimple};
-  buf[8]={{x4,y1},Smooth::DotSimple};
+  buf[6]={{x4,y3}};
+  buf[7]={{x5,y2}};
+  buf[8]={{x4,y1}};
   buf[9]={{x3,y0},Smooth::DotBreak};
  }
 

@@ -1,7 +1,7 @@
 /* FigureLib.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -77,7 +77,7 @@ struct MPane
 
   // constructors
 
-  MPane() : x(0),y(0),dx(0),dy(0),ex(0),ey(0) {}
+  MPane() noexcept : x(0),y(0),dx(0),dy(0),ex(0),ey(0) {}
 
   MPane(const Pane &pane)
    {
@@ -141,11 +141,7 @@ struct MPane
    {
     MPane ret(*this);
 
-    ret.x+=p.x;
-    ret.y+=p.y;
-
-    ret.ex+=p.x;
-    ret.ey+=p.y;
+    ret+=p;
 
     return ret;
    }
@@ -201,6 +197,8 @@ struct FigureBase
  {
   T buf[Len];
 
+  // methods
+
   PtrLen<const T> get() const { return Range(buf); }
 
   T & operator [] (ulen ind) { return buf[ind]; }
@@ -212,67 +210,67 @@ struct FigureBase
 
 struct DrawPoints
  {
-  static void Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
+  static void Path(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
 
-  static void Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
-
-
-  static void Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
-
-  static void Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
+  static void Loop(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
 
 
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
+  static void Path(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
 
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
-
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
+  static void Loop(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
 
 
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,VColor vc)
+  static void Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
+
+  static void Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
+
+  static void Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
+
+
+  static void Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,VColor vc)
    {
     Solid(art,dots,SolidAll,vc);
    }
 
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const TwoField &field)
+  static void Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,const TwoField &field)
    {
     Solid(art,dots,SolidAll,field);
    }
 
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const RadioField &field)
+  static void Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,const RadioField &field)
    {
     Solid(art,dots,SolidAll,field);
    }
 
 
-  static void CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
+  static void CurvePath(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
 
-  static void CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
-
-
-  static void CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
-
-  static void CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
+  static void CurveLoop(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc);
 
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
+  static void CurvePath(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
-
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
+  static void CurveLoop(SmoothDrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
 
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,VColor vc)
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
+
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
+
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
+
+
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,VColor vc)
    {
     CurveSolid(art,dots,SolidAll,vc);
    }
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const TwoField &field)
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,const TwoField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const RadioField &field)
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,const RadioField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
@@ -286,8 +284,8 @@ struct FigurePoints : FigureBase<MPoint,Len> , DrawPoints
   using FigureBase<MPoint,Len>::buf;
   using FigureBase<MPoint,Len>::get;
 
-  template <class FuncInit>
-  void transform(FuncInit func_init) // MPoint func(MPoint)
+  template <FuncInitType<MPoint,MPoint> FuncInit>
+  void transform(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
 
@@ -295,37 +293,37 @@ struct FigurePoints : FigureBase<MPoint,Len> , DrawPoints
    }
 
   template <class ... TT>
-  void path(Smooth::DrawArt &art,TT && ... tt) const
+  void path(SmoothDrawArt &art,TT && ... tt) const
    {
     Path(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void loop(Smooth::DrawArt &art,TT && ... tt) const
+  void loop(SmoothDrawArt &art,TT && ... tt) const
    {
     Loop(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void solid(Smooth::DrawArt &art,TT && ... tt) const
+  void solid(SmoothDrawArt &art,TT && ... tt) const
    {
     Solid(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void curvePath(Smooth::DrawArt &art,TT && ... tt) const
+  void curvePath(SmoothDrawArt &art,TT && ... tt) const
    {
     CurvePath(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void curveLoop(Smooth::DrawArt &art,TT && ... tt) const
+  void curveLoop(SmoothDrawArt &art,TT && ... tt) const
    {
     CurveLoop(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void curveSolid(Smooth::DrawArt &art,TT && ... tt) const
+  void curveSolid(SmoothDrawArt &art,TT && ... tt) const
    {
     CurveSolid(art,get(), std::forward<TT>(tt)... );
    }
@@ -335,34 +333,34 @@ struct FigurePoints : FigureBase<MPoint,Len> , DrawPoints
 
 struct DrawDots
  {
-  static void CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor vc);
+  static void CurvePath(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,MCoord width,VColor vc);
 
-  static void CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor vc);
-
-
-  static void CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor vc);
-
-  static void CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor vc);
+  static void CurveLoop(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,MCoord width,VColor vc);
 
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,VColor vc);
+  static void CurvePath(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,HalfFlag half_flag,MCoord width,VColor vc);
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,const TwoField &field);
-
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,const RadioField &field);
+  static void CurveLoop(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,HalfFlag half_flag,MCoord width,VColor vc);
 
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,VColor vc)
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,VColor vc);
+
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const TwoField &field);
+
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const RadioField &field);
+
+
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,VColor vc)
    {
     CurveSolid(art,dots,SolidAll,vc);
    }
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,const TwoField &field)
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,const TwoField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
 
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,const RadioField &field)
+  static void CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,const RadioField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
@@ -371,33 +369,33 @@ struct DrawDots
 /* struct FigureDots<ulen Len> */
 
 template <ulen Len>
-struct FigureDots : FigureBase<Smooth::Dot,Len> , DrawDots
+struct FigureDots : FigureBase<SmoothDot,Len> , DrawDots
  {
-  using FigureBase<Smooth::Dot,Len>::buf;
-  using FigureBase<Smooth::Dot,Len>::get;
+  using FigureBase<SmoothDot,Len>::buf;
+  using FigureBase<SmoothDot,Len>::get;
 
-  template <class FuncInit>
-  void transform(FuncInit func_init) // MPoint func(MPoint)
+  template <FuncInitType<MPoint,MPoint> FuncInit>
+  void transform(FuncInit func_init)
    {
     FunctorTypeOf<FuncInit> func(func_init);
 
-    for(Smooth::Dot &p : buf ) p.point=func(p.point);
+    for(SmoothDot &p : buf ) p.point=func(p.point);
    }
 
   template <class ... TT>
-  void curvePath(Smooth::DrawArt &art,TT && ... tt) const
+  void curvePath(SmoothDrawArt &art,TT && ... tt) const
    {
     CurvePath(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void curveLoop(Smooth::DrawArt &art,TT && ... tt) const
+  void curveLoop(SmoothDrawArt &art,TT && ... tt) const
    {
     CurveLoop(art,get(), std::forward<TT>(tt)... );
    }
 
   template <class ... TT>
-  void curveSolid(Smooth::DrawArt &art,TT && ... tt) const
+  void curveSolid(SmoothDrawArt &art,TT && ... tt) const
    {
     CurveSolid(art,get(), std::forward<TT>(tt)... );
    }

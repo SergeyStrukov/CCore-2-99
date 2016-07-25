@@ -1919,6 +1919,10 @@ class DrawArt
 
 } // namespace Smooth
 
+/* type SmoothDot */
+
+using SmoothDot = Smooth::Dot ;
+
 /* type SmoothDrawArt */
 
 using SmoothDrawArt = Smooth::DrawArt ;
