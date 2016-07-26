@@ -193,7 +193,7 @@ class FieldPlotBase : public DrawBuf
 
    // AlphaColor
 
-   void plot_safe(Point p,VColor vc,unsigned alpha)
+   void plot_cap(Point p,VColor vc,unsigned alpha)
     {
      if( alpha>=AlphaLim )
        plot(p,vc);
@@ -203,12 +203,12 @@ class FieldPlotBase : public DrawBuf
 
    void plot(Point p,AlphaColor ac)
     {
-     plot_safe(p,ac.vc,ac.alpha);
+     plot_cap(p,ac.vc,ac.alpha);
     }
 
    void plot(Point p,AlphaColor ac,unsigned alpha)
     {
-     plot_safe(p,ac.vc,(Min(ac.alpha,AlphaLim)*alpha)>>ClrBits);
+     plot_cap(p,ac.vc,(Min(ac.alpha,AlphaLim)*alpha)>>ClrBits);
     }
  };
 
@@ -222,7 +222,7 @@ class FieldPlot : FieldPlotBase
 
   private:
 
-   static Coord Shift(MCoord a) { return (Coord)IntRShift(a,MPoint::Precision); }
+   static Coord Shift(MCoord a) { return Coord( IntRShift(a,MPoint::Precision) ); }
 
    static Point ToPoint(MPoint p) { return Point(Shift(p.x),Shift(p.y)); }
 

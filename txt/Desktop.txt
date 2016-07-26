@@ -20,8 +20,8 @@ DrawAlgo.h           +
 CommonDrawArt.h      +
 
 ColorField.h         +
-SmoothAlgo.h            ?      
-SmoothDrawArt.h
+SmoothAlgo.h             
+SmoothDrawArt.h      +
             
 FigureLib.h          + 
 
