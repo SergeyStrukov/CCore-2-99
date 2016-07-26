@@ -55,6 +55,16 @@ concept bool MPointMapType = requires(R &obj,Map &map,ulen ind)
   { map(obj[ind]) } -> MPoint ;
  } ;
 
+/* concept PlotType<Plot> */
+
+template <NothrowCopyableType Plot>
+concept bool PlotType = requires(Plot &obj,MPoint p,unsigned alpha)
+ {
+  obj(p);
+
+  obj(p,alpha);
+ } ;
+
 /* consts */
 
 const unsigned MaxCapFineness = 1 ;
@@ -67,19 +77,11 @@ DCoord Length(MCoord a,MCoord b);
 
 inline DCoord Length(MPoint a) { return Length(a.x,a.y); }
 
-inline MPoint Rotate90(MPoint point) { return MPoint(-point.y,point.x); }
-
-/* PutWithoutFirst() */
-
-template <class R,class Func>
-void PutWithoutFirst(R r,Func &func)
- {
-  for(++r; +r ;++r) func(*r);
- }
+inline MPoint Rotate90(MPoint point) { return MPoint(-point.y,point.x); } // clockwise
 
 /* classes */
 
-template <class T> struct RationalType;
+template <SIntType SInt> struct RationalType;
 
 class Rotate;
 
@@ -91,15 +93,15 @@ struct LineArc;
 
 class SolidDriver;
 
-/* struct RationalType<T> */
+/* struct RationalType<SInt> */
 
-template <class T>
+template <SIntType SInt>
 struct RationalType
  {
   MCoord a;
-  T b;
+  SInt b;
 
-  RationalType(MCoord a_,T b_) : a(a_),b(b_) { IntGuard(b!=0); }
+  RationalType(MCoord a_,SInt b_) : a(a_),b(b_) { IntGuard(b!=0); }
 
   MCoord operator * (MCoord x) const { return MCoord( (DCoord(a)*x)/b ); }
 
@@ -122,7 +124,7 @@ class Rotate
 
   public:
 
-   explicit Rotate(MPoint A)
+   explicit Rotate(MPoint A) // (1,0) -> A/Length(A)
     {
      a=A.x;
      b=A.y;
@@ -172,7 +174,7 @@ struct LineRound
  {
   MPoint buf[12];
 
-  LineRound(MPoint a,MCoord radius);
+  LineRound(MPoint a,MCoord radius); // clockwise
 
   PtrLen<const MPoint> get() const { return Range(buf); }
  };
@@ -209,9 +211,17 @@ struct LineArc
   LineArc(MPoint a,MPoint b,MPoint c,MCoord radius);
  };
 
+/* PutWithoutFirst() */
+
+template <FuncArgType<MPoint> Func>
+void PutWithoutFirst(CursorOverType<MPoint> r,Func &func)
+ {
+  for(++r; +r ;++r) func(*r);
+ }
+
 /* AddLineRound() */
 
-template <class FuncInit>
+template <FuncInitArgType<MPoint> FuncInit>
 void AddLineRound(MPoint a,MCoord radius,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
@@ -242,7 +252,7 @@ void AddLineRound(MPoint a,MCoord radius,FuncInit func_init)
 
 /* AddLineCap() */
 
-template <class FuncInit>
+template <FuncInitArgType<MPoint> FuncInit>
 void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
@@ -270,7 +280,7 @@ void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
 
 /* AddLineInCap() */
 
-template <class FuncInit>
+template <FuncInitArgType<MPoint> FuncInit>
 void AddLineInCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
@@ -300,7 +310,7 @@ void AddLineInCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
 
 /* AddLineOutCap() */
 
-template <class FuncInit>
+template <FuncInitArgType<MPoint> FuncInit>
 void AddLineOutCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
@@ -330,7 +340,7 @@ void AddLineOutCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
 
 /* AddLineArc() */
 
-template <class FuncInit>
+template <FuncInitArgType<MPoint> FuncInit>
 void AddLineArc(MPoint a,MPoint b,MPoint c,MCoord radius,FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
@@ -529,8 +539,8 @@ class SolidDriver : NoCopy
         MCoord dx;
         MCoord dy;
 
-        template <class R,class Map>
-        Box(R dots,Map map)
+        template <class R>
+        Box(R dots,MPointMapType<R> map)
          {
           if( +dots )
             {
@@ -737,8 +747,7 @@ class SolidDriver : NoCopy
            for(; x<x3 ;x+=MPoint::One) pixel(x,PixelArea(H,c,e,d,f,x));
           }
 
-         template <class Plot>
-         void complete(Plot &plot)
+         void complete(PlotType &plot)
           {
            auto *ptr=line.getPtr()+off;
 
@@ -775,8 +784,7 @@ class SolidDriver : NoCopy
            return delta>=Len && delta>=count/3 ;
           }
 
-         template <class Plot>
-         void push(MCoord x,Plot &plot)
+         void push(MCoord x,PlotType &plot)
           {
            if( count )
              {
@@ -854,8 +862,7 @@ class SolidDriver : NoCopy
              }
           }
 
-         template <class Plot>
-         void pixel(MCoord x,Plot &plot)
+         void pixel(MCoord x,PlotType &plot)
           {
            plot(MPoint(x,base.y));
           }
@@ -875,8 +882,7 @@ class SolidDriver : NoCopy
            count=0;
           }
 
-         template <class Plot>
-         void next(MCoord bottom,MCoord top,MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,Plot &plot)
+         void next(MCoord bottom,MCoord top,MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,PlotType &plot)
           {
            MCoord c=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),a);
            MCoord e=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),b);
@@ -906,8 +912,7 @@ class SolidDriver : NoCopy
            for(; x<x3 ;x+=MPoint::One) pixel(x,PixelArea(c,e,d,f,x));
           }
 
-         template <class Plot>
-         void complete(Plot &plot)
+         void complete(PlotType &plot)
           {
            if( count )
              {
@@ -968,8 +973,8 @@ class SolidDriver : NoCopy
         top_part=&part2;
        }
 
-      template <class R,class Map>
-      Row(R dots,Map map) : Row(Box(dots,map)) {}
+      template <class R>
+      Row(R dots,MPointMapType<R> map) : Row(Box(dots,map)) {}
 
       void start(MCoord bottom_,MCoord top_)
        {
@@ -1057,8 +1062,7 @@ class SolidDriver : NoCopy
           }
        }
 
-      template <class Plot>
-      void next(MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,Plot &plot)
+      void next(MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,PlotType &plot)
        {
         if( top_on ) top_part->next(bottom,top,bottom_start,bottom_end,top_start,top_end);
 
@@ -1067,22 +1071,19 @@ class SolidDriver : NoCopy
         for(Full &f : getFulls() ) f.next(bottom,top,bottom_start,bottom_end,top_start,top_end,plot);
        }
 
-      template <class Plot>
-      void next(Line *start,Line *end,Plot &plot)
+      void next(Line *start,Line *end,PlotType &plot)
        {
         next(start->x_bottom,end->x_bottom,start->x_cur,end->x_cur,plot);
        }
 
-      template <class Plot>
-      void end(Plot &plot)
+      void end(PlotType &plot)
        {
         if( bottom_on ) bottom_part->complete(plot);
 
         for(Full &f : getFulls() ) f.complete(plot);
        }
 
-      template <class Plot>
-      void complete(Plot &plot)
+      void complete(PlotType &plot)
        {
         if( top_on ) top_part->complete(plot);
        }
@@ -1092,8 +1093,7 @@ class SolidDriver : NoCopy
 
   private:
 
-   template <class Plot>
-   void substep(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,Plot &plot)
+   void substep(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,PlotType &plot)
     {
      row.start(bottom,top);
 
@@ -1131,8 +1131,7 @@ class SolidDriver : NoCopy
      for(Line *line : set ) line->copyX();
     }
 
-   template <class Plot>
-   void step(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,Plot &plot)
+   void step(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,PlotType &plot)
     {
      for(Line *line : set ) line->setTop(top);
 
@@ -1171,8 +1170,8 @@ class SolidDriver : NoCopy
 
   public:
 
-   template <class R,class Map>
-   SolidDriver(R dots,Map map) // map(...) -> MPoint
+   template <class R>
+   SolidDriver(R dots,MPointMapType<R> map)
     : dot_count( Algon::BaseRangeAlgo<R>::GetLen(dots) ),
       path(dot_count),
       sect(dot_count),
@@ -1211,13 +1210,11 @@ class SolidDriver : NoCopy
      IncrSort(Range(lines), [] (const Line *a,const Line *b) { return a->bottom<b->bottom; } );
     }
 
-   template <class R>
-   explicit SolidDriver(R dots) : SolidDriver(dots, [] (MPoint point) { return point; } ) {} // MPoint
+   explicit SolidDriver(MPointRangeType dots) : SolidDriver(dots, [] (MPoint point) { return point; } ) {}
 
    ~SolidDriver() {}
 
-   template <class Plot>
-   void operator () (SolidFlag solid_flag,Plot plot)
+   void operator () (SolidFlag solid_flag,PlotType plot)
     {
      if( !dot_count ) return;
 
