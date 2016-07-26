@@ -213,8 +213,7 @@ struct LineArc
 
 /* PutWithoutFirst() */
 
-template <FuncArgType<MPoint> Func>
-void PutWithoutFirst(CursorOverType<MPoint> r,Func &func)
+void PutWithoutFirst(CursorOverType<MPoint> r,FuncArgType<MPoint> &func)
  {
   for(++r; +r ;++r) func(*r);
  }
@@ -253,7 +252,7 @@ void AddLineRound(MPoint a,MCoord radius,FuncInit func_init)
 /* AddLineCap() */
 
 template <FuncInitArgType<MPoint> FuncInit>
-void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
+void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init) // a != b
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
@@ -281,7 +280,7 @@ void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
 /* AddLineInCap() */
 
 template <FuncInitArgType<MPoint> FuncInit>
-void AddLineInCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
+void AddLineInCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init) // a != b
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
@@ -311,7 +310,7 @@ void AddLineInCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
 /* AddLineOutCap() */
 
 template <FuncInitArgType<MPoint> FuncInit>
-void AddLineOutCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
+void AddLineOutCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init) // a != b
  {
   FunctorTypeOf<FuncInit> func(func_init);
 

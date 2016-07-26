@@ -1,7 +1,7 @@
 /* SmoothAlgo.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -190,7 +190,7 @@ LineArc::LineArc(MPoint a,MPoint b,MPoint c,MCoord radius)
 
      type=OnePoint;
 
-     return ;
+     return;
     }
 
   if( Sigma(a,c)>0 )
