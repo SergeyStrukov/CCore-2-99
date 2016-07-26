@@ -337,6 +337,8 @@ struct TreeUpLink<T,K>::BinAlgo
 
     // constructors
 
+    Cur() noexcept : ptr(0) {}
+
     explicit Cur(T *ptr_) : ptr(ptr_) {}
 
     // object ptr
@@ -363,6 +365,8 @@ struct TreeUpLink<T,K>::BinAlgo
     T *ptr;
 
     // constructors
+
+    RevCur() noexcept : ptr(0) {}
 
     explicit RevCur(T *ptr_) : ptr(ptr_) {}
 

@@ -120,16 +120,8 @@ concept bool Has_RangeAlgo = requires()
 
 /* concept RangeType<R> */
 
-template <class R>
-concept bool RangeType2 = requires()
- {
-  requires ( CursorType<R> ) ;
-
-  requires ( Has_RangeAlgo<R> ) ;
- } ;
-
-template <class R>
-concept bool RangeType = Meta::IsPtrLen<R> || Meta::IsPtrLenReverse<R> || RangeType2<R> ;
+template <CursorType R>
+concept bool RangeType = Meta::IsPtrLen<R> || Meta::IsPtrLenReverse<R> || Has_RangeAlgo<R> ;
 
 /* classes */
 

@@ -1,7 +1,7 @@
 /* SmoothAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -30,6 +30,30 @@
 namespace CCore {
 namespace Video {
 namespace Smooth {
+
+/* concept MPointRangeType<R> */
+
+template <Algon::RangeType R>
+concept bool MPointRangeType = requires(R &obj,ulen ind)
+ {
+  { *obj } -> MPoint ;
+
+  obj+=ind;
+
+  { obj[ind] } -> MPoint ;
+ } ;
+
+/* concept MPointMapType<Map,R> */
+
+template <class Map,Algon::RangeType R>
+concept bool MPointMapType = requires(R &obj,Map &map,ulen ind)
+ {
+  { map(*obj) } -> MPoint ;
+
+  obj+=ind;
+
+  { map(obj[ind]) } -> MPoint ;
+ } ;
 
 /* consts */
 

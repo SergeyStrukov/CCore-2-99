@@ -182,72 +182,42 @@ concept bool RangeAccessType = requires(T &obj,Meta::ToConst<T> &cobj)
 
 /* concept CursorType<R> */
 
-template <class R>
-concept bool CursorType = requires(R &obj,Meta::ToConst<R> &cobj)
+template <NothrowCopyableType R>
+concept bool CursorType = NothrowDefaultCtorType<R> && requires(R &obj,Meta::ToConst<R> &cobj)
  {
-  requires ( NothrowCopyableType<R> ) ;
-
   { +cobj } -> bool ;
 
+  { !cobj } -> bool ;
+
   *cobj;
+
+  cobj.operator -> () ;
 
   ++obj;
  } ;
 
 /* concept CursorOverType<R,T> */
 
-template <class R,class T>
-concept bool CursorOverType = requires(R &obj,Meta::ToConst<R> &cobj)
- {
-  requires ( NothrowCopyableType<R> ) ;
-
-  { +cobj } -> bool ;
-
-  { *cobj } -> T ;
-
-  ++obj;
- } ;
+template <CursorType R,class T>
+concept bool CursorOverType = requires(Meta::ToConst<R> &cobj) { { *cobj } -> T ; } ;
 
 /* concept CursorCastType<R,T> */
 
-template <class R,class T>
-concept bool CursorCastType = requires(R &obj,Meta::ToConst<R> &cobj)
- {
-  requires ( NothrowCopyableType<R> ) ;
-
-  { +cobj } -> bool ;
-
-  T(*cobj);
-
-  ++obj;
- } ;
+template <CursorType R,class T>
+concept bool CursorCastType = requires(Meta::ToConst<R> &cobj) { T(*cobj); } ;
 
 /* concept RecursorType<R> */
 
-template <class R>
-concept bool RecursorType = requires(Meta::ToConst<R> &cobj)
+template <NothrowCopyableType R>
+concept bool RecursorType = NothrowDefaultCtorType<R> && requires(Meta::ToConst<R> &cobj)
  {
-  requires ( NothrowCopyableType<R> ) ;
-
   { +cobj } -> bool ;
+
+  { !cobj } -> bool ;
 
   *cobj;
 
-  { cobj.prev() } -> R ;
-
-  { cobj.next() } -> R ;
- } ;
-
-/* concept RecursorOverType<R,T> */
-
-template <class R,class T>
-concept bool RecursorOverType = requires(Meta::ToConst<R> &cobj)
- {
-  requires ( NothrowCopyableType<R> ) ;
-
-  { +cobj } -> bool ;
-
-  { *cobj } -> T ;
+  cobj.operator -> () ;
 
   { cobj.prev() } -> R ;
 
@@ -256,27 +226,20 @@ concept bool RecursorOverType = requires(Meta::ToConst<R> &cobj)
 
 /* concept RecursorOverType<R,T> */
 
-template <class R,class T>
-concept bool RecursorCastType = requires(Meta::ToConst<R> &cobj)
- {
-  requires ( NothrowCopyableType<R> ) ;
+template <RecursorType R,class T>
+concept bool RecursorOverType = requires(Meta::ToConst<R> &cobj) { { *cobj } -> T ; } ;
 
-  { +cobj } -> bool ;
+/* concept RecursorOverType<R,T> */
 
-  T(*cobj);
-
-  { cobj.prev() } -> R ;
-
-  { cobj.next() } -> R ;
- } ;
+template <RecursorType R,class T>
+concept bool RecursorCastType = requires(Meta::ToConst<R> &cobj) { T(*cobj); } ;
 
 /* concept RanType<Ran> */
 
-template <class Ran>
+template <NothrowCopyableType Ran>
 concept bool RanType = requires(Ran ptr,ulen len)
  {
   requires ( DefaultCtorType<Ran> ) ;
-  requires ( NothrowCopyableType<Ran> ) ;
   requires ( OpCmpType<Ran> ) ;
 
   *ptr;
@@ -288,9 +251,11 @@ concept bool RanType = requires(Ran ptr,ulen len)
   --ptr;
 
   { ptr+len } -> Ran ;
+
   ptr+=len;
 
   { ptr-len } -> Ran ;
+
   ptr-=len;
 
   { ptr-ptr } -> ulen ;

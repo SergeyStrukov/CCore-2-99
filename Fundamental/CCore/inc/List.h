@@ -69,6 +69,8 @@ struct SLink
 
       // constructors
 
+      Cur() noexcept : ptr(0) {}
+
       explicit Cur(T *ptr_) : ptr(ptr_) {}
 
       // object ptr
@@ -263,6 +265,8 @@ struct SLink
       T *bottom;
 
       // constructors
+
+      Cur() noexcept : ptr(0),bottom(0) {}
 
       explicit Cur(T *bottom_)
        : bottom(bottom_)
@@ -549,6 +553,8 @@ struct DLink
 
       // constructors
 
+      Cur() noexcept : ptr(0) {}
+
       explicit Cur(T *ptr_) : ptr(ptr_) {}
 
       // object ptr
@@ -575,6 +581,8 @@ struct DLink
       T *ptr;
 
       // constructors
+
+      RevCur() noexcept : ptr(0) {}
 
       explicit RevCur(T *ptr_) : ptr(ptr_) {}
 
@@ -1076,6 +1084,8 @@ struct DLink
 
       // constructors
 
+      Cur() noexcept : ptr(0),last(0) {}
+
       explicit Cur(T *ptr_)
        : ptr(ptr_)
        {
@@ -1132,6 +1142,8 @@ struct DLink
       T *first;
 
       // constructors
+
+      RevCur() noexcept : ptr(0),first(0) {}
 
       explicit RevCur(T *first_)
        : first(first_)

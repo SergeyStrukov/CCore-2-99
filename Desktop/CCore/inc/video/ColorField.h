@@ -1,7 +1,7 @@
 /* ColorField.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -120,6 +120,27 @@ class RadioField
 
    VColor operator () (MPoint point) const;
  };
+
+/* concept VColorFieldType<Field> */
+
+template <class Field>
+concept bool VColorFieldType = requires(const Field &field,MPoint p)
+ {
+  { field(p) } -> VColor ;
+ } ;
+
+/* concept AlphaColorFieldType<Field> */
+
+template <class Field>
+concept bool AlphaColorFieldType = requires(const Field &field,MPoint p)
+ {
+  { field(p) } -> AlphaColor ;
+ } ;
+
+/* concept ColorFieldType<Field> */
+
+template <class Field>
+concept bool ColorFieldType = VColorFieldType<Field> || AlphaColorFieldType<Field> ;
 
 } // namespace Video
 } // namespace CCore

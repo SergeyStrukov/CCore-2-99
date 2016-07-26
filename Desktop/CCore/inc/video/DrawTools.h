@@ -26,6 +26,11 @@ namespace Video {
 template <class ... TT>
 concept bool PointSetTypes = ( ... && IsType<TT,Point> ) ;
 
+/* concept MPointSetTypes<TT> */
+
+template <class ... TT>
+concept bool MPointSetTypes = ( ... && OneOfTypes<TT,Point,MPoint> ) ;
+
 /* concept PlotType<Plot> */
 
 template <NothrowCopyableType Plot>

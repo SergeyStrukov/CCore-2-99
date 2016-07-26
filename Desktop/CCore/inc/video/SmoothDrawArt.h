@@ -28,7 +28,7 @@ namespace Smooth {
 
 /* PrefixPlus() */
 
-template <class R>
+template <Algon::RangeType R>
 R PrefixPlus(R r,R suffix)
  {
   auto len=Algon::BaseRangeAlgo<R>::GetLen(r)-Algon::BaseRangeAlgo<R>::GetLen(suffix)+1;
@@ -41,38 +41,6 @@ R PrefixPlus(R r,R suffix)
 //enum DotType;
 
 struct Dot;
-
-class DotShift;
-
-template <class R> class DotBreaker;
-
-class FieldPlotBase;
-
-template <class Field> class FieldPlot;
-
-template <class R,class Map> class NextLine;
-
-class DotsBase;
-
-class PathDots;
-
-class LoopDots;
-
-class HalfPathDots;
-
-class HalfLoopDots;
-
-class CurveBase;
-
-class CurvePath;
-
-class CurveLoop;
-
-class CurveBreakPath;
-
-class CurveBreakLoop;
-
-class DrawArt;
 
 /* enum DotType */
 
@@ -99,6 +67,64 @@ struct Dot
   Dot(const MPoint &point_,DotType type_) : point(point_),type(type_) {}
  };
 
+/* concept DotRangeType<R> */
+
+template <Algon::RangeType R>
+concept bool DotRangeType = requires(R &obj,ulen ind)
+ {
+  { *obj } -> Dot ;
+
+  obj+=ind;
+
+  { obj[ind] } -> Dot ;
+ } ;
+
+/* concept DotMapType<Map,R> */
+
+template <class Map,Algon::RangeType R>
+concept bool DotMapType = requires(R &obj,Map &map,ulen ind)
+ {
+  { map(*obj) } -> Dot ;
+
+  obj+=ind;
+
+  { map(obj[ind]) } -> Dot ;
+ } ;
+
+/* classes */
+
+class DotShift;
+
+template <DotRangeType R> class DotBreaker;
+
+class FieldPlotBase;
+
+template <ColorFieldType Field> class FieldPlot;
+
+template <class R,MPointMapType<R> Map> class NextLine;
+
+class DotsBase;
+
+class PathDots;
+
+class LoopDots;
+
+class HalfPathDots;
+
+class HalfLoopDots;
+
+class CurveBase;
+
+class CurvePath;
+
+class CurveLoop;
+
+class CurveBreakPath;
+
+class CurveBreakLoop;
+
+class DrawArt;
+
 /* class DotShift */
 
 class DotShift
@@ -116,7 +142,7 @@ class DotShift
 
 /* class DotBreaker<R> */
 
-template <class R>
+template <DotRangeType R>
 class DotBreaker
  {
    R dots;
@@ -188,7 +214,7 @@ class FieldPlotBase : public DrawBuf
 
 /* class FieldPlot<Field> */
 
-template <class Field>
+template <ColorFieldType Field>
 class FieldPlot : FieldPlotBase
  {
    Field field;
@@ -236,7 +262,7 @@ class FieldPlot : FieldPlotBase
 
 /* class NextLine<R,Map> */
 
-template <class R,class Map>
+template <class R,MPointMapType<R> Map>
 class NextLine
  {
    R dots;
@@ -332,8 +358,7 @@ class DotsBase : NoCopy
 
    void addPoint(MPoint point) { buf.append_copy(point); }
 
-   template <class R>
-   void addWithoutFirst(R r)
+   void addWithoutFirst(CursorOverType<MPoint> r)
     {
      for(++r; +r ;++r) addPoint(*r);
     }
@@ -376,7 +401,7 @@ class DotsBase : NoCopy
 
 class PathDots : public DotsBase
  {
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    bool addDirect(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -400,7 +425,7 @@ class PathDots : public DotsBase
        }
     }
 
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    void addBack(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -418,8 +443,8 @@ class PathDots : public DotsBase
 
   public:
 
-   template <class R,class Map>
-   PathDots(R dots,Map map,MCoord width) // map(...) -> MPoint
+   template <class R>
+   PathDots(R dots,MPointMapType<R> map,MCoord width)
     {
      if( !dots ) return;
 
@@ -431,8 +456,7 @@ class PathDots : public DotsBase
        }
     }
 
-   template <class R>
-   PathDots(R dots,MCoord width) : PathDots(dots, [] (MPoint point) { return point; } ,width) {} // MPoint
+   PathDots(MPointRangeType dots,MCoord width) : PathDots(dots, [] (MPoint point) { return point; } ,width) {}
 
    ~PathDots() {}
  };
@@ -441,7 +465,7 @@ class PathDots : public DotsBase
 
 class LoopDots : public DotsBase
  {
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    bool addDirect(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -480,7 +504,7 @@ class LoopDots : public DotsBase
        }
     }
 
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    void addBack(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -496,8 +520,8 @@ class LoopDots : public DotsBase
 
   public:
 
-   template <class R,class Map>
-   LoopDots(R dots,Map map,MCoord width) // map(...) -> MPoint
+   template <class R>
+   LoopDots(R dots,MPointMapType<R> map,MCoord width)
     {
      if( !dots ) return;
 
@@ -509,8 +533,7 @@ class LoopDots : public DotsBase
        }
     }
 
-   template <class R>
-   LoopDots(R dots,MCoord width) : LoopDots(dots, [] (MPoint point) { return point; } ,width) {} // MPoint
+   LoopDots(MPointRangeType dots,MCoord width) : LoopDots(dots, [] (MPoint point) { return point; } ,width) {}
 
    ~LoopDots() {}
  };
@@ -519,7 +542,7 @@ class LoopDots : public DotsBase
 
 class HalfPathDots : public DotsBase
  {
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    bool addDirect(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -538,7 +561,7 @@ class HalfPathDots : public DotsBase
        }
     }
 
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    void addBack(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -556,8 +579,8 @@ class HalfPathDots : public DotsBase
 
   public:
 
-   template <class R,class Map>
-   HalfPathDots(R dots,Map map,HalfFlag half_flag,MCoord width) // map(...) -> MPoint
+   template <class R>
+   HalfPathDots(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width)
     {
      if( !dots ) return;
 
@@ -577,8 +600,7 @@ class HalfPathDots : public DotsBase
        }
     }
 
-   template <class R>
-   HalfPathDots(R dots,HalfFlag half_flag,MCoord width) : HalfPathDots(dots, [] (MPoint point) { return point; } ,half_flag,width) {} // MPoint
+   HalfPathDots(MPointRangeType dots,HalfFlag half_flag,MCoord width) : HalfPathDots(dots, [] (MPoint point) { return point; } ,half_flag,width) {}
 
    ~HalfPathDots() {}
  };
@@ -593,7 +615,7 @@ class HalfLoopDots : public DotsBase
 
   private:
 
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    bool addDirect(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -640,7 +662,7 @@ class HalfLoopDots : public DotsBase
        }
     }
 
-   template <class R,class Map>
+   template <class R,MPointMapType<R> Map>
    void addBack(R dots,Map map,MCoord width)
     {
      NextLine<R,Map> line(dots,map);
@@ -658,8 +680,8 @@ class HalfLoopDots : public DotsBase
 
   public:
 
-   template <class R,class Map>
-   HalfLoopDots(R dots,Map map,HalfFlag half_flag,MCoord width) // map(...) -> MPoint
+   template <class R>
+   HalfLoopDots(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width)
     {
      if( !dots ) return;
 
@@ -679,8 +701,7 @@ class HalfLoopDots : public DotsBase
        }
     }
 
-   template <class R>
-   HalfLoopDots(R dots,HalfFlag half_flag,MCoord width) : HalfLoopDots(dots, [] (MPoint point) { return point; } ,half_flag,width) {} // MPoint
+   HalfLoopDots(MPointRangeType dots,HalfFlag half_flag,MCoord width) : HalfLoopDots(dots, [] (MPoint point) { return point; } ,half_flag,width) {}
 
    ~HalfLoopDots() {}
  };
@@ -695,8 +716,8 @@ class CurveBase : public DotsBase
 
    ~CurveBase() {}
 
-   template <class R,class Map>
-   void buildLoop(R dots,Map map) // map(...) -> MPoint
+   template <class R>
+   void buildLoop(R dots,MPointMapType<R> map)
     {
      switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
        {
@@ -855,8 +876,8 @@ class CurveBase : public DotsBase
        }
     }
 
-   template <class R,class Map>
-   void extPath(R dots,Map map,DrawAlgo::CurveDriver &driver) // Dot , map(...) -> MPoint
+   template <class R>
+   void extPath(R dots,MPointMapType<R> map,DrawAlgo::CurveDriver &driver)
     {
      switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
        {
@@ -918,8 +939,8 @@ class CurveBase : public DotsBase
        }
     }
 
-   template <class R,class Map>
-   void extPath(R dots,R ext,Map map,DrawAlgo::CurveDriver &driver) // Dot , map(...) -> MPoint
+   template <class R>
+   void extPath(R dots,R ext,MPointMapType<R> map,DrawAlgo::CurveDriver &driver)
     {
      switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
        {
@@ -1138,8 +1159,8 @@ class CurvePath : public DotsBase
  {
   public:
 
-   template <class R,class Map>
-   CurvePath(R dots,Map map) // map(...) -> MPoint
+   template <class R>
+   CurvePath(R dots,MPointMapType<R> map)
     {
      switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
        {
@@ -1215,8 +1236,7 @@ class CurvePath : public DotsBase
        }
     }
 
-   template <class R>
-   explicit CurvePath(R dots) : CurvePath(dots, [] (MPoint point) { return point; } ) {} // MPoint
+   explicit CurvePath(MPointRangeType dots) : CurvePath(dots, [] (MPoint point) { return point; } ) {}
 
    ~CurvePath() {}
  };
@@ -1227,14 +1247,13 @@ class CurveLoop : public CurveBase
  {
   public:
 
-   template <class R,class Map>
-   CurveLoop(R dots,Map map) // map(...) -> MPoint
+   template <class R>
+   CurveLoop(R dots,MPointMapType<R> map)
     {
      buildLoop(dots,map);
     }
 
-   template <class R>
-   explicit CurveLoop(R dots) : CurveLoop(dots, [] (MPoint point) { return point; } ) {} // MPoint
+   explicit CurveLoop(MPointRangeType dots) : CurveLoop(dots, [] (MPoint point) { return point; } ) {}
 
    ~CurveLoop() {}
  };
@@ -1245,8 +1264,8 @@ class CurveBreakPath : public CurveBase
  {
   public:
 
-   template <class R,class Map>
-   CurveBreakPath(R dots,Map map) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   CurveBreakPath(R dots,MPointMapType<R> map)
     {
      if( !dots ) return;
 
@@ -1264,8 +1283,7 @@ class CurveBreakPath : public CurveBase
        }
     }
 
-   template <class R>
-   explicit CurveBreakPath(R dots) : CurveBreakPath(dots, [] (Dot dot) { return dot.point; } ) {} // Dot
+   explicit CurveBreakPath(DotRangeType dots) : CurveBreakPath(dots, [] (Dot dot) { return dot.point; } ) {}
 
    ~CurveBreakPath() {}
  };
@@ -1274,8 +1292,8 @@ class CurveBreakPath : public CurveBase
 
 class CurveBreakLoop : public CurveBase
  {
-   template <class R,class Map>
-   void buildPath(R dots,R ext,Map map)
+   template <DotRangeType R>
+   void buildPath(R dots,R ext,MPointMapType<R> map)
     {
      StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
 
@@ -1302,8 +1320,8 @@ class CurveBreakLoop : public CurveBase
 
   public:
 
-   template <class R,class Map>
-   CurveBreakLoop(R dots,Map map) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   CurveBreakLoop(R dots,MPointMapType<R> map)
     {
      if( !dots ) return;
 
@@ -1320,8 +1338,7 @@ class CurveBreakLoop : public CurveBase
      buildLoop(dots,map);
     }
 
-   template <class R>
-   explicit CurveBreakLoop(R dots) : CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } ) {} // Dot
+   explicit CurveBreakLoop(DotRangeType dots) : CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } ) {}
 
    ~CurveBreakLoop() {}
  };
@@ -1352,28 +1369,24 @@ class DrawArt
 
    // generic line
 
-   template <class R>
-   void path_gen(R dots,MCoord width,VColor vc) // MPoint
+   void path_gen(MPointRangeType dots,MCoord width,VColor vc)
     {
      path_gen(dots,width,ConstantField(vc));
     }
 
-   template <class R>
-   void loop_gen(R dots,MCoord width,VColor vc) // MPoint
+   void loop_gen(MPointRangeType dots,MCoord width,VColor vc)
     {
      loop_gen(dots,width,ConstantField(vc));
     }
 
-   template <class R,class Field>
-   void path_gen(R dots,MCoord width,const Field &field) // MPoint
+   void path_gen(MPointRangeType dots,MCoord width,const ColorFieldType &field)
     {
      PathDots path(dots,width);
 
      solid_gen(path.complete(),SolidAll,field);
     }
 
-   template <class R,class Field>
-   void loop_gen(R dots,MCoord width,const Field &field) // MPoint
+   void loop_gen(MPointRangeType dots,MCoord width,const ColorFieldType &field)
     {
      LoopDots loop(dots,width);
 
@@ -1381,28 +1394,28 @@ class DrawArt
     }
 
 
-   template <class R,class Map>
-   void path_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void path_gen(R dots,MPointMapType<R> map,MCoord width,VColor vc)
     {
      path_gen(dots,map,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void loop_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void loop_gen(R dots,MPointMapType<R> map,MCoord width,VColor vc)
     {
      loop_gen(dots,map,width,ConstantField(vc));
     }
 
-   template <class R,class Map,class Field>
-   void path_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void path_gen(R dots,MPointMapType<R> map,MCoord width,const ColorFieldType &field)
     {
      PathDots path(dots,map,width);
 
      solid_gen(path.complete(),SolidAll,field);
     }
 
-   template <class R,class Map,class Field>
-   void loop_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void loop_gen(R dots,MPointMapType<R> map,MCoord width,const ColorFieldType &field)
     {
      LoopDots loop(dots,map,width);
 
@@ -1411,28 +1424,24 @@ class DrawArt
 
    // half line
 
-   template <class R>
-   void path_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+   void path_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,VColor vc)
     {
      path_gen(dots,half_flag,width,ConstantField(vc));
     }
 
-   template <class R>
-   void loop_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+   void loop_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,VColor vc)
     {
      loop_gen(dots,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Field>
-   void path_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+   void path_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      HalfPathDots path(dots,half_flag,width);
 
      solid_gen(path.complete(),SolidAll,field);
     }
 
-   template <class R,class Field>
-   void loop_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+   void loop_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      HalfLoopDots loop(dots,half_flag,width);
 
@@ -1440,28 +1449,28 @@ class DrawArt
     }
 
 
-   template <class R,class Map>
-   void path_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void path_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,VColor vc)
     {
      path_gen(dots,map,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void loop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void loop_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,VColor vc)
     {
      loop_gen(dots,map,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Map,class Field>
-   void path_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void path_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      HalfPathDots path(dots,map,half_flag,width);
 
      solid_gen(path.complete(),SolidAll,field);
     }
 
-   template <class R,class Map,class Field>
-   void loop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void loop_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      HalfLoopDots loop(dots,map,half_flag,width);
 
@@ -1470,56 +1479,48 @@ class DrawArt
 
    // generic curve
 
-   template <class R>
-   void curvePath_gen(R dots,MCoord width,VColor vc) // MPoint
+   void curvePath_gen(MPointRangeType dots,MCoord width,VColor vc)
     {
      curvePath_gen(dots,width,ConstantField(vc));
     }
 
-   template <class R>
-   void curveBreakPath_gen(R dots,MCoord width,VColor vc) // Dot
+   void curveBreakPath_gen(DotRangeType dots,MCoord width,VColor vc)
     {
      curveBreakPath_gen(dots,width,ConstantField(vc));
     }
 
-   template <class R>
-   void curveLoop_gen(R dots,MCoord width,VColor vc) // MPoint
+   void curveLoop_gen(MPointRangeType dots,MCoord width,VColor vc)
     {
      curveLoop_gen(dots,width,ConstantField(vc));
     }
 
-   template <class R>
-   void curveBreakLoop_gen(R dots,MCoord width,VColor vc) // Dot
+   void curveBreakLoop_gen(DotRangeType dots,MCoord width,VColor vc)
     {
      curveBreakLoop_gen(dots,width,ConstantField(vc));
     }
 
-   template <class R,class Field>
-   void curvePath_gen(R dots,MCoord width,const Field &field) // MPoint
+   void curvePath_gen(MPointRangeType dots,MCoord width,const ColorFieldType &field)
     {
      CurvePath path(dots);
 
      path_gen(path.complete(),width,field);
     }
 
-   template <class R,class Field>
-   void curveBreakPath_gen(R dots,MCoord width,const Field &field) // Dot
+   void curveBreakPath_gen(DotRangeType dots,MCoord width,const ColorFieldType &field)
     {
      CurveBreakPath path(dots);
 
      path_gen(path.complete(),width,field);
     }
 
-   template <class R,class Field>
-   void curveLoop_gen(R dots,MCoord width,const Field &field) // MPoint
+   void curveLoop_gen(MPointRangeType dots,MCoord width,const ColorFieldType &field)
     {
      CurveLoop loop(dots);
 
      loop_gen(loop.complete(),width,field);
     }
 
-   template <class R,class Field>
-   void curveBreakLoop_gen(R dots,MCoord width,const Field &field) // Dot
+   void curveBreakLoop_gen(DotRangeType dots,MCoord width,const ColorFieldType &field)
     {
      CurveBreakLoop loop(dots);
 
@@ -1527,56 +1528,56 @@ class DrawArt
     }
 
 
-   template <class R,class Map>
-   void curvePath_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void curvePath_gen(R dots,MPointMapType<R> map,MCoord width,VColor vc)
     {
      curvePath_gen(dots,map,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveBreakPath_gen(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakPath_gen(R dots,MPointMapType<R> map,MCoord width,VColor vc)
     {
      curveBreakPath_gen(dots,map,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveLoop_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void curveLoop_gen(R dots,MPointMapType<R> map,MCoord width,VColor vc)
     {
      curveLoop_gen(dots,map,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveBreakLoop_gen(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakLoop_gen(R dots,MPointMapType<R> map,MCoord width,VColor vc)
     {
      curveBreakLoop_gen(dots,map,width,ConstantField(vc));
     }
 
-   template <class R,class Map,class Field>
-   void curvePath_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void curvePath_gen(R dots,MPointMapType<R> map,MCoord width,const ColorFieldType &field)
     {
      CurvePath path(dots,map);
 
      path_gen(path.complete(),width,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveBreakPath_gen(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakPath_gen(R dots,MPointMapType<R> map,MCoord width,const ColorFieldType &field)
     {
      CurveBreakPath path(dots,map);
 
      path_gen(path.complete(),width,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveLoop_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void curveLoop_gen(R dots,MPointMapType<R> map,MCoord width,const ColorFieldType &field)
     {
      CurveLoop loop(dots,map);
 
      loop_gen(loop.complete(),width,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveBreakLoop_gen(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakLoop_gen(R dots,MPointMapType<R> map,MCoord width,const ColorFieldType &field)
     {
      CurveBreakLoop loop(dots,map);
 
@@ -1585,56 +1586,48 @@ class DrawArt
 
    // generic half curve
 
-   template <class R>
-   void curvePath_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+   void curvePath_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curvePath_gen(dots,half_flag,width,ConstantField(vc));
     }
 
-   template <class R>
-   void curveBreakPath_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
+   void curveBreakPath_gen(DotRangeType dots,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curveBreakPath_gen(dots,half_flag,width,ConstantField(vc));
     }
 
-   template <class R>
-   void curveLoop_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+   void curveLoop_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curveLoop_gen(dots,half_flag,width,ConstantField(vc));
     }
 
-   template <class R>
-   void curveBreakLoop_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
+   void curveBreakLoop_gen(DotRangeType dots,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curveBreakLoop_gen(dots,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Field>
-   void curvePath_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+   void curvePath_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurvePath path(dots);
 
      path_gen(path.complete(),half_flag,width,field);
     }
 
-   template <class R,class Field>
-   void curveBreakPath_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
+   void curveBreakPath_gen(DotRangeType dots,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurveBreakPath path(dots);
 
      path_gen(path.complete(),half_flag,width,field);
     }
 
-   template <class R,class Field>
-   void curveLoop_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+   void curveLoop_gen(MPointRangeType dots,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurveLoop loop(dots);
 
      loop_gen(loop.complete(),half_flag,width,field);
     }
 
-   template <class R,class Field>
-   void curveBreakLoop_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
+   void curveBreakLoop_gen(DotRangeType dots,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurveBreakLoop loop(dots);
 
@@ -1642,56 +1635,56 @@ class DrawArt
     }
 
 
-   template <class R,class Map>
-   void curvePath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void curvePath_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curvePath_gen(dots,map,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveBreakPath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakPath_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curveBreakPath_gen(dots,map,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void curveLoop_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curveLoop_gen(dots,map,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveBreakLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakLoop_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,VColor vc)
     {
      curveBreakLoop_gen(dots,map,half_flag,width,ConstantField(vc));
     }
 
-   template <class R,class Map,class Field>
-   void curvePath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void curvePath_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurvePath path(dots,map);
 
      path_gen(path.complete(),half_flag,width,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveBreakPath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakPath_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurveBreakPath path(dots,map);
 
      path_gen(path.complete(),half_flag,width,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void curveLoop_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurveLoop loop(dots,map);
 
      loop_gen(loop.complete(),half_flag,width,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveBreakLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakLoop_gen(R dots,MPointMapType<R> map,HalfFlag half_flag,MCoord width,const ColorFieldType &field)
     {
      CurveBreakLoop loop(dots,map);
 
@@ -1700,14 +1693,13 @@ class DrawArt
 
    // generic solid
 
-   template <class R>
-   void solid_gen(R dots,SolidFlag solid_flag,VColor vc) // MPoint
+   void solid_gen(MPointRangeType dots,SolidFlag solid_flag,VColor vc)
     {
      solid_gen(dots,solid_flag,ConstantField(vc));
     }
 
-   template <class R,class Field>
-   void solid_gen(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+   template <ColorFieldType Field>
+   void solid_gen(MPointRangeType dots,SolidFlag solid_flag,const Field &field)
     {
      SolidDriver driver(dots);
 
@@ -1715,14 +1707,14 @@ class DrawArt
     }
 
 
-   template <class R,class Map>
-   void solid_gen(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void solid_gen(R dots,MPointMapType<R> map,SolidFlag solid_flag,VColor vc)
     {
      solid_gen(dots,map,solid_flag,ConstantField(vc));
     }
 
-   template <class R,class Map,class Field>
-   void solid_gen(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
+   template <class R,ColorFieldType Field>
+   void solid_gen(R dots,MPointMapType<R> map,SolidFlag solid_flag,const Field &field)
     {
      SolidDriver driver(dots,map);
 
@@ -1731,28 +1723,24 @@ class DrawArt
 
    // generic curve solid
 
-   template <class R>
-   void curveSolid_gen(R dots,SolidFlag solid_flag,VColor vc) // MPoint
+   void curveSolid_gen(MPointRangeType dots,SolidFlag solid_flag,VColor vc)
     {
      curveSolid_gen(dots,solid_flag,ConstantField(vc));
     }
 
-   template <class R>
-   void curveBreakSolid_gen(R dots,SolidFlag solid_flag,VColor vc) // Dot
+   void curveBreakSolid_gen(DotRangeType dots,SolidFlag solid_flag,VColor vc)
     {
      curveBreakSolid_gen(dots,solid_flag,ConstantField(vc));
     }
 
-   template <class R,class Field>
-   void curveSolid_gen(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+   void curveSolid_gen(MPointRangeType dots,SolidFlag solid_flag,const ColorFieldType &field)
     {
      CurveLoop loop(dots);
 
      solid_gen(loop.complete(),solid_flag,field);
     }
 
-   template <class R,class Field>
-   void curveBreakSolid_gen(R dots,SolidFlag solid_flag,const Field &field) // Dot
+   void curveBreakSolid_gen(DotRangeType dots,SolidFlag solid_flag,const ColorFieldType &field)
     {
      CurveBreakLoop loop(dots);
 
@@ -1760,28 +1748,28 @@ class DrawArt
     }
 
 
-   template <class R,class Map>
-   void curveSolid_gen(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
+   template <class R>
+   void curveSolid_gen(R dots,MPointMapType<R> map,SolidFlag solid_flag,VColor vc)
     {
      curveSolid_gen(dots,map,solid_flag,ConstantField(vc));
     }
 
-   template <class R,class Map>
-   void curveBreakSolid_gen(R dots,Map map,SolidFlag solid_flag,VColor vc) // Dot dots, map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakSolid_gen(R dots,MPointMapType<R> map,SolidFlag solid_flag,VColor vc)
     {
      curveBreakSolid_gen(dots,map,solid_flag,ConstantField(vc));
     }
 
-   template <class R,class Map,class Field>
-   void curveSolid_gen(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
+   template <class R>
+   void curveSolid_gen(R dots,MPointMapType<R> map,SolidFlag solid_flag,const ColorFieldType &field)
     {
      CurveLoop loop(dots,map);
 
      solid_gen(loop.complete(),solid_flag,field);
     }
 
-   template <class R,class Map,class Field>
-   void curveBreakSolid_gen(R dots,Map map,SolidFlag solid_flag,const Field &field) // Dot dots, map(...) -> MPoint
+   template <DotRangeType R>
+   void curveBreakSolid_gen(R dots,MPointMapType<R> map,SolidFlag solid_flag,const ColorFieldType &field)
     {
      CurveBreakLoop loop(dots,map);
 
@@ -1800,8 +1788,7 @@ class DrawArt
 
    void circle(MPoint center,MCoord radius,MCoord width,VColor vc);
 
-   template <class Field>
-   void knob_gen(MPoint center,MCoord len,const Field &field)
+   void knob_gen(MPoint center,MCoord len,const ColorFieldType &field)
     {
      MPoint temp[]=
       {
@@ -1814,16 +1801,14 @@ class DrawArt
      solid_gen(Range_const(temp),SolidAll,field);
     }
 
-   template <class Field>
-   void ball_gen(MPoint center,MCoord radius,const Field &field)
+   void ball_gen(MPoint center,MCoord radius,const ColorFieldType &field)
     {
      LineRound obj(center,radius);
 
      curveSolid_gen(obj.get(),SolidAll,field);
     }
 
-   template <class Field>
-   void circle_gen(MPoint center,MCoord radius,MCoord width,const Field &field)
+   void circle_gen(MPoint center,MCoord radius,MCoord width,const ColorFieldType &field)
     {
      LineRound obj(center,radius);
 
@@ -1831,7 +1816,7 @@ class DrawArt
     }
 
    template <class ... TT>
-   void path(MCoord width,VColor vc,TT ... tt)
+   void path(MCoord width,VColor vc,TT ... tt) requires ( MPointSetTypes<TT...> )
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
 
@@ -1839,7 +1824,7 @@ class DrawArt
     }
 
    template <class ... TT>
-   void loop(MCoord width,VColor vc,TT ... tt)
+   void loop(MCoord width,VColor vc,TT ... tt) requires ( MPointSetTypes<TT...> )
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
 
@@ -1847,7 +1832,7 @@ class DrawArt
     }
 
    template <class ... TT>
-   void path(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
+   void path(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt) requires ( MPointSetTypes<TT...> )
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
 
@@ -1855,7 +1840,7 @@ class DrawArt
     }
 
    template <class ... TT>
-   void loop(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
+   void loop(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt) requires ( MPointSetTypes<TT...> )
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
 

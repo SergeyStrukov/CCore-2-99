@@ -154,6 +154,8 @@ struct RBTreeLink<T,K>::BaseAlgo
 
     // constructors
 
+    Cur() noexcept : ptr(0) {}
+
     explicit Cur(T *ptr_) : ptr(ptr_) {}
 
     // object ptr
@@ -180,6 +182,8 @@ struct RBTreeLink<T,K>::BaseAlgo
     T *ptr;
 
     // constructors
+
+    RevCur() noexcept : ptr(0) {}
 
     explicit RevCur(T *ptr_) : ptr(ptr_) {}
 

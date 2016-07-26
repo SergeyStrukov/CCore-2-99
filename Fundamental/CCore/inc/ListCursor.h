@@ -33,7 +33,7 @@ struct ListCursor
  {
   Cur cur;
 
-  ListCursor() : cur(0) {}
+  ListCursor() noexcept {}
 
   ListCursor(const Cur &cur_) : cur(cur_) {}
 
@@ -64,7 +64,7 @@ struct ListCountCursor
   Cur cur;
   ulen count;
 
-  ListCountCursor() : cur(0),count(0) {}
+  ListCountCursor() noexcept : count(0) {}
 
   ListCountCursor(const Cur &cur_,ulen count_) : cur(cur_),count(count_) {}
 
