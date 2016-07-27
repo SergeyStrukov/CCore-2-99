@@ -236,6 +236,10 @@ inline void DeferCall::operator delete(void *mem,JustTryType,DeferCallQueue *def
   defer_queue->free(mem);
  }
 
+inline constexpr unsigned operator "" _tick (unsigned long long time) { return time; }
+
+inline constexpr unsigned operator "" _sectick (unsigned long long time) { return DeferCallQueue::DefaultTicksPerSec*time; }
+
 /* struct DeferCouple */
 
 struct DeferCouple

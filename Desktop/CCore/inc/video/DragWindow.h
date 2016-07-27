@@ -1,7 +1,7 @@
 /* DragWindow.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -109,8 +109,8 @@ class DragShape
 
      RefVal<Font> title_font;
 
-     RefVal<unsigned> blink_time   = 3*25 ;
-     RefVal<unsigned> blink_period =    3 ;
+     RefVal<unsigned> blink_time   = 3_sectick ;
+     RefVal<unsigned> blink_period =    3_tick ;
 
      RefVal<DefString> fatal_error = "Fatal error"_def ;
 
@@ -466,8 +466,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      if( !enable_react ) buf.erase(+shape.cfg.shade_color,+shape.cfg.shade_alpha);
     }
 
-   template <class Func>
-   void redraw(Func func)
+   void redraw(FuncArgType<FrameBuf<DesktopColor> &> func)
     {
      if( host->isDead() ) return;
 
@@ -540,7 +539,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
     {
      if( tick_count )
        {
-        if( !(tick_count%+shape.cfg.blink_period) )
+        if( !( tick_count % +shape.cfg.blink_period ) )
           {
            shape.alert_blink=!shape.alert_blink;
 

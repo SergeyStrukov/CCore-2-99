@@ -1,7 +1,7 @@
 /* DragWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -100,11 +100,11 @@ void DragPane(Pane &place,Point delta,DragType drag_type)
 
 /* class DragShape */
 
-class DragShape::DrawArt : public Smooth::DrawArt
+class DragShape::DrawArt : public SmoothDrawArt
  {
   public:
 
-   DrawArt(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
+   DrawArt(const DrawBuf &buf) : SmoothDrawArt(buf) {}
  };
 
 VColor DragShape::dragColor(DragType zone) const
@@ -358,7 +358,7 @@ void DragShape::draw_Bar(DrawArt &art) const
 
      Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
 
-     cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
+     cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
     }
  }
 
@@ -584,7 +584,7 @@ Coord DragShape::getMinDx(StrLen title) const
   Coord dxy=+cfg.frame_dxy;
   Coord bdx=+cfg.btn_dx;
 
-  TextSize ts=cfg.title_font.get()->text(title);
+  TextSize ts=cfg.title_font->text(title);
 
   return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+5*bdx+bdx/4);
  }

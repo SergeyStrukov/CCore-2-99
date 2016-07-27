@@ -20,7 +20,7 @@ DrawAlgo.h           +
 CommonDrawArt.h      +
 
 ColorField.h         +
-SmoothAlgo.h             
+SmoothAlgo.h         +    
 SmoothDrawArt.h      +
             
 FigureLib.h          + 
@@ -40,8 +40,12 @@ Incremental.h        +
 Info.h               +
 Picture.h            +
 
+================================================================================
+
+--- Tools ----------------------------------------------------------------------
+
+RefVal.h             +             
 Layout.h             
-RefVal.h             
 
 FontDatabase.h       
 FontParam.h          
@@ -50,10 +54,10 @@ UserPreference.h
 
 --- Window ---------------------------------------------------------------------
 
-DragWindow.h         
-FixedWindow.h        
-ShapeLib.h              ?
-WindowLib.h             ?
+DragWindow.h         +    
+FixedWindow.h        +
+ShapeLib.h           
+WindowLib.h          
 MessageWindow.h      
 WindowReport.h       
 

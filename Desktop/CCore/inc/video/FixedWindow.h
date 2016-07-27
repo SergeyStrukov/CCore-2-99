@@ -1,7 +1,7 @@
 /* FixedWindow.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -353,8 +353,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      if( !enable_react ) buf.erase(+shape.cfg.shade_color,+shape.cfg.shade_alpha);
     }
 
-   template <class Func>
-   void redraw(Func func)
+   void redraw(FuncArgType<FrameBuf<DesktopColor> &> func)
     {
      if( host->isDead() ) return;
 

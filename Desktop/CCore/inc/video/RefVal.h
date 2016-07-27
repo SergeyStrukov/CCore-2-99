@@ -1,7 +1,7 @@
 /* RefVal.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -42,6 +42,8 @@ class DefString
 
   public:
 
+   // constructors
+
    DefString() noexcept {}
 
    DefString(const char *persistent_zstr) noexcept : def_const(persistent_zstr) {}
@@ -51,6 +53,8 @@ class DefString
    DefString(const String &obj) noexcept : dynamic_str(obj) {}
 
    ~DefString() {}
+
+   // methods
 
    StrLen str() const noexcept
     {
@@ -70,8 +74,7 @@ class DefString
 
    using PrintOptType = StrPrintOpt ;
 
-   template <class P>
-   void print(P &out,const PrintOptType &opt) const
+   void print(PrinterType &out,const PrintOptType &opt) const
     {
      Putobj(out,BindOpt(opt,str()));
     }
@@ -91,13 +94,21 @@ class RefVal
 
   public:
 
+   // constructors
+
    RefVal() : ptr(0),val() {}
 
    RefVal(const T &val_) : ptr(0),val(val_) {}
 
+   // methods
+
    T operator + () const { return ptr?(*ptr):val; }
 
    const T & get() const { if( ptr ) return *ptr; return val; }
+
+   auto operator -> () const { return get().operator -> (); }
+
+   // set
 
    T & takeVal() { return val; }
 
@@ -115,10 +126,16 @@ class CtorRefVal : NoCopy
 
   public:
 
+   // constructors
+
    template <class ... SS>
    explicit CtorRefVal(SS && ... ss) : ptr(0),val( std::forward<SS>(ss)... ) {}
 
+   // methods
+
    operator const T & () const { lock=true; if( ptr ) return *ptr; return val; }
+
+   // set
 
    T & takeVal() { return val; }
 

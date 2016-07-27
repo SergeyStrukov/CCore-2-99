@@ -1,7 +1,7 @@
 /* FixedWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -22,11 +22,11 @@ namespace Video {
 
 /* class FixedShape */
 
-class FixedShape::DrawArt : public Smooth::DrawArt
+class FixedShape::DrawArt : public SmoothDrawArt
  {
   public:
 
-   explicit DrawArt(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
+   explicit DrawArt(const DrawBuf &buf) : SmoothDrawArt(buf) {}
  };
 
 void FixedShape::draw_Frame(DrawArt &art) const
@@ -141,7 +141,7 @@ void FixedShape::draw_Title(DrawArt &art) const
 
      Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
 
-     cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
+     cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
     }
  }
 
@@ -206,7 +206,7 @@ Coord FixedShape::getMinDx(StrLen title) const
   Coord dxy=+cfg.frame_dxy;
   Coord bdx=+cfg.btn_dx;
 
-  TextSize ts=cfg.title_font.get()->text(title);
+  TextSize ts=cfg.title_font->text(title);
 
   return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+2*bdx);
  }
