@@ -300,15 +300,15 @@ ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowRe
    report(report_),
    cfg(cfg_),
 
-   list(*this),
-   yscroll(list,cfg.scroll_cfg),
-   xscroll(list,cfg.scroll_cfg),
+   wlist(*this),
+   yscroll(wlist,cfg.scroll_cfg),
+   xscroll(wlist,cfg.scroll_cfg),
 
    connector_updateReport(this,&ExceptionWindow::updateReport,report.update),
    connector_yposChanged(this,&ExceptionWindow::yposChanged,yscroll.changed),
    connector_xposChanged(this,&ExceptionWindow::xposChanged,xscroll.changed)
  {
-  list.insTop(yscroll,xscroll);
+  wlist.insTop(yscroll,xscroll);
  }
 
 ExceptionWindow::~ExceptionWindow()
@@ -333,7 +333,7 @@ void ExceptionWindow::reposition() noexcept
 
 void ExceptionWindow::layout()
  {
-  FontSize font_size=cfg.font.get()->getSize();
+  FontSize font_size=cfg.font->getSize();
 
   text_by=font_size.by;
   text_dy=font_size.dy;
@@ -344,7 +344,7 @@ void ExceptionWindow::layout()
 
   if( size>Point::Diag(dxy) )
     {
-     Pane yp=Pane(0,0,dxy,size.y-dxy);
+     Pane yp=Pane(Null,dxy,size.y-dxy);
      Pane xp=Pane(dxy,size.y-dxy,size.x-dxy,dxy);
 
      if( yscroll.isGoodSize(yp.getSize()) ) yscroll.setPlace(yp); else yscroll.setPlace(Empty);
@@ -381,7 +381,7 @@ void ExceptionWindow::draw(DrawBuf buf,bool drag_active) const
 
      drawText(tbuf,pane);
 
-     list.draw(buf,drag_active);
+     wlist.draw(buf,drag_active);
     }
   catch(CatchType)
     {
@@ -398,11 +398,6 @@ void ExceptionWindow::open()
 void ExceptionWindow::close()
  {
   opened=false;
- }
-
-void ExceptionWindow::react(UserAction action)
- {
-  action.dispatch(*this, [this] (UserAction action) { list.react(action); } );
  }
 
 void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
@@ -529,6 +524,11 @@ void ExceptionWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
         redraw();
        }
     }
+ }
+
+void ExceptionWindow::react(UserAction action)
+ {
+  action.dispatch(*this, [this] (UserAction action) { wlist.react(action); } );
  }
 
 void ExceptionWindow::updateReport()

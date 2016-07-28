@@ -1,7 +1,7 @@
 /* WindowReport.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -96,8 +96,7 @@ class ExceptionStore : NoCopy
 
    bool nonEmpty() const { return head!=0; }
 
-   template <class Func>
-   void apply(Func func) const // func(ulen index,StrLen text,bool divide)
+   void apply(FuncArgType<ulen,StrLen,bool> func) const
     {
      for(Header *ptr=head; ptr ;ptr=ptr->next) if( ptr->done ) func(ptr->index,GetStr(ptr),ptr->divide);
     }
@@ -134,7 +133,7 @@ class ExceptionWindow : public SubWindow
 
    const Config &cfg;
 
-   WindowList list;
+   WindowList wlist;
 
    YScrollWindow yscroll;
    XScrollWindow xscroll;
@@ -190,11 +189,11 @@ class ExceptionWindow : public SubWindow
 
    // user input
 
-   virtual void react(UserAction action);
-
    void react_Key(VKey vkey,KeyMod kmod,unsigned repeat);
 
    void react_Wheel(Point point,MouseKey mkey,Coord delta);
+
+   virtual void react(UserAction action);
 
   private:
 
@@ -207,7 +206,7 @@ class ExceptionWindow : public SubWindow
    SignalConnector<ExceptionWindow> connector_updateReport;
    SignalConnector<ExceptionWindow,ulen> connector_yposChanged;
    SignalConnector<ExceptionWindow,ulen> connector_xposChanged;
-  };
+ };
 
 /* class WindowReportBase */
 
