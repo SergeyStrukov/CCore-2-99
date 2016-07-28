@@ -1,7 +1,7 @@
 /* Layout.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -21,9 +21,9 @@
 namespace CCore {
 namespace Video {
 
-/* ToCoord() */
+/* ToCoordinate() */
 
-inline Coordinate ToCoordinate(ulen count) { IntGuard( count<=MaxCoord ); return Coord(count); }
+Coordinate ToCoordinate(UIntType count) { IntGuard( count<=MaxCoord ); return Coord(count); }
 
 /* GetWindowPlace() */
 
@@ -31,7 +31,7 @@ Pane GetWindowPlace(Pane outer,Ratio ypos_ratio,Point size);
 
 Pane GetWindowPlace(Desktop *desktop,Ratio ypos_ratio,Point size);
 
-/* Center() */
+/* Center...() */
 
 Pane Center(Pane outer,Point size);
 
@@ -152,42 +152,42 @@ extern MinSizeType MinSize;
 
 class Pointsor
  {
-   Coord x;
-   Coord y;
-   Coord space;
+   Coordinate x;
+   Coordinate y;
+   Coordinate space;
 
   public:
 
-   explicit Pointsor(Coord space_) : x(space_),y(space_),space(space_) {}
+   explicit Pointsor(Coordinate space_) : x(space_),y(space_),space(space_) {}
 
-   Pointsor(Coord x_,Coord y_,Coord space_) : x(x_),y(y_),space(space_) {}
+   Pointsor(Coordinate x_,Coordinate y_,Coordinate space_) : x(x_),y(y_),space(space_) {}
 
-   Pointsor(Point point,Coord space_) : x(point.x),y(point.y),space(space_) {}
+   Pointsor(Point point,Coordinate space_) : x(point.x),y(point.y),space(space_) {}
 
    // methods
 
-   operator Point() const { return {x,y}; }
+   operator Point() const { return {+x,+y}; }
 
-   Coord maxDX(Coord dx) const { return IntSub(IntSub(dx,x),space); }
+   Coord maxDX(Coordinate dx) const { return +(dx-x-space); }
 
-   Coord maxDY(Coord dy) const { return IntSub(IntSub(dy,y),space); }
+   Coord maxDY(Coordinate dy) const { return +(dy-y-space); }
 
    // cut
 
-   Pointsor cutX(Coord delta)
+   Pointsor cutX(Coordinate delta)
     {
      Pointsor ret(x,y,space);
 
-     x=IntAdd(x,IntAdd(delta,space));
+     x+=delta+space;
 
      return ret;
     }
 
-   Pointsor cutY(Coord delta)
+   Pointsor cutY(Coordinate delta)
     {
      Pointsor ret(x,y,space);
 
-     y=IntAdd(y,IntAdd(delta,space));
+     y+=delta+space;
 
      return ret;
     }
@@ -195,13 +195,13 @@ class Pointsor
    // place
 
    template <class W>
-   void placeX(W &window,Coord dx,Coord dy)
+   void placeX(W &window,Coordinate dx,Coordinate dy)
     {
-     window.setPlace(Pane(cutX(dx),{dx,dy}));
+     window.setPlace(Pane(cutX(dx),+dx,+dy));
     }
 
    template <class W>
-   void placeX(W &window,Coord dxy)
+   void placeX(W &window,Coordinate dxy)
     {
      placeX(window,dxy,dxy);
     }
@@ -213,13 +213,13 @@ class Pointsor
     }
 
    template <class W>
-   void placeY(W &window,Coord dx,Coord dy)
+   void placeY(W &window,Coordinate dx,Coordinate dy)
     {
-     window.setPlace(Pane(cutY(dy),{dx,dy}));
+     window.setPlace(Pane(cutY(dy),+dx,+dy));
     }
 
    template <class W>
-   void placeY(W &window,Coord dxy)
+   void placeY(W &window,Coordinate dxy)
     {
      placeY(window,dxy,dxy);
     }
@@ -233,13 +233,13 @@ class Pointsor
    // place min size
 
    template <class W>
-   void placeMinX(W &window,MinSizeType,Coord dy)
+   void placeMinX(W &window,MinSizeType,Coordinate dy)
     {
      placeX(window,window.getMinSize().x,dy);
     }
 
    template <class W>
-   void placeMinX(W &window,Coord dx,MinSizeType)
+   void placeMinX(W &window,Coordinate dx,MinSizeType)
     {
      placeX(window,dx,window.getMinSize().y);
     }
@@ -251,13 +251,13 @@ class Pointsor
     }
 
    template <class W>
-   void placeMinY(W &window,MinSizeType,Coord dy)
+   void placeMinY(W &window,MinSizeType,Coordinate dy)
     {
      placeY(window,window.getMinSize().x,dy);
     }
 
    template <class W>
-   void placeMinY(W &window,Coord dx,MinSizeType)
+   void placeMinY(W &window,Coordinate dx,MinSizeType)
     {
      placeY(window,dx,window.getMinSize().y);
     }
@@ -270,38 +270,38 @@ class Pointsor
 
    // place transform
 
-   template <class W,class Func>
-   void placeX(W &window,Coord dx,Coord dy,Func func)
+   template <class W>
+   void placeX(W &window,Coordinate dx,Coordinate dy,FuncType<Pane,Pane> func)
     {
-     window.setPlace(func(Pane(cutX(dx),{dx,dy})));
+     window.setPlace(func(Pane(cutX(dx),+dx,+dy)));
     }
 
-   template <class W,class Func>
-   auto placeX(W &window,Coord dxy,Func func) -> decltype( (void)func(Pane()) )
+   template <class W>
+   auto placeX(W &window,Coordinate dxy,FuncType<Pane,Pane> func)
     {
      placeX(window,dxy,dxy,func);
     }
 
-   template <class W,class Func>
-   auto placeX(W &window,Point size,Func func) -> decltype( (void)func(Pane()) )
+   template <class W>
+   auto placeX(W &window,Point size,FuncType<Pane,Pane> func)
     {
      placeX(window,size.x,size.y,func);
     }
 
-   template <class W,class Func>
-   void placeY(W &window,Coord dx,Coord dy,Func func)
+   template <class W>
+   void placeY(W &window,Coordinate dx,Coordinate dy,FuncType<Pane,Pane> func)
     {
-     window.setPlace(func(Pane(cutY(dy),{dx,dy})));
+     window.setPlace(func(Pane(cutY(dy),+dx,+dy)));
     }
 
-   template <class W,class Func>
-   auto placeY(W &window,Coord dxy,Func func) -> decltype( (void)func(Pane()) )
+   template <class W>
+   auto placeY(W &window,Coordinate dxy,FuncType<Pane,Pane> func)
     {
      placeY(window,dxy,dxy,func);
     }
 
-   template <class W,class Func>
-   auto placeY(W &window,Point size,Func func) -> decltype( (void)func(Pane()) )
+   template <class W>
+   auto placeY(W &window,Point size,FuncType<Pane,Pane> func)
     {
      placeY(window,size.x,size.y,func);
     }
@@ -311,57 +311,57 @@ class Pointsor
 
 class Panesor
  {
-   Coord x;
-   Coord y;
-   Coord dx;
-   Coord dy;
-   Coord space;
+   Coordinate x;
+   Coordinate y;
+   Coordinate dx;
+   Coordinate dy;
+   Coordinate space;
 
   public:
 
-   Panesor(Coord x_,Coord y_,Coord dx_,Coord dy_,Coord space_) : x(x_),y(y_),dx(dx_),dy(dy_),space(space_) {}
+   Panesor(Coordinate x_,Coordinate y_,Coordinate dx_,Coordinate dy_,Coordinate space_) : x(x_),y(y_),dx(dx_),dy(dy_),space(space_) {}
 
-   Panesor(Point size,Coord space) : Panesor(0,0,size.x,size.y,space) {}
+   Panesor(Point size,Coordinate space) : Panesor(0,0,size.x,size.y,space) {}
 
-   Panesor(Pane pane,Coord space) : Panesor(pane.x,pane.y,pane.dx,pane.dy,space) {}
+   Panesor(Pane pane,Coordinate space) : Panesor(pane.x,pane.y,pane.dx,pane.dy,space) {}
 
    // methods
 
-   operator Pane() const { return Pane(x,y,dx,dy); }
+   operator Pane() const { return Pane(+x,+y,+dx,+dy); }
 
    void shrink()
     {
-     x=IntAdd(x,space);
-     y=IntAdd(y,space);
+     x+=space;
+     y+=space;
 
-     Coord space2=IntAdd(space,space);
+     Coordinate space2=space+space;
 
-     dx=IntSub(dx,space2);
-     dy=IntSub(dy,space2);
+     dx-=space2;
+     dy-=space2;
     }
 
    // cut
 
-   Panesor cutX(Coord delta)
+   Panesor cutX(Coordinate delta)
     {
      Panesor ret(x,y,delta,dy,space);
 
-     delta=IntAdd(delta,space);
+     delta+=space;
 
-     x=IntAdd(x,delta);
-     dx=IntSub(dx,delta);
+     x+=delta;
+     dx-=delta;
 
      return ret;
     }
 
-   Panesor cutY(Coord delta)
+   Panesor cutY(Coordinate delta)
     {
      Panesor ret(x,y,dx,delta,space);
 
-     delta=IntAdd(delta,space);
+     delta+=space;
 
-     y=IntAdd(y,delta);
-     dy=IntSub(dy,delta);
+     y+=delta;
+     dy-=delta;
 
      return ret;
     }
@@ -369,13 +369,13 @@ class Panesor
    // place
 
    template <class W>
-   void placeX(W &window,Coord delta)
+   void placeX(W &window,Coordinate delta)
     {
      window.setPlace(cutX(delta));
     }
 
    template <class W>
-   void placeY(W &window,Coord delta)
+   void placeY(W &window,Coordinate delta)
     {
      window.setPlace(cutY(delta));
     }
@@ -383,25 +383,25 @@ class Panesor
    template <class W>
    void placeX(W &window,Ratio rat)
     {
-     placeX(window,rat*dx);
+     placeX(window,rat*(+dx));
     }
 
    template <class W>
    void placeY(W &window,Ratio rat)
     {
-     placeY(window,rat*dy);
+     placeY(window,rat*(+dy));
     }
 
    // place transform
 
-   template <class W,class Func>
-   void placeX(W &window,Coord delta,Func func)
+   template <class W>
+   void placeX(W &window,Coordinate delta,FuncType<Pane,Pane> func)
     {
      window.setPlace(func(cutX(delta)));
     }
 
-   template <class W,class Func>
-   void placeY(W &window,Coord delta,Func func)
+   template <class W>
+   void placeY(W &window,Coordinate delta,FuncType<Pane,Pane> func)
     {
      window.setPlace(func(cutY(delta)));
     }
@@ -409,19 +409,15 @@ class Panesor
    // ext
 
    template <class W>
-   void extX(W &window,Coord ex=0)
+   void extX(W &window,Coordinate ex=0)
     {
-     Coord dx=IntAdd(window.getMinSize().x,ex);
-
-     placeX(window,dx);
+     placeX(window,ex+window.getMinSize().x);
     }
 
    template <class W>
-   void extY(W &window,Coord ey=0)
+   void extY(W &window,Coordinate ey=0)
     {
-     Coord dy=IntAdd(window.getMinSize().y,ey);
-
-     placeY(window,dy);
+     placeY(window,ey+window.getMinSize().y);
     }
  };
 
