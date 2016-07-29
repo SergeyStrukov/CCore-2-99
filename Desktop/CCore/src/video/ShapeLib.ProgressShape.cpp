@@ -1,7 +1,7 @@
 /* ShapeLib.ProgressShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -34,7 +34,7 @@ void ProgressShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MCoord x0=p.x;
   MCoord x2=p.ex;

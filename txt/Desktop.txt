@@ -56,7 +56,7 @@ UserPreference.h
 
 DragWindow.h         +    
 FixedWindow.h        +
-ShapeLib.h           
+ShapeLib.h           +           
 WindowLib.h          +
         
 MessageWindow.h      +     

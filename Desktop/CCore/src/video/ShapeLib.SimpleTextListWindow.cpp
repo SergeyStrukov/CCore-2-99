@@ -1,7 +1,7 @@
 /* ShapeLib.SimpleTextListWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -125,7 +125,7 @@ void SimpleTextListShape::draw(const DrawBuf &buf) const
  {
   if( !pane ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   art.block(pane,+cfg.back);
 

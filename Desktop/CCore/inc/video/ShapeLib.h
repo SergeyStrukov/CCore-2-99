@@ -961,9 +961,7 @@ class InfoShape
 
      RefVal<Font> font;
 
-     Config()
-      {
-      }
+     Config() {}
     };
 
    // parameters
@@ -1031,7 +1029,7 @@ class LineEditShape
 
      RefVal<Font> font;
 
-     RefVal<unsigned> period = 10 ;
+     RefVal<unsigned> period = 10_tick ;
 
      Config() {}
     };
@@ -1113,9 +1111,7 @@ class SimpleTextListShape
 
      RefVal<Font> font;
 
-     Config()
-      {
-      }
+     Config() {}
     };
 
    // parameters
