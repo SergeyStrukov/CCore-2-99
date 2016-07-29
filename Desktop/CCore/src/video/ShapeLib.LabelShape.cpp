@@ -1,7 +1,7 @@
 /* ShapeLib.LabelShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -25,7 +25,7 @@ namespace Video {
 
 Point LabelShape::getMinSize() const
  {
-  TextSize ts=cfg.font.get()->text(Range(text));
+  TextSize ts=cfg.font->text(Range(text));
 
   IntGuard( !ts.overflow );
 
@@ -34,7 +34,7 @@ Point LabelShape::getMinSize() const
 
 void LabelShape::draw(const DrawBuf &buf) const
  {
-  cfg.font.get()->text(buf,pane,TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
+  cfg.font->text(buf,pane,TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
  }
 
 } // namespace Video

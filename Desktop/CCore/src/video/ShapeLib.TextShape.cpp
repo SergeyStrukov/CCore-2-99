@@ -1,7 +1,7 @@
 /* ShapeLib.TextShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -25,7 +25,7 @@ namespace Video {
 
 Point TextShape::getMinSize() const
  {
-  TextSize ts=cfg.font.get()->text(Range(text));
+  TextSize ts=cfg.font->text(Range(text));
 
   IntGuard( !ts.overflow );
 
@@ -41,7 +41,7 @@ Point TextShape::getMinSize() const
 
 Point TextShape::getMinSize(StrLen text) const
  {
-  TextSize ts=cfg.font.get()->text(text);
+  TextSize ts=cfg.font->text(text);
 
   IntGuard( !ts.overflow );
 
@@ -61,7 +61,7 @@ void TextShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   Font font=cfg.font.get();
 
