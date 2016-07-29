@@ -1,7 +1,7 @@
 /* ShapeLib.TextContourShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -25,7 +25,7 @@ namespace Video {
 
 Point TextContourShape::getMinSize() const
  {
-  TextSize ts=cfg.font.get()->text(Range(title));
+  TextSize ts=cfg.font->text(Range(title));
 
   IntGuard( !ts.overflow );
 
@@ -36,7 +36,7 @@ Point TextContourShape::getMinSize() const
 
 Point TextContourShape::getMinSize(Point inner_size) const
  {
-  TextSize ts=cfg.font.get()->text(Range(title));
+  TextSize ts=cfg.font->text(Range(title));
 
   IntGuard( !ts.overflow );
 
@@ -47,7 +47,7 @@ Point TextContourShape::getMinSize(Point inner_size) const
 
 Pane TextContourShape::getInner() const
  {
-  TextSize ts=cfg.font.get()->text(Range(title));
+  TextSize ts=cfg.font->text(Range(title));
 
   Coord dxy=RoundUpLen(+cfg.width);
 
@@ -62,7 +62,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   Font font=cfg.font.get();
 

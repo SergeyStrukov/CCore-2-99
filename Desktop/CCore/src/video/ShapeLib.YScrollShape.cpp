@@ -1,7 +1,7 @@
 /* ShapeLib.YScrollShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -76,7 +76,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MPoint a=p.getBase();
   MPoint s=p.getSize();
@@ -136,7 +136,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
 
      FigureUpArrow fig(x0+d,x1-d,y0+d,y1-d);
 
-     fig.transform(Smooth::DotShift(MPoint::Diag(width)));
+     fig.shift(MPoint::Diag(width));
 
      fig.curveSolid(art,eface);
     }
@@ -179,7 +179,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
 
      FigureDownArrow fig(x0+d,x1-d,y4+d,y5-d);
 
-     fig.transform(Smooth::DotShift(MPoint::Diag(width)));
+     fig.shift(MPoint::Diag(width));
 
      fig.curveSolid(art,eface);
     }

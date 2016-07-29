@@ -140,7 +140,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        fig[2]={{c,c-a}};
        fig[3]={{0,b},Smooth::DotBreak};
 
-       fig.transform(Smooth::DotShift(center));
+       fig.shift(center);
 
        fig.curveSolid(art,fc);
 
@@ -166,7 +166,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
        FigureLeftArrow fig(-d-a,a-d,-a,a);
 
-       fig.transform(Smooth::DotShift(center));
+       fig.shift(center);
 
        fig.curveSolid(art,fc);
       }
@@ -179,7 +179,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
        FigureRightArrow fig(d-a,a+d,-a,a);
 
-       fig.transform(Smooth::DotShift(center));
+       fig.shift(center);
 
        fig.curveSolid(art,fc);
       }
@@ -192,7 +192,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
        FigureUpArrow fig(-a,a,-d-a,a-d);
 
-       fig.transform(Smooth::DotShift(center));
+       fig.shift(center);
 
        fig.curveSolid(art,fc);
       }
@@ -205,7 +205,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
        FigureDownArrow fig(-a,a,d-a,a+d);
 
-       fig.transform(Smooth::DotShift(center));
+       fig.shift(center);
 
        fig.curveSolid(art,fc);
       }
@@ -217,7 +217,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
        FigureBox fig(-a,a,-a,a);
 
-       fig.transform(Smooth::DotShift(center));
+       fig.shift(center);
 
        fig.solid(art,fc);
       }
@@ -232,11 +232,11 @@ void KnobShape::draw(const DrawBuf &buf) const
        FigureRightArrow fig1(-a,a,-a,a);
        FigureRightArrow fig2(fig1);
 
-       fig1.transform(Smooth::DotShift(center.subX(d1)));
+       fig1.shift(center.subX(d1));
 
        fig1.curveSolid(art,fc);
 
-       fig2.transform(Smooth::DotShift(center.addX(d2)));
+       fig2.shift(center.addX(d2));
 
        fig2.curveSolid(art,fc);
       }
@@ -251,11 +251,11 @@ void KnobShape::draw(const DrawBuf &buf) const
        FigureLeftArrow fig1(-a,a,-a,a);
        FigureLeftArrow fig2(fig1);
 
-       fig1.transform(Smooth::DotShift(center.addX(d1)));
+       fig1.shift(center.addX(d1));
 
        fig1.curveSolid(art,fc);
 
-       fig2.transform(Smooth::DotShift(center.subX(d2)));
+       fig2.shift(center.subX(d2));
 
        fig2.curveSolid(art,fc);
       }

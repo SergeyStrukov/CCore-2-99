@@ -1,7 +1,7 @@
 /* ShapeLib.SwitchShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -36,7 +36,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MPoint a=p.getBase();
 
@@ -124,7 +124,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
       fig[5]={radius,radius+d2};
      }
 
-   fig.transform(Smooth::DotShift(a));
+   fig.shift(a);
 
    fig.solid(art,face);
   }

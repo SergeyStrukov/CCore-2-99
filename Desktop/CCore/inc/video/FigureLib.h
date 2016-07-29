@@ -320,6 +320,8 @@ struct FigurePoints : FigureBase<MPoint,Len> , DrawPoints
     for(MPoint &p : buf ) p=func(p);
    }
 
+  void shift(MPoint delta) { transform(Smooth::DotShift(delta)); }
+
   template <class ... TT>
   void path(SmoothDrawArt &art,TT && ... tt) const
    {
@@ -423,6 +425,8 @@ struct FigureDots : FigureBase<SmoothDot,Len> , DrawDots
 
     for(SmoothDot &p : buf ) p.point=func(p.point);
    }
+
+  void shift(MPoint delta) { transform(Smooth::DotShift(delta)); }
 
   template <class ... TT>
   void curvePath(SmoothDrawArt &art,TT && ... tt) const

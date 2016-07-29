@@ -1,7 +1,7 @@
 /* ShapeLib.ScrollShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -142,7 +142,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MPoint a=p.getBase();
   MPoint s=p.getSize();
@@ -202,7 +202,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
 
      FigureLeftArrow fig(x0+d,x1-d,y0+d,y1-d);
 
-     fig.transform(Smooth::DotShift(MPoint::Diag(width)));
+     fig.shift(MPoint::Diag(width));
 
      fig.curveSolid(art,eface);
     }
@@ -245,7 +245,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
 
      FigureRightArrow fig(x4+d,x5-d,y0+d,y1-d);
 
-     fig.transform(Smooth::DotShift(MPoint::Diag(width)));
+     fig.shift(MPoint::Diag(width));
 
      fig.curveSolid(art,eface);
     }

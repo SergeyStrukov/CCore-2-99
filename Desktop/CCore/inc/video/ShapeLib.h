@@ -1,7 +1,7 @@
 /* ShapeLib.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -23,6 +23,7 @@
 #include <CCore/inc/video/Info.h>
 
 #include <CCore/inc/String.h>
+#include <CCore/inc/DeferCall.h>
 
 namespace CCore {
 namespace Video {
@@ -601,9 +602,9 @@ class LightShape
 
    struct Config
     {
-     RefVal<VColor> top      =  Gray ;
-     RefVal<VColor> bottom   =  Snow ;
-     RefVal<VColor> inactive =  Gray ;
+     RefVal<VColor> top      = Gray ;
+     RefVal<VColor> bottom   = Snow ;
+     RefVal<VColor> inactive = Gray ;
 
      Config() {}
     };
@@ -669,7 +670,7 @@ class ScrollShape
      RefVal<VColor> face   =     Black ;
      RefVal<VColor> faceUp =      Blue ;
 
-     RefVal<unsigned> speedUpPeriod = 12 ;
+     RefVal<unsigned> speedUpPeriod = 12_tick ;
 
      Config() {}
     };
@@ -868,8 +869,8 @@ class ProgressShape
      RefVal<VColor> ping_top      =      Snow ;
      RefVal<VColor> ping_bottom   =     Black ;
 
-     RefVal<unsigned> time   = 3*25 ;
-     RefVal<unsigned> period =    2 ;
+     RefVal<unsigned> time   = 3_sectick ;
+     RefVal<unsigned> period =    2_tick ;
 
      Config() {}
     };

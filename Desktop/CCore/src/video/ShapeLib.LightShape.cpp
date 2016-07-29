@@ -1,7 +1,7 @@
 /* ShapeLib.LightShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -36,7 +36,7 @@ void LightShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MPoint a=p.getBase();
 
