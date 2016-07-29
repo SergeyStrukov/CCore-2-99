@@ -50,6 +50,10 @@ class TwoField;
 
 class RadioField;
 
+struct AbstractField;
+
+struct AbstractAlphaField;
+
 /* struct AlphaColor */
 
 struct AlphaColor
@@ -119,6 +123,20 @@ class RadioField
    RadioField(MPoint center,MCoord radius,VColor vc,VColor va);
 
    VColor operator () (MPoint point) const;
+ };
+
+/* struct AbstractField */
+
+struct AbstractField
+ {
+  virtual VColor operator () (MPoint) const =0;
+ };
+
+/* struct AbstractAlphaField */
+
+struct AbstractAlphaField
+ {
+  virtual AlphaColor operator () (MPoint) const =0;
  };
 
 /* concept VColorFieldType<Field> */

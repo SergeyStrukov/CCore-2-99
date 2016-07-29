@@ -55,6 +55,16 @@ void DrawPoints::Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag so
   art.solid(dots,solid_flag,field);
  }
 
+void DrawPoints::Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractField &field)
+ {
+  art.solid(dots,solid_flag,field);
+ }
+
+void DrawPoints::Solid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractAlphaField &field)
+ {
+  art.solid(dots,solid_flag,field);
+ }
+
 void DrawPoints::CurvePath(SmoothDrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
   art.curvePath(dots,width,vc);
@@ -86,6 +96,16 @@ void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFl
  }
 
 void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
+ {
+  art.curveSolid(dots,solid_flag,field);
+ }
+
+void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractField &field)
+ {
+  art.curveSolid(dots,solid_flag,field);
+ }
+
+void DrawPoints::CurveSolid(SmoothDrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractAlphaField &field)
  {
   art.curveSolid(dots,solid_flag,field);
  }
@@ -123,6 +143,16 @@ void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidF
  }
 
 void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const RadioField &field)
+ {
+  art.curveSolid(dots,solid_flag,field);
+ }
+
+void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const AbstractField &field)
+ {
+  art.curveSolid(dots,solid_flag,field);
+ }
+
+void DrawDots::CurveSolid(SmoothDrawArt &art,PtrLen<const SmoothDot> dots,SolidFlag solid_flag,const AbstractAlphaField &field)
  {
   art.curveSolid(dots,solid_flag,field);
  }

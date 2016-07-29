@@ -101,7 +101,7 @@ void PointEditWindow::layout()
 
   x_spin.setPlace(Pane(Null,s));
 
-  y_spin.setPlace(Pane({s.x+space_dxy,0},s));
+  y_spin.setPlace(Pane(Point(s.x+space_dxy,0),s));
 
   Coord dx=s.x+space_dxy/2;
 

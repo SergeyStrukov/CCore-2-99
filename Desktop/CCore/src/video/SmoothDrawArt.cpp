@@ -1,7 +1,7 @@
 /* SmoothDrawArt.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -79,6 +79,16 @@ void DrawArt::ball(MPoint center,MCoord radius,const TwoField &field)
  }
 
 void DrawArt::ball(MPoint center,MCoord radius,const RadioField &field)
+ {
+  ball_gen(center,radius,field);
+ }
+
+void DrawArt::ball(MPoint center,MCoord radius,const AbstractField &field)
+ {
+  ball_gen(center,radius,field);
+ }
+
+void DrawArt::ball(MPoint center,MCoord radius,const AbstractAlphaField &field)
  {
   ball_gen(center,radius,field);
  }
@@ -173,6 +183,16 @@ void DrawArt::solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioFi
   solid_gen(dots,solid_flag,field);
  }
 
+void DrawArt::solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractField &field)
+ {
+  solid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractAlphaField &field)
+ {
+  solid_gen(dots,solid_flag,field);
+ }
+
  // special curve solid
 
 void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
@@ -190,6 +210,16 @@ void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const Ra
   curveSolid_gen(dots,solid_flag,field);
  }
 
+void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractField &field)
+ {
+  curveSolid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractAlphaField &field)
+ {
+  curveSolid_gen(dots,solid_flag,field);
+ }
+
 void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,VColor vc)
  {
   curveBreakSolid_gen(dots,solid_flag,vc);
@@ -201,6 +231,16 @@ void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const TwoFi
  }
 
 void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const RadioField &field)
+ {
+  curveBreakSolid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const AbstractField &field)
+ {
+  curveBreakSolid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const AbstractAlphaField &field)
  {
   curveBreakSolid_gen(dots,solid_flag,field);
  }

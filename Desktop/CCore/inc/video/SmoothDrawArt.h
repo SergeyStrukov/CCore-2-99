@@ -99,6 +99,8 @@ template <DotRangeType R> class DotBreaker;
 
 class FieldPlotBase;
 
+template <class Field> struct RefOrCopyCtor;
+
 template <ColorFieldType Field> class FieldPlot;
 
 template <class R,MPointMapType<R> Map> class NextLine;
@@ -122,6 +124,8 @@ class CurveLoop;
 class CurveBreakPath;
 
 class CurveBreakLoop;
+
+class GenDrawArt;
 
 class DrawArt;
 
@@ -212,12 +216,31 @@ class FieldPlotBase : public DrawBuf
     }
  };
 
+/* struct RefOrCopyCtor<Field> */
+
+template <class Field>
+struct RefOrCopyCtor
+ {
+  using Ret = Field ;
+ };
+
+template <class Field> requires ( !CopyCtorType<Field> )
+struct RefOrCopyCtor<Field>
+ {
+  using Ret = const Field & ;
+ };
+
+/* type RefOrCopy<Field> */
+
+template <class Field>
+using RefOrCopy = typename RefOrCopyCtor<Field>::Ret ;
+
 /* class FieldPlot<Field> */
 
 template <ColorFieldType Field>
 class FieldPlot : FieldPlotBase
  {
-   Field field;
+   RefOrCopy<Field> field;
    MPoint size;
 
   private:
@@ -1343,29 +1366,19 @@ class CurveBreakLoop : public CurveBase
    ~CurveBreakLoop() {}
  };
 
-/* class DrawArt */
+/* class GenDrawArt */
 
-class DrawArt
+class GenDrawArt
  {
    DrawBuf buf;
 
   public:
 
-   DrawArt(const DrawBuf &buf_) : buf(buf_) {}
+   GenDrawArt(const DrawBuf &buf_) : buf(buf_) {}
 
    const DrawBuf & getBuf() const { return buf; }
 
-   // simple
-
-   void pixel(Point p,DesktopColor color);
-
-   void erase(DesktopColor color);
-
-   void erase(VColor vc,Clr alpha);
-
-   void block(Pane pane,DesktopColor color);
-
-   void block(Pane pane,VColor vc,Clr alpha);
+  protected:
 
    // generic line
 
@@ -1776,17 +1789,7 @@ class DrawArt
      solid_gen(loop.complete(),solid_flag,field);
     }
 
-   // special
-
-   void knob(MPoint center,MCoord len,VColor vc);
-
-   void ball(MPoint center,MCoord radius,VColor vc);
-
-   void ball(MPoint center,MCoord radius,const TwoField &field);
-
-   void ball(MPoint center,MCoord radius,const RadioField &field);
-
-   void circle(MPoint center,MCoord radius,MCoord width,VColor vc);
+   // generic special
 
    void knob_gen(MPoint center,MCoord len,const ColorFieldType &field)
     {
@@ -1814,6 +1817,43 @@ class DrawArt
 
      curveLoop_gen(obj.get(),width,field);
     }
+ };
+
+/* class DrawArt */
+
+class DrawArt : public GenDrawArt
+ {
+  public:
+
+   DrawArt(const DrawBuf &buf) : GenDrawArt(buf) {}
+
+   // simple
+
+   void pixel(Point p,DesktopColor color);
+
+   void erase(DesktopColor color);
+
+   void erase(VColor vc,Clr alpha);
+
+   void block(Pane pane,DesktopColor color);
+
+   void block(Pane pane,VColor vc,Clr alpha);
+
+   // special
+
+   void knob(MPoint center,MCoord len,VColor vc);
+
+   void ball(MPoint center,MCoord radius,VColor vc);
+
+   void ball(MPoint center,MCoord radius,const TwoField &field);
+
+   void ball(MPoint center,MCoord radius,const RadioField &field);
+
+   void ball(MPoint center,MCoord radius,const AbstractField &field);
+
+   void ball(MPoint center,MCoord radius,const AbstractAlphaField &field);
+
+   void circle(MPoint center,MCoord radius,MCoord width,VColor vc);
 
    template <class ... TT>
    void path(MCoord width,VColor vc,TT ... tt) requires ( MPointSetTypes<TT...> )
@@ -1887,6 +1927,10 @@ class DrawArt
 
    void solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
 
+   void solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractField &field);
+
+   void solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractAlphaField &field);
+
    // special curve solid
 
    void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
@@ -1895,11 +1939,19 @@ class DrawArt
 
    void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
 
+   void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractField &field);
+
+   void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const AbstractAlphaField &field);
+
    void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,VColor vc);
 
    void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const TwoField &field);
 
    void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const RadioField &field);
+
+   void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const AbstractField &field);
+
+   void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const AbstractAlphaField &field);
  };
 
 } // namespace Smooth

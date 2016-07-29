@@ -1,7 +1,7 @@
 /* ShapeLib.KnobShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -40,7 +40,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   // center and radius
 

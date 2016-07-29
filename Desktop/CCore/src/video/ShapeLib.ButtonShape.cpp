@@ -1,7 +1,7 @@
 /* ShapeLib.ButtonShape.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -25,7 +25,7 @@ namespace Video {
 
 Point ButtonShape::getMinSize() const
  {
-  TextSize ts=cfg.font.get()->text(Range(face));
+  TextSize ts=cfg.font->text(Range(face));
 
   IntGuard( !ts.overflow );
 
@@ -45,7 +45,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   Font font=cfg.font.get();
 

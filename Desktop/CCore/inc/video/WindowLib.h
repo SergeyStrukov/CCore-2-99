@@ -1,7 +1,7 @@
 /* WindowLib.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -511,7 +511,7 @@ class RadioItem : NoCopy
 
   public:
 
-   explicit RadioItem(int radio_id_);
+   explicit RadioItem(int radio_id);
 
    ~RadioItem();
  };
