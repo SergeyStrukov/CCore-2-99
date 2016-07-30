@@ -41,8 +41,8 @@ class SpinEditWindow : public ComboWindow
 
      explicit Config(const UserPreference &pref)
       {
-       knob_cfg.bind(pref.getKnobWindowConfig());
-       text_cfg.bind(pref.getTextWindowConfig());
+       knob_cfg.bind(pref.getKnobConfig());
+       text_cfg.bind(pref.getTextConfig());
       }
     };
 

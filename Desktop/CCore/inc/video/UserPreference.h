@@ -1,7 +1,7 @@
 /* UserPreference.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -99,10 +99,10 @@ struct UserPreferenceBag
 
   // other
 
-  unsigned line_edit_period     =   10 ;
-  unsigned scroll_speedUpPeriod =   12 ;
-  unsigned progress_time        = 3*25 ;
-  unsigned progress_period      =    2 ;
+  unsigned line_edit_period     =   10_tick ;
+  unsigned scroll_speedUpPeriod =   12_tick ;
+  unsigned progress_time        = 3_sectick ;
+  unsigned progress_period      =    2_tick ;
 
   Coord line_edit_ex        = 3 ;
 
@@ -117,8 +117,8 @@ struct UserPreferenceBag
 
   // TopWindow
 
-  unsigned blink_time   = 3*25 ;
-  unsigned blink_period =    3 ;
+  unsigned blink_time   = 3_sectick ;
+  unsigned blink_period =    3_tick ;
 
   DefString fatal_error = "Fatal error"_def ;
 
@@ -268,19 +268,19 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // sub windows
 
-   const ButtonWindow::ConfigType & getButtonShapeConfig() const { return cfg_ButtonWindow; }
+   const ButtonWindow::ConfigType & getButtonConfig() const { return cfg_ButtonWindow; }
 
-   const KnobWindow::ConfigType & getKnobWindowConfig() const { return cfg_KnobWindow; }
+   const KnobWindow::ConfigType & getKnobConfig() const { return cfg_KnobWindow; }
 
-   const CheckWindow::ConfigType & getCheckWindowConfig() const { return cfg_CheckWindow; }
+   const CheckWindow::ConfigType & getCheckConfig() const { return cfg_CheckWindow; }
 
-   const SwitchWindow::ConfigType & getSwitchWindowConfig() const { return cfg_SwitchWindow; }
+   const SwitchWindow::ConfigType & getSwitchConfig() const { return cfg_SwitchWindow; }
 
-   const RadioWindow::ConfigType & getRadioWindowConfig() const { return cfg_RadioWindow; }
+   const RadioWindow::ConfigType & getRadioConfig() const { return cfg_RadioWindow; }
 
-   const TextWindow::ConfigType & getTextWindowConfig() const { return cfg_TextWindow; }
+   const TextWindow::ConfigType & getTextConfig() const { return cfg_TextWindow; }
 
-   const LabelWindow::ConfigType & getLabelWindowConfig() const { return cfg_LabelWindow; }
+   const LabelWindow::ConfigType & getLabelConfig() const { return cfg_LabelWindow; }
 
    const XSingleLineWindow::ConfigType & getXSingleLineConfig() const { return cfg_XSingleLineWindow; }
 

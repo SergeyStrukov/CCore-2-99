@@ -108,10 +108,10 @@ class DesignerWindow : public ComboWindow
         color_cfg(pref)
       {
        text_list_cfg.bind(pref.getSimpleTextListConfig());
-       check_cfg.bind(pref.getCheckWindowConfig());
-       label_cfg.bind(pref.getLabelWindowConfig());
+       check_cfg.bind(pref.getCheckConfig());
+       label_cfg.bind(pref.getLabelConfig());
 
-       btn_cfg.bind(pref.getButtonShapeConfig());
+       btn_cfg.bind(pref.getButtonConfig());
 
        edit_cfg.bind(pref.getLineEditConfig());
       }

@@ -65,12 +65,12 @@ class FontEditWindow : public ComboWindow
 
        progress_cfg.bind(pref.getProgressConfig());
        text_list_cfg.bind(pref.getSimpleTextListConfig());
-       text_cfg.bind(pref.getTextWindowConfig());
+       text_cfg.bind(pref.getTextConfig());
        light_cfg.bind(pref.getLightConfig());
-       label_cfg.bind(pref.getLabelWindowConfig());
+       label_cfg.bind(pref.getLabelConfig());
        dline_cfg.bind(pref.getXDoubleLineConfig());
-       check_cfg.bind(pref.getCheckWindowConfig());
-       radio_cfg.bind(pref.getRadioWindowConfig());
+       check_cfg.bind(pref.getCheckConfig());
+       radio_cfg.bind(pref.getRadioConfig());
        text_contour_cfg.bind(pref.getTextContourConfig());
        contour_cfg.bind(pref.getContourConfig());
       }
