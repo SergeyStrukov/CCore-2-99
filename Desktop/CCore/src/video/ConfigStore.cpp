@@ -1,7 +1,7 @@
 /* ConfigStore.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -341,8 +341,7 @@ struct ConfigMap::AddItem
   void do_Font() { obj->add_Font(name,get_Font()); }
  };
 
-template <class T>
-void ConfigMap::add(StrLen name,const T &value)
+void ConfigMap::add(StrLen name,const ConfigType &value)
  {
   auto result=map.find_or_add(name);
 

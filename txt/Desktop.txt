@@ -47,9 +47,9 @@ Picture.h            +
 RefVal.h             +             
 Layout.h             +
 
-FontParam.h          
-FontDatabase.h       
-ConfigStore.h             
+FontParam.h          +          
+ConfigStore.h        +     
+FontDatabase.h       +
 UserPreference.h     
 
 --- Window ---------------------------------------------------------------------

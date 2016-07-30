@@ -1,7 +1,7 @@
 /* FontParam.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -31,6 +31,8 @@ struct FontParam;
 
 struct FontParam
  {
+  // engine_type
+
   enum EngineType
    {
     EngineDefault,
@@ -41,7 +43,11 @@ struct FontParam
 
   EngineType engine_type = EngineDefault ;
 
+  // file_name
+
   String file_name;
+
+  // size_type
 
   enum SizeType
    {
@@ -54,6 +60,8 @@ struct FontParam
 
   SizeType size_type = SizeXY ;
 
+  // set_size
+
   union SetSize
    {
     Coord size_xy;
@@ -64,6 +72,8 @@ struct FontParam
    };
 
   SetSize set_size;
+
+  // cfg
 
   FreeTypeFont::Config cfg;
 

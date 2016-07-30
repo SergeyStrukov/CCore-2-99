@@ -1,7 +1,7 @@
 /* ConfigStore.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -54,6 +54,11 @@ using ConfigTypeList = Meta::CaseList<
                                        Meta::Case<int,6,DefString> ,
                                        Meta::Case<int,7,FontParam>
                                      > ;
+
+/* concept ConfigType<T> */
+
+template <class T>
+concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Point,DefString,FontParam> ;
 
 /* class ConfigItem */
 
@@ -138,7 +143,7 @@ class ConfigItem : NoCopy
 
    StrLen getDDLTypeName() const;
 
-   template <class T>
+   template <ConfigType T>
    bool sync(T &ret)
     {
      if( !id )
@@ -162,7 +167,7 @@ class ConfigItem : NoCopy
        }
     }
 
-   template <class T>
+   template <ConfigType T>
    void update(const T &value)
     {
      if( !id )
@@ -184,7 +189,7 @@ class ConfigItem : NoCopy
 
    // print object
 
-   template <class P>
+   template <PrinterType P>
    void print(P &out) const // DDL print
     {
      Meta::TypeSwitch<ConfigTypeList>::Switch(id,PrintCtx<P>{out,storage.getPlace()});
@@ -229,8 +234,7 @@ class ConfigMap : NoCopy
 
    struct AddItem;
 
-   template <class T>
-   void add(StrLen name,const T &value);
+   void add(StrLen name,const ConfigType &value);
 
    void add_uint(StrLen name,unsigned value);
 
@@ -258,16 +262,14 @@ class ConfigMap : NoCopy
 
    bool isModified() const { return modified; }
 
-   template <class T>
-   void sync(StrLen name,T &ret)
+   void sync(StrLen name,ConfigType &ret)
     {
      ConfigItem &item=find_or_add(name);
 
      if( item.sync(ret) ) modified=true;
     }
 
-   template <class T>
-   void update(StrLen name,const T &value)
+   void update(StrLen name,const ConfigType &value)
     {
      ConfigItem &item=find_or_add(name);
 

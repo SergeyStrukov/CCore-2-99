@@ -1,7 +1,7 @@
 /* FontDatabase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -82,8 +82,7 @@ struct FontInfo
 
   static const char * Bool(bool val) { return val?"True":"False"; }
 
-  template <class P>
-  void printDDL(P &out) const
+  void printDDL(PrinterType &out) const
    {
     Printf(out,"{ '#;' , '#;' , '#;' , #; , #; , #; , #; , ",
                file_name,family,style,Bool(scalable),Bool(monospace),Bool(italic),Bool(bold));
@@ -92,8 +91,7 @@ struct FontInfo
                def_size.min_dx,def_size.max_dx,def_size.dy,def_size.by,def_size.dx0,def_size.dx1,def_size.skew);
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"File #;\n",file_name);
     Printf(out,"Font #; #;\n",family,style);
@@ -204,9 +202,7 @@ class FontIndex : NoCopy
 
    ~FontIndex();
 
-   template <class Filter,class Cmp>
-   void build(const FontDatabase &fdb,Filter filter,Cmp cmp) // bool filter(const FontInfo &obj)
-                                                             // CmpResult cmp(const FontInfo &a,const FontInfo &b)
+   void build(const FontDatabase &fdb,FuncType<bool,const FontInfo &> filter,FuncType<CmpResult,const FontInfo &,const FontInfo &> cmp)
     {
      auto info_list=fdb.getList();
 
@@ -223,8 +219,7 @@ class FontIndex : NoCopy
 
    PtrLen<const FontInfo *const> getList() const { return Range(list); }
 
-   template <class Func>
-   const FontInfo * find(Func func) const // CmpResult func(const FontInfo &obj) , func(list) monotonic
+   const FontInfo * find(FuncType<CmpResult,const FontInfo &> func) const // func(list) monotonic
     {
      auto r=getList();
 
@@ -248,8 +243,7 @@ struct FontId
 
   FontId(const char *family_) : family(family_),bold(false),italic(false) {}
 
-  template <class T>
-  FontId(const T &obj) : family(Range(obj)),bold(false),italic(false) {}
+  FontId(const ConstTypeRangeableType<char> &obj) : family(Range_const(obj)),bold(false),italic(false) {}
  };
 
 inline FontId operator | (FontId id,BoldType) { id.bold=true; return id; }
