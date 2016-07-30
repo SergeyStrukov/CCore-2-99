@@ -50,7 +50,7 @@ Layout.h             +
 FontParam.h          +          
 ConfigStore.h        +     
 FontDatabase.h       +
-UserPreference.h     
+UserPreference.h     +
 
 --- Window ---------------------------------------------------------------------
 
