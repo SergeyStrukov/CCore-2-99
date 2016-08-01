@@ -250,6 +250,7 @@ obj/ScanBit.o \
 obj/ScanProxy.o \
 obj/ScanTools.o \
 obj/Scanf.o \
+obj/ScopeGuard.o \
 obj/Sem.o \
 obj/ShortSort.o \
 obj/Signal.o \
@@ -587,6 +588,7 @@ obj/ScanBit.s \
 obj/ScanProxy.s \
 obj/ScanTools.s \
 obj/Scanf.s \
+obj/ScopeGuard.s \
 obj/Sem.s \
 obj/ShortSort.s \
 obj/Signal.s \
@@ -924,6 +926,7 @@ obj/ScanBit.dep \
 obj/ScanProxy.dep \
 obj/ScanTools.dep \
 obj/Scanf.dep \
+obj/ScopeGuard.dep \
 obj/Sem.dep \
 obj/ShortSort.dep \
 obj/Signal.dep \
@@ -1776,6 +1779,9 @@ obj/ScanTools.o : ../../Fundamental/CCore/src/scanf/ScanTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Scanf.o : ../../Fundamental/CCore/src/Scanf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ScopeGuard.o : ../../Simple/CCore/src/gadget/ScopeGuard.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Sem.o : ../../XCore/CCore/src/task/Sem.cpp
@@ -2782,6 +2788,9 @@ obj/ScanTools.s : ../../Fundamental/CCore/src/scanf/ScanTools.cpp
 obj/Scanf.s : ../../Fundamental/CCore/src/Scanf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ScopeGuard.s : ../../Simple/CCore/src/gadget/ScopeGuard.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Sem.s : ../../XCore/CCore/src/task/Sem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3785,6 +3794,9 @@ obj/ScanTools.dep : ../../Fundamental/CCore/src/scanf/ScanTools.cpp
 
 obj/Scanf.dep : ../../Fundamental/CCore/src/Scanf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Scanf.o $< -MF $@
+
+obj/ScopeGuard.dep : ../../Simple/CCore/src/gadget/ScopeGuard.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScopeGuard.o $< -MF $@
 
 obj/Sem.dep : ../../XCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sem.o $< -MF $@

@@ -39,6 +39,7 @@
 #include <CCore/inc/gadget/PtrLenReverse.h>
 #include <CCore/inc/gadget/PtrStepLen.h>
 #include <CCore/inc/gadget/Replace.h>
+#include <CCore/inc/gadget/ScopeGuard.h>
 #include <CCore/inc/gadget/Space.h>
 #include <CCore/inc/gadget/UIntFunc.h>
 #include <CCore/inc/gadget/SIntFunc.h>

@@ -46,10 +46,10 @@ template <class T>
 concept bool VoidType = Meta::OneOf<T,void,const void> ;
 
 template <class T>
-concept bool CharType = Meta::OneOf<T,char,const char,unsigned char,const unsigned char> ;
+concept bool ConstCharType = Meta::OneOf<T,const char,const unsigned char> ;
 
 template <class T>
-concept bool ConstCharType = Meta::OneOf<T,const char,const unsigned char> ;
+concept bool CharType = ConstCharType<T> || Meta::OneOf<T,char,unsigned char> ;
 
 template <class T>
 concept bool ULenType = Meta::IsSame<T,ulen> ;
@@ -81,13 +81,13 @@ template <class T>
 concept bool TrivDtorType = Meta::HasTrivDtor<T> ;
 
 template <class T>
-concept bool MoveCtorType = Meta::HasMoveCtor<T> ;
-
-template <class T>
 concept bool DefaultCtorType = Meta::HasDefaultCtor<T> ;
 
 template <class T>
 concept bool NothrowDefaultCtorType = Meta::HasNothrowDefaultCtor<T> ;
+
+template <class T>
+concept bool MoveCtorType = Meta::HasMoveCtor<T> ;
 
 template <class T>
 concept bool CopyCtorType = Meta::HasCopyCtor<T> ;
@@ -123,42 +123,42 @@ concept bool FuncType = FuncArgType<Func,AA...> && requires(Func func,AA && ... 
 
 /* concept OpLessType<T> */
 
-template <class T>
+template <class T> // ref extended
 concept bool OpLessType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a < b } -> bool ; } ;
 
 /* concept OpEqualType<T> */
 
-template <class T>
+template <class T> // ref extended
 concept bool OpEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a == b } -> bool ; } ;
 
 /* concept OpNotEqualType<T> */
 
-template <class T>
+template <class T> // ref extended
 concept bool OpNotEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a != b } -> bool ; } ;
 
 /* concept OpLessTypes<T,S> */
 
-template <class T,class S>
+template <class T,class S> // ref extended
 concept bool OpLessTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a < b } -> bool ; } ;
 
 /* concept OpLessEqualTypes<T,S> */
 
-template <class T,class S>
+template <class T,class S> // ref extended
 concept bool OpLessEqualTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a <= b } -> bool ; } ;
 
 /* concept OpGreaterTypes<T,S> */
 
-template <class T,class S>
+template <class T,class S> // ref extended
 concept bool OpGreaterTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a > b } -> bool ; } ;
 
 /* concept OpGreaterEqualTypes<T,S> */
 
-template <class T,class S>
+template <class T,class S> // ref extended
 concept bool OpGreaterEqualTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a >= b } -> bool ; } ;
 
 /* concept OpCmpType<T> */
 
-template <class T>
+template <class T> // ref extended
 concept bool OpCmpType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b)
  {
   { a <  b } -> bool ;
@@ -169,12 +169,38 @@ concept bool OpCmpType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b)
   { a != b } -> bool ;
  } ;
 
+/* concept NullableType<T> */
+
+template <NothrowDefaultCtorType T>
+concept bool NullableType = requires(Meta::ToConst<T> &cobj)
+ {
+  { +cobj } -> bool ;
+
+  { !cobj } -> bool ;
+ } ;
+
+/* concept IndirectOverType<P,T> */
+
+template <class P,class T> // P ref extended
+concept bool IndirectOverType = requires(Meta::ToConst<P> &cobj)
+ {
+  { *cobj } -> T ;
+ } ;
+
+/* concept IndirectCastType<P,T> */
+
+template <class P,class T> // P ref extended
+concept bool IndirectCastType = requires(Meta::ToConst<P> &cobj)
+ {
+  T(*cobj);
+ } ;
+
 /* concept RangeAccessType<T> */
 
 template <class T,class T1,class T2> requires ( Meta::IsSame<T1,T2> && Meta::OneOf<T1,T,const T> )
 void RangeAccessHelper(T *,T1 *,T2 *,ULenType) {}
 
-template <class T>
+template <class T> // ref extended
 concept bool RangeAccessType = requires(T &obj,Meta::ToConst<T> &cobj)
  {
   RangeAccessHelper(obj.getPtr(),cobj.getPtr_const(),cobj.getPtr(),cobj.getLen());
@@ -183,12 +209,8 @@ concept bool RangeAccessType = requires(T &obj,Meta::ToConst<T> &cobj)
 /* concept CursorType<R> */
 
 template <NothrowCopyableType R>
-concept bool CursorType = NothrowDefaultCtorType<R> && requires(R &obj,Meta::ToConst<R> &cobj)
+concept bool CursorType = NullableType<R> && requires(R &obj,Meta::ToConst<R> &cobj)
  {
-  { +cobj } -> bool ;
-
-  { !cobj } -> bool ;
-
   *cobj;
 
   cobj.operator -> () ;
@@ -199,22 +221,18 @@ concept bool CursorType = NothrowDefaultCtorType<R> && requires(R &obj,Meta::ToC
 /* concept CursorOverType<R,T> */
 
 template <CursorType R,class T>
-concept bool CursorOverType = requires(Meta::ToConst<R> &cobj) { { *cobj } -> T ; } ;
+concept bool CursorOverType = IndirectOverType<R,T> ;
 
 /* concept CursorCastType<R,T> */
 
 template <CursorType R,class T>
-concept bool CursorCastType = requires(Meta::ToConst<R> &cobj) { T(*cobj); } ;
+concept bool CursorCastType = IndirectCastType<R,T> ;
 
 /* concept RecursorType<R> */
 
 template <NothrowCopyableType R>
-concept bool RecursorType = NothrowDefaultCtorType<R> && requires(Meta::ToConst<R> &cobj)
+concept bool RecursorType = NullableType<R> && requires(Meta::ToConst<R> &cobj)
  {
-  { +cobj } -> bool ;
-
-  { !cobj } -> bool ;
-
   *cobj;
 
   cobj.operator -> () ;
@@ -227,21 +245,18 @@ concept bool RecursorType = NothrowDefaultCtorType<R> && requires(Meta::ToConst<
 /* concept RecursorOverType<R,T> */
 
 template <RecursorType R,class T>
-concept bool RecursorOverType = requires(Meta::ToConst<R> &cobj) { { *cobj } -> T ; } ;
+concept bool RecursorOverType = IndirectOverType<R,T> ;
 
 /* concept RecursorOverType<R,T> */
 
 template <RecursorType R,class T>
-concept bool RecursorCastType = requires(Meta::ToConst<R> &cobj) { T(*cobj); } ;
+concept bool RecursorCastType = IndirectCastType<R,T> ;
 
 /* concept RanType<Ran> */
 
 template <NothrowCopyableType Ran>
-concept bool RanType = requires(Ran ptr,ulen len)
+concept bool RanType = NothrowDefaultCtorType<Ran> && OpCmpType<Ran> && requires(Ran ptr,ulen len)
  {
-  requires ( DefaultCtorType<Ran> ) ;
-  requires ( OpCmpType<Ran> ) ;
-
   *ptr;
 
   ptr++;

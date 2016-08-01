@@ -33,6 +33,7 @@
 ../../Simple/CCore/src/gadget/PtrLenReverse.cpp
 ../../Simple/CCore/src/gadget/PtrStepLen.cpp
 ../../Simple/CCore/src/gadget/Replace.cpp
+../../Simple/CCore/src/gadget/ScopeGuard.cpp
 ../../Simple/CCore/src/gadget/SIntFunc.cpp
 ../../Simple/CCore/src/gadget/Space.cpp
 ../../Simple/CCore/src/gadget/UIntFunc.cpp

@@ -24,8 +24,6 @@ namespace App {
 
 /* classes */
 
-class Client;
-
 struct Param;
 
 class PrefGuard;
@@ -162,7 +160,7 @@ int Main(CmdDisplay cmd_display)
      Param param;
      WindowReport report(param);
      FreeTypeFont::InitExit freetype_initexit;
-     PrefGuard guard(param.pref);
+     DefaultGuard<UserPreferenceBag> guard(param.pref.take());
 
      SetAppIcon(DefaultAppIcon());
 
