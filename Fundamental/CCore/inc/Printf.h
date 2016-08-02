@@ -200,19 +200,13 @@ concept bool PrintableType2 = requires(PrintBase &out,const T &t)
  } ;
 
 template <class T>
-struct PrintableTypeCtor
- {
-  enum RetType { Ret = PrintableType2<T> };
- };
+const bool IsPrintableType = PrintableType2<T> ;
 
 template <class ... TT>
-struct PrintableTypeCtor<Tuple<TT...> >
- {
-  enum RetType { Ret = ( ... && PrintableTypeCtor< Meta::UnConst<Meta::UnRef<TT> > >::Ret ) };
- };
+const bool IsPrintableType<Tuple<TT...> > = ( ... && IsPrintableType< Meta::UnConst<Meta::UnRef<TT> > > ) ;
 
 template <class T>
-concept bool PrintableType = (bool)PrintableTypeCtor<T>::Ret ;
+concept bool PrintableType = IsPrintableType< Meta::UnConst<Meta::UnRef<T> > > ;
 
 /* struct PrintfDevBase */
 

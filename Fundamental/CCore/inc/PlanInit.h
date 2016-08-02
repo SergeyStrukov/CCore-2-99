@@ -22,8 +22,8 @@ namespace CCore {
 
 /* concept PlanInitObjectType<T> */
 
-template <class T>
-concept bool PlanInitObjectType = NothrowDtorType<T> && requires()
+template <NothrowDtorType T>
+concept bool PlanInitObjectType = requires()
  {
   { T::GetTag() } -> const char * ;
  } ;

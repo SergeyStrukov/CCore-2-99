@@ -241,23 +241,23 @@ auto Range_const(const RangeAccessType &obj) { return Range_const(obj.getPtr_con
 
 /* concept RangeableType<T> */
 
-template <class T>
+template <class T> // ref extended
 concept bool RangeableType = requires(T &obj) { Range(obj); } ;
 
 /* concept TypeRangeableType<T,S> */
 
-template <class T,class S>
-concept bool TypeRangeableType = requires(T &obj) { { Range(obj) } -> PtrLen<S> ; } ;
+template <class T,class S> // T ref extended
+concept bool TypeRangeableType = RangeableType<T> && requires(T &obj) { { Range(obj) } -> PtrLen<S> ; } ;
 
 /* concept ConstRangeableType<T> */
 
-template <class T>
-concept bool ConstRangeableType = requires(const T &obj) { Range_const(obj); } ;
+template <class T> // ref extended
+concept bool ConstRangeableType = requires(Meta::ToConst<T> &cobj) { Range_const(cobj); } ;
 
 /* concept TypeRangeableType<T,S> */
 
-template <class T,class S>
-concept bool ConstTypeRangeableType = requires(const T &obj) { { Range_const(obj) } -> PtrLen<const S> ; } ;
+template <class T,class S> // T ref extended
+concept bool ConstTypeRangeableType = requires(Meta::ToConst<T> &cobj) { { Range_const(cobj) } -> PtrLen<const S> ; } ;
 
 /* begin()/end() */
 

@@ -27,7 +27,7 @@ namespace CCore {
 /* concept ObjLessFuncType<Func,T> */
 
 template <class Func,class T>
-concept bool ObjLessFuncType = FuncType<Func,bool,const T &,const T &> ;
+concept bool ObjLessFuncType = FuncType<Func,bool,Meta::ToConst<T> &,Meta::ToConst<T> &> ;
 
 /* concept RanLessFuncType<Func,Ran> */
 

@@ -168,19 +168,13 @@ concept bool ScanableType2 = requires(ScanBase &inp,T &t)
  } ;
 
 template <class T>
-struct ScanableTypeCtor
- {
-  enum RetType { Ret = ScanableType2<T> };
- };
+const bool IsScanableType = ScanableType2<T> ;
 
 template <class ... TT>
-struct ScanableTypeCtor<Tuple<TT...> >
- {
-  enum RetType { Ret = ( ... && ScanableTypeCtor< Meta::UnRef<TT> >::Ret ) };
- };
+const bool IsScanableType<Tuple<TT...> > = ( ... && IsScanableType< Meta::UnRef<TT> > ) ;
 
 template <class T>
-concept bool ScanableType = (bool)ScanableTypeCtor<Meta::UnRef<T> >::Ret ;
+concept bool ScanableType = IsScanableType< Meta::UnRef<T> > ;
 
 /* struct ScanfDevBase */
 

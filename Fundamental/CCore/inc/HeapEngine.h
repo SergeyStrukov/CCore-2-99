@@ -24,7 +24,7 @@ namespace CCore {
 /* concept HeapType<Heap> */
 
 template <class Heap>
-concept bool HeapType = requires(Heap obj,void *mem,ulen len,const void *cmem)
+concept bool HeapType = requires(Heap &obj,void *mem,ulen len,const void *cmem)
  {
   { obj.alloc(len) } -> Space ;
 

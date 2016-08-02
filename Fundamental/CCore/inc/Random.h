@@ -23,14 +23,10 @@ namespace CCore {
 
 /* concept RandomCoreType<T> */
 
-template <class T>
-concept bool RandomCoreType = requires()
+template <class T,UIntType UnitType>
+concept bool RandomCoreType2 = requires()
  {
-  typename T::UnitType;
-
-  requires ( UIntType<typename T::UnitType> );
-
-  { &T::next } -> typename T::UnitType (T::*)() ;
+  { &T::next } -> UnitType (T::*)() ;
 
   { &T::next8 } -> uint8 (T::*)() ;
 
@@ -39,6 +35,14 @@ concept bool RandomCoreType = requires()
   { &T::next32 } -> uint32 (T::*)() ;
 
   { &T::next64 } -> uint64 (T::*)() ;
+ } ;
+
+template <class T>
+concept bool RandomCoreType = requires()
+ {
+  typename T::UnitType;
+
+  requires ( RandomCoreType2<T,typename T::UnitType> );
  } ;
 
 /* classes */

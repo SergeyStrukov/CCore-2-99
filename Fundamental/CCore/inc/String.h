@@ -124,8 +124,8 @@ struct StrLenCast
 
 /* concept StrLenCastableType<T> */
 
-template <class T>
-concept bool StrLenCastableType = requires(const T &obj)
+template <class T> // ref extended
+concept bool StrLenCastableType = requires(Meta::ToConst<T> &obj)
  {
   StrLenCast::Cast(obj);
  } ;

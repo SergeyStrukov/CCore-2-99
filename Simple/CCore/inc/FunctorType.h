@@ -57,11 +57,9 @@ using FunctorTypeOf = typename FunctorTypeOfCtor<FuncInit>::Ret ;
 
 /* concept FuncInitArgType<FuncInit,AA> */
 
-template <class FuncInit,class ... AA>
+template <CopyCtorType FuncInit,class ... AA>
 concept bool FuncInitArgType = requires(FuncInit func_init)
  {
-  requires ( CopyCtorType<FuncInit> );
-
   FunctorTypeOf<FuncInit>(func_init);
 
   requires ( FuncArgType<FunctorTypeOf<FuncInit>,AA...> );
