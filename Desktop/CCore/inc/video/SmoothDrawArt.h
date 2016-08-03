@@ -91,6 +91,8 @@ concept bool DotMapType = requires(R &obj,Map &map,ulen ind)
   { map(obj[ind]) } -> Dot ;
  } ;
 
+//----------------------------------------------------------------------------------------
+
 /* classes */
 
 class DotShift;
@@ -221,13 +223,13 @@ class FieldPlotBase : public DrawBuf
 template <class Field>
 struct RefOrCopyCtor
  {
-  using Ret = Field ;
+  using Ret = const Field & ;
  };
 
-template <class Field> requires ( !CopyCtorType<Field> )
+template <CopyCtorType Field>
 struct RefOrCopyCtor<Field>
  {
-  using Ret = const Field & ;
+  using Ret = Field ;
  };
 
 /* type RefOrCopy<Field> */

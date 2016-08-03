@@ -54,6 +54,8 @@ concept bool StepBuilder = requires(Step &obj,T &t,IncrementalProgress &progress
   { obj.erase() } noexcept;
  } ;
 
+//----------------------------------------------------------------------------------------
+
 /* classes */
 
 class IncrementalNode;

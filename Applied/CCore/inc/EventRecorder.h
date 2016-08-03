@@ -83,8 +83,8 @@ const char * GetTextDesc(EventMarker marker);
 
 /* concept EventValue<T> */
 
-template <class T,class V>
-concept bool EventValue2 = OneOfTypes<V,uint8,uint16,uint32> && requires()
+template <class T,OneOfTypes<uint8,uint16,uint32> V>
+concept bool EventValue2 = requires()
  {
   { T::Base } -> V ;
   { T::Lim } -> V ;
@@ -887,8 +887,8 @@ class EventMetaInfo : NoCopy
 
 /* concept EventType<T> */
 
-template <class T>
-concept bool EventType = PODType<T> && requires()
+template <PODType T>
+concept bool EventType = requires()
  {
   { &T::time } -> EventTimeType T::* ;
 

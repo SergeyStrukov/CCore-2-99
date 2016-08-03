@@ -141,23 +141,23 @@ struct AbstractAlphaField
 
 /* concept VColorFieldType<Field> */
 
-template <class Field>
-concept bool VColorFieldType = requires(const Field &field,MPoint p)
+template <class Field> // ref extended
+concept bool VColorFieldType = requires(Meta::ToConst<Field> &field,MPoint p)
  {
   { field(p) } -> VColor ;
  } ;
 
 /* concept AlphaColorFieldType<Field> */
 
-template <class Field>
-concept bool AlphaColorFieldType = requires(const Field &field,MPoint p)
+template <class Field> // ref extended
+concept bool AlphaColorFieldType = requires(Meta::ToConst<Field> &field,MPoint p)
  {
   { field(p) } -> AlphaColor ;
  } ;
 
 /* concept ColorFieldType<Field> */
 
-template <class Field>
+template <class Field> // ref extended
 concept bool ColorFieldType = VColorFieldType<Field> || AlphaColorFieldType<Field> ;
 
 } // namespace Video

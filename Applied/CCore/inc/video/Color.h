@@ -493,7 +493,7 @@ class RawColor32Inv
 /* concept RawColorType<RawColor> */
 
 template <class RawColor,class Raw>
-concept bool RawColorType2 = requires(RawColor &obj,RawColor &cobj,Raw *dst,const Raw *src,Blender blender)
+concept bool RawColorType2 = requires(RawColor &obj,const RawColor &cobj,Raw *dst,const Raw *src,Blender blender)
  {
   cobj.copyTo(dst);
 

@@ -26,7 +26,7 @@ namespace Video {
 
 /* concept RawPlotType<Plot> */
 
-template <NothrowCopyableType Plot>
+template <NothrowCopyableType Plot> // ref extended
 concept bool RawPlotType = requires(Plot &obj,DesktopColor::Raw *ptr)
  {
   obj(ptr);

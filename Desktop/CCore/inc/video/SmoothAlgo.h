@@ -57,7 +57,7 @@ concept bool MPointMapType = requires(R &obj,Map &map,ulen ind)
 
 /* concept PlotType<Plot> */
 
-template <NothrowCopyableType Plot>
+template <NothrowCopyCtorType Plot>
 concept bool PlotType = requires(Plot &obj,MPoint p,unsigned alpha)
  {
   obj(p);

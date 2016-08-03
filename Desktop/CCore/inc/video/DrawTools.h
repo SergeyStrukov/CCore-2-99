@@ -33,7 +33,7 @@ concept bool MPointSetTypes = ( ... && OneOfTypes<TT,Point,MPoint> ) ;
 
 /* concept PlotType<Plot> */
 
-template <NothrowCopyableType Plot>
+template <NothrowCopyCtorType Plot>
 concept bool PlotType = requires(Plot &obj,Point p)
  {
   obj(p);
@@ -41,7 +41,7 @@ concept bool PlotType = requires(Plot &obj,Point p)
 
 /* concept SmoothPlotType<SPlot> */
 
-template <NothrowCopyableType SPlot>
+template <class SPlot>
 concept bool SmoothPlotType = PlotType<SPlot> && requires(SPlot &obj,Point p,unsigned alpha)
  {
   obj(p,alpha);
@@ -49,7 +49,7 @@ concept bool SmoothPlotType = PlotType<SPlot> && requires(SPlot &obj,Point p,uns
 
 /* concept HPlotType<HPlot> */
 
-template <NothrowCopyableType HPlot>
+template <class HPlot>
 concept bool HPlotType = PlotType<HPlot> && requires(HPlot &obj,Coord y,Coord a,Coord b)
  {
   obj(y,a,b);
