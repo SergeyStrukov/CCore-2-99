@@ -26,8 +26,6 @@ namespace App {
 
 struct Param;
 
-class PrefGuard;
-
 class Application;
 
 /* struct Param */
@@ -50,22 +48,6 @@ struct Param
      designer_cfg(pref)
    {
    }
- };
-
-/* class PrefGuard */
-
-class PrefGuard : NoCopy
- {
-   UserPreference &pref;
-
-  public:
-
-   explicit PrefGuard(UserPreference &pref_) : pref(pref_) {}
-
-   ~PrefGuard()
-    {
-     pref.take()={};
-    }
  };
 
 /* class Application */
@@ -170,6 +152,8 @@ int Main(CmdDisplay cmd_display)
     }
   catch(CatchType)
     {
+     ErrorMsgBox("Cannot start application: no memory","Fatal error");
+
      return 1;
     }
  }

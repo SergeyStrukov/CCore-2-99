@@ -60,7 +60,7 @@ class MessageSubWindow : public SubWindow
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    using ConfigType = Config ;
@@ -185,7 +185,7 @@ class MessageWindow : public FixedWindow
      CtorRefVal<FixedWindow::ConfigType> frame_cfg;
      CtorRefVal<MessageSubWindow::ConfigType> msg_cfg;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    using ConfigType = Config ;

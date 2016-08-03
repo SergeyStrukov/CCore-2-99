@@ -45,7 +45,7 @@ using namespace Private_Info;
 
 /* class Info */
 
-Info::Info()
+Info::Info() noexcept
  : ptr(&Object)
  {
   ptr->incRef();

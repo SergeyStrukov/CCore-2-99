@@ -19,13 +19,13 @@
 
 /* main() */
 
-using namespace CCore::Video;
+using namespace App;
 
-const CCore::AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
+const AbortMsgFuncType AbortMsgFunc = AbortMsgBox ;
 
 int main()
  {
-  return App::Main(StartDisplay());
+  return Main(StartDisplay());
  }
 
 

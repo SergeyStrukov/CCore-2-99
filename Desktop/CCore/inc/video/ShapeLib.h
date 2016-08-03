@@ -98,7 +98,7 @@ class ButtonShape
 
      RefVal<Font> font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    // parameters
@@ -147,7 +147,7 @@ class KnobShape
      RefVal<VColor> top    =      Snow ;
      RefVal<VColor> face   =     Black ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    // parameters
@@ -212,7 +212,7 @@ class CheckShape
      RefVal<VColor> top      =      Gray ;
      RefVal<VColor> mark     =     Black ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -252,7 +252,7 @@ class RadioShape
      RefVal<VColor> top      =      Gray ;
      RefVal<VColor> mark     =     Black ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -289,7 +289,7 @@ class LabelShape
 
      RefVal<Font> font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -334,7 +334,7 @@ class TextShape
 
      RefVal<Font> font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -376,7 +376,7 @@ class SingleLineShape
 
      RefVal<VColor> line = Gray ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -434,7 +434,7 @@ class DoubleLineShape
      RefVal<VColor> top    = Gray ;
      RefVal<VColor> bottom = Snow ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -492,7 +492,7 @@ class ContourShape
      RefVal<VColor> top    = Gray ;
      RefVal<VColor> bottom = Snow ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -529,7 +529,7 @@ class TextContourShape
 
      RefVal<Font> font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -570,7 +570,7 @@ class SwitchShape
      RefVal<VColor> on     =     Green ;
      RefVal<VColor> off    =       Red ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -606,7 +606,7 @@ class LightShape
      RefVal<VColor> bottom   = Snow ;
      RefVal<VColor> inactive = Gray ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -672,7 +672,7 @@ class ScrollShape
 
      RefVal<unsigned> speedUpPeriod = 12_tick ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -872,7 +872,7 @@ class ProgressShape
      RefVal<unsigned> time   = 3_sectick ;
      RefVal<unsigned> period =    2_tick ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -961,7 +961,7 @@ class InfoShape
 
      RefVal<Font> font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    // parameters
@@ -1031,7 +1031,7 @@ class LineEditShape
 
      RefVal<unsigned> period = 10_tick ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;
@@ -1111,7 +1111,7 @@ class SimpleTextListShape
 
      RefVal<Font> font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    // parameters

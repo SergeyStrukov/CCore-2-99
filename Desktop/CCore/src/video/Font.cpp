@@ -483,7 +483,7 @@ bool DoubleString::cutCenter(ulen len)
 
 /* class Font */
 
-Font::Font()
+Font::Font() noexcept
  : ptr(&Object)
  {
   ptr->incRef();

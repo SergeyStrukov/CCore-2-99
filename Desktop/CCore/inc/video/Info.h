@@ -59,7 +59,7 @@ class Info
 
   public:
 
-   Info();
+   Info() noexcept;
 
    ~Info() {}
 

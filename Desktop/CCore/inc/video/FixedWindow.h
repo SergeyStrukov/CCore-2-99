@@ -81,7 +81,7 @@ class FixedShape
 
      RefVal<Font> title_font;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;

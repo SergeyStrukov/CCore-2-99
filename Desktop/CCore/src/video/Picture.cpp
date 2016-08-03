@@ -49,7 +49,7 @@ using namespace Private_Picture;
 
 /* class Picture */
 
-Picture::Picture()
+Picture::Picture() noexcept
  : ptr(&Object)
  {
   ptr->incRef();

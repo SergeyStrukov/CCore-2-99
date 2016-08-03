@@ -368,7 +368,7 @@ class Font
 
   public:
 
-   Font(); // default font
+   Font() noexcept; // default font
 
    ~Font() {}
 

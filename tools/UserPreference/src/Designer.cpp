@@ -19,7 +19,7 @@ namespace App {
 
 /* class Preference */
 
-Preference::Preference()
+Preference::Preference() noexcept
  {
  }
 

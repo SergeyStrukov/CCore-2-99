@@ -92,7 +92,7 @@ class Picture
 
   public:
 
-   Picture(); // empty picture
+   Picture() noexcept; // empty picture
 
    ~Picture() {}
 

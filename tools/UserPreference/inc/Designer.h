@@ -37,7 +37,7 @@ class Preference : public UserPreference
  {
   public:
 
-   Preference();
+   Preference() noexcept;
 
    ~Preference();
 
@@ -95,9 +95,7 @@ class DesignerWindow : public ComboWindow
      CtorRefVal<PointEditWindow::ConfigType> point_cfg;
      CtorRefVal<ColorEditWindow::ConfigType> color_cfg;
 
-     Config()
-      {
-      }
+     Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
       : coord_cfg(pref),

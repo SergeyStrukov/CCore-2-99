@@ -114,7 +114,7 @@ class DragShape
 
      RefVal<DefString> fatal_error = "Fatal error"_def ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    const Config &cfg;

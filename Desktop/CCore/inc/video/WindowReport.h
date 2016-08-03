@@ -120,7 +120,7 @@ class ExceptionWindow : public SubWindow
 
      CtorRefVal<XScrollWindow::ConfigType> scroll_cfg;
 
-     Config() {}
+     Config() noexcept {}
     };
 
    using ConfigType = Config ;
