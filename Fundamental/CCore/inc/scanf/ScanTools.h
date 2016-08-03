@@ -23,9 +23,11 @@ namespace CCore {
 /* concept CharStreamType<S> */
 
 template <class S>
-concept bool CharStreamType = requires(S &obj,const S &cobj)
+concept bool CharStreamType = requires(S &obj,Meta::ToConst<S> &cobj)
  {
   { +cobj } -> bool ;
+
+  { !cobj } -> bool ;
 
   { *cobj } -> char ;
 

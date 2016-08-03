@@ -176,6 +176,14 @@ auto RangeReverse(RangeAccessType &&obj) { return RangeReverse(obj.getPtr(),obj.
 
 auto RangeReverse_const(const RangeAccessType &obj) { return RangeReverse_const(obj.getPtr_const(),obj.getLen()); }
 
+/* const IsPtrLenReverse<R> */
+
+template <class R>
+const bool IsPtrLenReverse = false ;
+
+template <class T>
+const bool IsPtrLenReverse<PtrLenReverse<T> > = true ;
+
 /* begin()/end() */
 
 template <class T>

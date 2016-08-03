@@ -19,64 +19,11 @@
 #include <CCore/inc/Swap.h>
 
 namespace CCore {
-
-/* namespace Meta */
-
-namespace Meta {
-
-/* classes */
-
-template <class R> struct IsPtrLenCtor;
-
-template <class R> struct IsPtrLenReverseCtor;
-
-/* struct IsPtrLenCtor<R> */
-
-template <class R>
-struct IsPtrLenCtor
- {
-  enum RetType { Ret = false };
- };
-
-template <class T>
-struct IsPtrLenCtor<PtrLen<T> >
- {
-  enum RetType { Ret = true };
- };
-
-/* const IsPtrLen<R> */
-
-template <class R>
-const bool IsPtrLen = IsPtrLenCtor<R>::Ret ;
-
-/* struct IsPtrLenReverseCtor<R> */
-
-template <class R>
-struct IsPtrLenReverseCtor
- {
-  enum RetType { Ret = false };
- };
-
-template <class T>
-struct IsPtrLenReverseCtor<PtrLenReverse<T> >
- {
-  enum RetType { Ret = true };
- };
-
-/* const IsPtrLenReverse<R> */
-
-template <class R>
-const bool IsPtrLenReverse = IsPtrLenReverseCtor<R>::Ret ;
-
-} // namespace Meta
-
-/* namespace Algon */
-
 namespace Algon {
 
 /* concept RangeAlgo<Algo,R> */
 
-template <class Algo,class R,class LenType>
+template <class Algo,class R,UIntType LenType>
 concept bool RangeAlgo2 = requires(R r,LenType len)
  {
   r[len];
@@ -103,8 +50,6 @@ concept bool RangeAlgo = requires(R r)
  {
   typename Algo::LenType;
 
-  requires ( UIntType<typename Algo::LenType> ) ;
-
   requires ( RangeAlgo2<Algo,R,typename Algo::LenType> ) ;
  } ;
 
@@ -121,7 +66,7 @@ concept bool Has_RangeAlgo = requires()
 /* concept RangeType<R> */
 
 template <CursorType R>
-concept bool RangeType = Meta::IsPtrLen<R> || Meta::IsPtrLenReverse<R> || Has_RangeAlgo<R> ;
+concept bool RangeType = IsPtrLen<R> || IsPtrLenReverse<R> || Has_RangeAlgo<R> ;
 
 /* classes */
 

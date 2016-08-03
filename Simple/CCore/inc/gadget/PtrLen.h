@@ -239,6 +239,14 @@ auto Range(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }
 
 auto Range_const(const RangeAccessType &obj) { return Range_const(obj.getPtr_const(),obj.getLen()); }
 
+/* const IsPtrLen<R> */
+
+template <class R>
+const bool IsPtrLen = false ;
+
+template <class T>
+const bool IsPtrLen<PtrLen<T> > = true ;
+
 /* concept RangeableType<T> */
 
 template <class T> // ref extended

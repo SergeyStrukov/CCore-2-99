@@ -26,13 +26,9 @@ void RadixTreeBrokenAbort();
 
 /* concept TreeKeyTypes<K,KRef> */
 
-template <class K,class KRef>
-concept bool TreeKeyTypes = requires(K &obj,const K &cobj,KRef a)
+template <CmpableType K,NothrowCopyCtorType KRef>
+concept bool TreeKeyTypes = requires(const K &cobj,KRef a)
  {
-  requires ( NothrowCopyCtorType<KRef> ) ;
-
-  requires ( CmpableType<K> ) ;
-
   { Cmp(a,cobj) } -> CmpResult ;
  } ;
 

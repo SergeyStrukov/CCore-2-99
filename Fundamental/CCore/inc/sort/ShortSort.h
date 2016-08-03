@@ -23,10 +23,7 @@ namespace CCore {
 /* concept SortRanType<Ran> */
 
 template <RanType Ran>
-concept bool SortRanType = requires(Ran a)
- {
-  requires ( OpLessType<Meta::PtrObjType<Ran> > ) ;
- } ;
+concept bool SortRanType = OpLessType< Meta::PtrObjType<Ran> > ;
 
 /* concept SortContextType<Ctx,Ran> */
 

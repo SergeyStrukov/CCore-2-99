@@ -22,13 +22,9 @@ namespace CCore {
 
 /* concept RBTreeKeyTypes<K,KRef> */
 
-template <class K,class KRef>
-concept bool RBTreeKeyTypes = requires(K &obj,const K &cobj,KRef a)
+template <CmpableType K,NothrowCopyCtorType KRef>
+concept bool RBTreeKeyTypes = requires(const K &cobj,KRef a)
  {
-  requires ( NothrowCopyCtorType<KRef> ) ;
-
-  requires ( CmpableType<K> ) ;
-
   { Cmp(a,cobj) } -> CmpResult ;
  } ;
 

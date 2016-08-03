@@ -43,7 +43,7 @@ concept bool ArrayHeaderType = requires(H obj,ulen len)
 /* concept BuilderType<Builder,T> */
 
 template <class Builder,class T>
-concept bool BuilderType = requires(const Builder &cobj)
+concept bool BuilderType = requires(Meta::ToConst<Builder> &cobj)
  {
   { cobj.getLen() } -> ulen ;
 
