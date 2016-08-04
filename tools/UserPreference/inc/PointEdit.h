@@ -38,9 +38,7 @@ class PointEditWindow : public ComboWindow
 
      CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
 
-     Config()
-      {
-      }
+     Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
       : spin_cfg(pref)

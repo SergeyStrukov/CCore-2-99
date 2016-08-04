@@ -35,14 +35,12 @@ class SpinEditWindow : public ComboWindow
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
      CtorRefVal<TextWindow::ConfigType> text_cfg;
 
-     Config()
-      {
-      }
+     Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
+      : knob_cfg(SmartBind,pref),
+        text_cfg(SmartBind,pref)
       {
-       knob_cfg.bind(pref.getKnobConfig());
-       text_cfg.bind(pref.getTextConfig());
       }
     };
 

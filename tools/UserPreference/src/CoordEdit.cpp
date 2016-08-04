@@ -25,7 +25,7 @@ void CoordEditWindow::drawLine(const DrawBuf &buf) const
     {
      Coord mark_dy=+cfg.mark_dy;
 
-     Smooth::DrawArt art(buf);
+     SmoothDrawArt art(buf);
 
      Point end=pos.addX(getCoord());
 

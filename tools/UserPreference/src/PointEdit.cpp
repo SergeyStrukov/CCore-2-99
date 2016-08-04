@@ -23,7 +23,7 @@ void PointEditWindow::drawBox(const DrawBuf &buf) const
  {
   try
     {
-     Smooth::DrawArt art(buf);
+     SmoothDrawArt art(buf);
 
      Pane pane=Envelope(pos,pos+getPoint());
 
