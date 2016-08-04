@@ -307,6 +307,71 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    const LineEditWindow::ConfigType & getLineEditConfig() const { return cfg_LineEditWindow; }
 
    const SimpleTextListWindow::ConfigType & getSimpleTextListConfig() const { return cfg_SimpleTextListWindow; }
+
+   // getSmartConfig()
+
+   class Proxy
+    {
+      const UserPreference *obj;
+
+     public:
+
+      Proxy(const UserPreference *obj_) : obj(obj_) {}
+
+      // main windows
+
+      operator const auto & () const { return obj->cfg_DragWindow; }
+
+      operator const auto & () const { return obj->cfg_FixedWindow; }
+
+      operator const auto & () const { return obj->cfg_MessageWindow; }
+
+      operator const auto & () const { return obj->cfg_ExceptionWindow; }
+
+      // sub windows
+
+      operator const auto & () const { return obj->cfg_ButtonWindow; }
+
+      operator const auto & () const { return obj->cfg_KnobWindow; }
+
+      operator const auto & () const { return obj->cfg_CheckWindow; }
+
+      operator const auto & () const { return obj->cfg_SwitchWindow; }
+
+      operator const auto & () const { return obj->cfg_RadioWindow; }
+
+      operator const auto & () const { return obj->cfg_TextWindow; }
+
+      operator const auto & () const { return obj->cfg_LabelWindow; }
+
+      operator const auto & () const { return obj->cfg_XSingleLineWindow; }
+
+      operator const auto & () const { return obj->cfg_YSingleLineWindow; }
+
+      operator const auto & () const { return obj->cfg_XDoubleLineWindow; }
+
+      operator const auto & () const { return obj->cfg_YDoubleLineWindow; }
+
+      operator const auto & () const { return obj->cfg_ContourWindow; }
+
+      operator const auto & () const { return obj->cfg_TextContourWindow; }
+
+      operator const auto & () const { return obj->cfg_LightWindow; }
+
+      operator const auto & () const { return obj->cfg_XScrollWindow; }
+
+      operator const auto & () const { return obj->cfg_YScrollWindow; }
+
+      operator const auto & () const { return obj->cfg_ProgressWindow; }
+
+      operator const auto & () const { return obj->cfg_InfoWindow; }
+
+      operator const auto & () const { return obj->cfg_LineEditWindow; }
+
+      operator const auto & () const { return obj->cfg_SimpleTextListWindow; }
+    };
+
+   Proxy getSmartConfig() const { return this; }
  };
 
 } // namespace Video

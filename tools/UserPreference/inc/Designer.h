@@ -84,10 +84,9 @@ class DesignerWindow : public ComboWindow
      CtorRefVal<SimpleTextListWindow::ConfigType> text_list_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
-
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
-
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
+
      CtorRefVal<CoordEditWindow::ConfigType> coord_cfg;
      CtorRefVal<MCoordEditWindow::ConfigType> mcoord_cfg;
      CtorRefVal<FontEditWindow::ConfigType> font_cfg;
@@ -98,20 +97,19 @@ class DesignerWindow : public ComboWindow
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
-      : coord_cfg(pref),
+      : text_list_cfg(SmartBind,pref),
+        check_cfg(SmartBind,pref),
+        label_cfg(SmartBind,pref),
+        btn_cfg(SmartBind,pref),
+        edit_cfg(SmartBind,pref),
+
+        coord_cfg(pref),
         mcoord_cfg(pref),
         font_cfg(pref),
         unsigned_cfg(pref),
         point_cfg(pref),
         color_cfg(pref)
       {
-       text_list_cfg.bind(pref.getSimpleTextListConfig());
-       check_cfg.bind(pref.getCheckConfig());
-       label_cfg.bind(pref.getLabelConfig());
-
-       btn_cfg.bind(pref.getButtonConfig());
-
-       edit_cfg.bind(pref.getLineEditConfig());
       }
     };
 
@@ -229,6 +227,8 @@ class DesignerWindow : public ComboWindow
 
    void newList();
 
+   // enable
+
    void enable_all(bool on);
 
    void enable_Coord(bool on);
@@ -254,6 +254,8 @@ class DesignerWindow : public ComboWindow
    SignalConnector<DesignerWindow,bool> connector_check_Point_changed;
    SignalConnector<DesignerWindow,bool> connector_check_Font_changed;
 
+   // buttons
+
    void savePref();
 
    SignalConnector<DesignerWindow> connector_btnSave_pressed;
@@ -261,6 +263,8 @@ class DesignerWindow : public ComboWindow
    void selfPref();
 
    SignalConnector<DesignerWindow> connector_btnSelf_pressed;
+
+   // select
 
    void select(Coord &var);
 
@@ -283,6 +287,8 @@ class DesignerWindow : public ComboWindow
    void selectVar(ulen index);
 
    SignalConnector<DesignerWindow,ulen> connector_text_list_selected;
+
+   // changed
 
    void changed();
 

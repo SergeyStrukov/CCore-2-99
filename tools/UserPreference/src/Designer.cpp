@@ -433,6 +433,8 @@ void DesignerWindow::newList()
   redraw();
  }
 
+ // enable
+
 void DesignerWindow::enable_all(bool on)
  {
   if( info.enable_all(on) ) newList();
@@ -473,6 +475,8 @@ void DesignerWindow::enable_Font(bool on)
   if( info.enable_Font(on) ) newList();
  }
 
+ // buttons
+
 void DesignerWindow::savePref()
  {
   pref.update();
@@ -486,6 +490,8 @@ void DesignerWindow::selfPref()
 
   self_pref.update.assert();
  }
+
+ // select
 
 void DesignerWindow::select(Coord &var)
  {
@@ -569,6 +575,8 @@ void DesignerWindow::selectVar(ulen index)
   info.select(index,FuncSelect{this});
  }
 
+ // changed
+
 void DesignerWindow::changed()
  {
   btn_Save.enable();
@@ -646,6 +654,8 @@ void DesignerWindow::color_edit_changed(VColor value)
      changed();
     }
  }
+
+ // constructors
 
 DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference &self_pref_)
  : ComboWindow(host),

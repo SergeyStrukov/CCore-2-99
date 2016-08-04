@@ -21,6 +21,10 @@
 namespace CCore {
 namespace Video {
 
+/* word SmartBind */
+
+enum SmartBindType { SmartBind };
+
 /* GuardCtorRefValLock() */
 
 void GuardCtorRefValLock();
@@ -115,6 +119,14 @@ class RefVal
    void bind(const T &obj) { ptr=&obj; }
  };
 
+/* concept SmartConfigType<Pref> */
+
+template <class Pref>
+concept bool SmartConfigType = requires(const Pref &pref)
+ {
+  pref.getSmartConfig();
+ } ;
+
 /* class CtorRefVal<T> */
 
 template <class T>
@@ -130,6 +142,9 @@ class CtorRefVal : NoCopy
 
    template <class ... SS>
    explicit CtorRefVal(SS && ... ss) : ptr(0),val( std::forward<SS>(ss)... ) {}
+
+   template <SmartConfigType Pref>
+   explicit CtorRefVal(SmartBindType,const Pref &pref) { bind(pref.getSmartConfig()); }
 
    // methods
 
