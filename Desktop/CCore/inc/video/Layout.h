@@ -47,6 +47,58 @@ inline Pane EnvelopeX(Point base,Coord dy,Coord delta_x) { return Pane(IntSub(ba
 
 inline Pane EnvelopeY(Point base,Coord dx,Coord delta_y) { return Pane(base.x,IntSub(base.y,delta_y),dx,IntAdd(delta_y,delta_y)); }
 
+/* SetMinPlace() */
+
+template <class W>
+void SetMinPlace(W &window,Point base)
+ {
+  Pane pane(base,window.getMinSize());
+
+  window.setPlace(pane);
+ }
+
+/* SetExt...Place() */
+
+template <class W>
+void SetExtXPlace(W &window,Point base,Coord dx)
+ {
+  Pane pane(base,window.getMinSize().supX(dx));
+
+  window.setPlace(pane);
+ }
+
+template <class W>
+void SetExtYPlace(W &window,Point base,Coord dy)
+ {
+  Pane pane(base,window.getMinSize().supY(dy));
+
+  window.setPlace(pane);
+ }
+
+template <class W>
+void SetExtPlace(W &window,Point base,Coord dx,Coord dy)
+ {
+  Pane pane(base,window.getMinSize().sup(dx,dy));
+
+  window.setPlace(pane);
+ }
+
+template <class W>
+void SetExtPlace(W &window,Point base,Point s)
+ {
+  Pane pane(base,window.getMinSize().sup(s));
+
+  window.setPlace(pane);
+ }
+
+/* SupMinSize() */
+
+template <class ... WW>
+Point SupMinSize(const WW & ... ww)
+ {
+  return Sup( ww.getMinSize()... );
+ }
+
 /* classes */
 
 class CenterFunc;

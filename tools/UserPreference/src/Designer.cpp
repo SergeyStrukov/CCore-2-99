@@ -477,6 +477,14 @@ void DesignerWindow::enable_Font(bool on)
 
  // buttons
 
+void DesignerWindow::setPref()
+ {
+ }
+
+void DesignerWindow::backPref()
+ {
+ }
+
 void DesignerWindow::savePref()
  {
   pref.update();
@@ -683,6 +691,8 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    label_Point(wlist,cfg.label_cfg,String("point"),AlignX_Left),
    label_Font(wlist,cfg.label_cfg,String("font"),AlignX_Left),
 
+   btn_Set(wlist,cfg.btn_cfg,String("Set")),
+   btn_Back(wlist,cfg.btn_cfg,String("Back")),
    btn_Save(wlist,cfg.btn_cfg,String("Save")),
    btn_Self(wlist,cfg.btn_cfg,String("Apply to self")),
 
@@ -705,6 +715,8 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    connector_check_Point_changed(this,&DesignerWindow::enable_Point,check_Point.changed),
    connector_check_Font_changed(this,&DesignerWindow::enable_Font,check_Font.changed),
 
+   connector_btnSet_pressed(this,&DesignerWindow::setPref,btn_Set.pressed),
+   connector_btnBack_pressed(this,&DesignerWindow::backPref,btn_Back.pressed),
    connector_btnSave_pressed(this,&DesignerWindow::savePref,btn_Save.pressed),
    connector_btnSelf_pressed(this,&DesignerWindow::selfPref,btn_Self.pressed),
 
@@ -724,8 +736,10 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
                          check_unsigned,check_String,check_Point,check_Font,
                          label_all,label_Coord,label_MCoord,label_VColor,
                          label_unsigned,label_String,label_Point,label_Font,
-                         btn_Save,btn_Self);
+                         btn_Set,btn_Back,btn_Save,btn_Self);
 
+  btn_Set.disable();
+  btn_Back.disable();
   btn_Save.disable();
 
   unsigned_edit.setValue(0,0,10000);
@@ -764,11 +778,11 @@ void DesignerWindow::layout()
   // check box
 
   {
-   Point s=Sup(label_all.getMinSize(),label_Coord.getMinSize(),label_MCoord.getMinSize(),label_VColor.getMinSize(),
-               label_unsigned.getMinSize(),label_String.getMinSize(),label_Point.getMinSize(),label_Font.getMinSize());
+   Point s=SupMinSize(label_all,label_Coord,label_MCoord,label_VColor,
+                      label_unsigned,label_String,label_Point,label_Font);
 
-   Point btn1_size=btn_Save.getMinSize();
-   Point btn2_size=btn_Self.getMinSize();
+   Point btnSave_size=btn_Save.getMinSize();
+   Point btnSelf_size=btn_Self.getMinSize();
 
    Pointsor psor1=psor.cutX(s.y);
 
@@ -781,21 +795,26 @@ void DesignerWindow::layout()
    psor1.placeY(check_Point,s.y);
    psor1.placeY(check_Font,s.y);
 
-   psor1.placeY(btn_Save,btn1_size);
+   Point btnSet_size=btn_Set.getMinSize();
+   Point btnBack_size=btn_Back.getMinSize();
+
+   psor1.placeMinY(btn_Set);
+   psor1.placeMinY(btn_Back);
+   psor1.placeMinY(btn_Save);
 
    {
     Point pos=psor1;
 
     Coord max_dy=psor1.maxDY(size.y);
 
-    Coord delta=0;
+    Coord delta=Max<Coord>(0,max_dy-btnSelf_size.y);
 
-    if( max_dy>btn2_size.y ) delta=max_dy-btn2_size.y;
-
-    btn_Self.setPlace(Pane(pos.addY(delta),btn2_size));
+    btn_Self.setPlace(Pane(pos.addY(delta),btnSelf_size));
    }
 
-   Pointsor psor2=psor.cutX(Max<Coord>(s.x,Max(btn1_size.x,btn2_size.x)-s.y-space_dxy));
+   Coord dx=Max_cast(btnSet_size.x,btnBack_size.x,btnSave_size.x,btnSelf_size.x)-s.y-space_dxy;
+
+   Pointsor psor2=psor.cutX(Max(s.x,dx));
 
    psor2.placeY(label_all,s);
    psor2.placeY(label_Coord,s);
@@ -807,12 +826,14 @@ void DesignerWindow::layout()
    psor2.placeY(label_Font,s);
   }
 
+  Point base=psor;
+
   Coord max_dx=psor.maxDX(size.x);
 
   // font_edit color_edit
 
   {
-   Pane pane(psor,{max_dx,max_dy});
+   Pane pane(base,max_dx,max_dy);
 
    font_edit.setPlace(pane);
    color_edit.setPlace(pane);
@@ -820,53 +841,23 @@ void DesignerWindow::layout()
 
   // string_edit
 
-  {
-   Point s=string_edit.getMinSize();
-
-   Pane pane(psor,{Max(s.x,max_dx),s.y});
-
-   string_edit.setPlace(pane);
-  }
+  SetExtXPlace(string_edit,base,max_dx);
 
   // coord_edit
 
-  {
-   Point s=coord_edit.getMinSize();
-
-   Pane pane(psor,s);
-
-   coord_edit.setPlace(pane);
-  }
+  SetMinPlace(coord_edit,base);
 
   // mcoord_edit
 
-  {
-   Point s=mcoord_edit.getMinSize();
-
-   Pane pane(psor,s);
-
-   mcoord_edit.setPlace(pane);
-  }
+  SetMinPlace(mcoord_edit,base);
 
   // unsigned_edit
 
-  {
-   Point s=unsigned_edit.getMinSize();
-
-   Pane pane(psor,s);
-
-   unsigned_edit.setPlace(pane);
-  }
+  SetMinPlace(unsigned_edit,base);
 
   // point_edit
 
-  {
-   Point s=point_edit.getMinSize();
-
-   Pane pane(psor,s);
-
-   point_edit.setPlace(pane);
-  }
+  SetMinPlace(point_edit,base);
  }
 
 void DesignerWindow::draw(DrawBuf buf,bool drag_active) const
@@ -899,7 +890,7 @@ void DesignerWindow::open()
 
   wlist.open();
 
-  wlist.focusTop();
+  if( !wlist.getFocus() ) wlist.focusTop();
  }
 
 } // namespace App

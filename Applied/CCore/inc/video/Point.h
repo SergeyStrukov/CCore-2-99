@@ -244,6 +244,22 @@ struct BasePoint
 
   static T Diag(Int xy) { return T(xy,xy); }
 
+  T supX(Int sx) const { return Point(Max(x,sx),y); }
+
+  T supY(Int sy) const { return Point(x,Max(y,sy)); }
+
+  T sup(Int sx,Int sy) const { return Point(Max(x,sx),Max(y,sy)); }
+
+  T sup(T s) const { return sup(s.x,s.y); }
+
+  T infX(Int sx) const { return Point(Min(x,sx),y); }
+
+  T infY(Int sy) const { return Point(x,Min(y,sy)); }
+
+  T inf(Int sx,Int sy) const { return Point(Min(x,sx),Min(y,sy)); }
+
+  T inf(T s) const { return inf(s.x,s.y); }
+
   // print object
 
   void print(PrinterType &out) const

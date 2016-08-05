@@ -32,11 +32,11 @@ void ColorEditWindow::preparePalette()
     }
  }
 
-class ColorEditWindow::Art : public Smooth::DrawArt
+class ColorEditWindow::Art : public SmoothDrawArt
  {
   public:
 
-   Art(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
+   Art(const DrawBuf &buf) : SmoothDrawArt(buf) {}
  };
 
 void ColorEditWindow::draw(Art &art,MPoint center,VColor color,bool select) const

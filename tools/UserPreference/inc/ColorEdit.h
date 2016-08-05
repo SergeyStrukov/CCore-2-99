@@ -48,9 +48,7 @@ class ColorEditWindow : public SubWindow
 
      RefVal<Font> font;
 
-     Config()
-      {
-      }
+     Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
       {

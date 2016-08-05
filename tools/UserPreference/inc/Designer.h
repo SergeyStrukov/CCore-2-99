@@ -146,6 +146,8 @@ class DesignerWindow : public ComboWindow
    LabelWindow label_Point;
    LabelWindow label_Font;
 
+   ButtonWindow btn_Set;
+   ButtonWindow btn_Back;
    ButtonWindow btn_Save;
    ButtonWindow btn_Self;
 
@@ -255,6 +257,14 @@ class DesignerWindow : public ComboWindow
    SignalConnector<DesignerWindow,bool> connector_check_Font_changed;
 
    // buttons
+
+   void setPref();
+
+   SignalConnector<DesignerWindow> connector_btnSet_pressed;
+
+   void backPref();
+
+   SignalConnector<DesignerWindow> connector_btnBack_pressed;
 
    void savePref();
 
