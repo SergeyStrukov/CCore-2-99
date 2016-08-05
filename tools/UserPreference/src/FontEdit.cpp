@@ -19,16 +19,18 @@
 
 namespace App {
 
+#define DISABLE_NONSCALABLE
+
 /* class FontEditWindow::FDBInfo::Base */
 
 class FontEditWindow::FDBInfo::Base : public InfoBase
  {
-   struct Rec : SetDefaultNoThrowFlag<Rec,false>
+   struct Rec
     {
-     String name;
+     DefString name;
      const FontInfo *info;
 
-     Rec() : name("-- Default --"),info(0) {}
+     Rec() noexcept : name("-- Default --"),info(0) {}
 
      explicit Rec(const FontInfo &obj)
       {
@@ -42,7 +44,7 @@ class FontEditWindow::FDBInfo::Base : public InfoBase
        return file_name.equal(Range(info->file_name));
       }
 
-     bool operator < (const Rec &obj) const { return StrLess(Range(name),Range(obj.name)); }
+     bool operator < (const Rec &obj) const { return StrLess(name.str(),obj.name.str()); }
     };
 
    DynArray<Rec> list;
@@ -65,7 +67,9 @@ class FontEditWindow::FDBInfo::Base : public InfoBase
      list.append_fill();
 
      for(const FontInfo &obj : range )
+#ifdef DISABLE_NONSCALABLE
        if( obj.scalable )
+#endif
          list.append_fill(obj);
 
      Sort(Range(list).part(1));
@@ -80,7 +84,7 @@ class FontEditWindow::FDBInfo::Base : public InfoBase
 
    String getFamily(ulen index) const
     {
-     if( index<list.getLen() ) return list[index].name;
+     if( index<list.getLen() ) return list[index].name.makeString();
 
      return Empty;
     }
@@ -103,7 +107,7 @@ class FontEditWindow::FDBInfo::Base : public InfoBase
 
    virtual StrLen getLine(ulen index) const
     {
-     return Range(list.at(index).name);
+     return list.at(index).name.str();
     }
  };
 
@@ -150,6 +154,46 @@ const char *const FontEditWindow::TestText =
 "To dungeons deep and caverns old\n"
 "We must away ere break of day,\n"
 "To find our long-forgotten gold.\n";
+
+class FontEditWindow::MaxIndexFunc : public Funchor
+ {
+   int count = 0 ;
+
+  private:
+
+   void size(Coord,Coord)
+    {
+     count++;
+    }
+
+  public:
+
+   MaxIndexFunc() {}
+
+   operator int() const { return (count>0)?count-1:0; }
+
+   Function<void (Coord dx,Coord dy)> function_size() { return FunctionOf(this,&MaxIndexFunc::size); }
+ };
+
+int FontEditWindow::GetMaxIndex(Font font_)
+ {
+  try
+    {
+     FreeTypeFont font;
+
+     (Font &)font=font_;
+
+     MaxIndexFunc func;
+
+     font.getSizeList(func.function_size());
+
+     return func;
+    }
+  catch(...)
+    {
+     return 0;
+    }
+ };
 
 void FontEditWindow::updateFont()
  {
@@ -203,7 +247,7 @@ void FontEditWindow::setSize()
        fdx_check.enable();
        fdx_spin.disable();
 
-       fdy_spin.setValue(param.set_size.size_xy);
+       fdy_spin.setValue(param.set_size.size_xy,1,1000);
 
        fdx_check.check(false);
       }
@@ -215,7 +259,7 @@ void FontEditWindow::setSize()
        fdx_check.enable();
        fdx_spin.enable();
 
-       fdy_spin.setValue(param.set_size.size.y);
+       fdy_spin.setValue(param.set_size.size.y,1,1000);
 
        fdx_check.check(true);
 
@@ -225,7 +269,11 @@ void FontEditWindow::setSize()
 
      case FontParam::SizeIndex :
       {
-       noSize();
+       fdy_spin.enable();
+       fdx_check.disable();
+       fdx_spin.disable();
+
+       fdy_spin.setValue(param.set_size.index,0,GetMaxIndex(font));
       }
      break;
     }
@@ -413,6 +461,14 @@ void FontEditWindow::fdxyChanged(int)
        updateFont();
       }
      break;
+
+     case FontParam::SizeIndex :
+      {
+       param.set_size.index=ulen(fdy_spin.getValue());
+
+       updateFont();
+      }
+     break;
     }
  }
 
@@ -563,7 +619,7 @@ void FontEditWindow::layout()
   // progress
 
   {
-   Pane pane(Null,{size.x,+cfg.progress_dy});
+   Pane pane(Null,size.x,+cfg.progress_dy);
 
    progress.setPlace(pane);
   }

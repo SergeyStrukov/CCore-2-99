@@ -892,7 +892,7 @@ void DesignerWindow::open()
      PlaceFrame place(getDesktop());
 
      test_frame.create(getFrame(),
-                       place.getPane(Rational(2,3),Rational(1,3),Rational(1,8),Rational(3,4)),
+                       place.getPane(Rational(2,3)-Rational(1,48),Rational(1,3),Rational(1,8),Rational(3,4)),
                        place.getMaxSize(),
                        String("Test Frame"));
     }

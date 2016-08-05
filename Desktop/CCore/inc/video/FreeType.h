@@ -201,6 +201,8 @@ class Face : NoCopy
 
    bool emboldenGlyph(FT_Pos strength);
 
+   bool tryEmboldenGlyph(FT_Pos strength);
+
    bool renderGlyph(FT_Render_Mode mode=FT_RENDER_MODE_NORMAL);
 
    // glyph metrics

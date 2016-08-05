@@ -110,7 +110,10 @@ class FreeTypeFont::Base : public FontBase
 
      face.loadGlyph(index,ToFlags(cfg.fht));
 
-     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+     if( cfg.strength )
+       {
+        if( !face.tryEmboldenGlyph(cfg.strength) ) cfg.strength=0;
+       }
 
      face.renderGlyph(ToMode(cfg.fsm));
 

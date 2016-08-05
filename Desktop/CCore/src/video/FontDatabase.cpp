@@ -28,6 +28,7 @@
 
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
+#include <CCore/inc/Path.h>
 
 #include <CCore/inc/ddl/DDLEngine.h>
 #include <CCore/inc/ddl/DDLTypeSet.h>
@@ -168,9 +169,23 @@ const char *const FontDatabase::Pretext=
 "type FontDatabase = FontInfo[] ;\r\n"
 ;
 
+String FontDatabase::CatPath(StrLen path,StrLen name)
+ {
+  if( path.len>=2 && PathBase::IsSlash(path.back(2)) && PathBase::IsDot(path.back(1)) )
+    {
+     path.len--;
+
+     return StringCat(path,name);
+    }
+  else
+    {
+     return StringCat(path,"/",name);
+    }
+ }
+
 void FontDatabase::Append(Collector<FontInfo> &obj,StrLen path,StrLen name)
  {
-  String file_name=StringCat(path,"/",name);
+  String file_name=CatPath(path,name);
 
   bool is_font=false;
   FontInfo info(file_name,is_font);
@@ -414,7 +429,7 @@ void FontDatabase::Step::append(StrLen dir)
 
     void file(StrLen path,StrLen name,DataType *)
      {
-      obj.append_copy(StringCat(path,"/",name));
+      obj.append_copy(CatPath(path,name));
      }
 
     void enddir(StrLen,StrLen,DataType *) {}

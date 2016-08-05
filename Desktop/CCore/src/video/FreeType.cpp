@@ -308,6 +308,15 @@ bool Face::emboldenGlyph(FT_Pos strength)
   return true;
  }
 
+bool Face::tryEmboldenGlyph(FT_Pos strength)
+ {
+  if( getGlyphFormat()!=FT_GLYPH_FORMAT_OUTLINE ) return false;
+
+  if( FT_Outline_Embolden(&face->glyph->outline,strength) ) return false;
+
+  return true;
+ }
+
 bool Face::renderGlyph(FT_Render_Mode mode)
  {
   if( getGlyphFormat()==FT_GLYPH_FORMAT_BITMAP ) return false;

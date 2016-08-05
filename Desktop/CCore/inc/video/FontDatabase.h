@@ -119,6 +119,8 @@ class FontDatabase : NoCopy
 
    static const char *const Pretext;
 
+   static String CatPath(StrLen path,StrLen name);
+
    static void Append(Collector<FontInfo> &obj,StrLen path,StrLen name);
 
    static void Append(Collector<FontInfo> &obj,StrLen dir);

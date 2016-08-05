@@ -95,7 +95,7 @@ class FreeTypeFont : public Font
 
    // constructors
 
-   FreeTypeFont() {} // default, not a FreeType font!
+   FreeTypeFont() noexcept {} // default, not a FreeType font!
 
    explicit FreeTypeFont(StrLen file_name);
 

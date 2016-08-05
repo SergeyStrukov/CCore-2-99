@@ -45,15 +45,14 @@ class FontEditWindow : public ComboWindow
      CtorRefVal<LightWindow::ConfigType> light_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
-     CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<RadioWindow::ConfigType> radio_cfg;
      CtorRefVal<TextContourWindow::ConfigType> text_contour_cfg;
      CtorRefVal<ContourWindow::ConfigType> contour_cfg;
 
-     Config()
-      {
-      }
+     CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
+
+     Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
       : spin_cfg(pref)
@@ -206,6 +205,10 @@ class FontEditWindow : public ComboWindow
    ContourWindow test_contour;
 
   private:
+
+   class MaxIndexFunc;
+
+   static int GetMaxIndex(Font font);
 
    void updateFont();
 
