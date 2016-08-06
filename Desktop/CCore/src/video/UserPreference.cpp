@@ -105,14 +105,14 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("exw_text",exw_text);
   map.sync("exw_divider",exw_divider);
 
-  map.sync("label_font",label_font_param);
-  map.sync("contour_font",contour_font_param);
-  map.sync("message_font",message_font_param);
-  map.sync("info_font",info_font_param);
-  map.sync("line_edit_font",line_edit_font_param);
-  map.sync("list_font",list_font_param);
-  map.sync("button_font",button_font_param);
-  map.sync("title_font",title_font_param);
+  map.sync("label_font",label_font.param);
+  map.sync("contour_font",contour_font.param);
+  map.sync("message_font",message_font.param);
+  map.sync("info_font",info_font.param);
+  map.sync("line_edit_font",line_edit_font.param);
+  map.sync("list_font",list_font.param);
+  map.sync("button_font",button_font.param);
+  map.sync("title_font",title_font.param);
 
   createFonts();
  }
@@ -194,14 +194,14 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("exw_text",exw_text);
   map.update("exw_divider",exw_divider);
 
-  map.update("label_font",label_font_param);
-  map.update("contour_font",contour_font_param);
-  map.update("message_font",message_font_param);
-  map.update("info_font",info_font_param);
-  map.update("line_edit_font",line_edit_font_param);
-  map.update("list_font",list_font_param);
-  map.update("button_font",button_font_param);
-  map.update("title_font",title_font_param);
+  map.update("label_font",label_font.param);
+  map.update("contour_font",contour_font.param);
+  map.update("message_font",message_font.param);
+  map.update("info_font",info_font.param);
+  map.update("line_edit_font",line_edit_font.param);
+  map.update("list_font",list_font.param);
+  map.update("button_font",button_font.param);
+  map.update("title_font",title_font.param);
  }
 
 void UserPreferenceBag::bind(Bind &binder)
@@ -257,14 +257,14 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("info space",info_space);
    binder.item("list space",list_space);
    binder.space();
-   binder.item("label font",label_font_param,label_font);
-   binder.item("contour font",contour_font_param,contour_font);
+   binder.item("label font",label_font);
+   binder.item("contour font",contour_font);
    binder.space();
-   binder.item("button font",button_font_param,button_font);
-   binder.item("message font",message_font_param,message_font);
-   binder.item("info font",info_font_param,info_font);
-   binder.item("editor font",line_edit_font_param,line_edit_font);
-   binder.item("list font",list_font_param,list_font);
+   binder.item("button font",button_font);
+   binder.item("message font",message_font);
+   binder.item("info font",info_font);
+   binder.item("editor font",line_edit_font);
+   binder.item("list font",list_font);
 
   binder.group("Other");
 
@@ -316,7 +316,7 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("button no-alert picture",btnPictNoAlert);
    binder.item("button close-alert picture",btnPictCloseAlert);
    binder.space();
-   binder.item("title font",title_font_param,title_font);
+   binder.item("title font",title_font);
 
   binder.group("Exception window");
 
@@ -327,14 +327,14 @@ void UserPreferenceBag::bind(Bind &binder)
 
 void UserPreferenceBag::createFonts()
  {
-  label_font     = label_font_param.create() ;
-  contour_font   = contour_font_param.create() ;
-  message_font   = message_font_param.create() ;
-  info_font      = info_font_param.create() ;
-  line_edit_font = line_edit_font_param.create() ;
-  list_font      = list_font_param.create() ;
-  button_font    = button_font_param.create() ;
-  title_font     = title_font_param.create() ;
+  label_font.create();
+  contour_font.create();
+  message_font.create();
+  info_font.create();
+  line_edit_font.create();
+  list_font.create();
+  button_font.create();
+  title_font.create();
  }
 
 /* class UserPreference */
@@ -349,7 +349,7 @@ UserPreference::UserPreference() noexcept
   cfg_ExceptionWindow.text.bind(exw_text);
   cfg_ExceptionWindow.divider.bind(exw_divider);
   cfg_ExceptionWindow.scroll_dxy.bind(scroll_dxy);
-  cfg_ExceptionWindow.font.bind(info_font);
+  cfg_ExceptionWindow.font.bind(info_font.font);
   cfg_ExceptionWindow.scroll_cfg.bind(cfg_XScrollWindow);
 
   cfg_MessageSubWindow.back.bind(back);
@@ -374,7 +374,7 @@ UserPreference::UserPreference() noexcept
   cfg_DragWindow.active.bind(active_frame);
   cfg_DragWindow.inactive.bind(inactive_frame);
   cfg_DragWindow.title.bind(title);
-  cfg_DragWindow.title_font.bind(title_font);
+  cfg_DragWindow.title_font.bind(title_font.font);
   cfg_DragWindow.drag.bind(drag);
   cfg_DragWindow.dragHilight.bind(dragHilight);
   cfg_DragWindow.dragActive.bind(dragActive);
@@ -417,7 +417,7 @@ UserPreference::UserPreference() noexcept
   cfg_ButtonWindow.top.bind(top);
   cfg_ButtonWindow.topUp.bind(topUp);
   cfg_ButtonWindow.text.bind(button_text);
-  cfg_ButtonWindow.font.bind(button_font);
+  cfg_ButtonWindow.font.bind(button_font.font);
 
   cfg_KnobWindow.width.bind(width);
   cfg_KnobWindow.border.bind(border);
@@ -463,11 +463,11 @@ UserPreference::UserPreference() noexcept
   cfg_TextContourWindow.top.bind(bottom);
   cfg_TextContourWindow.bottom.bind(top);
   cfg_TextContourWindow.text.bind(contour_text);
-  cfg_TextContourWindow.font.bind(contour_font);
+  cfg_TextContourWindow.font.bind(contour_font.font);
 
   cfg_LabelWindow.inactive.bind(inactive);
   cfg_LabelWindow.text.bind(label_text);
-  cfg_LabelWindow.font.bind(label_font);
+  cfg_LabelWindow.font.bind(label_font.font);
 
   cfg_TextWindow.width.bind(width);
   cfg_TextWindow.space.bind(message_space);
@@ -476,14 +476,14 @@ UserPreference::UserPreference() noexcept
   cfg_TextWindow.inactive.bind(inactive);
   cfg_TextWindow.back.bind(back);
   cfg_TextWindow.text.bind(message_text);
-  cfg_TextWindow.font.bind(message_font);
+  cfg_TextWindow.font.bind(message_font.font);
 
   cfg_InfoWindow.width.bind(width);
   cfg_InfoWindow.space.bind(info_space);
   cfg_InfoWindow.focus.bind(focus);
   cfg_InfoWindow.inactive.bind(inactive);
   cfg_InfoWindow.focus.bind(focus);
-  cfg_InfoWindow.font.bind(info_font);
+  cfg_InfoWindow.font.bind(info_font.font);
 
   cfg_LineEditWindow.width.bind(width);
   cfg_LineEditWindow.space.bind(line_edit_space);
@@ -497,7 +497,7 @@ UserPreference::UserPreference() noexcept
   cfg_LineEditWindow.text.bind(line_edit_text);
   cfg_LineEditWindow.select.bind(text_select);
   cfg_LineEditWindow.cursor.bind(text_cursor);
-  cfg_LineEditWindow.font.bind(line_edit_font);
+  cfg_LineEditWindow.font.bind(line_edit_font.font);
   cfg_LineEditWindow.period.bind(line_edit_period);
 
   cfg_XScrollWindow.width.bind(width);
@@ -551,7 +551,7 @@ UserPreference::UserPreference() noexcept
   cfg_SimpleTextListWindow.inactive.bind(inactive);
   cfg_SimpleTextListWindow.focus.bind(focus);
   cfg_SimpleTextListWindow.select.bind(text_select);
-  cfg_SimpleTextListWindow.font.bind(list_font);
+  cfg_SimpleTextListWindow.font.bind(list_font.font);
  }
 
 UserPreference::~UserPreference()

@@ -56,7 +56,7 @@ class ColorEditWindow : public SubWindow
        top.bind(pref.get().bottom);
        bottom.bind(pref.get().top);
        focus.bind(pref.get().focus);
-       font.bind(pref.get().label_font);
+       font.bind(pref.get().label_font.font);
       }
     };
 

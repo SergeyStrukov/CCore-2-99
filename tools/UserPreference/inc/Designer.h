@@ -191,35 +191,177 @@ class DesignerWindow : public ComboWindow
 
    PrefInfo info;
 
+   struct BackSet
+    {
+     virtual bool back()=0;
+
+     virtual void set()=0;
+    };
+
+   template <class T>
+   class BackPadBase : public NoCopyBase<BackSet>
+    {
+      T *var = 0 ;
+      T backup;
+      bool flag = false ;
+
+     private:
+
+      virtual void propagate(T val)=0;
+
+     public:
+
+      BackPadBase() : backup{} {}
+
+      T * operator + () const { return var; }
+
+      void bind(T &var_)
+       {
+        var=&var_;
+        flag=false;
+
+        propagate(var_);
+       }
+
+      bool update(T val)
+       {
+        if( var )
+          {
+           if( !flag )
+             {
+              backup=*var;
+
+              flag=true;
+             }
+
+           *var=val;
+
+           return true;
+          }
+
+        return false;
+       }
+
+      virtual bool back()
+       {
+        if( var && flag )
+          {
+           *var=backup;
+
+           propagate(backup);
+
+           flag=false;
+
+           return true;
+          }
+
+        flag=false;
+
+        return false;
+       }
+
+      virtual void set()
+       {
+        flag=false;
+       }
+    };
+
+   template <class T,class E,void (E::*Set)(T val)>
+   class BackPad : public BackPadBase<T>
+    {
+      E &editor;
+
+     private:
+
+      virtual void propagate(T val)
+       {
+        (editor.*Set)(val);
+       }
+
+     public:
+
+      explicit BackPad(E &editor_) : editor(editor_) {}
+    };
+
+   class BackPad_unsigned : public BackPadBase<unsigned>
+    {
+      SpinEditWindow &editor;
+
+     private:
+
+      virtual void propagate(unsigned val)
+       {
+        editor.setValue((int)val);
+       }
+
+     public:
+
+      explicit BackPad_unsigned(SpinEditWindow &editor_) : editor(editor_) {}
+    };
+
+   class BackPad_string : public BackPadBase<DefString>
+    {
+      LineEditWindow &editor;
+
+     private:
+
+      virtual void propagate(DefString val)
+       {
+        editor.setText(val.str());
+       }
+
+     public:
+
+      explicit BackPad_string(LineEditWindow &editor_) : editor(editor_) {}
+    };
+
+   class BackPad_font : public BackPadBase<FontCouple>
+    {
+     FontEditWindow &editor;
+
+     private:
+
+      virtual void propagate(FontCouple val)
+       {
+        editor.setCouple(val);
+       }
+
+     public:
+
+      explicit BackPad_font(FontEditWindow &editor_) : editor(editor_) {}
+    };
+
    LineEditWindow string_edit;
-   DefString *string_var = 0 ;
+   BackPad_string string_pad;
 
    CoordEditWindow coord_edit;
-   Coord *coord_var = 0 ;
+   BackPad<Coord,CoordEditWindow,&CoordEditWindow::setCoord> coord_pad;
 
    MCoordEditWindow mcoord_edit;
-   MCoord *mcoord_var = 0 ;
+   BackPad<MCoord,MCoordEditWindow,&MCoordEditWindow::setMCoord> mcoord_pad;
 
    FontEditWindow font_edit;
-   FontParam *font_param_var = 0 ;
-   Font *font_var = 0 ;
+   BackPad_font font_pad;
 
    SpinEditWindow unsigned_edit;
-   unsigned *unsigned_var = 0 ;
+   BackPad_unsigned unsigned_pad;
 
    PointEditWindow point_edit;
-   Point *point_var = 0 ;
+   BackPad<Point,PointEditWindow,&PointEditWindow::setPoint> point_pad;
 
    ColorEditWindow color_edit;
-   VColor *color_var = 0 ;
+   BackPad<VColor,ColorEditWindow,&ColorEditWindow::setColor> color_pad;
 
    SubWindow *active_editor = 0 ;
+   BackSet *active_backset = 0 ;
 
   private:
 
-   void switchTo(SubWindow *editor);
+   void switchTo(SubWindow *editor,BackSet *backset=0);
 
    void switchTo(SubWindow &editor) { switchTo(&editor); }
+
+   void switchTo(SubWindow &editor,BackSet &backset) { switchTo(&editor,&backset); }
 
   private:
 
@@ -288,7 +430,7 @@ class DesignerWindow : public ComboWindow
 
    void select(Point &var);
 
-   void select(FontParam &var,Font &font);
+   void select(FontCouple &var);
 
    void select();
 

@@ -84,8 +84,7 @@ class FontEditWindow : public ComboWindow
    const Config &cfg;
 
    Coord def_dy = 20 ;
-   FontParam param;
-   Font font;
+   FontCouple font;
 
    ProgressWindow progress;
 
@@ -220,7 +219,7 @@ class FontEditWindow : public ComboWindow
 
    void setConfig();
 
-   void setParam();
+   void setCouple();
 
    void fdbComplete(bool ok);
 
@@ -263,11 +262,13 @@ class FontEditWindow : public ComboWindow
 
    // methods
 
-   const FontParam & getParam() const { return param; }
+   const FontParam & getParam() const { return font.param; }
 
-   const Font & getFont() const { return font; }
+   const Font & getFont() const { return font.font; }
 
-   void setParam(const FontParam &param,const Font &font);
+   const FontCouple getCouple() const { return font; }
+
+   void setCouple(const FontCouple &font);
 
    // drawing
 

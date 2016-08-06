@@ -197,7 +197,7 @@ int FontEditWindow::GetMaxIndex(Font font_)
 
 void FontEditWindow::updateFont()
  {
-  font=param.create();
+  font.create();
 
   changed.assert();
 
@@ -239,7 +239,7 @@ void FontEditWindow::noSize()
 
 void FontEditWindow::setSize()
  {
-  switch( param.size_type )
+  switch( font.param.size_type )
     {
      case FontParam::SizeXY :
       {
@@ -247,7 +247,7 @@ void FontEditWindow::setSize()
        fdx_check.enable();
        fdx_spin.disable();
 
-       fdy_spin.setValue(param.set_size.size_xy,1,1000);
+       fdy_spin.setValue(font.param.set_size.size_xy,1,1000);
 
        fdx_check.check(false);
       }
@@ -259,11 +259,11 @@ void FontEditWindow::setSize()
        fdx_check.enable();
        fdx_spin.enable();
 
-       fdy_spin.setValue(param.set_size.size.y,1,1000);
+       fdy_spin.setValue(font.param.set_size.size.y,1,1000);
 
        fdx_check.check(true);
 
-       fdx_spin.setValue(param.set_size.size.x);
+       fdx_spin.setValue(font.param.set_size.size.x);
       }
      break;
 
@@ -273,7 +273,7 @@ void FontEditWindow::setSize()
        fdx_check.disable();
        fdx_spin.disable();
 
-       fdy_spin.setValue(param.set_size.index,0,GetMaxIndex(font));
+       fdy_spin.setValue(font.param.set_size.index,0,GetMaxIndex(font.font));
       }
      break;
     }
@@ -281,7 +281,7 @@ void FontEditWindow::setSize()
 
 void FontEditWindow::setConfig()
  {
-  switch( param.cfg.fht )
+  switch( font.param.cfg.fht )
     {
      default:
      case FontHintNone : no_hint_radio.check(); break;
@@ -291,7 +291,7 @@ void FontEditWindow::setConfig()
      case FontHintAuto : auto_hint_radio.check(); break;
     }
 
-  switch( param.cfg.fsm )
+  switch( font.param.cfg.fsm )
     {
      default:
      case FontSmoothNone : no_smooth_radio.check(); break;
@@ -303,16 +303,16 @@ void FontEditWindow::setConfig()
      case FontSmoothLCD_BGR : BGR_radio.check(); break;
     }
 
-  kerning_check.check(param.cfg.use_kerning);
+  kerning_check.check(font.param.cfg.use_kerning);
 
-  strength_spin.setValue(param.cfg.strength);
+  strength_spin.setValue(font.param.cfg.strength);
  }
 
-void FontEditWindow::setParam()
+void FontEditWindow::setCouple()
  {
   if( fdb_flag ) return;
 
-  if( param.engine_type==FontParam::EngineDefault )
+  if( font.param.engine_type==FontParam::EngineDefault )
     {
      text_list.select(0);
 
@@ -320,7 +320,7 @@ void FontEditWindow::setParam()
     }
   else
     {
-     text_list.select(info.getIndex(Range(param.file_name)));
+     text_list.select(info.getIndex(Range(font.param.file_name)));
 
      setSize();
     }
@@ -355,7 +355,7 @@ void FontEditWindow::fdbComplete(bool ok)
                   smooth_contour,
                   kerning_check,kerning_label,strength_spin,strength_label,font_test,test_contour);
 
-     setParam();
+     setCouple();
     }
  }
 
@@ -363,9 +363,9 @@ void FontEditWindow::selectFont(ulen select)
  {
   bool def_size=true;
 
-  if( param.engine_type==FontParam::EngineFreeType )
+  if( font.param.engine_type==FontParam::EngineFreeType )
     {
-     if( param.size_type!=FontParam::SizeIndex )
+     if( font.param.size_type!=FontParam::SizeIndex )
        {
         def_dy=Coord(fdy_spin.getValue());
 
@@ -375,29 +375,29 @@ void FontEditWindow::selectFont(ulen select)
 
   if( const FontInfo *font_info=info.get(select) )
     {
-     param.engine_type=FontParam::EngineFreeType;
+     font.param.engine_type=FontParam::EngineFreeType;
 
-     param.file_name=font_info->file_name;
+     font.param.file_name=font_info->file_name;
 
      if( font_info->scalable )
        {
-        if( param.size_type==FontParam::SizeIndex || def_size )
+        if( font.param.size_type==FontParam::SizeIndex || def_size )
           {
-           param.size_type=FontParam::SizeXY;
-           param.set_size.size_xy=def_dy;
+           font.param.size_type=FontParam::SizeXY;
+           font.param.set_size.size_xy=def_dy;
           }
        }
      else
        {
-        param.size_type=FontParam::SizeIndex;
-        param.set_size.index=0;
+        font.param.size_type=FontParam::SizeIndex;
+        font.param.set_size.index=0;
        }
 
      setSize();
     }
   else
     {
-     param.engine_type=FontParam::EngineDefault;
+     font.param.engine_type=FontParam::EngineDefault;
 
      noSize();
     }
@@ -409,7 +409,7 @@ void FontEditWindow::selectFont(ulen select)
 
 void FontEditWindow::fdxEnable(bool enable)
  {
-  switch( param.size_type )
+  switch( font.param.size_type )
     {
      case FontParam::SizeXY :
       {
@@ -418,8 +418,8 @@ void FontEditWindow::fdxEnable(bool enable)
           fdx_spin.enable();
           fdx_spin.setValue(fdy_spin.getValue());
 
-          param.size_type=FontParam::SizePoint;
-          param.set_size.size=Point(Coord(fdx_spin.getValue()),Coord(fdy_spin.getValue()));
+          font.param.size_type=FontParam::SizePoint;
+          font.param.set_size.size=Point(Coord(fdx_spin.getValue()),Coord(fdy_spin.getValue()));
 
           updateFont();
          }
@@ -432,8 +432,8 @@ void FontEditWindow::fdxEnable(bool enable)
          {
           fdx_spin.disable();
 
-          param.size_type=FontParam::SizeXY;
-          param.set_size.size_xy=Coord(fdy_spin.getValue());
+          font.param.size_type=FontParam::SizeXY;
+          font.param.set_size.size_xy=Coord(fdy_spin.getValue());
 
           updateFont();
          }
@@ -444,11 +444,11 @@ void FontEditWindow::fdxEnable(bool enable)
 
 void FontEditWindow::fdxyChanged(int)
  {
-  switch( param.size_type )
+  switch( font.param.size_type )
     {
      case FontParam::SizeXY :
       {
-       param.set_size.size_xy=Coord(fdy_spin.getValue());
+       font.param.set_size.size_xy=Coord(fdy_spin.getValue());
 
        updateFont();
       }
@@ -456,7 +456,7 @@ void FontEditWindow::fdxyChanged(int)
 
      case FontParam::SizePoint :
       {
-       param.set_size.size=Point(Coord(fdx_spin.getValue()),Coord(fdy_spin.getValue()));
+       font.param.set_size.size=Point(Coord(fdx_spin.getValue()),Coord(fdy_spin.getValue()));
 
        updateFont();
       }
@@ -464,7 +464,7 @@ void FontEditWindow::fdxyChanged(int)
 
      case FontParam::SizeIndex :
       {
-       param.set_size.index=ulen(fdy_spin.getValue());
+       font.param.set_size.index=ulen(fdy_spin.getValue());
 
        updateFont();
       }
@@ -474,28 +474,28 @@ void FontEditWindow::fdxyChanged(int)
 
 void FontEditWindow::hintChanged(int new_id,int)
  {
-  param.cfg.fht=FontHintType(new_id);
+  font.param.cfg.fht=FontHintType(new_id);
 
   updateFont();
  }
 
 void FontEditWindow::smoothChanged(int new_id,int)
  {
-  param.cfg.fsm=FontSmoothType(new_id);
+  font.param.cfg.fsm=FontSmoothType(new_id);
 
   updateFont();
  }
 
 void FontEditWindow::kerningChanged(bool check)
  {
-  param.cfg.use_kerning=check;
+  font.param.cfg.use_kerning=check;
 
   updateFont();
  }
 
 void FontEditWindow::strengthChanged(int strength)
  {
-  param.cfg.strength=strength;
+  font.param.cfg.strength=strength;
 
   updateFont();
  }
@@ -589,7 +589,7 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
   strength_spin.setValue(0,-1000,1000);
 
-  info_cfg.font.bind(font);
+  info_cfg.font.bind(font.font);
  }
 
 FontEditWindow::~FontEditWindow()
@@ -598,12 +598,11 @@ FontEditWindow::~FontEditWindow()
 
  // methods
 
-void FontEditWindow::setParam(const FontParam &param_,const Font &font_)
+void FontEditWindow::setCouple(const FontCouple &font_)
  {
-  param=param_;
   font=font_;
 
-  setParam();
+  setCouple();
  }
 
  // drawing

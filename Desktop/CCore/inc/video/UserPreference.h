@@ -29,9 +29,23 @@ namespace Video {
 
 /* classes */
 
+struct FontCouple;
+
 struct UserPreferenceBag;
 
 class UserPreference;
+
+/* struct FontCouple */
+
+struct FontCouple
+ {
+  Font font;
+  FontParam param;
+
+  FontCouple() noexcept {}
+
+  void create() { font=param.create(); }
+ };
 
 /* struct UserPreferenceBag */
 
@@ -88,14 +102,14 @@ struct UserPreferenceBag
   Point info_space      = Point(8,8) ;
   Point list_space      = Point(8,8) ;
 
-  Font label_font;
-  Font contour_font;
+  FontCouple label_font;
+  FontCouple contour_font;
 
-  Font button_font;
-  Font message_font;
-  Font info_font;
-  Font line_edit_font;
-  Font list_font;
+  FontCouple button_font;
+  FontCouple message_font;
+  FontCouple info_font;
+  FontCouple line_edit_font;
+  FontCouple list_font;
 
   // other
 
@@ -146,24 +160,13 @@ struct UserPreferenceBag
   VColor btnPictNoAlert    =      Gray ;
   VColor btnPictCloseAlert =    Orange ;
 
-  Font title_font;
+  FontCouple title_font;
 
   // ExceptionWindow
 
   VColor exw_back    = Black ;
   VColor exw_text    = Green ;
   VColor exw_divider =   Red ;
-
-  // font params
-
-  FontParam label_font_param;
-  FontParam contour_font_param;
-  FontParam message_font_param;
-  FontParam info_font_param;
-  FontParam line_edit_font_param;
-  FontParam list_font_param;
-  FontParam button_font_param;
-  FontParam title_font_param;
 
   // constructors
 
@@ -193,7 +196,7 @@ struct UserPreferenceBag
 
     virtual void item(StrLen name,Point &var)=0;
 
-    virtual void item(StrLen name,FontParam &var,Font &font)=0;
+    virtual void item(StrLen name,FontCouple &var)=0;
    };
 
   void bind(Bind &binder);

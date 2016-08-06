@@ -44,18 +44,6 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
      VarLim
     };
 
-   template <class T>
-   struct RefOf
-    {
-     T &var;
-    };
-
-   struct RefFont
-    {
-     FontParam &var;
-     Font &font;
-    };
-
    struct Rec
     {
      String name;
@@ -63,13 +51,13 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
      union Ref
       {
-       RefOf<Coord>     of_Coord;
-       RefOf<MCoord>    of_MCoord;
-       RefOf<VColor>    of_VColor;
-       RefOf<unsigned>  of_unsigned;
-       RefOf<DefString> of_String;
-       RefOf<Point>     of_Point;
-       RefFont          of_Font;
+       Coord      &of_Coord;
+       MCoord     &of_MCoord;
+       VColor     &of_VColor;
+       unsigned   &of_unsigned;
+       DefString  &of_String;
+       Point      &of_Point;
+       FontCouple &of_Font;
 
        Ref(Coord &var) : of_Coord{var} {}
 
@@ -83,7 +71,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
        Ref(Point &var) : of_Point{var} {}
 
-       Ref(FontParam &var,Font &font) : of_Font{var,font} {}
+       Ref(FontCouple &var) : of_Font{var} {}
       };
 
      Ref ref;
@@ -130,10 +118,10 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
       {
       }
 
-     Rec(StrLen name_,FontParam &var,Font &font)
+     Rec(StrLen name_,FontCouple &var)
       : name(name_),
         type(Var_Font),
-        ref(var,font)
+        ref(var)
       {
       }
 
@@ -142,19 +130,19 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
       {
        switch( type )
          {
-          case Var_Coord : func(ref.of_Coord.var); break;
+          case Var_Coord : func(ref.of_Coord); break;
 
-          case Var_MCoord : func(ref.of_MCoord.var); break;
+          case Var_MCoord : func(ref.of_MCoord); break;
 
-          case Var_VColor : func(ref.of_VColor.var); break;
+          case Var_VColor : func(ref.of_VColor); break;
 
-          case Var_unsigned : func(ref.of_unsigned.var); break;
+          case Var_unsigned : func(ref.of_unsigned); break;
 
-          case Var_String : func(ref.of_String.var); break;
+          case Var_String : func(ref.of_String); break;
 
-          case Var_Point : func(ref.of_Point.var); break;
+          case Var_Point : func(ref.of_Point); break;
 
-          case Var_Font : func(ref.of_Font.var,ref.of_Font.font); break;
+          case Var_Font : func(ref.of_Font); break;
          }
       }
     };
@@ -224,7 +212,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    void add(StrLen name,Point &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,FontParam &var,Font &font) { list.append_fill(name,var,font); }
+   void add(StrLen name,FontCouple &var) { list.append_fill(name,var); }
 
    // enable...()
 
@@ -327,7 +315,7 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
 
    virtual void item(StrLen name,Point &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,FontParam &var,Font &font) { base->add(name,var,font); }
+   virtual void item(StrLen name,FontCouple &var) { base->add(name,var); }
  };
 
 /* class DesignerWindow::PrefInfo */
@@ -399,8 +387,10 @@ void DesignerWindow::PrefInfo::select(ulen index,Func func)
 
 /* class DesignerWindow */
 
-void DesignerWindow::switchTo(SubWindow *editor)
+void DesignerWindow::switchTo(SubWindow *editor,BackSet *backset)
  {
+  active_backset=backset;
+
   if( active_editor!=editor )
     {
      if( active_editor ) wlist.del(active_editor);
@@ -479,14 +469,32 @@ void DesignerWindow::enable_Font(bool on)
 
 void DesignerWindow::setPref()
  {
+  if( active_backset ) active_backset->set();
+
+  btn_Set.disable();
+  btn_Back.disable();
  }
 
 void DesignerWindow::backPref()
  {
+  if( active_backset )
+    {
+     if( active_backset->back() )
+       {
+        btn_Save.enable();
+
+        update.assert();
+       }
+    }
+
+  btn_Set.disable();
+  btn_Back.disable();
  }
 
 void DesignerWindow::savePref()
  {
+  setPref();
+
   pref.update();
 
   btn_Save.disable();
@@ -494,6 +502,8 @@ void DesignerWindow::savePref()
 
 void DesignerWindow::selfPref()
  {
+  setPref();
+
   self_pref.take()=pref.get();
 
   self_pref.update.assert();
@@ -503,66 +513,51 @@ void DesignerWindow::selfPref()
 
 void DesignerWindow::select(Coord &var)
  {
-  coord_var=&var;
+  coord_pad.bind(var);
 
-  coord_edit.setCoord(var);
-
-  switchTo(coord_edit);
+  switchTo(coord_edit,coord_pad);
  }
 
 void DesignerWindow::select(MCoord &var)
  {
-  mcoord_var=&var;
+  mcoord_pad.bind(var);
 
-  mcoord_edit.setMCoord(var);
-
-  switchTo(mcoord_edit);
+  switchTo(mcoord_edit,mcoord_pad);
  }
 
 void DesignerWindow::select(VColor &var)
  {
-  color_var=&var;
+  color_pad.bind(var);
 
-  color_edit.setColor(var);
-
-  switchTo(color_edit);
+  switchTo(color_edit,color_pad);
  }
 
 void DesignerWindow::select(unsigned &var)
  {
-  unsigned_var=&var;
+  unsigned_pad.bind(var);
 
-  unsigned_edit.setValue(var);
-
-  switchTo(unsigned_edit);
+  switchTo(unsigned_edit,unsigned_pad);
  }
 
 void DesignerWindow::select(DefString &var)
  {
-  string_var=&var;
+  string_pad.bind(var);
 
-  string_edit.setText(var.str());
-
-  switchTo(string_edit);
+  switchTo(string_edit,string_pad);
  }
 
 void DesignerWindow::select(Point &var)
  {
-  point_var=&var;
+  point_pad.bind(var);
 
-  point_edit.setPoint(var);
-
-  switchTo(point_edit);
+  switchTo(point_edit,point_pad);
  }
 
-void DesignerWindow::select(FontParam &var,Font &font)
+void DesignerWindow::select(FontCouple &var)
  {
-  font_param_var=&var;
-  font_var=&font;
+  font_pad.bind(var);
 
-  font_edit.setParam(var,font);
-
-  switchTo(font_edit);
+  switchTo(font_edit,font_pad);
  }
 
 void DesignerWindow::select()
@@ -580,6 +575,8 @@ struct DesignerWindow::FuncSelect
 
 void DesignerWindow::selectVar(ulen index)
  {
+  backPref();
+
   info.select(index,FuncSelect{this});
  }
 
@@ -587,6 +584,8 @@ void DesignerWindow::selectVar(ulen index)
 
 void DesignerWindow::changed()
  {
+  btn_Set.enable();
+  btn_Back.enable();
   btn_Save.enable();
 
   update.assert();
@@ -594,73 +593,37 @@ void DesignerWindow::changed()
 
 void DesignerWindow::string_edit_changed()
  {
-  if( string_var )
-    {
-     *string_var=String(string_edit.getText());
-
-     changed();
-    }
+  if( string_pad.update(String(string_edit.getText())) ) changed();
  }
 
 void DesignerWindow::coord_edit_changed(Coord value)
  {
-  if( coord_var )
-    {
-     *coord_var=value;
-
-     changed();
-    }
+  if( coord_pad.update(value) ) changed();
  }
 
 void DesignerWindow::mcoord_edit_changed(MCoord value)
  {
-  if( mcoord_var )
-    {
-     *mcoord_var=value;
-
-     changed();
-    }
+  if( mcoord_pad.update(value) ) changed();
  }
 
 void DesignerWindow::font_edit_changed()
  {
-  if( font_var && font_param_var )
-    {
-     *font_param_var=font_edit.getParam();
-     *font_var=font_edit.getFont();
-
-     changed();
-    }
+  if( font_pad.update(font_edit.getCouple()) ) changed();
  }
 
 void DesignerWindow::unsigned_edit_changed(int value)
  {
-  if( unsigned_var )
-    {
-     *unsigned_var=value;
-
-     changed();
-    }
+  if( unsigned_pad.update((unsigned)value) ) changed();
  }
 
 void DesignerWindow::point_edit_changed(Point value)
  {
-  if( point_var )
-    {
-     *point_var=value;
-
-     changed();
-    }
+  if( point_pad.update(value) ) changed();
  }
 
 void DesignerWindow::color_edit_changed(VColor value)
  {
-  if( color_var )
-    {
-     *color_var=value;
-
-     changed();
-    }
+  if( color_pad.update(value) ) changed();
  }
 
  // constructors
@@ -697,12 +660,25 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    btn_Self(wlist,cfg.btn_cfg,String("Apply to self")),
 
    string_edit(wlist,cfg.edit_cfg),
+   string_pad(string_edit),
+
    coord_edit(wlist,cfg.coord_cfg),
+   coord_pad(coord_edit),
+
    mcoord_edit(wlist,cfg.mcoord_cfg),
+   mcoord_pad(mcoord_edit),
+
    font_edit(wlist,cfg.font_cfg),
+   font_pad(font_edit),
+
    unsigned_edit(wlist,cfg.unsigned_cfg),
+   unsigned_pad(unsigned_edit),
+
    point_edit(wlist,cfg.point_cfg),
+   point_pad(point_edit),
+
    color_edit(wlist,cfg.color_cfg),
+   color_pad(color_edit),
 
    connector_test_frame_destroyed(this,&DesignerWindow::testDestroyed,test_frame.destroyed),
 
