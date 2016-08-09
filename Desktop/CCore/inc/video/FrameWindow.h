@@ -21,6 +21,7 @@
 
 #include <CCore/inc/MemBase.h>
 #include <CCore/inc/TimeScope.h>
+#include <CCore/inc/Signal.h>
 
 namespace CCore {
 namespace Video {
@@ -288,6 +289,12 @@ class FrameWindow : public NoCopyBase<MemBase,UserInput>
 
      host->setMouseShape(Mouse_Arrow);
     }
+
+   // signals
+
+   Signal<Point> moved;
+
+   Signal<> destroyed;
  };
 
 } // namespace Video

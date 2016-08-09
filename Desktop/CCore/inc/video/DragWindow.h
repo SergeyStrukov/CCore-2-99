@@ -23,7 +23,6 @@
 
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
-#include <CCore/inc/Signal.h>
 
 namespace CCore {
 namespace Video {
@@ -264,8 +263,15 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      tick_count=0;
     }
 
+   void assert_moved(Point from,Point to)
+    {
+     if( from!=to ) moved.assert(to-from);
+    }
+
    void replace(Pane place,Point delta,DragType drag_type)
     {
+     Point base=place.getBase();
+
      DragPane(place,delta,drag_type);
 
      Point new_size(place.dx,place.dy);
@@ -286,6 +292,8 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
            host->move(place);
 
            host->invalidate(1);
+
+           assert_moved(base,place.getBase());
           }
        }
     }
@@ -1085,10 +1093,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
         getClient().put_Leave();
        }
     }
-
-   // signals
-
-   Signal<> destroyed;
 
    // DeferInput
 

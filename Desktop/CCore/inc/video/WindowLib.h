@@ -19,7 +19,6 @@
 #include <CCore/inc/video/ShapeLib.h>
 #include <CCore/inc/video/SubWindow.h>
 
-#include <CCore/inc/Signal.h>
 #include <CCore/inc/DeferCall.h>
 
 #include <CCore/inc/Array.h>

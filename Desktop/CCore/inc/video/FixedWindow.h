@@ -23,7 +23,6 @@
 
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
-#include <CCore/inc/Signal.h>
 
 namespace CCore {
 namespace Video {
@@ -203,6 +202,8 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
            host->move(place);
 
            host->invalidate(1);
+
+           moved.assert(delta);
           }
        }
     }
@@ -853,10 +854,6 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
         getClient().put_Leave();
        }
     }
-
-   // signals
-
-   Signal<> destroyed;
 
    // DeferInput
 
