@@ -103,7 +103,7 @@ class ButtonShape
 
    // parameters
 
-   using FaceType = String ;
+   using FaceType = DefString ;
 
    const Config &cfg;
    FaceType face;
@@ -293,7 +293,7 @@ class LabelShape
     };
 
    const Config &cfg;
-   String text;
+   DefString text;
    AlignX align_x;
    AlignY align_y;
    Pane pane;
@@ -304,7 +304,7 @@ class LabelShape
 
    // methods
 
-   LabelShape(const Config &cfg_,const String &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
+   LabelShape(const Config &cfg_,const DefString &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
     : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
 
    Point getMinSize() const;
@@ -338,7 +338,7 @@ class TextShape
     };
 
    const Config &cfg;
-   String text;
+   DefString text;
    AlignX align_x;
    AlignY align_y;
    Pane pane;
@@ -349,7 +349,7 @@ class TextShape
 
    // methods
 
-   TextShape(const Config &cfg_,const String &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
+   TextShape(const Config &cfg_,const DefString &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
     : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
 
    explicit TextShape(const Config &cfg_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
@@ -533,13 +533,13 @@ class TextContourShape
     };
 
    const Config &cfg;
-   String title;
+   DefString title;
    AlignX align_x;
    Pane pane;
 
    // methods
 
-   TextContourShape(const Config &cfg_,const String &title_,AlignX align_x_=AlignX_Left) : cfg(cfg_),title(title_),align_x(align_x_) {}
+   TextContourShape(const Config &cfg_,const DefString &title_,AlignX align_x_=AlignX_Left) : cfg(cfg_),title(title_),align_x(align_x_) {}
 
    Point getMinSize() const;
 

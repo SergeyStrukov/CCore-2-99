@@ -25,7 +25,7 @@ namespace Video {
 
 Point TextContourShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(Range(title));
+  TextSize ts=cfg.font->text(title.str());
 
   IntGuard( !ts.overflow );
 
@@ -36,7 +36,7 @@ Point TextContourShape::getMinSize() const
 
 Point TextContourShape::getMinSize(Point inner_size) const
  {
-  TextSize ts=cfg.font->text(Range(title));
+  TextSize ts=cfg.font->text(title.str());
 
   IntGuard( !ts.overflow );
 
@@ -47,7 +47,7 @@ Point TextContourShape::getMinSize(Point inner_size) const
 
 Pane TextContourShape::getInner() const
  {
-  TextSize ts=cfg.font->text(Range(title));
+  TextSize ts=cfg.font->text(title.str());
 
   Coord dxy=RoundUpLen(+cfg.width);
 
@@ -66,7 +66,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
 
   Font font=cfg.font.get();
 
-  TextSize ts=font->text(Range(title));
+  TextSize ts=font->text(title.str());
 
   Coord ty=Min(ts.dy,pane.dy);
   Coord tx=Min<Coord>(ty,pane.dx/2);
@@ -138,7 +138,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
 
   // title
 
-  font->text(buf,Pane(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),+cfg.text);
+  font->text(buf,Pane(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),title.str(),+cfg.text);
  }
 
 } // namespace Video

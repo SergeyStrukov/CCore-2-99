@@ -1,4 +1,4 @@
-/* ShapeLib.LabelShape.cpp */
+/* Menu.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,31 +13,38 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#ifndef CCore_inc_video_Menu_h
+#define CCore_inc_video_Menu_h
 
-#include <CCore/inc/video/SmoothDrawArt.h>
-#include <CCore/inc/video/FigureLib.h>
+#include <CCore/inc/video/SubWindow.h>
+#include <CCore/inc/video/Font.h>
+#include <CCore/inc/video/RefVal.h>
+
+#include <CCore/inc/String.h>
 
 namespace CCore {
 namespace Video {
 
-/* class LabelShape */
+/* classes */
 
-Point LabelShape::getMinSize() const
- {
-  TextSize ts=cfg.font->text(text.str());
+struct SimpleTopMenuShape;
 
-  IntGuard( !ts.overflow );
+template <class Shape> class SimpleTopMenuOf;
 
-  return Point(ts.full_dx,ts.dy).addXY(2);
- }
+/* struct SimpleTopMenuShape */
 
-void LabelShape::draw(const DrawBuf &buf) const
- {
-  cfg.font->text(buf,pane,TextPlace(align_x,align_y),text.str(),enable?+cfg.text:+cfg.inactive);
- }
+
+
+/* class SimpleTopMenuOf<Shape> */
+
+
+
+/* type SimpleTopMenu */
+
+using SimpleTopMenu = SimpleTopMenuOf<SimpleTopMenuShape> ;
 
 } // namespace Video
 } // namespace CCore
 
+#endif
 

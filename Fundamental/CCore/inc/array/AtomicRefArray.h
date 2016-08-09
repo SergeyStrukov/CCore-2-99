@@ -111,6 +111,12 @@ class AtomicRefArrayBase
     {
     }
 
+   explicit AtomicRefArrayBase(void *mem,ulen maxlen) requires ( TrivDtorType<T> )
+    : ptr(Base::Create(mem,maxlen))
+    {
+     ptr->incRef();
+    }
+
    ~AtomicRefArrayBase()
     {
     }
@@ -202,6 +208,17 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
    template <class S>
    explicit AtomicRefArray(std::initializer_list<S> il)
     : AtomicRefArrayBase<T,Algo>(il.size())
+    {
+     Base::Extend_cast(ptr.getPtr(),il.size(),il.begin());
+    }
+
+   template <ulen MaxLen> requires ( MaxLen>0 )
+   static const ulen StaticMemLen = Base::template StaticMemLen<MaxLen> ;
+
+   template <class S>
+   AtomicRefArray(void *mem,ulen maxlen,std::initializer_list<S> il) requires ( TrivDtorType<T> )
+                 // mem is aligned , maxlen > 0 , il.size() <= maxlen , static object !
+    : AtomicRefArrayBase<T,Algo>(mem,maxlen)
     {
      Base::Extend_cast(ptr.getPtr(),il.size(),il.begin());
     }

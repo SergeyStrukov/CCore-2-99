@@ -50,6 +50,8 @@ class DefString
 
    DefString() noexcept {}
 
+   DefString(NothingType) noexcept {}
+
    DefString(const char *persistent_zstr) noexcept : def_const(persistent_zstr) {}
 
    DefString(const char *persistent_str,ulen str_len) noexcept : def_const(persistent_str,str_len) {}

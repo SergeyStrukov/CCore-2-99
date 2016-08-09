@@ -25,7 +25,7 @@ namespace Video {
 
 Point ButtonShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(Range(face));
+  TextSize ts=cfg.font->text(face.str());
 
   IntGuard( !ts.overflow );
 
@@ -91,7 +91,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
 
    VColor text=enable?+cfg.text:bottom;
 
-   font->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),text);
+   font->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),face.str(),text);
   }
 
   // border

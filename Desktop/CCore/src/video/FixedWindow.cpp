@@ -141,7 +141,7 @@ void FixedShape::draw_Title(DrawArt &art) const
 
      Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
 
-     cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
+     cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),title.str(),+cfg.title);
     }
  }
 
@@ -211,7 +211,7 @@ Coord FixedShape::getMinDx(StrLen title) const
   return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+2*bdx);
  }
 
-void FixedShape::reset(const String &title_)
+void FixedShape::reset(const DefString &title_)
  {
   has_focus=false;
 

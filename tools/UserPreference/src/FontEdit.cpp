@@ -82,9 +82,9 @@ class FontEditWindow::FDBInfo::Base : public InfoBase
      return 0;
     }
 
-   String getFamily(ulen index) const
+   DefString getFamily(ulen index) const
     {
-     if( index<list.getLen() ) return list[index].name.makeString();
+     if( index<list.getLen() ) return list[index].name;
 
      return Empty;
     }
@@ -137,7 +137,7 @@ const FontInfo * FontEditWindow::FDBInfo::get(ulen index) const
   return getBase()->get(index);
  }
 
-String FontEditWindow::FDBInfo::getFamily(ulen index) const
+DefString FontEditWindow::FDBInfo::getFamily(ulen index) const
  {
   return getBase()->getFamily(index);
  }
@@ -219,7 +219,7 @@ void FontEditWindow::showFont(ulen select)
     }
   else
     {
-     file_name_text.setText(String("<none>"));
+     file_name_text.setText("<none>"_def);
      family_text.setText(info.getFamily(select));
 
      scalable_light.turn(false);
@@ -519,10 +519,10 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    bold_light(wlist,cfg.light_cfg),
    italic_light(wlist,cfg.light_cfg),
 
-   scalable_label(wlist,cfg.label_cfg,String("scalable"),AlignX_Left),
-   monospace_label(wlist,cfg.label_cfg,String("monospace"),AlignX_Left),
-   bold_label(wlist,cfg.label_cfg,String("bold"),AlignX_Left),
-   italic_label(wlist,cfg.label_cfg,String("italic"),AlignX_Left),
+   scalable_label(wlist,cfg.label_cfg,"scalable"_def,AlignX_Left),
+   monospace_label(wlist,cfg.label_cfg,"monospace"_def,AlignX_Left),
+   bold_label(wlist,cfg.label_cfg,"bold"_def,AlignX_Left),
+   italic_label(wlist,cfg.label_cfg,"italic"_def,AlignX_Left),
 
    line1(wlist,cfg.dline_cfg),
 
@@ -536,31 +536,31 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    native_hint_radio(wlist,FontHintNative,cfg.radio_cfg),
    auto_hint_radio(wlist,FontHintAuto,cfg.radio_cfg),
 
-   no_hint_label(wlist,cfg.label_cfg,String("No hint"),AlignX_Left),
-   native_hint_label(wlist,cfg.label_cfg,String("Native hint"),AlignX_Left),
-   auto_hint_label(wlist,cfg.label_cfg,String("Auto hint"),AlignX_Left),
+   no_hint_label(wlist,cfg.label_cfg,"No hint"_def,AlignX_Left),
+   native_hint_label(wlist,cfg.label_cfg,"Native hint"_def,AlignX_Left),
+   auto_hint_label(wlist,cfg.label_cfg,"Auto hint"_def,AlignX_Left),
 
-   hint_contour(wlist,cfg.text_contour_cfg,String("Hint")),
+   hint_contour(wlist,cfg.text_contour_cfg,"Hint"_def),
 
    no_smooth_radio(wlist,FontSmoothNone,cfg.radio_cfg),
    smooth_radio(wlist,FontSmooth,cfg.radio_cfg),
    RGB_radio(wlist,FontSmoothLCD_RGB,cfg.radio_cfg),
    BGR_radio(wlist,FontSmoothLCD_BGR,cfg.radio_cfg),
 
-   no_smooth_label(wlist,cfg.label_cfg,String("No smooth"),AlignX_Left),
-   smooth_label(wlist,cfg.label_cfg,String("Smooth"),AlignX_Left),
-   RGB_label(wlist,cfg.label_cfg,String("LCD RGB"),AlignX_Left),
-   BGR_label(wlist,cfg.label_cfg,String("LCD BGR"),AlignX_Left),
+   no_smooth_label(wlist,cfg.label_cfg,"No smooth"_def,AlignX_Left),
+   smooth_label(wlist,cfg.label_cfg,"Smooth"_def,AlignX_Left),
+   RGB_label(wlist,cfg.label_cfg,"LCD RGB"_def,AlignX_Left),
+   BGR_label(wlist,cfg.label_cfg,"LCD BGR"_def,AlignX_Left),
 
-   smooth_contour(wlist,cfg.text_contour_cfg,String("Smooth")),
+   smooth_contour(wlist,cfg.text_contour_cfg,"Smooth"_def),
 
    kerning_check(wlist,cfg.check_cfg),
 
-   kerning_label(wlist,cfg.label_cfg,String("Kerning"),AlignX_Left),
+   kerning_label(wlist,cfg.label_cfg,"Kerning"_def,AlignX_Left),
 
    strength_spin(wlist,cfg.spin_cfg),
 
-   strength_label(wlist,cfg.label_cfg,String("Strength"),AlignX_Left),
+   strength_label(wlist,cfg.label_cfg,"Strength"_def,AlignX_Left),
 
    font_test(wlist,info_cfg,InfoFromString(TestText)),
 

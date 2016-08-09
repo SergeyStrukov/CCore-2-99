@@ -185,7 +185,7 @@ class DragShape
    AlertType alert_type = AlertType_No ;
    bool alert_blink = false ;
 
-   String title;
+   DefString title;
 
    // methods
 
@@ -197,7 +197,7 @@ class DragShape
 
    Pane getClient() const { return client; }
 
-   void reset(const String &title,bool is_main,bool max_button);
+   void reset(const DefString &title,bool is_main,bool max_button);
 
    void layout(Point size);
 
@@ -635,29 +635,29 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      alert_client_ac=alert_client_.getAliveControl();
     }
 
-   void createMain(CmdDisplay cmd_display,Point max_size,const String &title)
+   void createMain(CmdDisplay cmd_display,Point max_size,const DefString &title)
     {
      guardClient();
 
      shape.reset(title,true, cmd_display!=CmdDisplay_Maximized );
 
      host->createMain(max_size);
-     host->setTitle(Range(title));
+     host->setTitle(title.str());
      host->display(cmd_display);
     }
 
-   void createMain(CmdDisplay cmd_display,Pane pane,Point max_size,const String &title)
+   void createMain(CmdDisplay cmd_display,Pane pane,Point max_size,const DefString &title)
     {
      guardClient();
 
      shape.reset(title,true, cmd_display!=CmdDisplay_Maximized );
 
      host->createMain(pane,max_size);
-     host->setTitle(Range(title));
+     host->setTitle(title.str());
      host->display(cmd_display);
     }
 
-   void create(Pane pane,Point max_size,const String &title)
+   void create(Pane pane,Point max_size,const DefString &title)
     {
      guardClient();
 
@@ -667,7 +667,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      host->show();
     }
 
-   void create(FrameWindow *parent,Pane pane,Point max_size,const String &title)
+   void create(FrameWindow *parent,Pane pane,Point max_size,const DefString &title)
     {
      guardClient();
 
@@ -766,11 +766,11 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
 
    unsigned getToken() { return host->getToken(); }
 
-   void setTitle(const String &title)
+   void setTitle(const DefString &title)
     {
      shape.title=title;
 
-     host->setTitle(Range(title));
+     host->setTitle(title.str());
 
      redrawFrame();
     }

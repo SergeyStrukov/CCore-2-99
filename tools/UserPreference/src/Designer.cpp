@@ -46,7 +46,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    struct Rec
     {
-     String name;
+     DefString name;
      VarType type;
 
      union Ref
@@ -76,49 +76,49 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
      Ref ref;
 
-     Rec(StrLen name_,Coord &var)
+     Rec(DefString  name_,Coord &var)
       : name(name_),
         type(Var_Coord),
         ref(var)
       {
       }
 
-     Rec(StrLen name_,MCoord &var)
+     Rec(DefString  name_,MCoord &var)
       : name(name_),
         type(Var_MCoord),
         ref(var)
       {
       }
 
-     Rec(StrLen name_,VColor &var)
+     Rec(DefString  name_,VColor &var)
       : name(name_),
         type(Var_VColor),
         ref(var)
       {
       }
 
-     Rec(StrLen name_,unsigned &var)
+     Rec(DefString  name_,unsigned &var)
       : name(name_),
         type(Var_unsigned),
         ref(var)
       {
       }
 
-     Rec(StrLen name_,DefString &var)
+     Rec(DefString  name_,DefString &var)
       : name(name_),
         type(Var_String),
         ref(var)
       {
       }
 
-     Rec(StrLen name_,Point &var)
+     Rec(DefString  name_,Point &var)
       : name(name_),
         type(Var_Point),
         ref(var)
       {
       }
 
-     Rec(StrLen name_,FontCouple &var)
+     Rec(DefString  name_,FontCouple &var)
       : name(name_),
         type(Var_Font),
         ref(var)
@@ -200,19 +200,19 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    // add...()
 
-   void add(StrLen name,Coord &var) { list.append_fill(name,var); }
+   void add(DefString name,Coord &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,MCoord &var) { list.append_fill(name,var); }
+   void add(DefString name,MCoord &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,VColor &var) { list.append_fill(name,var); }
+   void add(DefString name,VColor &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,unsigned &var) { list.append_fill(name,var); }
+   void add(DefString name,unsigned &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,DefString &var) { list.append_fill(name,var); }
+   void add(DefString name,DefString &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,Point &var) { list.append_fill(name,var); }
+   void add(DefString name,Point &var) { list.append_fill(name,var); }
 
-   void add(StrLen name,FontCouple &var) { list.append_fill(name,var); }
+   void add(DefString name,FontCouple &var) { list.append_fill(name,var); }
 
    // enable...()
 
@@ -278,11 +278,11 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
     {
      if( en_all )
        {
-        return Range(list.at(index).name);
+        return list.at(index).name.str();
        }
      else
        {
-        return Range(sublist.at(index).name);
+        return sublist.at(index).name.str();
        }
     }
  };
@@ -299,23 +299,23 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
 
    // UserPreferenceBag::Bind
 
-   virtual void group(StrLen) {}
+   virtual void group(DefString) {}
 
    virtual void space() {}
 
-   virtual void item(StrLen name,Coord &var) { base->add(name,var); }
+   virtual void item(DefString name,Coord &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,MCoord &var) { base->add(name,var); }
+   virtual void item(DefString name,MCoord &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,VColor &var) { base->add(name,var); }
+   virtual void item(DefString name,VColor &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,unsigned &var) { base->add(name,var); }
+   virtual void item(DefString name,unsigned &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,DefString &var) { base->add(name,var); }
+   virtual void item(DefString name,DefString &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,Point &var) { base->add(name,var); }
+   virtual void item(DefString name,Point &var) { base->add(name,var); }
 
-   virtual void item(StrLen name,FontCouple &var) { base->add(name,var); }
+   virtual void item(DefString name,FontCouple &var) { base->add(name,var); }
  };
 
 /* class DesignerWindow::PrefInfo */
@@ -645,19 +645,19 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    check_Point(wlist,cfg.check_cfg),
    check_Font(wlist,cfg.check_cfg),
 
-   label_all(wlist,cfg.label_cfg,String("All"),AlignX_Left),
-   label_Coord(wlist,cfg.label_cfg,String("size"),AlignX_Left),
-   label_MCoord(wlist,cfg.label_cfg,String("milli-size"),AlignX_Left),
-   label_VColor(wlist,cfg.label_cfg,String("color"),AlignX_Left),
-   label_unsigned(wlist,cfg.label_cfg,String("count"),AlignX_Left),
-   label_String(wlist,cfg.label_cfg,String("text"),AlignX_Left),
-   label_Point(wlist,cfg.label_cfg,String("point"),AlignX_Left),
-   label_Font(wlist,cfg.label_cfg,String("font"),AlignX_Left),
+   label_all(wlist,cfg.label_cfg,"All"_def,AlignX_Left),
+   label_Coord(wlist,cfg.label_cfg,"size"_def,AlignX_Left),
+   label_MCoord(wlist,cfg.label_cfg,"milli-size"_def,AlignX_Left),
+   label_VColor(wlist,cfg.label_cfg,"color"_def,AlignX_Left),
+   label_unsigned(wlist,cfg.label_cfg,"count"_def,AlignX_Left),
+   label_String(wlist,cfg.label_cfg,"text"_def,AlignX_Left),
+   label_Point(wlist,cfg.label_cfg,"point"_def,AlignX_Left),
+   label_Font(wlist,cfg.label_cfg,"font"_def,AlignX_Left),
 
-   btn_Set(wlist,cfg.btn_cfg,String("Set")),
-   btn_Back(wlist,cfg.btn_cfg,String("Back")),
-   btn_Save(wlist,cfg.btn_cfg,String("Save")),
-   btn_Self(wlist,cfg.btn_cfg,String("Apply to self")),
+   btn_Set(wlist,cfg.btn_cfg,"Set"_def),
+   btn_Back(wlist,cfg.btn_cfg,"Back"_def),
+   btn_Save(wlist,cfg.btn_cfg,"Save"_def),
+   btn_Self(wlist,cfg.btn_cfg,"Apply to self"_def),
 
    string_edit(wlist,cfg.edit_cfg),
    string_pad(string_edit),
@@ -861,7 +861,7 @@ void DesignerWindow::open()
      test_frame.create(getFrame(),
                        place.getPane(Rational(2,3)-Rational(1,48),Rational(1,3),Rational(1,8),Rational(3,4)),
                        place.getMaxSize(),
-                       String("Test Frame"));
+                       "Test Frame"_def);
     }
 
   wlist.open();

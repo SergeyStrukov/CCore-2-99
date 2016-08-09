@@ -134,7 +134,7 @@ class FontEditWindow : public ComboWindow
 
       const FontInfo * get(ulen index) const;
 
-      String getFamily(ulen index) const;
+      DefString getFamily(ulen index) const;
 
       ulen getIndex(StrLen file_name) const;
     };

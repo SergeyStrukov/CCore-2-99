@@ -114,7 +114,7 @@ class FixedShape
    HitFrameType hilight  = HitFrame_None ;
    HitFrameType hit_type = HitFrame_None ;
 
-   String title;
+   DefString title;
 
    // methods
 
@@ -126,7 +126,7 @@ class FixedShape
 
    Pane getClient() const { return client; }
 
-   void reset(const String &title);
+   void reset(const DefString &title);
 
    void layout(Point size);
 
@@ -454,18 +454,18 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      client_ac=client_.getAliveControl();
     }
 
-   void createMain(Pane pane,const String &title)
+   void createMain(Pane pane,const DefString &title)
     {
      guardClient();
 
      shape.reset(title);
 
      host->createMain(pane,pane.getSize());
-     host->setTitle(Range(title));
+     host->setTitle(title.str());
      host->display(CmdDisplay_Normal);
     }
 
-   void create(Pane pane,const String &title)
+   void create(Pane pane,const DefString &title)
     {
      guardClient();
 
@@ -475,7 +475,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      host->show();
     }
 
-   void create(FrameWindow *parent,Pane pane,const String &title)
+   void create(FrameWindow *parent,Pane pane,const DefString &title)
     {
      guardClient();
 
@@ -545,11 +545,11 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
    unsigned getToken() { return host->getToken(); }
 
-   void setTitle(const String &title)
+   void setTitle(const DefString &title)
     {
      shape.title=title;
 
-     host->setTitle(Range(title));
+     host->setTitle(title.str());
 
      redrawFrame();
     }

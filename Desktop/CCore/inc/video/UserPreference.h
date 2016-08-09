@@ -180,23 +180,23 @@ struct UserPreferenceBag
 
   struct Bind
    {
-    virtual void group(StrLen name)=0;
+    virtual void group(DefString name)=0;
 
     virtual void space()=0;
 
-    virtual void item(StrLen name,Coord &var)=0;
+    virtual void item(DefString name,Coord &var)=0;
 
-    virtual void item(StrLen name,MCoord &var)=0;
+    virtual void item(DefString name,MCoord &var)=0;
 
-    virtual void item(StrLen name,VColor &var)=0;
+    virtual void item(DefString name,VColor &var)=0;
 
-    virtual void item(StrLen name,unsigned &var)=0;
+    virtual void item(DefString name,unsigned &var)=0;
 
-    virtual void item(StrLen name,DefString &var)=0;
+    virtual void item(DefString name,DefString &var)=0;
 
-    virtual void item(StrLen name,Point &var)=0;
+    virtual void item(DefString name,Point &var)=0;
 
-    virtual void item(StrLen name,FontCouple &var)=0;
+    virtual void item(DefString name,FontCouple &var)=0;
    };
 
   void bind(Bind &binder);

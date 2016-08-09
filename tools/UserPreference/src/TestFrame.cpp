@@ -52,7 +52,7 @@ void TestWindow::lightOnOff(bool check)
 
 void TestWindow::knobPressed()
  {
-  text.setText(edit.getText());
+  text.setText(String(edit.getText()));
  }
 
 void TestWindow::enableAll(bool en)

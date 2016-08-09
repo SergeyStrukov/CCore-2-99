@@ -1,7 +1,7 @@
 /* test2037.AtomicRefArray.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Fundamental Mini
 //
@@ -18,6 +18,45 @@
 
 namespace App {
 
+namespace Private_2037 {
+
+/* struct Test */
+
+struct Test
+ {
+  int val;
+
+  explicit Test(int val_)
+   : val(val_)
+   {
+    Printf(Con,"Test(#;)\n",val);
+   }
+
+  // print object
+
+  void print(PrinterType &out) const
+   {
+    Printf(out,"#;",val);
+   }
+ };
+
+/* testStatic() */
+
+void testStatic()
+ {
+  using Array = AtomicRefArray<Test> ;
+
+  static Meta::AlignedStorage<Array::StaticMemLen<5> > mem;
+
+  Array a(&mem,5,{1,2,3,4,5});
+
+  Show(a);
+ }
+
+} // namespace Private_2037
+
+using namespace Private_2037;
+
 /* Testit<2037> */
 
 template<>
@@ -26,6 +65,8 @@ const char *const Testit<2037>::Name="Test2037 AtomicRefArray";
 template<>
 bool Testit<2037>::Main()
  {
+  testStatic();
+
   const int buf[]={1,2,3,4,5};
 
   AtomicRefArray<int> a;

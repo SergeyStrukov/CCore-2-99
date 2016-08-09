@@ -27,7 +27,7 @@ void MessageSubWindow::Btn::pressed_id()
   sub_win->finish.assert(btn_id);
  }
 
-MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const String &name,int btn_id_,MessageSubWindow *sub_win_)
+MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id_,MessageSubWindow *sub_win_)
  : ButtonWindow(host,cfg,name),
    btn_id(btn_id_),
    sub_win(sub_win_),
@@ -107,7 +107,7 @@ MessageSubWindow & MessageSubWindow::setInfo(const Info &info)
   return *this;
  }
 
-MessageSubWindow & MessageSubWindow::add(const String &name,int btn_id)
+MessageSubWindow & MessageSubWindow::add(const DefString &name,int btn_id)
  {
   btn_list.append_fill(OwnPtr<Btn>(new Btn(wlist,btn_cfg,name,btn_id,this)));
 

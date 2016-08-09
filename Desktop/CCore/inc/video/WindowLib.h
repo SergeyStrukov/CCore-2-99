@@ -782,9 +782,9 @@ class TextWindowOf : public SubWindow
 
    void disable() { enable(false); }
 
-   String getText() const { return shape.text; }
+   DefString getText() const { return shape.text; }
 
-   void setText(const String &text)
+   void setText(const DefString &text)
     {
      shape.text=text;
 

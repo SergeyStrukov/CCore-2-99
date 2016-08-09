@@ -25,7 +25,7 @@ namespace Video {
 
 Point TextShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(Range(text));
+  TextSize ts=cfg.font->text(text.str());
 
   IntGuard( !ts.overflow );
 
@@ -94,7 +94,7 @@ void TextShape::draw(const DrawBuf &buf) const
   Coord dx=RoundUpLen(ex);
   Coord dy=RoundUpLen(width);
 
-  font->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
+  font->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),text.str(),enable?+cfg.text:+cfg.inactive);
  }
 
 } // namespace Video

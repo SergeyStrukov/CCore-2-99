@@ -358,7 +358,7 @@ void DragShape::draw_Bar(DrawArt &art) const
 
      Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
 
-     cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
+     cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),title.str(),+cfg.title);
     }
  }
 
@@ -589,7 +589,7 @@ Coord DragShape::getMinDx(StrLen title) const
   return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+5*bdx+bdx/4);
  }
 
-void DragShape::reset(const String &title_,bool is_main_,bool max_button_)
+void DragShape::reset(const DefString &title_,bool is_main_,bool max_button_)
  {
   has_focus=false;
   max_button=max_button_;

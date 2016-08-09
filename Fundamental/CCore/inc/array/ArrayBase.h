@@ -111,6 +111,18 @@ struct ArrayBase
 
   // basic
 
+  template <ulen MaxLen> requires ( MaxLen>0 )
+  static const ulen StaticMemLen = UIntConstAdd<ulen, Delta , UIntConstMul<ulen,MaxLen,sizeof (T)> > ;
+
+  static H * Create(void *mem,ulen maxlen) requires ( ArrayAlgo_core<Algo,T> ) // mem is aligned , maxlen > 0
+   {
+    H *ret=PlaceAt(mem); // POD
+
+    ret->init(maxlen);
+
+    return ret;
+   }
+
   static H * Alloc(ulen maxlen,ulen mem_len) requires ( ArrayAlgo_core<Algo,T> )
    {
     H *ret=PlaceAt(Algo::MemAlloc(mem_len)); // POD

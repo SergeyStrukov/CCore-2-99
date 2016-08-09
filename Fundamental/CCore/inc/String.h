@@ -37,6 +37,12 @@ class String
  {
    AtomicRefArray<char> data;
 
+  private:
+
+   String(void *mem,ulen maxlen,std::initializer_list<char> il) noexcept : data(mem,maxlen,il) {}
+
+    // mem is aligned , maxlen > 0 , il.size() <= maxlen , static object !
+
   public:
 
    String() noexcept {}
@@ -79,7 +85,38 @@ class String
     : data(ObjToMove(obj->data))
     {
     }
+
+   // static string
+
+   template <char ... CC> class StaticObject;
  };
+
+/* String::StaticObject<CC> */
+
+template <char ... CC>
+class String::StaticObject
+ {
+   static const ulen Len = Max<ulen>(sizeof ... (CC),1) ;
+
+   Meta::AlignedStorage< AtomicRefArray<char>::StaticMemLen<Len> > storage;
+   String str;
+
+  private:
+
+   StaticObject()
+    : str(&storage,Len,{CC...})
+    {
+    }
+
+  public:
+
+   operator const String & () const { return str; }
+
+   static StaticObject Object;
+ };
+
+template <char ... CC>
+String::StaticObject<CC...> String::StaticObject<CC...>::Object CCORE_INITPRI_3 ;
 
 /* class PrintString */
 

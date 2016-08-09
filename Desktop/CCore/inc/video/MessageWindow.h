@@ -81,7 +81,7 @@ class MessageSubWindow : public SubWindow
 
      public:
 
-      Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const String &name,int btn_id,MessageSubWindow *sub_win);
+      Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id,MessageSubWindow *sub_win);
 
       virtual ~Btn();
     };
@@ -123,7 +123,7 @@ class MessageSubWindow : public SubWindow
 
    MessageSubWindow & setInfo(const Info &info);
 
-   MessageSubWindow & add(const String &name,int btn_id);
+   MessageSubWindow & add(const DefString &name,int btn_id);
 
    // drawing
 
@@ -216,7 +216,7 @@ class MessageWindow : public FixedWindow
 
    MessageWindow & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
 
-   MessageWindow & add(const String &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
+   MessageWindow & add(const DefString &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
 
    int getButtonId() const { return btn_id; } // available after the signal "destroyed"
 
@@ -231,11 +231,11 @@ class MessageWindow : public FixedWindow
    using FixedWindow::createMain;
    using FixedWindow::create;
 
-   void createMain(const String &title) { createMain(getPane(Range(title)),title); }
+   void createMain(const DefString &title) { createMain(getPane(title.str()),title); }
 
-   void create(const String &title) { create(getPane(Range(title)),title); }
+   void create(const DefString &title) { create(getPane(title.str()),title); }
 
-   void create(FrameWindow *parent,const String &title) { create(parent,getPane(Range(title)),title); }
+   void create(FrameWindow *parent,const DefString &title) { create(parent,getPane(title.str()),title); }
  };
 
 } // namespace Video
