@@ -1,21 +1,18 @@
 OBJ_LIST = \
 obj/Application.o \
-obj/ShapeLab.o \
-obj/WindowLib2.o \
+obj/Menu.o \
 obj/main.o \
 
 
 ASM_LIST = \
 obj/Application.s \
-obj/ShapeLab.s \
-obj/WindowLib2.s \
+obj/Menu.s \
 obj/main.s \
 
 
 DEP_LIST = \
 obj/Application.dep \
-obj/ShapeLab.dep \
-obj/WindowLib2.dep \
+obj/Menu.dep \
 obj/main.dep \
 
 
@@ -28,10 +25,7 @@ include $(RULES_FILE)
 obj/Application.o : ./src/Application.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ShapeLab.o : ./src/ShapeLab.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/WindowLib2.o : ./CCore/src/video/WindowLib2.cpp
+obj/Menu.o : ./CCore/src/video/Menu.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/main.o : ./src/main.cpp
@@ -42,10 +36,7 @@ obj/main.o : ./src/main.cpp
 obj/Application.s : ./src/Application.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ShapeLab.s : ./src/ShapeLab.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/WindowLib2.s : ./CCore/src/video/WindowLib2.cpp
+obj/Menu.s : ./CCore/src/video/Menu.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -56,11 +47,8 @@ obj/main.s : ./src/main.cpp
 obj/Application.dep : ./src/Application.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Application.o $< -MF $@
 
-obj/ShapeLab.dep : ./src/ShapeLab.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLab.o $< -MF $@
-
-obj/WindowLib2.dep : ./CCore/src/video/WindowLib2.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowLib2.o $< -MF $@
+obj/Menu.dep : ./CCore/src/video/Menu.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Menu.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

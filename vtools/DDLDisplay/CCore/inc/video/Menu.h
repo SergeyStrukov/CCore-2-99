@@ -20,8 +20,6 @@
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/RefVal.h>
 
-#include <CCore/inc/String.h>
-
 namespace CCore {
 namespace Video {
 

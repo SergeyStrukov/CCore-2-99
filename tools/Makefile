@@ -1,7 +1,7 @@
 # Makefile
 #----------------------------------------------------------------------------------------
 #
-#  Project: CCore 2.00
+#  Project: CCore 3.00
 #
 #  License: Boost Software License - Version 1.0 - August 17th, 2003 
 #
@@ -30,7 +30,6 @@ all:
 	make $(OPT) -C exectest
 	make $(OPT) -C PSecEchoServer
 	make $(OPT) -C Regen
-	make $(OPT) -C UserPreference
 
 clean:
 	make -C MakeList               clean
@@ -49,7 +48,6 @@ clean:
 	make -C exectest               clean
 	make -C PSecEchoServer         clean
 	make -C Regen                  clean
-	make -C UserPreference         clean
 
 list:
 	make -C MakeList               list
@@ -68,7 +66,6 @@ list:
 	make -C exectest               list
 	make -C PSecEchoServer         list
 	make -C Regen                  list
-	make -C UserPreference         list
 
 
 

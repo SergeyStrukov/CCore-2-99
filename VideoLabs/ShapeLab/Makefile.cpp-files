@@ -1,4 +1,3 @@
-./CCore/src/video/Menu.cpp
 ./CCore/src/video/WindowLib2.cpp
 ./src/Application.cpp
 ./src/main.cpp
