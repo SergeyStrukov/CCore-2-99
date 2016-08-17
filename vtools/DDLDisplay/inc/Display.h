@@ -13,6 +13,8 @@
 
 #include <inc/Application.h>
 
+#include <CCore/inc/video/Menu.h>
+
 namespace App {
 
 /* classes */
