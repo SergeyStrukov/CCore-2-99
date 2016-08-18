@@ -54,22 +54,27 @@ template <class Shape> class SimpleTopMenuOf;
 
 struct MenuPoint
  {
+  static const char Hot = '@' ;
+
   MenuType type;
   DefString text;
+  ulen hotindex;
+  char hotkey;
   int id;
 
   // internal
 
   Pane place;
-  char hotkey = 0 ;
+
+  void pickhot();
 
   // constructors
 
-  MenuPoint() noexcept : type(MenuHidden),text("<not defined>"),id(-1) {}
+  MenuPoint() noexcept : type(MenuHidden),text("<not defined>"),hotindex(0),hotkey(0),id(-1) {}
 
-  MenuPoint(DefString text_,int id_) noexcept : type(MenuText),text(text_),id(id_) {}
+  MenuPoint(DefString text_,int id_) noexcept : type(MenuText),text(text_),id(id_) { pickhot(); }
 
-  MenuPoint(MenuType type_,DefString text_,int id_) noexcept : type(type_),text(text_),id(id_) {}
+  MenuPoint(MenuType type_,DefString text_,int id_) noexcept : type(type_),text(text_),id(id_) { pickhot(); }
 
   MenuPoint(MenuType type_) noexcept : MenuPoint() { type=type_; }
 
@@ -112,10 +117,11 @@ class SimpleTopMenuShape
 
      RefVal<Point> space = Point(8,8) ;
 
-     RefVal<VColor> ground   = Silver ;
-     RefVal<VColor> text     =  Black ;
-     RefVal<VColor> inactive =   Gray ;
-     RefVal<VColor> hilight  =  Green ;
+     RefVal<VColor> ground   =    Silver ;
+     RefVal<VColor> text     =     Black ;
+     RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> hilight  =     Green ;
+     RefVal<VColor> select   = OrangeRed ;
 
      RefVal<Font> font;
 
@@ -137,7 +143,7 @@ class SimpleTopMenuShape
 
    SimpleTopMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
 
-   void prepare();
+   void layout();
 
    Point getMinSize() const;
 
@@ -191,7 +197,7 @@ class SimpleTopMenuOf : public SubWindow
     {
      shape.pane=Pane(Null,getSize());
 
-     shape.prepare();
+     shape.layout();
     }
 
    virtual void draw(DrawBuf buf,bool) const

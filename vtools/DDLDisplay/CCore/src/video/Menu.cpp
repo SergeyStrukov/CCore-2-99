@@ -18,6 +18,27 @@
 namespace CCore {
 namespace Video {
 
+/* struct MenuPoint */
+
+void MenuPoint::pickhot()
+ {
+  StrLen str=text.str();
+
+  if( str.len )
+    for(ulen i=0,lim=str.len-1; i<lim ;i++)
+      {
+       if( str[i]==Hot )
+         {
+          hotindex=i+1;
+          hotkey=str[hotindex];
+
+          return;
+         }
+      }
+
+  hotindex=0;
+  hotkey=0;
+ }
 
 } // namespace Video
 } // namespace CCore
