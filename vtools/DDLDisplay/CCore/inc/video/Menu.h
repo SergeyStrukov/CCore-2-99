@@ -40,6 +40,13 @@ enum MenuState
   MenuSelect
  };
 
+/* functions */
+
+inline Point TopCascadePoint(Pane pane)
+ {
+  return pane.getBase().addY(pane.dy);
+ }
+
 /* classes */
 
 struct MenuPoint;
@@ -79,6 +86,12 @@ struct MenuPoint
   MenuPoint(MenuType type_) noexcept : MenuPoint() { type=type_; }
 
   ~MenuPoint() {}
+
+  // methods
+
+  bool test(char ch) const { return hotindex && hotkey==ch ; }
+
+  bool test(Point point) const { return place.contains(point); }
  };
 
 /* struct MenuData */
@@ -96,6 +109,8 @@ struct MenuData : NoCopy
   template <class ... TT> requires ( ... && IsType<TT,MenuPoint> )
   explicit MenuData(TT ... tt) : list{tt...} {}
 
+  // methods
+
   template <class ... SS>
   MenuData & operator () (SS && ... ss)
    {
@@ -103,6 +118,16 @@ struct MenuData : NoCopy
 
     return *this;
    }
+
+  struct FindResult
+   {
+    ulen index;
+    bool found;
+   };
+
+  FindResult find(char ch) const;
+
+  FindResult find(Point point) const;
  };
 
 /* class SimpleTopMenuShape */
@@ -159,6 +184,64 @@ class SimpleTopMenuOf : public SubWindow
  {
    Shape shape;
 
+  private:
+
+   void assert()
+    {
+     const MenuPoint &point=shape.data.list.at(shape.index);
+
+     selected.assert(point.id,TopCascadePoint(point.place));
+    }
+
+   void select(ulen index)
+    {
+     if( Change(shape.state,MenuSelect) )
+       {
+        shape.index=index;
+
+        assert();
+
+        redraw();
+       }
+     else
+       {
+        if( Change(shape.index,index) )
+          {
+           assert();
+
+           redraw();
+          }
+       }
+    }
+
+   void hilight(ulen index)
+    {
+     if( shape.state==MenuNone )
+       {
+        shape.state=MenuHilight;
+        shape.index=index;
+
+        redraw();
+       }
+     else if( shape.state==MenuHilight )
+       {
+        if( Change(shape.index,index) )
+          {
+           redraw();
+          }
+       }
+    }
+
+   void hilightOff()
+    {
+     if( shape.state==MenuHilight )
+       {
+        shape.state=MenuNone;
+
+        redraw();
+       }
+    }
+
   public:
 
    using ShapeType = Shape ;
@@ -186,7 +269,16 @@ class SimpleTopMenuOf : public SubWindow
 
    bool forward(char ch)
     {
-     Used(ch);
+     auto result=shape.data.find(ch);
+
+     if( result.found )
+       {
+        setFocus();
+
+        select(result.index);
+
+        return true;
+       }
 
      return false;
     }
@@ -196,6 +288,8 @@ class SimpleTopMenuOf : public SubWindow
    virtual void layout()
     {
      shape.pane=Pane(Null,getSize());
+
+     shape.state=MenuNone;
 
      shape.layout();
     }
@@ -221,14 +315,28 @@ class SimpleTopMenuOf : public SubWindow
 
    void react_Key(VKey vkey,KeyMod kmod)
     {
+     Used(vkey);
+     Used(kmod);
     }
 
    void react_Char(char ch)
     {
+     auto result=shape.data.find(ch);
+
+     if( result.found )
+       {
+        select(result.index);
+       }
     }
 
-   void react_LeftClick(Point point,MouseKey)
+   void react_LeftClick(Point point,MouseKey mkey)
     {
+     auto result=shape.data.find(point);
+
+     if( result.found )
+       {
+        select(result.index);
+       }
     }
 
    void react_LeftDClick(Point point,MouseKey mkey)
@@ -236,13 +344,30 @@ class SimpleTopMenuOf : public SubWindow
      react_LeftClick(point,mkey);
     }
 
-   void react_Move(Point point,MouseKey)
+   void react_Move(Point point,MouseKey mkey)
     {
-     Used(point);
+     auto result=shape.data.find(point);
+
+     if( result.found )
+       {
+        hilight(result.index);
+       }
+     else
+       {
+        hilightOff();
+       }
     }
 
    void react_Leave()
     {
+     hilightOff();
+    }
+
+   void react_Wheel(Point point,MouseKey mkey,Coord delta)
+    {
+     Used(point);
+     Used(mkey);
+     Used(delta);
     }
 
    // signals

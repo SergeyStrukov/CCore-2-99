@@ -40,6 +40,40 @@ void MenuPoint::pickhot()
   hotkey=0;
  }
 
+/* struct MenuData */
+
+auto MenuData::find(char ch) const -> FindResult
+ {
+  auto r=Range(list);
+
+  for(ulen i=0; i<r.len ;i++) if( r[i].test(ch) ) return {i,true};
+
+  return {0,false};
+ }
+
+auto MenuData::find(Point point) const -> FindResult
+ {
+  auto r=Range(list);
+
+  for(ulen i=0; i<r.len ;i++) if( r[i].test(point) ) return {i,true};
+
+  return {0,false};
+ }
+
+/* class SimpleTopMenuShape */
+
+void SimpleTopMenuShape::layout()
+ {
+ }
+
+Point SimpleTopMenuShape::getMinSize() const
+ {
+ }
+
+void SimpleTopMenuShape::draw(const DrawBuf &buf) const
+ {
+ }
+
 } // namespace Video
 } // namespace CCore
 
