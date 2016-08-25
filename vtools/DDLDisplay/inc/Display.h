@@ -19,11 +19,13 @@ namespace App {
 
 /* classes */
 
-class Display;
+class DisplayWindow;
 
-/* class Display */
+class ClientWindow;
 
-class Display : public SubWindow
+/* class DisplayWindow */
+
+class DisplayWindow : public SubWindow
  {
   public:
 
@@ -45,9 +47,69 @@ class Display : public SubWindow
 
   public:
 
-   Display(SubWindowHost &host,const Config &cfg);
+   DisplayWindow(SubWindowHost &host,const Config &cfg);
 
-   virtual ~Display();
+   virtual ~DisplayWindow();
+ };
+
+/* class ClientWindow */
+
+class ClientWindow : public ComboWindow
+ {
+  public:
+
+   struct Config
+    {
+     CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
+     CtorRefVal<DisplayWindow::ConfigType> display_cfg;
+
+     Config() noexcept {}
+
+     explicit Config(const UserPreference &pref)
+      : //menu_cfg(SmartBind,pref),
+        display_cfg(pref)
+      {
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   MenuData menu_data;
+
+   SimpleTopMenuWindow menu;
+   DisplayWindow display;
+
+  private:
+
+   void menu_selected(int id,Point point);
+
+   SignalConnector<ClientWindow,int,Point> connector_menu_selected;
+
+  public:
+
+   ClientWindow(SubWindowHost &host,const Config &cfg);
+
+   virtual ~ClientWindow();
+
+   // base
+
+   virtual void open();
+
+   // drawing
+
+   virtual void layout();
+
+   // user input
+
+   virtual void react(UserAction action);
+
+   void react_Key(VKey vkey,KeyMod kmod);
+
+   void react_other(UserAction action);
  };
 
 } // namespace App

@@ -55,7 +55,7 @@ struct MenuData;
 
 class SimpleTopMenuShape;
 
-template <class Shape> class SimpleTopMenuOf;
+template <class Shape> class SimpleTopMenuWindowOf;
 
 /* struct MenuPoint */
 
@@ -89,9 +89,9 @@ struct MenuPoint
 
   // methods
 
-  bool test(char ch) const { return hotindex && hotkey==ch ; }
+  bool test(char ch) const { return type==MenuText && hotindex && hotkey==ch ; }
 
-  bool test(Point point) const { return place.contains(point); }
+  bool test(Point point) const { return type==MenuText && place.contains(point); }
  };
 
 /* struct MenuData */
@@ -145,7 +145,7 @@ class SimpleTopMenuShape
      RefVal<VColor> ground   =    Silver ;
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> hilight  =     Green ;
+     RefVal<VColor> hilight  =      Blue ;
      RefVal<VColor> select   = OrangeRed ;
 
      RefVal<Font> font;
@@ -164,6 +164,12 @@ class SimpleTopMenuShape
    MenuState state = MenuNone ;
    ulen index = 0 ;
 
+   // internal methods
+
+   static Coord GetDX(const MenuPoint &point,Font font,Coord space,Coord dy);
+
+   static void Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,bool showhot=false);
+
    // methods
 
    SimpleTopMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
@@ -177,10 +183,10 @@ class SimpleTopMenuShape
    void draw(const DrawBuf &buf) const;
  };
 
-/* class SimpleTopMenuOf<Shape> */
+/* class SimpleTopMenuWindowOf<Shape> */
 
 template <class Shape>
-class SimpleTopMenuOf : public SubWindow
+class SimpleTopMenuWindowOf : public SubWindow
  {
    Shape shape;
 
@@ -248,13 +254,13 @@ class SimpleTopMenuOf : public SubWindow
    using ConfigType = typename Shape::Config ;
 
    template <class ... TT>
-   SimpleTopMenuOf(SubWindowHost &host,TT && ... tt)
+   SimpleTopMenuWindowOf(SubWindowHost &host,TT && ... tt)
     : SubWindow(host),
       shape( std::forward<TT>(tt)... )
     {
     }
 
-   virtual ~SimpleTopMenuOf() {}
+   virtual ~SimpleTopMenuWindowOf() {}
 
    // methods
 
@@ -288,8 +294,6 @@ class SimpleTopMenuOf : public SubWindow
    virtual void layout()
     {
      shape.pane=Pane(Null,getSize());
-
-     shape.state=MenuNone;
 
      shape.layout();
     }
@@ -329,7 +333,7 @@ class SimpleTopMenuOf : public SubWindow
        }
     }
 
-   void react_LeftClick(Point point,MouseKey mkey)
+   void react_LeftClick(Point point,MouseKey)
     {
      auto result=shape.data.find(point);
 
@@ -344,7 +348,7 @@ class SimpleTopMenuOf : public SubWindow
      react_LeftClick(point,mkey);
     }
 
-   void react_Move(Point point,MouseKey mkey)
+   void react_Move(Point point,MouseKey)
     {
      auto result=shape.data.find(point);
 
@@ -375,9 +379,9 @@ class SimpleTopMenuOf : public SubWindow
    Signal<int,Point> selected; // id , cascade menu point
  };
 
-/* type SimpleTopMenu */
+/* type SimpleTopMenuWindow */
 
-using SimpleTopMenu = SimpleTopMenuOf<SimpleTopMenuShape> ;
+using SimpleTopMenuWindow = SimpleTopMenuWindowOf<SimpleTopMenuShape> ;
 
 } // namespace Video
 } // namespace CCore

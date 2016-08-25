@@ -65,9 +65,12 @@ struct Param
   const DragWindow::ConfigType &drag_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
 
+  ClientWindow::ConfigType client_cfg;
+
   Param()
    : drag_cfg(pref.getDragWindowConfig()),
-     exception_cfg(pref.getExceptionWindowConfig())
+     exception_cfg(pref.getExceptionWindowConfig()),
+     client_cfg(pref)
    {
    }
  };
@@ -81,7 +84,8 @@ class Application : public ApplicationBase
    DragWindow main_win;
 
    ExceptionClient exception_client;
-   SubWindow client;
+
+   ClientWindow client;
 
   private:
 
@@ -122,7 +126,7 @@ class Application : public ApplicationBase
 
   private:
 
-   void prefUpdate()
+   void pref_update()
     {
      main_win.redrawAll(true);
     }
@@ -136,8 +140,8 @@ class Application : public ApplicationBase
       cmd_display(cmd_display_),
       main_win(param.desktop,param.drag_cfg),
       exception_client(main_win,param.exception_cfg,report),
-      client(main_win),
-      connector_pref_update(this,&Application::prefUpdate,param.pref.update)
+      client(main_win,param.client_cfg),
+      connector_pref_update(this,&Application::pref_update,param.pref.update)
     {
      main_win.bindAlertClient(exception_client);
      main_win.bindClient(client);
