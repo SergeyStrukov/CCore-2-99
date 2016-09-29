@@ -171,7 +171,7 @@ concept bool OpCmpType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b)
 
 /* concept NullableType<T> */
 
-template <NothrowDefaultCtorType T>
+template <NothrowDefaultCtorType T> // ref extended
 concept bool NullableType = requires(Meta::ToConst<T> &cobj)
  {
   { +cobj } -> bool ;
