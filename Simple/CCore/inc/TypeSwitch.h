@@ -130,6 +130,10 @@ concept bool CaseListType = IsCaseListType<CaseList> ;
 
 template <CaseListType CaseList> struct TypeSwitch;
 
+template <SUIntType SUInt,SUInt Val> struct RetCaseVal;
+
+template <class T> struct PickCaseVal;
+
 template <CaseListType CaseList,class T> struct CaseValCtor;
 
 template <CaseListType CaseList> struct CaseListMaxSizeofCtor;
@@ -421,11 +425,36 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
    }
  };
 
+/* struct RetCaseVal<SUInt,SUInt Val> */
+
+template <SUIntType SUInt,SUInt Val>
+struct RetCaseVal
+ {
+  static const SUInt Ret = Val ;
+
+  template <class T>
+  constexpr RetCaseVal<SUInt,Val> operator + (T) { return *this; }
+ };
+
+/* struct PickCaseVal<T> */
+
+template <class T>
+struct PickCaseVal
+ {
+  template <SUIntType SUInt,SUInt Val,class S>
+  constexpr PickCaseVal<T> operator + (Case<SUInt,Val,S>) { return *this; }
+
+  template <SUIntType SUInt,SUInt Val>
+  constexpr RetCaseVal<SUInt,Val> operator + (Case<SUInt,Val,T>) { return RetCaseVal<SUInt,Val>(); }
+ };
+
 /* struct CaseValCtor<CaseList,T> */
 
-template <class T,class S,SUIntType SUInt,SUInt Val,CaseType ... CC>
-struct CaseValCtor< CaseList< Case<SUInt,Val,S> ,CC...> ,T>
- : Select< IsSame<T,S> , DefConst<SUInt,Val> , CaseValCtor< CaseList<CC...> ,T> > {};
+template <class T,CaseType ... CC>
+struct CaseValCtor<CaseList<CC...>,T>
+ {
+  static const auto Ret = ( PickCaseVal<T>() + ... + CC() ).Ret ;
+ };
 
 /* const CaseVal<CaseList,T> */
 
