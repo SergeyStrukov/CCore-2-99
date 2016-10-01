@@ -97,7 +97,7 @@ struct SplitTypeListBox<Index,TypeListBox<TT...> > : SplitTypeList<Index,TT...> 
 
 /* struct SplitTypeList<unsigned Index,TT> */
 
-template <unsigned Index,class ... TT> requires ( Index >= 2 && Index <= sizeof ... (TT) )
+template <unsigned Index,class ... TT> requires ( Index >= 10 && Index <= sizeof ... (TT) )
 struct SplitTypeList<Index,TT...>
  {
   using SplitA = SplitTypeList<( Index/2 ),TT...> ;
@@ -117,10 +117,74 @@ struct SplitTypeList<0,TT...>
   using Last = TypeListBox<TT...> ;
  };
 
-template <class T,class ... TT>
-struct SplitTypeList<1,T,TT...>
+template <class T1,class ... TT>
+struct SplitTypeList<1,T1,TT...>
  {
-  using First = TypeListBox<T> ;
+  using First = TypeListBox<T1> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class ... TT>
+struct SplitTypeList<2,T1,T2,TT...>
+ {
+  using First = TypeListBox<T1,T2> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class ... TT>
+struct SplitTypeList<3,T1,T2,T3,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class T4,class ... TT>
+struct SplitTypeList<4,T1,T2,T3,T4,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3,T4> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class T4,class T5,class ... TT>
+struct SplitTypeList<5,T1,T2,T3,T4,T5,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3,T4,T5> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class ... TT>
+struct SplitTypeList<6,T1,T2,T3,T4,T5,T6,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3,T4,T5,T6> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class ... TT>
+struct SplitTypeList<7,T1,T2,T3,T4,T5,T6,T7,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3,T4,T5,T6,T7> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class ... TT>
+struct SplitTypeList<8,T1,T2,T3,T4,T5,T6,T7,T8,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3,T4,T5,T6,T7,T8> ;
+
+  using Last = TypeListBox<TT...> ;
+ };
+
+template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class ... TT>
+struct SplitTypeList<9,T1,T2,T3,T4,T5,T6,T7,T8,T9,TT...>
+ {
+  using First = TypeListBox<T1,T2,T3,T4,T5,T6,T7,T8,T9> ;
 
   using Last = TypeListBox<TT...> ;
  };
