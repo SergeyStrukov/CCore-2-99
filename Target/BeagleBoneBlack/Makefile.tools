@@ -29,17 +29,17 @@ CAT = /usr/bin/cat
 
 TOUCH = /usr/bin/touch
 
-CC_ = /opt/BBB-6.1.0/bin/arm-g++.exe
+CC_ = /opt/BBB-6.2.0/bin/arm-g++.exe
 
 CC = @$(ECHO) CC $< ; $(CC_)
 
 LD = @$(ECHO) LD $@ ; $(CC_)
 
-AS_ = /opt/BBB-6.1.0/bin/arm-as.exe
+AS_ = /opt/BBB-6.2.0/bin/arm-as.exe
 
 AS = @$(ECHO) AS $< ; $(AS_)
 
-AR_ = /opt/BBB-6.1.0/bin/arm-ar.exe
+AR_ = /opt/BBB-6.2.0/bin/arm-ar.exe
 
 AR = @$(ECHO) AR $@ ; $(AR_)
 
