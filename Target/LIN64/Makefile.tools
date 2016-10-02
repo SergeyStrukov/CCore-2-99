@@ -37,7 +37,7 @@ CAT = cat
 
 TOUCH = touch
 
-CC_ = /opt/gcc-6.1.0/bin/g++-6.1.0 -static
+CC_ = /opt/gcc-6.2.0/bin/g++-6.2.0 -static
 
 CC = @$(ECHO) CC $< ; $(CC_)
 
