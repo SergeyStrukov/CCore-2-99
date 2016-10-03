@@ -2139,6 +2139,11 @@ CmdDisplay StartDisplay()
   return CmdDisplay_Normal;
  }
 
+char ToLowerCase(char ch)
+ {
+  return (unsigned char)(unsigned)Win32::CharLowerA((char *)(unsigned)(unsigned char)ch);
+ }
+
 /* global DefaultDesktop */
 
 static WindowsDesktop DesktopObject CCORE_INITPRI_3 ;

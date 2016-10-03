@@ -233,6 +233,10 @@ int WIN32_API MultiByteToWideChar(codepage_t codepage,
                                   unicode_t *out,
                                   int out_len);
 
+/* CharLowerA() */
+
+char * WIN32_API CharLowerA(char *str);
+
 /*--------------------------------------------------------------------------------------*/
 /* Time functions                                                                       */
 /*--------------------------------------------------------------------------------------*/
@@ -431,7 +435,7 @@ struct ProcessInfo
 /* Process functions                                                                    */
 /*--------------------------------------------------------------------------------------*/
 
-/* GetStartupInfo() */
+/* GetStartupInfoA() */
 
 void WIN32_API GetStartupInfoA(StartupInfo *info);
 

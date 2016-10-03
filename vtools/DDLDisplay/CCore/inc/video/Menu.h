@@ -89,7 +89,7 @@ struct MenuPoint
 
   // methods
 
-  bool test(char ch) const { return type==MenuText && hotindex && hotkey==ch ; }
+  bool test(char ch) const { return type==MenuText && hotindex && ToLowerCase(hotkey)==ToLowerCase(ch) ; }
 
   bool test(Point point) const { return type==MenuText && place.contains(point); }
  };
