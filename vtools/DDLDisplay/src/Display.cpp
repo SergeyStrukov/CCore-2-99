@@ -33,6 +33,8 @@ DisplayWindow::~DisplayWindow()
 
 void ClientWindow::menu_selected(int id,Point point)
  {
+  Printf(Con,"id = #;\n",id);
+
   Used(id);
   Used(point);
 
@@ -52,6 +54,7 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   menu_data("@File",1)
            ("@Options",2)
+           (MenuSeparator)
            ("E@xit",3);
  }
 
@@ -85,7 +88,7 @@ void ClientWindow::react(UserAction action)
 
 void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
  {
-  if( vkey==VKey_Alt )
+  if( vkey==VKey_F10 )
     {
      menu.setFocus();
     }
@@ -103,6 +106,8 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
 
 void ClientWindow::react_other(UserAction action)
  {
+  Printf(Con,"#;\n",action);
+
   wlist.react(action);
  }
 

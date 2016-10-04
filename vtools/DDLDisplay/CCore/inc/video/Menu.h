@@ -128,6 +128,10 @@ struct MenuData : NoCopy
   FindResult find(char ch) const;
 
   FindResult find(Point point) const;
+
+  FindResult findDown(ulen index) const;
+
+  FindResult findUp(ulen index) const;
  };
 
 /* class SimpleTopMenuShape */
@@ -161,6 +165,7 @@ class SimpleTopMenuShape
 
    // state
 
+   bool focus = false ;
    MenuState state = MenuNone ;
    ulen index = 0 ;
 
@@ -168,7 +173,21 @@ class SimpleTopMenuShape
 
    static Coord GetDX(const MenuPoint &point,Font font,Coord space,Coord dy);
 
-   static void Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,bool showhot=false);
+   struct CharFunc : Funchor
+    {
+     VColor vc;
+     ulen index;
+     Point base;
+     Point delta;
+
+     CharFunc(VColor vc_,ulen index_) : vc(vc_),index(index_) {}
+
+     VColor place(ulen index,char ch,Point base,Point delta);
+
+     CharFunction function_place() { return FunctionOf(this,&CharFunc::place); }
+    };
+
+   static void Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,const Config &cfg,bool showhot=false);
 
    // methods
 
@@ -307,7 +326,20 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    virtual void open()
     {
+     shape.focus=false;
      shape.state=MenuNone;
+    }
+
+   // keyboard
+
+   virtual void gainFocus()
+    {
+     if( Change(shape.focus,true) ) redraw();
+    }
+
+   virtual void looseFocus()
+    {
+     if( Change(shape.focus,false) ) redraw();
     }
 
    // user input
@@ -319,8 +351,38 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_Key(VKey vkey,KeyMod kmod)
     {
-     Used(vkey);
      Used(kmod);
+
+     switch( vkey )
+       {
+        case VKey_Left :
+         {
+          if( shape.state==MenuSelect)
+            {
+             auto result=shape.data.findDown(shape.index);
+
+             if( result.found )
+               {
+                select(result.index);
+               }
+            }
+         }
+        break;
+
+        case VKey_Right :
+         {
+          if( shape.state==MenuSelect )
+            {
+             auto result=shape.data.findUp(shape.index);
+
+             if( result.found )
+               {
+                select(result.index);
+               }
+            }
+         }
+        break;
+       }
     }
 
    void react_Char(char ch)

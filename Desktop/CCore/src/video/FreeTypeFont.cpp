@@ -273,6 +273,59 @@ class FreeTypeFont::Base : public FontBase
      return ret;
     }
 
+   bool text(FrameBuf<DesktopColor> &buf,Point &base,char ch,ulen ch_index,PointMap map,CharFunction func) const
+    {
+     auto index=face.getGlyphIndex(Object->map(ch));
+
+     face.loadGlyph(index,ToFlags(cfg.fht));
+
+     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+
+     face.renderGlyph(ToMode(cfg.fsm));
+
+     auto placement=face.getGlyphPlacement();
+
+     Point delta=placement.getDelta();
+     VColor vc=func(ch_index,ch,map(base),delta);
+
+     bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
+
+     base+=delta;
+
+     return ret;
+    }
+
+   bool text(FrameBuf<DesktopColor> &buf,Point &base,IndexType &prev_index,char ch,ulen ch_index,PointMap map,CharFunction func) const
+    {
+     auto index=face.getGlyphIndex(Object->map(ch));
+
+     if( prev_index && index )
+       {
+        FT_Vector delta=face.getKerning(prev_index,index);
+
+        base+={FreeType::Round(delta.x),FreeType::Round(delta.y)};
+       }
+
+     prev_index=index;
+
+     face.loadGlyph(index,ToFlags(cfg.fht));
+
+     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+
+     face.renderGlyph(ToMode(cfg.fsm));
+
+     auto placement=face.getGlyphPlacement();
+
+     Point delta=placement.getDelta();
+     VColor vc=func(ch_index,ch,map(base),delta);
+
+     bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
+
+     base+=delta;
+
+     return ret;
+    }
+
   private:
 
    void textRun(AbstractSparseString &str,FuncArgType<CharX> func) const
@@ -451,18 +504,23 @@ class FreeTypeFont::Base : public FontBase
      return ret;
     }
 
-   Coord skip(AbstractSparseString &str,MCoord x) const
+   Coord skip(AbstractSparseString &str,MCoord x,ulen &index) const
     {
-     if( x>=0 ) return Coord(x);
+     if( x>=0 )
+       {
+        index=0;
+
+        return Coord(x);
+       }
 
      ulen len=skipCount(str,x);
 
-     str.cutSuffix(len);
+     str.cutSuffix_index(len,index);
 
      return Coord(x);
     }
 
-   Point prepare(Coord dx,Coord dy,TextPlace place,AbstractSparseString &str) const
+   Point prepare(Coord dx,Coord dy,TextPlace place,AbstractSparseString &str,ulen &index) const
     {
      Coord y;
 
@@ -481,13 +539,13 @@ class FreeTypeFont::Base : public FontBase
 
      switch( place.align_x )
        {
-        case AlignX_Left : x=font_size.dx0; break;
+        case AlignX_Left : index=0; x=font_size.dx0; break;
 
         case AlignX_Right :
          {
           MCoord tdx=text_dx(str);
 
-          x=skip(str,dx-font_size.dx1-tdx);
+          x=skip(str,dx-font_size.dx1-tdx,index);
          }
         break;
 
@@ -495,11 +553,11 @@ class FreeTypeFont::Base : public FontBase
          {
           MCoord tdx=text_dx(str);
 
-          x=skip(str,(dx-tdx)/2);
+          x=skip(str,(dx-tdx)/2,index);
          }
         break;
 
-        default: x=place.x;
+        default: index=0; x=place.x;
        }
 
      return {x,y};
@@ -521,13 +579,40 @@ class FreeTypeFont::Base : public FontBase
        }
     }
 
+   void text(FrameBuf<DesktopColor> &buf,Point base,AbstractSparseString &str,ulen ch_index,PointMap map,CharFunction func) const
+    {
+     if( base.y<font_size.by-font_size.dy || base.y>buf.dY()+font_size.by ) return;
+
+     if( cfg.use_kerning )
+       {
+        IndexType index=0;
+
+        str.applyChar( [&] (char ch) { return text(buf,base,index,ch,ch_index++,map,func); } );
+       }
+     else
+       {
+        str.applyChar( [&] (char ch) { return text(buf,base,ch,ch_index++,map,func); } );
+       }
+    }
+
    void text(DrawBuf buf,Coord dx,Coord dy,TextPlace place,AbstractSparseString &str,VColor vc) const
     {
      if( !buf ) return;
 
-     Point base=prepare(dx,dy,place,str);
+     ulen index;
+     Point base=prepare(dx,dy,place,str,index);
 
      text(buf,buf.map(base),str,vc);
+    }
+
+   void text(DrawBuf buf,Coord dx,Coord dy,TextPlace place,AbstractSparseString &str,CharFunction func) const
+    {
+     if( !buf ) return;
+
+     ulen index;
+     Point base=prepare(dx,dy,place,str,index);
+
+     text(buf,buf.map(base),str,index,-buf.getMapper(),func);
     }
 
   private:
@@ -679,6 +764,11 @@ class FreeTypeFont::Base : public FontBase
    virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const
     {
      text(buf.cutRebase(pane),pane.dx,pane.dy,place,str,vc);
+    }
+
+   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,CharFunction func) const
+    {
+     text(buf.cutRebase(pane),pane.dx,pane.dy,place,str,func);
     }
 
    // set params

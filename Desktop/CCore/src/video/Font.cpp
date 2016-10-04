@@ -112,7 +112,7 @@ class DefFont : public FontBase
 
       // text
 
-      static Point Prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str)
+      static Point Prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str,ulen &index)
        {
         Coord y;
 
@@ -131,7 +131,7 @@ class DefFont : public FontBase
 
         switch( place.align_x )
           {
-           case AlignX_Left : x=0; break;
+           case AlignX_Left : index=0; x=0; break;
 
            case AlignX_Right :
             {
@@ -141,11 +141,13 @@ class DefFont : public FontBase
 
              if( len<=cap )
                {
+                index=0;
+
                 x=Coord( px-len.value*DefaultFont::DX );
                }
              else
                {
-                str.cutSuffix(cap);
+                str.cutSuffix_index(cap,index);
 
                 x=Coord( px-cap*DefaultFont::DX );
                }
@@ -160,18 +162,20 @@ class DefFont : public FontBase
 
              if( len<=cap )
                {
+                index=0;
+
                 x=Coord( px-len.value*DefaultFont::DX )/2;
                }
              else
                {
-                ulen new_len=cap+str.cutCenter(cap);
+                ulen new_len=cap+str.cutCenter_index(cap,index);
 
                 x=Coord( px-new_len*DefaultFont::DX )/2;
                }
             }
            break;
 
-           default: x=place.x;
+           default: index=0; x=place.x;
           }
 
         return Point(x,y);
@@ -197,13 +201,48 @@ class DefFont : public FontBase
                            } );
        }
 
+      void text(Point point,AbstractSparseString &str,ulen index,CharFunction func)
+       {
+        Coord x=mapX(point.x);
+        Coord y=mapY(point.y);
+
+        if( y>=dy || y<=-DefaultFont::DY ) return;
+
+        PointMap map=-getMapper();
+
+        str.applyChar( [&] (char ch)
+                           {
+                            if( x>=dx ) return false;
+
+                            VColor vc=func(index++,ch,map(Point(x,y+DefaultFont::BY)),Point(DefaultFont::DX,0));
+
+                            text(x,y,ch,vc);
+
+                            x+=DefaultFont::DX;
+
+                            return true;
+
+                           } );
+       }
+
       void text(Coord px,Coord py,TextPlace place,AbstractSparseString &str,DesktopColor color)
        {
         if( !*this ) return;
 
-        Point point=Prepare(px,py,place,str);
+        ulen index;
+        Point point=Prepare(px,py,place,str,index);
 
         text(point,str,color);
+       }
+
+      void text(Coord px,Coord py,TextPlace place,AbstractSparseString &str,CharFunction func)
+       {
+        if( !*this ) return;
+
+        ulen index;
+        Point point=Prepare(px,py,place,str,index);
+
+        text(point,str,index,func);
        }
     };
 
@@ -293,6 +332,13 @@ class DefFont : public FontBase
      WorkBuf out(buf.cutRebase(pane));
 
      out.text(pane.dx,pane.dy,place,str,vc);
+    }
+
+   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,CharFunction func) const
+    {
+     WorkBuf out(buf.cutRebase(pane));
+
+     out.text(pane.dx,pane.dy,place,str,func);
     }
  };
 

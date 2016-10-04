@@ -62,6 +62,26 @@ auto MenuData::find(Point point) const -> FindResult
   return {0,false};
  }
 
+auto MenuData::findDown(ulen index) const -> FindResult
+ {
+  auto r=Range(list);
+
+  Replace_min(index,r.len);
+
+  while( index-- ) if( r[index].type==MenuText ) return {index,true};
+
+  return {0,false};
+ }
+
+auto MenuData::findUp(ulen index) const -> FindResult
+ {
+  auto r=Range(list);
+
+  for(index++; index<r.len ;index++) if( r[index].type==MenuText ) return {index,true};
+
+  return {0,false};
+ }
+
 /* class SimpleTopMenuShape */
 
 Coord SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coord space,Coord dy)
@@ -111,7 +131,18 @@ Coord SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coord space,Coo
     }
  }
 
-void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,bool showhot)
+VColor SimpleTopMenuShape::CharFunc::place(ulen index_,char,Point base_,Point delta_)
+ {
+  if( index==index_ )
+    {
+     base=base_;
+     delta=delta_;
+    }
+
+  return vc;
+ }
+
+void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,const Config &cfg,bool showhot)
  {
   StrLen str=point.text.str();
 
@@ -120,10 +151,23 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font fon
      StrLen str1=str.prefix(s-1);
      StrLen str2=str.part(s);
 
-     font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,vc);
-
      if( showhot )
        {
+        CharFunc func(vc,str1.len);
+
+        font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
+
+        Point base=point.place.getBase()+func.base;
+
+        base=base.addY(1);
+
+        SmoothDrawArt art(buf);
+
+        art.path(HalfNeg,+cfg.width,+cfg.select,base,base+func.delta);
+       }
+     else
+       {
+        font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,vc);
        }
     }
   else
@@ -188,24 +232,24 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
          {
           if( state==MenuHilight && index==i )
             {
-             Draw(buf,point,font,+cfg.hilight);
+             Draw(buf,point,font,+cfg.hilight,cfg,focus);
             }
           else if( state==MenuSelect && index==i )
             {
              FigureBox(point.place).loop(art,HalfPos,+cfg.width,+cfg.select);
 
-             Draw(buf,point,font,+cfg.hilight);
+             Draw(buf,point,font,+cfg.hilight,cfg,focus);
             }
           else
             {
-             Draw(buf,point,font,+cfg.text);
+             Draw(buf,point,font,+cfg.text,cfg,focus);
             }
          }
         break;
 
         case MenuDisabled :
          {
-          Draw(buf,point,font,+cfg.inactive);
+          Draw(buf,point,font,+cfg.inactive,cfg);
          }
         break;
 

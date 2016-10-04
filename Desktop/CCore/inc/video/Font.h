@@ -42,6 +42,10 @@ enum AlignY
   AlignY_Given
  };
 
+/* types */
+
+using CharFunction = Function<VColor (ulen index,char ch,Point base,Point delta)> ;
+
 /* classes */
 
 struct FontSize;
@@ -203,6 +207,20 @@ struct AbstractSparseString
    }
 
   ULenSat countLen();
+
+  void cutSuffix_index(ulen len,ulen &index)
+   {
+    index=countLen().value-len;
+
+    cutSuffix(len);
+   }
+
+  bool cutCenter_index(ulen len,ulen &index)
+   {
+    index=(countLen().value-len)/2;
+
+    return cutCenter(len);
+   }
  };
 
 /* class SingleString */
@@ -272,6 +290,8 @@ struct AbstractFont
 
   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const =0;
 
+  virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,CharFunction func) const =0;
+
   // helpers
 
   // single
@@ -311,6 +331,13 @@ struct AbstractFont
     text(buf,pane,place,obj,vc);
    }
 
+  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,CharFunction func) const
+   {
+    SingleString obj(str);
+
+    text(buf,pane,place,obj,func);
+   }
+
   // double
 
   TextSize text(StrLen str1,StrLen str2) const
@@ -346,6 +373,13 @@ struct AbstractFont
     DoubleString obj(str1,str2);
 
     text(buf,pane,place,obj,vc);
+   }
+
+  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str1,StrLen str2,CharFunction func) const
+   {
+    DoubleString obj(str1,str2);
+
+    text(buf,pane,place,obj,func);
    }
  };
 
