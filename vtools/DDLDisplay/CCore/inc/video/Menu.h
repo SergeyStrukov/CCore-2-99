@@ -146,11 +146,14 @@ class SimpleTopMenuShape
 
      RefVal<Point> space = Point(8,8) ;
 
+     RefVal<bool> use_hotcolor = true ;
+
      RefVal<VColor> ground   =    Silver ;
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
      RefVal<VColor> hilight  =      Blue ;
      RefVal<VColor> select   = OrangeRed ;
+     RefVal<VColor> hot      =       Red ;
 
      RefVal<Font> font;
 
@@ -173,18 +176,31 @@ class SimpleTopMenuShape
 
    static Coord GetDX(const MenuPoint &point,Font font,Coord space,Coord dy);
 
-   struct CharFunc : Funchor
+   struct PlaceFunc : Funchor
     {
      VColor vc;
      ulen index;
      Point base;
      Point delta;
 
-     CharFunc(VColor vc_,ulen index_) : vc(vc_),index(index_) {}
+     PlaceFunc(VColor vc_,ulen index_) : vc(vc_),index(index_) {}
 
      VColor place(ulen index,char ch,Point base,Point delta);
 
-     CharFunction function_place() { return FunctionOf(this,&CharFunc::place); }
+     CharFunction function_place() { return FunctionOf(this,&PlaceFunc::place); }
+    };
+
+   struct HotFunc : Funchor
+    {
+     VColor vc;
+     ulen index;
+     VColor hotc;
+
+     HotFunc(VColor vc_,ulen index_,VColor hotc_) : vc(vc_),index(index_),hotc(hotc_) {}
+
+     VColor hot(ulen index,char ch,Point base,Point delta);
+
+     CharFunction function_hot() { return FunctionOf(this,&HotFunc::hot); }
     };
 
    static void Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,const Config &cfg,bool showhot=false);
@@ -286,6 +302,8 @@ class SimpleTopMenuWindowOf : public SubWindow
    Point getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+
+   MenuState getState() const { return shape.state; }
 
    void unselect()
     {

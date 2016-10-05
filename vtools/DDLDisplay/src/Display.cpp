@@ -92,11 +92,11 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
     {
      menu.setFocus();
     }
-  else if( vkey==VKey_Esc && wlist.getFocus()==&menu )
+  else if( vkey==VKey_Esc )
     {
-     menu.unselect();
+     if( menu.getState()==MenuSelect ) menu.unselect();
 
-     display.setFocus();
+     if( wlist.getFocus()==&menu ) display.setFocus();
     }
   else
     {
@@ -106,7 +106,7 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
 
 void ClientWindow::react_other(UserAction action)
  {
-  Printf(Con,"#;\n",action);
+  //Printf(Con,"#;\n",action);
 
   wlist.react(action);
  }

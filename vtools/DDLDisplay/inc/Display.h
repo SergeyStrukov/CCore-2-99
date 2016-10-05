@@ -69,6 +69,7 @@ class ClientWindow : public ComboWindow
       : //menu_cfg(SmartBind,pref),
         display_cfg(pref)
       {
+       menu_cfg.takeVal().font=pref.getLabelConfig().font;
       }
     };
 

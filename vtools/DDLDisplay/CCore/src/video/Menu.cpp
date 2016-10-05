@@ -131,13 +131,20 @@ Coord SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coord space,Coo
     }
  }
 
-VColor SimpleTopMenuShape::CharFunc::place(ulen index_,char,Point base_,Point delta_)
+VColor SimpleTopMenuShape::PlaceFunc::place(ulen index_,char,Point base_,Point delta_)
  {
   if( index==index_ )
     {
      base=base_;
      delta=delta_;
     }
+
+  return vc;
+ }
+
+VColor SimpleTopMenuShape::HotFunc::hot(ulen index_,char,Point,Point)
+ {
+  if( index==index_ ) return hotc;
 
   return vc;
  }
@@ -153,17 +160,27 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font fon
 
      if( showhot )
        {
-        CharFunc func(vc,str1.len);
+        if( +cfg.use_hotcolor )
+          {
+           HotFunc func(vc,str1.len,+cfg.hot);
 
-        font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
+           font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,func.function_hot());
+          }
+        else
+          {
+           PlaceFunc func(vc,str1.len);
 
-        Point base=point.place.getBase()+func.base;
+           font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
 
-        base=base.addY(1);
+           Point base=point.place.getBase()+func.base;
+           MCoord width=+cfg.width;
 
-        SmoothDrawArt art(buf);
+           base=base.addY(RoundUpLen(width));
 
-        art.path(HalfNeg,+cfg.width,+cfg.select,base,base+func.delta);
+           SmoothDrawArt art(buf);
+
+           art.path(HalfNeg,width,+cfg.select,base,base+func.delta);
+          }
        }
      else
        {

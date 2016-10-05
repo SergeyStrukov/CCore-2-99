@@ -167,6 +167,8 @@ int Main(CmdDisplay cmd_display)
 
      SetAppIcon(DefaultAppIcon());
 
+     param.pref.sync();
+
      Application app(report,param,cmd_display);
 
      return app.run();
