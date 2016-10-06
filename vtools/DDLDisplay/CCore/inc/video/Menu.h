@@ -144,9 +144,9 @@ class SimpleTopMenuShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<Point> space = Point(8,8) ;
+     RefVal<Point> space = Point(4,4) ;
 
-     RefVal<bool> use_hotcolor = true ;
+     RefVal<bool> use_hotcolor = false ;
 
      RefVal<VColor> ground   =    Silver ;
      RefVal<VColor> text     =     Black ;
@@ -154,6 +154,8 @@ class SimpleTopMenuShape
      RefVal<VColor> hilight  =      Blue ;
      RefVal<VColor> select   = OrangeRed ;
      RefVal<VColor> hot      =       Red ;
+     RefVal<VColor> left     =      Snow ;
+     RefVal<VColor> right    =      Gray ;
 
      RefVal<Font> font;
 
@@ -171,6 +173,8 @@ class SimpleTopMenuShape
    bool focus = false ;
    MenuState state = MenuNone ;
    ulen index = 0 ;
+   Coord off = 0 ;
+   Coord max_off = 0 ;
 
    // internal methods
 
@@ -203,7 +207,9 @@ class SimpleTopMenuShape
      CharFunction function_hot() { return FunctionOf(this,&HotFunc::hot); }
     };
 
-   static void Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,const Config &cfg,bool showhot=false);
+   static void Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot=false);
+
+   static void Draw(const DrawBuf &buf,Pane pane,const Config &cfg);
 
    // methods
 
@@ -283,6 +289,15 @@ class SimpleTopMenuWindowOf : public SubWindow
        }
     }
 
+   void changeOff(Coord delta)
+    {
+     delta*=shape.pane.dy/2;
+
+     Coord new_off=Cap<Coord>(0,shape.off+delta,shape.max_off);
+
+     if( Change(shape.off,new_off) ) redraw();
+    }
+
   public:
 
    using ShapeType = Shape ;
@@ -346,6 +361,8 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      shape.focus=false;
      shape.state=MenuNone;
+     shape.off=0;
+     shape.max_off=0;
     }
 
    // keyboard
@@ -375,13 +392,20 @@ class SimpleTopMenuWindowOf : public SubWindow
        {
         case VKey_Left :
          {
-          if( shape.state==MenuSelect)
+          if( kmod&KeyMod_Shift )
             {
-             auto result=shape.data.findDown(shape.index);
-
-             if( result.found )
+             changeOff(-1);
+            }
+          else
+            {
+             if( shape.state==MenuSelect )
                {
-                select(result.index);
+                auto result=shape.data.findDown(shape.index);
+
+                if( result.found )
+                  {
+                   select(result.index);
+                  }
                }
             }
          }
@@ -389,13 +413,20 @@ class SimpleTopMenuWindowOf : public SubWindow
 
         case VKey_Right :
          {
-          if( shape.state==MenuSelect )
+          if( kmod&KeyMod_Shift )
             {
-             auto result=shape.data.findUp(shape.index);
-
-             if( result.found )
+             changeOff(+1);
+            }
+          else
+            {
+             if( shape.state==MenuSelect )
                {
-                select(result.index);
+                auto result=shape.data.findUp(shape.index);
+
+                if( result.found )
+                  {
+                   select(result.index);
+                  }
                }
             }
          }
@@ -415,7 +446,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_LeftClick(Point point,MouseKey)
     {
-     auto result=shape.data.find(point);
+     auto result=shape.data.find(point+Point(shape.off,0));
 
      if( result.found )
        {
@@ -447,11 +478,9 @@ class SimpleTopMenuWindowOf : public SubWindow
      hilightOff();
     }
 
-   void react_Wheel(Point point,MouseKey mkey,Coord delta)
+   void react_Wheel(Point,MouseKey,Coord delta)
     {
-     Used(point);
-     Used(mkey);
-     Used(delta);
+     changeOff(delta);
     }
 
    // signals

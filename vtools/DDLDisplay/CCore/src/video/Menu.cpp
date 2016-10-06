@@ -126,7 +126,7 @@ Coord SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coord space,Coo
 
      default: // MenuSeparator
       {
-       return dy/10;
+       return dy/5;
       }
     }
  }
@@ -149,7 +149,7 @@ VColor SimpleTopMenuShape::HotFunc::hot(ulen index_,char,Point,Point)
   return vc;
  }
 
-void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font font,VColor vc,const Config &cfg,bool showhot)
+void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot)
  {
   StrLen str=point.text.str();
 
@@ -164,15 +164,15 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font fon
           {
            HotFunc func(vc,str1.len,+cfg.hot);
 
-           font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,func.function_hot());
+           font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,func.function_hot());
           }
         else
           {
            PlaceFunc func(vc,str1.len);
 
-           font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
+           font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
 
-           Point base=point.place.getBase()+func.base;
+           Point base=pane.getBase()+func.base;
            MCoord width=+cfg.width;
 
            base=base.addY(RoundUpLen(width));
@@ -184,13 +184,23 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Font fon
        }
      else
        {
-        font->text(buf,point.place,{AlignX_Center,AlignY_Center},str1,str2,vc);
+        font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,vc);
        }
     }
   else
     {
-     font->text(buf,point.place,{AlignX_Center,AlignY_Center},str,vc);
+     font->text(buf,pane,{AlignX_Center,AlignY_Center},str,vc);
     }
+ }
+
+void SimpleTopMenuShape::Draw(const DrawBuf &buf,Pane pane,const Config &cfg)
+ {
+  SmoothDrawArt art(buf);
+
+  MPane p(pane);
+  TwoField field(p.getTopLeft(),+cfg.left,p.getTopRight(),+cfg.right);
+
+  FigureBox(p).solid(art,field);
  }
 
 void SimpleTopMenuShape::layout()
@@ -210,6 +220,12 @@ void SimpleTopMenuShape::layout()
 
      dx+=len;
     }
+
+  max_off=+dx;
+
+  if( max_off>pane.dx ) max_off-=pane.dx; else max_off=0;
+
+  Replace_min(off,max_off);
  }
 
 Point SimpleTopMenuShape::getMinSize() const
@@ -243,35 +259,38 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
     {
      const MenuPoint &point=r[i];
 
+     Pane pane=point.place-Point(off,0);
+
      switch( point.type )
        {
         case MenuText :
          {
           if( state==MenuHilight && index==i )
             {
-             Draw(buf,point,font,+cfg.hilight,cfg,focus);
+             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }
           else if( state==MenuSelect && index==i )
             {
-             FigureBox(point.place).loop(art,HalfPos,+cfg.width,+cfg.select);
+             FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
 
-             Draw(buf,point,font,+cfg.hilight,cfg,focus);
+             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }
           else
             {
-             Draw(buf,point,font,+cfg.text,cfg,focus);
+             Draw(buf,point,pane,font,+cfg.text,cfg,focus);
             }
          }
         break;
 
         case MenuDisabled :
          {
-          Draw(buf,point,font,+cfg.inactive,cfg);
+          Draw(buf,point,pane,font,+cfg.inactive,cfg);
          }
         break;
 
         default: // MenuSeparator
          {
+          Draw(buf,pane,cfg);
          }
        }
     }

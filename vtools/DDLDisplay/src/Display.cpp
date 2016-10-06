@@ -55,7 +55,10 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
   menu_data("@File",1)
            ("@Options",2)
            (MenuSeparator)
-           ("E@xit",3);
+           ("E@xit",3)
+           (MenuSeparator)
+           ("Ex@tra",4)
+           ("W@indow",5);
  }
 
 ClientWindow::~ClientWindow()
