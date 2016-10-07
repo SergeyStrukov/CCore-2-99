@@ -2,6 +2,7 @@ OBJ_LIST = \
 obj/Application.o \
 obj/Display.o \
 obj/Menu.o \
+obj/ToolWindow.o \
 obj/main.o \
 
 
@@ -9,6 +10,7 @@ ASM_LIST = \
 obj/Application.s \
 obj/Display.s \
 obj/Menu.s \
+obj/ToolWindow.s \
 obj/main.s \
 
 
@@ -16,6 +18,7 @@ DEP_LIST = \
 obj/Application.dep \
 obj/Display.dep \
 obj/Menu.dep \
+obj/ToolWindow.dep \
 obj/main.dep \
 
 
@@ -34,6 +37,9 @@ obj/Display.o : ./src/Display.cpp
 obj/Menu.o : ./CCore/src/video/Menu.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/ToolWindow.o : ./CCore/src/video/ToolWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -46,6 +52,9 @@ obj/Display.s : ./src/Display.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Menu.s : ./CCore/src/video/Menu.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ToolWindow.s : ./CCore/src/video/ToolWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -61,6 +70,9 @@ obj/Display.dep : ./src/Display.cpp
 
 obj/Menu.dep : ./CCore/src/video/Menu.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Menu.o $< -MF $@
+
+obj/ToolWindow.dep : ./CCore/src/video/ToolWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToolWindow.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
