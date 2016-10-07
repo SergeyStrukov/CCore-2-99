@@ -237,7 +237,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      const MenuPoint &point=shape.data.list.at(shape.index);
 
-     selected.assert(point.id,TopCascadePoint(point.place));
+     selected.assert(point.id,TopCascadePoint(point.place)-Point(shape.off,0));
     }
 
    void select(ulen index)
