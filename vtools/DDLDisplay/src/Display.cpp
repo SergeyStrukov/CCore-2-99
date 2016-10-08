@@ -58,7 +58,10 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
            ("E@xit",3)
            (MenuSeparator)
            ("Ex@tra",4)
-           ("W@indow",5);
+           ("W@indow",5)
+           ("Long line",6)
+           ("Long long line",7)
+           ("DDL options",8);
  }
 
 ClientWindow::~ClientWindow()

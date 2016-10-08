@@ -216,7 +216,7 @@ void SimpleTopMenuShape::layout()
     {
      Coord len=GetDX(point,font,space.x,dy);
 
-     point.place=Pane(+dx,0,len,dy);
+     point.place=Pane(+dx,0,len,dy)+pane.getBase();
 
      dx+=len;
     }
@@ -251,7 +251,7 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
 
   SmoothDrawArt art(buf);
 
-  art.erase(+cfg.ground);
+  art.block(pane,+cfg.ground);
 
   auto r=Range(data.list);
 
@@ -293,6 +293,24 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
           Draw(buf,pane,cfg);
          }
        }
+    }
+
+  if( off>0 )
+    {
+     Coord len=pane.dy/3;
+
+     Pane p(pane.x,pane.y+pane.dy-len,len,len);
+
+     FigureLeftArrow(p).curveSolid(art,+cfg.hilight);
+    }
+
+  if( off<max_off )
+    {
+     Coord len=pane.dy/3;
+
+     Pane p(pane.x+pane.dx-len,pane.y+pane.dy-len,len,len);
+
+     FigureRightArrow(p).curveSolid(art,+cfg.hilight);
     }
  }
 

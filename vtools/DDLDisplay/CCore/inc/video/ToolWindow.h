@@ -33,6 +33,22 @@ class ToolWindow;
 
 class ToolWindow : public FrameWindow , public SubWindowHost
  {
+  public:
+
+   struct Config
+    {
+     RefVal<VColor> shade_color = Violet ;
+     RefVal<Clr>    shade_alpha =     64 ;
+
+     Config() noexcept {}
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
    SubWindow *client = 0 ;
 
    Point size;
@@ -45,347 +61,95 @@ class ToolWindow : public FrameWindow , public SubWindowHost
 
   private:
 
-   void guardClient()
-    {
-     if( !client ) GuardNoClient();
-    }
+   void guardClient();
 
-   void guardDead()
-    {
-     if( isAlive() ) GuardNotDead();
-    }
+   void guardDead();
 
-   void reset()
-    {
-     size=Null;
-     client_enter=false;
-     client_capture=false;
-     delay_draw=false;
-     enable_react=true;
-    }
+   void reset();
 
-   SubWindow & getClient()
-    {
-     guardClient();
+   SubWindow & getClient();
 
-     return *client;
-    }
+   void shade(FrameBuf<DesktopColor> &buf);
 
-   void shade(FrameBuf<DesktopColor> &buf)
-    {
-     //if( !enable_react ) buf.erase(+shape.cfg.shade_color,+shape.cfg.shade_alpha);
-    }
-
-   void redraw(FuncArgType<FrameBuf<DesktopColor> &> func)
-    {
-     if( host->isDead() ) return;
-
-     if( host->getToken() )
-       {
-        delay_draw=true;
-
-        return;
-       }
-
-     FrameBuf<DesktopColor> buf(host->getDrawPlane());
-
-     if( size<=buf.getSize() )
-       {
-        func(buf);
-       }
-     else
-       {
-        buf.erase(Black);
-
-        host->invalidate(1);
-       }
-    }
+   void redraw(FuncArgType<FrameBuf<DesktopColor> &> func);
 
   public:
 
-   explicit ToolWindow(Desktop *desktop)
-    : FrameWindow(desktop),
-      input(this)
-    {
-    }
+   ToolWindow(Desktop *desktop,const Config &cfg);
 
-   virtual ~ToolWindow()
-    {
-    }
+   virtual ~ToolWindow();
 
    // methods
 
-   void bindClient(SubWindow &client_)
-    {
-     guardDead();
+   void bindClient(SubWindow &client_);
 
-     client=&client_;
-    }
+   void createMain(Pane pane,const DefString &title);
 
-   void createMain(Pane pane,const DefString &title)
-    {
-     guardClient();
+   void create(Pane pane);
 
-     has_focus=false;
+   void create(FrameWindow *parent,Pane pane);
 
-     host->createMain(pane,pane.getSize());
-     host->setTitle(title.str());
-     host->display(CmdDisplay_Normal);
-    }
+   void destroy();
 
-   void create(Pane pane)
-    {
-     guardClient();
+   void redrawAll(bool do_layout=false);
 
-     has_focus=false;
+   void redrawClient();
 
-     host->create(pane,pane.getSize());
-     host->show();
-    }
-
-   void create(FrameWindow *parent,Pane pane)
-    {
-     guardClient();
-
-     has_focus=false;
-
-     host->create(parent->getHost(),pane,pane.getSize());
-     host->show();
-    }
-
-   void destroy()
-    {
-     host->destroy();
-
-     destroyed.assert();
-    }
-
-   void redrawAll(bool do_layout=false)
-    {
-     if( do_layout )
-       {
-        if( client ) client->setPlace(Pane(Null,size));
-       }
-
-     redraw( [this] (FrameBuf<DesktopColor> &buf)
-                    {
-                     getClient().forward_draw(buf,false);
-
-                     shade(buf);
-
-                     host->invalidate(1);
-
-                    } );
-    }
-
-   void redrawClient()
-    {
-     redraw( [this] (FrameBuf<DesktopColor> &buf)
-                    {
-                     getClient().forward_draw(buf,false);
-
-                     shade(buf);
-
-                     host->invalidate(Pane(Null,size),1);
-
-                    } );
-    }
-
-   void redrawClient(Pane pane)
-    {
-     redraw( [this,pane] (FrameBuf<DesktopColor> &buf)
-                         {
-                          getClient().forward_draw(buf,pane,false);
-
-                          shade(buf);
-
-                          host->invalidate(pane,1);
-
-                         } );
-    }
+   void redrawClient(Pane pane);
 
    unsigned getToken() { return host->getToken(); }
 
    // SubWindowHost
 
-   virtual FrameWindow * getFrame()
-    {
-     return this;
-    }
+   virtual FrameWindow * getFrame();
 
-   virtual Point getScreenOrigin()
-    {
-     Pane pane=host->getPlace();
+   virtual Point getScreenOrigin();
 
-     return pane.getBase();
-    }
+   virtual void redraw(Pane pane);
 
-   virtual void redraw(Pane pane)
-    {
-     input.redrawClient(pane);
-    }
+   virtual void setFocus(SubWindow *);
 
-   virtual void setFocus(SubWindow *)
-    {
-     if( has_focus )
-       {
-        getClient().gainFocus();
-       }
-    }
+   virtual void captureMouse(SubWindow *);
 
-   virtual void captureMouse(SubWindow *)
-    {
-     if( !client_capture )
-       {
-        client_capture=true;
-
-        host->captureMouse();
-       }
-    }
-
-   virtual void releaseMouse(SubWindow *)
-    {
-     if( client_capture )
-       {
-        client_capture=false;
-
-        host->releaseMouse();
-       }
-    }
+   virtual void releaseMouse(SubWindow *);
 
    // base
 
-   virtual void alive()
-    {
-     reset();
+   virtual void alive();
 
-     host->trackMouseHover();
-     host->trackMouseLeave();
+   virtual void dead();
 
-     getClient().open();
-    }
+   virtual void askClose();
 
-   virtual void dead()
-    {
-     getClient().close();
-    }
+   virtual void setSize(Point size_,bool buf_dirty);
 
-   virtual void askClose()
-    {
-     destroy();
-    }
-
-   virtual void setSize(Point size_,bool buf_dirty)
-    {
-     if( size!=size_ || buf_dirty )
-       {
-        size=size_;
-
-        redrawAll(true);
-       }
-    }
-
-   virtual void paintDone(unsigned)
-    {
-     if( delay_draw )
-       {
-        delay_draw=false;
-
-        redrawAll();
-       }
-    }
+   virtual void paintDone(unsigned);
 
    // keyboard
 
-   virtual void gainFocus()
-    {
-     has_focus=true;
+   virtual void gainFocus();
 
-     getClient().gainFocus();
-    }
-
-   virtual void looseFocus()
-    {
-     has_focus=false;
-
-     getClient().looseFocus();
-    }
+   virtual void looseFocus();
 
    // mouse
 
-   virtual void looseCapture()
-    {
-     if( client_capture )
-       {
-        client_capture=false;
+   virtual void looseCapture();
 
-        getClient().looseCapture();
-       }
-    }
-
-   virtual void setMouseShape(Point point,KeyMod kmod)
-    {
-     host->setMouseShape(getClient().forward_getMouseShape(point,kmod));
-    }
+   virtual void setMouseShape(Point point,KeyMod kmod);
 
    // user input
 
-   virtual void disableReact() { enable_react=false; redrawAll(); }
+   virtual void disableReact();
 
-   virtual void enableReact() { enable_react=true; redrawAll(); }
+   virtual void enableReact();
 
-   virtual void react(UserAction action)
-    {
-     if( enable_react ) action.dispatch(*this);
-    }
+   virtual void react(UserAction action);
 
-   void react_other(UserAction action)
-    {
-     if( action.fromKeyboard() )
-       {
-        getClient().react(action);
-       }
-     else
-       {
-        Point point=action.getPoint();
+   void react_other(UserAction action);
 
-        if( client_capture || Pane(Null,size).contains(point) )
-          {
-           getClient().forward_react(action);
-          }
-       }
-    }
+   void react_Move(Point point,MouseKey mkey);
 
-   void react_Move(Point point,MouseKey mkey)
-    {
-     if( Pane(Null,size).contains(point) )
-       {
-        client_enter=true;
-
-        getClient().forward().put_Move(point,mkey);
-       }
-     else
-       {
-        if( client_capture ) getClient().forward().put_Move(point,mkey);
-
-        if( client_enter )
-          {
-           client_enter=false;
-
-           getClient().put_Leave();
-          }
-       }
-    }
-
-   void react_Leave()
-    {
-     if( client_enter )
-       {
-        client_enter=false;
-
-        getClient().put_Leave();
-       }
-    }
+   void react_Leave();
 
    // DeferInput
 
