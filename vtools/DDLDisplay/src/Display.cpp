@@ -60,7 +60,7 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
            ("Ex@tra",4)
            ("W@indow",5)
            ("Long line",6)
-           ("Long long line",7)
+           (MenuHidden,"Long long line",7)
            ("DDL options",8);
  }
 

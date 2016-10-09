@@ -57,6 +57,10 @@ class SimpleTopMenuShape;
 
 template <class Shape> class SimpleTopMenuWindowOf;
 
+class SimpleCascadeMenuShape;
+
+template <class Shape> class SimpleCascadeMenuWindowOf;
+
 /* struct MenuPoint */
 
 struct MenuPoint
@@ -176,7 +180,7 @@ class SimpleTopMenuShape
    Coord off = 0 ;
    Coord max_off = 0 ;
 
-   // internal methods
+  private:
 
    static Coord GetDX(const MenuPoint &point,Font font,Coord space,Coord dy);
 
@@ -211,7 +215,7 @@ class SimpleTopMenuShape
 
    static void Draw(const DrawBuf &buf,Pane pane,const Config &cfg);
 
-   // methods
+  public:
 
    SimpleTopMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
 
@@ -491,6 +495,107 @@ class SimpleTopMenuWindowOf : public SubWindow
 /* type SimpleTopMenuWindow */
 
 using SimpleTopMenuWindow = SimpleTopMenuWindowOf<SimpleTopMenuShape> ;
+
+/* class SimpleCascadeMenuShape */
+
+class SimpleCascadeMenuShape
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<Point> space = Point(4,4) ;
+
+     RefVal<bool> use_hotcolor = false ;
+
+     RefVal<VColor> ground   =    Silver ;
+     RefVal<VColor> text     =     Black ;
+     RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> hilight  =      Blue ;
+     RefVal<VColor> select   = OrangeRed ;
+     RefVal<VColor> hot      =       Red ;
+     RefVal<VColor> top      =      Snow ;
+     RefVal<VColor> bottom   =      Gray ;
+
+     RefVal<Font> font;
+
+     Config() noexcept {}
+    };
+
+   // parameters
+
+   const Config &cfg;
+   MenuData &data;
+   Pane pane;
+
+   // state
+
+   bool focus = false ;
+   MenuState state = MenuNone ;
+   ulen index = 0 ;
+   Coord off = 0 ;
+   Coord max_off = 0 ;
+
+  private:
+
+   static Coord GetDX(const MenuPoint &point,Font font,Coord space);
+
+   struct PlaceFunc : Funchor
+    {
+     VColor vc;
+     ulen index;
+     Point base;
+     Point delta;
+
+     PlaceFunc(VColor vc_,ulen index_) : vc(vc_),index(index_) {}
+
+     VColor place(ulen index,char ch,Point base,Point delta);
+
+     CharFunction function_place() { return FunctionOf(this,&PlaceFunc::place); }
+    };
+
+   struct HotFunc : Funchor
+    {
+     VColor vc;
+     ulen index;
+     VColor hotc;
+
+     HotFunc(VColor vc_,ulen index_,VColor hotc_) : vc(vc_),index(index_),hotc(hotc_) {}
+
+     VColor hot(ulen index,char ch,Point base,Point delta);
+
+     CharFunction function_hot() { return FunctionOf(this,&HotFunc::hot); }
+    };
+
+   static void Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot=false);
+
+   static void Draw(const DrawBuf &buf,Pane pane,const Config &cfg);
+
+  public:
+
+   SimpleCascadeMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
+
+   void layout();
+
+   Point getMinSize() const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   void draw(const DrawBuf &buf) const;
+ };
+
+/* class SimpleCascadeMenuWindowOf<Shape> */
+
+template <class Shape>
+class SimpleCascadeMenuWindowOf
+ {
+ };
+
+/* type SimpleCascadeMenuWindow */
+
+using SimpleCascadeMenuWindow = SimpleCascadeMenuWindowOf<SimpleCascadeMenuShape> ;
 
 } // namespace Video
 } // namespace CCore
