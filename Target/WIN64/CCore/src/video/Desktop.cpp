@@ -2130,6 +2130,11 @@ CmdDisplay StartDisplay()
   return CmdDisplay_Normal;
  }
 
+char ToLowerCase(char ch)
+ {
+  return (unsigned char)(unsigned long)Win64::CharLowerA((char *)(unsigned long)(unsigned char)ch);
+ }
+
 /* global DefaultDesktop */
 
 static WindowsDesktop DesktopObject CCORE_INITPRI_3 ;

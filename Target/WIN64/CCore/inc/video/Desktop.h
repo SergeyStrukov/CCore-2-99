@@ -41,6 +41,8 @@ void ErrorMsgBox(StrLen text,StrLen title);
 
 CmdDisplay StartDisplay();
 
+char ToLowerCase(char ch);
+
 /* classes */
 
 class CharMapTable;

@@ -218,6 +218,10 @@ int WIN64_API MultiByteToWideChar(codepage_t codepage,
                                   unicode_t *out,
                                   int out_len);
 
+/* CharLowerA() */
+
+char * WIN64_API CharLowerA(char *str);
+
 /*--------------------------------------------------------------------------------------*/
 /* Error functions                                                                      */
 /*--------------------------------------------------------------------------------------*/
@@ -434,7 +438,7 @@ struct ProcessInfo
 /* Process functions                                                                    */
 /*--------------------------------------------------------------------------------------*/
 
-/* GetStartupInfo() */
+/* GetStartupInfoA() */
 
 void WIN64_API GetStartupInfoA(StartupInfo *info);
 

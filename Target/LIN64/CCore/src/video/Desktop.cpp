@@ -43,6 +43,7 @@
 #include <cstdlib>
 #include <clocale>
 #include <cwctype>
+#include <cctype>
 
 namespace CCore {
 namespace Video {
@@ -4117,6 +4118,11 @@ void ErrorMsgBox(StrLen text,StrLen title)
 CmdDisplay StartDisplay()
  {
   return CmdDisplay_Normal;
+ }
+
+char ToLowerCase(char ch)
+ {
+  return std::tolower(ch);
  }
 
 void SetAppIcon(Picture pict)
