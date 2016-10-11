@@ -47,6 +47,11 @@ inline Point TopCascadePoint(Pane pane)
   return pane.getBase().addY(pane.dy);
  }
 
+inline Point CascadePoint(Pane pane)
+ {
+  return pane.getBase().addX(pane.dx);
+ }
+
 /* classes */
 
 struct MenuPoint;
@@ -465,7 +470,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_Move(Point point,MouseKey)
     {
-     auto result=shape.data.find(point);
+     auto result=shape.data.find(point+Point(shape.off,0));
 
      if( result.found )
        {
@@ -537,6 +542,7 @@ class SimpleCascadeMenuShape
    ulen index = 0 ;
    Coord off = 0 ;
    Coord max_off = 0 ;
+   Coord cell_dy = 0 ;
 
   private:
 
@@ -589,8 +595,265 @@ class SimpleCascadeMenuShape
 /* class SimpleCascadeMenuWindowOf<Shape> */
 
 template <class Shape>
-class SimpleCascadeMenuWindowOf
+class SimpleCascadeMenuWindowOf : public SubWindow
  {
+   Shape shape;
+
+  private:
+
+   void assert()
+    {
+     const MenuPoint &point=shape.data.list.at(shape.index);
+
+     selected.assert(point.id,CascadePoint(point.place)-Point(0,shape.off));
+    }
+
+   void select(ulen index)
+    {
+     if( Change(shape.state,MenuSelect) )
+       {
+        shape.index=index;
+
+        assert();
+
+        redraw();
+       }
+     else
+       {
+        if( Change(shape.index,index) )
+          {
+           assert();
+
+           redraw();
+          }
+       }
+    }
+
+   void hilight(ulen index)
+    {
+     if( shape.state==MenuNone )
+       {
+        shape.state=MenuHilight;
+        shape.index=index;
+
+        redraw();
+       }
+     else if( shape.state==MenuHilight )
+       {
+        if( Change(shape.index,index) )
+          {
+           redraw();
+          }
+       }
+    }
+
+   void hilightOff()
+    {
+     if( shape.state==MenuHilight )
+       {
+        shape.state=MenuNone;
+
+        redraw();
+       }
+    }
+
+   void changeOff(Coord delta)
+    {
+     delta*=shape.cell_dy/2;
+
+     Coord new_off=Cap<Coord>(0,shape.off+delta,shape.max_off);
+
+     if( Change(shape.off,new_off) ) redraw();
+    }
+
+  public:
+
+   using ShapeType = Shape ;
+   using ConfigType = typename Shape::Config ;
+
+   template <class ... TT>
+   SimpleCascadeMenuWindowOf(SubWindowHost &host,TT && ... tt)
+    : SubWindow(host),
+      shape( std::forward<TT>(tt)... )
+    {
+    }
+
+   virtual ~SimpleCascadeMenuWindowOf() {}
+
+   // methods
+
+   Point getMinSize() const { return shape.getMinSize(); }
+
+   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+
+   MenuState getState() const { return shape.state; }
+
+   void unselect()
+    {
+     if( Change(shape.state,MenuNone) ) redraw();
+    }
+
+   bool forward(char ch)
+    {
+     auto result=shape.data.find(ch);
+
+     if( result.found )
+       {
+        setFocus();
+
+        select(result.index);
+
+        return true;
+       }
+
+     return false;
+    }
+
+   // drawing
+
+   virtual void layout()
+    {
+     shape.pane=Pane(Null,getSize());
+
+     shape.layout();
+    }
+
+   virtual void draw(DrawBuf buf,bool) const
+    {
+     try { shape.draw(buf); } catch(CatchType) {}
+    }
+
+   // base
+
+   virtual void open()
+    {
+     shape.focus=false;
+     shape.state=MenuNone;
+     shape.off=0;
+     shape.max_off=0;
+    }
+
+   // keyboard
+
+   virtual void gainFocus()
+    {
+     if( Change(shape.focus,true) ) redraw();
+    }
+
+   virtual void looseFocus()
+    {
+     if( Change(shape.focus,false) ) redraw();
+    }
+
+   // user input
+
+   virtual void react(UserAction action)
+    {
+     action.dispatch(*this);
+    }
+
+   void react_Key(VKey vkey,KeyMod kmod)
+    {
+     Used(kmod);
+
+     switch( vkey )
+       {
+        case VKey_Up :
+         {
+          if( kmod&KeyMod_Shift )
+            {
+             changeOff(-1);
+            }
+          else
+            {
+             if( shape.state==MenuSelect )
+               {
+                auto result=shape.data.findDown(shape.index);
+
+                if( result.found )
+                  {
+                   select(result.index);
+                  }
+               }
+            }
+         }
+        break;
+
+        case VKey_Down :
+         {
+          if( kmod&KeyMod_Shift )
+            {
+             changeOff(+1);
+            }
+          else
+            {
+             if( shape.state==MenuSelect )
+               {
+                auto result=shape.data.findUp(shape.index);
+
+                if( result.found )
+                  {
+                   select(result.index);
+                  }
+               }
+            }
+         }
+        break;
+       }
+    }
+
+   void react_Char(char ch)
+    {
+     auto result=shape.data.find(ch);
+
+     if( result.found )
+       {
+        select(result.index);
+       }
+    }
+
+   void react_LeftClick(Point point,MouseKey)
+    {
+     auto result=shape.data.find(point+Point(0,shape.off));
+
+     if( result.found )
+       {
+        select(result.index);
+       }
+    }
+
+   void react_LeftDClick(Point point,MouseKey mkey)
+    {
+     react_LeftClick(point,mkey);
+    }
+
+   void react_Move(Point point,MouseKey)
+    {
+     auto result=shape.data.find(point+Point(0,shape.off));
+
+     if( result.found )
+       {
+        hilight(result.index);
+       }
+     else
+       {
+        hilightOff();
+       }
+    }
+
+   void react_Leave()
+    {
+     hilightOff();
+    }
+
+   void react_Wheel(Point,MouseKey,Coord delta)
+    {
+     changeOff(delta);
+    }
+
+   // signals
+
+   Signal<int,Point> selected; // id , cascade menu point
  };
 
 /* type SimpleCascadeMenuWindow */

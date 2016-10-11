@@ -445,6 +445,8 @@ void SimpleCascadeMenuShape::layout()
   Coord dy=fs.dy+2*space.y;
   Coordinate y=0;
 
+  cell_dy=dy;
+
   for(MenuPoint &point : data.list )
     switch( point.type )
       {
