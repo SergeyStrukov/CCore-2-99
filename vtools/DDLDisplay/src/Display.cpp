@@ -41,27 +41,29 @@ void ClientWindow::menu_selected(int id,Point point)
     {
      case 1 :
       {
-       if( menu_file.isDead() ) menu_file.create(getFrame(),point);
+       if( cascade_menu.isDead() ) cascade_menu.create(getFrame(),menu_file_data,point);
       }
      break;
     }
  }
 
-void ClientWindow::menu_file_selected(int id,Point point)
+void ClientWindow::cascade_menu_selected(int id,Point point)
  {
+  Used(point);
+
   Printf(Con,"id = #;\n",id);
 
-  menu_file.destroy();
+  cascade_menu.destroy();
  }
 
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
    menu(wlist,cfg.menu_cfg,menu_data),
-   menu_file(host.getFrame()->getDesktop(),cfg.cascade_menu_cfg,menu_file_data),
+   cascade_menu(host.getFrame()->getDesktop(),cfg.cascade_menu_cfg),
    display(wlist,cfg.display_cfg),
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
-   connector_menu_file_selected(this,&ClientWindow::menu_file_selected,menu_file.takeSelected())
+   connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.takeSelected())
  {
   wlist.insTop(menu,display);
 
@@ -134,8 +136,6 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
 
 void ClientWindow::react_other(UserAction action)
  {
-  //Printf(Con,"#;\n",action);
-
   wlist.react(action);
  }
 

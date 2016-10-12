@@ -447,7 +447,15 @@ void SimpleCascadeMenuShape::layout()
 
   cell_dy=dy;
 
-  for(MenuPoint &point : data.list )
+  if( !data )
+    {
+     off=0;
+     max_off=0;
+
+     return;
+    }
+
+  for(MenuPoint &point : data->list )
     switch( point.type )
       {
        case MenuText :
@@ -495,7 +503,12 @@ Point SimpleCascadeMenuShape::getMinSize() const
   Coord len=dy;
   Coordinate y=0;
 
-  for(const MenuPoint &point : data.list )
+  if( !data )
+    {
+     return Point(len,0);
+    }
+
+  for(const MenuPoint &point : data->list )
     switch( point.type )
       {
        case MenuText :
@@ -529,7 +542,12 @@ void SimpleCascadeMenuShape::draw(const DrawBuf &buf) const
 
   art.block(pane,+cfg.ground);
 
-  auto r=Range(data.list);
+  if( !data )
+    {
+     return;
+    }
+
+  auto r=Range(data->list);
 
   for(ulen i=0; i<r.len ;i++)
     {

@@ -398,8 +398,6 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_Key(VKey vkey,KeyMod kmod)
     {
-     Used(kmod);
-
      switch( vkey )
        {
         case VKey_Left :
@@ -535,7 +533,7 @@ class SimpleCascadeMenuShape
    // parameters
 
    const Config &cfg;
-   MenuData &data;
+   MenuData *data = 0 ;
    Pane pane;
 
    // state
@@ -584,7 +582,7 @@ class SimpleCascadeMenuShape
 
   public:
 
-   SimpleCascadeMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
+   explicit SimpleCascadeMenuShape(const Config &cfg_) : cfg(cfg_) {}
 
    void layout();
 
@@ -606,9 +604,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void assert()
     {
-     const MenuPoint &point=shape.data.list.at(shape.index);
+     const MenuPoint &point=shape.data->list.at(shape.index);
 
-     selected.assert(point.id,CascadePoint(point.place)-Point(0,shape.off));
+     selected.assert(point.id,toScreen(CascadePoint(point.place)-Point(0,shape.off)));
     }
 
    void select(ulen index)
@@ -691,6 +689,8 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    MenuState getState() const { return shape.state; }
 
+   void bind(MenuData &data) { shape.data=&data; }
+
    void unselect()
     {
      if( Change(shape.state,MenuNone) ) redraw();
@@ -698,7 +698,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    bool forward(char ch)
     {
-     auto result=shape.data.find(ch);
+     if( !shape.data ) return false;
+
+     auto result=shape.data->find(ch);
 
      if( result.found )
        {
@@ -757,8 +759,6 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void react_Key(VKey vkey,KeyMod kmod)
     {
-     Used(kmod);
-
      switch( vkey )
        {
         case VKey_Up :
@@ -769,9 +769,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
             }
           else
             {
-             if( shape.state==MenuSelect )
+             if( shape.state==MenuSelect && shape.data )
                {
-                auto result=shape.data.findDown(shape.index);
+                auto result=shape.data->findDown(shape.index);
 
                 if( result.found )
                   {
@@ -790,9 +790,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
             }
           else
             {
-             if( shape.state==MenuSelect )
+             if( shape.state==MenuSelect && shape.data )
                {
-                auto result=shape.data.findUp(shape.index);
+                auto result=shape.data->findUp(shape.index);
 
                 if( result.found )
                   {
@@ -807,7 +807,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void react_Char(char ch)
     {
-     auto result=shape.data.find(ch);
+     if( !shape.data ) return;
+
+     auto result=shape.data->find(ch);
 
      if( result.found )
        {
@@ -817,7 +819,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void react_LeftClick(Point point,MouseKey)
     {
-     auto result=shape.data.find(point+Point(0,shape.off));
+     if( !shape.data ) return;
+
+     auto result=shape.data->find(point+Point(0,shape.off));
 
      if( result.found )
        {
@@ -832,7 +836,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void react_Move(Point point,MouseKey)
     {
-     auto result=shape.data.find(point+Point(0,shape.off));
+     if( !shape.data ) return;
+
+     auto result=shape.data->find(point+Point(0,shape.off));
 
      if( result.found )
        {
@@ -916,11 +922,15 @@ class SimpleCascadeMenuOf
 
    bool isDead() const { return frame.isDead(); }
 
-   SimpleCascadeMenuOf<Shape> & create(FrameWindow *parent,Point base) // TODO
+   void create(FrameWindow *parent,MenuData &data,Point base) // TODO
     {
+     client.bind(data);
+
      Point size=client.getMinSize();
 
      Point screen_size=frame.getDesktop()->getScreenSize();
+
+     Used(screen_size);
 
      // adjust size and base
 
@@ -928,17 +938,10 @@ class SimpleCascadeMenuOf
 
      frame.create(parent,pane);
 
-     connector_moved.disconnect();
-     connector_moved.connect(parent->moved);
-
-     return *this;
-    }
-
-   void focus()
-    {
      frame.getHost()->setFocus();
 
-     client.setFocus();
+     connector_moved.disconnect();
+     connector_moved.connect(parent->moved);
     }
 
    void unselect() { client.unselect(); }

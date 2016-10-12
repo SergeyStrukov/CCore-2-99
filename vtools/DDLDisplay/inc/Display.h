@@ -82,9 +82,10 @@ class ClientWindow : public ComboWindow
 
    MenuData menu_data;
    MenuData menu_file_data;
+   MenuData menu_option_data;
 
    SimpleTopMenuWindow menu;
-   SimpleCascadeMenu menu_file;
+   SimpleCascadeMenu cascade_menu;
 
    DisplayWindow display;
 
@@ -92,10 +93,10 @@ class ClientWindow : public ComboWindow
 
    void menu_selected(int id,Point point);
 
-   void menu_file_selected(int id,Point point);
+   void cascade_menu_selected(int id,Point point);
 
    SignalConnector<ClientWindow,int,Point> connector_menu_selected;
-   SignalConnector<ClientWindow,int,Point> connector_menu_file_selected;
+   SignalConnector<ClientWindow,int,Point> connector_cascade_menu_selected;
 
   public:
 
