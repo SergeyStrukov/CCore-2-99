@@ -296,7 +296,7 @@
 ../../Desktop/CCore/src/video/ShapeLib.ProgressShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.RadioShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
-../../Desktop/CCore/src/video/ShapeLib.SimpleTextListWindow.cpp
+../../Desktop/CCore/src/video/ShapeLib.SimpleTextListShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.SwitchShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp

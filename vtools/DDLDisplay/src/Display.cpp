@@ -35,18 +35,33 @@ void ClientWindow::menu_selected(int id,Point point)
  {
   Printf(Con,"id = #;\n",id);
 
-  Used(id);
-  Used(point);
+  menu.unselect();
 
-  //menu.unselect();
+  switch( id )
+    {
+     case 1 :
+      {
+       if( menu_file.isDead() ) menu_file.create(getFrame(),point);
+      }
+     break;
+    }
+ }
+
+void ClientWindow::menu_file_selected(int id,Point point)
+ {
+  Printf(Con,"id = #;\n",id);
+
+  menu_file.destroy();
  }
 
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
    menu(wlist,cfg.menu_cfg,menu_data),
+   menu_file(host.getFrame()->getDesktop(),cfg.cascade_menu_cfg,menu_file_data),
    display(wlist,cfg.display_cfg),
-   connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected)
+   connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
+   connector_menu_file_selected(this,&ClientWindow::menu_file_selected,menu_file.takeSelected())
  {
   wlist.insTop(menu,display);
 
@@ -62,6 +77,13 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
            ("Long line",6)
            (MenuHidden,"Long long line",7)
            ("DDL options",8);
+
+  menu_file_data("@New",101)
+                ("@Open",102)
+                ("@Save",103)
+                ("Save @as",103)
+                (MenuSeparator)
+                ("E@xit",104);
  }
 
 ClientWindow::~ClientWindow()

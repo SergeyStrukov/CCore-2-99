@@ -61,6 +61,7 @@ class ClientWindow : public ComboWindow
    struct Config
     {
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
+     CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
      CtorRefVal<DisplayWindow::ConfigType> display_cfg;
 
      Config() noexcept {}
@@ -80,15 +81,21 @@ class ClientWindow : public ComboWindow
    const Config &cfg;
 
    MenuData menu_data;
+   MenuData menu_file_data;
 
    SimpleTopMenuWindow menu;
+   SimpleCascadeMenu menu_file;
+
    DisplayWindow display;
 
   private:
 
    void menu_selected(int id,Point point);
 
+   void menu_file_selected(int id,Point point);
+
    SignalConnector<ClientWindow,int,Point> connector_menu_selected;
+   SignalConnector<ClientWindow,int,Point> connector_menu_file_selected;
 
   public:
 

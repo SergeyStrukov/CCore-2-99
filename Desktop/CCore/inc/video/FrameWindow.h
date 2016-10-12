@@ -231,6 +231,13 @@ class FrameWindow : public NoCopyBase<MemBase,UserInput>
 
    bool isDead() const { return host->isDead(); }
 
+   // move
+
+   void move(Point delta)
+    {
+     host->move(host->getPlace()+delta);
+    }
+
    // base
 
    virtual void alive()

@@ -19,6 +19,7 @@
 #include <CCore/inc/video/SubWindow.h>
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/RefVal.h>
+#include <CCore/inc/video/ToolWindow.h>
 
 namespace CCore {
 namespace Video {
@@ -65,6 +66,8 @@ template <class Shape> class SimpleTopMenuWindowOf;
 class SimpleCascadeMenuShape;
 
 template <class Shape> class SimpleCascadeMenuWindowOf;
+
+template <class Shape> class SimpleCascadeMenuOf;
 
 /* struct MenuPoint */
 
@@ -246,7 +249,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      const MenuPoint &point=shape.data.list.at(shape.index);
 
-     selected.assert(point.id,TopCascadePoint(point.place)-Point(shape.off,0));
+     selected.assert(point.id,toScreen(TopCascadePoint(point.place)-Point(shape.off,0)));
     }
 
    void select(ulen index)
@@ -859,6 +862,97 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 /* type SimpleCascadeMenuWindow */
 
 using SimpleCascadeMenuWindow = SimpleCascadeMenuWindowOf<SimpleCascadeMenuShape> ;
+
+/* class SimpleCascadeMenuOf<Shape> */
+
+template <class Shape>
+class SimpleCascadeMenuOf
+ {
+  public:
+
+   struct Config
+    {
+     CtorRefVal<ToolWindow::ConfigType> frame_cfg;
+     CtorRefVal<typename Shape::Config> menu_cfg;
+
+     Config() noexcept {}
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   ToolWindow frame;
+   SimpleCascadeMenuWindowOf<Shape> client;
+
+   SignalConnector<SimpleCascadeMenuOf<Shape>,Point> connector_moved;
+
+  private:
+
+   void moved(Point delta)
+    {
+     frame.move(delta);
+    }
+
+  public:
+
+   template <class ... TT>
+   SimpleCascadeMenuOf(Desktop *desktop,const Config &cfg_,TT && ... tt)
+    : cfg(cfg_),
+      frame(desktop,cfg.frame_cfg),
+      client(frame,cfg.menu_cfg, std::forward<TT>(tt)... ),
+      connector_moved(this,&SimpleCascadeMenuOf<Shape>::moved)
+    {
+     frame.bindClient(client);
+    }
+
+   ~SimpleCascadeMenuOf() {}
+
+   // methods
+
+   bool isAlive() const { return frame.isAlive(); }
+
+   bool isDead() const { return frame.isDead(); }
+
+   SimpleCascadeMenuOf<Shape> & create(FrameWindow *parent,Point base) // TODO
+    {
+     Point size=client.getMinSize();
+
+     Point screen_size=frame.getDesktop()->getScreenSize();
+
+     // adjust size and base
+
+     Pane pane(base,size);
+
+     frame.create(parent,pane);
+
+     connector_moved.disconnect();
+     connector_moved.connect(parent->moved);
+
+     return *this;
+    }
+
+   void focus()
+    {
+     frame.getHost()->setFocus();
+
+     client.setFocus();
+    }
+
+   void unselect() { client.unselect(); }
+
+   void destroy() { frame.destroy(); }
+
+   // signals
+
+   Signal<int,Point> & takeSelected() { return client.selected; } // id , cascade menu point
+ };
+
+/* type SimpleCascadeMenu */
+
+using SimpleCascadeMenu = SimpleCascadeMenuOf<SimpleCascadeMenuShape> ;
 
 } // namespace Video
 } // namespace CCore

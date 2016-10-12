@@ -279,7 +279,7 @@ obj/ShapeLib.LineEditShape.o \
 obj/ShapeLib.ProgressShape.o \
 obj/ShapeLib.RadioShape.o \
 obj/ShapeLib.ScrollShape.o \
-obj/ShapeLib.SimpleTextListWindow.o \
+obj/ShapeLib.SimpleTextListShape.o \
 obj/ShapeLib.SingleLineShape.o \
 obj/ShapeLib.SwitchShape.o \
 obj/ShapeLib.TextContourShape.o \
@@ -648,7 +648,7 @@ obj/ShapeLib.LineEditShape.s \
 obj/ShapeLib.ProgressShape.s \
 obj/ShapeLib.RadioShape.s \
 obj/ShapeLib.ScrollShape.s \
-obj/ShapeLib.SimpleTextListWindow.s \
+obj/ShapeLib.SimpleTextListShape.s \
 obj/ShapeLib.SingleLineShape.s \
 obj/ShapeLib.SwitchShape.s \
 obj/ShapeLib.TextContourShape.s \
@@ -1017,7 +1017,7 @@ obj/ShapeLib.LineEditShape.dep \
 obj/ShapeLib.ProgressShape.dep \
 obj/ShapeLib.RadioShape.dep \
 obj/ShapeLib.ScrollShape.dep \
-obj/ShapeLib.SimpleTextListWindow.dep \
+obj/ShapeLib.SimpleTextListShape.dep \
 obj/ShapeLib.SingleLineShape.dep \
 obj/ShapeLib.SwitchShape.dep \
 obj/ShapeLib.TextContourShape.dep \
@@ -1958,7 +1958,7 @@ obj/ShapeLib.RadioShape.o : ../../Desktop/CCore/src/video/ShapeLib.RadioShape.cp
 obj/ShapeLib.ScrollShape.o : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ShapeLib.SimpleTextListWindow.o : ../../Desktop/CCore/src/video/ShapeLib.SimpleTextListWindow.cpp
+obj/ShapeLib.SimpleTextListShape.o : ../../Desktop/CCore/src/video/ShapeLib.SimpleTextListShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.SingleLineShape.o : ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
@@ -3058,7 +3058,7 @@ obj/ShapeLib.RadioShape.s : ../../Desktop/CCore/src/video/ShapeLib.RadioShape.cp
 obj/ShapeLib.ScrollShape.s : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ShapeLib.SimpleTextListWindow.s : ../../Desktop/CCore/src/video/ShapeLib.SimpleTextListWindow.cpp
+obj/ShapeLib.SimpleTextListShape.s : ../../Desktop/CCore/src/video/ShapeLib.SimpleTextListShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.SingleLineShape.s : ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
@@ -4158,8 +4158,8 @@ obj/ShapeLib.RadioShape.dep : ../../Desktop/CCore/src/video/ShapeLib.RadioShape.
 obj/ShapeLib.ScrollShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ScrollShape.o $< -MF $@
 
-obj/ShapeLib.SimpleTextListWindow.dep : ../../Desktop/CCore/src/video/ShapeLib.SimpleTextListWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.SimpleTextListWindow.o $< -MF $@
+obj/ShapeLib.SimpleTextListShape.dep : ../../Desktop/CCore/src/video/ShapeLib.SimpleTextListShape.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.SimpleTextListShape.o $< -MF $@
 
 obj/ShapeLib.SingleLineShape.dep : ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.SingleLineShape.o $< -MF $@
