@@ -517,6 +517,7 @@ class SimpleCascadeMenuShape
      RefVal<bool> use_hotcolor = false ;
 
      RefVal<VColor> ground   =    Silver ;
+     RefVal<VColor> border   =     Black ;
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
      RefVal<VColor> hilight  =      Blue ;
@@ -579,6 +580,10 @@ class SimpleCascadeMenuShape
    static void Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot=false);
 
    static void Draw(const DrawBuf &buf,Pane pane,const Config &cfg);
+
+   void draw_Frame(const DrawBuf &buf) const;
+
+   void draw_Menu(const DrawBuf &buf) const;
 
   public:
 
@@ -761,6 +766,19 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      switch( vkey )
        {
+        case VKey_Esc :
+         {
+          getFrame()->askClose();
+         }
+        break;
+
+        case VKey_Left :
+        case VKey_Right :
+         {
+          pressed.assert(vkey,kmod);
+         }
+        break;
+
         case VKey_Up :
          {
           if( kmod&KeyMod_Shift )
@@ -834,6 +852,11 @@ class SimpleCascadeMenuWindowOf : public SubWindow
      react_LeftClick(point,mkey);
     }
 
+   void react_RightClick(Point,MouseKey)
+    {
+     getFrame()->askClose();
+    }
+
    void react_Move(Point point,MouseKey)
     {
      if( !shape.data ) return;
@@ -863,6 +886,8 @@ class SimpleCascadeMenuWindowOf : public SubWindow
    // signals
 
    Signal<int,Point> selected; // id , cascade menu point
+
+   Signal<VKey,KeyMod> pressed; // for Left and Right keys
  };
 
 /* type SimpleCascadeMenuWindow */
@@ -899,7 +924,7 @@ class SimpleCascadeMenuOf
 
    void moved(Point delta)
     {
-     frame.move(delta);
+     if( frame.isAlive() ) frame.move(delta);
     }
 
   public:
@@ -922,7 +947,7 @@ class SimpleCascadeMenuOf
 
    bool isDead() const { return frame.isDead(); }
 
-   void create(FrameWindow *parent,MenuData &data,Point base) // TODO
+   void create(FrameWindow *parent,MenuData &data,Point base)
     {
      client.bind(data);
 
@@ -930,9 +955,33 @@ class SimpleCascadeMenuOf
 
      Point screen_size=frame.getDesktop()->getScreenSize();
 
-     Used(screen_size);
+     if( base.x<0 || size.x>screen_size.x )
+       {
+        base.x=0;
+       }
+     else
+       {
+        Replace_min<Coord>(base.x,screen_size.x-size.x);
+       }
 
-     // adjust size and base
+     if( base.y<0 ) base.y=0;
+
+     if( base.y>screen_size.y )
+       {
+        if( screen_size.y>size.y )
+          {
+           base.y=screen_size.y-size.y;
+          }
+        else
+          {
+           base.y=0;
+           size.y=screen_size.y;
+          }
+       }
+     else
+       {
+        Replace_min<Coord>(size.y,screen_size.y-base.y);
+       }
 
      Pane pane(base,size);
 
@@ -951,6 +1000,8 @@ class SimpleCascadeMenuOf
    // signals
 
    Signal<int,Point> & takeSelected() { return client.selected; } // id , cascade menu point
+
+   Signal<VKey,KeyMod> & takePressed() { return client.pressed; } // for Left and Right keys
  };
 
 /* type SimpleCascadeMenu */

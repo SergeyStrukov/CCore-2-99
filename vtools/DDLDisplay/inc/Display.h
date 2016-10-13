@@ -91,12 +91,19 @@ class ClientWindow : public ComboWindow
 
   private:
 
+   void menu_off();
+
+  private:
+
    void menu_selected(int id,Point point);
 
    void cascade_menu_selected(int id,Point point);
 
+   void cascade_menu_pressed(VKey vkey,KeyMod kmod);
+
    SignalConnector<ClientWindow,int,Point> connector_menu_selected;
    SignalConnector<ClientWindow,int,Point> connector_cascade_menu_selected;
+   SignalConnector<ClientWindow,VKey,KeyMod> connector_cascade_menu_pressed;
 
   public:
 
@@ -117,6 +124,10 @@ class ClientWindow : public ComboWindow
    virtual void react(UserAction action);
 
    void react_Key(VKey vkey,KeyMod kmod);
+
+   void react_LeftClick(Point point,MouseKey mkey);
+
+   void react_RightClick(Point point,MouseKey mkey);
 
    void react_other(UserAction action);
  };
