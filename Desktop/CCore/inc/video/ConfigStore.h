@@ -50,15 +50,16 @@ using ConfigTypeList = Meta::CaseList<
                                        Meta::Case<int,2,Coord> ,
                                        Meta::Case<int,3,MCoord> ,
                                        Meta::Case<int,4,VColor> ,
-                                       Meta::Case<int,5,Point> ,
-                                       Meta::Case<int,6,DefString> ,
-                                       Meta::Case<int,7,FontParam>
+                                       Meta::Case<int,5,Clr> ,
+                                       Meta::Case<int,6,Point> ,
+                                       Meta::Case<int,7,DefString> ,
+                                       Meta::Case<int,8,FontParam>
                                      > ;
 
 /* concept ConfigType<T> */
 
 template <class T>
-concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Point,DefString,FontParam> ;
+concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Clr,Point,DefString,FontParam> ;
 
 /* class ConfigItem */
 
@@ -245,6 +246,8 @@ class ConfigMap : NoCopy
    void add_MCoord(StrLen name,MCoord value);
 
    void add_VColor(StrLen name,uint32 value);
+
+   void add_Clr(StrLen name,uint8 value);
 
    void add_Point(StrLen name,Point value);
 

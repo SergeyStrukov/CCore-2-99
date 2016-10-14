@@ -20,6 +20,7 @@
 
 #include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/FixedWindow.h>
+#include <CCore/inc/video/ToolWindow.h>
 #include <CCore/inc/video/MessageWindow.h>
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/WindowLib.h>
@@ -162,6 +163,9 @@ struct UserPreferenceBag
 
   FontCouple title_font;
 
+  VColor shade_color = Violet ;
+  Clr    shade_alpha =     64 ;
+
   // ExceptionWindow
 
   VColor exw_back    = Black ;
@@ -190,6 +194,8 @@ struct UserPreferenceBag
 
     virtual void item(DefString name,VColor &var)=0;
 
+    virtual void item(DefString name,Clr &var)=0;
+
     virtual void item(DefString name,unsigned &var)=0;
 
     virtual void item(DefString name,DefString &var)=0;
@@ -214,6 +220,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    DragWindow::ConfigType cfg_DragWindow;
    FixedWindow::ConfigType cfg_FixedWindow;
+   ToolWindow::ConfigType cfg_ToolWindow;
    MessageSubWindow::ConfigType cfg_MessageSubWindow;
    MessageWindow::ConfigType cfg_MessageWindow;
    ExceptionWindow::ConfigType cfg_ExceptionWindow;
@@ -264,6 +271,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    const DragWindow::ConfigType & getDragWindowConfig() const { return cfg_DragWindow; }
 
    const FixedWindow::ConfigType & getFixedWindowConfig() const { return cfg_FixedWindow; }
+
+   const ToolWindow::ConfigType & getToolWindowConfig() const { return cfg_ToolWindow; }
 
    const MessageWindow::ConfigType & getMessageWindowConfig() const { return cfg_MessageWindow; }
 
@@ -326,6 +335,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_DragWindow; }
 
       operator const auto & () const { return obj->cfg_FixedWindow; }
+
+      operator const auto & () const { return obj->cfg_ToolWindow; }
 
       operator const auto & () const { return obj->cfg_MessageWindow; }
 

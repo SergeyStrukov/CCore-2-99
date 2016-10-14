@@ -267,6 +267,10 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
          {
           if( state==MenuHilight && index==i )
             {
+             MPane p(pane);
+
+             art.path(HalfPos,+cfg.width,+cfg.hilight,p.getBottomLeft(),p.getBottomRight());
+
              Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }
           else if( state==MenuSelect && index==i )
@@ -467,6 +471,10 @@ void SimpleCascadeMenuShape::draw_Menu(const DrawBuf &buf) const
          {
           if( state==MenuHilight && index==i )
             {
+             MPane p(pane);
+
+             art.path(HalfPos,+cfg.width,+cfg.hilight,p.getBottomLeft(),p.getBottomRight());
+
              Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }
           else if( state==MenuSelect && index==i )

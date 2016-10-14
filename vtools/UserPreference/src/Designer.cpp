@@ -309,6 +309,8 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
 
    virtual void item(DefString name,VColor &var) { base->add(name,var); }
 
+   virtual void item(DefString name,Clr &var) { }
+
    virtual void item(DefString name,unsigned &var) { base->add(name,var); }
 
    virtual void item(DefString name,DefString &var) { base->add(name,var); }

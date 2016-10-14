@@ -342,6 +342,7 @@ obj/Timer.o \
 obj/TlsSlot.o \
 obj/ToMemBase.o \
 obj/ToMoveCtor.o \
+obj/ToolWindow.o \
 obj/Tree.o \
 obj/TreeBase.o \
 obj/TreeLink.o \
@@ -712,6 +713,7 @@ obj/Timer.s \
 obj/TlsSlot.s \
 obj/ToMemBase.s \
 obj/ToMoveCtor.s \
+obj/ToolWindow.s \
 obj/Tree.s \
 obj/TreeBase.s \
 obj/TreeLink.s \
@@ -1082,6 +1084,7 @@ obj/Timer.dep \
 obj/TlsSlot.dep \
 obj/ToMemBase.dep \
 obj/ToMoveCtor.dep \
+obj/ToolWindow.dep \
 obj/Tree.dep \
 obj/TreeBase.dep \
 obj/TreeLink.dep \
@@ -2148,6 +2151,9 @@ obj/ToMemBase.o : ../../Applied/CCore/src/ToMemBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ToMoveCtor.o : ../../Simple/CCore/src/ToMoveCtor.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ToolWindow.o : ../../Desktop/CCore/src/video/ToolWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tree.o : ../../Fundamental/CCore/src/Tree.cpp
@@ -3253,6 +3259,9 @@ obj/ToMemBase.s : ../../Applied/CCore/src/ToMemBase.cpp
 obj/ToMoveCtor.s : ../../Simple/CCore/src/ToMoveCtor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ToolWindow.s : ../../Desktop/CCore/src/video/ToolWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Tree.s : ../../Fundamental/CCore/src/Tree.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4355,6 +4364,9 @@ obj/ToMemBase.dep : ../../Applied/CCore/src/ToMemBase.cpp
 
 obj/ToMoveCtor.dep : ../../Simple/CCore/src/ToMoveCtor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToMoveCtor.o $< -MF $@
+
+obj/ToolWindow.dep : ../../Desktop/CCore/src/video/ToolWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToolWindow.o $< -MF $@
 
 obj/Tree.dep : ../../Fundamental/CCore/src/Tree.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tree.o $< -MF $@

@@ -1,5 +1,4 @@
 ./CCore/src/video/Menu.cpp
-./CCore/src/video/ToolWindow.cpp
 ./src/Application.cpp
 ./src/Display.cpp
 ./src/main.cpp

@@ -87,6 +87,9 @@ template <>
 auto ConfigItem::DDLTypeNameCtx::call<VColor>() -> RetType { return "VColor"; }
 
 template <>
+auto ConfigItem::DDLTypeNameCtx::call<Clr>() -> RetType { return "Clr"; }
+
+template <>
 auto ConfigItem::DDLTypeNameCtx::call<Point>() -> RetType { return "Point"; }
 
 template <>
@@ -121,6 +124,8 @@ const char *const ConfigMap::Pretext=
 "type MCoord = sint32 ; \r\n"
 "\r\n"
 "type VColor = uint32 ;\r\n"
+"\r\n"
+"type Clr = uint8 ;\r\n"
 "\r\n"
 "struct Point\r\n"
 " {\r\n"
@@ -217,6 +222,10 @@ struct ConfigMap::TypeFilter
              {
               func.do_VColor();
              }
+           else if( name.equal(StrLen("Clr",3)) )
+             {
+              func.do_Clr();
+             }
           }
        }
 
@@ -282,6 +291,8 @@ struct ConfigMap::AddItem
 
   uint32 get_VColor() const { return value.get<DDL::imp_uint32>().value; }
 
+  uint8 get_Clr() const { return value.get<DDL::imp_uint8>().value; }
+
   Point get_Point() const
    {
     auto r=value.get<DDL::Block>().data;
@@ -336,6 +347,8 @@ struct ConfigMap::AddItem
 
   void do_VColor() { obj->add_VColor(name,get_VColor()); }
 
+  void do_Clr() { obj->add_Clr(name,get_Clr()); }
+
   void do_Point() { obj->add_Point(name,get_Point()); }
 
   void do_Font() { obj->add_Font(name,get_Font()); }
@@ -362,6 +375,8 @@ void ConfigMap::add_Coord(StrLen name,Coord value) { add(name,value); }
 void ConfigMap::add_MCoord(StrLen name,MCoord value) { add(name,value); }
 
 void ConfigMap::add_VColor(StrLen name,uint32 value) { add(name,VColor(value)); }
+
+void ConfigMap::add_Clr(StrLen name,uint8 value) { add(name,Clr(value)); }
 
 void ConfigMap::add_Point(StrLen name,Point value) { add(name,value); }
 

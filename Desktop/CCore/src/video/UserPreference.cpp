@@ -101,6 +101,8 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("btnPictAlert",btnPictAlert);
   map.sync("btnPictNoAlert",btnPictNoAlert);
   map.sync("btnPictCloseAlert",btnPictCloseAlert);
+  map.sync("shade_color",shade_color);
+  map.sync("shade_alpha",shade_alpha);
   map.sync("exw_back",exw_back);
   map.sync("exw_text",exw_text);
   map.sync("exw_divider",exw_divider);
@@ -190,6 +192,8 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("btnPictAlert",btnPictAlert);
   map.update("btnPictNoAlert",btnPictNoAlert);
   map.update("btnPictCloseAlert",btnPictCloseAlert);
+  map.update("shade_color",shade_color);
+  map.update("shade_alpha",shade_alpha);
   map.update("exw_back",exw_back);
   map.update("exw_text",exw_text);
   map.update("exw_divider",exw_divider);
@@ -317,6 +321,9 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("button close-alert picture",btnPictCloseAlert);
    binder.space();
    binder.item("title font",title_font);
+   binder.space();
+   binder.item("shade_color",shade_color);
+   binder.item("shade_alpha",shade_alpha);
 
   binder.group("Exception window");
 
@@ -389,6 +396,8 @@ UserPreference::UserPreference() noexcept
   cfg_DragWindow.blink_time.bind(blink_time);
   cfg_DragWindow.blink_period.bind(blink_period);
   cfg_DragWindow.fatal_error.bind(fatal_error);
+  cfg_DragWindow.shade_color.bind(shade_color);
+  cfg_DragWindow.shade_alpha.bind(shade_alpha);
 
   cfg_FixedWindow.width.bind(width);
   cfg_FixedWindow.frame_dxy.bind(frame_dxy);
@@ -406,6 +415,11 @@ UserPreference::UserPreference() noexcept
   cfg_FixedWindow.btnFace.bind(btnFace);
   cfg_FixedWindow.btnFaceHilight.bind(btnFaceHilight);
   cfg_FixedWindow.btnPictClose.bind(btnPictClose);
+  cfg_FixedWindow.shade_color.bind(shade_color);
+  cfg_FixedWindow.shade_alpha.bind(shade_alpha);
+
+  cfg_ToolWindow.shade_color.bind(shade_color);
+  cfg_ToolWindow.shade_alpha.bind(shade_alpha);
 
   // sub windows
 

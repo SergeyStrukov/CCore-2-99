@@ -305,6 +305,7 @@
 ../../Desktop/CCore/src/video/SmoothAlgo.cpp
 ../../Desktop/CCore/src/video/SmoothDrawArt.cpp
 ../../Desktop/CCore/src/video/SubWindow.cpp
+../../Desktop/CCore/src/video/ToolWindow.cpp
 ../../Desktop/CCore/src/video/UserAction.cpp
 ../../Desktop/CCore/src/video/UserPreference.cpp
 ../../Desktop/CCore/src/video/WindowLib.cpp
