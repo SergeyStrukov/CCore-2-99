@@ -132,6 +132,7 @@ class DesignerWindow : public ComboWindow
    CheckWindow check_Coord;
    CheckWindow check_MCoord;
    CheckWindow check_VColor;
+   CheckWindow check_Clr;
    CheckWindow check_unsigned;
    CheckWindow check_String;
    CheckWindow check_Point;
@@ -141,6 +142,7 @@ class DesignerWindow : public ComboWindow
    LabelWindow label_Coord;
    LabelWindow label_MCoord;
    LabelWindow label_VColor;
+   LabelWindow label_Clr;
    LabelWindow label_unsigned;
    LabelWindow label_String;
    LabelWindow label_Point;
@@ -176,6 +178,8 @@ class DesignerWindow : public ComboWindow
       bool enable_MCoord(bool on);
 
       bool enable_VColor(bool on);
+
+      bool enable_Clr(bool on);
 
       bool enable_unsigned(bool on);
 
@@ -299,6 +303,22 @@ class DesignerWindow : public ComboWindow
       explicit BackPad_unsigned(SpinEditWindow &editor_) : editor(editor_) {}
     };
 
+   class BackPad_clr : public BackPadBase<Clr>
+    {
+      SpinEditWindow &editor;
+
+     private:
+
+      virtual void propagate(Clr val)
+       {
+        editor.setValue((int)val);
+       }
+
+     public:
+
+      explicit BackPad_clr(SpinEditWindow &editor_) : editor(editor_) {}
+    };
+
    class BackPad_string : public BackPadBase<DefString>
     {
       LineEditWindow &editor;
@@ -346,6 +366,9 @@ class DesignerWindow : public ComboWindow
    SpinEditWindow unsigned_edit;
    BackPad_unsigned unsigned_pad;
 
+   SpinEditWindow clr_edit;
+   BackPad_clr clr_pad;
+
    PointEditWindow point_edit;
    BackPad<Point,PointEditWindow,&PointEditWindow::setPoint> point_pad;
 
@@ -381,6 +404,8 @@ class DesignerWindow : public ComboWindow
 
    void enable_VColor(bool on);
 
+   void enable_Clr(bool on);
+
    void enable_unsigned(bool on);
 
    void enable_String(bool on);
@@ -393,6 +418,7 @@ class DesignerWindow : public ComboWindow
    SignalConnector<DesignerWindow,bool> connector_check_Coord_changed;
    SignalConnector<DesignerWindow,bool> connector_check_MCoord_changed;
    SignalConnector<DesignerWindow,bool> connector_check_VColor_changed;
+   SignalConnector<DesignerWindow,bool> connector_check_Clr_changed;
    SignalConnector<DesignerWindow,bool> connector_check_unsigned_changed;
    SignalConnector<DesignerWindow,bool> connector_check_String_changed;
    SignalConnector<DesignerWindow,bool> connector_check_Point_changed;
@@ -423,6 +449,8 @@ class DesignerWindow : public ComboWindow
    void select(MCoord &var);
 
    void select(VColor &var);
+
+   void select(Clr &var);
 
    void select(unsigned &var);
 
@@ -463,6 +491,10 @@ class DesignerWindow : public ComboWindow
    void unsigned_edit_changed(int value);
 
    SignalConnector<DesignerWindow,int> connector_unsigned_edit_changed;
+
+   void clr_edit_changed(int value);
+
+   SignalConnector<DesignerWindow,int> connector_clr_edit_changed;
 
    void point_edit_changed(Point value);
 

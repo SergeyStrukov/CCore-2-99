@@ -36,6 +36,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
      Var_Coord,
      Var_MCoord,
      Var_VColor,
+     Var_Clr,
      Var_unsigned,
      Var_String,
      Var_Point,
@@ -54,6 +55,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        Coord      &of_Coord;
        MCoord     &of_MCoord;
        VColor     &of_VColor;
+       Clr        &of_Clr;
        unsigned   &of_unsigned;
        DefString  &of_String;
        Point      &of_Point;
@@ -66,6 +68,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        Ref(VColor &var) : of_VColor{var} {}
 
        Ref(unsigned &var) : of_unsigned{var} {}
+
+       Ref(Clr &var) : of_Clr{var} {}
 
        Ref(DefString &var) : of_String{var} {}
 
@@ -93,6 +97,13 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
      Rec(DefString  name_,VColor &var)
       : name(name_),
         type(Var_VColor),
+        ref(var)
+      {
+      }
+
+     Rec(DefString  name_,Clr &var)
+      : name(name_),
+        type(Var_Clr),
         ref(var)
       {
       }
@@ -135,6 +146,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
           case Var_MCoord : func(ref.of_MCoord); break;
 
           case Var_VColor : func(ref.of_VColor); break;
+
+          case Var_Clr : func(ref.of_Clr); break;
 
           case Var_unsigned : func(ref.of_unsigned); break;
 
@@ -206,6 +219,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    void add(DefString name,VColor &var) { list.append_fill(name,var); }
 
+   void add(DefString name,Clr &var) { list.append_fill(name,var); }
+
    void add(DefString name,unsigned &var) { list.append_fill(name,var); }
 
    void add(DefString name,DefString &var) { list.append_fill(name,var); }
@@ -251,6 +266,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
    bool enable_MCoord(bool on) { return enable(Var_MCoord,on); }
 
    bool enable_VColor(bool on) { return enable(Var_VColor,on); }
+
+   bool enable_Clr(bool on) { return enable(Var_Clr,on); }
 
    bool enable_unsigned(bool on) { return enable(Var_unsigned,on); }
 
@@ -309,7 +326,7 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
 
    virtual void item(DefString name,VColor &var) { base->add(name,var); }
 
-   virtual void item(DefString name,Clr &var) { }
+   virtual void item(DefString name,Clr &var) { base->add(name,var); }
 
    virtual void item(DefString name,unsigned &var) { base->add(name,var); }
 
@@ -359,6 +376,11 @@ bool DesignerWindow::PrefInfo::enable_MCoord(bool on)
 bool DesignerWindow::PrefInfo::enable_VColor(bool on)
  {
   return getBase()->enable_VColor(on);
+ }
+
+bool DesignerWindow::PrefInfo::enable_Clr(bool on)
+ {
+  return getBase()->enable_Clr(on);
  }
 
 bool DesignerWindow::PrefInfo::enable_unsigned(bool on)
@@ -445,6 +467,11 @@ void DesignerWindow::enable_MCoord(bool on)
 void DesignerWindow::enable_VColor(bool on)
  {
   if( info.enable_VColor(on) ) newList();
+ }
+
+void DesignerWindow::enable_Clr(bool on)
+ {
+  if( info.enable_Clr(on) ) newList();
  }
 
 void DesignerWindow::enable_unsigned(bool on)
@@ -534,6 +561,13 @@ void DesignerWindow::select(VColor &var)
   switchTo(color_edit,color_pad);
  }
 
+void DesignerWindow::select(Clr &var)
+ {
+  clr_pad.bind(var);
+
+  switchTo(clr_edit,clr_pad);
+ }
+
 void DesignerWindow::select(unsigned &var)
  {
   unsigned_pad.bind(var);
@@ -618,6 +652,11 @@ void DesignerWindow::unsigned_edit_changed(int value)
   if( unsigned_pad.update((unsigned)value) ) changed();
  }
 
+void DesignerWindow::clr_edit_changed(int value)
+ {
+  if( clr_pad.update((Clr)value) ) changed();
+ }
+
 void DesignerWindow::point_edit_changed(Point value)
  {
   if( point_pad.update(value) ) changed();
@@ -642,6 +681,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    check_Coord(wlist,cfg.check_cfg),
    check_MCoord(wlist,cfg.check_cfg),
    check_VColor(wlist,cfg.check_cfg),
+   check_Clr(wlist,cfg.check_cfg),
    check_unsigned(wlist,cfg.check_cfg),
    check_String(wlist,cfg.check_cfg),
    check_Point(wlist,cfg.check_cfg),
@@ -651,6 +691,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    label_Coord(wlist,cfg.label_cfg,"size"_def,AlignX_Left),
    label_MCoord(wlist,cfg.label_cfg,"milli-size"_def,AlignX_Left),
    label_VColor(wlist,cfg.label_cfg,"color"_def,AlignX_Left),
+   label_Clr(wlist,cfg.label_cfg,"color pitch"_def,AlignX_Left),
    label_unsigned(wlist,cfg.label_cfg,"count"_def,AlignX_Left),
    label_String(wlist,cfg.label_cfg,"text"_def,AlignX_Left),
    label_Point(wlist,cfg.label_cfg,"point"_def,AlignX_Left),
@@ -676,6 +717,9 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    unsigned_edit(wlist,cfg.unsigned_cfg),
    unsigned_pad(unsigned_edit),
 
+   clr_edit(wlist,cfg.unsigned_cfg),
+   clr_pad(clr_edit),
+
    point_edit(wlist,cfg.point_cfg),
    point_pad(point_edit),
 
@@ -688,6 +732,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    connector_check_Coord_changed(this,&DesignerWindow::enable_Coord,check_Coord.changed),
    connector_check_MCoord_changed(this,&DesignerWindow::enable_MCoord,check_MCoord.changed),
    connector_check_VColor_changed(this,&DesignerWindow::enable_VColor,check_VColor.changed),
+   connector_check_Clr_changed(this,&DesignerWindow::enable_Clr,check_Clr.changed),
    connector_check_unsigned_changed(this,&DesignerWindow::enable_unsigned,check_unsigned.changed),
    connector_check_String_changed(this,&DesignerWindow::enable_String,check_String.changed),
    connector_check_Point_changed(this,&DesignerWindow::enable_Point,check_Point.changed),
@@ -705,14 +750,15 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    connector_mcoord_edit_changed(this,&DesignerWindow::mcoord_edit_changed,mcoord_edit.changed),
    connector_font_edit_changed(this,&DesignerWindow::font_edit_changed,font_edit.changed),
    connector_unsigned_edit_changed(this,&DesignerWindow::unsigned_edit_changed,unsigned_edit.changed),
+   connector_clr_edit_changed(this,&DesignerWindow::clr_edit_changed,clr_edit.changed),
    connector_point_edit_changed(this,&DesignerWindow::point_edit_changed,point_edit.changed),
    connector_color_edit_changed(this,&DesignerWindow::color_edit_changed,color_edit.changed)
  {
   pref.sync();
 
-  wlist.insTop(text_list,check_all,check_Coord,check_MCoord,check_VColor,
+  wlist.insTop(text_list,check_all,check_Coord,check_MCoord,check_VColor,check_Clr,
                          check_unsigned,check_String,check_Point,check_Font,
-                         label_all,label_Coord,label_MCoord,label_VColor,
+                         label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
                          label_unsigned,label_String,label_Point,label_Font,
                          btn_Set,btn_Back,btn_Save,btn_Self);
 
@@ -721,6 +767,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
   btn_Save.disable();
 
   unsigned_edit.setValue(0,0,10000);
+  clr_edit.setValue(0,0,MaxClr);
 
   // fill text_list
 
@@ -756,7 +803,7 @@ void DesignerWindow::layout()
   // check box
 
   {
-   Point s=SupMinSize(label_all,label_Coord,label_MCoord,label_VColor,
+   Point s=SupMinSize(label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
                       label_unsigned,label_String,label_Point,label_Font);
 
    Point btnSave_size=btn_Save.getMinSize();
@@ -768,6 +815,7 @@ void DesignerWindow::layout()
    psor1.placeY(check_Coord,s.y);
    psor1.placeY(check_MCoord,s.y);
    psor1.placeY(check_VColor,s.y);
+   psor1.placeY(check_Clr,s.y);
    psor1.placeY(check_unsigned,s.y);
    psor1.placeY(check_String,s.y);
    psor1.placeY(check_Point,s.y);
@@ -798,6 +846,7 @@ void DesignerWindow::layout()
    psor2.placeY(label_Coord,s);
    psor2.placeY(label_MCoord,s);
    psor2.placeY(label_VColor,s);
+   psor2.placeY(label_Clr,s);
    psor2.placeY(label_unsigned,s);
    psor2.placeY(label_String,s);
    psor2.placeY(label_Point,s);
@@ -832,6 +881,10 @@ void DesignerWindow::layout()
   // unsigned_edit
 
   SetMinPlace(unsigned_edit,base);
+
+  // clr_edit
+
+  SetMinPlace(clr_edit,base);
 
   // point_edit
 
