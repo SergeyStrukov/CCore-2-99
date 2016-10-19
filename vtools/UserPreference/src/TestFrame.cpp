@@ -94,6 +94,18 @@ void TestWindow::push()
     }
  }
 
+void TestWindow::shade()
+ {
+  disableFrameReact();
+
+  if( enable_window.isDead() ) enable_window.create(getFrame(),"TestFrame enable"_def);
+ }
+
+void TestWindow::unshade()
+ {
+  enableFrameReact();
+ }
+
 TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
  : ComboWindow(host),
    pref(pref_),
@@ -123,16 +135,22 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    text_contour(wlist,pref.getTextContourConfig(),"Select color"_def),
    light(wlist,pref.getLightConfig()),
    progress(wlist,pref.getProgressConfig()),
+   shade_btn(wlist,pref.getButtonConfig(),"Shade"_def),
+
+   enable_window(host.getFrame()->getDesktop(),pref.getMessageWindowConfig()),
 
    connector_group_changed(this,&TestWindow::changeColor,group.changed),
    connector_check_changed(this,&TestWindow::lightOnOff,check.changed),
    connector_knob_pressed(this,&TestWindow::knobPressed,knob.pressed),
    connector_swtch_changed(this,&TestWindow::enableAll,swtch.changed),
    connector_xscroll_changed(this,&TestWindow::setFace,xscroll.changed),
-   connector_btn_pressed(this,&TestWindow::push,btn.pressed)
+   connector_btn_pressed(this,&TestWindow::push,btn.pressed),
+   connector_shade_btn_pressed(this,&TestWindow::shade,shade_btn.pressed),
+   connector_enable_window_destoyed(this,&TestWindow::unshade,enable_window.destroyed)
  {
   wlist.insTop(swtch,btn,rad1,rad2,rad3,check,edit,knob,xscroll,info,text_list,
-               label1,label2,label3,label,text,xsingle,ysingle,xdouble,ydouble,contour,text_contour,light,progress);
+               label1,label2,label3,label,text,xsingle,ysingle,xdouble,ydouble,
+               contour,text_contour,light,progress,shade_btn);
 
   group.add(rad1,rad2,rad3);
 
@@ -141,6 +159,10 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
   xscroll.setRange(KnobShape::FaceLim,1);
 
   edit.setText("To find our long-forgotten gold.");
+
+  enable_window.setInfo(InfoFromString("Press Ok to enable"));
+
+  enable_window.add("Ok"_def,Button_Ok);
  }
 
 TestWindow::~TestWindow()
@@ -280,6 +302,12 @@ void TestWindow::layout()
 
   {
    psor.placeMinY(text_list);
+  }
+
+  // shade_btn
+
+  {
+   psor.placeMinY(shade_btn);
   }
  }
 

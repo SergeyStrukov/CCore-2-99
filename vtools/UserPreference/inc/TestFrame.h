@@ -17,6 +17,7 @@
 #include <inc/Application.h>
 
 #include <CCore/inc/video/UserPreference.h>
+#include <CCore/inc/video/MessageWindow.h>
 
 namespace App {
 
@@ -65,6 +66,10 @@ class TestWindow : public ComboWindow
    LightWindow light;
    ProgressWindow progress;
 
+   ButtonWindow shade_btn;
+
+   MessageWindow enable_window;
+
   private:
 
    static const char *const InfoText;
@@ -94,6 +99,14 @@ class TestWindow : public ComboWindow
    void push();
 
    SignalConnector<TestWindow> connector_btn_pressed;
+
+   void shade();
+
+   SignalConnector<TestWindow> connector_shade_btn_pressed;
+
+   void unshade();
+
+   SignalConnector<TestWindow> connector_enable_window_destoyed;
 
   public:
 
