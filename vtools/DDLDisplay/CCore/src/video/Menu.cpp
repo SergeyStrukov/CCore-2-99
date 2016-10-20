@@ -265,17 +265,17 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
        {
         case MenuText :
          {
-          if( state==MenuHilight && index==i )
+          if( (state&MenuSelect) && select_index==i )
+            {
+             FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
+
+             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
+            }
+          else if( (state&MenuHilight) && hilight_index==i )
             {
              MPane p(pane);
 
              art.path(HalfPos,+cfg.width,+cfg.hilight,p.getBottomLeft(),p.getBottomRight());
-
-             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
-            }
-          else if( state==MenuSelect && index==i )
-            {
-             FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
 
              Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }

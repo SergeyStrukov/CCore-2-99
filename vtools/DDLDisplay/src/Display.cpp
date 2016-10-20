@@ -161,7 +161,7 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
     }
   else if( vkey==VKey_Esc )
     {
-     if( menu.getState()==MenuSelect ) menu.unselect();
+     if( menu.getState() ) menu.unselect();
 
      if( wlist.getFocus()==&menu ) display.setFocus();
     }
