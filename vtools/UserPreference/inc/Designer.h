@@ -137,6 +137,7 @@ class DesignerWindow : public ComboWindow
    CheckWindow check_String;
    CheckWindow check_Point;
    CheckWindow check_Font;
+   CheckWindow check_bool;
 
    LabelWindow label_all;
    LabelWindow label_Coord;
@@ -147,6 +148,7 @@ class DesignerWindow : public ComboWindow
    LabelWindow label_String;
    LabelWindow label_Point;
    LabelWindow label_Font;
+   LabelWindow label_bool;
 
    ButtonWindow btn_Set;
    ButtonWindow btn_Back;
@@ -188,6 +190,8 @@ class DesignerWindow : public ComboWindow
       bool enable_Point(bool on);
 
       bool enable_Font(bool on);
+
+      bool enable_bool(bool on);
 
       template <class Func>
       void select(ulen index,Func func);
@@ -270,7 +274,7 @@ class DesignerWindow : public ComboWindow
        }
     };
 
-   template <class T,class E,void (E::*Set)(T val)>
+   template <class T,class E,class S,void (E::*Set)(S val)>
    class BackPad : public BackPadBase<T>
     {
       E &editor;
@@ -279,44 +283,12 @@ class DesignerWindow : public ComboWindow
 
       virtual void propagate(T val)
        {
-        (editor.*Set)(val);
+        (editor.*Set)((S)val);
        }
 
      public:
 
       explicit BackPad(E &editor_) : editor(editor_) {}
-    };
-
-   class BackPad_unsigned : public BackPadBase<unsigned>
-    {
-      SpinEditWindow &editor;
-
-     private:
-
-      virtual void propagate(unsigned val)
-       {
-        editor.setValue((int)val);
-       }
-
-     public:
-
-      explicit BackPad_unsigned(SpinEditWindow &editor_) : editor(editor_) {}
-    };
-
-   class BackPad_clr : public BackPadBase<Clr>
-    {
-      SpinEditWindow &editor;
-
-     private:
-
-      virtual void propagate(Clr val)
-       {
-        editor.setValue((int)val);
-       }
-
-     public:
-
-      explicit BackPad_clr(SpinEditWindow &editor_) : editor(editor_) {}
     };
 
    class BackPad_string : public BackPadBase<DefString>
@@ -335,45 +307,32 @@ class DesignerWindow : public ComboWindow
       explicit BackPad_string(LineEditWindow &editor_) : editor(editor_) {}
     };
 
-   class BackPad_font : public BackPadBase<FontCouple>
-    {
-     FontEditWindow &editor;
-
-     private:
-
-      virtual void propagate(FontCouple val)
-       {
-        editor.setCouple(val);
-       }
-
-     public:
-
-      explicit BackPad_font(FontEditWindow &editor_) : editor(editor_) {}
-    };
-
    LineEditWindow string_edit;
    BackPad_string string_pad;
 
    CoordEditWindow coord_edit;
-   BackPad<Coord,CoordEditWindow,&CoordEditWindow::setCoord> coord_pad;
+   BackPad<Coord,CoordEditWindow,Coord,&CoordEditWindow::setCoord> coord_pad;
 
    MCoordEditWindow mcoord_edit;
-   BackPad<MCoord,MCoordEditWindow,&MCoordEditWindow::setMCoord> mcoord_pad;
+   BackPad<MCoord,MCoordEditWindow,MCoord,&MCoordEditWindow::setMCoord> mcoord_pad;
 
    FontEditWindow font_edit;
-   BackPad_font font_pad;
+   BackPad<FontCouple,FontEditWindow,const FontCouple &,&FontEditWindow::setCouple> font_pad;
 
    SpinEditWindow unsigned_edit;
-   BackPad_unsigned unsigned_pad;
+   BackPad<unsigned,SpinEditWindow,int,&SpinEditWindow::setValue> unsigned_pad;
 
    SpinEditWindow clr_edit;
-   BackPad_clr clr_pad;
+   BackPad<Clr,SpinEditWindow,int,&SpinEditWindow::setValue> clr_pad;
 
    PointEditWindow point_edit;
-   BackPad<Point,PointEditWindow,&PointEditWindow::setPoint> point_pad;
+   BackPad<Point,PointEditWindow,Point,&PointEditWindow::setPoint> point_pad;
 
    ColorEditWindow color_edit;
-   BackPad<VColor,ColorEditWindow,&ColorEditWindow::setColor> color_pad;
+   BackPad<VColor,ColorEditWindow,VColor,&ColorEditWindow::setColor> color_pad;
+
+   CheckWindow bool_edit;
+   BackPad<bool,CheckWindow,bool,&CheckWindow::check> bool_pad;
 
    SubWindow *active_editor = 0 ;
    BackSet *active_backset = 0 ;
@@ -414,6 +373,8 @@ class DesignerWindow : public ComboWindow
 
    void enable_Font(bool on);
 
+   void enable_bool(bool on);
+
    SignalConnector<DesignerWindow,bool> connector_check_all_changed;
    SignalConnector<DesignerWindow,bool> connector_check_Coord_changed;
    SignalConnector<DesignerWindow,bool> connector_check_MCoord_changed;
@@ -423,6 +384,7 @@ class DesignerWindow : public ComboWindow
    SignalConnector<DesignerWindow,bool> connector_check_String_changed;
    SignalConnector<DesignerWindow,bool> connector_check_Point_changed;
    SignalConnector<DesignerWindow,bool> connector_check_Font_changed;
+   SignalConnector<DesignerWindow,bool> connector_check_bool_changed;
 
    // buttons
 
@@ -459,6 +421,8 @@ class DesignerWindow : public ComboWindow
    void select(Point &var);
 
    void select(FontCouple &var);
+
+   void select(bool &var);
 
    void select();
 
@@ -503,6 +467,10 @@ class DesignerWindow : public ComboWindow
    void color_edit_changed(VColor value);
 
    SignalConnector<DesignerWindow,VColor> connector_color_edit_changed;
+
+   void bool_edit_changed(bool value);
+
+   SignalConnector<DesignerWindow,bool> connector_bool_edit_changed;
 
   public:
 

@@ -121,7 +121,7 @@ struct UserPreferenceBag
 
   // other
 
-  bool use_hotcolor = true ;                          // TODO
+  bool use_hotcolor = true ;
 
   unsigned line_edit_period     =   10_tick ;
   unsigned scroll_speedUpPeriod =   12_tick ;
@@ -212,6 +212,8 @@ struct UserPreferenceBag
     virtual void item(DefString name,Point &var)=0;
 
     virtual void item(DefString name,FontCouple &var)=0;
+
+    virtual void item(DefString name,bool &var)=0;
    };
 
   void bind(Bind &binder);

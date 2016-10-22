@@ -53,13 +53,14 @@ using ConfigTypeList = Meta::CaseList<
                                        Meta::Case<int,5,Clr> ,
                                        Meta::Case<int,6,Point> ,
                                        Meta::Case<int,7,DefString> ,
-                                       Meta::Case<int,8,FontParam>
+                                       Meta::Case<int,8,FontParam> ,
+                                       Meta::Case<int,9,bool>
                                      > ;
 
 /* concept ConfigType<T> */
 
 template <class T>
-concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Clr,Point,DefString,FontParam> ;
+concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Clr,Point,DefString,FontParam,bool> ;
 
 /* class ConfigItem */
 
@@ -122,6 +123,11 @@ class ConfigItem : NoCopy
 
        Printf(out," { Font##Config###; , Font##Config###; , #; , #; , #; } }",
                   obj.cfg.fht,obj.cfg.fsm,Bool(obj.cfg.use_kerning),obj.cfg.strength,GammaToInt(obj.cfg.gamma_order));
+      }
+
+     void print(bool obj)
+      {
+       Printf(out,"#;",Bool(obj));
       }
 
      template <class T>
@@ -252,6 +258,8 @@ class ConfigMap : NoCopy
    void add_Point(StrLen name,Point value);
 
    void add_Font(StrLen name,const FontParam &value);
+
+   void add_Bool(StrLen name,uint8 value);
 
   public:
 

@@ -98,6 +98,9 @@ auto ConfigItem::DDLTypeNameCtx::call<DefString>() -> RetType { return "text"; }
 template <>
 auto ConfigItem::DDLTypeNameCtx::call<FontParam>() -> RetType { return "Font"; }
 
+template <>
+auto ConfigItem::DDLTypeNameCtx::call<bool>() -> RetType { return "Bool"; }
+
 StrLen ConfigItem::getDDLTypeName() const
  {
   return Meta::TypeSwitch<ConfigTypeList>::Switch(id,DDLTypeNameCtx{});
@@ -226,6 +229,10 @@ struct ConfigMap::TypeFilter
              {
               func.do_Clr();
              }
+           else if( name.equal(StrLen("Bool",4)) )
+             {
+              func.do_Bool();
+             }
           }
        }
 
@@ -335,6 +342,8 @@ struct ConfigMap::AddItem
     return param;
    }
 
+  uint8 get_Bool() const { return value.get<DDL::imp_uint8>().value; }
+
   // do...()
 
   void do_uint() { obj->add_uint(name,get_uint()); }
@@ -352,6 +361,8 @@ struct ConfigMap::AddItem
   void do_Point() { obj->add_Point(name,get_Point()); }
 
   void do_Font() { obj->add_Font(name,get_Font()); }
+
+  void do_Bool() { obj->add_Bool(name,get_Bool()); }
  };
 
 void ConfigMap::add(StrLen name,const ConfigType &value)
@@ -381,6 +392,11 @@ void ConfigMap::add_Clr(StrLen name,uint8 value) { add(name,Clr(value)); }
 void ConfigMap::add_Point(StrLen name,Point value) { add(name,value); }
 
 void ConfigMap::add_Font(StrLen name,const FontParam &value) { add(name,value); }
+
+void ConfigMap::add_Bool(StrLen name,uint8 value)
+ {
+  if( !name.equal(StrLen("True",4)) && !name.equal(StrLen("False",5)) ) add(name,bool(value));
+ }
 
 ConfigMap::ConfigMap() noexcept
  {

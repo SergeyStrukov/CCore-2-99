@@ -41,6 +41,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
      Var_String,
      Var_Point,
      Var_Font,
+     Var_bool,
 
      VarLim
     };
@@ -60,6 +61,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        DefString  &of_String;
        Point      &of_Point;
        FontCouple &of_Font;
+       bool       &of_bool;
 
        Ref(Coord &var) : of_Coord{var} {}
 
@@ -76,62 +78,71 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        Ref(Point &var) : of_Point{var} {}
 
        Ref(FontCouple &var) : of_Font{var} {}
+
+       Ref(bool &var) : of_bool{var} {}
       };
 
      Ref ref;
 
-     Rec(DefString  name_,Coord &var)
+     Rec(DefString name_,Coord &var)
       : name(name_),
         type(Var_Coord),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,MCoord &var)
+     Rec(DefString name_,MCoord &var)
       : name(name_),
         type(Var_MCoord),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,VColor &var)
+     Rec(DefString name_,VColor &var)
       : name(name_),
         type(Var_VColor),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,Clr &var)
+     Rec(DefString name_,Clr &var)
       : name(name_),
         type(Var_Clr),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,unsigned &var)
+     Rec(DefString name_,unsigned &var)
       : name(name_),
         type(Var_unsigned),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,DefString &var)
+     Rec(DefString name_,DefString &var)
       : name(name_),
         type(Var_String),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,Point &var)
+     Rec(DefString name_,Point &var)
       : name(name_),
         type(Var_Point),
         ref(var)
       {
       }
 
-     Rec(DefString  name_,FontCouple &var)
+     Rec(DefString name_,FontCouple &var)
       : name(name_),
         type(Var_Font),
+        ref(var)
+      {
+      }
+
+     Rec(DefString name_,bool &var)
+      : name(name_),
+        type(Var_bool),
         ref(var)
       {
       }
@@ -156,6 +167,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
           case Var_Point : func(ref.of_Point); break;
 
           case Var_Font : func(ref.of_Font); break;
+
+          case Var_bool : func(ref.of_bool); break;
          }
       }
     };
@@ -229,6 +242,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    void add(DefString name,FontCouple &var) { list.append_fill(name,var); }
 
+   void add(DefString name,bool &var) { list.append_fill(name,var); }
+
    // enable...()
 
    bool enable_all(bool on)
@@ -276,6 +291,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
    bool enable_Point(bool on) { return enable(Var_Point,on); }
 
    bool enable_Font(bool on) { return enable(Var_Font,on); }
+
+   bool enable_bool(bool on) { return enable(Var_bool,on); }
 
    // AbstractInfo
 
@@ -335,6 +352,8 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
    virtual void item(DefString name,Point &var) { base->add(name,var); }
 
    virtual void item(DefString name,FontCouple &var) { base->add(name,var); }
+
+   virtual void item(DefString name,bool &var) { base->add(name,var); }
  };
 
 /* class DesignerWindow::PrefInfo */
@@ -401,6 +420,11 @@ bool DesignerWindow::PrefInfo::enable_Point(bool on)
 bool DesignerWindow::PrefInfo::enable_Font(bool on)
  {
   return getBase()->enable_Font(on);
+ }
+
+bool DesignerWindow::PrefInfo::enable_bool(bool on)
+ {
+  return getBase()->enable_bool(on);
  }
 
 template <class Func>
@@ -492,6 +516,11 @@ void DesignerWindow::enable_Point(bool on)
 void DesignerWindow::enable_Font(bool on)
  {
   if( info.enable_Font(on) ) newList();
+ }
+
+void DesignerWindow::enable_bool(bool on)
+ {
+  if( info.enable_bool(on) ) newList();
  }
 
  // buttons
@@ -596,6 +625,13 @@ void DesignerWindow::select(FontCouple &var)
   switchTo(font_edit,font_pad);
  }
 
+void DesignerWindow::select(bool &var)
+ {
+  bool_pad.bind(var);
+
+  switchTo(bool_edit,bool_pad);
+ }
+
 void DesignerWindow::select()
  {
   switchTo(0);
@@ -667,6 +703,11 @@ void DesignerWindow::color_edit_changed(VColor value)
   if( color_pad.update(value) ) changed();
  }
 
+void DesignerWindow::bool_edit_changed(bool value)
+ {
+  if( bool_pad.update(value) ) changed();
+ }
+
  // constructors
 
 DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference &self_pref_)
@@ -686,6 +727,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    check_String(wlist,cfg.check_cfg),
    check_Point(wlist,cfg.check_cfg),
    check_Font(wlist,cfg.check_cfg),
+   check_bool(wlist,cfg.check_cfg),
 
    label_all(wlist,cfg.label_cfg,"All"_def,AlignX_Left),
    label_Coord(wlist,cfg.label_cfg,"size"_def,AlignX_Left),
@@ -696,6 +738,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    label_String(wlist,cfg.label_cfg,"text"_def,AlignX_Left),
    label_Point(wlist,cfg.label_cfg,"point"_def,AlignX_Left),
    label_Font(wlist,cfg.label_cfg,"font"_def,AlignX_Left),
+   label_bool(wlist,cfg.label_cfg,"bool"_def,AlignX_Left),
 
    btn_Set(wlist,cfg.btn_cfg,"Set"_def),
    btn_Back(wlist,cfg.btn_cfg,"Back"_def),
@@ -726,6 +769,9 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    color_edit(wlist,cfg.color_cfg),
    color_pad(color_edit),
 
+   bool_edit(wlist,cfg.check_cfg),
+   bool_pad(bool_edit),
+
    connector_test_frame_destroyed(this,&DesignerWindow::testDestroyed,test_frame.destroyed),
 
    connector_check_all_changed(this,&DesignerWindow::enable_all,check_all.changed),
@@ -737,6 +783,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    connector_check_String_changed(this,&DesignerWindow::enable_String,check_String.changed),
    connector_check_Point_changed(this,&DesignerWindow::enable_Point,check_Point.changed),
    connector_check_Font_changed(this,&DesignerWindow::enable_Font,check_Font.changed),
+   connector_check_bool_changed(this,&DesignerWindow::enable_bool,check_bool.changed),
 
    connector_btnSet_pressed(this,&DesignerWindow::setPref,btn_Set.pressed),
    connector_btnBack_pressed(this,&DesignerWindow::backPref,btn_Back.pressed),
@@ -752,14 +799,15 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    connector_unsigned_edit_changed(this,&DesignerWindow::unsigned_edit_changed,unsigned_edit.changed),
    connector_clr_edit_changed(this,&DesignerWindow::clr_edit_changed,clr_edit.changed),
    connector_point_edit_changed(this,&DesignerWindow::point_edit_changed,point_edit.changed),
-   connector_color_edit_changed(this,&DesignerWindow::color_edit_changed,color_edit.changed)
+   connector_color_edit_changed(this,&DesignerWindow::color_edit_changed,color_edit.changed),
+   connector_bool_edit_changed(this,&DesignerWindow::bool_edit_changed,bool_edit.changed)
  {
   pref.sync();
 
   wlist.insTop(text_list,check_all,check_Coord,check_MCoord,check_VColor,check_Clr,
-                         check_unsigned,check_String,check_Point,check_Font,
+                         check_unsigned,check_String,check_Point,check_Font,check_bool,
                          label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
-                         label_unsigned,label_String,label_Point,label_Font,
+                         label_unsigned,label_String,label_Point,label_Font,label_bool,
                          btn_Set,btn_Back,btn_Save,btn_Self);
 
   btn_Set.disable();
@@ -802,24 +850,29 @@ void DesignerWindow::layout()
 
   // check box
 
+  Coord check_dxy;
+
   {
    Point s=SupMinSize(label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
-                      label_unsigned,label_String,label_Point,label_Font);
+                      label_unsigned,label_String,label_Point,label_Font,label_bool);
+
+   check_dxy=s.y;
 
    Point btnSave_size=btn_Save.getMinSize();
    Point btnSelf_size=btn_Self.getMinSize();
 
-   Pointsor psor1=psor.cutX(s.y);
+   Pointsor psor1=psor.cutX(check_dxy);
 
-   psor1.placeY(check_all,s.y);
-   psor1.placeY(check_Coord,s.y);
-   psor1.placeY(check_MCoord,s.y);
-   psor1.placeY(check_VColor,s.y);
-   psor1.placeY(check_Clr,s.y);
-   psor1.placeY(check_unsigned,s.y);
-   psor1.placeY(check_String,s.y);
-   psor1.placeY(check_Point,s.y);
-   psor1.placeY(check_Font,s.y);
+   psor1.placeY(check_all,check_dxy);
+   psor1.placeY(check_Coord,check_dxy);
+   psor1.placeY(check_MCoord,check_dxy);
+   psor1.placeY(check_VColor,check_dxy);
+   psor1.placeY(check_Clr,check_dxy);
+   psor1.placeY(check_unsigned,check_dxy);
+   psor1.placeY(check_String,check_dxy);
+   psor1.placeY(check_Point,check_dxy);
+   psor1.placeY(check_Font,check_dxy);
+   psor1.placeY(check_bool,check_dxy);
 
    Point btnSet_size=btn_Set.getMinSize();
    Point btnBack_size=btn_Back.getMinSize();
@@ -838,7 +891,7 @@ void DesignerWindow::layout()
     btn_Self.setPlace(Pane(pos.addY(delta),btnSelf_size));
    }
 
-   Coord dx=Max_cast(btnSet_size.x,btnBack_size.x,btnSave_size.x,btnSelf_size.x)-s.y-space_dxy;
+   Coord dx=Max_cast(btnSet_size.x,btnBack_size.x,btnSave_size.x,btnSelf_size.x)-check_dxy-space_dxy;
 
    Pointsor psor2=psor.cutX(Max(s.x,dx));
 
@@ -851,6 +904,7 @@ void DesignerWindow::layout()
    psor2.placeY(label_String,s);
    psor2.placeY(label_Point,s);
    psor2.placeY(label_Font,s);
+   psor2.placeY(label_bool,s);
   }
 
   Point base=psor;
@@ -889,6 +943,10 @@ void DesignerWindow::layout()
   // point_edit
 
   SetMinPlace(point_edit,base);
+
+  // bool_edit
+
+  SetExtPlace(bool_edit,base,check_dxy,check_dxy);
  }
 
 void DesignerWindow::draw(DrawBuf buf,bool drag_active) const

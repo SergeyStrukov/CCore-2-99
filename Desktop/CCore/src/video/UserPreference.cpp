@@ -71,6 +71,7 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("info_space",info_space);
   map.sync("list_space",list_space);
   map.sync("menu_space",menu_space);
+  map.sync("use_hotcolor",use_hotcolor);
   map.sync("line_edit_period",line_edit_period);
   map.sync("scroll_speedUpPeriod",scroll_speedUpPeriod);
   map.sync("progress_time",progress_time);
@@ -168,6 +169,7 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("info_space",info_space);
   map.update("list_space",list_space);
   map.update("menu_space",menu_space);
+  map.update("use_hotcolor",use_hotcolor);
   map.update("line_edit_period",line_edit_period);
   map.update("scroll_speedUpPeriod",scroll_speedUpPeriod);
   map.update("progress_time",progress_time);
@@ -271,6 +273,7 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("menu hilight",menu_hilight);
    binder.item("menu select",menu_select);
    binder.item("menu hot",menu_hot);
+   binder.item("use hotcolor",use_hotcolor);
    binder.space();
    binder.item("button space",button_space);
    binder.item("message space",message_space);

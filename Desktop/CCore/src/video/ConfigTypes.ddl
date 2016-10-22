@@ -25,6 +25,8 @@ type MCoord = sint32 ;
 
 type VColor = uint32 ;
 
+type Clr = uint8 ;
+
 struct Point
  {
   Coord x;
