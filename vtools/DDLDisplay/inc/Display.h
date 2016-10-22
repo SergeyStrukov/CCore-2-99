@@ -67,10 +67,10 @@ class ClientWindow : public ComboWindow
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
-      : //menu_cfg(SmartBind,pref),
+      : menu_cfg(SmartBind,pref),
+        cascade_menu_cfg(SmartBind,pref),
         display_cfg(pref)
       {
-       menu_cfg.takeVal().font=pref.getLabelConfig().font;
       }
     };
 

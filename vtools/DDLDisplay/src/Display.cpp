@@ -57,6 +57,11 @@ void ClientWindow::menu_selected(int id,Point point)
        cascade_menu.create(getFrame(),menu_option_data,point);
       }
      break;
+
+     default:
+      {
+       if( id>=100 ) menu.unselect();
+      }
     }
  }
 

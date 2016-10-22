@@ -158,7 +158,7 @@ class SimpleTopMenuShape
 
      RefVal<Point> space = Point(4,4) ;
 
-     RefVal<bool> use_hotcolor = false ;
+     RefVal<bool> use_hotcolor = true ;
 
      RefVal<VColor> ground   =    Silver ;
      RefVal<VColor> text     =     Black ;
@@ -420,6 +420,7 @@ class SimpleTopMenuWindowOf : public SubWindow
        {
         case VKey_Enter :
         case VKey_Space :
+        case VKey_Down :
          {
           if( BitTest(shape.state,MenuHilight) )
             {
@@ -560,10 +561,9 @@ class SimpleCascadeMenuShape
 
      RefVal<Point> space = Point(4,4) ;
 
-     RefVal<bool> use_hotcolor = false ;
+     RefVal<bool> use_hotcolor = true ;
 
      RefVal<VColor> ground   =    Silver ;
-     RefVal<VColor> border   =     Black ;
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
      RefVal<VColor> hilight  =      Blue ;
@@ -586,8 +586,9 @@ class SimpleCascadeMenuShape
    // state
 
    bool focus = false ;
-   MenuState state = MenuNone ;
-   ulen index = 0 ;
+   unsigned state = MenuNone ;
+   ulen hilight_index = 0 ;
+   ulen select_index = 0 ;
    Coord off = 0 ;
    Coord max_off = 0 ;
    Coord cell_dy = 0 ;
@@ -655,55 +656,62 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void assert()
     {
-     const MenuPoint &point=shape.data->list.at(shape.index);
+     const MenuPoint &point=shape.data->list.at(shape.select_index);
 
      selected.assert(point.id,toScreen(CascadePoint(point.place)-Point(0,shape.off)));
     }
 
    void select(ulen index)
     {
-     if( Change(shape.state,MenuSelect) )
-       {
-        shape.index=index;
+     if( !shape.data || index>=shape.data->list.getLen() ) return;
 
-        assert();
-
-        redraw();
-       }
-     else
+     if( BitTest(shape.state,MenuSelect) )
        {
-        if( Change(shape.index,index) )
+        if( Change(shape.select_index,index) )
           {
            assert();
 
            redraw();
           }
        }
+     else
+       {
+        BitSet(shape.state,MenuSelect);
+
+        shape.select_index=index;
+
+        assert();
+
+        redraw();
+       }
     }
 
    void hilight(ulen index)
     {
-     if( shape.state==MenuNone )
-       {
-        shape.state=MenuHilight;
-        shape.index=index;
+     if( !shape.data || index>=shape.data->list.getLen() ) return;
 
-        redraw();
-       }
-     else if( shape.state==MenuHilight )
+     if( BitTest(shape.state,MenuHilight) )
        {
-        if( Change(shape.index,index) )
+        if( Change(shape.hilight_index,index) )
           {
            redraw();
           }
+       }
+     else
+       {
+        BitSet(shape.state,MenuHilight);
+
+        shape.hilight_index=index;
+
+        redraw();
        }
     }
 
    void hilightOff()
     {
-     if( shape.state==MenuHilight )
+     if( BitTest(shape.state,MenuHilight) && !shape.focus )
        {
-        shape.state=MenuNone;
+        BitClear(shape.state,MenuHilight);
 
         redraw();
        }
@@ -738,13 +746,13 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
-   MenuState getState() const { return shape.state; }
+   unsigned getState() const { return shape.state; }
 
    void bind(MenuData &data) { shape.data=&data; }
 
    void unselect()
     {
-     if( Change(shape.state,MenuNone) ) redraw();
+     if( Change<unsigned>(shape.state,MenuNone) ) redraw();
     }
 
    bool forward(char ch)
@@ -793,7 +801,17 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    virtual void gainFocus()
     {
-     if( Change(shape.focus,true) ) redraw();
+     if( Change(shape.focus,true) )
+       {
+        if( !BitTest(shape.state,MenuHilight) && shape.data && shape.data->list.getLen() )
+          {
+           BitSet(shape.state,MenuHilight);
+
+           shape.hilight_index=0;
+          }
+
+        redraw();
+       }
     }
 
    virtual void looseFocus()
@@ -812,9 +830,19 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      switch( vkey )
        {
+        case VKey_Enter :
+        case VKey_Space :
+         {
+          if( BitTest(shape.state,MenuHilight) )
+            {
+             select(shape.hilight_index);
+            }
+         }
+        break;
+
         case VKey_Esc :
          {
-          getFrame()->askClose();
+          askFrameClose();
          }
         break;
 
@@ -833,13 +861,24 @@ class SimpleCascadeMenuWindowOf : public SubWindow
             }
           else
             {
-             if( shape.state==MenuSelect && shape.data )
+             if( !shape.data ) break;
+
+             if( BitTest(shape.state,MenuSelect) )
                {
-                auto result=shape.data->findDown(shape.index);
+                auto result=shape.data->findDown(shape.select_index);
 
                 if( result.found )
                   {
                    select(result.index);
+                  }
+               }
+             else if( BitTest(shape.state,MenuHilight) )
+               {
+                auto result=shape.data->findDown(shape.hilight_index);
+
+                if( result.found )
+                  {
+                   hilight(result.index);
                   }
                }
             }
@@ -854,13 +893,24 @@ class SimpleCascadeMenuWindowOf : public SubWindow
             }
           else
             {
-             if( shape.state==MenuSelect && shape.data )
+             if( !shape.data ) break;
+
+             if( BitTest(shape.state,MenuSelect)  )
                {
-                auto result=shape.data->findUp(shape.index);
+                auto result=shape.data->findUp(shape.select_index);
 
                 if( result.found )
                   {
                    select(result.index);
+                  }
+               }
+             else if( BitTest(shape.state,MenuHilight) )
+               {
+                auto result=shape.data->findUp(shape.hilight_index);
+
+                if( result.found )
+                  {
+                   hilight(result.index);
                   }
                }
             }
@@ -900,7 +950,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void react_RightClick(Point,MouseKey)
     {
-     getFrame()->askClose();
+     askFrameClose();
     }
 
    void react_Move(Point point,MouseKey)

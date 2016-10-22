@@ -265,13 +265,13 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
        {
         case MenuText :
          {
-          if( (state&MenuSelect) && select_index==i )
+          if( BitTest(state,MenuSelect) && select_index==i )
             {
              FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
 
              Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }
-          else if( (state&MenuHilight) && hilight_index==i )
+          else if( BitTest(state,MenuHilight) && hilight_index==i )
             {
              MPane p(pane);
 
@@ -390,6 +390,11 @@ void SimpleCascadeMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane
  {
   StrLen str=point.text.str();
 
+  Pane pane1=pane;
+  Coord delta=RoundUpLen(+cfg.width);
+
+  SplitX(delta,pane1);
+
   if( ulen s=point.hotindex )
     {
      StrLen str1=str.prefix(s-1);
@@ -401,13 +406,13 @@ void SimpleCascadeMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane
           {
            HotFunc func(vc,str1.len,+cfg.hot);
 
-           font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,func.function_hot());
+           font->text(buf,pane1,{AlignX_Left,AlignY_Center},str1,str2,func.function_hot());
           }
         else
           {
            PlaceFunc func(vc,str1.len);
 
-           font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
+           font->text(buf,pane1,{AlignX_Left,AlignY_Center},str1,str2,func.function_place());
 
            Point base=pane.getBase()+func.base;
            MCoord width=+cfg.width;
@@ -421,12 +426,12 @@ void SimpleCascadeMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane
        }
      else
        {
-        font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,vc);
+        font->text(buf,pane1,{AlignX_Left,AlignY_Center},str1,str2,vc);
        }
     }
   else
     {
-     font->text(buf,pane,{AlignX_Center,AlignY_Center},str,vc);
+     font->text(buf,pane1,{AlignX_Left,AlignY_Center},str,vc);
     }
  }
 
@@ -446,7 +451,8 @@ void SimpleCascadeMenuShape::draw_Frame(const DrawBuf &buf) const
 
   art.block(pane,+cfg.ground);
 
-  FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.border);
+  FigureTopBorder(pane,+cfg.width).solid(art,+cfg.top);
+  FigureBottomBorder(pane,+cfg.width).solid(art,+cfg.bottom);
  }
 
 void SimpleCascadeMenuShape::draw_Menu(const DrawBuf &buf) const
@@ -469,17 +475,17 @@ void SimpleCascadeMenuShape::draw_Menu(const DrawBuf &buf) const
        {
         case MenuText :
          {
-          if( state==MenuHilight && index==i )
+          if( BitTest(state,MenuSelect) && select_index==i )
+            {
+             FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
+
+             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
+            }
+          else if( BitTest(state,MenuHilight) && hilight_index==i )
             {
              MPane p(pane);
 
              art.path(HalfPos,+cfg.width,+cfg.hilight,p.getBottomLeft(),p.getBottomRight());
-
-             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
-            }
-          else if( state==MenuSelect && index==i )
-            {
-             FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
 
              Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
             }

@@ -156,6 +156,7 @@ obj/MemBase.o \
 obj/MemBase_general.o \
 obj/MemPageHeap.o \
 obj/MemSpaceHeap.o \
+obj/Menu.o \
 obj/MergeSort.o \
 obj/MersenneTwister.o \
 obj/MessageWindow.o \
@@ -527,6 +528,7 @@ obj/MemBase.s \
 obj/MemBase_general.s \
 obj/MemPageHeap.s \
 obj/MemSpaceHeap.s \
+obj/Menu.s \
 obj/MergeSort.s \
 obj/MersenneTwister.s \
 obj/MessageWindow.s \
@@ -898,6 +900,7 @@ obj/MemBase.dep \
 obj/MemBase_general.dep \
 obj/MemPageHeap.dep \
 obj/MemSpaceHeap.dep \
+obj/Menu.dep \
 obj/MergeSort.dep \
 obj/MersenneTwister.dep \
 obj/MessageWindow.dep \
@@ -1593,6 +1596,9 @@ obj/MemPageHeap.o : ../../HCore/CCore/src/MemPageHeap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MemSpaceHeap.o : ../../Fundamental/CCore/src/MemSpaceHeap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Menu.o : ../../Desktop/CCore/src/video/Menu.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MergeSort.o : ../../Fundamental/CCore/src/sort/MergeSort.cpp
@@ -2701,6 +2707,9 @@ obj/MemPageHeap.s : ../../HCore/CCore/src/MemPageHeap.cpp
 obj/MemSpaceHeap.s : ../../Fundamental/CCore/src/MemSpaceHeap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Menu.s : ../../Desktop/CCore/src/video/Menu.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/MergeSort.s : ../../Fundamental/CCore/src/sort/MergeSort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3806,6 +3815,9 @@ obj/MemPageHeap.dep : ../../HCore/CCore/src/MemPageHeap.cpp
 
 obj/MemSpaceHeap.dep : ../../Fundamental/CCore/src/MemSpaceHeap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MemSpaceHeap.o $< -MF $@
+
+obj/Menu.dep : ../../Desktop/CCore/src/video/Menu.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Menu.o $< -MF $@
 
 obj/MergeSort.dep : ../../Fundamental/CCore/src/sort/MergeSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MergeSort.o $< -MF $@

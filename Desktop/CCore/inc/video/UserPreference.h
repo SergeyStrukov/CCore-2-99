@@ -24,6 +24,7 @@
 #include <CCore/inc/video/MessageWindow.h>
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/Menu.h>
 
 namespace CCore {
 namespace Video {
@@ -85,23 +86,28 @@ struct UserPreferenceBag
 
   // text
 
-  VColor text_select    = Yellow ;
-  VColor text_cursor    =   Blue ;
+  VColor text_select    =    Yellow ;
+  VColor text_cursor    =      Blue ;
 
-  VColor label_text     =  Black ;
-  VColor contour_text   =  Black ;
+  VColor label_text     =     Black ;
+  VColor contour_text   =     Black ;
 
-  VColor button_text    =  Black ;
-  VColor message_text   =  Black ;
-  VColor info_text      =  Black ;
-  VColor line_edit_text =  Black ;
-  VColor list_text      =  Black ;
+  VColor button_text    =     Black ;
+  VColor message_text   =     Black ;
+  VColor info_text      =     Black ;
+  VColor line_edit_text =     Black ;
+  VColor list_text      =     Black ;
+  VColor menu_text      =     Black ;
+  VColor menu_hilight   =      Blue ;
+  VColor menu_select    = OrangeRed ;
+  VColor menu_hot       =       Red ;
 
   Point button_space    = Point(6,4) ;
   Point message_space   = Point(6,4) ;
   Point line_edit_space = Point(6,4) ;
   Point info_space      = Point(8,8) ;
   Point list_space      = Point(8,8) ;
+  Point menu_space      = Point(4,4) ;
 
   FontCouple label_font;
   FontCouple contour_font;
@@ -111,8 +117,11 @@ struct UserPreferenceBag
   FontCouple info_font;
   FontCouple line_edit_font;
   FontCouple list_font;
+  FontCouple menu_font;
 
   // other
+
+  bool use_hotcolor = true ;                          // TODO
 
   unsigned line_edit_period     =   10_tick ;
   unsigned scroll_speedUpPeriod =   12_tick ;
@@ -224,6 +233,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    MessageSubWindow::ConfigType cfg_MessageSubWindow;
    MessageWindow::ConfigType cfg_MessageWindow;
    ExceptionWindow::ConfigType cfg_ExceptionWindow;
+   SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
 
    // sub windows
 
@@ -247,6 +257,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    InfoWindow::ConfigType cfg_InfoWindow;
    LineEditWindow::ConfigType cfg_LineEditWindow;
    SimpleTextListWindow::ConfigType cfg_SimpleTextListWindow;
+   SimpleTopMenuWindow::ConfigType cfg_SimpleTopMenuWindow;
+   SimpleCascadeMenuWindow::ConfigType cfg_SimpleCascadeMenuWindow;
 
   public:
 
@@ -277,6 +289,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    const MessageWindow::ConfigType & getMessageWindowConfig() const { return cfg_MessageWindow; }
 
    const ExceptionWindow::ConfigType & getExceptionWindowConfig() const { return cfg_ExceptionWindow; }
+
+   const SimpleCascadeMenu::ConfigType & getSimpleCascadeMenu() const { return cfg_SimpleCascadeMenu; }
 
    // sub windows
 
@@ -320,6 +334,10 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const SimpleTextListWindow::ConfigType & getSimpleTextListConfig() const { return cfg_SimpleTextListWindow; }
 
+   const SimpleTopMenuWindow::ConfigType & getSimpleTopMenuConfig() const { return cfg_SimpleTopMenuWindow; }
+
+   const SimpleCascadeMenuWindow::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenuWindow; }
+
    // getSmartConfig()
 
    class Proxy
@@ -341,6 +359,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_MessageWindow; }
 
       operator const auto & () const { return obj->cfg_ExceptionWindow; }
+
+      operator const auto & () const { return obj->cfg_SimpleCascadeMenu; }
 
       // sub windows
 
@@ -383,6 +403,10 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_LineEditWindow; }
 
       operator const auto & () const { return obj->cfg_SimpleTextListWindow; }
+
+      operator const auto & () const { return obj->cfg_SimpleTopMenuWindow; }
+
+      operator const auto & () const { return obj->cfg_SimpleCascadeMenuWindow; }
     };
 
    Proxy getSmartConfig() const { return this; }

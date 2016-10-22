@@ -152,6 +152,8 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    void enableFrameReact() { getFrame()->enableReact(); }
 
+   void askFrameClose() { getFrame()->askClose(); }
+
    // drawing
 
    virtual void layout()
