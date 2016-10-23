@@ -472,7 +472,7 @@ void TestClient::react_Key(VKey vkey,KeyMod kmod)
     }
   else if( vkey==VKey_Esc )
     {
-     if( menu.getState() ) menu.unselect();
+     menu.unselect();
 
      if( wlist.getFocus()==&menu ) test.setFocus();
     }

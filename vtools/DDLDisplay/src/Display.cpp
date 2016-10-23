@@ -57,17 +57,7 @@ void ClientWindow::menu_selected(int id,Point point)
        cascade_menu.create(getFrame(),menu_option_data,point);
       }
      break;
-
-     default:
-      {
-       if( id>=100 ) menu.unselect();
-      }
     }
- }
-
-void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
- {
-  menu.put_Key(vkey,kmod);
  }
 
 void ClientWindow::cascade_menu_selected(int id,Point point)
@@ -76,11 +66,16 @@ void ClientWindow::cascade_menu_selected(int id,Point point)
 
   Printf(Con,"id = #;\n",id);
 
-  menu.unselect();
-
   cascade_menu.destroy();
 
   display.setFocus();
+
+  menu.unselect();
+ }
+
+void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
+ {
+  menu.put_Key(vkey,kmod);
  }
 
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
@@ -166,7 +161,7 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
     }
   else if( vkey==VKey_Esc )
     {
-     if( menu.getState() ) menu.unselect();
+     menu.unselect();
 
      if( wlist.getFocus()==&menu ) display.setFocus();
     }
