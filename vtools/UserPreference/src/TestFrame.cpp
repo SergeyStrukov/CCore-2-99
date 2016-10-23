@@ -329,13 +329,185 @@ void TestWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
   wlist.draw(buf,pane,drag_active);
  }
 
+/* class TestClient */
+
+void TestClient::menu_off()
+ {
+  if( cascade_menu.isAlive() ) cascade_menu.destroy();
+
+  menu.unselect();
+ }
+
+void TestClient::menu_selected(int id,Point point)
+ {
+  if( cascade_menu.isAlive() ) cascade_menu.destroy();
+
+  switch( id )
+    {
+     case 1 :
+      {
+       cascade_menu.create(getFrame(),menu_file_data,point);
+      }
+     break;
+
+     case 2 :
+      {
+       cascade_menu.create(getFrame(),menu_edit_data,point);
+      }
+     break;
+
+     case 3 :
+      {
+       cascade_menu.create(getFrame(),menu_options_data,point);
+      }
+     break;
+
+     case 5 :
+      {
+       cascade_menu.create(getFrame(),menu_window_data,point);
+      }
+     break;
+    }
+ }
+
+void TestClient::cascade_menu_selected(int id,Point point)
+ {
+  Used(id);
+  Used(point);
+
+  cascade_menu.destroy();
+
+  test.setFocus();
+
+  menu.unselect();
+ }
+
+void TestClient::cascade_menu_pressed(VKey vkey,KeyMod kmod)
+ {
+  menu.put_Key(vkey,kmod);
+ }
+
+TestClient::TestClient(SubWindowHost &host,const UserPreference &pref)
+ : ComboWindow(host),
+   menu(wlist,pref.getSmartConfig(),menu_data),
+   cascade_menu(host.getFrame()->getDesktop(),pref.getSmartConfig()),
+   test(wlist,pref),
+   connector_menu_selected(this,&TestClient::menu_selected,menu.selected),
+   connector_cascade_menu_selected(this,&TestClient::cascade_menu_selected,cascade_menu.takeSelected()),
+   connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.takePressed())
+ {
+  wlist.insTop(menu,test);
+
+  wlist.enableTabFocus(false);
+
+  menu_data("@File",1)
+           ("@Edit",2)
+           (MenuSeparator)
+           ("@Options",3)
+           (MenuDisabled,"@Modules",4)
+           ("@Window",5);
+
+  menu_file_data("@New",101)
+                ("@Open",102)
+                (MenuDisabled,"@Save",103)
+                (MenuDisabled,"Save @as",104)
+                (MenuSeparator)
+                ("E@xit",105);
+
+  menu_edit_data("@Undo",201)
+                ("@Check",202)
+                (MenuSeparator)
+                ("Cut",203)
+                ("Copy",204)
+                ("Paste",205)
+                (MenuSeparator)
+                ("@Run",206);
+
+  menu_options_data("@Colors",301)
+                   ("@Fonts",302)
+                   ("@Targets",303);
+
+  menu_window_data("@Split",501)
+                  ("@Close all",502)
+                  ("S@tack",503);
+ }
+
+TestClient::~TestClient()
+ {
+ }
+
+ // base
+
+void TestClient::open()
+ {
+  wlist.open();
+
+  test.setFocus();
+ }
+
+ // drawing
+
+void TestClient::layout()
+ {
+  Coord dy=menu.getMinSize().y;
+
+  Pane pane(Null,getSize());
+
+  menu.setPlace(SplitY(dy,pane));
+  test.setPlace(pane);
+ }
+
+ // user input
+
+void TestClient::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+void TestClient::react_Key(VKey vkey,KeyMod kmod)
+ {
+  if( vkey==VKey_F10 )
+    {
+     menu.setFocus();
+    }
+  else if( vkey==VKey_Esc )
+    {
+     if( menu.getState() ) menu.unselect();
+
+     if( wlist.getFocus()==&menu ) test.setFocus();
+    }
+  else
+    {
+     wlist.put_Key(vkey,kmod);
+    }
+ }
+
+void TestClient::react_LeftClick(Point point,MouseKey mkey)
+ {
+  menu_off();
+
+  wlist.put_LeftClick(point,mkey);
+ }
+
+void TestClient::react_RightClick(Point point,MouseKey mkey)
+ {
+  menu_off();
+
+  wlist.put_RightClick(point,mkey);
+ }
+
+void TestClient::react_other(UserAction action)
+ {
+  wlist.react(action);
+ }
+
 /* class TestFrame */
 
 TestFrame::TestFrame(Desktop *desktop,const UserPreference &pref,Signal<> &update)
  : DragWindow(desktop,pref.getDragWindowConfig(),update),
-   test(*this,pref)
+   client(*this,pref)
  {
-  bindClient(test);
+  bindClient(client);
  }
 
 TestFrame::~TestFrame()

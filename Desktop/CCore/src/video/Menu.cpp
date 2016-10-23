@@ -251,7 +251,13 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
 
   SmoothDrawArt art(buf);
 
-  art.block(pane,+cfg.ground);
+  {
+   art.block(pane,+cfg.ground);
+
+   MPane p(pane);
+
+   art.path(HalfPos,+cfg.width,+cfg.right,p.getBottomLeft(),p.getBottomRight());
+  }
 
   auto r=Range(data.list);
 

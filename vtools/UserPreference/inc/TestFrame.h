@@ -18,12 +18,15 @@
 
 #include <CCore/inc/video/UserPreference.h>
 #include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/Menu.h>
 
 namespace App {
 
 /* classes */
 
 class TestWindow;
+
+class TestClient;
 
 class TestFrame;
 
@@ -123,11 +126,70 @@ class TestWindow : public ComboWindow
    virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
  };
 
+/* class TestClient */
+
+class TestClient : public ComboWindow
+ {
+   MenuData menu_data;
+
+   MenuData menu_file_data;
+   MenuData menu_edit_data;
+   MenuData menu_options_data;
+   MenuData menu_window_data;
+
+   SimpleTopMenuWindow menu;
+   SimpleCascadeMenu cascade_menu;
+
+   TestWindow test;
+
+  private:
+
+   void menu_off();
+
+  private:
+
+   void menu_selected(int id,Point point);
+
+   void cascade_menu_selected(int id,Point point);
+
+   void cascade_menu_pressed(VKey vkey,KeyMod kmod);
+
+   SignalConnector<TestClient,int,Point> connector_menu_selected;
+   SignalConnector<TestClient,int,Point> connector_cascade_menu_selected;
+   SignalConnector<TestClient,VKey,KeyMod> connector_cascade_menu_pressed;
+
+  public:
+
+   TestClient(SubWindowHost &host,const UserPreference &pref);
+
+   virtual ~TestClient();
+
+   // base
+
+   virtual void open();
+
+   // drawing
+
+   virtual void layout();
+
+   // user input
+
+   virtual void react(UserAction action);
+
+   void react_Key(VKey vkey,KeyMod kmod);
+
+   void react_LeftClick(Point point,MouseKey mkey);
+
+   void react_RightClick(Point point,MouseKey mkey);
+
+   void react_other(UserAction action);
+ };
+
 /* class TestFrame */
 
 class TestFrame : public DragWindow
  {
-   TestWindow test;
+   TestClient client;
 
   public:
 
