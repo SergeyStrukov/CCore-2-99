@@ -11,7 +11,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <inc/Display.h>
+#include <inc/Client.h>
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
