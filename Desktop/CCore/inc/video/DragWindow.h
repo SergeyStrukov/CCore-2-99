@@ -657,6 +657,20 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      host->display(cmd_display);
     }
 
+   void createMain(CmdDisplay cmd_display,const DefString &title)
+    {
+     Point max_size=getDesktop()->getScreenSize();
+
+     createMain(cmd_display,max_size,title);
+    }
+
+   void createMain(CmdDisplay cmd_display,Pane pane,const DefString &title)
+    {
+     Point max_size=getDesktop()->getScreenSize();
+
+     createMain(cmd_display,pane,max_size,title);
+    }
+
    void create(Pane pane,Point max_size,const DefString &title)
     {
      guardClient();
@@ -675,6 +689,20 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
 
      host->create(parent->getHost(),pane,max_size);
      host->show();
+    }
+
+   void create(Pane pane,const DefString &title)
+    {
+     Point max_size=getDesktop()->getScreenSize();
+
+     create(pane,max_size,title);
+    }
+
+   void create(FrameWindow *parent,Pane pane,const DefString &title)
+    {
+     Point max_size=getDesktop()->getScreenSize();
+
+     create(parent,pane,max_size,title);
     }
 
    void destroy()
