@@ -42,6 +42,7 @@ class ClientWindow : public ComboWindow
         cascade_menu_cfg(SmartBind,pref),
         display_cfg(pref)
       {
+       file_cfg.takeVal().frame_cfg.takeVal()=pref.getSmartConfig();
       }
     };
 

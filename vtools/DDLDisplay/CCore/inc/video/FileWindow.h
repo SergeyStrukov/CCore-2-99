@@ -35,6 +35,8 @@ class FileSubWindow : public ComboWindow
 
    struct Config
     {
+     RefVal<VColor> back = Silver ;
+
      Config() noexcept {}
     };
 
@@ -103,18 +105,18 @@ class FileWindow : public DragWindow
 
    // create
 
-   Pane getPane(Point base) const;
+   Pane getPane(StrLen title,Point base) const;
 
    using DragWindow::create;
 
    void create(Point base,const DefString &title)
     {
-     create(getPane(base),title);
+     create(getPane(title.str(),base),title);
     }
 
    void create(FrameWindow *parent,Point base,const DefString &title)
     {
-     create(parent,getPane(base),title);
+     create(parent,getPane(title.str(),base),title);
     }
  };
 

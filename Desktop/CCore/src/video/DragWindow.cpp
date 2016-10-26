@@ -574,7 +574,7 @@ Point DragShape::getDeltaSize() const
   return Point(2*dxy,tdy+dxy);
  }
 
-Coord DragShape::getMinDx(StrLen title) const
+Coord DragShape::getMinDx(bool is_main,StrLen title) const
  {
   Coord width=RoundUpLen(+cfg.width);
   Coord tdy=+cfg.title_dy;
@@ -586,7 +586,9 @@ Coord DragShape::getMinDx(StrLen title) const
 
   TextSize ts=cfg.title_font->text(title);
 
-  return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+5*bdx+bdx/4);
+  Coord btn_len=is_main?5*bdx:3*bdx;
+
+  return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+btn_len+bdx/4);
  }
 
 void DragShape::reset(const DefString &title_,bool is_main_,bool max_button_)

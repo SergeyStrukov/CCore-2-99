@@ -193,7 +193,7 @@ class DragShape
 
    Point getDeltaSize() const;
 
-   Coord getMinDx(StrLen title) const;
+   Coord getMinDx(bool is_main,StrLen title) const;
 
    Pane getClient() const { return client; }
 
@@ -606,11 +606,11 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
 
    Point getDeltaSize() const { return shape.getDeltaSize(); }
 
-   Point getMinSize(StrLen title,Point size) const
+   Point getMinSize(bool is_main,StrLen title,Point size) const
     {
      size+=shape.getDeltaSize();
 
-     return Point(Max(size.x,shape.getMinDx(title)),size.y);
+     return Point(Max(size.x,shape.getMinDx(is_main,title)),size.y);
     }
 
    void bindUpdate(Signal<> &update)

@@ -16,6 +16,8 @@
 #include <CCore/inc/video/FileWindow.h>
 #include <CCore/inc/video/Layout.h>
 
+#include <CCore/inc/video/SmoothDrawArt.h>
+
 namespace CCore {
 namespace Video {
 
@@ -35,7 +37,7 @@ FileSubWindow::~FileSubWindow()
 
 Point FileSubWindow::getMinSize() const
  {
-  return Point(300,200);
+  return Point(20,10);
  }
 
 StrLen FileSubWindow::getFilePath() const
@@ -58,16 +60,18 @@ void FileSubWindow::layout() // TODO
  {
  }
 
-void FileSubWindow::draw(DrawBuf buf,bool drag_active) const // TODO
+void FileSubWindow::draw(DrawBuf buf,bool drag_active) const
  {
-  buf.erase(drag_active?Gray:Black);
+  buf.erase(+cfg.back);
 
   wlist.draw(buf,drag_active);
  }
 
-void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const // TODO
+void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  buf.erase(drag_active?Gray:Black);
+  SmoothDrawArt art(buf);
+
+  art.block(pane,+cfg.back);
 
   wlist.draw(buf,pane,drag_active);
  }
@@ -93,9 +97,9 @@ FileWindow::~FileWindow()
 
  // create
 
-Pane FileWindow::getPane(Point base) const
+Pane FileWindow::getPane(StrLen title,Point base) const
  {
-  Point size=sub_win.getMinSize();
+  Point size=getMinSize(false,title,sub_win.getMinSize());
 
   Point screen_size=getDesktop()->getScreenSize();
 
