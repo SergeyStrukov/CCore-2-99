@@ -20,6 +20,7 @@
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/RefVal.h>
 #include <CCore/inc/video/ToolWindow.h>
+#include <CCore/inc/video/Layout.h>
 
 namespace CCore {
 namespace Video {
@@ -1051,35 +1052,7 @@ class SimpleCascadeMenuOf
 
      Point screen_size=frame.getDesktop()->getScreenSize();
 
-     if( base.x<0 || size.x>screen_size.x )
-       {
-        base.x=0;
-       }
-     else
-       {
-        Replace_min<Coord>(base.x,screen_size.x-size.x);
-       }
-
-     if( base.y<0 ) base.y=0;
-
-     if( base.y>screen_size.y )
-       {
-        if( screen_size.y>size.y )
-          {
-           base.y=screen_size.y-size.y;
-          }
-        else
-          {
-           base.y=0;
-           size.y=screen_size.y;
-          }
-       }
-     else
-       {
-        Replace_min<Coord>(size.y,screen_size.y-base.y);
-       }
-
-     Pane pane(base,size);
+     Pane pane=FitToScreen(base,size,screen_size);
 
      frame.create(parent,pane);
 

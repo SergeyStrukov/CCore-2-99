@@ -18,6 +18,41 @@
 namespace CCore {
 namespace Video {
 
+/* FitToScreen() */
+
+Pane FitToScreen(Point base,Point size,Point screen_size)
+ {
+  if( base.x<0 || size.x>screen_size.x )
+    {
+     base.x=0;
+    }
+  else
+    {
+     Replace_min<Coord>(base.x,screen_size.x-size.x);
+    }
+
+  if( base.y<0 ) base.y=0;
+
+  if( base.y>screen_size.y )
+    {
+     if( screen_size.y>size.y )
+       {
+        base.y=screen_size.y-size.y;
+       }
+     else
+       {
+        base.y=0;
+        size.y=screen_size.y;
+       }
+    }
+  else
+    {
+     Replace_min<Coord>(size.y,screen_size.y-base.y);
+    }
+
+  return Pane(base,size);
+ }
+
 /* GetWindowPlace() */
 
 Pane GetWindowPlace(Pane outer,Ratio ypos_ratio,Point size)

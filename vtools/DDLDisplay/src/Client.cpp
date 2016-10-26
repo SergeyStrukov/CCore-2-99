@@ -44,7 +44,7 @@ void ClientWindow::menu_selected(int id,Point point)
     }
  }
 
-void ClientWindow::cascade_menu_selected(int id,Point)
+void ClientWindow::cascade_menu_selected(int id,Point base)
  {
   cascade_menu.destroy();
 
@@ -54,8 +54,12 @@ void ClientWindow::cascade_menu_selected(int id,Point)
 
   switch( id )
     {
-     case Cmd_Open : // TODO
+     case Cmd_Open :
       {
+       if( open_file.isDead() )
+         {
+          open_file.create(getFrame(),base,"Select a DDL file"_def);
+         }
       }
      break;
 
@@ -72,15 +76,29 @@ void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
   menu.put_Key(vkey,kmod);
  }
 
+void ClientWindow::open_file_destroyed()
+ {
+  StrLen file_name=open_file.getFilePath();
+
+  if( +file_name )
+    {
+     display.open(file_name);
+    }
+ }
+
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
    menu(wlist,cfg.menu_cfg,menu_data),
    cascade_menu(host.getFrame()->getDesktop(),cfg.cascade_menu_cfg),
    display(wlist,cfg.display_cfg),
+   open_file(host.getFrame()->getDesktop(),cfg.file_cfg),
+
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.takeSelected()),
-   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.takePressed())
+   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.takePressed()),
+
+   connector_open_file_destroyed(this,&ClientWindow::open_file_destroyed,open_file.destroyed)
  {
   wlist.insTop(menu,display);
 

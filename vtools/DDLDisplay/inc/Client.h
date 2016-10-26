@@ -14,6 +14,7 @@
 #include <inc/Display.h>
 
 #include <CCore/inc/video/Menu.h>
+#include <CCore/inc/video/FileWindow.h>
 
 namespace App {
 
@@ -32,10 +33,11 @@ class ClientWindow : public ComboWindow
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
      CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
      CtorRefVal<DisplayWindow::ConfigType> display_cfg;
+     CtorRefVal<FileWindow::ConfigType> file_cfg;
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
+     explicit Config(const UserPreference &pref) // TODO
       : menu_cfg(SmartBind,pref),
         cascade_menu_cfg(SmartBind,pref),
         display_cfg(pref)
@@ -68,6 +70,8 @@ class ClientWindow : public ComboWindow
 
    DisplayWindow display;
 
+   FileWindow open_file;
+
   private:
 
    void menu_off();
@@ -83,6 +87,10 @@ class ClientWindow : public ComboWindow
    SignalConnector<ClientWindow,int,Point> connector_menu_selected;
    SignalConnector<ClientWindow,int,Point> connector_cascade_menu_selected;
    SignalConnector<ClientWindow,VKey,KeyMod> connector_cascade_menu_pressed;
+
+   void open_file_destroyed();
+
+   SignalConnector<ClientWindow> connector_open_file_destroyed;
 
   public:
 

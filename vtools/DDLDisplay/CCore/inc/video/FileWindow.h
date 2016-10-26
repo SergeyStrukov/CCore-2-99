@@ -55,6 +55,18 @@ class FileSubWindow : public ComboWindow
    Point getMinSize() const;
 
    StrLen getFilePath() const;
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool drag_active) const;
+
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+
+   // base
+
+   virtual void open();
  };
 
 /* class FileWindow */
@@ -75,8 +87,6 @@ class FileWindow : public DragWindow
 
   private:
 
-   const Config &cfg;
-
    FileSubWindow sub_win;
 
   public:
@@ -90,10 +100,6 @@ class FileWindow : public DragWindow
    // methods
 
    StrLen getFilePath() const { return sub_win.getFilePath(); } // available after the signal "destroyed"
-
-   // base
-
-   virtual void alive();
 
    // create
 

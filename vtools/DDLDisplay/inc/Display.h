@@ -46,6 +46,10 @@ class DisplayWindow : public SubWindow
    DisplayWindow(SubWindowHost &host,const Config &cfg);
 
    virtual ~DisplayWindow();
+
+   // methods
+
+   void open(StrLen file_name) { Used(file_name); }
  };
 
 } // namespace App

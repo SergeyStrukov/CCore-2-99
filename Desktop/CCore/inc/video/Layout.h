@@ -25,6 +25,10 @@ namespace Video {
 
 Coordinate ToCoordinate(UIntType count) { IntGuard( count<=MaxCoord ); return Coord(count); }
 
+/* FitToScreen() */
+
+Pane FitToScreen(Point base,Point size,Point screen_size);
+
 /* GetWindowPlace() */
 
 Pane GetWindowPlace(Pane outer,Ratio ypos_ratio,Point size);
