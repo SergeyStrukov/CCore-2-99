@@ -422,6 +422,16 @@ class Panesor
      return ret;
     }
 
+   Panesor cutX_rest(Coordinate rest)
+    {
+     return cutX(dx-space-rest);
+    }
+
+   Panesor cutY_rest(Coordinate rest)
+    {
+     return cutY(dy-space-rest);
+    }
+
    // place
 
    template <class W>
@@ -434,6 +444,18 @@ class Panesor
    void placeY(W &window,Coordinate delta)
     {
      window.setPlace(cutY(delta));
+    }
+
+   template <class W>
+   void placeX_rest(W &window,Coordinate rest)
+    {
+     window.setPlace(cutX_rest(rest));
+    }
+
+   template <class W>
+   void placeY_rest(W &window,Coordinate rest)
+    {
+     window.setPlace(cutY_rest(rest));
     }
 
    template <class W>

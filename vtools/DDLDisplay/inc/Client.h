@@ -40,9 +40,9 @@ class ClientWindow : public ComboWindow
      explicit Config(const UserPreference &pref) // TODO
       : menu_cfg(SmartBind,pref),
         cascade_menu_cfg(SmartBind,pref),
-        display_cfg(pref)
+        display_cfg(pref),
+        file_cfg(pref)
       {
-       file_cfg.takeVal().frame_cfg.takeVal()=pref.getSmartConfig();
       }
     };
 

@@ -17,15 +17,39 @@
 #define CCore_inc_video_FileWindow_h
 
 #include <CCore/inc/video/DragWindow.h>
+#include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/UserPreference.h>
+
+#include <CCore/inc/FileSystem.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
 
+class InfoBuilder;
+
 class FileSubWindow;
 
 class FileWindow;
+
+/* class InfoBuilder */
+
+class InfoBuilder : NoCopy
+ {
+  public:
+
+   InfoBuilder();
+
+   ~InfoBuilder();
+
+   void add(StrLen text);
+
+   template <class Func>
+   void sort(Func cmp);
+
+   Info complete();
+ };
 
 /* class FileSubWindow */
 
@@ -35,9 +59,24 @@ class FileSubWindow : public ComboWindow
 
    struct Config
     {
+     RefVal<Coord> space_dxy = 10 ;
+
      RefVal<VColor> back = Silver ;
 
+     CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
+     CtorRefVal<SimpleTextListWindow::ConfigType> list_cfg;
+     CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
+
      Config() noexcept {}
+
+     explicit Config(const UserPreference &pref) noexcept
+      : edit_cfg(SmartBind,pref),
+        list_cfg(SmartBind,pref),
+        btn_cfg(SmartBind,pref)
+      {
+       back.bind(pref.get().back);
+       space_dxy.bind(pref.get().space_dxy);
+      }
     };
 
    using ConfigType = Config ;
@@ -45,6 +84,43 @@ class FileSubWindow : public ComboWindow
   private:
 
    const Config &cfg;
+
+   LineEditWindow dir;
+   SimpleTextListWindow dir_list;
+   SimpleTextListWindow file_list;
+
+   ButtonWindow btn_Ok;
+   ButtonWindow btn_Cancel;
+
+   FileSystem fs;
+
+   StrLen file_path;
+
+  private:
+
+
+
+   void fillLists();
+
+   void setDir(StrLen dir_name);
+
+   void buildFilePath();
+
+  private:
+
+   void dir_entered();
+
+   void dir_changed();
+
+   SignalConnector<FileSubWindow> connector_dir_entered;
+   SignalConnector<FileSubWindow> connector_dir_changed;
+
+   void btn_Ok_pressed();
+
+   void btn_Cancel_pressed();
+
+   SignalConnector<FileSubWindow> connector_btn_Ok_pressed;
+   SignalConnector<FileSubWindow> connector_btn_Cancel_pressed;
 
   public:
 
@@ -56,7 +132,7 @@ class FileSubWindow : public ComboWindow
 
    Point getMinSize() const;
 
-   StrLen getFilePath() const;
+   StrLen getFilePath() const { return file_path; }
 
    // drawing
 
@@ -83,6 +159,12 @@ class FileWindow : public DragWindow
      CtorRefVal<FileSubWindow::ConfigType> file_cfg;
 
      Config() noexcept {}
+
+     explicit Config(const UserPreference &pref) noexcept
+      : frame_cfg(SmartBind,pref),
+        file_cfg(pref)
+      {
+      }
     };
 
    using ConfigType = Config ;
