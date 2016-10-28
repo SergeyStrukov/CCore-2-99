@@ -3216,6 +3216,8 @@ class SimpleTextListWindowOf : public SubWindow
      redraw();
     }
 
+   const Info & getInfo() const { return shape.info; }
+
    ulen getSelect() const { return shape.select; }
 
    void select(ulen select) { setSelect(select,false); }
@@ -3373,6 +3375,8 @@ class SimpleTextListWindowOf : public SubWindow
    void react_LeftDClick(Point point,MouseKey mkey)
     {
      react_LeftClick(point,mkey);
+
+     dclicked.assert();
     }
 
    void react_Wheel(Point,MouseKey mkey,Coord delta_)
@@ -3410,6 +3414,7 @@ class SimpleTextListWindowOf : public SubWindow
    // signals
 
    Signal<> entered;
+   Signal<> dclicked;
    Signal<ulen> selected; // select
  };
 

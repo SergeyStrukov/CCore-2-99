@@ -18,33 +18,143 @@
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/SmoothDrawArt.h>
 
+#include <CCore/inc/Path.h>
+#include <CCore/inc/Exception.h>
+
 namespace CCore {
 namespace Video {
 
+/* class InfoBuilder::PoolInfo */
+
+class InfoBuilder::PoolInfo : public Info
+ {
+   class Base : public InfoBase
+    {
+      ElementPool pool;
+      DynArray<StrLen> list;
+
+     public:
+
+      Base(ElementPool &pool_,DynArray<StrLen> &list_)
+       {
+        Swap(pool,pool_);
+        Swap(list,list_);
+
+        pool.shrink_extra();
+        list.shrink_extra();
+       }
+
+      virtual ~Base()
+       {
+       }
+
+      // AbstractInfo
+
+      virtual ulen getLineCount() const
+       {
+        return list.getLen();
+       }
+
+      virtual StrLen getLine(ulen index) const
+       {
+        return list.at(index);
+       }
+    };
+
+  public:
+
+   PoolInfo(ElementPool &pool,DynArray<StrLen> &list)
+    : Info(new Base(pool,list))
+    {
+    }
+
+   ~PoolInfo()
+    {
+    }
+ };
+
+/* class InfoBuilder */
+
+InfoBuilder::InfoBuilder()
+ {
+ }
+
+InfoBuilder::~InfoBuilder()
+ {
+ }
+
+void InfoBuilder::add(StrLen text)
+ {
+  list.append_copy(pool.dup(text));
+ }
+
+Info InfoBuilder::complete()
+ {
+  return PoolInfo(pool,list);
+ }
+
+/* class FileSubWindow::MakeFileName */
+
+FileSubWindow::MakeFileName::MakeFileName(StrLen dir_name,StrLen file_name)
+ {
+  (*this)(dir_name,file_name);
+ }
+
+StrLen FileSubWindow::MakeFileName::operator () (StrLen dir_name,StrLen file_name)
+ {
+  reset();
+
+  if( +dir_name && PathBase::IsSlash(dir_name.back(1)) ) dir_name.len--;
+
+  add(dir_name,'/',file_name);
+
+  if( !(*this) )
+    {
+     Printf(Exception,"CCore::Video::FileSubWindow::MakeFileName::operator () (#.q;,#.q;) : too long path",dir_name,file_name);
+    }
+
+  return get();
+ }
+
 /* class FileSubWindow */
 
-void FileSubWindow::fillLists() // TODO
+void FileSubWindow::fillLists() // TODO sort
  {
   dir_list.enable();
   file_list.enable();
 
-  DirCursor cur(fs,dir.getText());
+  FileSystem::DirCursor cur(fs,dir.getText());
 
-  cur.apply( [] (StrLen name,FileType ft)
-                {
-                 switch( ft )
-                   {
-                    case FileType_dir :
-                    break;
+  InfoBuilder dir_builder;
+  InfoBuilder file_builder;
 
-                    case FileType_file :
-                    break;
-                   }
+  cur.apply( [&] (StrLen name,FileType ft)
+                 {
+                  switch( ft )
+                    {
+                     case FileType_dir :
+                      {
+                       if( PathBase::IsDot(name) ) break;
+
+                       dir_builder.add(name);
+                      }
+                     break;
+
+                     case FileType_file :
+                      {
+                       file_builder.add(name);
+                      }
+                     break;
+                    }
 
                 } );
+
+  dir_list.setInfo(dir_builder.complete());
+
+  file_list.setInfo(file_builder.complete());
  }
 
-void FileSubWindow::setDir(StrLen dir_name) // TODO
+void FileSubWindow::setDir(StrLen dir_name)
  {
   char temp[MaxPathLen+1];
 
@@ -61,12 +171,45 @@ void FileSubWindow::setDir(StrLen dir_name) // TODO
      dir_list.disable();
      file_list.disable();
 
-     // TODO
+     Printf(Exception,"CCore::Video::FileSubWindow::setDir(#.q;) : #.q; is not a directory",dir_name,path);
     }
  }
 
-void FileSubWindow::buildFilePath() // TODO
+void FileSubWindow::setDir(StrLen dir_name,StrLen sub_dir)
  {
+  MakeFileName temp(dir_name,sub_dir);
+
+  setDir(temp.get());
+ }
+
+void FileSubWindow::buildFilePath()
+ {
+  const Info &info=file_list.getInfo();
+  ulen index=file_list.getSelect();
+
+  if( index<info->getLineCount() )
+    {
+     StrLen dir_name=dir.getText();
+     StrLen file_name=info->getLine(index);
+
+     file_path=file_buf(dir_name,file_name);
+    }
+ }
+
+void FileSubWindow::file_list_entered()
+ {
+  buildFilePath();
+
+  askFrameClose();
+ }
+
+void FileSubWindow::dir_list_entered()
+ {
+  const Info &info=dir_list.getInfo();
+  ulen index=dir_list.getSelect();
+
+  if( index<info->getLineCount() )
+    setDir(dir.getText(),info->getLine(index));
  }
 
 void FileSubWindow::dir_entered()
@@ -104,6 +247,10 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    btn_Ok(wlist,cfg.btn_cfg,"Ok"_def),
    btn_Cancel(wlist,cfg.btn_cfg,"Cancel"_def),
 
+   connector_file_list_entered(this,&FileSubWindow::file_list_entered,file_list.entered),
+   connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,file_list.dclicked),
+   connector_dir_list_entered(this,&FileSubWindow::dir_list_entered,dir_list.entered),
+   connector_dir_list_dclicked(this,&FileSubWindow::dir_list_entered,dir_list.dclicked),
    connector_dir_entered(this,&FileSubWindow::dir_entered,dir.entered),
    connector_dir_changed(this,&FileSubWindow::dir_changed,dir.changed),
    connector_btn_Ok_pressed(this,&FileSubWindow::btn_Ok_pressed,btn_Ok.pressed),

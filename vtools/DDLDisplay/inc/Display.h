@@ -13,6 +13,8 @@
 
 #include <inc/Application.h>
 
+#include <CCore/inc/video/MessageWindow.h>
+
 namespace App {
 
 /* classes */
@@ -27,11 +29,13 @@ class DisplayWindow : public SubWindow
 
    struct Config
     {
+     CtorRefVal<MessageWindow::ConfigType> msg_cfg;
+
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
+      : msg_cfg(SmartBind,pref)
       {
-       Used(pref);
       }
     };
 
@@ -41,6 +45,8 @@ class DisplayWindow : public SubWindow
 
    const Config &cfg;
 
+   MessageWindow msg;
+
   public:
 
    DisplayWindow(SubWindowHost &host,const Config &cfg);
@@ -49,7 +55,7 @@ class DisplayWindow : public SubWindow
 
    // methods
 
-   void open(StrLen file_name) { Used(file_name); }
+   void open(StrLen file_name);
  };
 
 } // namespace App

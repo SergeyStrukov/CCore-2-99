@@ -21,6 +21,10 @@
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FileSystem.h>
+#include <CCore/inc/ElementPool.h>
+#include <CCore/inc/Array.h>
+#include <CCore/inc/Sort.h>
+#include <CCore/inc/MakeString.h>
 
 namespace CCore {
 namespace Video {
@@ -37,6 +41,11 @@ class FileWindow;
 
 class InfoBuilder : NoCopy
  {
+   ElementPool pool;
+   DynArray<StrLen> list;
+
+   class PoolInfo;
+
   public:
 
    InfoBuilder();
@@ -45,8 +54,7 @@ class InfoBuilder : NoCopy
 
    void add(StrLen text);
 
-   template <class Func>
-   void sort(Func cmp);
+   void sort(ObjLessFuncType<StrLen> less) { IncrSort(Range(list),less); }
 
    Info complete();
  };
@@ -94,19 +102,41 @@ class FileSubWindow : public ComboWindow
 
    FileSystem fs;
 
+   class MakeFileName : public MakeString<MaxPathLen>
+    {
+     public:
+
+      MakeFileName() {}
+
+      MakeFileName(StrLen dir_name,StrLen file_name);
+
+      StrLen operator () (StrLen dir_name,StrLen file_name);
+    };
+
+   MakeFileName file_buf;
    StrLen file_path;
 
   private:
-
-
 
    void fillLists();
 
    void setDir(StrLen dir_name);
 
+   void setDir(StrLen dir_name,StrLen sub_dir);
+
    void buildFilePath();
 
   private:
+
+   void file_list_entered();
+
+   SignalConnector<FileSubWindow> connector_file_list_entered;
+   SignalConnector<FileSubWindow> connector_file_list_dclicked;
+
+   void dir_list_entered();
+
+   SignalConnector<FileSubWindow> connector_dir_list_entered;
+   SignalConnector<FileSubWindow> connector_dir_list_dclicked;
 
    void dir_entered();
 

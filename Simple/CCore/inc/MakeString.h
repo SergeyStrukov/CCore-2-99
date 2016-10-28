@@ -41,6 +41,12 @@ class MakeString : NoCopy
 
    bool operator ! () const { return overflow; }
 
+   void reset()
+    {
+     len=0;
+     overflow=false;
+    }
+
    // add()
 
    MakeString & add(StrLen str)
