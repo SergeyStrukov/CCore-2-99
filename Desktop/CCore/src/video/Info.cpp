@@ -89,6 +89,75 @@ InfoFromString::~InfoFromString()
  {
  }
 
+/* class InfoBuilder::PoolInfo */
+
+class InfoBuilder::PoolInfo : public Info
+ {
+   class Base : public InfoBase
+    {
+      ElementPool pool;
+      DynArray<StrLen> list;
+
+     public:
+
+      Base(ElementPool &pool_,DynArray<StrLen> &list_)
+       {
+        Swap(pool,pool_);
+        Swap(list,list_);
+
+        pool.shrink_extra();
+        list.shrink_extra();
+       }
+
+      virtual ~Base()
+       {
+       }
+
+      // AbstractInfo
+
+      virtual ulen getLineCount() const
+       {
+        return list.getLen();
+       }
+
+      virtual StrLen getLine(ulen index) const
+       {
+        return list.at(index);
+       }
+    };
+
+  public:
+
+   PoolInfo(ElementPool &pool,DynArray<StrLen> &list)
+    : Info(new Base(pool,list))
+    {
+    }
+
+   ~PoolInfo()
+    {
+    }
+ };
+
+/* class InfoBuilder */
+
+InfoBuilder::InfoBuilder()
+ {
+ }
+
+InfoBuilder::~InfoBuilder()
+ {
+ }
+
+void InfoBuilder::add(StrLen line)
+ {
+  list.append_copy(pool.dup(line));
+ }
+
+Info InfoBuilder::complete()
+ {
+  return PoolInfo(pool,list);
+ }
+
 } // namespace Video
 } // namespace CCore
 

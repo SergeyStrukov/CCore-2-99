@@ -21,9 +21,6 @@
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FileSystem.h>
-#include <CCore/inc/ElementPool.h>
-#include <CCore/inc/Array.h>
-#include <CCore/inc/Sort.h>
 #include <CCore/inc/MakeString.h>
 
 namespace CCore {
@@ -31,33 +28,9 @@ namespace Video {
 
 /* classes */
 
-class InfoBuilder;
-
 class FileSubWindow;
 
 class FileWindow;
-
-/* class InfoBuilder */
-
-class InfoBuilder : NoCopy
- {
-   ElementPool pool;
-   DynArray<StrLen> list;
-
-   class PoolInfo;
-
-  public:
-
-   InfoBuilder();
-
-   ~InfoBuilder();
-
-   void add(StrLen text);
-
-   void sort(ObjLessFuncType<StrLen> less) { IncrSort(Range(list),less); }
-
-   Info complete();
- };
 
 /* class FileSubWindow */
 

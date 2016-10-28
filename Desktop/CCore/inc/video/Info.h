@@ -16,9 +16,12 @@
 #ifndef CCore_inc_video_Info_h
 #define CCore_inc_video_Info_h
 
-#include <CCore/inc/String.h>
-
 #include <CCore/inc/RefObjectBase.h>
+
+#include <CCore/inc/String.h>
+#include <CCore/inc/ElementPool.h>
+#include <CCore/inc/Array.h>
+#include <CCore/inc/Sort.h>
 
 namespace CCore {
 namespace Video {
@@ -30,6 +33,8 @@ struct AbstractInfo;
 class Info;
 
 class InfoFromString;
+
+class InfoBuilder;
 
 /* struct AbstractInfo */
 
@@ -94,6 +99,28 @@ class InfoFromString : public Info
    explicit InfoFromString(StrLen str);
 
    ~InfoFromString();
+ };
+
+/* class InfoBuilder */
+
+class InfoBuilder : NoCopy
+ {
+   ElementPool pool;
+   DynArray<StrLen> list;
+
+   class PoolInfo;
+
+  public:
+
+   InfoBuilder();
+
+   ~InfoBuilder();
+
+   void add(StrLen line);
+
+   void sort(ObjLessFuncType<StrLen> less) { IncrSort(Range(list),less); }
+
+   Info complete();
  };
 
 } // namespace Video
