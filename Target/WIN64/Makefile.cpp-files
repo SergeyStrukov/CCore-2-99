@@ -103,6 +103,7 @@
 ../../Fundamental/CCore/src/Job.cpp
 ../../Fundamental/CCore/src/List.cpp
 ../../Fundamental/CCore/src/ListCursor.cpp
+../../Fundamental/CCore/src/MakeFileName.cpp
 ../../Fundamental/CCore/src/math/UIntSlowMulAlgo.cpp
 ../../Fundamental/CCore/src/MemBase_general.cpp
 ../../Fundamental/CCore/src/MemSpaceHeap.cpp
@@ -266,6 +267,7 @@
 ../../Desktop/CCore/src/video/DrawBuf.cpp
 ../../Desktop/CCore/src/video/DrawTools.cpp
 ../../Desktop/CCore/src/video/FigureLib.cpp
+../../Desktop/CCore/src/video/FileNameCmp.cpp
 ../../Desktop/CCore/src/video/FixedWindow.cpp
 ../../Desktop/CCore/src/video/Font.cpp
 ../../Desktop/CCore/src/video/FontDatabase.cpp

@@ -17,6 +17,7 @@
 
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/SmoothDrawArt.h>
+#include <CCore/inc/video/FileNameCmp.h>
 
 #include <CCore/inc/Path.h>
 #include <CCore/inc/Exception.h>
@@ -24,89 +25,7 @@
 namespace CCore {
 namespace Video {
 
-/* class FileSubWindow::MakeFileName */
-
-FileSubWindow::MakeFileName::MakeFileName(StrLen dir_name,StrLen file_name)
- {
-  (*this)(dir_name,file_name);
- }
-
-StrLen FileSubWindow::MakeFileName::operator () (StrLen dir_name,StrLen file_name)
- {
-  reset();
-
-  if( +dir_name && PathBase::IsSlash(dir_name.back(1)) ) dir_name.len--;
-
-  add(dir_name,'/',file_name);
-
-  if( !(*this) )
-    {
-     Printf(Exception,"CCore::Video::FileSubWindow::MakeFileName::operator () (#.q;,#.q;) : too long path",dir_name,file_name);
-    }
-
-  return get();
- }
-
 /* class FileSubWindow */
-
-CmpResult FileSubWindow::NameCmp(StrLen a,StrLen b)
- {
-  if( a.len<b.len )
-    {
-     ulen off=a.match(b.ptr);
-
-     if( off<a.len ) return NativeCmp(a[off],b[off]);
-
-     return CmpLess;
-    }
-  else
-    {
-     ulen off=b.match(a.ptr);
-
-     if( off<b.len ) return NativeCmp(a[off],b[off]);
-
-     return (a.len==b.len)?CmpEqual:CmpGreater;
-    }
- }
-
-bool FileSubWindow::ExtNameLess(StrLen a,StrLen b)
- {
-  if( PathBase::IsDotDot(b) ) return false;
-
-  if( PathBase::IsDotDot(a) ) return true;
-
-  for(;;)
-    {
-     SplitExt exta(a);
-     SplitExt extb(b);
-
-     if( !extb )
-       {
-        if( !exta )
-          {
-           return NameCmp(a,b)<0;
-          }
-        else
-          {
-           return false;
-          }
-       }
-     else
-       {
-        if( !exta )
-          {
-           return true;
-          }
-        else
-          {
-           if( CmpResult cmp=NameCmp(exta.ext,extb.ext) ) return cmp<0;
-
-           a=exta.name;
-           b=extb.name;
-          }
-       }
-    }
- }
 
 void FileSubWindow::fillLists()
  {

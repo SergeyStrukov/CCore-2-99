@@ -96,6 +96,7 @@ obj/FastMutex.o \
 obj/Fifo.o \
 obj/FigureLib.o \
 obj/FileName.o \
+obj/FileNameCmp.o \
 obj/FileSystem.o \
 obj/FileToMem.o \
 obj/FixedWindow.o \
@@ -147,6 +148,7 @@ obj/Locked.o \
 obj/Log.o \
 obj/MD5.o \
 obj/MSec.o \
+obj/MakeFileName.o \
 obj/MakeString.o \
 obj/MemAllocGuard.o \
 obj/MemBase.o \
@@ -464,6 +466,7 @@ obj/FastMutex.s \
 obj/Fifo.s \
 obj/FigureLib.s \
 obj/FileName.s \
+obj/FileNameCmp.s \
 obj/FileSystem.s \
 obj/FileToMem.s \
 obj/FixedWindow.s \
@@ -515,6 +518,7 @@ obj/Locked.s \
 obj/Log.s \
 obj/MD5.s \
 obj/MSec.s \
+obj/MakeFileName.s \
 obj/MakeString.s \
 obj/MemAllocGuard.s \
 obj/MemBase.s \
@@ -832,6 +836,7 @@ obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FigureLib.dep \
 obj/FileName.dep \
+obj/FileNameCmp.dep \
 obj/FileSystem.dep \
 obj/FileToMem.dep \
 obj/FixedWindow.dep \
@@ -883,6 +888,7 @@ obj/Locked.dep \
 obj/Log.dep \
 obj/MD5.dep \
 obj/MSec.dep \
+obj/MakeFileName.dep \
 obj/MakeString.dep \
 obj/MemAllocGuard.dep \
 obj/MemBase.dep \
@@ -1403,6 +1409,9 @@ obj/FigureLib.o : ../../Desktop/CCore/src/video/FigureLib.cpp
 obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/FileNameCmp.o : ../../Desktop/CCore/src/video/FileNameCmp.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1554,6 +1563,9 @@ obj/MD5.o : ../../Applied/CCore/src/crypton/MD5.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MSec.o : ../../Simple/CCore/src/gadget/MSec.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MakeFileName.o : ../../Fundamental/CCore/src/MakeFileName.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MakeString.o : ../../Simple/CCore/src/MakeString.cpp
@@ -2500,6 +2512,9 @@ obj/FigureLib.s : ../../Desktop/CCore/src/video/FigureLib.cpp
 obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileNameCmp.s : ../../Desktop/CCore/src/video/FileNameCmp.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2651,6 +2666,9 @@ obj/MD5.s : ../../Applied/CCore/src/crypton/MD5.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/MSec.s : ../../Simple/CCore/src/gadget/MSec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MakeFileName.s : ../../Fundamental/CCore/src/MakeFileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/MakeString.s : ../../Simple/CCore/src/MakeString.cpp
@@ -3597,6 +3615,9 @@ obj/FigureLib.dep : ../../Desktop/CCore/src/video/FigureLib.cpp
 obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
 
+obj/FileNameCmp.dep : ../../Desktop/CCore/src/video/FileNameCmp.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameCmp.o $< -MF $@
+
 obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileSystem.o $< -MF $@
 
@@ -3749,6 +3770,9 @@ obj/MD5.dep : ../../Applied/CCore/src/crypton/MD5.cpp
 
 obj/MSec.dep : ../../Simple/CCore/src/gadget/MSec.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MSec.o $< -MF $@
+
+obj/MakeFileName.dep : ../../Fundamental/CCore/src/MakeFileName.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MakeFileName.o $< -MF $@
 
 obj/MakeString.dep : ../../Simple/CCore/src/MakeString.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MakeString.o $< -MF $@

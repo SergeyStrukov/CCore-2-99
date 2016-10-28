@@ -39,6 +39,7 @@ ProgressScale.h      +
 Incremental.h        +        
 Info.h               +
 Picture.h            +
+FileNameCmp.h        +
 
 ================================================================================
 

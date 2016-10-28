@@ -143,6 +143,7 @@ obj/Locked.o \
 obj/Log.o \
 obj/MD5.o \
 obj/MSec.o \
+obj/MakeFileName.o \
 obj/MakeString.o \
 obj/MemAllocGuard.o \
 obj/MemBase.o \
@@ -481,6 +482,7 @@ obj/Locked.s \
 obj/Log.s \
 obj/MD5.s \
 obj/MSec.s \
+obj/MakeFileName.s \
 obj/MakeString.s \
 obj/MemAllocGuard.s \
 obj/MemBase.s \
@@ -819,6 +821,7 @@ obj/Locked.dep \
 obj/Log.dep \
 obj/MD5.dep \
 obj/MSec.dep \
+obj/MakeFileName.dep \
 obj/MakeString.dep \
 obj/MemAllocGuard.dep \
 obj/MemBase.dep \
@@ -1458,6 +1461,9 @@ obj/MD5.o : ../../Applied/CCore/src/crypton/MD5.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MSec.o : ../../Simple/CCore/src/gadget/MSec.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MakeFileName.o : ../../Fundamental/CCore/src/MakeFileName.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MakeString.o : ../../Simple/CCore/src/MakeString.cpp
@@ -2467,6 +2473,9 @@ obj/MD5.s : ../../Applied/CCore/src/crypton/MD5.cpp
 obj/MSec.s : ../../Simple/CCore/src/gadget/MSec.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MakeFileName.s : ../../Fundamental/CCore/src/MakeFileName.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/MakeString.s : ../../Simple/CCore/src/MakeString.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3473,6 +3482,9 @@ obj/MD5.dep : ../../Applied/CCore/src/crypton/MD5.cpp
 
 obj/MSec.dep : ../../Simple/CCore/src/gadget/MSec.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MSec.o $< -MF $@
+
+obj/MakeFileName.dep : ../../Fundamental/CCore/src/MakeFileName.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MakeFileName.o $< -MF $@
 
 obj/MakeString.dep : ../../Simple/CCore/src/MakeString.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MakeString.o $< -MF $@

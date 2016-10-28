@@ -21,7 +21,7 @@
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FileSystem.h>
-#include <CCore/inc/MakeString.h>
+#include <CCore/inc/MakeFileName.h>
 
 namespace CCore {
 namespace Video {
@@ -75,25 +75,10 @@ class FileSubWindow : public ComboWindow
 
    FileSystem fs;
 
-   class MakeFileName : public MakeString<MaxPathLen>
-    {
-     public:
-
-      MakeFileName() {}
-
-      MakeFileName(StrLen dir_name,StrLen file_name);
-
-      StrLen operator () (StrLen dir_name,StrLen file_name);
-    };
-
    MakeFileName file_buf;
    StrLen file_path;
 
   private:
-
-   static CmpResult NameCmp(StrLen a,StrLen b);
-
-   static bool ExtNameLess(StrLen a,StrLen b);
 
    void fillLists();
 
