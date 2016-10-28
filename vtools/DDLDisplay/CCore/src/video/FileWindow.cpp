@@ -118,7 +118,66 @@ StrLen FileSubWindow::MakeFileName::operator () (StrLen dir_name,StrLen file_nam
 
 /* class FileSubWindow */
 
-void FileSubWindow::fillLists() // TODO sort
+CmpResult FileSubWindow::NameCmp(StrLen a,StrLen b)
+ {
+  if( a.len<b.len )
+    {
+     ulen off=a.match(b.ptr);
+
+     if( off<a.len ) return NativeCmp(a[off],b[off]);
+
+     return CmpLess;
+    }
+  else
+    {
+     ulen off=b.match(a.ptr);
+
+     if( off<b.len ) return NativeCmp(a[off],b[off]);
+
+     return (a.len==b.len)?CmpEqual:CmpGreater;
+    }
+ }
+
+bool FileSubWindow::ExtNameLess(StrLen a,StrLen b)
+ {
+  if( PathBase::IsDotDot(b) ) return false;
+
+  if( PathBase::IsDotDot(a) ) return true;
+
+  for(;;)
+    {
+     SplitExt exta(a);
+     SplitExt extb(b);
+
+     if( !extb )
+       {
+        if( !exta )
+          {
+           return NameCmp(a,b)<0;
+          }
+        else
+          {
+           return false;
+          }
+       }
+     else
+       {
+        if( !exta )
+          {
+           return true;
+          }
+        else
+          {
+           if( CmpResult cmp=NameCmp(exta.ext,extb.ext) ) return cmp<0;
+
+           a=exta.name;
+           b=extb.name;
+          }
+       }
+    }
+ }
+
+void FileSubWindow::fillLists()
  {
   dir_list.enable();
   file_list.enable();
@@ -148,6 +207,10 @@ void FileSubWindow::fillLists() // TODO sort
                     }
 
                 } );
+
+  dir_builder.sort(ExtNameLess);
+
+  file_builder.sort(ExtNameLess);
 
   dir_list.setInfo(dir_builder.complete());
 

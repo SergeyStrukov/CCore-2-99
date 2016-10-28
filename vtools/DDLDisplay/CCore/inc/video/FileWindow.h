@@ -118,6 +118,10 @@ class FileSubWindow : public ComboWindow
 
   private:
 
+   static CmpResult NameCmp(StrLen a,StrLen b);
+
+   static bool ExtNameLess(StrLen a,StrLen b);
+
    void fillLists();
 
    void setDir(StrLen dir_name);

@@ -90,6 +90,10 @@ using file_len_t = unsigned long long ;
 
 using codepage_t = unsigned ;
 
+/* type lcid_t */
+
+using lcid_t = unsigned ;
+
 /* type sem_count_t */
 
 using sem_count_t = int ;
@@ -194,7 +198,7 @@ ulen_t WIN32_API FormatMessageA(flags_t format_message_flags,
                                 void_ptr);
 
 /*--------------------------------------------------------------------------------------*/
-/* Character conversion flags                                                           */
+/* Character flags                                                                      */
 /*--------------------------------------------------------------------------------------*/
 
 /* enum CodePageId */
@@ -220,6 +224,14 @@ enum MultiByteFlags
   MultiByteErrorInvalidChars = 0x0008
  };
 
+/* enum LCID */
+
+enum LCID
+ {
+  LCID_UserDefault   = 0x0400,
+  LCID_SystemDefault = 0x0800
+ };
+
 /*--------------------------------------------------------------------------------------*/
 /* Character functions                                                                  */
 /*--------------------------------------------------------------------------------------*/
@@ -236,6 +248,13 @@ int WIN32_API MultiByteToWideChar(codepage_t codepage,
 /* CharLowerA() */
 
 char * WIN32_API CharLowerA(char *str);
+
+/* CompareStringA() */
+
+int WIN32_API CompareStringA(lcid_t lcid,
+                             flags_t,
+                             const char *a,int a_len,
+                             const char *b,int b_len);
 
 /*--------------------------------------------------------------------------------------*/
 /* Time functions                                                                       */

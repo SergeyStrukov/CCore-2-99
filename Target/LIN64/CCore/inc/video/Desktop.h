@@ -19,6 +19,7 @@
 #include <CCore/inc/video/FrameWindow.h>
 #include <CCore/inc/GenFile.h>
 #include <CCore/inc/MakeString.h>
+#include <CCore/inc/Cmp.h>
 
 namespace CCore {
 namespace Video {
@@ -42,6 +43,8 @@ void ErrorMsgBox(StrLen text,StrLen title);
 CmdDisplay StartDisplay();
 
 char ToLowerCase(char ch);
+
+CmpResult NativeCmp(char a,char b);
 
 /* classes */
 

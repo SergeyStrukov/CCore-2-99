@@ -4125,6 +4125,16 @@ char ToLowerCase(char ch)
   return std::tolower(ch);
  }
 
+CmpResult NativeCmp(char a_,char b_)
+ {
+  char a[]={a_,0};
+  char b[]={b_,0};
+
+  int cmp=std::strcoll(a,b);
+
+  return LessCmp(cmp,0);
+ }
+
 void SetAppIcon(Picture pict)
  {
   HiddenWindow.setIcon(pict);

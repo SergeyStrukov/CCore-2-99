@@ -2135,6 +2135,13 @@ char ToLowerCase(char ch)
   return (unsigned char)(unsigned long)Win64::CharLowerA((char *)(unsigned long)(unsigned char)ch);
  }
 
+CmpResult NativeCmp(char a,char b)
+ {
+  int cmp=Win64::CompareStringA(Win64::LCID_UserDefault,0,&a,1,&b,1);
+
+  return LessCmp(cmp,2);
+ }
+
 /* global DefaultDesktop */
 
 static WindowsDesktop DesktopObject CCORE_INITPRI_3 ;
