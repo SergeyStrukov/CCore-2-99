@@ -168,3 +168,4 @@
 ../../../Target/LIN64/CCore/test/test6008.X11.cpp
 ../../../Target/LIN64/CCore/test/test6009.KeySym.cpp
 ../../../Target/LIN64/CCore/test/test6010.MsgBox.cpp
+../../../Target/LIN64/CCore/test/test6011.Char.cpp

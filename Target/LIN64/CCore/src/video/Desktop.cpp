@@ -44,6 +44,7 @@
 #include <clocale>
 #include <cwctype>
 #include <cctype>
+#include <cstring>
 
 namespace CCore {
 namespace Video {
@@ -52,7 +53,7 @@ namespace Video {
 
 CharMapTable::CharMapTable()
  {
-  std::setlocale(LC_CTYPE,std::getenv("LANG"));
+  std::setlocale(LC_ALL,std::getenv("LANG"));
 
   table[0]=0;
 

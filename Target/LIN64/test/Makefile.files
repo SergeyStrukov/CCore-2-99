@@ -162,6 +162,7 @@ OBJ_LIST = \
 ../test-obj/test6008.X11.o \
 ../test-obj/test6009.KeySym.o \
 ../test-obj/test6010.MsgBox.o \
+../test-obj/test6011.Char.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -335,6 +336,7 @@ ASM_LIST = \
 ../test-obj/test6008.X11.s \
 ../test-obj/test6009.KeySym.s \
 ../test-obj/test6010.MsgBox.s \
+../test-obj/test6011.Char.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -508,6 +510,7 @@ DEP_LIST = \
 ../test-obj/test6008.X11.dep \
 ../test-obj/test6009.KeySym.dep \
 ../test-obj/test6010.MsgBox.dep \
+../test-obj/test6011.Char.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -1010,6 +1013,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test6010.MsgBox.o : ../../../Target/LIN64/CCore/test/test6010.MsgBox.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test6011.Char.o : ../../../Target/LIN64/CCore/test/test6011.Char.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../Fundamental/CCore/test/testArray.cpp
@@ -1524,6 +1530,9 @@ include $(RULES_FILE)
 ../test-obj/test6010.MsgBox.s : ../../../Target/LIN64/CCore/test/test6010.MsgBox.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test6011.Char.s : ../../../Target/LIN64/CCore/test/test6011.Char.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../Fundamental/CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2035,6 +2044,9 @@ include $(RULES_FILE)
 
 ../test-obj/test6010.MsgBox.dep : ../../../Target/LIN64/CCore/test/test6010.MsgBox.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test6010.MsgBox.o $< -MF $@
+
+../test-obj/test6011.Char.dep : ../../../Target/LIN64/CCore/test/test6011.Char.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test6011.Char.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../Fundamental/CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

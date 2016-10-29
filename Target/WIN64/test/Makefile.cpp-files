@@ -168,3 +168,4 @@
 ../../../Target/WIN64/CCore/test/test6008.Time.cpp
 ../../../Target/WIN64/CCore/test/test6009.SysFile.cpp
 ../../../Target/WIN64/CCore/test/test6010.Quick.cpp
+../../../Target/WIN64/CCore/test/test6011.Char.cpp

@@ -160,3 +160,4 @@
 ../../../HCore/CCore/test/testPrint.cpp
 ../../../Target/WIN32/CCore/test/test6001.Quick.cpp
 ../../../Target/WIN32/CCore/test/test6002.SysError.cpp
+../../../Target/WIN32/CCore/test/test6003.Char.cpp
