@@ -1065,6 +1065,8 @@ class LineEditShape
 
    Point getMinSize() const;
 
+   Point getMinSize(StrLen sample_text) const;
+
    void setMax();
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }

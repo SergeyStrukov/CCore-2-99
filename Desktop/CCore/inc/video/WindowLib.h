@@ -2440,6 +2440,8 @@ class LineEditWindowOf : public SubWindow
 
    Point getMinSize() const { return shape.getMinSize(); }
 
+   Point getMinSize(StrLen sample_text) const { return shape.getMinSize(sample_text); }
+
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
    bool isEnabled() const { return shape.enable; }

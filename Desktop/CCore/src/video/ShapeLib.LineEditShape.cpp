@@ -25,6 +25,11 @@ namespace Video {
 
 Point LineEditShape::getMinSize() const
  {
+  return getMinSize("Sample12345");
+ }
+
+Point LineEditShape::getMinSize(StrLen sample_text) const
+ {
   Font font=cfg.font.get();
 
   MCoord width=+cfg.width;
@@ -36,7 +41,7 @@ Point LineEditShape::getMinSize() const
   Coord dx=RoundUpLen(ex+width);
   Coord dy=RoundUpLen(width)+(+cfg.cursor_dx);
 
-  TextSize ts=font->text("Sample12345");
+  TextSize ts=font->text(sample_text);
 
   IntGuard( !ts.overflow );
 

@@ -122,7 +122,7 @@ class FileSubWindow : public ComboWindow
 
    // methods
 
-   Point getMinSize() const;
+   Point getMinSize(StrLen sample_text) const;
 
    StrLen getFilePath() const { return file_path; }
 
@@ -164,6 +164,8 @@ class FileWindow : public DragWindow
   private:
 
    FileSubWindow sub_win;
+
+   static const char *const SampleDir;
 
   public:
 

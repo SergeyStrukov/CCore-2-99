@@ -178,16 +178,16 @@ FileSubWindow::~FileSubWindow()
 
  // methods
 
-Point FileSubWindow::getMinSize() const
+Point FileSubWindow::getMinSize(StrLen sample_text) const
  {
   Coord space=+cfg.space_dxy;
 
-  Point dir_size=dir.getMinSize();
+  Point dir_size=dir.getMinSize(sample_text);
 
   Point btn_size=SupMinSize(btn_Ok,btn_Cancel);
 
   Coord dx=2*space+Max<Coord>(dir_size.x,2*btn_size.x+space);
-  Coord dy=5*space+12*dir_size.y+btn_size.y;
+  Coord dy=5*space+20*dir_size.y+btn_size.y;
 
   return Point(dx,dy);
  }
@@ -265,6 +265,8 @@ void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 /* class FileWindow */
 
+const char *const FileWindow::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
+
 FileWindow::FileWindow(Desktop *desktop,const Config &cfg)
  : DragWindow(desktop,cfg.frame_cfg),
    sub_win(*this,cfg.file_cfg)
@@ -286,7 +288,7 @@ FileWindow::~FileWindow()
 
 Pane FileWindow::getPane(StrLen title,Point base) const
  {
-  Point size=getMinSize(false,title,sub_win.getMinSize());
+  Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir));
 
   Point screen_size=getDesktop()->getScreenSize();
 
