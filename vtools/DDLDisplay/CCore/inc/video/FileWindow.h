@@ -18,6 +18,7 @@
 
 #include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FileSystem.h>
@@ -47,13 +48,18 @@ class FileSubWindow : public ComboWindow
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
      CtorRefVal<SimpleTextListWindow::ConfigType> list_cfg;
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
+     CtorRefVal<KnobWindow::ConfigType> knob_cfg;
+
+     CtorRefVal<SimpleCascadeMenu::ConfigType> hit_menu_cfg;
 
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref) noexcept
       : edit_cfg(SmartBind,pref),
         list_cfg(SmartBind,pref),
-        btn_cfg(SmartBind,pref)
+        btn_cfg(SmartBind,pref),
+        knob_cfg(SmartBind,pref),
+        hit_menu_cfg(SmartBind,pref)
       {
        back.bind(pref.get().back);
        space_dxy.bind(pref.get().space_dxy);
@@ -67,11 +73,17 @@ class FileSubWindow : public ComboWindow
    const Config &cfg;
 
    LineEditWindow dir;
+   KnobWindow knob_hit;
+   KnobWindow knob_add;
+   KnobWindow knob_back;
    SimpleTextListWindow dir_list;
    SimpleTextListWindow file_list;
 
    ButtonWindow btn_Ok;
    ButtonWindow btn_Cancel;
+
+   MenuData hit_data;
+   SimpleCascadeMenu hit_menu;
 
    FileSystem fs;
 
@@ -113,6 +125,16 @@ class FileSubWindow : public ComboWindow
 
    SignalConnector<FileSubWindow> connector_btn_Ok_pressed;
    SignalConnector<FileSubWindow> connector_btn_Cancel_pressed;
+
+   void knob_hit_pressed();
+
+   void knob_add_pressed();
+
+   void knob_back_pressed();
+
+   SignalConnector<FileSubWindow> connector_knob_hit_pressed;
+   SignalConnector<FileSubWindow> connector_knob_add_pressed;
+   SignalConnector<FileSubWindow> connector_knob_back_pressed;
 
   public:
 

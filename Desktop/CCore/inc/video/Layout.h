@@ -172,6 +172,23 @@ class PlaceRow
    Point size;
    Coord delta_x;
 
+  private:
+
+   struct Place
+    {
+     PlaceRow &obj;
+
+     template <class W>
+     Place operator + (W &window)
+      {
+       window.setPlace(*obj);
+
+       ++obj;
+
+       return *this;
+      }
+    };
+
   public:
 
    PlaceRow(Pane outer,Point size,Coord space,ulen count);
@@ -179,6 +196,12 @@ class PlaceRow
    Pane operator * () const { return Pane(base,size); }
 
    void operator ++ () { base.x+=delta_x; }
+
+   template <class ... WW>
+   void place(WW & ... ww)
+    {
+     ( Place{*this} + ... + ww );
+    }
  };
 
 /* class PlaceColumn */
@@ -189,6 +212,23 @@ class PlaceColumn
    Point size;
    Coord delta_y;
 
+  private:
+
+   struct Place
+    {
+     PlaceColumn &obj;
+
+     template <class W>
+     Place operator + (W &window)
+      {
+       window.setPlace(*obj);
+
+       ++obj;
+
+       return *this;
+      }
+    };
+
   public:
 
    PlaceColumn(Pane outer,Point size,Coord space,ulen count);
@@ -196,6 +236,12 @@ class PlaceColumn
    Pane operator * () const { return Pane(base,size); }
 
    void operator ++ () { base.y+=delta_y; }
+
+   template <class ... WW>
+   void place(WW & ... ww)
+    {
+     ( Place{*this} + ... + ww );
+    }
  };
 
 /* struct MinSizeType */
@@ -381,6 +427,8 @@ class Panesor
 
    Panesor(Pane pane,Coordinate space) : Panesor(pane.x,pane.y,pane.dx,pane.dy,space) {}
 
+   Panesor(Panesor psor,Ratio rat) : Panesor(psor.x,psor.y,psor.dx,psor.dy,rat*(+psor.space)) {}
+
    // methods
 
    operator Pane() const { return Pane(+x,+y,+dx,+dy); }
@@ -496,6 +544,46 @@ class Panesor
    void extY(W &window,Coordinate ey=0)
     {
      placeY(window,ey+window.getMinSize().y);
+    }
+
+   // placeRow
+
+   template <class ... WW>
+   void placeRow(Point size,WW & ... ww) const
+    {
+     PlaceRow row(*this,size,+space,sizeof ... (WW));
+
+     row.place(ww...);
+    }
+
+   template <class ... WW>
+   Point placeRow(WW & ... ww) const
+    {
+     Point size=SupMinSize(ww...);
+
+     placeRow(size,ww...);
+
+     return size;
+    }
+
+   // placeColumn
+
+   template <class ... WW>
+   void placeColumn(Point size,WW & ... ww) const
+    {
+     PlaceColumn col(*this,size,+space,sizeof ... (WW));
+
+     col.place(ww...);
+    }
+
+   template <class ... WW>
+   Point placeColumn(WW & ... ww) const
+    {
+     Point size=SupMinSize(ww...);
+
+     placeColumn(size,ww...);
+
+     return size;
     }
  };
 

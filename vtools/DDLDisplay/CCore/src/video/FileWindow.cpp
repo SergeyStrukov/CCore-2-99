@@ -150,15 +150,74 @@ void FileSubWindow::btn_Cancel_pressed()
   askFrameClose();
  }
 
+void FileSubWindow::knob_hit_pressed() // TODO
+ {
+  if( hit_menu.isDead() )
+    {
+     hit_menu.create(getFrame(),hit_data,toScreen(knob_hit.getPlace().addDY()));
+
+     knob_hit.setFace(KnobShape::FaceUp);
+    }
+  else
+    {
+     hit_menu.destroy();
+
+     knob_hit.setFace(KnobShape::FaceDown);
+    }
+ }
+
+void FileSubWindow::knob_add_pressed() // TODO
+ {
+  StrLen dir_name=dir.getText();
+
+  hit_data(DefString(dir_name),(int)hit_data.list.getLen());
+
+  hit_data.update.assert();
+ }
+
+void FileSubWindow::knob_back_pressed()
+ {
+  StrLen dir_name=dir.getText();
+
+  SplitPath split1(dir_name);
+
+  SplitName split2(split1.path);
+
+  if( !split2 )
+    {
+     if( ulen delta=split2.name.len )
+       {
+        dir_name.len-=delta;
+
+        setDir(dir_name);
+       }
+    }
+  else
+    {
+     ulen delta=split2.name.len+1;
+
+     if( delta==split1.path.len ) delta--;
+
+     dir_name.len-=delta;
+
+     setDir(dir_name);
+    }
+ }
+
 FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
 
    dir(wlist,cfg.edit_cfg),
+   knob_hit(wlist,cfg.knob_cfg,KnobShape::FaceDown),
+   knob_add(wlist,cfg.knob_cfg,KnobShape::FacePlus),
+   knob_back(wlist,cfg.knob_cfg,KnobShape::FaceLeft),
    dir_list(wlist,cfg.list_cfg),
    file_list(wlist,cfg.list_cfg),
    btn_Ok(wlist,cfg.btn_cfg,"Ok"_def),
    btn_Cancel(wlist,cfg.btn_cfg,"Cancel"_def),
+
+   hit_menu(host.getFrame()->getDesktop(),cfg.hit_menu_cfg),
 
    connector_file_list_entered(this,&FileSubWindow::file_list_entered,file_list.entered),
    connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,file_list.dclicked),
@@ -167,9 +226,12 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    connector_dir_entered(this,&FileSubWindow::dir_entered,dir.entered),
    connector_dir_changed(this,&FileSubWindow::dir_changed,dir.changed),
    connector_btn_Ok_pressed(this,&FileSubWindow::btn_Ok_pressed,btn_Ok.pressed),
-   connector_btn_Cancel_pressed(this,&FileSubWindow::btn_Cancel_pressed,btn_Cancel.pressed)
+   connector_btn_Cancel_pressed(this,&FileSubWindow::btn_Cancel_pressed,btn_Cancel.pressed),
+   connector_knob_hit_pressed(this,&FileSubWindow::knob_hit_pressed,knob_hit.pressed),
+   connector_knob_add_pressed(this,&FileSubWindow::knob_add_pressed,knob_add.pressed),
+   connector_knob_back_pressed(this,&FileSubWindow::knob_back_pressed,knob_back.pressed)
  {
-  wlist.insTop(dir,dir_list,file_list,btn_Ok,btn_Cancel);
+  wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,btn_Ok,btn_Cancel);
  }
 
 FileSubWindow::~FileSubWindow()
@@ -186,7 +248,7 @@ Point FileSubWindow::getMinSize(StrLen sample_text) const
 
   Point btn_size=SupMinSize(btn_Ok,btn_Cancel);
 
-  Coord dx=2*space+Max<Coord>(dir_size.x,2*btn_size.x+space);
+  Coord dx=3*space+Max<Coord>(dir_size.x,2*btn_size.x+space)+3*dir_size.y;
   Coord dy=5*space+20*dir_size.y+btn_size.y;
 
   return Point(dx,dy);
@@ -207,17 +269,23 @@ void FileSubWindow::open()
 
 void FileSubWindow::layout()
  {
-  Coord space=+cfg.space_dxy;
-  Panesor psor(getSize(),space);
+  Panesor psor(getSize(),+cfg.space_dxy);
 
   psor.shrink();
 
   // dir
 
   {
-   Point s=dir.getMinSize();
+   Coord dy=dir.getMinSize().y;
 
-   psor.placeY(dir,s.y);
+   Panesor p(psor.cutY(dy),Rational(1,4));
+
+   p.placeX(knob_hit,dy);
+   p.placeX(knob_add,dy);
+
+   p.placeX_rest(dir,dy);
+
+   knob_back.setPlace(p);
   }
 
   // dir_list
@@ -237,13 +305,7 @@ void FileSubWindow::layout()
   // btn
 
   {
-   PlaceRow row(psor,btn_size,space,2);
-
-   btn_Ok.setPlace(*row);
-
-   ++row;
-
-   btn_Cancel.setPlace(*row);
+   psor.placeRow(btn_size,btn_Ok,btn_Cancel);
   }
  }
 

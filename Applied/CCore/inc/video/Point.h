@@ -471,6 +471,10 @@ struct Pane
 
   Point getBase() const { return Point(x,y); }
 
+  Point addDX() const { return Point(x+dx,y); }
+
+  Point addDY() const { return Point(x,y+dy); }
+
   Point getSize() const { return Point(dx,dy); }
 
   Point getLim() const { return Point(IntAdd(x,dx),IntAdd(y,dy)); }

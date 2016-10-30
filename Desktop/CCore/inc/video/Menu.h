@@ -42,18 +42,6 @@ enum MenuState : unsigned
   MenuSelect  = 0x02
  };
 
-/* functions */
-
-inline Point TopCascadePoint(Pane pane)
- {
-  return pane.getBase().addY(pane.dy);
- }
-
-inline Point CascadePoint(Pane pane)
- {
-  return pane.getBase().addX(pane.dx);
- }
-
 /* classes */
 
 struct MenuPoint;
@@ -251,7 +239,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      const MenuPoint &point=shape.data.list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(TopCascadePoint(point.place)-Point(shape.off,0)));
+     selected.assert(point.id,toScreen(point.place.addDY()-Point(shape.off,0)));
     }
 
    void select(ulen index)
@@ -659,7 +647,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      const MenuPoint &point=shape.data->list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(CascadePoint(point.place)-Point(0,shape.off)));
+     selected.assert(point.id,toScreen(point.place.addDX()-Point(0,shape.off)));
     }
 
    void select(ulen index)
