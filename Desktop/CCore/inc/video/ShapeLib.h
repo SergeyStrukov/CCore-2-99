@@ -1087,6 +1087,8 @@ class LineEditShape
 
    ulen getPosition(Point point) const;
 
+   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
+
    void draw(const DrawBuf &buf) const;
  };
 

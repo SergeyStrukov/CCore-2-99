@@ -158,9 +158,13 @@ class TestClient : public ComboWindow
    SignalConnector<TestClient,int,Point> connector_cascade_menu_selected;
    SignalConnector<TestClient,VKey,KeyMod> connector_cascade_menu_pressed;
 
+   void update();
+
+   SignalConnector<TestClient> connector_update;
+
   public:
 
-   TestClient(SubWindowHost &host,const UserPreference &pref);
+   TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &update);
 
    virtual ~TestClient();
 

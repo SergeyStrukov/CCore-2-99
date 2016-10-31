@@ -1046,23 +1046,6 @@ class SimpleCascadeMenuOf
 
    SignalConnector<SimpleCascadeMenuOf<Shape>,Point> connector_moved;
 
-   void update()
-    {
-     if( frame.isAlive() )
-       {
-        Point size=client.getMinSize();
-
-        if( size<=screen_size )
-          {
-           frame.getHost()->setMaxSize(size);
-
-           frame.resize(size);
-
-           frame.redrawAll(true);
-          }
-       }
-    }
-
    SignalConnector<SimpleCascadeMenuOf<Shape> > connector_update;
 
   public:
@@ -1106,6 +1089,23 @@ class SimpleCascadeMenuOf
 
      connector_update.disconnect();
      connector_update.connect(data.update);
+    }
+
+   void update()
+    {
+     if( frame.isAlive() )
+       {
+        Point size=client.getMinSize();
+
+        if( size<=screen_size )
+          {
+           frame.getHost()->setMaxSize(size);
+
+           frame.resize(size);
+
+           frame.redrawAll(true);
+          }
+       }
     }
 
    void unselect() { client.unselect(); }

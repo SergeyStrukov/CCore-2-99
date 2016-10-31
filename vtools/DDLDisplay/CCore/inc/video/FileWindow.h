@@ -31,6 +31,8 @@ namespace Video {
 
 class DirHitList;
 
+class DirEditShape;
+
 class FileSubWindow;
 
 class FileWindow;
@@ -41,14 +43,47 @@ class DirHitList : NoCopy
  {
    static const ulen MaxLen = 10 ;
 
-   DefString list[MaxLen];
-   ulen len = 0 ;
+   String hit_list[MaxLen];
+   ulen hit_len = 0 ;
+
+   struct Rec
+    {
+     String dir;
+     unsigned count = 0 ;
+
+     bool test_and_inc(StrLen dir_name);
+
+     void init(StrLen dir_name,unsigned count_=1);
+    };
+
+   Rec last_list[MaxLen];
+   ulen last_len = 0 ;
+
+  private:
+
+   template <class T>
+   static bool Del(T list[],ulen len,ulen ind)
+    {
+     if( ind>=len ) return false;
+
+     for(len--; ind<len ;ind++) list[ind]=list[ind+1];
+
+     return true;
+    }
+
+   static const char *const HitFile;
+
+   static const char *const Pretext;
 
   public:
 
-   DirHitList();
+   DirHitList() noexcept;
 
    ~DirHitList();
+
+   void loadDDL(StrLen file_name);
+
+   void saveDDL(StrLen file_name);
 
    void load();
 
@@ -56,14 +91,46 @@ class DirHitList : NoCopy
 
    void add(StrLen dir_name);
 
-   void del(int id);
-
    void last(StrLen dir_name);
 
-   void prepare(MenuData &data);
-
    StrLen operator () (int id) const;
+
+   void del(int id);
+
+   void prepare(MenuData &data);
  };
+
+/* class DirEditShape */
+
+class DirEditShape : public LineEditShape
+ {
+   struct Func : public Funchor
+    {
+     VColor vc;
+     VColor accent;
+
+     Func(VColor vc_,VColor accent_) : vc(vc_),accent(accent_) {}
+
+     VColor color(ulen index,char ch,Point base,Point delta);
+
+     CharFunction function_color() { return FunctionOf(this,&Func::color); }
+    };
+
+   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
+
+  public:
+
+   struct Config : LineEditShape::Config
+    {
+     RefVal<VColor> accent = Black ;
+
+     Config() noexcept {}
+    };
+
+   DirEditShape(PtrLen<char> text_buf,const Config &cfg) : LineEditShape(text_buf,cfg) {}
+ };
+
+using DirEditWindow = LineEditWindowOf<DirEditShape> ;
 
 /* class FileSubWindow */
 
@@ -77,7 +144,7 @@ class FileSubWindow : public ComboWindow
 
      RefVal<VColor> back = Silver ;
 
-     CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
+     CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<SimpleTextListWindow::ConfigType> list_cfg;
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
@@ -87,7 +154,7 @@ class FileSubWindow : public ComboWindow
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref) noexcept
-      : edit_cfg(SmartBind,pref),
+      : //edit_cfg(SmartBind,pref),
         list_cfg(SmartBind,pref),
         btn_cfg(SmartBind,pref),
         knob_cfg(SmartBind,pref),
@@ -95,6 +162,8 @@ class FileSubWindow : public ComboWindow
       {
        back.bind(pref.get().back);
        space_dxy.bind(pref.get().space_dxy);
+
+       (LineEditShape::Config &)edit_cfg.takeVal()=pref.getSmartConfig();
       }
     };
 
@@ -104,7 +173,7 @@ class FileSubWindow : public ComboWindow
 
    const Config &cfg;
 
-   LineEditWindow dir;
+   DirEditWindow dir;
    KnobWindow knob_hit;
    KnobWindow knob_add;
    KnobWindow knob_back;

@@ -387,14 +387,20 @@ void TestClient::cascade_menu_pressed(VKey vkey,KeyMod kmod)
   menu.put_Key(vkey,kmod);
  }
 
-TestClient::TestClient(SubWindowHost &host,const UserPreference &pref)
+void TestClient::update()
+ {
+  cascade_menu.update();
+ }
+
+TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &update)
  : ComboWindow(host),
    menu(wlist,pref.getSmartConfig(),menu_data),
    cascade_menu(host.getFrame()->getDesktop(),pref.getSmartConfig()),
    test(wlist,pref),
    connector_menu_selected(this,&TestClient::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&TestClient::cascade_menu_selected,cascade_menu.takeSelected()),
-   connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.takePressed())
+   connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.takePressed()),
+   connector_update(this,&TestClient::update,update)
  {
   wlist.insTop(menu,test);
 
@@ -505,7 +511,7 @@ void TestClient::react_other(UserAction action)
 
 TestFrame::TestFrame(Desktop *desktop,const UserPreference &pref,Signal<> &update)
  : DragWindow(desktop,pref.getDragWindowConfig(),update),
-   client(*this,pref)
+   client(*this,pref,update)
  {
   bindClient(client);
  }
