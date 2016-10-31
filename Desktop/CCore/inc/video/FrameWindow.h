@@ -231,11 +231,16 @@ class FrameWindow : public NoCopyBase<MemBase,UserInput>
 
    bool isDead() const { return host->isDead(); }
 
-   // move
+   // move/resize
 
    void move(Point delta)
     {
      host->move(host->getPlace()+delta);
+    }
+
+   void resize(Point size)
+    {
+     host->move(Pane(host->getPlace().getBase(),size));
     }
 
    // base

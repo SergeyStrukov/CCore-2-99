@@ -24,22 +24,32 @@ namespace Video {
 
 void MenuPoint::pickhot()
  {
-  StrLen str=text.str();
+  if( type==MenuTextNoHot )
+    {
+     type=MenuText;
 
-  if( str.len )
-    for(ulen i=0,lim=str.len-1; i<lim ;i++)
-      {
-       if( str[i]==Hot )
+     hotindex=0;
+     hotkey=0;
+    }
+  else
+    {
+     StrLen str=text.str();
+
+     if( str.len )
+       for(ulen i=0,lim=str.len-1; i<lim ;i++)
          {
-          hotindex=i+1;
-          hotkey=str[hotindex];
+          if( str[i]==Hot )
+            {
+             hotindex=i+1;
+             hotkey=str[hotindex];
 
-          return;
+             return;
+            }
          }
-      }
 
-  hotindex=0;
-  hotkey=0;
+     hotindex=0;
+     hotkey=0;
+    }
  }
 
 /* struct MenuData */

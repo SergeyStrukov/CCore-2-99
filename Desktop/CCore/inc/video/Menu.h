@@ -32,7 +32,9 @@ enum MenuType
   MenuText,
   MenuDisabled,
   MenuHidden,
-  MenuSeparator
+  MenuSeparator,
+
+  MenuTextNoHot
  };
 
 enum MenuState : unsigned
@@ -526,6 +528,10 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_Wheel(Point,MouseKey,Coord delta)
     {
+     setFocus();
+
+     getWindowHost()->setFocus();
+
      changeOff(delta);
     }
 
@@ -673,6 +679,15 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
         redraw();
        }
+    }
+
+   void del(ulen index)
+    {
+     if( !shape.data || index>=shape.data->list.getLen() ) return;
+
+     const MenuPoint &point=shape.data->list[index];
+
+     deleted.assert(point.id);
     }
 
    void hilight(ulen index)
@@ -829,6 +844,15 @@ class SimpleCascadeMenuWindowOf : public SubWindow
          }
         break;
 
+        case VKey_Delete :
+         {
+          if( BitTest(shape.state,MenuHilight) )
+            {
+             del(shape.hilight_index);
+            }
+         }
+        break;
+
         case VKey_Esc :
          {
           askFrameClose();
@@ -965,6 +989,10 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void react_Wheel(Point,MouseKey,Coord delta)
     {
+     setFocus();
+
+     getWindowHost()->setFocus();
+
      changeOff(delta);
     }
 
@@ -973,6 +1001,8 @@ class SimpleCascadeMenuWindowOf : public SubWindow
    Signal<int,Point> selected; // id , cascade menu point
 
    Signal<VKey,KeyMod> pressed; // for Left and Right keys
+
+   Signal<int> deleted; // id
  };
 
 /* type SimpleCascadeMenuWindow */
@@ -1002,15 +1032,38 @@ class SimpleCascadeMenuOf
 
    ToolWindow frame;
    SimpleCascadeMenuWindowOf<Shape> client;
-
-   SignalConnector<SimpleCascadeMenuOf<Shape>,Point> connector_moved;
+   Point screen_size;
 
   private:
 
    void moved(Point delta)
     {
-     if( frame.isAlive() ) frame.move(delta);
+     if( frame.isAlive() )
+       {
+        frame.move(delta);
+       }
     }
+
+   SignalConnector<SimpleCascadeMenuOf<Shape>,Point> connector_moved;
+
+   void update()
+    {
+     if( frame.isAlive() )
+       {
+        Point size=client.getMinSize();
+
+        if( size<=screen_size )
+          {
+           frame.getHost()->setMaxSize(size);
+
+           frame.resize(size);
+
+           frame.redrawAll(true);
+          }
+       }
+    }
+
+   SignalConnector<SimpleCascadeMenuOf<Shape> > connector_update;
 
   public:
 
@@ -1019,7 +1072,9 @@ class SimpleCascadeMenuOf
     : cfg(cfg_),
       frame(desktop,cfg.frame_cfg),
       client(frame,cfg.menu_cfg, std::forward<TT>(tt)... ),
-      connector_moved(this,&SimpleCascadeMenuOf<Shape>::moved)
+
+      connector_moved(this,&SimpleCascadeMenuOf<Shape>::moved),
+      connector_update(this,&SimpleCascadeMenuOf<Shape>::update)
     {
      frame.bindClient(client);
     }
@@ -1038,7 +1093,7 @@ class SimpleCascadeMenuOf
 
      Point size=client.getMinSize();
 
-     Point screen_size=frame.getDesktop()->getScreenSize();
+     screen_size=frame.getDesktop()->getScreenSize();
 
      Pane pane=FitToScreen(base,size,screen_size);
 
@@ -1048,6 +1103,9 @@ class SimpleCascadeMenuOf
 
      connector_moved.disconnect();
      connector_moved.connect(parent->moved);
+
+     connector_update.disconnect();
+     connector_update.connect(data.update);
     }
 
    void unselect() { client.unselect(); }
@@ -1056,7 +1114,11 @@ class SimpleCascadeMenuOf
 
    // signals
 
+   Signal<> & takeDestroyed() { return frame.destroyed; }
+
    Signal<int,Point> & takeSelected() { return client.selected; } // id , cascade menu point
+
+   Signal<int> & takeDeleted() { return client.deleted; } // id
 
    Signal<VKey,KeyMod> & takePressed() { return client.pressed; } // for Left and Right keys
  };

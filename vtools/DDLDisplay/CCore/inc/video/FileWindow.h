@@ -29,9 +29,41 @@ namespace Video {
 
 /* classes */
 
+class DirHitList;
+
 class FileSubWindow;
 
 class FileWindow;
+
+/* class DirHitList */
+
+class DirHitList : NoCopy
+ {
+   static const ulen MaxLen = 10 ;
+
+   DefString list[MaxLen];
+   ulen len = 0 ;
+
+  public:
+
+   DirHitList();
+
+   ~DirHitList();
+
+   void load();
+
+   void save();
+
+   void add(StrLen dir_name);
+
+   void del(int id);
+
+   void last(StrLen dir_name);
+
+   void prepare(MenuData &data);
+
+   StrLen operator () (int id) const;
+ };
 
 /* class FileSubWindow */
 
@@ -82,6 +114,7 @@ class FileSubWindow : public ComboWindow
    ButtonWindow btn_Ok;
    ButtonWindow btn_Cancel;
 
+   DirHitList hit_list;
    MenuData hit_data;
    SimpleCascadeMenu hit_menu;
 
@@ -136,7 +169,17 @@ class FileSubWindow : public ComboWindow
    SignalConnector<FileSubWindow> connector_knob_add_pressed;
    SignalConnector<FileSubWindow> connector_knob_back_pressed;
 
-  public:
+   void hit_menu_destroyed();
+
+   void hit_menu_selected(int id,Point base);
+
+   void hit_menu_deleted(int id);
+
+   SignalConnector<FileSubWindow> connector_hit_menu_destroyed;
+   SignalConnector<FileSubWindow,int,Point> connector_hit_menu_selected;
+   SignalConnector<FileSubWindow,int> connector_hit_menu_deleted;
+
+ public:
 
    FileSubWindow(SubWindowHost &host,const Config &cfg);
 
@@ -159,6 +202,8 @@ class FileSubWindow : public ComboWindow
    // base
 
    virtual void open();
+
+   virtual void close();
  };
 
 /* class FileWindow */

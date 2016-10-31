@@ -25,6 +25,66 @@
 namespace CCore {
 namespace Video {
 
+/* class DirHitList */
+
+DirHitList::DirHitList()
+ {
+ }
+
+DirHitList::~DirHitList()
+ {
+ }
+
+void DirHitList::load()
+ {
+ }
+
+void DirHitList::save()
+ {
+ }
+
+void DirHitList::add(StrLen dir_name)
+ {
+  if( len<MaxLen )
+    {
+     list[len++]=DefString(dir_name);
+    }
+ }
+
+void DirHitList::del(int id)
+ {
+  ulen ind=(ulen)id;
+
+  if( ind>=len ) return;
+
+  for(len--; ind<len ;ind++) list[ind]=list[ind+1];
+ }
+
+void DirHitList::last(StrLen dir_name)
+ {
+ }
+
+void DirHitList::prepare(MenuData &data)
+ {
+  data.list.erase();
+
+  for(ulen i=0; i<len ;i++)
+    {
+     data(MenuTextNoHot,list[i],(int)i);
+    }
+
+  data.update.assert();
+ }
+
+StrLen DirHitList::operator () (int id) const
+ {
+  ulen ind=(ulen)id;
+
+  if( ind>=len ) return Empty;
+
+  return list[ind].str();
+ }
+
 /* class FileSubWindow */
 
 void FileSubWindow::fillLists()
@@ -140,6 +200,8 @@ void FileSubWindow::dir_changed()
 
 void FileSubWindow::btn_Ok_pressed()
  {
+  hit_list.last(dir.getText());
+
   buildFilePath();
 
   askFrameClose();
@@ -150,29 +212,25 @@ void FileSubWindow::btn_Cancel_pressed()
   askFrameClose();
  }
 
-void FileSubWindow::knob_hit_pressed() // TODO
+void FileSubWindow::knob_hit_pressed()
  {
   if( hit_menu.isDead() )
     {
      hit_menu.create(getFrame(),hit_data,toScreen(knob_hit.getPlace().addDY()));
 
-     knob_hit.setFace(KnobShape::FaceUp);
+     knob_hit.setFace(KnobShape::FaceCross);
     }
   else
     {
      hit_menu.destroy();
-
-     knob_hit.setFace(KnobShape::FaceDown);
     }
  }
 
-void FileSubWindow::knob_add_pressed() // TODO
+void FileSubWindow::knob_add_pressed()
  {
-  StrLen dir_name=dir.getText();
+  hit_list.add(dir.getText());
 
-  hit_data(DefString(dir_name),(int)hit_data.list.getLen());
-
-  hit_data.update.assert();
+  hit_list.prepare(hit_data);
  }
 
 void FileSubWindow::knob_back_pressed()
@@ -204,6 +262,23 @@ void FileSubWindow::knob_back_pressed()
     }
  }
 
+void FileSubWindow::hit_menu_destroyed()
+ {
+  knob_hit.setFace(KnobShape::FaceDown);
+ }
+
+void FileSubWindow::hit_menu_selected(int id,Point)
+ {
+  setDir(hit_list(id));
+ }
+
+void FileSubWindow::hit_menu_deleted(int id)
+ {
+  hit_list.del(id);
+
+  hit_list.prepare(hit_data);
+ }
+
 FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -229,7 +304,10 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    connector_btn_Cancel_pressed(this,&FileSubWindow::btn_Cancel_pressed,btn_Cancel.pressed),
    connector_knob_hit_pressed(this,&FileSubWindow::knob_hit_pressed,knob_hit.pressed),
    connector_knob_add_pressed(this,&FileSubWindow::knob_add_pressed,knob_add.pressed),
-   connector_knob_back_pressed(this,&FileSubWindow::knob_back_pressed,knob_back.pressed)
+   connector_knob_back_pressed(this,&FileSubWindow::knob_back_pressed,knob_back.pressed),
+   connector_hit_menu_destroyed(this,&FileSubWindow::hit_menu_destroyed,hit_menu.takeDestroyed()),
+   connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.takeSelected()),
+   connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted())
  {
   wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,btn_Ok,btn_Cancel);
  }
@@ -263,6 +341,15 @@ void FileSubWindow::open()
   file_path=Empty;
 
   setDir(".");
+
+  hit_list.load();
+
+  hit_list.prepare(hit_data);
+ }
+
+void FileSubWindow::close()
+ {
+  hit_list.save();
  }
 
  // drawing
