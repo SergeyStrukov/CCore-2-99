@@ -113,6 +113,8 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    // methods
 
+   bool isListed() const { return list!=0; }
+
    Pane getPlace() const { return place; }
 
    Point getSize() const { return place.getSize(); }

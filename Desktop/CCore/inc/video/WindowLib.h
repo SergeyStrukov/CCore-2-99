@@ -3376,6 +3376,8 @@ class SimpleTextListWindowOf : public SubWindow
 
    void react_LeftDClick(Point point,MouseKey mkey)
     {
+     if( !shape.enable ) return;
+
      react_LeftClick(point,mkey);
 
      dclicked.assert();
