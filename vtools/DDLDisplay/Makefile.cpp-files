@@ -3,3 +3,4 @@
 ./src/Client.cpp
 ./src/Display.cpp
 ./src/main.cpp
+./src/ScrollList.cpp

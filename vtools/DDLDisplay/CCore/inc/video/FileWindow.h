@@ -24,6 +24,8 @@
 #include <CCore/inc/FileSystem.h>
 #include <CCore/inc/MakeFileName.h>
 
+#include <inc/ScrollList.h>
+
 namespace CCore {
 namespace Video {
 

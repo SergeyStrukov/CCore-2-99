@@ -39,6 +39,23 @@ class DefInfo : public InfoBase
 
 DefInfo Object CCORE_INITPRI_3 ;
 
+class DefComboInfo : public ComboInfoBase
+ {
+  public:
+
+   DefComboInfo() {}
+
+   virtual ~DefComboInfo() {}
+
+   // AbstractComboInfo
+
+   virtual ulen getLineCount() const { return 0; }
+
+   virtual ComboInfoItem getLine(ulen) const { return Empty; }
+ };
+
+DefComboInfo ComboObject CCORE_INITPRI_3 ;
+
 } // namespace Private_Info
 
 using namespace Private_Info;
@@ -154,6 +171,83 @@ void InfoBuilder::add(StrLen line)
  }
 
 Info InfoBuilder::complete()
+ {
+  return PoolInfo(pool,list);
+ }
+
+/* class ComboInfo */
+
+ComboInfo::ComboInfo() noexcept
+ : ptr(&ComboObject)
+ {
+  ptr->incRef();
+ }
+
+/* class ComboInfoBuilder::PoolInfo */
+
+class ComboInfoBuilder::PoolInfo : public ComboInfo
+ {
+   class Base : public ComboInfoBase
+    {
+      ElementPool pool;
+      DynArray<ComboInfoItem> list;
+
+     public:
+
+      Base(ElementPool &pool_,DynArray<ComboInfoItem> &list_)
+       {
+        Swap(pool,pool_);
+        Swap(list,list_);
+
+        pool.shrink_extra();
+        list.shrink_extra();
+       }
+
+      virtual ~Base()
+       {
+       }
+
+      // AbstractComboInfo
+
+      virtual ulen getLineCount() const
+       {
+        return list.getLen();
+       }
+
+      virtual ComboInfoItem getLine(ulen index) const
+       {
+        return list.at(index);
+       }
+    };
+
+  public:
+
+   PoolInfo(ElementPool &pool,DynArray<ComboInfoItem> &list)
+    : ComboInfo(new Base(pool,list))
+    {
+    }
+
+   ~PoolInfo()
+    {
+    }
+ };
+
+/* class ComboInfoBuilder */
+
+ComboInfoBuilder::ComboInfoBuilder()
+ {
+ }
+
+ComboInfoBuilder::~ComboInfoBuilder()
+ {
+ }
+
+void ComboInfoBuilder::add(ComboInfoType type,StrLen text)
+ {
+  list.append_fill(type,pool.dup(text));
+ }
+
+ComboInfo ComboInfoBuilder::complete()
  {
   return PoolInfo(pool,list);
  }

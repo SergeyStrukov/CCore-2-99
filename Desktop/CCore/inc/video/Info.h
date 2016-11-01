@@ -26,6 +26,15 @@
 namespace CCore {
 namespace Video {
 
+/* consts */
+
+enum ComboInfoType
+ {
+  ComboInfoText,
+  ComboInfoSeparator,
+  ComboInfoTitle
+ };
+
 /* classes */
 
 struct AbstractInfo;
@@ -35,6 +44,14 @@ class Info;
 class InfoFromString;
 
 class InfoBuilder;
+
+struct ComboInfoItem;
+
+struct AbstractComboInfo;
+
+class ComboInfo;
+
+class ComboInfoBuilder;
 
 /* struct AbstractInfo */
 
@@ -121,6 +138,112 @@ class InfoBuilder : NoCopy
    void sort(ObjLessFuncType<StrLen> less) { IncrSort(Range(list),less); }
 
    Info complete();
+ };
+
+/* struct ComboInfoItem */
+
+struct ComboInfoItem
+ {
+  ComboInfoType type;
+  StrLen text;
+
+  ComboInfoItem() noexcept : type(ComboInfoText) {}
+
+  ComboInfoItem(NothingType) : ComboInfoItem() {}
+
+  ComboInfoItem(ComboInfoType type_,StrLen text_) : type(type_),text(text_) {}
+ };
+
+/* struct AbstractComboInfo */
+
+struct AbstractComboInfo
+ {
+  virtual ulen getLineCount() const =0;
+
+  virtual ComboInfoItem getLine(ulen index) const =0;
+ };
+
+/* type ComboInfoBase */
+
+using ComboInfoBase = RefObjectBase<AbstractComboInfo> ;
+
+/* class ComboInfo */
+
+class ComboInfo
+ {
+   RefPtr<ComboInfoBase> ptr;
+
+  protected:
+
+   explicit ComboInfo(ComboInfoBase *info) : ptr(info) {}
+
+   template <class T>
+   T * castPtr() const { return dynamic_cast<T *>(ptr.getPtr()); }
+
+  public:
+
+   ComboInfo() noexcept;
+
+   ~ComboInfo() {}
+
+   const AbstractComboInfo * getPtr() const { return ptr.getPtr(); }
+
+   const AbstractComboInfo * operator -> () const { return ptr.getPtr(); }
+ };
+
+/* class ComboInfoBuilder */
+
+class ComboInfoBuilder : NoCopy
+ {
+   ElementPool pool;
+   DynArray<ComboInfoItem> list;
+
+   class PoolInfo;
+
+  private:
+
+   static void SortGroups(PtrLen<ComboInfoItem> r,ObjLessFuncType<StrLen> less)
+    {
+     while( +r )
+       {
+        for(; +r && r->type!=ComboInfoText ;++r);
+
+        if( !r ) break;
+
+        auto temp=r;
+
+        for(; +r && r->type==ComboInfoText ;++r);
+
+        IncrSort(temp.prefix(r), [=] (ComboInfoItem a,ComboInfoItem b) { return less(a.text,b.text); } );
+       }
+    }
+
+  public:
+
+   ComboInfoBuilder();
+
+   ~ComboInfoBuilder();
+
+   // add...()
+
+   void add(ComboInfoType type,StrLen text);
+
+   void add(StrLen text) { add(ComboInfoText,text); }
+
+   void addTitle(StrLen text) { add(ComboInfoTitle,text); }
+
+   void addSeparator() { add(ComboInfoSeparator,Empty); }
+
+   // sort...()
+
+   void sortGroups(ObjLessFuncType<StrLen> less)
+    {
+     SortGroups(Range(list),less);
+    }
+
+   // complete()
+
+   ComboInfo complete();
  };
 
 } // namespace Video
