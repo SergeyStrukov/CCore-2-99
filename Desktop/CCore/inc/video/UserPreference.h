@@ -97,10 +97,6 @@ struct UserPreferenceBag
   VColor info_text      =     Black ;
   VColor line_edit_text =     Black ;
   VColor list_text      =     Black ;
-  VColor menu_text      =     Black ;
-  VColor menu_hilight   =      Blue ;
-  VColor menu_select    = OrangeRed ;
-  VColor menu_hot       =       Red ;
 
   Point button_space    = Point(6,4) ;
   Point message_space   = Point(6,4) ;
@@ -119,9 +115,17 @@ struct UserPreferenceBag
   FontCouple list_font;
   FontCouple menu_font;
 
-  // other
+  // menu
+
+  VColor menu_back      =    Silver ;
+  VColor menu_text      =     Black ;
+  VColor menu_hilight   =      Blue ;
+  VColor menu_select    = OrangeRed ;
+  VColor menu_hot       =       Red ;
 
   bool use_hotcolor = true ;
+
+  // other
 
   unsigned line_edit_period     =   10_tick ;
   unsigned scroll_speedUpPeriod =   12_tick ;

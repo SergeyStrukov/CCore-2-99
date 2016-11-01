@@ -61,16 +61,17 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("info_text",info_text);
   map.sync("line_edit_text",line_edit_text);
   map.sync("list_text",list_text);
-  map.sync("menu_text",menu_text);
-  map.sync("menu_hilight",menu_hilight);
-  map.sync("menu_select",menu_select);
-  map.sync("menu_hot",menu_hot);
   map.sync("button_space",button_space);
   map.sync("message_space",message_space);
   map.sync("line_edit_space",line_edit_space);
   map.sync("info_space",info_space);
   map.sync("list_space",list_space);
   map.sync("menu_space",menu_space);
+  map.sync("menu_back",menu_back);
+  map.sync("menu_text",menu_text);
+  map.sync("menu_hilight",menu_hilight);
+  map.sync("menu_select",menu_select);
+  map.sync("menu_hot",menu_hot);
   map.sync("use_hotcolor",use_hotcolor);
   map.sync("line_edit_period",line_edit_period);
   map.sync("scroll_speedUpPeriod",scroll_speedUpPeriod);
@@ -159,16 +160,17 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("info_text",info_text);
   map.update("line_edit_text",line_edit_text);
   map.update("list_text",list_text);
-  map.update("menu_text",menu_text);
-  map.update("menu_hilight",menu_hilight);
-  map.update("menu_select",menu_select);
-  map.update("menu_hot",menu_hot);
   map.update("button_space",button_space);
   map.update("message_space",message_space);
   map.update("line_edit_space",line_edit_space);
   map.update("info_space",info_space);
   map.update("list_space",list_space);
   map.update("menu_space",menu_space);
+  map.update("menu_back",menu_back);
+  map.update("menu_text",menu_text);
+  map.update("menu_hilight",menu_hilight);
+  map.update("menu_select",menu_select);
+  map.update("menu_hot",menu_hot);
   map.update("use_hotcolor",use_hotcolor);
   map.update("line_edit_period",line_edit_period);
   map.update("scroll_speedUpPeriod",scroll_speedUpPeriod);
@@ -269,12 +271,6 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("editor text",line_edit_text);
    binder.item("list text",list_text);
    binder.space();
-   binder.item("menu text",menu_text);
-   binder.item("menu hilight",menu_hilight);
-   binder.item("menu select",menu_select);
-   binder.item("menu hot",menu_hot);
-   binder.item("use hotcolor",use_hotcolor);
-   binder.space();
    binder.item("button space",button_space);
    binder.item("message space",message_space);
    binder.item("editor space",line_edit_space);
@@ -291,6 +287,16 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("editor font",line_edit_font);
    binder.item("list font",list_font);
    binder.item("menu font",menu_font);
+
+  binder.group("Menu");
+
+   binder.item("menu back",menu_back);
+   binder.item("menu text",menu_text);
+   binder.item("menu hilight",menu_hilight);
+   binder.item("menu select",menu_select);
+   binder.item("menu hot",menu_hot);
+   binder.space();
+   binder.item("use hotcolor",use_hotcolor);
 
   binder.group("Other");
 
@@ -596,7 +602,7 @@ UserPreference::UserPreference() noexcept
   cfg_SimpleTopMenuWindow.width.bind(width);
   cfg_SimpleTopMenuWindow.space.bind(menu_space);
   cfg_SimpleTopMenuWindow.use_hotcolor.bind(use_hotcolor);
-  cfg_SimpleTopMenuWindow.ground.bind(ground);
+  cfg_SimpleTopMenuWindow.back.bind(menu_back);
   cfg_SimpleTopMenuWindow.text.bind(menu_text);
   cfg_SimpleTopMenuWindow.inactive.bind(inactive);
   cfg_SimpleTopMenuWindow.hilight.bind(menu_hilight);
@@ -609,7 +615,7 @@ UserPreference::UserPreference() noexcept
   cfg_SimpleCascadeMenuWindow.width.bind(width);
   cfg_SimpleCascadeMenuWindow.space.bind(menu_space);
   cfg_SimpleCascadeMenuWindow.use_hotcolor.bind(use_hotcolor);
-  cfg_SimpleCascadeMenuWindow.ground.bind(ground);
+  cfg_SimpleCascadeMenuWindow.back.bind(menu_back);
   cfg_SimpleCascadeMenuWindow.text.bind(menu_text);
   cfg_SimpleCascadeMenuWindow.inactive.bind(inactive);
   cfg_SimpleCascadeMenuWindow.hilight.bind(menu_hilight);

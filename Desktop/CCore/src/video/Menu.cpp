@@ -262,7 +262,7 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
   SmoothDrawArt art(buf);
 
   {
-   art.block(pane,+cfg.ground);
+   art.block(pane,+cfg.back);
 
    MPane p(pane);
 
@@ -465,7 +465,7 @@ void SimpleCascadeMenuShape::draw_Frame(const DrawBuf &buf) const
  {
   SmoothDrawArt art(buf);
 
-  art.block(pane,+cfg.ground);
+  art.block(pane,+cfg.back);
 
   FigureTopBorder(pane,+cfg.width).solid(art,+cfg.top);
   FigureBottomBorder(pane,+cfg.width).solid(art,+cfg.bottom);

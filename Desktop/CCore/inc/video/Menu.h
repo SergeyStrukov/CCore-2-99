@@ -151,7 +151,7 @@ class SimpleTopMenuShape
 
      RefVal<bool> use_hotcolor = true ;
 
-     RefVal<VColor> ground   =    Silver ;
+     RefVal<VColor> back     =    Silver ;
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
      RefVal<VColor> hilight  =      Blue ;
@@ -558,7 +558,7 @@ class SimpleCascadeMenuShape
 
      RefVal<bool> use_hotcolor = true ;
 
-     RefVal<VColor> ground   =    Silver ;
+     RefVal<VColor> back     =    Silver ;
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
      RefVal<VColor> hilight  =      Blue ;
