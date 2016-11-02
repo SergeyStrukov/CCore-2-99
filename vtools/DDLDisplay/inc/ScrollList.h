@@ -86,7 +86,13 @@ class ScrollListShape
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
-   void showSelect();
+   void initSelect();
+
+   bool setSelectDown(ulen pos);
+
+   bool setSelectUp(ulen pos);
+
+   bool showSelect();
 
    ulen getPosition(Point point) const;
 
@@ -114,6 +120,11 @@ class ScrollListInnerWindowOf : public SubWindow
    ScrollListWindowBase *outer;
 
   private:
+
+   void showSelect()
+    {
+     if( shape.showSelect() ) scroll_y.assert(shape.yoff);
+    }
 
    void setXOff(Coord xoff)
     {
@@ -182,9 +193,9 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      if( shape.select )
        {
-        shape.select=0;
+        shape.setSelectDown(0);
 
-        shape.showSelect();
+        showSelect();
 
         outer->selected.assert(shape.select);
 
@@ -200,9 +211,9 @@ class ScrollListInnerWindowOf : public SubWindow
        {
         if( shape.select!=count-1 )
           {
-           shape.select=count-1;
+           shape.setSelectUp(count-1);
 
-           shape.showSelect();
+           showSelect();
 
            outer->selected.assert(shape.select);
 
@@ -221,9 +232,11 @@ class ScrollListInnerWindowOf : public SubWindow
 
      if( delta && count && shape.select<count-1 )
        {
-        shape.select+=Min<ulen>(delta,count-1-shape.select);
+        ulen select=shape.select+Min<ulen>(delta,count-1-shape.select);
 
-        shape.showSelect();
+        shape.setSelectDown(select);
+
+        showSelect();
 
         outer->selected.assert(shape.select);
 
@@ -235,9 +248,11 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      if( delta && shape.select )
        {
-        shape.select=PosSub(shape.select,delta);
+        ulen select=PosSub(shape.select,delta);
 
-        shape.showSelect();
+        shape.setSelectUp(select);
+
+        showSelect();
 
         outer->selected.assert(shape.select);
 
@@ -256,9 +271,9 @@ class ScrollListInnerWindowOf : public SubWindow
 
      if( shape.select!=select )
        {
-        shape.select=select;
+        shape.setSelectDown(select);
 
-        shape.showSelect();
+        showSelect();
 
         if( signal ) outer->selected.assert(shape.select);
 
@@ -348,7 +363,8 @@ class ScrollListInnerWindowOf : public SubWindow
      shape.info=info;
      shape.yoff=0;
      shape.xoff=0;
-     shape.select=0;
+
+     shape.initSelect();
 
      shape.setMax();
 
