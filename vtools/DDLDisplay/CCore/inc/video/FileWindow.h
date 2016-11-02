@@ -24,8 +24,6 @@
 #include <CCore/inc/FileSystem.h>
 #include <CCore/inc/MakeFileName.h>
 
-#include <inc/ScrollList.h>
-
 namespace CCore {
 namespace Video {
 
@@ -147,7 +145,7 @@ class FileSubWindow : public ComboWindow
      RefVal<VColor> back = Silver ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
-     CtorRefVal<SimpleTextListWindow::ConfigType> list_cfg;
+     CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
 
@@ -179,8 +177,8 @@ class FileSubWindow : public ComboWindow
    KnobWindow knob_hit;
    KnobWindow knob_add;
    KnobWindow knob_back;
-   SimpleTextListWindow dir_list;
-   SimpleTextListWindow file_list;
+   ScrollListWindow dir_list;
+   ScrollListWindow file_list;
 
    ButtonWindow btn_Ok;
    ButtonWindow btn_Cancel;

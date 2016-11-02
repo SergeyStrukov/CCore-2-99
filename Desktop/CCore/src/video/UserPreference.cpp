@@ -73,6 +73,9 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("menu_select",menu_select);
   map.sync("menu_hot",menu_hot);
   map.sync("use_hotcolor",use_hotcolor);
+  map.sync("scroll_list_title",scroll_list_title);
+  map.sync("scroll_list_title_top",scroll_list_title_top);
+  map.sync("scroll_list_title_bottom",scroll_list_title_bottom);
   map.sync("line_edit_period",line_edit_period);
   map.sync("scroll_speedUpPeriod",scroll_speedUpPeriod);
   map.sync("progress_time",progress_time);
@@ -172,6 +175,9 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("menu_select",menu_select);
   map.update("menu_hot",menu_hot);
   map.update("use_hotcolor",use_hotcolor);
+  map.update("scroll_list_title",scroll_list_title);
+  map.update("scroll_list_title_top",scroll_list_title_top);
+  map.update("scroll_list_title_bottom",scroll_list_title_bottom);
   map.update("line_edit_period",line_edit_period);
   map.update("scroll_speedUpPeriod",scroll_speedUpPeriod);
   map.update("progress_time",progress_time);
@@ -298,6 +304,12 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.space();
    binder.item("use hotcolor",use_hotcolor);
 
+  binder.group("Scroll List");
+
+   binder.item("title",scroll_list_title);
+   binder.item("title top",scroll_list_title_top);
+   binder.item("title bottom",scroll_list_title_bottom);
+
   binder.group("Other");
 
    binder.item("cursor blink period",line_edit_period);
@@ -306,7 +318,6 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("progress ping period",progress_period);
    binder.space();
    binder.item("editor round ext",line_edit_ex);
-   binder.space();
    binder.space();
    binder.item("switch on",switch_on);
    binder.item("switch off",switch_off);
@@ -624,6 +635,25 @@ UserPreference::UserPreference() noexcept
   cfg_SimpleCascadeMenuWindow.top.bind(top);
   cfg_SimpleCascadeMenuWindow.bottom.bind(bottom);
   cfg_SimpleCascadeMenuWindow.font.bind(menu_font.font);
+
+  cfg_ScrollListWindow.width.bind(width);
+  cfg_ScrollListWindow.space.bind(list_space);
+  cfg_ScrollListWindow.back.bind(back);
+  cfg_ScrollListWindow.top.bind(bottom);
+  cfg_ScrollListWindow.bottom.bind(top);
+  cfg_ScrollListWindow.text.bind(list_text);
+  cfg_ScrollListWindow.inactive.bind(inactive);
+  cfg_ScrollListWindow.focus.bind(focus);
+  cfg_ScrollListWindow.select.bind(text_select);
+  cfg_ScrollListWindow.font.bind(list_font.font);
+
+  cfg_ScrollListWindow.title.bind(scroll_list_title);
+  cfg_ScrollListWindow.title_top.bind(scroll_list_title_top);
+  cfg_ScrollListWindow.title_bottom.bind(scroll_list_title_bottom);
+
+  cfg_ScrollListWindow.scroll_dxy.bind(scroll_dxy);
+  cfg_ScrollListWindow.x_cfg.bind(cfg_XScrollWindow);
+  cfg_ScrollListWindow.y_cfg.bind(cfg_YScrollWindow);
  }
 
 UserPreference::~UserPreference()

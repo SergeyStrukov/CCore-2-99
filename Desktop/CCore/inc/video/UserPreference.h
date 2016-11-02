@@ -125,6 +125,12 @@ struct UserPreferenceBag
 
   bool use_hotcolor = true ;
 
+  // scroll list
+
+  VColor scroll_list_title        = Navy ;
+  VColor scroll_list_title_top    = Aqua ;
+  VColor scroll_list_title_bottom = Gray ;
+
   // other
 
   unsigned line_edit_period     =   10_tick ;
@@ -265,6 +271,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    SimpleTextListWindow::ConfigType cfg_SimpleTextListWindow;
    SimpleTopMenuWindow::ConfigType cfg_SimpleTopMenuWindow;
    SimpleCascadeMenuWindow::ConfigType cfg_SimpleCascadeMenuWindow;
+   ScrollListWindow::ConfigType cfg_ScrollListWindow;
 
   public:
 
@@ -344,6 +351,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const SimpleCascadeMenuWindow::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenuWindow; }
 
+   const ScrollListWindow::ConfigType & getScrollListWindowConfig() const { return cfg_ScrollListWindow; }
+
    // getSmartConfig()
 
    class Proxy
@@ -413,6 +422,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_SimpleTopMenuWindow; }
 
       operator const auto & () const { return obj->cfg_SimpleCascadeMenuWindow; }
+
+      operator const auto & () const { return obj->cfg_ScrollListWindow; }
     };
 
    Proxy getSmartConfig() const { return this; }

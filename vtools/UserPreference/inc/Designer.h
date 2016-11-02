@@ -81,7 +81,7 @@ class DesignerWindow : public ComboWindow
 
      RefVal<VColor> back = Silver ;
 
-     CtorRefVal<SimpleTextListWindow::ConfigType> text_list_cfg;
+     CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
@@ -97,7 +97,7 @@ class DesignerWindow : public ComboWindow
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
-      : text_list_cfg(SmartBind,pref),
+      : list_cfg(SmartBind,pref),
         check_cfg(SmartBind,pref),
         label_cfg(SmartBind,pref),
         btn_cfg(SmartBind,pref),
@@ -126,7 +126,7 @@ class DesignerWindow : public ComboWindow
 
    TestFrame test_frame;
 
-   SimpleTextListWindow text_list;
+   ScrollListWindow item_list;
 
    CheckWindow check_all;
    CheckWindow check_Coord;
@@ -155,7 +155,7 @@ class DesignerWindow : public ComboWindow
    ButtonWindow btn_Save;
    ButtonWindow btn_Self;
 
-   class PrefInfo : public Info
+   class PrefInfo : public ComboInfo
     {
       class Base;
 
@@ -430,7 +430,7 @@ class DesignerWindow : public ComboWindow
 
    void selectVar(ulen index);
 
-   SignalConnector<DesignerWindow,ulen> connector_text_list_selected;
+   SignalConnector<DesignerWindow,ulen> connector_item_list_selected;
 
    // changed
 

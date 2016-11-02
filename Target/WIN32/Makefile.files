@@ -278,6 +278,7 @@ obj/ShapeLib.LightShape.o \
 obj/ShapeLib.LineEditShape.o \
 obj/ShapeLib.ProgressShape.o \
 obj/ShapeLib.RadioShape.o \
+obj/ShapeLib.ScrollListShape.o \
 obj/ShapeLib.ScrollShape.o \
 obj/ShapeLib.SimpleTextListShape.o \
 obj/ShapeLib.SingleLineShape.o \
@@ -648,6 +649,7 @@ obj/ShapeLib.LightShape.s \
 obj/ShapeLib.LineEditShape.s \
 obj/ShapeLib.ProgressShape.s \
 obj/ShapeLib.RadioShape.s \
+obj/ShapeLib.ScrollListShape.s \
 obj/ShapeLib.ScrollShape.s \
 obj/ShapeLib.SimpleTextListShape.s \
 obj/ShapeLib.SingleLineShape.s \
@@ -1018,6 +1020,7 @@ obj/ShapeLib.LightShape.dep \
 obj/ShapeLib.LineEditShape.dep \
 obj/ShapeLib.ProgressShape.dep \
 obj/ShapeLib.RadioShape.dep \
+obj/ShapeLib.ScrollListShape.dep \
 obj/ShapeLib.ScrollShape.dep \
 obj/ShapeLib.SimpleTextListShape.dep \
 obj/ShapeLib.SingleLineShape.dep \
@@ -1953,6 +1956,9 @@ obj/ShapeLib.ProgressShape.o : ../../Desktop/CCore/src/video/ShapeLib.ProgressSh
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.RadioShape.o : ../../Desktop/CCore/src/video/ShapeLib.RadioShape.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib.ScrollListShape.o : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.ScrollShape.o : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
@@ -3058,6 +3064,9 @@ obj/ShapeLib.ProgressShape.s : ../../Desktop/CCore/src/video/ShapeLib.ProgressSh
 obj/ShapeLib.RadioShape.s : ../../Desktop/CCore/src/video/ShapeLib.RadioShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ShapeLib.ScrollListShape.s : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ShapeLib.ScrollShape.s : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4160,6 +4169,9 @@ obj/ShapeLib.ProgressShape.dep : ../../Desktop/CCore/src/video/ShapeLib.Progress
 
 obj/ShapeLib.RadioShape.dep : ../../Desktop/CCore/src/video/ShapeLib.RadioShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.RadioShape.o $< -MF $@
+
+obj/ShapeLib.ScrollListShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ScrollListShape.o $< -MF $@
 
 obj/ShapeLib.ScrollShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ScrollShape.o $< -MF $@

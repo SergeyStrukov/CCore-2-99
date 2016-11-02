@@ -76,6 +76,8 @@ class LineEditShape;
 
 class SimpleTextListShape;
 
+class ScrollListShape;
+
 /* class ButtonShape */
 
 class ButtonShape
@@ -1151,6 +1153,83 @@ class SimpleTextListShape
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void showSelect();
+
+   ulen getPosition(Point point) const;
+
+   void draw(const DrawBuf &buf) const;
+ };
+
+/* class ScrollListShape */
+
+class ScrollListShape
+ {
+   static StrLen GetText(ComboInfoItem item) { return (item.type==ComboInfoText)?item.text:Empty; }
+
+  public:
+
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<Point> space = Point(8,8) ;
+
+     RefVal<VColor> back   = Silver ;
+     RefVal<VColor> top    =   Gray ;
+     RefVal<VColor> bottom =   Snow ;
+
+     RefVal<VColor> title_top    = Aqua ;
+     RefVal<VColor> title_bottom = Gray ;
+
+     RefVal<VColor> text     =     Black ;
+     RefVal<VColor> title    =      Navy ;
+     RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> focus    = OrangeRed ;
+     RefVal<VColor> select   =    Yellow ;
+
+     RefVal<Font> font;
+
+     Config() noexcept {}
+    };
+
+   // parameters
+
+   const Config &cfg;
+   ComboInfo info;
+   Pane pane;
+
+   // state
+
+   bool enable =  true ;
+   bool focus  = false ;
+   ulen select = 0 ;
+
+   ulen yoff  = 0 ;
+   Coord xoff = 0 ;
+
+   ulen page     = 0 ;
+   ulen yoffMax  = 0 ;
+   Coord xoffMax = 0 ;
+   Coord dxoff   = 0 ;
+
+   // methods
+
+   explicit ScrollListShape(const Config &cfg_) : cfg(cfg_) {}
+
+   ScrollListShape(const Config &cfg_,const ComboInfo &info_) : cfg(cfg_),info(info_) {}
+
+   Point getMinSize() const;
+
+   void setMax();
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   void initSelect();
+
+   bool setSelectDown(ulen pos);
+
+   bool setSelectUp(ulen pos);
+
+   bool showSelect();
 
    ulen getPosition(Point point) const;
 

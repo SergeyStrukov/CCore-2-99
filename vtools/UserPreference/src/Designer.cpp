@@ -29,10 +29,13 @@ Preference::~Preference()
 
 /* class DesignerWindow::PrefInfo::Base */
 
-class DesignerWindow::PrefInfo::Base : public InfoBase
+class DesignerWindow::PrefInfo::Base : public ComboInfoBase
  {
    enum VarType
     {
+     Var_Title,
+     Var_Separator,
+
      Var_Coord,
      Var_MCoord,
      Var_VColor,
@@ -63,6 +66,8 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        FontCouple &of_Font;
        bool       &of_bool;
 
+       Ref() {}
+
        Ref(Coord &var) : of_Coord{var} {}
 
        Ref(MCoord &var) : of_MCoord{var} {}
@@ -83,6 +88,10 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
       };
 
      Ref ref;
+
+     Rec() noexcept : type(Var_Separator) {}
+
+     Rec(DefString name_) : name(name_),type(Var_Title) {}
 
      Rec(DefString name_,Coord &var)
       : name(name_),
@@ -177,7 +186,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    bool en_all = true ;
 
-   bool en[VarLim] = {} ;
+   bool en[VarLim] = {true,true} ;
 
    DynArray<Rec> sublist;
 
@@ -203,6 +212,18 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        }
     }
 
+   static ComboInfoItem ToItem(const Rec &rec)
+    {
+     switch( rec.type )
+       {
+        case Var_Title : return {ComboInfoTitle,rec.name.str()};
+
+        case Var_Separator : return {ComboInfoSeparator,Empty};
+
+        default: return {ComboInfoText,rec.name.str()};
+       }
+    }
+
   public:
 
    Base() noexcept {}
@@ -225,6 +246,10 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
     }
 
    // add...()
+
+   void addTitle(DefString name) { list.append_fill(name); }
+
+   void addSeparator() { list.append_fill(); }
 
    void add(DefString name,Coord &var) { list.append_fill(name,var); }
 
@@ -294,7 +319,7 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
 
    bool enable_bool(bool on) { return enable(Var_bool,on); }
 
-   // AbstractInfo
+   // AbstractComboInfo
 
    virtual ulen getLineCount() const
     {
@@ -308,15 +333,15 @@ class DesignerWindow::PrefInfo::Base : public InfoBase
        }
     }
 
-   virtual StrLen getLine(ulen index) const
+   virtual ComboInfoItem getLine(ulen index) const
     {
      if( en_all )
        {
-        return list.at(index).name.str();
+        return ToItem(list.at(index));
        }
      else
        {
-        return sublist.at(index).name.str();
+        return ToItem(sublist.at(index));
        }
     }
  };
@@ -333,9 +358,9 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
 
    // UserPreferenceBag::Bind
 
-   virtual void group(DefString) {}
+   virtual void group(DefString name) { base->addTitle(name); }
 
-   virtual void space() {}
+   virtual void space() { base->addSeparator(); }
 
    virtual void item(DefString name,Coord &var) { base->add(name,var); }
 
@@ -364,7 +389,7 @@ auto DesignerWindow::PrefInfo::getBase() -> Base *
  }
 
 DesignerWindow::PrefInfo::PrefInfo()
- : Info(new Base)
+ : ComboInfo(new Base)
  {
  }
 
@@ -462,9 +487,9 @@ void DesignerWindow::testDestroyed()
 
 void DesignerWindow::newList()
  {
-  text_list.setInfo(info);
+  item_list.setInfo(info);
 
-  selectVar(text_list.getSelect());
+  selectVar(item_list.getSelect());
 
   layout();
 
@@ -716,7 +741,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    self_pref(self_pref_),
    test_frame(getDesktop(),pref,update),
 
-   text_list(wlist,cfg.text_list_cfg),
+   item_list(wlist,cfg.list_cfg),
 
    check_all(wlist,cfg.check_cfg,true),
    check_Coord(wlist,cfg.check_cfg),
@@ -790,7 +815,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
    connector_btnSave_pressed(this,&DesignerWindow::savePref,btn_Save.pressed),
    connector_btnSelf_pressed(this,&DesignerWindow::selfPref,btn_Self.pressed),
 
-   connector_text_list_selected(this,&DesignerWindow::selectVar,text_list.selected),
+   connector_item_list_selected(this,&DesignerWindow::selectVar,item_list.selected),
 
    connector_string_edit_changed(this,&DesignerWindow::string_edit_changed,string_edit.changed),
    connector_coord_edit_changed(this,&DesignerWindow::coord_edit_changed,coord_edit.changed),
@@ -804,7 +829,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
  {
   pref.sync();
 
-  wlist.insTop(text_list,check_all,check_Coord,check_MCoord,check_VColor,check_Clr,
+  wlist.insTop(item_list,check_all,check_Coord,check_MCoord,check_VColor,check_Clr,
                          check_unsigned,check_String,check_Point,check_Font,check_bool,
                          label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
                          label_unsigned,label_String,label_Point,label_Font,label_bool,
@@ -842,10 +867,10 @@ void DesignerWindow::layout()
 
   Coord max_dy=psor.maxDY(size.y);
 
-  // text_list
+  // item_list
 
   {
-   psor.placeMinX(text_list,MinSize,max_dy);
+   psor.placeMinX(item_list,MinSize,max_dy);
   }
 
   // check box

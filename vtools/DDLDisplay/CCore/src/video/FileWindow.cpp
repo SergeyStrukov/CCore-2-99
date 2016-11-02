@@ -334,8 +334,8 @@ void FileSubWindow::fillLists()
 
   FileSystem::DirCursor cur(fs,dir.getText());
 
-  InfoBuilder dir_builder;
-  InfoBuilder file_builder;
+  ComboInfoBuilder dir_builder;
+  ComboInfoBuilder file_builder;
 
   cur.apply( [&] (StrLen name,FileType ft)
                  {
@@ -358,9 +358,9 @@ void FileSubWindow::fillLists()
 
                 } );
 
-  dir_builder.sort(ExtNameLess);
+  dir_builder.sortGroups(ExtNameLess);
 
-  file_builder.sort(ExtNameLess);
+  file_builder.sortGroups(ExtNameLess);
 
   dir_list.setInfo(dir_builder.complete());
 
@@ -397,15 +397,17 @@ void FileSubWindow::setDir(StrLen dir_name,StrLen sub_dir)
 
 void FileSubWindow::buildFilePath()
  {
-  const Info &info=file_list.getInfo();
+  const ComboInfo &info=file_list.getInfo();
   ulen index=file_list.getSelect();
 
   if( index<info->getLineCount() )
     {
-     StrLen dir_name=dir.getText();
-     StrLen file_name=info->getLine(index);
+     ComboInfoItem item=info->getLine(index);
 
-     file_path=file_buf(dir_name,file_name);
+     if( item.type==ComboInfoText )
+       {
+        file_path=file_buf(dir.getText(),item.text);
+       }
     }
  }
 
@@ -418,11 +420,18 @@ void FileSubWindow::file_list_entered()
 
 void FileSubWindow::dir_list_entered()
  {
-  const Info &info=dir_list.getInfo();
+  const ComboInfo &info=dir_list.getInfo();
   ulen index=dir_list.getSelect();
 
   if( index<info->getLineCount() )
-    setDir(dir.getText(),info->getLine(index));
+    {
+     ComboInfoItem item=info->getLine(index);
+
+     if( item.type==ComboInfoText )
+       {
+        setDir(dir.getText(),item.text);
+       }
+    }
  }
 
 void FileSubWindow::dir_entered()
@@ -645,9 +654,7 @@ void FileSubWindow::draw(DrawBuf buf,bool drag_active) const
 
 void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  SmoothDrawArt art(buf);
-
-  art.block(pane,+cfg.back);
+  buf.block_safe(pane,+cfg.back);
 
   wlist.draw(buf,pane,drag_active);
  }
