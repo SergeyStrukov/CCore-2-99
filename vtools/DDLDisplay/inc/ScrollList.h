@@ -191,10 +191,8 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void selectFirst()
     {
-     if( shape.select )
+     if( shape.setSelectDown(0) )
        {
-        shape.setSelectDown(0);
-
         showSelect();
 
         outer->selected.assert(shape.select);
@@ -207,22 +205,13 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      ulen count=shape.info->getLineCount();
 
-     if( count )
+     if( count && shape.setSelectUp(count-1) )
        {
-        if( shape.select!=count-1 )
-          {
-           shape.setSelectUp(count-1);
+        showSelect();
 
-           showSelect();
+        outer->selected.assert(shape.select);
 
-           outer->selected.assert(shape.select);
-
-           redraw();
-          }
-       }
-     else
-       {
-        selectFirst();
+        redraw();
        }
     }
 
@@ -230,12 +219,8 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      ulen count=shape.info->getLineCount();
 
-     if( delta && count && shape.select<count-1 )
+     if( delta && count && shape.select<count-1 && shape.setSelectDown(shape.select+Min<ulen>(delta,count-1-shape.select)) )
        {
-        ulen select=shape.select+Min<ulen>(delta,count-1-shape.select);
-
-        shape.setSelectDown(select);
-
         showSelect();
 
         outer->selected.assert(shape.select);
@@ -246,12 +231,8 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void subSelect(ulen delta)
     {
-     if( delta && shape.select )
+     if( delta && shape.select && shape.setSelectUp(PosSub(shape.select,delta)) )
        {
-        ulen select=PosSub(shape.select,delta);
-
-        shape.setSelectUp(select);
-
         showSelect();
 
         outer->selected.assert(shape.select);
@@ -269,10 +250,8 @@ class ScrollListInnerWindowOf : public SubWindow
         select=count?count-1:0;
        }
 
-     if( shape.select!=select )
+     if( shape.select!=select && shape.setSelectDown(select) )
        {
-        shape.setSelectDown(select);
-
         showSelect();
 
         if( signal ) outer->selected.assert(shape.select);

@@ -3118,10 +3118,6 @@ class SimpleTextListWindowOf : public SubWindow
            redraw();
           }
        }
-     else
-       {
-        selectFirst();
-       }
     }
 
    void addSelect(ulen delta)
