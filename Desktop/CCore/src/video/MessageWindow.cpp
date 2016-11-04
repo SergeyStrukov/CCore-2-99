@@ -20,7 +20,7 @@
 namespace CCore {
 namespace Video {
 
-/* class MessageSubWindow */
+/* class MessageSubWindow::Btn */
 
 void MessageSubWindow::Btn::pressed_id()
  {
@@ -38,6 +38,8 @@ MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,co
 MessageSubWindow::Btn::~Btn()
  {
  }
+
+/* class MessageSubWindow */
 
 void MessageSubWindow::knobOk_pressed()
  {

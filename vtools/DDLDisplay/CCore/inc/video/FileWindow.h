@@ -19,6 +19,7 @@
 #include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
+#include <CCore/inc/video/FileNameMatch.h>
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FunctorType.h>
@@ -27,10 +28,6 @@
 
 namespace CCore {
 namespace Video {
-
-/* functions */
-
-bool FileNameMatch(StrLen filter,StrLen file);
 
 /* layout functions */
 
@@ -180,13 +177,15 @@ class FileFilterWindow : public ComboWindow
    LineEditWindow edit;
    KnobWindow knob;
 
+   mutable FileNameFilter filter;
+
   private:
 
-   void on_check_changed(bool check);
+   void check_changed(bool check);
 
-   void on_edit_changed();
+   void edit_changed();
 
-   void on_knob_pressed();
+   void knob_pressed();
 
    SignalConnector<FileFilterWindow,bool> connector_check_changed;
    SignalConnector<FileFilterWindow> connector_edit_changed;
@@ -204,7 +203,17 @@ class FileFilterWindow : public ComboWindow
 
    bool isChecked() const { return check.isChecked(); }
 
-   StrLen getFilter() const { return edit.getText(); }
+   StrLen getFilterText() const { return edit.getText(); }
+
+   const FileNameFilter & getFilter() const
+    {
+     if( !filter )
+       {
+        filter.reset(getFilterText());
+       }
+
+     return filter;
+    }
 
    void setIndex(ulen index_) { index=index_; }
 
@@ -257,12 +266,12 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
 
    void add(StrLen filter,bool check);
 
-   template <FuncInitArgType<StrLen> FuncInit>
+   template <FuncInitArgType<StrLen,const FileNameFilter &> FuncInit>
    void apply(FuncInit func_init) const
     {
      FunctorTypeOf<FuncInit> func(func_init);
 
-     for(auto &obj : filter_list ) if( obj->isChecked() ) func(obj->getFilter());
+     for(auto &obj : filter_list ) if( obj->isChecked() ) func(obj->getFilterText(),obj->getFilter());
     }
 
    // drawing

@@ -97,6 +97,7 @@ obj/Fifo.o \
 obj/FigureLib.o \
 obj/FileName.o \
 obj/FileNameCmp.o \
+obj/FileNameMatch.o \
 obj/FileSystem.o \
 obj/FileToMem.o \
 obj/FixedWindow.o \
@@ -469,6 +470,7 @@ obj/Fifo.s \
 obj/FigureLib.s \
 obj/FileName.s \
 obj/FileNameCmp.s \
+obj/FileNameMatch.s \
 obj/FileSystem.s \
 obj/FileToMem.s \
 obj/FixedWindow.s \
@@ -841,6 +843,7 @@ obj/Fifo.dep \
 obj/FigureLib.dep \
 obj/FileName.dep \
 obj/FileNameCmp.dep \
+obj/FileNameMatch.dep \
 obj/FileSystem.dep \
 obj/FileToMem.dep \
 obj/FixedWindow.dep \
@@ -1416,6 +1419,9 @@ obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileNameCmp.o : ../../Desktop/CCore/src/video/FileNameCmp.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FileNameMatch.o : ../../Desktop/CCore/src/video/FileNameMatch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
@@ -2527,6 +2533,9 @@ obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameCmp.s : ../../Desktop/CCore/src/video/FileNameCmp.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileNameMatch.s : ../../Desktop/CCore/src/video/FileNameMatch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3635,6 +3644,9 @@ obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 
 obj/FileNameCmp.dep : ../../Desktop/CCore/src/video/FileNameCmp.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameCmp.o $< -MF $@
+
+obj/FileNameMatch.dep : ../../Desktop/CCore/src/video/FileNameMatch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameMatch.o $< -MF $@
 
 obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileSystem.o $< -MF $@

@@ -37,47 +37,6 @@
 namespace CCore {
 namespace Video {
 
-/* functions */
-
-bool FileNameMatch(StrLen filter,StrLen file)
- {
-  for(; +filter ;++filter)
-    {
-     switch( char ch=*filter )
-       {
-        case '*' :
-         {
-          StrLen next=filter.part(1);
-
-          for(;;++file)
-            {
-             if( FileNameMatch(next,file) ) return true;
-
-             if( !file ) return false;
-            }
-         }
-        break;
-
-        case '?' :
-         {
-          if( !file ) return false;
-
-          ++file;
-         }
-        break;
-
-        default:
-         {
-          if( !file || (*file)!=ch ) return false;
-
-          ++file;
-         }
-       }
-    }
-
-  return !file;
- }
-
 /* layout functions */
 
 Pane BoxLeft(Pane pane,Coord dxy)
@@ -400,19 +359,21 @@ void DirEditShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace pla
 
 /* class FileFilterWindow */
 
-void FileFilterWindow::on_check_changed(bool check)
+void FileFilterWindow::check_changed(bool check)
  {
   pad->check_changed(index,check);
  }
 
-void FileFilterWindow::on_edit_changed()
+void FileFilterWindow::edit_changed()
  {
+  filter.reset();
+
   check.uncheck();
 
   pad->check_changed(index,false);
  }
 
-void FileFilterWindow::on_knob_pressed()
+void FileFilterWindow::knob_pressed()
  {
   pad->knob_del_pressed(index);
  }
@@ -427,9 +388,9 @@ FileFilterWindow::FileFilterWindow(SubWindowHost &host,const Config &cfg_,ulen i
    edit(wlist,cfg.edit_cfg),
    knob(wlist,cfg.knob_cfg,KnobShape::FaceCross),
 
-   connector_check_changed(this,&FileFilterWindow::on_check_changed,check.changed),
-   connector_edit_changed(this,&FileFilterWindow::on_edit_changed,edit.changed),
-   connector_knob_pressed(this,&FileFilterWindow::on_knob_pressed,knob.pressed)
+   connector_check_changed(this,&FileFilterWindow::check_changed,check.changed),
+   connector_edit_changed(this,&FileFilterWindow::edit_changed,edit.changed),
+   connector_knob_pressed(this,&FileFilterWindow::knob_pressed,knob.pressed)
  {
   wlist.insTop(check,edit,knob);
 
@@ -605,16 +566,17 @@ void FileFilterListWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 class FileSubWindow::Distributor : NoCopy
  {
-   struct Basket
+   struct Basket : NoCopy
     {
-     StrLen filter;
+     StrLen filter_text;
+     const FileNameFilter &filter;
      CompactList2<StrLen> file_list;
 
-     explicit Basket(StrLen filter_) : filter(filter_) {}
+     Basket(StrLen filter_text_,const FileNameFilter &filter_) : filter_text(filter_text_),filter(filter_) {}
 
      bool tryAdd(StrLen file)
       {
-       if( FileNameMatch(filter,file) )
+       if( filter(file) )
          {
           file_list.insLast(file);
 
@@ -628,7 +590,7 @@ class FileSubWindow::Distributor : NoCopy
       {
        if( +file_list )
          {
-          builder.addTitle(filter);
+          builder.addTitle(filter_text);
 
           file_list.apply( [&builder] (StrLen file) { builder.add(file); } );
          }
@@ -647,9 +609,9 @@ class FileSubWindow::Distributor : NoCopy
     {
     }
 
-   void addFilter(StrLen filter)
+   void addFilter(StrLen filter_text,const FileNameFilter &filter)
     {
-     basket_list.insLast(filter);
+     basket_list.insLast(filter_text,filter);
     }
 
    void addFile(StrLen file)
@@ -673,53 +635,72 @@ class FileSubWindow::Distributor : NoCopy
 
 void FileSubWindow::applyFilters()
  {
-  Distributor obj;
+  try
+    {
+     Distributor obj;
 
-  filter_list.apply( [&obj] (StrLen filter) { obj.addFilter(filter); } );
+     filter_list.apply( [&obj] (StrLen filter_text,const FileNameFilter &filter) { obj.addFilter(filter_text,filter); } );
 
-  ulen count=file_info->getLineCount();
+     ulen count=file_info->getLineCount();
 
-  for(ulen i=0; i<count ;i++) obj.addFile(file_info->getLine(i));
+     for(ulen i=0; i<count ;i++) obj.addFile(file_info->getLine(i));
 
-  file_list.setInfo(obj.build());
+     file_list.setInfo(obj.build());
+    }
+  catch(...)
+    {
+     file_list.setInfo(ComboInfo());
+
+     throw;
+    }
  }
 
 void FileSubWindow::fillLists()
  {
-  dir_list.enable();
-  file_list.enable();
+  try
+    {
+     dir_list.enable();
+     file_list.enable();
 
-  FileSystem::DirCursor cur(fs,dir.getText());
+     FileSystem::DirCursor cur(fs,dir.getText());
 
-  ComboInfoBuilder dir_builder;
-  InfoBuilder file_builder;
+     ComboInfoBuilder dir_builder;
+     InfoBuilder file_builder;
 
-  cur.apply( [&] (StrLen name,FileType ft)
-                 {
-                  switch( ft )
+     cur.apply( [&] (StrLen name,FileType ft)
                     {
-                     case FileType_dir :
-                      {
-                       if( PathBase::IsDot(name) ) break;
+                     switch( ft )
+                       {
+                        case FileType_dir :
+                         {
+                          if( PathBase::IsDot(name) ) break;
 
-                       dir_builder.add(name);
-                      }
-                     break;
+                          dir_builder.add(name);
+                         }
+                        break;
 
-                     case FileType_file :
-                      {
-                       file_builder.add(name);
-                      }
-                     break;
-                    }
+                        case FileType_file :
+                         {
+                          file_builder.add(name);
+                         }
+                        break;
+                       }
 
-                } );
+                   } );
 
-  dir_builder.sortGroups(ExtNameLess);
+     dir_builder.sortGroups(ExtNameLess);
 
-  dir_list.setInfo(dir_builder.complete());
+     dir_list.setInfo(dir_builder.complete());
 
-  file_info=file_builder.complete();
+     file_info=file_builder.complete();
+    }
+  catch(...)
+    {
+     dir_list.setInfo(ComboInfo());
+     file_list.setInfo(ComboInfo());
+
+     throw;
+    }
 
   applyFilters();
  }

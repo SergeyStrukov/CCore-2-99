@@ -269,6 +269,7 @@
 ../../Desktop/CCore/src/video/DrawTools.cpp
 ../../Desktop/CCore/src/video/FigureLib.cpp
 ../../Desktop/CCore/src/video/FileNameCmp.cpp
+../../Desktop/CCore/src/video/FileNameMatch.cpp
 ../../Desktop/CCore/src/video/FixedWindow.cpp
 ../../Desktop/CCore/src/video/Font.cpp
 ../../Desktop/CCore/src/video/FontDatabase.cpp
