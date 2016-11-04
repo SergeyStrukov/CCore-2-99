@@ -53,6 +53,7 @@
 ../../Simple/CCore/src/PrintStem.cpp
 ../../Simple/CCore/src/PrintTime.cpp
 ../../Simple/CCore/src/PrintTitle.cpp
+../../Simple/CCore/src/RangeDel.cpp
 ../../Simple/CCore/src/RefObjectBase.cpp
 ../../Simple/CCore/src/RefPtr.cpp
 ../../Simple/CCore/src/SafeBuf.cpp

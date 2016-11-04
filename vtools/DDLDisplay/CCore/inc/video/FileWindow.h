@@ -21,17 +21,36 @@
 #include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/UserPreference.h>
 
+#include <CCore/inc/FunctorType.h>
 #include <CCore/inc/FileSystem.h>
 #include <CCore/inc/MakeFileName.h>
 
 namespace CCore {
 namespace Video {
 
+/* functions */
+
+bool FileNameMatch(StrLen filter,StrLen file);
+
+/* layout functions */
+
+Pane BoxLeft(Pane pane,Coord dxy);
+
+Pane BoxRight(Pane pane,Coord dxy);
+
+Pane PlaceBefore(Pane &pane,Coord dxy);
+
+Pane PlaceAfter(Pane &pane,Coord dxy);
+
 /* classes */
 
 class DirHitList;
 
 class DirEditShape;
+
+class FileFilterWindow;
+
+class FileFilterListWindow;
 
 class FileSubWindow;
 
@@ -60,16 +79,6 @@ class DirHitList : NoCopy
    ulen last_len = 0 ;
 
   private:
-
-   template <class T>
-   static bool Del(T list[],ulen len,ulen ind)
-    {
-     if( ind>=len ) return false;
-
-     for(len--; ind<len ;ind++) list[ind]=list[ind+1];
-
-     return true;
-    }
 
    static const char *const HitFile;
 
@@ -132,6 +141,143 @@ class DirEditShape : public LineEditShape
 
 using DirEditWindow = LineEditWindowOf<DirEditShape> ;
 
+/* class FileFilterWindow */
+
+class FileFilterWindow : public ComboWindow
+ {
+  public:
+
+   struct Config
+    {
+     CtorRefVal<CheckWindow::ConfigType> check_cfg;
+     CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
+     CtorRefVal<KnobWindow::ConfigType> knob_cfg;
+
+     RefVal<Coord> check_dxy = 20 ;
+     RefVal<Coord> knob_dxy = 30 ;
+
+     Config() noexcept {}
+    };
+
+   using ConfigType = Config ;
+
+   struct SignalPad
+    {
+     virtual void check_changed(ulen index,bool check)=0;
+
+     virtual void knob_del_pressed(ulen index)=0;
+    };
+
+  private:
+
+   const Config &cfg;
+
+   ulen index;
+
+   SignalPad *pad;
+
+   CheckWindow check;
+   LineEditWindow edit;
+   KnobWindow knob;
+
+  private:
+
+   void on_check_changed(bool check);
+
+   void on_edit_changed();
+
+   void on_knob_pressed();
+
+   SignalConnector<FileFilterWindow,bool> connector_check_changed;
+   SignalConnector<FileFilterWindow> connector_edit_changed;
+   SignalConnector<FileFilterWindow> connector_knob_pressed;
+
+  public:
+
+   FileFilterWindow(SubWindowHost &host,const Config &cfg,ulen index,SignalPad *pad,StrLen filter,bool check);
+
+   virtual ~FileFilterWindow();
+
+   // methods
+
+   Point getMinSize() const;
+
+   bool isChecked() const { return check.isChecked(); }
+
+   StrLen getFilter() const { return edit.getText(); }
+
+   void setIndex(ulen index_) { index=index_; }
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool drag_active) const;
+
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+ };
+
+/* class FileFilterListWindow */
+
+class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
+ {
+  public:
+
+   using ConfigType = FileFilterWindow::ConfigType ;
+
+  private:
+
+   const ConfigType &cfg;
+
+   DynArray<OwnPtr<FileFilterWindow> > filter_list;
+
+   KnobWindow knob;
+
+  private:
+
+   void knob_add_pressed();
+
+   SignalConnector<FileFilterListWindow> connector_knob_add_pressed;
+
+   // FileFilterWindow::SignalPad
+
+   virtual void check_changed(ulen index,bool check);
+
+   virtual void knob_del_pressed(ulen index);
+
+  public:
+
+   FileFilterListWindow(SubWindowHost &host,const ConfigType &cfg);
+
+   virtual ~FileFilterListWindow();
+
+   // methods
+
+   Point getMinSize() const;
+
+   void add(StrLen filter,bool check);
+
+   template <FuncInitArgType<StrLen> FuncInit>
+   void apply(FuncInit func_init) const
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+
+     for(auto &obj : filter_list ) if( obj->isChecked() ) func(obj->getFilter());
+    }
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool drag_active) const;
+
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+
+   // signals
+
+   Signal<> changed;
+ };
+
 /* class FileSubWindow */
 
 class FileSubWindow : public ComboWindow
@@ -142,10 +288,13 @@ class FileSubWindow : public ComboWindow
     {
      RefVal<Coord> space_dxy = 10 ;
 
+     RefVal<Coord> knob_dxy = 30 ;
+
      RefVal<VColor> back = Silver ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
+     CtorRefVal<FileFilterListWindow::ConfigType> filter_list_cfg;
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
 
@@ -156,12 +305,14 @@ class FileSubWindow : public ComboWindow
      explicit Config(const UserPreference &pref) noexcept
       : //edit_cfg(SmartBind,pref),
         list_cfg(SmartBind,pref),
+        //filter_list_cfg(SmartBind,pref),
         btn_cfg(SmartBind,pref),
         knob_cfg(SmartBind,pref),
         hit_menu_cfg(SmartBind,pref)
       {
-       back.bind(pref.get().back);
        space_dxy.bind(pref.get().space_dxy);
+       knob_dxy.bind(pref.get().knob_dxy);
+       back.bind(pref.get().back);
 
        (LineEditShape::Config &)edit_cfg.takeVal()=pref.getSmartConfig();
       }
@@ -173,12 +324,16 @@ class FileSubWindow : public ComboWindow
 
    const Config &cfg;
 
+   Info file_info;
+
    DirEditWindow dir;
    KnobWindow knob_hit;
    KnobWindow knob_add;
    KnobWindow knob_back;
    ScrollListWindow dir_list;
    ScrollListWindow file_list;
+
+   FileFilterListWindow filter_list;
 
    ButtonWindow btn_Ok;
    ButtonWindow btn_Cancel;
@@ -194,6 +349,10 @@ class FileSubWindow : public ComboWindow
 
   private:
 
+   class Distributor;
+
+   void applyFilters();
+
    void fillLists();
 
    void setDir(StrLen dir_name);
@@ -208,6 +367,10 @@ class FileSubWindow : public ComboWindow
 
    SignalConnector<FileSubWindow> connector_file_list_entered;
    SignalConnector<FileSubWindow> connector_file_list_dclicked;
+
+   void filter_list_changed();
+
+   SignalConnector<FileSubWindow> connector_filter_list_changed;
 
    void dir_list_entered();
 
@@ -259,6 +422,8 @@ class FileSubWindow : public ComboWindow
    Point getMinSize(StrLen sample_text) const;
 
    StrLen getFilePath() const { return file_path; }
+
+   void addFilter(StrLen filter) { filter_list.add(filter,true); }
 
    // drawing
 
@@ -312,6 +477,16 @@ class FileWindow : public DragWindow
    virtual ~FileWindow();
 
    // methods
+
+   void addFilter(StrLen filter) { sub_win.addFilter(filter); }
+
+   template <class ... TT>
+   void addFilter(StrLen filter,TT ... filters)
+    {
+     sub_win.addFilter(filter);
+
+     addFilter(filters...);
+    }
 
    StrLen getFilePath() const { return sub_win.getFilePath(); } // available after the signal "destroyed"
 

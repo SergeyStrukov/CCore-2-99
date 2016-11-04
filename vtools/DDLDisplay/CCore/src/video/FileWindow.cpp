@@ -22,9 +22,11 @@
 #include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FileNameCmp.h>
 
+#include <CCore/inc/RangeDel.h>
 #include <CCore/inc/Path.h>
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
+#include <CCore/inc/CompactList.h>
 
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
@@ -34,6 +36,77 @@
 
 namespace CCore {
 namespace Video {
+
+/* functions */
+
+bool FileNameMatch(StrLen filter,StrLen file)
+ {
+  for(; +filter ;++filter)
+    {
+     switch( char ch=*filter )
+       {
+        case '*' :
+         {
+          StrLen next=filter.part(1);
+
+          for(;;++file)
+            {
+             if( FileNameMatch(next,file) ) return true;
+
+             if( !file ) return false;
+            }
+         }
+        break;
+
+        case '?' :
+         {
+          if( !file ) return false;
+
+          ++file;
+         }
+        break;
+
+        default:
+         {
+          if( !file || (*file)!=ch ) return false;
+
+          ++file;
+         }
+       }
+    }
+
+  return !file;
+ }
+
+/* layout functions */
+
+Pane BoxLeft(Pane pane,Coord dxy)
+ {
+  return Pane(pane.x,pane.y+(pane.dy-dxy)/2,dxy,dxy);
+ }
+
+Pane BoxRight(Pane pane,Coord dxy)
+ {
+  return Pane(pane.x+(pane.dx-dxy),pane.y+(pane.dy-dxy)/2,dxy,dxy);
+ }
+
+Pane PlaceBefore(Pane &pane,Coord dxy)
+ {
+  Coord delta=dxy+dxy/5;
+
+  Pane p=SplitX(delta,pane);
+
+  return BoxLeft(p,dxy);
+ }
+
+Pane PlaceAfter(Pane &pane,Coord dxy)
+ {
+  Coord delta=dxy+dxy/5;
+
+  Pane p=SplitX(pane,delta);
+
+  return BoxRight(p,dxy);
+ }
 
 /* class DirHitList */
 
@@ -278,13 +351,13 @@ void DirHitList::del(int id)
 
   if( ind<MaxLen )
     {
-     hit_len-=Del(hit_list,hit_len,ind);
+     hit_len-=RangeCopyDel(hit_list,hit_len,ind);
     }
   else
     {
      ind-=MaxLen;
 
-     last_len-=Del(last_list,last_len,ind);
+     last_len-=RangeCopyDel(last_list,last_len,ind);
     }
  }
 
@@ -325,7 +398,291 @@ void DirEditShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace pla
   font->text(buf,pane,place,text,func.function_color());
  }
 
+/* class FileFilterWindow */
+
+void FileFilterWindow::on_check_changed(bool check)
+ {
+  pad->check_changed(index,check);
+ }
+
+void FileFilterWindow::on_edit_changed()
+ {
+  check.uncheck();
+
+  pad->check_changed(index,false);
+ }
+
+void FileFilterWindow::on_knob_pressed()
+ {
+  pad->knob_del_pressed(index);
+ }
+
+FileFilterWindow::FileFilterWindow(SubWindowHost &host,const Config &cfg_,ulen index_,SignalPad *pad_,StrLen filter,bool check_)
+ : ComboWindow(host),
+   cfg(cfg_),
+   index(index_),
+   pad(pad_),
+
+   check(wlist,cfg.check_cfg,check_),
+   edit(wlist,cfg.edit_cfg),
+   knob(wlist,cfg.knob_cfg,KnobShape::FaceCross),
+
+   connector_check_changed(this,&FileFilterWindow::on_check_changed,check.changed),
+   connector_edit_changed(this,&FileFilterWindow::on_edit_changed,edit.changed),
+   connector_knob_pressed(this,&FileFilterWindow::on_knob_pressed,knob.pressed)
+ {
+  wlist.insTop(check,edit,knob);
+
+  edit.setText(filter);
+ }
+
+FileFilterWindow::~FileFilterWindow()
+ {
+ }
+
+ // methods
+
+Point FileFilterWindow::getMinSize() const
+ {
+  Point size=edit.getMinSize();
+
+  Coord a=Min(+cfg.check_dxy,size.y);
+  Coord b=Min(+cfg.knob_dxy,size.y);
+
+  return size+Point(a+a/5,0)+Point(b+b/5,0);
+ }
+
+ // drawing
+
+void FileFilterWindow::layout()
+ {
+  Point size=getSize();
+
+  Pane pane(Null,size);
+
+  check.setPlace(PlaceBefore(pane,Min(+cfg.check_dxy,size.y)));
+
+  knob.setPlace(PlaceAfter(pane,Min(+cfg.knob_dxy,size.y)));
+
+  edit.setPlace(pane);
+ }
+
+void FileFilterWindow::draw(DrawBuf buf,bool drag_active) const
+ {
+  wlist.draw(buf,drag_active);
+ }
+
+void FileFilterWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
+ {
+  wlist.draw(buf,pane,drag_active);
+ }
+
+/* class FileFilterListWindow */
+
+void FileFilterListWindow::knob_add_pressed()
+ {
+  add(StrLen("*",1),false);
+ }
+
+void FileFilterListWindow::check_changed(ulen index,bool check)
+ {
+  Used(index);
+  Used(check);
+
+  changed.assert();
+ }
+
+void FileFilterListWindow::knob_del_pressed(ulen index)
+ {
+  if( RangeSwapDel(Range(filter_list),index) )
+    {
+     filter_list.shrink_one();
+
+     for(ulen i=index,count=filter_list.getLen(); i<count ;i++) filter_list[i]->setIndex(i);
+
+     layout();
+
+     redraw();
+
+     changed.assert();
+    }
+ }
+
+FileFilterListWindow::FileFilterListWindow(SubWindowHost &host,const ConfigType &cfg_)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   knob(wlist,cfg.knob_cfg,KnobShape::FacePlus),
+
+   connector_knob_add_pressed(this,&FileFilterListWindow::knob_add_pressed,knob.pressed)
+ {
+  wlist.insTop(knob);
+ }
+
+FileFilterListWindow::~FileFilterListWindow()
+ {
+ }
+
+ // methods
+
+Point FileFilterListWindow::getMinSize() const
+ {
+  if( ulen count=filter_list.getLen() )
+    {
+     Point size=filter_list[0]->getMinSize();
+
+     Coord dy=size.y;
+     Coord delta=dy+dy/5;
+
+     return Point(size.x,delta*count+(+cfg.knob_dxy));
+    }
+  else
+    {
+     Coord dxy=+cfg.knob_dxy;
+
+     return Point::Diag(dxy);
+    }
+ }
+
+void FileFilterListWindow::add(StrLen filter,bool check)
+ {
+  ulen index=filter_list.getLen();
+
+  OwnPtr<FileFilterWindow> obj(new FileFilterWindow(wlist,cfg,index,this,filter,check));
+
+  wlist.insBottom(obj.getPtr());
+
+  filter_list.append_fill(std::move(obj));
+
+  if( getFrame()->isAlive() )
+    {
+     layout();
+
+     redraw();
+    }
+ }
+
+ // drawing
+
+void FileFilterListWindow::layout()
+ {
+  Point size=getSize();
+
+  if( ulen count=filter_list.getLen() )
+    {
+     Coord dy=filter_list[0]->getMinSize().y;
+
+     Pane pane(Null,size.x,dy);
+
+     Coord delta=dy+dy/5;
+
+     for(ulen i=0; i<count ;i++)
+       {
+        filter_list[i]->setPlace(pane);
+
+        pane.y+=delta;
+       }
+
+     knob.setPlace(Pane(pane.getBase(),+cfg.knob_dxy));
+    }
+  else
+    {
+     knob.setPlace(Pane(Null,+cfg.knob_dxy));
+    }
+ }
+
+void FileFilterListWindow::draw(DrawBuf buf,bool drag_active) const
+ {
+  wlist.draw(buf,drag_active);
+ }
+
+void FileFilterListWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
+ {
+  wlist.draw(buf,pane,drag_active);
+ }
+
+/* class FileSubWindow::Distributor */
+
+class FileSubWindow::Distributor : NoCopy
+ {
+   struct Basket
+    {
+     StrLen filter;
+     CompactList2<StrLen> file_list;
+
+     explicit Basket(StrLen filter_) : filter(filter_) {}
+
+     bool tryAdd(StrLen file)
+      {
+       if( FileNameMatch(filter,file) )
+         {
+          file_list.insLast(file);
+
+          return true;
+         }
+
+       return false;
+      }
+
+     void addTo(ComboInfoBuilder &builder)
+      {
+       if( +file_list )
+         {
+          builder.addTitle(filter);
+
+          file_list.apply( [&builder] (StrLen file) { builder.add(file); } );
+         }
+      }
+    };
+
+   CompactList2<Basket> basket_list;
+
+  public:
+
+   Distributor()
+    {
+    }
+
+   ~Distributor()
+    {
+    }
+
+   void addFilter(StrLen filter)
+    {
+     basket_list.insLast(filter);
+    }
+
+   void addFile(StrLen file)
+    {
+     basket_list.apply( [file] (Basket &obj) -> bool { return !obj.tryAdd(file); } );
+    }
+
+   ComboInfo build()
+    {
+     ComboInfoBuilder builder;
+
+     basket_list.apply( [&builder] (Basket &obj) { obj.addTo(builder); } );
+
+     builder.sortGroups(ExtNameLess);
+
+     return builder.complete();
+    }
+ };
+
 /* class FileSubWindow */
+
+void FileSubWindow::applyFilters()
+ {
+  Distributor obj;
+
+  filter_list.apply( [&obj] (StrLen filter) { obj.addFilter(filter); } );
+
+  ulen count=file_info->getLineCount();
+
+  for(ulen i=0; i<count ;i++) obj.addFile(file_info->getLine(i));
+
+  file_list.setInfo(obj.build());
+ }
 
 void FileSubWindow::fillLists()
  {
@@ -335,7 +692,7 @@ void FileSubWindow::fillLists()
   FileSystem::DirCursor cur(fs,dir.getText());
 
   ComboInfoBuilder dir_builder;
-  ComboInfoBuilder file_builder;
+  InfoBuilder file_builder;
 
   cur.apply( [&] (StrLen name,FileType ft)
                  {
@@ -360,11 +717,11 @@ void FileSubWindow::fillLists()
 
   dir_builder.sortGroups(ExtNameLess);
 
-  file_builder.sortGroups(ExtNameLess);
-
   dir_list.setInfo(dir_builder.complete());
 
-  file_list.setInfo(file_builder.complete());
+  file_info=file_builder.complete();
+
+  applyFilters();
  }
 
 void FileSubWindow::setDir(StrLen dir_name)
@@ -416,6 +773,11 @@ void FileSubWindow::file_list_entered()
   buildFilePath();
 
   askFrameClose();
+ }
+
+void FileSubWindow::filter_list_changed()
+ {
+  applyFilters();
  }
 
 void FileSubWindow::dir_list_entered()
@@ -538,6 +900,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    knob_back(wlist,cfg.knob_cfg,KnobShape::FaceLeft),
    dir_list(wlist,cfg.list_cfg),
    file_list(wlist,cfg.list_cfg),
+   filter_list(wlist,cfg.filter_list_cfg),
    btn_Ok(wlist,cfg.btn_cfg,"Ok"_def),
    btn_Cancel(wlist,cfg.btn_cfg,"Cancel"_def),
 
@@ -545,6 +908,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
 
    connector_file_list_entered(this,&FileSubWindow::file_list_entered,file_list.entered),
    connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,file_list.dclicked),
+   connector_filter_list_changed(this,&FileSubWindow::filter_list_changed,filter_list.changed),
    connector_dir_list_entered(this,&FileSubWindow::dir_list_entered,dir_list.entered),
    connector_dir_list_dclicked(this,&FileSubWindow::dir_list_entered,dir_list.dclicked),
    connector_dir_entered(this,&FileSubWindow::dir_entered,dir.entered),
@@ -558,7 +922,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.takeSelected()),
    connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted())
  {
-  wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,btn_Ok,btn_Cancel);
+  wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,filter_list,btn_Ok,btn_Cancel);
  }
 
 FileSubWindow::~FileSubWindow()
@@ -575,7 +939,7 @@ Point FileSubWindow::getMinSize(StrLen sample_text) const
 
   Point btn_size=SupMinSize(btn_Ok,btn_Cancel);
 
-  Coord dx=3*space+Max<Coord>(dir_size.x,2*btn_size.x+space)+3*dir_size.y;
+  Coord dx=3*space+Max<Coord>(dir_size.x+dir_size.y,2*btn_size.x+space)+3*dir_size.y;
   Coord dy=5*space+20*dir_size.y+btn_size.y;
 
   return Point(dx,dy);
@@ -614,14 +978,16 @@ void FileSubWindow::layout()
   {
    Coord dy=dir.getMinSize().y;
 
-   Panesor p(psor.cutY(dy),Rational(1,4));
+   Pane pane=psor.cutY(dy);
+   Coord dxy=Min(dy,+cfg.knob_dxy);
 
-   p.placeX(knob_hit,dy);
-   p.placeX(knob_add,dy);
+   knob_hit.setPlace(PlaceBefore(pane,dxy));
 
-   p.placeX_rest(dir,dy);
+   knob_add.setPlace(PlaceBefore(pane,dxy));
 
-   knob_back.setPlace(p);
+   knob_back.setPlace(PlaceAfter(pane,dxy));
+
+   dir.setPlace(pane);
   }
 
   // dir_list
@@ -635,7 +1001,11 @@ void FileSubWindow::layout()
   Point btn_size=SupMinSize(btn_Ok,btn_Cancel);
 
   {
-   psor.placeY_rest(file_list,btn_size.y);
+   Panesor p=psor.cutY_rest(btn_size.y);
+
+   p.placeX(file_list,Rational(2,3));
+
+   filter_list.setPlace(p);
   }
 
   // btn

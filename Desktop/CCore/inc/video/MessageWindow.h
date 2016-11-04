@@ -71,7 +71,7 @@ class MessageSubWindow : public SubWindow
     {
       int btn_id;
 
-      MessageSubWindow *sub_win;
+      MessageSubWindow *owner;
 
       SignalConnector<Btn> connector_pressed;
 
@@ -81,7 +81,7 @@ class MessageSubWindow : public SubWindow
 
      public:
 
-      Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id,MessageSubWindow *sub_win);
+      Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id,MessageSubWindow *owner);
 
       virtual ~Btn();
     };

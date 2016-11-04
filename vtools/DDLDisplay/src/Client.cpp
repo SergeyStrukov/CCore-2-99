@@ -112,6 +112,8 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
                 ("E@xit",Cmd_Exit);
 
   menu_options_data(MenuDisabled,"@DDL",201);
+
+  open_file.addFilter("*.ddl","*");
  }
 
 ClientWindow::~ClientWindow()

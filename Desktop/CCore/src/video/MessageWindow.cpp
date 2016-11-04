@@ -24,13 +24,13 @@ namespace Video {
 
 void MessageSubWindow::Btn::pressed_id()
  {
-  sub_win->finish.assert(btn_id);
+  owner->finish.assert(btn_id);
  }
 
-MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id_,MessageSubWindow *sub_win_)
+MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id_,MessageSubWindow *owner_)
  : ButtonWindow(host,cfg,name),
    btn_id(btn_id_),
-   sub_win(sub_win_),
+   owner(owner_),
    connector_pressed(this,&MessageSubWindow::Btn::pressed_id,pressed)
  {
  }
@@ -109,7 +109,7 @@ MessageSubWindow & MessageSubWindow::setInfo(const Info &info)
 
 MessageSubWindow & MessageSubWindow::add(const DefString &name,int btn_id)
  {
-  btn_list.append_fill(OwnPtr<Btn>(new Btn(wlist,btn_cfg,name,btn_id,this)));
+  btn_list.append_fill(OwnPtr<Btn>( new Btn(wlist,btn_cfg,name,btn_id,this) ));
 
   return *this;
  }
