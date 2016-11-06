@@ -121,6 +121,7 @@ OBJ_LIST = \
 ../test-obj/test3029.NetFork.o \
 ../test-obj/test3030.PSec.o \
 ../test-obj/test3031.PKE.o \
+../test-obj/test3032.FileNameMatch.o \
 ../test-obj/test5001.Task.o \
 ../test-obj/test5002.Mutex.o \
 ../test-obj/test5003.Sem.o \
@@ -282,6 +283,7 @@ ASM_LIST = \
 ../test-obj/test3029.NetFork.s \
 ../test-obj/test3030.PSec.s \
 ../test-obj/test3031.PKE.s \
+../test-obj/test3032.FileNameMatch.s \
 ../test-obj/test5001.Task.s \
 ../test-obj/test5002.Mutex.s \
 ../test-obj/test5003.Sem.s \
@@ -443,6 +445,7 @@ DEP_LIST = \
 ../test-obj/test3029.NetFork.dep \
 ../test-obj/test3030.PSec.dep \
 ../test-obj/test3031.PKE.dep \
+../test-obj/test3032.FileNameMatch.dep \
 ../test-obj/test5001.Task.dep \
 ../test-obj/test5002.Mutex.dep \
 ../test-obj/test5003.Sem.dep \
@@ -851,6 +854,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3031.PKE.o : ../../../Applied/CCore/test/test3031.PKE.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3032.FileNameMatch.o : ../../../Applied/CCore/test/test3032.FileNameMatch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test5001.Task.o : ../../../XCore/CCore/test/test5001.Task.cpp
@@ -1329,6 +1335,9 @@ include $(RULES_FILE)
 ../test-obj/test3031.PKE.s : ../../../Applied/CCore/test/test3031.PKE.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3032.FileNameMatch.s : ../../../Applied/CCore/test/test3032.FileNameMatch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test5001.Task.s : ../../../XCore/CCore/test/test5001.Task.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1804,6 +1813,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3031.PKE.dep : ../../../Applied/CCore/test/test3031.PKE.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3031.PKE.o $< -MF $@
+
+../test-obj/test3032.FileNameMatch.dep : ../../../Applied/CCore/test/test3032.FileNameMatch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3032.FileNameMatch.o $< -MF $@
 
 ../test-obj/test5001.Task.dep : ../../../XCore/CCore/test/test5001.Task.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test5001.Task.o $< -MF $@

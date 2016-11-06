@@ -19,12 +19,12 @@
 #include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
-#include <CCore/inc/video/FileNameMatch.h>
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FunctorType.h>
 #include <CCore/inc/FileSystem.h>
 #include <CCore/inc/MakeFileName.h>
+#include <CCore/inc/FileNameMatch.h>
 
 namespace CCore {
 namespace Video {

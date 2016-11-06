@@ -325,7 +325,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
    // cursor
 
-   if( enable )
+   if( enable && ( !hide_cursor || focus ) )
      {
       MCoord c0=y0+Fraction(dy);
       MCoord c1=c0+h;

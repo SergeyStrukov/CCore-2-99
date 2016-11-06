@@ -395,6 +395,7 @@ FileFilterWindow::FileFilterWindow(SubWindowHost &host,const Config &cfg_,ulen i
   wlist.insTop(check,edit,knob);
 
   edit.setText(filter);
+  edit.hideInactiveCursor();
  }
 
 FileFilterWindow::~FileFilterWindow()
@@ -904,6 +905,8 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted())
  {
   wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,filter_list,btn_Ok,btn_Cancel);
+
+  dir.hideInactiveCursor();
  }
 
 FileSubWindow::~FileSubWindow()

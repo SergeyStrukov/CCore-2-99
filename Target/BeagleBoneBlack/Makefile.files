@@ -107,6 +107,7 @@ obj/ExceptionType.o \
 obj/FastMutex.o \
 obj/Fifo.o \
 obj/FileName.o \
+obj/FileNameMatch.o \
 obj/Forget.o \
 obj/FrameBuf.o \
 obj/FuncTask.o \
@@ -447,6 +448,7 @@ obj/ExceptionType.s \
 obj/FastMutex.s \
 obj/Fifo.s \
 obj/FileName.s \
+obj/FileNameMatch.s \
 obj/Forget.s \
 obj/FrameBuf.s \
 obj/FuncTask.s \
@@ -787,6 +789,7 @@ obj/ExceptionType.dep \
 obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FileName.dep \
+obj/FileNameMatch.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
 obj/FuncTask.dep \
@@ -1356,6 +1359,9 @@ obj/Fifo.o : ../../Simple/CCore/src/Fifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FileNameMatch.o : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Forget.o : ../../Applied/CCore/src/crypton/Forget.cpp
@@ -2371,6 +2377,9 @@ obj/Fifo.s : ../../Simple/CCore/src/Fifo.cpp
 obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileNameMatch.s : ../../Applied/CCore/src/FileNameMatch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Forget.s : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3383,6 +3392,9 @@ obj/Fifo.dep : ../../Simple/CCore/src/Fifo.cpp
 
 obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
+
+obj/FileNameMatch.dep : ../../Applied/CCore/src/FileNameMatch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameMatch.o $< -MF $@
 
 obj/Forget.dep : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Forget.o $< -MF $@

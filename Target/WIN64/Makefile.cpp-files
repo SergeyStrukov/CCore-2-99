@@ -190,6 +190,7 @@
 ../../Applied/CCore/src/Elf.cpp
 ../../Applied/CCore/src/EventRecorder.cpp
 ../../Applied/CCore/src/FileName.cpp
+../../Applied/CCore/src/FileNameMatch.cpp
 ../../Applied/CCore/src/LineInput.cpp
 ../../Applied/CCore/src/Log.cpp
 ../../Applied/CCore/src/math/APRTest.cpp
@@ -269,7 +270,6 @@
 ../../Desktop/CCore/src/video/DrawTools.cpp
 ../../Desktop/CCore/src/video/FigureLib.cpp
 ../../Desktop/CCore/src/video/FileNameCmp.cpp
-../../Desktop/CCore/src/video/FileNameMatch.cpp
 ../../Desktop/CCore/src/video/FixedWindow.cpp
 ../../Desktop/CCore/src/video/Font.cpp
 ../../Desktop/CCore/src/video/FontDatabase.cpp

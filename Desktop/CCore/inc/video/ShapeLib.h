@@ -1045,6 +1045,7 @@ class LineEditShape
    bool enable =  true ;
    bool focus  = false ;
    bool cursor = false ;
+   bool hide_cursor = false ;
    ulen len    =     0 ;
    ulen pos    =     0 ;
    ulen select_off = 0 ;

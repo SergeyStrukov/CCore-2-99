@@ -121,6 +121,7 @@ OBJ_LIST = \
 ../test-obj/test3029.NetFork.o \
 ../test-obj/test3030.PSec.o \
 ../test-obj/test3031.PKE.o \
+../test-obj/test3032.FileNameMatch.o \
 ../test-obj/test4001.Mutex.o \
 ../test-obj/test4002.Sem.o \
 ../test-obj/test4003.Event.o \
@@ -295,6 +296,7 @@ ASM_LIST = \
 ../test-obj/test3029.NetFork.s \
 ../test-obj/test3030.PSec.s \
 ../test-obj/test3031.PKE.s \
+../test-obj/test3032.FileNameMatch.s \
 ../test-obj/test4001.Mutex.s \
 ../test-obj/test4002.Sem.s \
 ../test-obj/test4003.Event.s \
@@ -469,6 +471,7 @@ DEP_LIST = \
 ../test-obj/test3029.NetFork.dep \
 ../test-obj/test3030.PSec.dep \
 ../test-obj/test3031.PKE.dep \
+../test-obj/test3032.FileNameMatch.dep \
 ../test-obj/test4001.Mutex.dep \
 ../test-obj/test4002.Sem.dep \
 ../test-obj/test4003.Event.dep \
@@ -890,6 +893,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3031.PKE.o : ../../../Applied/CCore/test/test3031.PKE.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3032.FileNameMatch.o : ../../../Applied/CCore/test/test3032.FileNameMatch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test4001.Mutex.o : ../../../HCore/CCore/test/test4001.Mutex.cpp
@@ -1407,6 +1413,9 @@ include $(RULES_FILE)
 ../test-obj/test3031.PKE.s : ../../../Applied/CCore/test/test3031.PKE.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3032.FileNameMatch.s : ../../../Applied/CCore/test/test3032.FileNameMatch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test4001.Mutex.s : ../../../HCore/CCore/test/test4001.Mutex.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1921,6 +1930,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3031.PKE.dep : ../../../Applied/CCore/test/test3031.PKE.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3031.PKE.o $< -MF $@
+
+../test-obj/test3032.FileNameMatch.dep : ../../../Applied/CCore/test/test3032.FileNameMatch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3032.FileNameMatch.o $< -MF $@
 
 ../test-obj/test4001.Mutex.dep : ../../../HCore/CCore/test/test4001.Mutex.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test4001.Mutex.o $< -MF $@

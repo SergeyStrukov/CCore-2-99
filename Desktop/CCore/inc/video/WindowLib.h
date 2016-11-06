@@ -2486,6 +2486,11 @@ class LineEditWindowOf : public SubWindow
 
    void disable() { enable(false); }
 
+   void hideInactiveCursor(bool flag=true)
+    {
+     if( Change(shape.hide_cursor,flag) ) redraw();
+    }
+
    StrLen getText() const { return Range(text_buf.getPtr(),shape.len); }
 
    PtrLen<char> getBuf() { return Range(text_buf); }

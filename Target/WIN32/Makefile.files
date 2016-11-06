@@ -1421,7 +1421,7 @@ obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameCmp.o : ../../Desktop/CCore/src/video/FileNameCmp.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/FileNameMatch.o : ../../Desktop/CCore/src/video/FileNameMatch.cpp
+obj/FileNameMatch.o : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
@@ -2533,7 +2533,7 @@ obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameCmp.s : ../../Desktop/CCore/src/video/FileNameCmp.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/FileNameMatch.s : ../../Desktop/CCore/src/video/FileNameMatch.cpp
+obj/FileNameMatch.s : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
@@ -3645,7 +3645,7 @@ obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameCmp.dep : ../../Desktop/CCore/src/video/FileNameCmp.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameCmp.o $< -MF $@
 
-obj/FileNameMatch.dep : ../../Desktop/CCore/src/video/FileNameMatch.cpp
+obj/FileNameMatch.dep : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameMatch.o $< -MF $@
 
 obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
