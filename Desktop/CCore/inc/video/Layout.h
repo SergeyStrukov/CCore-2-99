@@ -103,6 +103,40 @@ Point SupMinSize(const WW & ... ww)
   return Sup( ww.getMinSize()... );
  }
 
+/* Box() */
+
+inline Pane Box(Coord dxy,Pane pane)
+ {
+  return Pane(pane.x,pane.y+(pane.dy-dxy)/2,dxy,dxy);
+ }
+
+inline Pane Box(Pane pane,Coord dxy)
+ {
+  return Pane(pane.x+(pane.dx-dxy),pane.y+(pane.dy-dxy)/2,dxy,dxy);
+ }
+
+/* SplitBox() */
+
+inline Pane SplitBox(Coord dxy,Pane &pane,Coord space)
+ {
+  return Box(dxy,SplitX(IntAdd(dxy,space),pane));
+ }
+
+inline Pane SplitBox(Pane &pane,Coord dxy,Coord space)
+ {
+  return Box(SplitX(pane,IntAdd(dxy,space)),dxy);
+ }
+
+inline Pane SplitBox(Coord dxy,Pane &pane)
+ {
+  return SplitBox(dxy,pane,dxy/5);
+ }
+
+inline Pane SplitBox(Pane &pane,Coord dxy)
+ {
+  return SplitBox(pane,dxy,dxy/5);
+ }
+
 /* classes */
 
 class CenterFunc;

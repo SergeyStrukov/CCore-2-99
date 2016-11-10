@@ -29,16 +29,6 @@
 namespace CCore {
 namespace Video {
 
-/* layout functions */
-
-Pane BoxLeft(Pane pane,Coord dxy);
-
-Pane BoxRight(Pane pane,Coord dxy);
-
-Pane PlaceBefore(Pane &pane,Coord dxy);
-
-Pane PlaceAfter(Pane &pane,Coord dxy);
-
 /* classes */
 
 class DirHitList;

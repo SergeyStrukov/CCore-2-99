@@ -37,36 +37,6 @@
 namespace CCore {
 namespace Video {
 
-/* layout functions */
-
-Pane BoxLeft(Pane pane,Coord dxy)
- {
-  return Pane(pane.x,pane.y+(pane.dy-dxy)/2,dxy,dxy);
- }
-
-Pane BoxRight(Pane pane,Coord dxy)
- {
-  return Pane(pane.x+(pane.dx-dxy),pane.y+(pane.dy-dxy)/2,dxy,dxy);
- }
-
-Pane PlaceBefore(Pane &pane,Coord dxy)
- {
-  Coord delta=dxy+dxy/5;
-
-  Pane p=SplitX(delta,pane);
-
-  return BoxLeft(p,dxy);
- }
-
-Pane PlaceAfter(Pane &pane,Coord dxy)
- {
-  Coord delta=dxy+dxy/5;
-
-  Pane p=SplitX(pane,delta);
-
-  return BoxRight(p,dxy);
- }
-
 /* class DirHitList */
 
 bool DirHitList::Rec::test_and_inc(StrLen dir_name)
@@ -422,9 +392,9 @@ void FileFilterWindow::layout()
 
   Pane pane(Null,size);
 
-  check.setPlace(PlaceBefore(pane,Min(+cfg.check_dxy,size.y)));
+  check.setPlace(SplitBox(Min(+cfg.check_dxy,size.y),pane));
 
-  knob.setPlace(PlaceAfter(pane,Min(+cfg.knob_dxy,size.y)));
+  knob.setPlace(SplitBox(pane,Min(+cfg.knob_dxy,size.y)));
 
   edit.setPlace(pane);
  }
@@ -965,11 +935,11 @@ void FileSubWindow::layout()
    Pane pane=psor.cutY(dy);
    Coord dxy=Min(dy,+cfg.knob_dxy);
 
-   knob_hit.setPlace(PlaceBefore(pane,dxy));
+   knob_hit.setPlace(SplitBox(dxy,pane));
 
-   knob_add.setPlace(PlaceBefore(pane,dxy));
+   knob_add.setPlace(SplitBox(dxy,pane));
 
-   knob_back.setPlace(PlaceAfter(pane,dxy));
+   knob_back.setPlace(SplitBox(pane,dxy));
 
    dir.setPlace(pane);
   }
