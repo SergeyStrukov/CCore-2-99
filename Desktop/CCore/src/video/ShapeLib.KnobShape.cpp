@@ -27,9 +27,9 @@ Point KnobShape::getMinSize() const
  {
   MCoord width=+cfg.width;
 
-  Coord dxy=RoundUpLen(4*width);
+  Coord min_dxy=RoundUpLen(4*width);
 
-  return Point::Diag(dxy);
+  return Point::Diag(Max(+cfg.dxy,min_dxy));
  }
 
 void KnobShape::draw(const DrawBuf &buf) const

@@ -39,6 +39,8 @@ class FileFilterWindow;
 
 class FileFilterListWindow;
 
+struct FileWindowParam;
+
 class FileSubWindow;
 
 class FileWindow;
@@ -139,9 +141,6 @@ class FileFilterWindow : public ComboWindow
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
-
-     RefVal<Coord> check_dxy = 20 ;
-     RefVal<Coord> knob_dxy = 30 ;
 
      Config() noexcept {}
     };
@@ -277,6 +276,13 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
    Signal<> changed;
  };
 
+/* struct FileWindowParam */
+
+struct FileWindowParam
+ {
+  bool new_file = false ;
+ };
+
 /* class FileSubWindow */
 
 class FileSubWindow : public ComboWindow
@@ -289,6 +295,8 @@ class FileSubWindow : public ComboWindow
 
      RefVal<Coord> knob_dxy = 30 ;
 
+     RefVal<Coord> check_dxy = 20 ;
+
      RefVal<VColor> back = Silver ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
@@ -299,6 +307,9 @@ class FileSubWindow : public ComboWindow
 
      CtorRefVal<SimpleCascadeMenu::ConfigType> hit_menu_cfg;
 
+     CtorRefVal<CheckWindow::ConfigType> check_cfg;
+     CtorRefVal<LabelWindow::ConfigType> label_cfg;
+
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref) noexcept
@@ -307,10 +318,13 @@ class FileSubWindow : public ComboWindow
         //filter_list_cfg(SmartBind,pref),
         btn_cfg(SmartBind,pref),
         knob_cfg(SmartBind,pref),
-        hit_menu_cfg(SmartBind,pref)
+        hit_menu_cfg(SmartBind,pref),
+        check_cfg(SmartBind,pref),
+        label_cfg(SmartBind,pref)
       {
        space_dxy.bind(pref.get().space_dxy);
        knob_dxy.bind(pref.get().knob_dxy);
+       check_dxy.bind(pref.get().check_dxy);
        back.bind(pref.get().back);
 
        (LineEditShape::Config &)edit_cfg.takeVal()=pref.getSmartConfig();
@@ -323,7 +337,9 @@ class FileSubWindow : public ComboWindow
 
    const Config &cfg;
 
-   Info file_info;
+   FileWindowParam param;
+
+   // subs
 
    DirEditWindow dir;
    KnobWindow knob_hit;
@@ -341,7 +357,15 @@ class FileSubWindow : public ComboWindow
    MenuData hit_data;
    SimpleCascadeMenu hit_menu;
 
+   CheckWindow check_new;
+   LabelWindow label_new_file;
+   LineEditWindow new_file;
+
+   // work
+
    FileSystem fs;
+
+   Info file_info;
 
    MakeFileName file_buf;
    StrLen file_path;
@@ -412,7 +436,7 @@ class FileSubWindow : public ComboWindow
 
  public:
 
-   FileSubWindow(SubWindowHost &host,const Config &cfg);
+   FileSubWindow(SubWindowHost &host,const Config &cfg,const FileWindowParam &param);
 
    virtual ~FileSubWindow();
 
@@ -469,9 +493,9 @@ class FileWindow : public DragWindow
 
   public:
 
-   FileWindow(Desktop *desktop,const Config &cfg);
+   FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param);
 
-   FileWindow(Desktop *desktop,const Config &cfg,Signal<> &update);
+   FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update);
 
    virtual ~FileWindow();
 

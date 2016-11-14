@@ -25,18 +25,7 @@ namespace Video {
 
 Point TextShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(text.str());
-
-  IntGuard( !ts.overflow );
-
-  MCoord width=+cfg.width;
-
-  MCoord ex=(Fraction(ts.dy)+2*width)/4;
-
-  Coord dx=RoundUpLen(ex);
-  Coord dy=RoundUpLen(width);
-
-  return 2*Point(dx,dy)+Point(ts.full_dx,ts.dy)+(+cfg.space);
+  return getMinSize(text.str());
  }
 
 Point TextShape::getMinSize(StrLen text) const

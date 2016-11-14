@@ -216,7 +216,7 @@ void TestWindow::layout()
    {
     Panesor psor1=psor.cutY(lsize.y);
 
-    psor1.placeX(rad1,lsize.y,CenterFunc(pref.get().check_dxy));
+    psor1.placeX(rad1,lsize.y,CenterFunc(pref.get().radio_dxy));
 
     psor1.placeX(label1,lsize.x);
    }
@@ -224,7 +224,7 @@ void TestWindow::layout()
    {
     Panesor psor1=psor.cutY(lsize.y);
 
-    psor1.placeX(rad2,lsize.y,CenterFunc(pref.get().check_dxy));
+    psor1.placeX(rad2,lsize.y,CenterFunc(pref.get().radio_dxy));
 
     psor1.placeX(label2,lsize.x);
    }
@@ -232,7 +232,7 @@ void TestWindow::layout()
    {
     Panesor psor1=psor.cutY(lsize.y);
 
-    psor1.placeX(rad3,lsize.y,CenterFunc(pref.get().check_dxy));
+    psor1.placeX(rad3,lsize.y,CenterFunc(pref.get().radio_dxy));
 
     psor1.placeX(label3,lsize.x);
    }

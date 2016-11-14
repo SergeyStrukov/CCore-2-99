@@ -92,7 +92,7 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    menu(wlist,cfg.menu_cfg,menu_data),
    cascade_menu(host.getFrame()->getDesktop(),cfg.cascade_menu_cfg),
    display(wlist,cfg.display_cfg),
-   open_file(host.getFrame()->getDesktop(),cfg.file_cfg),
+   open_file(host.getFrame()->getDesktop(),cfg.file_cfg,{true}),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.takeSelected()),

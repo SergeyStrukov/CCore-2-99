@@ -25,7 +25,7 @@ namespace Video {
 
 Point CheckShape::getMinSize() const
  {
-  return Point::Diag(10);
+  return Point::Diag(+cfg.dxy);
  }
 
 void CheckShape::draw(const DrawBuf &buf) const

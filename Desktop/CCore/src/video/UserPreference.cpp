@@ -34,6 +34,7 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("text_cursor_dx",text_cursor_dx);
   map.sync("check_dxy",check_dxy);
   map.sync("knob_dxy",knob_dxy);
+  map.sync("radio_dxy",radio_dxy);
   map.sync("swtch_dxy",swtch_dxy);
   map.sync("light_dxy",light_dxy);
   map.sync("scroll_dxy",scroll_dxy);
@@ -116,6 +117,7 @@ void UserPreferenceBag::sync(ConfigMap &map)
   map.sync("exw_back",exw_back);
   map.sync("exw_text",exw_text);
   map.sync("exw_divider",exw_divider);
+  map.sync("msgw_knob_dxy",msgw_knob_dxy);
 
   map.sync("label_font",label_font.param);
   map.sync("contour_font",contour_font.param);
@@ -136,6 +138,7 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("text_cursor_dx",text_cursor_dx);
   map.update("check_dxy",check_dxy);
   map.update("knob_dxy",knob_dxy);
+  map.update("radio_dxy",radio_dxy);
   map.update("swtch_dxy",swtch_dxy);
   map.update("light_dxy",light_dxy);
   map.update("scroll_dxy",scroll_dxy);
@@ -218,6 +221,7 @@ void UserPreferenceBag::update(ConfigMap &map) const
   map.update("exw_back",exw_back);
   map.update("exw_text",exw_text);
   map.update("exw_divider",exw_divider);
+  map.update("msgw_knob_dxy",msgw_knob_dxy);
 
   map.update("label_font",label_font.param);
   map.update("contour_font",contour_font.param);
@@ -239,6 +243,7 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.space();
    binder.item("check box",check_dxy);
    binder.item("knob box",knob_dxy);
+   binder.item("radio box",radio_dxy);
    binder.item("switch box",swtch_dxy);
    binder.item("light box",light_dxy);
    binder.item("scroll width",scroll_dxy);
@@ -369,6 +374,10 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("exception back",exw_back);
    binder.item("exception text",exw_text);
    binder.item("exception divider",exw_divider);
+
+  binder.group("Message window");
+
+   binder.item("ok knob box",msgw_knob_dxy);
  }
 
 void UserPreferenceBag::createFonts()
@@ -400,7 +409,7 @@ UserPreference::UserPreference() noexcept
   cfg_ExceptionWindow.scroll_cfg.bind(cfg_XScrollWindow);
 
   cfg_MessageSubWindow.back.bind(back);
-  cfg_MessageSubWindow.knob_dxy.bind(knob_dxy);
+  cfg_MessageSubWindow.knob_dxy.bind(msgw_knob_dxy);
   cfg_MessageSubWindow.space_dxy.bind(space_dxy);
   cfg_MessageSubWindow.info_cfg.bind(cfg_InfoWindow);
   cfg_MessageSubWindow.knob_cfg.bind(cfg_KnobWindow);
@@ -477,6 +486,7 @@ UserPreference::UserPreference() noexcept
   cfg_ButtonWindow.font.bind(button_font.font);
 
   cfg_KnobWindow.width.bind(width);
+  cfg_KnobWindow.dxy.bind(knob_dxy);
   cfg_KnobWindow.border.bind(border);
   cfg_KnobWindow.focus.bind(focus);
   cfg_KnobWindow.bottom.bind(bottom);
@@ -484,6 +494,7 @@ UserPreference::UserPreference() noexcept
   cfg_KnobWindow.topUp.bind(topUp);
   cfg_KnobWindow.face.bind(face);
 
+  cfg_CheckWindow.dxy.bind(check_dxy);
   cfg_CheckWindow.border.bind(border);
   cfg_CheckWindow.focus.bind(focus);
   cfg_CheckWindow.bottom.bind(top);
@@ -491,6 +502,7 @@ UserPreference::UserPreference() noexcept
   cfg_CheckWindow.bottomUp.bind(bottomUp);
   cfg_CheckWindow.mark.bind(mark);
 
+  cfg_RadioWindow.dxy.bind(radio_dxy);
   cfg_RadioWindow.border.bind(border);
   cfg_RadioWindow.focus.bind(focus);
   cfg_RadioWindow.bottom.bind(top);
@@ -575,10 +587,12 @@ UserPreference::UserPreference() noexcept
   cfg_YScrollWindow.faceUp.bind(faceUp);
   cfg_YScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
 
+  cfg_LightWindow.dxy.bind(light_dxy);
   cfg_LightWindow.top.bind(bottom);
   cfg_LightWindow.bottom.bind(top);
   cfg_LightWindow.inactive.bind(inactive);
 
+  cfg_SwitchWindow.dxy.bind(swtch_dxy);
   cfg_SwitchWindow.border.bind(border);
   cfg_SwitchWindow.focus.bind(focus);
   cfg_SwitchWindow.top.bind(top);

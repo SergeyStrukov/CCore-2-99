@@ -19,6 +19,7 @@
 #include <CCore/inc/video/Desktop.h>
 
 #include <CCore/inc/video/Layout.h>
+#include <CCore/inc/video/PaneCut.h>
 #include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FileNameCmp.h>
 
@@ -378,25 +379,23 @@ Point FileFilterWindow::getMinSize() const
  {
   Point size=edit.getMinSize();
 
-  Coord a=Min(+cfg.check_dxy,size.y);
-  Coord b=Min(+cfg.knob_dxy,size.y);
+  Coord check_dxy=BoxSize(check);
+  Coord knob_dxy=BoxSize(knob);
 
-  return size+Point(a+a/5,0)+Point(b+b/5,0);
+  return Point( BoxExt(check_dxy)+BoxExt(knob_dxy)+size.x , Max_cast(check_dxy,knob_dxy,size.y) );
  }
 
  // drawing
 
 void FileFilterWindow::layout()
  {
-  Point size=getSize();
+  PaneCut pane(getSize(),0);
 
-  Pane pane(Null,size);
+  pane.place_boxLeft(check);
 
-  check.setPlace(SplitBox(Min(+cfg.check_dxy,size.y),pane));
+  pane.place_boxRight(knob);
 
-  knob.setPlace(SplitBox(pane,Min(+cfg.knob_dxy,size.y)));
-
-  edit.setPlace(pane);
+  pane.place(edit);
  }
 
 void FileFilterWindow::draw(DrawBuf buf,bool drag_active) const
@@ -459,20 +458,19 @@ FileFilterListWindow::~FileFilterListWindow()
 
 Point FileFilterListWindow::getMinSize() const
  {
+  Coord knob_dxy=BoxSize(knob);
+
   if( ulen count=filter_list.getLen() )
     {
      Point size=filter_list[0]->getMinSize();
 
-     Coord dy=size.y;
-     Coord delta=dy+dy/5;
+     Coord delta=BoxExt(size.y);
 
-     return Point(size.x,delta*count+(+cfg.knob_dxy));
+     return Point(size.x,delta*count+knob_dxy);
     }
   else
     {
-     Coord dxy=+cfg.knob_dxy;
-
-     return Point::Diag(dxy);
+     return Point::Diag(knob_dxy);
     }
  }
 
@@ -500,26 +498,21 @@ void FileFilterListWindow::layout()
  {
   Point size=getSize();
 
-  if( ulen count=filter_list.getLen() )
+  if( filter_list.getLen() )
     {
      Coord dy=filter_list[0]->getMinSize().y;
 
-     Pane pane(Null,size.x,dy);
+     PaneCut pane(size,BoxSpace(dy));
 
-     Coord delta=dy+dy/5;
+     for(auto &ptr : filter_list ) pane.place_cutTop(*ptr);
 
-     for(ulen i=0; i<count ;i++)
-       {
-        filter_list[i]->setPlace(pane);
-
-        pane.y+=delta;
-       }
-
-     knob.setPlace(Pane(pane.getBase(),+cfg.knob_dxy));
+     pane.place_cutTopLeft(knob);
     }
   else
     {
-     knob.setPlace(Pane(Null,+cfg.knob_dxy));
+     PaneCut pane(size,0);
+
+     pane.place_cutTopLeft(knob);
     }
  }
 
@@ -842,9 +835,10 @@ void FileSubWindow::hit_menu_deleted(int id)
   hit_list.prepare(hit_data);
  }
 
-FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
+FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWindowParam &param_)
  : ComboWindow(host),
    cfg(cfg_),
+   param(param_),
 
    dir(wlist,cfg.edit_cfg),
    knob_hit(wlist,cfg.knob_cfg,KnobShape::FaceDown),
@@ -857,6 +851,10 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    btn_Cancel(wlist,cfg.btn_cfg,"Cancel"_def),
 
    hit_menu(host.getFrame()->getDesktop(),cfg.hit_menu_cfg),
+
+   check_new(wlist,cfg.check_cfg,true),
+   label_new_file(wlist,cfg.label_cfg,"New file"_def),
+   new_file(wlist,cfg.edit_cfg),
 
    connector_file_list_entered(this,&FileSubWindow::file_list_entered,file_list.entered),
    connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,file_list.dclicked),
@@ -875,6 +873,8 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_)
    connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted())
  {
   wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,filter_list,btn_Ok,btn_Cancel);
+
+  if( param.new_file ) wlist.insBottom(check_new,label_new_file,new_file);
 
   dir.hideInactiveCursor();
  }
@@ -923,7 +923,9 @@ void FileSubWindow::close()
 
 void FileSubWindow::layout()
  {
-  Panesor psor(getSize(),+cfg.space_dxy);
+  Coord space=+cfg.space_dxy;
+
+  Panesor psor(getSize(),space);
 
   psor.shrink();
 
@@ -949,6 +951,28 @@ void FileSubWindow::layout()
   {
    psor.placeY(dir_list,Rational(1,3));
   }
+
+  // new_file
+
+  if( param.new_file )
+    {
+     Point label_size=label_new_file.getMinSize();
+     Point edit_size=new_file.getMinSize();
+
+     Coord dy=Max(label_size.y,edit_size.y);
+
+     Pane pane=psor.cutY(dy);
+
+     Coord dxy=Min(+cfg.check_dxy,dy);
+
+     check_new.setPlace(SplitBox(dxy,pane));
+
+     Panesor p(pane,space);
+
+     p.placeX(label_new_file,label_size.x);
+
+     new_file.setPlace(p);
+    }
 
   // file_list
 
@@ -987,15 +1011,15 @@ void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 const char *const FileWindow::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
 
-FileWindow::FileWindow(Desktop *desktop,const Config &cfg)
+FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param)
  : DragWindow(desktop,cfg.frame_cfg),
-   sub_win(*this,cfg.file_cfg)
+   sub_win(*this,cfg.file_cfg,param)
  {
   bindClient(sub_win);
  }
 
-FileWindow::FileWindow(Desktop *desktop,const Config &cfg,Signal<> &update)
- : FileWindow(desktop,cfg)
+FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update)
+ : FileWindow(desktop,cfg,param)
  {
   bindUpdate(update);
  }

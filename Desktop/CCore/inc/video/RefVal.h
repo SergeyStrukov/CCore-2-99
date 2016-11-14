@@ -150,7 +150,9 @@ class CtorRefVal : NoCopy
 
    // methods
 
-   operator const T & () const { lock=true; if( ptr ) return *ptr; return val; }
+   const T & get() const { lock=true; if( ptr ) return *ptr; return val; }
+
+   operator const T & () const { return get(); }
 
    // set
 

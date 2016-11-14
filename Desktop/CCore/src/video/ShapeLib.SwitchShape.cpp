@@ -25,7 +25,7 @@ namespace Video {
 
 Point SwitchShape::getMinSize() const
  {
-  return Point::Diag(16);
+  return Point::Diag(+cfg.dxy);
  }
 
 void SwitchShape::draw(const DrawBuf &buf) const

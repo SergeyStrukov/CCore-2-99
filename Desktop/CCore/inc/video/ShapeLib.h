@@ -141,6 +141,8 @@ class KnobShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
+     RefVal<Coord> dxy = 30 ;
+
      RefVal<VColor> border =      Blue ;
      RefVal<VColor> focus  = OrangeRed ;
 
@@ -206,6 +208,8 @@ class CheckShape
 
    struct Config
     {
+     RefVal<Coord> dxy = 20 ;
+
      RefVal<VColor> border   =      Blue ;
      RefVal<VColor> focus    = OrangeRed ;
 
@@ -246,6 +250,8 @@ class RadioShape
 
    struct Config
     {
+     RefVal<Coord> dxy = 20 ;
+
      RefVal<VColor> border   =      Blue ;
      RefVal<VColor> focus    = OrangeRed ;
 
@@ -562,6 +568,8 @@ class SwitchShape
 
    struct Config
     {
+     RefVal<Coord> dxy = 30 ;
+
      RefVal<VColor> border =      Blue ;
      RefVal<VColor> focus  = OrangeRed ;
 
@@ -604,6 +612,8 @@ class LightShape
 
    struct Config
     {
+     RefVal<Coord> dxy = 20 ;
+
      RefVal<VColor> top      = Gray ;
      RefVal<VColor> bottom   = Snow ;
      RefVal<VColor> inactive = Gray ;

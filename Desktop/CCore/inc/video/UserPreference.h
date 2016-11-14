@@ -60,6 +60,7 @@ struct UserPreferenceBag
 
   Coord check_dxy   = 20 ;
   Coord knob_dxy    = 30 ;
+  Coord radio_dxy   = 20 ;
   Coord swtch_dxy   = 30 ;
   Coord light_dxy   = 20 ;
   Coord scroll_dxy  = 20 ;
@@ -190,6 +191,10 @@ struct UserPreferenceBag
   VColor exw_back    = Black ;
   VColor exw_text    = Green ;
   VColor exw_divider =   Red ;
+
+  // MessageWindow
+
+  Coord msgw_knob_dxy = 50 ;
 
   // constructors
 

@@ -1,4 +1,5 @@
 ./CCore/src/video/FileWindow.cpp
+./CCore/src/video/PaneCut.cpp
 ./src/Application.cpp
 ./src/Client.cpp
 ./src/Display.cpp

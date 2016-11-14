@@ -50,7 +50,7 @@ class MessageSubWindow : public SubWindow
 
    struct Config
     {
-     RefVal<Coord> knob_dxy  = 30 ;
+     RefVal<Coord> knob_dxy  = 50 ;
      RefVal<Coord> space_dxy = 10 ;
 
      RefVal<VColor> back = Silver ;
