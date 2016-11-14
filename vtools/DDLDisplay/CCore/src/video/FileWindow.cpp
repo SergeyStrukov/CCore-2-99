@@ -391,11 +391,9 @@ void FileFilterWindow::layout()
  {
   PaneCut pane(getSize(),0);
 
-  pane.place_boxLeft(check);
-
-  pane.place_boxRight(knob);
-
-  pane.place(edit);
+  pane.place_boxLeft(check)
+      .place_boxRight(knob)
+      .place(edit);
  }
 
 void FileFilterWindow::draw(DrawBuf buf,bool drag_active) const
@@ -923,73 +921,60 @@ void FileSubWindow::close()
 
 void FileSubWindow::layout()
  {
-  Coord space=+cfg.space_dxy;
+  PaneCut pane(getSize(),+cfg.space_dxy);
 
-  Panesor psor(getSize(),space);
+  pane.shrink();
 
-  psor.shrink();
-
-  // dir
+  // knob_hit , knob_add , dir , knob_back
 
   {
-   Coord dy=dir.getMinSize().y;
+   Coord knob_size=BoxSize(knob_hit);
+   Point dir_size=dir.getMinSize();
 
-   Pane pane=psor.cutY(dy);
-   Coord dxy=Min(dy,+cfg.knob_dxy);
+   Coord dy=Max(knob_size,dir_size.y);
 
-   knob_hit.setPlace(SplitBox(dxy,pane));
+   PaneCut p=pane.cutTop(dy);
 
-   knob_add.setPlace(SplitBox(dxy,pane));
-
-   knob_back.setPlace(SplitBox(pane,dxy));
-
-   dir.setPlace(pane);
+   p.place_boxLeft(knob_hit,knob_size)
+    .place_boxLeft(knob_add,knob_size)
+    .place_boxRight(knob_back,knob_size)
+    .place(dir);
   }
 
   // dir_list
 
   {
-   psor.placeY(dir_list,Rational(1,3));
+   pane.place_cutTop(dir_list,Rational(1,3));
   }
 
-  // new_file
+  // check_new , label_new_file , new_file
 
   if( param.new_file )
     {
+     Coord check_size=BoxSize(check_new);
      Point label_size=label_new_file.getMinSize();
      Point edit_size=new_file.getMinSize();
 
-     Coord dy=Max(label_size.y,edit_size.y);
+     Coord dy=Max_cast(check_size,label_size.y,edit_size.y);
 
-     Pane pane=psor.cutY(dy);
+     PaneCut p=pane.cutTop(dy);
 
-     Coord dxy=Min(+cfg.check_dxy,dy);
-
-     check_new.setPlace(SplitBox(dxy,pane));
-
-     Panesor p(pane,space);
-
-     p.placeX(label_new_file,label_size.x);
-
-     new_file.setPlace(p);
+     p.place_boxLeft(check_new,check_size)
+      .place_cutLeft(label_new_file,label_size.x)
+      .place(new_file);
     }
 
-  // file_list
-
-  Point btn_size=SupMinSize(btn_Ok,btn_Cancel);
+  // btn_Ok , btn_Cancel
 
   {
-   Panesor p=psor.cutY_rest(btn_size.y);
-
-   p.placeX(file_list,Rational(2,3));
-
-   filter_list.setPlace(p);
+   pane.placeRow_cutBottom(btn_Ok,btn_Cancel);
   }
 
-  // btn
+  // file_list , filter_list
 
   {
-   psor.placeRow(btn_size,btn_Ok,btn_Cancel);
+   pane.place_cutLeft(file_list,Rational(2,3))
+       .place(filter_list);
   }
  }
 

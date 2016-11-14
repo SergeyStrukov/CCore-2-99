@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_PaneCut_h
 #define CCore_inc_video_PaneCut_h
 
-#include <CCore/inc/video/Point.h>
+#include <CCore/inc/video/Layout.h>
 
 namespace CCore {
 namespace Video {
@@ -92,6 +92,15 @@ class PaneCut
 
    PaneCut cutBottom(Coord dy);
 
+
+   PaneCut cutLeft(Ratio dx) { return cutLeft(dx*pane.dx); }
+
+   PaneCut cutRight(Ratio dx) { return cutRight(dx*pane.dx); }
+
+   PaneCut cutTop(Ratio dy) { return cutTop(dy*pane.dy); }
+
+   PaneCut cutBottom(Ratio dy) { return cutBottom(dy*pane.dy); }
+
    // box
 
    Pane boxLeft(Coord dxy,Coord mini_space);
@@ -158,85 +167,137 @@ class PaneCut
    void place(PlaceType &window) const { window.setPlace(pane); }
 
 
-   void place_boxLeft(PlaceType &window,Coord dxy,Coord mini_space) { window.setPlace(boxLeft(dxy,mini_space)); }
+   PaneCut & place_boxLeft(PlaceType &window,Coord dxy,Coord mini_space) { window.setPlace(boxLeft(dxy,mini_space)); return *this; }
 
-   void place_boxRight(PlaceType &window,Coord dxy,Coord mini_space) { window.setPlace(boxRight(dxy,mini_space)); }
+   PaneCut & place_boxRight(PlaceType &window,Coord dxy,Coord mini_space) { window.setPlace(boxRight(dxy,mini_space)); return *this; }
 
-   void place_boxLeft(PlaceType &window,Coord dxy) { window.setPlace(boxLeft(dxy)); }
+   PaneCut & place_boxLeft(PlaceType &window,Coord dxy) { window.setPlace(boxLeft(dxy)); return *this; }
 
-   void place_boxRight(PlaceType &window,Coord dxy) { window.setPlace(boxRight(dxy)); }
+   PaneCut & place_boxRight(PlaceType &window,Coord dxy) { window.setPlace(boxRight(dxy)); return *this; }
 
-   void place_boxLeft(PlaceType &window) { place_boxLeft(window,BoxSize(window)); }
+   PaneCut & place_boxLeft(PlaceType &window) { place_boxLeft(window,BoxSize(window)); return *this; }
 
-   void place_boxRight(PlaceType &window) { place_boxRight(window,BoxSize(window)); }
-
-
-   void place_cutLeft(PlaceType &window,Coord dx) { window.setPlace(cutLeft(dx)); }
-
-   void place_cutRight(PlaceType &window,Coord dx) { window.setPlace(cutRight(dx)); }
-
-   void place_cutTop(PlaceType &window,Coord dy) { window.setPlace(cutTop(dy)); }
-
-   void place_cutBottom(PlaceType &window,Coord dy) { window.setPlace(cutBottom(dy)); }
+   PaneCut & place_boxRight(PlaceType &window) { place_boxRight(window,BoxSize(window)); return *this; }
 
 
-   void place_cutLeft(PlaceType &window) { place_cutLeft(window,window.getMinSize().x); }
+   PaneCut & place_cutLeft(PlaceType &window,OneOfTypes<Coord,Ratio> dx) { window.setPlace(cutLeft(dx)); return *this; }
 
-   void place_cutRight(PlaceType &window) { place_cutRight(window,window.getMinSize().x); }
+   PaneCut & place_cutRight(PlaceType &window,OneOfTypes<Coord,Ratio> dx) { window.setPlace(cutRight(dx)); return *this; }
 
-   void place_cutTop(PlaceType &window) { place_cutTop(window,window.getMinSize().y); }
+   PaneCut & place_cutTop(PlaceType &window,OneOfTypes<Coord,Ratio> dy) { window.setPlace(cutTop(dy)); return *this; }
 
-   void place_cutBottom(PlaceType &window) { place_cutBottom(window,window.getMinSize().y); }
-
-
-   void place_cutLeftTop(PlaceType &window,Point size) { window.setPlace(cutLeftTop(size)); }
-
-   void place_cutLeftCenter(PlaceType &window,Point size) { window.setPlace(cutLeftCenter(size)); }
-
-   void place_cutLeftBottom(PlaceType &window,Point size) { window.setPlace(cutLeftBottom(size)); }
-
-   void place_cutRightTop(PlaceType &window,Point size) { window.setPlace(cutRightTop(size)); }
-
-   void place_cutRightCenter(PlaceType &window,Point size) { window.setPlace(cutRightCenter(size)); }
-
-   void place_cutRightBottom(PlaceType &window,Point size) { window.setPlace(cutRightBottom(size)); }
-
-   void place_cutTopLeft(PlaceType &window,Point size) { window.setPlace(cutTopLeft(size)); }
-
-   void place_cutTopCenter(PlaceType &window,Point size) { window.setPlace(cutTopCenter(size)); }
-
-   void place_cutTopRight(PlaceType &window,Point size) { window.setPlace(cutTopRight(size)); }
-
-   void place_cutBottomLeft(PlaceType &window,Point size) { window.setPlace(cutBottomLeft(size)); }
-
-   void place_cutBottomCenter(PlaceType &window,Point size) { window.setPlace(cutBottomCenter(size)); }
-
-   void place_cutBottomRight(PlaceType &window,Point size) { window.setPlace(cutBottomRight(size)); }
+   PaneCut & place_cutBottom(PlaceType &window,OneOfTypes<Coord,Ratio> dy) { window.setPlace(cutBottom(dy)); return *this; }
 
 
-   void place_cutLeftTop(PlaceType &window) { place_cutLeftTop(window,window.getMinSize()); }
+   PaneCut & place_cutLeft(PlaceType &window) { place_cutLeft(window,window.getMinSize().x); return *this; }
 
-   void place_cutLeftCenter(PlaceType &window) { place_cutLeftCenter(window,window.getMinSize()); }
+   PaneCut & place_cutRight(PlaceType &window) { place_cutRight(window,window.getMinSize().x); return *this; }
 
-   void place_cutLeftBottom(PlaceType &window) { place_cutLeftBottom(window,window.getMinSize()); }
+   PaneCut & place_cutTop(PlaceType &window) { place_cutTop(window,window.getMinSize().y); return *this; }
 
-   void place_cutRightTop(PlaceType &window) { place_cutRightTop(window,window.getMinSize()); }
+   PaneCut & place_cutBottom(PlaceType &window) { place_cutBottom(window,window.getMinSize().y); return *this; }
 
-   void place_cutRightCenter(PlaceType &window) { place_cutRightCenter(window,window.getMinSize()); }
 
-   void place_cutRightBottom(PlaceType &window) { place_cutRightBottom(window,window.getMinSize()); }
+   PaneCut & place_cutLeftTop(PlaceType &window,Point size) { window.setPlace(cutLeftTop(size)); return *this; }
 
-   void place_cutTopLeft(PlaceType &window) { place_cutTopLeft(window,window.getMinSize()); }
+   PaneCut & place_cutLeftCenter(PlaceType &window,Point size) { window.setPlace(cutLeftCenter(size)); return *this; }
 
-   void place_cutTopCenter(PlaceType &window) { place_cutTopCenter(window,window.getMinSize()); }
+   PaneCut & place_cutLeftBottom(PlaceType &window,Point size) { window.setPlace(cutLeftBottom(size)); return *this; }
 
-   void place_cutTopRight(PlaceType &window) { place_cutTopRight(window,window.getMinSize()); }
+   PaneCut & place_cutRightTop(PlaceType &window,Point size) { window.setPlace(cutRightTop(size)); return *this; }
 
-   void place_cutBottomLeft(PlaceType &window) { place_cutBottomLeft(window,window.getMinSize()); }
+   PaneCut & place_cutRightCenter(PlaceType &window,Point size) { window.setPlace(cutRightCenter(size)); return *this; }
 
-   void place_cutBottomCenter(PlaceType &window) { place_cutBottomCenter(window,window.getMinSize()); }
+   PaneCut & place_cutRightBottom(PlaceType &window,Point size) { window.setPlace(cutRightBottom(size)); return *this; }
 
-   void place_cutBottomRight(PlaceType &window) { place_cutBottomRight(window,window.getMinSize()); }
+   PaneCut & place_cutTopLeft(PlaceType &window,Point size) { window.setPlace(cutTopLeft(size)); return *this; }
+
+   PaneCut & place_cutTopCenter(PlaceType &window,Point size) { window.setPlace(cutTopCenter(size)); return *this; }
+
+   PaneCut & place_cutTopRight(PlaceType &window,Point size) { window.setPlace(cutTopRight(size)); return *this; }
+
+   PaneCut & place_cutBottomLeft(PlaceType &window,Point size) { window.setPlace(cutBottomLeft(size)); return *this; }
+
+   PaneCut & place_cutBottomCenter(PlaceType &window,Point size) { window.setPlace(cutBottomCenter(size)); return *this; }
+
+   PaneCut & place_cutBottomRight(PlaceType &window,Point size) { window.setPlace(cutBottomRight(size)); return *this; }
+
+
+   PaneCut & place_cutLeftTop(PlaceType &window) { place_cutLeftTop(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutLeftCenter(PlaceType &window) { place_cutLeftCenter(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutLeftBottom(PlaceType &window) { place_cutLeftBottom(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutRightTop(PlaceType &window) { place_cutRightTop(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutRightCenter(PlaceType &window) { place_cutRightCenter(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutRightBottom(PlaceType &window) { place_cutRightBottom(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutTopLeft(PlaceType &window) { place_cutTopLeft(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutTopCenter(PlaceType &window) { place_cutTopCenter(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutTopRight(PlaceType &window) { place_cutTopRight(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutBottomLeft(PlaceType &window) { place_cutBottomLeft(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutBottomCenter(PlaceType &window) { place_cutBottomCenter(window,window.getMinSize()); return *this; }
+
+   PaneCut & place_cutBottomRight(PlaceType &window) { place_cutBottomRight(window,window.getMinSize()); return *this; }
+
+   // placeRow
+
+   template <class ... WW>
+   PaneCut & placeRow_cutTop(WW & ... ww) requires ( ... && PlaceType<WW> )
+    {
+     Point size=SupMinSize(ww...);
+
+     PlaceRow row(cutTop(size.y),size,space,sizeof ... (WW));
+
+     row.place(ww...);
+
+     return *this;
+    }
+
+   template <class ... WW>
+   PaneCut & placeRow_cutBottom(WW & ... ww) requires ( ... && PlaceType<WW> )
+    {
+     Point size=SupMinSize(ww...);
+
+     PlaceRow row(cutBottom(size.y),size,space,sizeof ... (WW));
+
+     row.place(ww...);
+
+     return *this;
+    }
+
+   // placeColumn
+
+   template <class ... WW>
+   PaneCut & placeColumn_cutLeft(WW & ... ww) requires ( ... && PlaceType<WW> )
+    {
+     Point size=SupMinSize(ww...);
+
+     PlaceColumn col(cutLeft(size.x),size,space,sizeof ... (WW));
+
+     col.place(ww...);
+
+     return *this;
+    }
+
+   template <class ... WW>
+   PaneCut & placeColumn_cutRight(WW & ... ww) requires ( ... && PlaceType<WW> )
+    {
+     Point size=SupMinSize(ww...);
+
+     PlaceColumn col(cutRight(size.x),size,space,sizeof ... (WW));
+
+     col.place(ww...);
+
+     return *this;
+    }
  };
 
 } // namespace Video
