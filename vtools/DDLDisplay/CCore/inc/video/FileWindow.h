@@ -306,6 +306,8 @@ class FileSubWindow : public ComboWindow
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
 
+     CtorRefVal<XDoubleLineWindow::ConfigType> line_cfg;
+
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref) noexcept
@@ -316,7 +318,8 @@ class FileSubWindow : public ComboWindow
         knob_cfg(SmartBind,pref),
         hit_menu_cfg(SmartBind,pref),
         check_cfg(SmartBind,pref),
-        label_cfg(SmartBind,pref)
+        label_cfg(SmartBind,pref),
+        line_cfg(SmartBind,pref)
       {
        space_dxy.bind(pref.get().space_dxy);
        back.bind(pref.get().back);
@@ -339,10 +342,15 @@ class FileSubWindow : public ComboWindow
    KnobWindow knob_hit;
    KnobWindow knob_add;
    KnobWindow knob_back;
+
+   XDoubleLineWindow line1;
+
    ScrollListWindow dir_list;
    ScrollListWindow file_list;
 
    FileFilterListWindow filter_list;
+
+   XDoubleLineWindow line2;
 
    ButtonWindow btn_Ok;
    ButtonWindow btn_Cancel;

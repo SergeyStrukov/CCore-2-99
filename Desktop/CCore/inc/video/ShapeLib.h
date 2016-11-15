@@ -439,8 +439,8 @@ class DoubleLineShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<VColor> top    = Gray ;
-     RefVal<VColor> bottom = Snow ;
+     RefVal<VColor> top    = Snow ;
+     RefVal<VColor> bottom = Gray ;
 
      Config() noexcept {}
     };

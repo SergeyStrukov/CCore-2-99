@@ -262,6 +262,8 @@ class FontEditWindow : public ComboWindow
 
    // methods
 
+   Point getMinSize() const { return Null; }
+
    const FontParam & getParam() const { return font.param; }
 
    const Font & getFont() const { return font.font; }

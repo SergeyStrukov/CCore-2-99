@@ -106,6 +106,8 @@ void MCoordEditWindow::setMCoord(MCoord value_)
 
  // drawing
 
+#if 0
+
 void MCoordEditWindow::layout()
  {
   Point size=getSize();
@@ -130,6 +132,8 @@ void MCoordEditWindow::layout()
 
   psor.placeX(small_plus,len3);
  }
+
+#endif
 
  // user input
 

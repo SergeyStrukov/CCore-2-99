@@ -149,7 +149,13 @@ void XScrollShape::draw(const DrawBuf &buf) const
 
   art.block(pane,+cfg.back);
 
-  if( s.x<5*s.y ) return;
+  if( s.x<5*s.y )
+    {
+     art.block(pane,+cfg.bottom);
+     art.block(pane.shrink(0,pane.dy/3),+cfg.face);
+
+     return;
+    }
 
   MCoord y0=a.y;
   MCoord y1=y0+s.y;

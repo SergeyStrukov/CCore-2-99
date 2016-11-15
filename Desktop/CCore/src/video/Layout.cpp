@@ -94,6 +94,113 @@ Pane CenterY(Pane outer,Coord dy)
   return Pane(outer.x,IntAdd(outer.y,IntSub(outer.dy,dy)/2),outer.dx,dy);
  }
 
+#if 0
+
+/* struct UseMinSizeType */
+
+UseMinSizeType MinSize;
+
+#endif
+
+//----------------------------------------------------------------------------------------
+
+/* functions */
+
+Pane AlignLeft(Pane pane,Coord dx)
+ {
+  if( dx<=pane.dx )
+    {
+     return Pane(pane.x,pane.y,dx,pane.dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignCenterX(Pane pane,Coord dx)
+ {
+  if( dx<=pane.dx )
+    {
+     Coord off=(pane.dx-dx)/2;
+
+     return Pane(pane.x+off,pane.y,dx,pane.dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignRight(Pane pane,Coord dx)
+ {
+  if( dx<=pane.dx )
+    {
+     Coord off=pane.dx-dx;
+
+     return Pane(pane.x+off,pane.y,dx,pane.dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignTop(Pane pane,Coord dy)
+ {
+  if( dy<=pane.dy )
+    {
+     return Pane(pane.x,pane.y,pane.dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignCenterY(Pane pane,Coord dy)
+ {
+  if( dy<=pane.dy )
+    {
+     Coord off=(pane.dy-dy)/2;
+
+     return Pane(pane.x,pane.y+off,pane.dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignBottom(Pane pane,Coord dy)
+ {
+  if( dy<=pane.dy )
+    {
+     Coord off=pane.dy-dy;
+
+     return Pane(pane.x,pane.y+off,pane.dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignCenter(Pane pane,Coord dx,Coord dy)
+ {
+  if( dx<=pane.dx && dy<=pane.dy )
+    {
+     Coord off_x=(pane.dx-dx)/2;
+     Coord off_y=(pane.dy-dy)/2;
+
+     return Pane(pane.x+off_x,pane.y+off_y,dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
 /* class PlaceRow */
 
 PlaceRow::PlaceRow(Pane outer,Point size_,Coord space,ulen count_)
@@ -104,7 +211,14 @@ PlaceRow::PlaceRow(Pane outer,Point size_,Coord space,ulen count_)
 
   auto total=count*size_.x+(count-1)*space;
 
-  base=Center(outer,{+total,size_.y}).getBase();
+  Point total_size(+total,size_.y);
+
+  Pane pane=AlignCenter(outer,total_size);
+
+  if( +pane )
+    base=pane.getBase();
+  else
+    size=Null;
  }
 
 /* class PlaceColumn */
@@ -117,12 +231,90 @@ PlaceColumn::PlaceColumn(Pane outer,Point size_,Coord space,ulen count_)
 
   auto total=count*size_.y+(count-1)*space;
 
-  base=Center(outer,{size_.x,+total}).getBase();
+  Point total_size(size_.x,+total);
+
+  Pane pane=AlignCenter(outer,total_size);
+
+  if( +pane )
+    base=pane.getBase();
+  else
+    size=Null;
  }
 
-/* struct UseMinSizeType */
+/* class PaneCut */
 
-UseMinSizeType MinSize;
+ // methods
+
+void PaneCut::shrink()
+ {
+  pane=pane.shrink(space);
+ }
+
+ // cut
+
+PaneCut PaneCut::cutLeft(Coord dx,Coord space)
+ {
+  if( dx<=pane.dx )
+    {
+     PaneCut ret(SplitX(dx,pane),this->space);
+
+     SplitX(space,pane);
+
+     return ret;
+    }
+  else
+    {
+     return PaneCut(space);
+    }
+ }
+
+PaneCut PaneCut::cutRight(Coord dx,Coord space)
+ {
+  if( dx<=pane.dx )
+    {
+     PaneCut ret(SplitX(pane,dx),this->space);
+
+     SplitX(pane,space);
+
+     return ret;
+    }
+  else
+    {
+     return PaneCut(space);
+    }
+ }
+
+PaneCut PaneCut::cutTop(Coord dy,Coord space)
+ {
+  if( dy<=pane.dy )
+    {
+     PaneCut ret(SplitY(dy,pane),this->space);
+
+     SplitY(space,pane);
+
+     return ret;
+    }
+  else
+    {
+     return PaneCut(space);
+    }
+ }
+
+PaneCut PaneCut::cutBottom(Coord dy,Coord space)
+ {
+  if( dy<=pane.dy )
+    {
+     PaneCut ret(SplitY(pane,dy),this->space);
+
+     SplitY(pane,space);
+
+     return ret;
+    }
+  else
+    {
+     return PaneCut(space);
+    }
+ }
 
 } // namespace Video
 } // namespace CCore

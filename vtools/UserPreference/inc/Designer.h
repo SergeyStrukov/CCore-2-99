@@ -110,6 +110,8 @@ class DesignerWindow : public ComboWindow
         point_cfg(pref),
         color_cfg(pref)
       {
+       space_dxy.bind(pref.get().space_dxy);
+       back.bind(pref.get().back);
       }
     };
 

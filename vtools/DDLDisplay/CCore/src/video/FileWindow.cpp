@@ -19,7 +19,6 @@
 #include <CCore/inc/video/Desktop.h>
 
 #include <CCore/inc/video/Layout.h>
-#include <CCore/inc/video/PaneCut.h>
 #include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FileNameCmp.h>
 
@@ -850,9 +849,11 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    knob_hit(wlist,cfg.knob_cfg,KnobShape::FaceDown),
    knob_add(wlist,cfg.knob_cfg,KnobShape::FacePlus),
    knob_back(wlist,cfg.knob_cfg,KnobShape::FaceLeft),
+   line1(wlist,cfg.line_cfg),
    dir_list(wlist,cfg.list_cfg),
    file_list(wlist,cfg.list_cfg),
    filter_list(wlist,cfg.filter_list_cfg),
+   line2(wlist,cfg.line_cfg),
    btn_Ok(wlist,cfg.btn_cfg,"Ok"_def),
    btn_Cancel(wlist,cfg.btn_cfg,"Cancel"_def),
 
@@ -878,7 +879,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.takeSelected()),
    connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted())
  {
-  wlist.insTop(dir,knob_hit,knob_add,knob_back,dir_list,file_list,filter_list,btn_Ok,btn_Cancel);
+  wlist.insTop(dir,knob_hit,knob_add,knob_back,line1,dir_list,file_list,filter_list,line2,btn_Ok,btn_Cancel);
 
   if( param.new_file ) wlist.insBottom(check_new,label_new_file,new_file);
 
@@ -949,6 +950,12 @@ void FileSubWindow::layout()
     .place(dir);
   }
 
+  // line1
+
+  {
+   pane.place_cutTop(line1);
+  }
+
   // dir_list
 
   {
@@ -976,6 +983,12 @@ void FileSubWindow::layout()
 
   {
    pane.placeRow_cutBottom(btn_Ok,btn_Cancel);
+  }
+
+  // line2
+
+  {
+   pane.place_cutBottom(line2);
   }
 
   // file_list , filter_list

@@ -859,119 +859,103 @@ DesignerWindow::~DesignerWindow()
 
 void DesignerWindow::layout()
  {
-  Point size=getSize();
+  PaneCut pane(getSize(),+cfg.space_dxy);
 
-  Coord space_dxy=+cfg.space_dxy;
-
-  Pointsor psor(space_dxy);
-
-  Coord max_dy=psor.maxDY(size.y);
+  pane.shrink();
 
   // item_list
 
   {
-   psor.placeMinX(item_list,MinSize,max_dy);
+   pane.place_cutLeft(item_list);
   }
 
-  // check box
-
-  Coord check_dxy;
+  // checks labels buttons
 
   {
-   Point s=SupMinSize(label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
-                      label_unsigned,label_String,label_Point,label_Font,label_bool);
+   Coord check_dxy=check_all.getMinSize().dxy;
 
-   check_dxy=s.y;
+   auto label__all=CutPoint(label_all);
+   auto label__Coord=CutPoint(label_Coord);
+   auto label__MCoord=CutPoint(label_MCoord);
+   auto label__VColor=CutPoint(label_VColor);
+   auto label__Clr=CutPoint(label_Clr);
+   auto label__unsigned=CutPoint(label_unsigned);
+   auto label__String=CutPoint(label_String);
+   auto label__Point=CutPoint(label_Point);
+   auto label__Font=CutPoint(label_Font);
+   auto label__bool=CutPoint(label_bool);
 
-   Point btnSave_size=btn_Save.getMinSize();
-   Point btnSelf_size=btn_Self.getMinSize();
+   Point size=SupMinSize(label__all,label__Coord,label__MCoord,label__VColor,label__Clr,
+                         label__unsigned,label__String,label__Point,label__Font,label__bool);
 
-   Pointsor psor1=psor.cutX(check_dxy);
+   auto btn__Set=CutPoint(btn_Set);
+   auto btn__Back=CutPoint(btn_Back);
+   auto btn__Save=CutPoint(btn_Save);
+   auto btn__Self=CutPoint(btn_Self);
 
-   psor1.placeY(check_all,check_dxy);
-   psor1.placeY(check_Coord,check_dxy);
-   psor1.placeY(check_MCoord,check_dxy);
-   psor1.placeY(check_VColor,check_dxy);
-   psor1.placeY(check_Clr,check_dxy);
-   psor1.placeY(check_unsigned,check_dxy);
-   psor1.placeY(check_String,check_dxy);
-   psor1.placeY(check_Point,check_dxy);
-   psor1.placeY(check_Font,check_dxy);
-   psor1.placeY(check_bool,check_dxy);
+   Coord dx=Max_cast(IntAdd(BoxExt(check_dxy),size.x),btn__Save.size.x,btn__Self.size.x,btn__Set.size.x,btn__Back.size.x);
 
-   Point btnSet_size=btn_Set.getMinSize();
-   Point btnBack_size=btn_Back.getMinSize();
+   PaneCut p=pane.cutLeft(dx);
 
-   psor1.placeMinY(btn_Set);
-   psor1.placeMinY(btn_Back);
-   psor1.placeMinY(btn_Save);
+   Coord dy=Max(check_dxy,size.y);
 
-   {
-    Point pos=psor1;
+   p.cutTop(dy).place_cutLeft(check_all).place_cutLeft(label__all);
+   p.cutTop(dy).place_cutLeft(check_Coord).place_cutLeft(label__Coord);
+   p.cutTop(dy).place_cutLeft(check_MCoord).place_cutLeft(label__MCoord);
+   p.cutTop(dy).place_cutLeft(check_VColor).place_cutLeft(label__VColor);
+   p.cutTop(dy).place_cutLeft(check_Clr).place_cutLeft(label__Clr);
+   p.cutTop(dy).place_cutLeft(check_unsigned).place_cutLeft(label__unsigned);
+   p.cutTop(dy).place_cutLeft(check_String).place_cutLeft(label__String);
+   p.cutTop(dy).place_cutLeft(check_Point).place_cutLeft(label__Point);
+   p.cutTop(dy).place_cutLeft(check_Font).place_cutLeft(label__Font);
+   p.cutTop(dy).place_cutLeft(check_bool).place_cutLeft(label__bool);
 
-    Coord max_dy=psor1.maxDY(size.y);
+   pane.place_cutTop(btn__Set);
+   pane.place_cutTop(btn__Back);
+   pane.place_cutTop(btn__Save);
 
-    Coord delta=Max<Coord>(0,max_dy-btnSelf_size.y);
-
-    btn_Self.setPlace(Pane(pos.addY(delta),btnSelf_size));
-   }
-
-   Coord dx=Max_cast(btnSet_size.x,btnBack_size.x,btnSave_size.x,btnSelf_size.x)-check_dxy-space_dxy;
-
-   Pointsor psor2=psor.cutX(Max(s.x,dx));
-
-   psor2.placeY(label_all,s);
-   psor2.placeY(label_Coord,s);
-   psor2.placeY(label_MCoord,s);
-   psor2.placeY(label_VColor,s);
-   psor2.placeY(label_Clr,s);
-   psor2.placeY(label_unsigned,s);
-   psor2.placeY(label_String,s);
-   psor2.placeY(label_Point,s);
-   psor2.placeY(label_Font,s);
-   psor2.placeY(label_bool,s);
+   pane.place_cutBottom(btn__Self);
   }
 
-  Point base=psor;
+  // font_edit
 
-  Coord max_dx=psor.maxDX(size.x);
+  pane.place(font_edit);
 
-  // font_edit color_edit
+  // color_edit
 
-  {
-   Pane pane(base,max_dx,max_dy);
-
-   font_edit.setPlace(pane);
-   color_edit.setPlace(pane);
-  }
+  pane.place(color_edit);
 
   // string_edit
 
-  SetExtXPlace(string_edit,base,max_dx);
+  {
+   auto p=pane;
+
+   p.place_cutTop(string_edit);
+  }
 
   // coord_edit
 
-  SetMinPlace(coord_edit,base);
+  pane.placeMin(coord_edit);
 
   // mcoord_edit
 
-  SetMinPlace(mcoord_edit,base);
+  pane.placeMin(mcoord_edit);
 
   // unsigned_edit
 
-  SetMinPlace(unsigned_edit,base);
+  pane.placeMin(unsigned_edit);
 
   // clr_edit
 
-  SetMinPlace(clr_edit,base);
+  pane.placeMin(clr_edit);
 
   // point_edit
 
-  SetMinPlace(point_edit,base);
+  pane.placeMin(point_edit);
 
   // bool_edit
 
-  SetExtPlace(bool_edit,base,check_dxy,check_dxy);
+  pane.placeMin(bool_edit);
  }
 
 void DesignerWindow::draw(DrawBuf buf,bool drag_active) const

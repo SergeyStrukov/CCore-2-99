@@ -607,6 +607,8 @@ void FontEditWindow::setCouple(const FontCouple &font_)
 
  // drawing
 
+#if 0
+
 void FontEditWindow::layout()
  {
   Point size=getSize();
@@ -787,6 +789,8 @@ void FontEditWindow::layout()
 
   font_test.setPlace(test_contour.getInner());
  }
+
+#endif
 
  // base
 

@@ -162,6 +162,8 @@ class ColorEditWindow : public SubWindow
 
    // methods
 
+   Point getMinSize() const { return Null; }
+
    VColor getColor() const { return value; }
 
    void setColor(VColor value);

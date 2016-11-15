@@ -83,7 +83,13 @@ void YScrollShape::draw(const DrawBuf &buf) const
 
   art.block(pane,+cfg.back);
 
-  if( s.y<5*s.x ) return;
+  if( s.y<5*s.x )
+    {
+     art.block(pane,+cfg.bottom);
+     art.block(pane.shrink(pane.dx/3,0),+cfg.face);
+
+     return;
+    }
 
   MCoord x0=a.x;
   MCoord x1=x0+s.x;

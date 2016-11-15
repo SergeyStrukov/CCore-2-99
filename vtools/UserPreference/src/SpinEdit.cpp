@@ -102,6 +102,8 @@ void SpinEditWindow::setValue(int value_,int min_value_,int max_value_)
 
  // drawing
 
+#if 0
+
 void SpinEditWindow::layout()
  {
   Point size=getSize();
@@ -115,6 +117,8 @@ void SpinEditWindow::layout()
   psor.placeX(text,len2);
   psor.placeX(plus,len1);
  }
+
+#endif
 
  // keyboard
 

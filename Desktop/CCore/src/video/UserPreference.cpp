@@ -517,12 +517,12 @@ UserPreference::UserPreference() noexcept
   cfg_YSingleLineWindow.line.bind(line);
 
   cfg_XDoubleLineWindow.width.bind(width);
-  cfg_XDoubleLineWindow.top.bind(bottom);
-  cfg_XDoubleLineWindow.bottom.bind(top);
+  cfg_XDoubleLineWindow.top.bind(top);
+  cfg_XDoubleLineWindow.bottom.bind(bottom);
 
   cfg_YDoubleLineWindow.width.bind(width);
-  cfg_YDoubleLineWindow.top.bind(bottom);
-  cfg_YDoubleLineWindow.bottom.bind(top);
+  cfg_YDoubleLineWindow.top.bind(top);
+  cfg_YDoubleLineWindow.bottom.bind(bottom);
 
   cfg_ContourWindow.width.bind(width);
   cfg_ContourWindow.top.bind(bottom);
