@@ -165,6 +165,7 @@ obj/MersenneTwister.o \
 obj/MessageWindow.o \
 obj/Meta.o \
 obj/MetaList.o \
+obj/MinSizeType.o \
 obj/ModEngine.o \
 obj/Mouse.o \
 obj/Move.o \
@@ -541,6 +542,7 @@ obj/MersenneTwister.s \
 obj/MessageWindow.s \
 obj/Meta.s \
 obj/MetaList.s \
+obj/MinSizeType.s \
 obj/ModEngine.s \
 obj/Mouse.s \
 obj/Move.s \
@@ -917,6 +919,7 @@ obj/MersenneTwister.dep \
 obj/MessageWindow.dep \
 obj/Meta.dep \
 obj/MetaList.dep \
+obj/MinSizeType.dep \
 obj/ModEngine.dep \
 obj/Mouse.dep \
 obj/Move.dep \
@@ -1635,6 +1638,9 @@ obj/Meta.o : ../../Simple/CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MetaList.o : ../../Simple/CCore/src/gadget/MetaList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MinSizeType.o : ../../Desktop/CCore/src/video/MinSizeType.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ModEngine.o : ../../Applied/CCore/src/math/ModEngine.cpp
@@ -2758,6 +2764,9 @@ obj/Meta.s : ../../Simple/CCore/src/gadget/Meta.cpp
 obj/MetaList.s : ../../Simple/CCore/src/gadget/MetaList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MinSizeType.s : ../../Desktop/CCore/src/video/MinSizeType.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ModEngine.s : ../../Applied/CCore/src/math/ModEngine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3878,6 +3887,9 @@ obj/Meta.dep : ../../Simple/CCore/src/gadget/Meta.cpp
 
 obj/MetaList.dep : ../../Simple/CCore/src/gadget/MetaList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MetaList.o $< -MF $@
+
+obj/MinSizeType.dep : ../../Desktop/CCore/src/video/MinSizeType.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MinSizeType.o $< -MF $@
 
 obj/ModEngine.dep : ../../Applied/CCore/src/math/ModEngine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ModEngine.o $< -MF $@

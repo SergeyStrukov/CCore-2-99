@@ -109,7 +109,7 @@ class ButtonWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -360,7 +360,7 @@ class CheckWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -625,7 +625,7 @@ class RadioWindowOf : public SubWindow , public RadioItem
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -773,7 +773,7 @@ class TextWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    Point getMinSize(StrLen text) const { return shape.getMinSize(text); }
 
@@ -854,7 +854,7 @@ class DecorWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    Point getMinSize(Point inner_size) const { return shape.getMinSize(inner_size); }
 
@@ -929,7 +929,7 @@ class LightWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -1119,7 +1119,7 @@ class ScrollWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -1580,7 +1580,7 @@ class ProgressWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -1748,7 +1748,7 @@ class InfoWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -2444,7 +2444,7 @@ class LineEditWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    Point getMinSize(StrLen sample_text) const { return shape.getMinSize(sample_text); }
 
@@ -3200,7 +3200,7 @@ class SimpleTextListWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -3658,7 +3658,7 @@ class ScrollListInnerWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
@@ -3952,7 +3952,7 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    // methods
 
-   Point getMinSize() const { return inner.getMinSize()+Point(+cfg.scroll_dxy,0); }
+   auto getMinSize() const { return inner.getMinSize()+Point(+cfg.scroll_dxy,0); }
 
    bool isGoodSize(Point size) const { return inner.isGoodSize(size); }
 
@@ -3999,7 +3999,7 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
         inner.setPlace(pane);
         scroll_y.setPlace(py);
 
-        if( !scroll_y.isListed() ) wlist.insBottom(scroll_y);
+        wlist.insBottom(scroll_y);
 
         if( inner.shortDX() )
           {
@@ -4008,11 +4008,11 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
            inner.setPlace(pane);
            scroll_x.setPlace(px);
 
-           if( !scroll_x.isListed() ) wlist.insBottom(scroll_x);
+           wlist.insBottom(scroll_x);
           }
         else
           {
-           if( scroll_x.isListed() ) wlist.del(scroll_x);
+           wlist.del(scroll_x);
           }
        }
      else
@@ -4033,24 +4033,24 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
               scroll_x.setPlace(px);
               scroll_y.setPlace(py);
 
-              if( !scroll_x.isListed() ) wlist.insBottom(scroll_x);
+              wlist.insBottom(scroll_x);
 
-              if( !scroll_y.isListed() ) wlist.insBottom(scroll_y);
+              wlist.insBottom(scroll_y);
              }
            else
              {
               scroll_x.setPlace(px);
 
-              if( !scroll_x.isListed() ) wlist.insBottom(scroll_x);
+              wlist.insBottom(scroll_x);
 
-              if( scroll_y.isListed() ) wlist.del(scroll_y);
+              wlist.del(scroll_y);
              }
           }
         else
           {
-           if( scroll_x.isListed() ) wlist.del(scroll_x);
+           wlist.del(scroll_x);
 
-           if( scroll_y.isListed() ) wlist.del(scroll_y);
+           wlist.del(scroll_y);
           }
        }
 

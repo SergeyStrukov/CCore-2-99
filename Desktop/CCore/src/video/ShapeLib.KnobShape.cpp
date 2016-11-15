@@ -23,13 +23,13 @@ namespace Video {
 
 /* class KnobShape */
 
-Point KnobShape::getMinSize() const
+SizeBox KnobShape::getMinSize() const
  {
   MCoord width=+cfg.width;
 
   Coord min_dxy=RoundUpLen(4*width);
 
-  return Point::Diag(Max(+cfg.dxy,min_dxy));
+  return Max(+cfg.dxy,min_dxy);
  }
 
 void KnobShape::draw(const DrawBuf &buf) const

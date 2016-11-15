@@ -23,9 +23,9 @@ namespace Video {
 
 /* class LightShape */
 
-Point LightShape::getMinSize() const
+SizeBox LightShape::getMinSize() const
  {
-  return Point::Diag(+cfg.dxy);
+  return +cfg.dxy;
  }
 
 void LightShape::draw(const DrawBuf &buf) const

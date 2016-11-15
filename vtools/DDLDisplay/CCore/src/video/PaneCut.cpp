@@ -20,46 +20,6 @@ namespace Video {
 
 /* functions */
 
-Pane AlignTop(Pane pane,Coord dy)
- {
-  if( dy<=pane.dy )
-    {
-     return Pane(pane.x,pane.y,pane.dx,dy);
-    }
-  else
-    {
-     return Empty;
-    }
- }
-
-Pane AlignCenterY(Pane pane,Coord dy)
- {
-  if( dy<=pane.dy )
-    {
-     Coord off=(pane.dy-dy)/2;
-
-     return Pane(pane.x,pane.y+off,pane.dx,dy);
-    }
-  else
-    {
-     return Empty;
-    }
- }
-
-Pane AlignBottom(Pane pane,Coord dy)
- {
-  if( dy<=pane.dy )
-    {
-     Coord off=pane.dy-dy;
-
-     return Pane(pane.x,pane.y+off,pane.dx,dy);
-    }
-  else
-    {
-     return Empty;
-    }
- }
-
 Pane AlignLeft(Pane pane,Coord dx)
  {
   if( dx<=pane.dx )
@@ -100,6 +60,46 @@ Pane AlignRight(Pane pane,Coord dx)
     }
  }
 
+Pane AlignTop(Pane pane,Coord dy)
+ {
+  if( dy<=pane.dy )
+    {
+     return Pane(pane.x,pane.y,pane.dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignCenterY(Pane pane,Coord dy)
+ {
+  if( dy<=pane.dy )
+    {
+     Coord off=(pane.dy-dy)/2;
+
+     return Pane(pane.x,pane.y+off,pane.dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
+Pane AlignBottom(Pane pane,Coord dy)
+ {
+  if( dy<=pane.dy )
+    {
+     Coord off=pane.dy-dy;
+
+     return Pane(pane.x,pane.y+off,pane.dx,dy);
+    }
+  else
+    {
+     return Empty;
+    }
+ }
+
 Pane AlignCenter(Pane pane,Coord dx,Coord dy)
  {
   if( dx<=pane.dx && dy<=pane.dy )
@@ -126,11 +126,11 @@ void PaneCut::shrink()
 
  // cut
 
-PaneCut PaneCut::cutLeft(Coord dx)
+PaneCut PaneCut::cutLeft(Coord dx,Coord space)
  {
   if( dx<=pane.dx )
     {
-     PaneCut ret(SplitX(dx,pane),space);
+     PaneCut ret(SplitX(dx,pane),this->space);
 
      SplitX(space,pane);
 
@@ -142,11 +142,11 @@ PaneCut PaneCut::cutLeft(Coord dx)
     }
  }
 
-PaneCut PaneCut::cutRight(Coord dx)
+PaneCut PaneCut::cutRight(Coord dx,Coord space)
  {
   if( dx<=pane.dx )
     {
-     PaneCut ret(SplitX(pane,dx),space);
+     PaneCut ret(SplitX(pane,dx),this->space);
 
      SplitX(pane,space);
 
@@ -158,11 +158,11 @@ PaneCut PaneCut::cutRight(Coord dx)
     }
  }
 
-PaneCut PaneCut::cutTop(Coord dy)
+PaneCut PaneCut::cutTop(Coord dy,Coord space)
  {
   if( dy<=pane.dy )
     {
-     PaneCut ret(SplitY(dy,pane),space);
+     PaneCut ret(SplitY(dy,pane),this->space);
 
      SplitY(space,pane);
 
@@ -174,11 +174,11 @@ PaneCut PaneCut::cutTop(Coord dy)
     }
  }
 
-PaneCut PaneCut::cutBottom(Coord dy)
+PaneCut PaneCut::cutBottom(Coord dy,Coord space)
  {
   if( dy<=pane.dy )
     {
-     PaneCut ret(SplitY(pane,dy),space);
+     PaneCut ret(SplitY(pane,dy),this->space);
 
      SplitY(pane,space);
 
@@ -187,40 +187,6 @@ PaneCut PaneCut::cutBottom(Coord dy)
   else
     {
      return PaneCut(space);
-    }
- }
-
- // box
-
-Pane PaneCut::boxLeft(Coord dxy,Coord mini_space)
- {
-  if( dxy<=pane.dx && dxy<=pane.dy )
-    {
-     Pane ret=AlignCenterY(SplitX(dxy,pane),dxy);
-
-     SplitX(mini_space,pane);
-
-     return ret;
-    }
-  else
-    {
-     return Empty;
-    }
- }
-
-Pane PaneCut::boxRight(Coord dxy,Coord mini_space)
- {
-  if( dxy<=pane.dx && dxy<=pane.dy )
-    {
-     Pane ret=AlignCenterY(SplitX(pane,dxy),dxy);
-
-     SplitX(pane,mini_space);
-
-     return ret;
-    }
-  else
-    {
-     return Empty;
     }
  }
 

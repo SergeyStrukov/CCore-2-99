@@ -23,9 +23,9 @@ namespace Video {
 
 /* class RadioShape */
 
-Point RadioShape::getMinSize() const
+SizeBox RadioShape::getMinSize() const
  {
-  return Point::Diag(+cfg.dxy);
+  return +cfg.dxy;
  }
 
 void RadioShape::draw(const DrawBuf &buf) const

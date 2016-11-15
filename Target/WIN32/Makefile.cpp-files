@@ -285,6 +285,7 @@
 ../../Desktop/CCore/src/video/Layout.cpp
 ../../Desktop/CCore/src/video/Menu.cpp
 ../../Desktop/CCore/src/video/MessageWindow.cpp
+../../Desktop/CCore/src/video/MinSizeType.cpp
 ../../Desktop/CCore/src/video/Mouse.cpp
 ../../Desktop/CCore/src/video/Picture.cpp
 ../../Desktop/CCore/src/video/ProgressScale.cpp

@@ -23,11 +23,11 @@ namespace Video {
 
 /* class XSingleLineShape */
 
-Point XSingleLineShape::getMinSize() const
+SizeY XSingleLineShape::getMinSize() const
  {
   Coord dxy=RoundUpLen(+cfg.width);
 
-  return Point::Diag(dxy);
+  return dxy;
  }
 
 void XSingleLineShape::draw(const DrawBuf &buf) const
@@ -36,7 +36,7 @@ void XSingleLineShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
 
@@ -50,11 +50,11 @@ void XSingleLineShape::draw(const DrawBuf &buf) const
 
 /* class YSingleLineShape */
 
-Point YSingleLineShape::getMinSize() const
+SizeX YSingleLineShape::getMinSize() const
  {
   Coord dxy=RoundUpLen(+cfg.width);
 
-  return Point::Diag(dxy);
+  return dxy;
  }
 
 void YSingleLineShape::draw(const DrawBuf &buf) const
@@ -63,7 +63,7 @@ void YSingleLineShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
 

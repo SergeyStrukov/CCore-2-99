@@ -293,10 +293,6 @@ class FileSubWindow : public ComboWindow
     {
      RefVal<Coord> space_dxy = 10 ;
 
-     RefVal<Coord> knob_dxy = 30 ;
-
-     RefVal<Coord> check_dxy = 20 ;
-
      RefVal<VColor> back = Silver ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
@@ -323,8 +319,6 @@ class FileSubWindow : public ComboWindow
         label_cfg(SmartBind,pref)
       {
        space_dxy.bind(pref.get().space_dxy);
-       knob_dxy.bind(pref.get().knob_dxy);
-       check_dxy.bind(pref.get().check_dxy);
        back.bind(pref.get().back);
 
        (LineEditShape::Config &)edit_cfg.takeVal()=pref.getSmartConfig();

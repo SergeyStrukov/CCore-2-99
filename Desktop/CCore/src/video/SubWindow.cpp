@@ -79,11 +79,16 @@ WindowList::~WindowList()
 
  // methods
 
-void WindowList::insTop(SubWindow *sub_win)
+bool WindowList::insTop(SubWindow *sub_win)
  {
   if( sub_win->list )
     {
-     Printf(Exception,"CCore::Video::WindowList::insTop(...) : sub-window is already included in a list");
+     if( sub_win->list!=this )
+       {
+        Printf(Exception,"CCore::Video::WindowList::insTop(...) : sub-window is already included in a list");
+       }
+
+     return false;
     }
 
   list.ins_first(sub_win);
@@ -91,13 +96,20 @@ void WindowList::insTop(SubWindow *sub_win)
   sub_win->list=this;
 
   if( is_opened ) sub_win->open();
+
+  return true;
  }
 
-void WindowList::insBottom(SubWindow *sub_win)
+bool WindowList::insBottom(SubWindow *sub_win)
  {
   if( sub_win->list )
     {
-     Printf(Exception,"CCore::Video::WindowList::insBottom(...) : sub-window is already included in a list");
+     if( sub_win->list!=this )
+       {
+        Printf(Exception,"CCore::Video::WindowList::insBottom(...) : sub-window is already included in a list");
+       }
+
+     return false;
     }
 
   list.ins_last(sub_win);
@@ -105,10 +117,14 @@ void WindowList::insBottom(SubWindow *sub_win)
   sub_win->list=this;
 
   if( is_opened ) sub_win->open();
+
+  return true;
  }
 
-void WindowList::del(SubWindow *sub_win)
+bool WindowList::del(SubWindow *sub_win)
  {
+  if( !sub_win->list ) return false;
+
   if( sub_win->list!=this )
     {
      Printf(Exception,"CCore::Video::WindowList::del(...) : sub-window from another list");
@@ -136,6 +152,8 @@ void WindowList::del(SubWindow *sub_win)
     }
 
   if( is_opened ) sub_win->close();
+
+  return true;
  }
 
 void WindowList::moveTop(SubWindow *sub_win)

@@ -379,10 +379,16 @@ Point FileFilterWindow::getMinSize() const
  {
   Point size=edit.getMinSize();
 
-  Coord check_dxy=BoxSize(check);
-  Coord knob_dxy=BoxSize(knob);
+  Coord check_dxy=check.getMinSize().dxy;
+  Coord knob_dxy=knob.getMinSize().dxy;
 
-  return Point( BoxExt(check_dxy)+BoxExt(knob_dxy)+size.x , Max_cast(check_dxy,knob_dxy,size.y) );
+  Coordinate dx(size.x);
+
+  dx+=BoxExt(check_dxy);
+
+  dx+=BoxExt(knob_dxy);
+
+  return Point( +dx , Max_cast(check_dxy,knob_dxy,size.y) );
  }
 
  // drawing
@@ -391,8 +397,8 @@ void FileFilterWindow::layout()
  {
   PaneCut pane(getSize(),0);
 
-  pane.place_boxLeft(check)
-      .place_boxRight(knob)
+  pane.place_cutLeft(check)
+      .place_cutRight(knob)
       .place(edit);
  }
 
@@ -456,19 +462,21 @@ FileFilterListWindow::~FileFilterListWindow()
 
 Point FileFilterListWindow::getMinSize() const
  {
-  Coord knob_dxy=BoxSize(knob);
-
   if( ulen count=filter_list.getLen() )
     {
+     Coord knob_dxy=knob.getMinSize().dxy;
+
      Point size=filter_list[0]->getMinSize();
 
      Coord delta=BoxExt(size.y);
 
-     return Point(size.x,delta*count+knob_dxy);
+     Coordinate dy=delta*ToCoordinate(count)+knob_dxy;
+
+     return Point( Max(size.x,knob_dxy) , +dy );
     }
   else
     {
-     return Point::Diag(knob_dxy);
+     return knob.getMinSize().toSizePoint();
     }
  }
 
@@ -928,16 +936,16 @@ void FileSubWindow::layout()
   // knob_hit , knob_add , dir , knob_back
 
   {
-   Coord knob_size=BoxSize(knob_hit);
+   Coord knob_size=knob_hit.getMinSize().dxy;
    Point dir_size=dir.getMinSize();
 
    Coord dy=Max(knob_size,dir_size.y);
 
    PaneCut p=pane.cutTop(dy);
 
-   p.place_boxLeft(knob_hit,knob_size)
-    .place_boxLeft(knob_add,knob_size)
-    .place_boxRight(knob_back,knob_size)
+   p.place_cutLeft(knob_hit)
+    .place_cutLeft(knob_add)
+    .place_cutRight(knob_back)
     .place(dir);
   }
 
@@ -951,17 +959,17 @@ void FileSubWindow::layout()
 
   if( param.new_file )
     {
-     Coord check_size=BoxSize(check_new);
-     Point label_size=label_new_file.getMinSize();
-     Point edit_size=new_file.getMinSize();
+     auto check=CutBox(check_new);
+     auto label=CutPoint(label_new_file);
+     auto edit=CutPoint(new_file);
 
-     Coord dy=Max_cast(check_size,label_size.y,edit_size.y);
+     Coord dy=Max_cast(check.dxy,label.size.y,edit.size.y);
 
      PaneCut p=pane.cutTop(dy);
 
-     p.place_boxLeft(check_new,check_size)
-      .place_cutLeft(label_new_file,label_size.x)
-      .place(new_file);
+     p.place_cutLeft(check)
+      .place_cutLeft(label)
+      .place(edit);
     }
 
   // btn_Ok , btn_Cancel
@@ -1026,4 +1034,3 @@ Pane FileWindow::getPane(StrLen title,Point base) const
 
 } // namespace Video
 } // namespace CCore
-

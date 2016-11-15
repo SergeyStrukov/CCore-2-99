@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_ShapeLib_h
 #define CCore_inc_video_ShapeLib_h
 
-#include <CCore/inc/video/Point.h>
+#include <CCore/inc/video/MinSizeType.h>
 #include <CCore/inc/video/Color.h>
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/RefVal.h>
@@ -193,7 +193,7 @@ class KnobShape
 
    KnobShape(const Config &cfg_,const FaceType &face_) : cfg(cfg_),face(face_) {}
 
-   Point getMinSize() const;
+   SizeBox getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -235,7 +235,7 @@ class CheckShape
 
    explicit CheckShape(const Config &cfg_,bool check_=false) : cfg(cfg_),check(check_) {}
 
-   Point getMinSize() const;
+   SizeBox getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -277,7 +277,7 @@ class RadioShape
 
    explicit RadioShape(const Config &cfg_,bool check_=false) : cfg(cfg_),check(check_) {}
 
-   Point getMinSize() const;
+   SizeBox getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -405,7 +405,7 @@ class XSingleLineShape : public SingleLineShape
 
    explicit XSingleLineShape(const Config &cfg) : SingleLineShape(cfg) {}
 
-   Point getMinSize() const;
+   SizeY getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -422,7 +422,7 @@ class YSingleLineShape : public SingleLineShape
 
    explicit YSingleLineShape(const Config &cfg) : SingleLineShape(cfg) {}
 
-   Point getMinSize() const;
+   SizeX getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -463,7 +463,7 @@ class XDoubleLineShape : public DoubleLineShape
 
    explicit XDoubleLineShape(const Config &cfg) : DoubleLineShape(cfg) {}
 
-   Point getMinSize() const;
+   SizeY getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -480,7 +480,7 @@ class YDoubleLineShape : public DoubleLineShape
 
    explicit YDoubleLineShape(const Config &cfg) : DoubleLineShape(cfg) {}
 
-   Point getMinSize() const;
+   SizeX getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -597,7 +597,7 @@ class SwitchShape
 
    explicit SwitchShape(const Config &cfg_,bool check_=false) : cfg(cfg_),check(check_) {}
 
-   Point getMinSize() const;
+   SizeBox getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
@@ -635,7 +635,7 @@ class LightShape
 
    LightShape(const Config &cfg_,VColor face_,bool on_=false) : cfg(cfg_),face(face_),on(on_) {}
 
-   Point getMinSize() const;
+   SizeBox getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 

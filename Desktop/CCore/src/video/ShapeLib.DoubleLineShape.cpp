@@ -23,11 +23,11 @@ namespace Video {
 
 /* class XDoubleLineShape */
 
-Point XDoubleLineShape::getMinSize() const
+SizeY XDoubleLineShape::getMinSize() const
  {
   Coord dxy=RoundUpLen(+cfg.width);
 
-  return Point(dxy,2*dxy);
+  return 2*dxy;
  }
 
 void XDoubleLineShape::draw(const DrawBuf &buf) const
@@ -36,7 +36,7 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
 
@@ -53,11 +53,11 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
 
 /* class YDoubleLineShape */
 
-Point YDoubleLineShape::getMinSize() const
+SizeX YDoubleLineShape::getMinSize() const
  {
   Coord dxy=RoundUpLen(+cfg.width);
 
-  return Point(2*dxy,dxy);
+  return 2*dxy;
  }
 
 void YDoubleLineShape::draw(const DrawBuf &buf) const
@@ -66,7 +66,7 @@ void YDoubleLineShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
 

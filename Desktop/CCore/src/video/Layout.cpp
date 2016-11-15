@@ -120,9 +120,9 @@ PlaceColumn::PlaceColumn(Pane outer,Point size_,Coord space,ulen count_)
   base=Center(outer,{size_.x,+total}).getBase();
  }
 
-/* struct MinSizeType */
+/* struct UseMinSizeType */
 
-MinSizeType MinSize;
+UseMinSizeType MinSize;
 
 } // namespace Video
 } // namespace CCore

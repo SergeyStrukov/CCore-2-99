@@ -16,6 +16,8 @@
 #ifndef CCore_inc_video_Layout_h
 #define CCore_inc_video_Layout_h
 
+#include <CCore/inc/video/MinSizeType.h>
+
 #include <CCore/inc/video/Desktop.h>
 
 namespace CCore {
@@ -278,11 +280,11 @@ class PlaceColumn
     }
  };
 
-/* struct MinSizeType */
+/* struct UseMinSizeType */
 
-struct MinSizeType {};
+struct UseMinSizeType {};
 
-extern MinSizeType MinSize;
+extern UseMinSizeType MinSize;
 
 /* class Pointsor */
 
@@ -369,13 +371,13 @@ class Pointsor
    // place min size
 
    template <class W>
-   void placeMinX(W &window,MinSizeType,Coordinate dy)
+   void placeMinX(W &window,UseMinSizeType,Coordinate dy)
     {
      placeX(window,window.getMinSize().x,dy);
     }
 
    template <class W>
-   void placeMinX(W &window,Coordinate dx,MinSizeType)
+   void placeMinX(W &window,Coordinate dx,UseMinSizeType)
     {
      placeX(window,dx,window.getMinSize().y);
     }
@@ -387,13 +389,13 @@ class Pointsor
     }
 
    template <class W>
-   void placeMinY(W &window,MinSizeType,Coordinate dy)
+   void placeMinY(W &window,UseMinSizeType,Coordinate dy)
     {
      placeY(window,window.getMinSize().x,dy);
     }
 
    template <class W>
-   void placeMinY(W &window,Coordinate dx,MinSizeType)
+   void placeMinY(W &window,Coordinate dx,UseMinSizeType)
     {
      placeY(window,dx,window.getMinSize().y);
     }

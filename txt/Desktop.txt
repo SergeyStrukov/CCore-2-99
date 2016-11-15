@@ -46,7 +46,8 @@ FileNameMatch.h      +
 
 --- Tools ----------------------------------------------------------------------
 
-RefVal.h             +             
+RefVal.h             +
+MinSizeType.h                     
 Layout.h             +
 
 FontParam.h          +          

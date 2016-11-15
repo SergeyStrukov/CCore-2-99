@@ -318,11 +318,11 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
 
    // methods
 
-   void insTop(SubWindow *sub_win);
+   bool insTop(SubWindow *sub_win);
 
-   void insBottom(SubWindow *sub_win);
+   bool insBottom(SubWindow *sub_win);
 
-   void del(SubWindow *sub_win);
+   bool del(SubWindow *sub_win);
 
    void moveTop(SubWindow *sub_win);
 
