@@ -910,11 +910,13 @@ void DesignerWindow::layout()
    p.cutTop(dy).place_cutLeft(check_Font).place_cutLeft(label__Font);
    p.cutTop(dy).place_cutLeft(check_bool).place_cutLeft(label__bool);
 
-   pane.place_cutTop(btn__Set);
-   pane.place_cutTop(btn__Back);
-   pane.place_cutTop(btn__Save);
+   ReplaceToSup(btn__Set.size.x,btn__Back.size.x,btn__Save.size.x);
 
-   pane.place_cutBottom(btn__Self);
+   p.place_cutTopLeft(btn__Set);
+   p.place_cutTopLeft(btn__Back);
+   p.place_cutTopLeft(btn__Save);
+
+   p.place_cutBottomLeft(btn__Self);
   }
 
   // font_edit

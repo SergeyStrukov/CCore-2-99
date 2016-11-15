@@ -607,10 +607,10 @@ void FontEditWindow::setCouple(const FontCouple &font_)
 
  // drawing
 
-#if 0
-
 void FontEditWindow::layout()
  {
+#if 0
+
   Point size=getSize();
 
   Coord space_dxy=+cfg.space_dxy;
@@ -788,9 +788,9 @@ void FontEditWindow::layout()
   test_contour.setPlace(cur);
 
   font_test.setPlace(test_contour.getInner());
- }
 
 #endif
+ }
 
  // base
 

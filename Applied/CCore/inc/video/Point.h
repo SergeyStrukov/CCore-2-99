@@ -62,6 +62,12 @@ MCoord Position(UInt P,UInt Q,MCoord a,MCoord b)
     return IntMoveNeg(a,uMCoord( (uDCoord(p)*IntDist(b,a))/q ));
  }
 
+template <OneOfTypes<Coord,MCoord> T>
+T Sup(T a,T b) { return Max(a,b); }
+
+template <OneOfTypes<Coord,MCoord> T>
+T Inf(T a,T b) { return Min(a,b); }
+
 /* classes */
 
 struct Coordinate;
@@ -404,6 +410,11 @@ struct Ratio
   friend Coord operator * (Ratio a,Coord b)
    {
     return To16( IntRShift(DCoord(a.value)*b,Precision) );
+   }
+
+  friend Coordinate operator * (Ratio a,Coordinate c)
+   {
+    return a*c.x;
    }
 
   friend Point operator * (Ratio a,Point point)

@@ -7,6 +7,7 @@ obj/AbortMsgFunc.o \
 obj/AntiSem.o \
 obj/AnyPtr.o \
 obj/ApplicationBase.o \
+obj/ApplyToList.o \
 obj/ApplyToRange.o \
 obj/Array.o \
 obj/ArrayAlgo.o \
@@ -385,6 +386,7 @@ obj/AbortMsgFunc.s \
 obj/AntiSem.s \
 obj/AnyPtr.s \
 obj/ApplicationBase.s \
+obj/ApplyToList.s \
 obj/ApplyToRange.s \
 obj/Array.s \
 obj/ArrayAlgo.s \
@@ -763,6 +765,7 @@ obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
 obj/AnyPtr.dep \
 obj/ApplicationBase.dep \
+obj/ApplyToList.dep \
 obj/ApplyToRange.dep \
 obj/Array.dep \
 obj/ArrayAlgo.dep \
@@ -1167,6 +1170,9 @@ obj/AnyPtr.o : ../../Simple/CCore/src/AnyPtr.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ApplicationBase.o : ../../Desktop/CCore/src/video/ApplicationBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ApplyToList.o : ../../Fundamental/CCore/src/algon/ApplyToList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ApplyToRange.o : ../../Fundamental/CCore/src/algon/ApplyToRange.cpp
@@ -2296,6 +2302,9 @@ obj/AnyPtr.s : ../../Simple/CCore/src/AnyPtr.cpp
 obj/ApplicationBase.s : ../../Desktop/CCore/src/video/ApplicationBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ApplyToList.s : ../../Fundamental/CCore/src/algon/ApplyToList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ApplyToRange.s : ../../Fundamental/CCore/src/algon/ApplyToRange.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3422,6 +3431,9 @@ obj/AnyPtr.dep : ../../Simple/CCore/src/AnyPtr.cpp
 
 obj/ApplicationBase.dep : ../../Desktop/CCore/src/video/ApplicationBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplicationBase.o $< -MF $@
+
+obj/ApplyToList.dep : ../../Fundamental/CCore/src/algon/ApplyToList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplyToList.o $< -MF $@
 
 obj/ApplyToRange.dep : ../../Fundamental/CCore/src/algon/ApplyToRange.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplyToRange.o $< -MF $@

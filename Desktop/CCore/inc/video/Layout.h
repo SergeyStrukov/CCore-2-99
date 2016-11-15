@@ -16,9 +16,11 @@
 #ifndef CCore_inc_video_Layout_h
 #define CCore_inc_video_Layout_h
 
+#include <CCore/inc/video/Desktop.h>
+
 #include <CCore/inc/video/MinSizeType.h>
 
-#include <CCore/inc/video/Desktop.h>
+#include <CCore/inc/algon/ApplyToList.h>
 
 namespace CCore {
 namespace Video {
@@ -107,6 +109,16 @@ template <class ... WW>
 Point SupMinSize(const WW & ... ww) requires ( ... && PlaceType<WW> )
  {
   return Sup( GetMinSize(ww)... );
+ }
+
+/* ReplaceToSup() */
+
+template <class ... TT>
+void ReplaceToSup(TT & ... tt)
+ {
+  auto sup=Sup(tt...);
+
+  Algon::ApplyToList( [sup] (AnyType &obj) { obj=sup; } , tt...  );
  }
 
 /* classes */
@@ -213,6 +225,8 @@ struct CutPointProxy
 
   explicit CutPointProxy(W &window_) : window(window_),size(GetMinSize(window_)) {}
 
+  CutPointProxy(W &window_,Ratio scale) : window(window_),size(scale*GetMinSize(window_)) {}
+
   Point getMinSize() const { return size; }
 
   void setPlace(Pane pane) { window.setPlace(pane); }
@@ -222,6 +236,9 @@ struct CutPointProxy
 
 template <PlaceType W>
 auto CutPoint(W &window) { return CutPointProxy<W>(window); }
+
+template <PlaceType W>
+auto CutPoint(W &window,Ratio scale) { return CutPointProxy<W>(window,scale); }
 
 /* class PlaceRow */
 

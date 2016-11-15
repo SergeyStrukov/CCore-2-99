@@ -171,10 +171,10 @@ TestWindow::~TestWindow()
 
  // drawing
 
-#if 0
-
 void TestWindow::layout()
  {
+#if 0
+
   Coord space_dxy=pref.get().space_dxy;
 
   Pointsor psor(space_dxy);
@@ -311,9 +311,9 @@ void TestWindow::layout()
   {
    psor.placeMinY(shade_btn);
   }
- }
 
 #endif
+ }
 
 void TestWindow::draw(DrawBuf buf,bool drag_active) const
  {

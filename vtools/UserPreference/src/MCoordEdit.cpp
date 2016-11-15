@@ -92,9 +92,20 @@ MCoordEditWindow::~MCoordEditWindow()
 
 Point MCoordEditWindow::getMinSize() const
  {
-  Point s=text.getMinSize("123435 3/16");
+  Coord knob_dxy=minus.getMinSize().dxy;
 
-  return Point(s.x+2*s.y,Rational(5,3)*s.y);
+  Point size=text.getMinSize("123435 3/16");
+
+  Coordinate dx=size.x;
+
+  dx+=BoxExt(knob_dxy);
+  dx+=BoxExt(knob_dxy);
+
+  Coordinate dy=Max(size.y,knob_dxy);
+
+  dy=(Rational(5,3)+Rational(1,10))*dy;
+
+  return Point( +dx , +dy );
  }
 
 void MCoordEditWindow::setMCoord(MCoord value_)
@@ -106,34 +117,28 @@ void MCoordEditWindow::setMCoord(MCoord value_)
 
  // drawing
 
-#if 0
-
 void MCoordEditWindow::layout()
  {
-  Point size=getSize();
+  PaneCut pane(getSize(),0);
 
-  Panesor psor(size,0);
+  PaneCut p=pane.cutTop(Rational(3,5));
 
-  Coord len1=Rational(3,5)*size.y;
-  Coord len2=size.x-2*len1;
-  Coord len3=Rational(2,3)*len1;
+  auto knob_minus=CutBox(minus);
 
-  Panesor psor1=psor.cutY(len1);
+  p.place_cutLeft(knob_minus)
+   .place_cutRight(plus)
+   .place(text);
 
-  psor1.placeX(minus,len1);
-  psor1.placeX(text,len2);
-  psor1.placeX(plus,len1);
+  Coord offx=BoxExt(knob_minus.dxy);
 
-  psor.cutX(len1);
+  pane.cutLeft(offx);
 
-  psor.placeX(small_minus,len3);
+  pane.place_cutLeftTop(CutPoint(small_minus,Rational(2,3)));
 
-  psor.cutX(len2-2*len3);
+  pane.cutRight(offx);
 
-  psor.placeX(small_plus,len3);
+  pane.place_cutRightTop(CutPoint(small_plus,Rational(2,3)));
  }
-
-#endif
 
  // user input
 

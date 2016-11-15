@@ -69,6 +69,7 @@
 ../../Simple/CCore/src/Tuple.cpp
 ../../Simple/CCore/src/TypeSwitch.cpp
 ../../Simple/CCore/src/UIntSplit.cpp
+../../Fundamental/CCore/src/algon/ApplyToList.cpp
 ../../Fundamental/CCore/src/algon/ApplyToRange.cpp
 ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
 ../../Fundamental/CCore/src/algon/BinarySearch.cpp

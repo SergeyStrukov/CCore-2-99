@@ -80,9 +80,15 @@ SpinEditWindow::~SpinEditWindow()
 
 Point SpinEditWindow::getMinSize() const
  {
-  Point s=Sup(getTextSize(min_value),getTextSize(max_value),getTextSize(12345));
+  Coord knob_dxy=minus.getMinSize().dxy;
+  Point size=Sup(getTextSize(min_value),getTextSize(max_value),getTextSize(12345));
 
-  return Point(2*s.y+s.x,s.y);
+  Coordinate dx=size.x;
+
+  dx+=BoxExt(knob_dxy);
+  dx+=BoxExt(knob_dxy);
+
+  return Point( +dx , Max(knob_dxy,size.y) );
  }
 
 void SpinEditWindow::setValue(int value_)
@@ -102,23 +108,14 @@ void SpinEditWindow::setValue(int value_,int min_value_,int max_value_)
 
  // drawing
 
-#if 0
-
 void SpinEditWindow::layout()
  {
-  Point size=getSize();
+  PaneCut pane(getSize(),0);
 
-  Panesor psor(size,0);
-
-  Coord len1=size.y;
-  Coord len2=size.x-2*len1;
-
-  psor.placeX(minus,len1);
-  psor.placeX(text,len2);
-  psor.placeX(plus,len1);
+  pane.place_cutLeft(minus)
+      .place_cutRight(plus)
+      .place(text);
  }
-
-#endif
 
  // keyboard
 
