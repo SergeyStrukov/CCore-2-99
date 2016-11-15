@@ -162,7 +162,7 @@ void MessageSubWindow::layout()
 
      dline.setPlace(EnvelopeY(bottom.getBase(),bottom.dx,space_dxy));
 
-     knobOk.setPlace(Center(bottom,knob_dxy));
+     knobOk.setPlace(FreeCenter(bottom,knob_dxy));
     }
  }
 

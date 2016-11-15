@@ -73,9 +73,9 @@ Pane GetWindowPlace(Desktop *desktop,Ratio ypos_ratio,Point size)
   return GetWindowPlace(desktop->getMaxPane(),ypos_ratio,size);
  }
 
-/* Center() */
+/* FreeCenter() */
 
-Pane Center(Pane outer,Point size)
+Pane FreeCenter(Pane outer,Point size)
  {
   Point p=outer.getSize()-size;
 
@@ -84,23 +84,15 @@ Pane Center(Pane outer,Point size)
   return Pane(outer.getBase()+pos,size);
  }
 
-Pane CenterX(Pane outer,Coord dx)
+Pane FreeCenterX(Pane outer,Coord dx)
  {
   return Pane(IntAdd(outer.x,IntSub(outer.dx,dx)/2),outer.y,dx,outer.dy);
  }
 
-Pane CenterY(Pane outer,Coord dy)
+Pane FreeCenterY(Pane outer,Coord dy)
  {
   return Pane(outer.x,IntAdd(outer.y,IntSub(outer.dy,dy)/2),outer.dx,dy);
  }
-
-#if 0
-
-/* struct UseMinSizeType */
-
-UseMinSizeType MinSize;
-
-#endif
 
 //----------------------------------------------------------------------------------------
 

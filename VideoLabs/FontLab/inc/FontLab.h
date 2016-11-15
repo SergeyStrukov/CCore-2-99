@@ -205,7 +205,7 @@ class Progress : public IncrementalProgress
 
         Point size=getMinSize(Range(title),client_size);
 
-        FixedWindow::create(parent,Center({Null,screen_size},size),title);
+        FixedWindow::create(parent,FreeCenter({Null,screen_size},size),title);
        }
     };
 
