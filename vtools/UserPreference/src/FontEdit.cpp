@@ -609,187 +609,164 @@ void FontEditWindow::setCouple(const FontCouple &font_)
 
 void FontEditWindow::layout()
  {
-#if 0
-
-  Point size=getSize();
-
   Coord space_dxy=+cfg.space_dxy;
-  Coord check_dxy=+cfg.check_dxy;
-  Coord light_dxy=+cfg.light_dxy;
+
+  PaneCut pane(getSize(),space_dxy);
 
   // progress
 
   {
-   Pane pane(Null,size.x,+cfg.progress_dy);
+   PaneCut p=pane;
 
-   progress.setPlace(pane);
+   p.place_cutTop(progress,+cfg.progress_dy);
   }
 
-  Panesor cur(size,space_dxy);
+  // text_list , file_name_text , family_text
 
-  cur.placeX(text_list,Rational(1,3));
-
-  cur.extY(file_name_text);
-
-  cur.extY(family_text);
+  pane.place_cutLeft(text_list,Rational(1,3))
+      .place_cutTop(file_name_text)
+      .place_cutTop(family_text);
 
   // lights
 
   {
-   Coord dy=scalable_label.getMinSize().y;
+   auto scalable__light=CutBox(scalable_light);
+   auto scalable__label=CutPoint(scalable_label);
 
-   Panesor cur1=cur.cutY(dy);
+   Coord dy=Max(scalable__label.size.y,scalable__light.dxy);
 
-   // scalable
+   PaneCut p=pane.cutTop(dy);
 
-   cur1.placeX(scalable_light,dy,CenterFunc(light_dxy));
-
-   cur1.extX(scalable_label);
-
-   // monospace
-
-   cur1.placeX(monospace_light,dy,CenterFunc(light_dxy));
-
-   cur1.extX(monospace_label);
-
-   // bold
-
-   cur1.placeX(bold_light,dy,CenterFunc(light_dxy));
-
-   cur1.extX(bold_label);
-
-   // italic
-
-   cur1.placeX(italic_light,dy,CenterFunc(light_dxy));
-
-   cur1.extX(italic_label);
+   p.place_cutLeft(scalable__light)
+    .place_cutLeft(scalable__label)
+    .place_cutLeft(monospace_light)
+    .place_cutLeft(monospace_label)
+    .place_cutLeft(bold_light)
+    .place_cutLeft(bold_label)
+    .place_cutLeft(italic_light)
+    .place_cutLeft(italic_label);
   }
 
-  cur.extY(line1);
+  // line1
+
+  pane.place_cutTop(line1);
 
   // size spins
 
   {
-   Point s=fdy_spin.getMinSize();
+   auto fdy__spin=CutPoint(fdy_spin);
+   auto fdx__check=CutBox(fdx_check);
 
-   Panesor cur1=cur.cutY(s.y);
+   Coord dy=Max(fdy__spin.size.y,fdx__check.dxy);
 
-   cur1.placeX(fdy_spin,s.x);
-   cur1.placeX(fdx_check,s.y,CenterFunc(check_dxy));
-   cur1.placeX(fdx_spin,s.x);
+   PaneCut p=pane.cutTop(dy);
+
+   p.place_cutLeft(fdy__spin)
+    .place_cutLeft(fdx__check)
+    .place_cutLeft(fdx_spin);
   }
 
-  cur.extY(line2);
+  // line2
+
+  pane.place_cutTop(line2);
 
   // hint and smooth
 
   {
-   Point hint_size=Sup(no_hint_label.getMinSize(),native_hint_label.getMinSize(),auto_hint_label.getMinSize());
+   auto no_hint__radio=CutBox(no_hint_radio);
+   auto native_hint__radio=CutBox(native_hint_radio);
+   auto auto_hint__radio=CutBox(auto_hint_radio);
 
-   Point hint_inner_size(hint_size.x+hint_size.y+3*space_dxy,3*hint_size.y+4*space_dxy);
+   auto no_hint__label=CutPoint(no_hint_label);
+   auto native_hint__label=CutPoint(native_hint_label);
+   auto auto_hint__label=CutPoint(auto_hint_label);
+
+   Coord line_dy=Max(no_hint__radio.dxy,no_hint__label.size.y);
+
+   Coord hint_dx=Sup(no_hint__label.size.x,native_hint__label.size.x,auto_hint__label.size.x);
+
+   Point hint_inner_size( BoxExt(no_hint__radio.dxy)+hint_dx+2*space_dxy , 3*line_dy+4*space_dxy );
 
    Point hint_outer_size=hint_contour.getMinSize(hint_inner_size);
 
-   Point smooth_size=Sup(no_smooth_label.getMinSize(),smooth_label.getMinSize(),RGB_label.getMinSize(),BGR_label.getMinSize());
+   auto no_smooth__radio=CutBox(no_smooth_radio);
+   auto smooth__radio=CutBox(smooth_radio);
+   auto RGB__radio=CutBox(RGB_radio);
+   auto BGR__radio=CutBox(BGR_radio);
 
-   Point smooth_inner_size(smooth_size.x+smooth_size.y+3*space_dxy,4*smooth_size.y+5*space_dxy);
+   auto no_smooth__label=CutPoint(no_smooth_label);
+   auto smooth__label=CutPoint(smooth_label);
+   auto RGB__label=CutPoint(RGB_label);
+   auto BGR__label=CutPoint(BGR_label);
+
+   Coord smooth_dx=Sup(no_smooth__label.size.x,smooth__label.size.x,RGB__label.size.x,BGR__label.size.x);
+
+   Point smooth_inner_size( BoxExt(no_smooth__radio.dxy)+smooth_dx+2*space_dxy , 4*line_dy+5*space_dxy );
 
    Point smooth_outer_size=smooth_contour.getMinSize(smooth_inner_size);
 
-   Panesor cur1=cur.cutY(Max(hint_outer_size.y,smooth_outer_size.y));
+   PaneCut p=pane.cutTop(Max(hint_outer_size.y,smooth_outer_size.y));
 
-   cur1.placeX(hint_contour,hint_outer_size.x);
+   p.place_cutLeftTop(hint_contour,hint_outer_size)
+    .place_cutLeftTop(smooth_contour,smooth_outer_size);
 
-   cur1.placeX(smooth_contour,smooth_outer_size.x);
+   // hint
 
    {
-    Panesor cur(hint_contour.getInner().shrink(space_dxy),space_dxy);
+    PaneCut pane(hint_contour.getInner(),space_dxy);
 
-    {
-     Panesor cur1=cur.cutY(hint_size.y);
+    pane.shrink();
 
-     cur1.placeX(no_hint_radio,hint_size.y,CenterFunc(check_dxy));
-     cur1.placeX(no_hint_label,hint_size.x);
-    }
-
-    {
-     Panesor cur1=cur.cutY(hint_size.y);
-
-     cur1.placeX(native_hint_radio,hint_size.y,CenterFunc(check_dxy));
-     cur1.placeX(native_hint_label,hint_size.x);
-    }
-
-    {
-     Panesor cur1=cur.cutY(hint_size.y);
-
-     cur1.placeX(auto_hint_radio,hint_size.y,CenterFunc(check_dxy));
-     cur1.placeX(auto_hint_label,hint_size.x);
-    }
+    pane.cutTop(line_dy).place_cutLeft(no_hint__radio).place_cutLeft(no_hint__label);
+    pane.cutTop(line_dy).place_cutLeft(native_hint__radio).place_cutLeft(native_hint__label);
+    pane.cutTop(line_dy).place_cutLeft(auto_hint__radio).place_cutLeft(auto_hint__label);
    }
 
+   // smooth
+
    {
-    Panesor cur(smooth_contour.getInner().shrink(space_dxy),space_dxy);
+    PaneCut pane(smooth_contour.getInner(),space_dxy);
 
-    {
-     Panesor cur1=cur.cutY(smooth_size.y);
+    pane.shrink();
 
-     cur1.placeX(no_smooth_radio,smooth_size.y,CenterFunc(check_dxy));
-     cur1.placeX(no_smooth_label,smooth_size.x);
-    }
-
-    {
-     Panesor cur1=cur.cutY(smooth_size.y);
-
-     cur1.placeX(smooth_radio,smooth_size.y,CenterFunc(check_dxy));
-     cur1.placeX(smooth_label,smooth_size.x);
-    }
-
-    {
-     Panesor cur1=cur.cutY(smooth_size.y);
-
-     cur1.placeX(RGB_radio,smooth_size.y,CenterFunc(check_dxy));
-     cur1.placeX(RGB_label,smooth_size.x);
-    }
-
-    {
-     Panesor cur1=cur.cutY(smooth_size.y);
-
-     cur1.placeX(BGR_radio,smooth_size.y,CenterFunc(check_dxy));
-     cur1.placeX(BGR_label,smooth_size.x);
-    }
+    pane.cutTop(line_dy).place_cutLeft(no_smooth__radio).place_cutLeft(no_smooth__label);
+    pane.cutTop(line_dy).place_cutLeft(smooth__radio).place_cutLeft(smooth__label);
+    pane.cutTop(line_dy).place_cutLeft(RGB__radio).place_cutLeft(RGB__label);
+    pane.cutTop(line_dy).place_cutLeft(BGR__radio).place_cutLeft(BGR__label);
    }
   }
 
   // kerning
 
   {
-   Point s=kerning_label.getMinSize();
+   auto kerning__check=CutBox(kerning_check);
+   auto kerning__label=CutPoint(kerning_label);
 
-   Panesor cur1=cur.cutY(s.y);
+   Coord dy=Max(kerning__check.dxy,kerning__label.size.y);
 
-   cur1.placeX(kerning_check,s.y,CenterFunc(check_dxy));
+   PaneCut p=pane.cutTop(dy);
 
-   cur1.placeX(kerning_label,s.x);
+   p.place_cutLeft(kerning__check)
+    .place_cutLeft(kerning__label);
   }
 
   // strength
 
   {
-   Point s1=strength_spin.getMinSize();
-   Point s2=strength_label.getMinSize();
+   auto strength__spin=CutPoint(strength_spin);
+   auto strength__label=CutPoint(strength_label);
 
-   Panesor cur1=cur.cutY(Max(s1.y,s2.y));
+   Coord dy=Max(strength__spin.size.y,strength__label.size.y);
 
-   cur1.placeX(strength_spin,s1.x);
+   PaneCut p=pane.cutTop(dy);
 
-   cur1.placeX(strength_label,s2.x);
+   p.place_cutLeft(AlignCenterY(strength__spin))
+    .place_cutLeft(AlignCenterY(strength__label));
   }
 
-  test_contour.setPlace(cur);
+  pane.place(test_contour);
 
   font_test.setPlace(test_contour.getInner());
-
-#endif
  }
 
  // base

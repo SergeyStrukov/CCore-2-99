@@ -53,16 +53,21 @@ Layout.h             +
 FontParam.h          +          
 ConfigStore.h        +     
 FontDatabase.h       +
-UserPreference.h     +
 
 --- Window ---------------------------------------------------------------------
 
-DragWindow.h         +    
-FixedWindow.h        +
-ShapeLib.h           +           
+DragWindow.h             
+FixedWindow.h        
+ToolWindow.h         
+
+ShapeLib.h                      
 WindowLib.h          +
         
-MessageWindow.h      +     
-WindowReport.h       +
+MessageWindow.h           
+WindowReport.h       
 
--------------------------------------------------------------------------------- 
+UserPreference.h     
+
+--------------------------------------------------------------------------------
+
+ 

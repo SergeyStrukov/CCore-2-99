@@ -278,11 +278,17 @@ struct BasePoint
 
 struct Point : BasePoint<Point,Coord>
  {
-  using BasePoint<Point,Coord>::BasePoint;
-
   static Point Max() { return Point(MaxCoord,MaxCoord); }
 
   static Point Min() { return Point(MinCoord,MinCoord); }
+
+  // constructors
+
+  using BasePoint<Point,Coord>::BasePoint;
+
+  Point() noexcept {}
+
+  Point(Coordinate x,Coordinate y) : Point(+x,+y) {}
  };
 
 /* struct MPoint */

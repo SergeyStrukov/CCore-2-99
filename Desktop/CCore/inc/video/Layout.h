@@ -248,23 +248,6 @@ class PlaceRow
    Point size;
    Coord delta_x;
 
-  private:
-
-   struct Place
-    {
-     PlaceRow &obj;
-
-     template <class W>
-     Place operator + (W &window)
-      {
-       window.setPlace(*obj);
-
-       ++obj;
-
-       return *this;
-      }
-    };
-
   public:
 
    PlaceRow(Pane outer,Point size,Coord space,ulen count);
@@ -276,7 +259,7 @@ class PlaceRow
    template <class ... WW>
    void place(WW && ... ww) requires ( ... && PlaceType<WW> )
     {
-     ( Place{*this} + ... + ww );
+     Algon::ApplyToList( [this] (AnyType &&window) { window.setPlace(*(*this)); ++(*this); } , std::forward<WW>(ww)... );
     }
  };
 
@@ -287,23 +270,6 @@ class PlaceColumn
    Point base;
    Point size;
    Coord delta_y;
-
-  private:
-
-   struct Place
-    {
-     PlaceColumn &obj;
-
-     template <class W>
-     Place operator + (W &window)
-      {
-       window.setPlace(*obj);
-
-       ++obj;
-
-       return *this;
-      }
-    };
 
   public:
 
@@ -316,7 +282,7 @@ class PlaceColumn
    template <class ... WW>
    void place(WW && ... ww) requires ( ... && PlaceType<WW> )
     {
-     ( Place{*this} + ... + ww );
+     Algon::ApplyToList( [this] (AnyType &&window) { window.setPlace(*(*this)); ++(*this); } , std::forward<WW>(ww)... );
     }
  };
 
