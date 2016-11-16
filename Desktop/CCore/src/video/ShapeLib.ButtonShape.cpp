@@ -23,6 +23,11 @@ namespace Video {
 
 /* class ButtonShape */
 
+MCoord ButtonShape::FigEX(Coord fdy,MCoord width)
+ {
+  return (Fraction(fdy)+2*width)/4;
+ }
+
 Point ButtonShape::getMinSize() const
  {
   TextSize ts=cfg.font->text(face.str());
@@ -31,7 +36,7 @@ Point ButtonShape::getMinSize() const
 
   MCoord width=+cfg.width;
 
-  MCoord ex=(Fraction(ts.dy)+2*width)/4;
+  MCoord ex=FigEX(ts.dy,width);
 
   Coord dx=RoundUpLen(ex);
   Coord dy=RoundUpLen(width);
@@ -45,7 +50,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   Font font=cfg.font.get();
 
@@ -55,7 +60,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4;
+  MCoord ex=FigEX(fs.dy,width);
 
   FigureButton fig(p,ex);
 
@@ -69,12 +74,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     VColor top;
-
-     if( mover && enable )
-       top=+cfg.topUp;
-     else
-       top=+cfg.top;
+     VColor top = ( mover && enable )? +cfg.topUp : +cfg.top ;
 
      fig.curveSolid(art,TwoField(p.getTopLeft(),top,p.getBottomLeft(),bottom));
     }
@@ -97,19 +97,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border;
-
-   if( focus )
-     {
-      border=+cfg.focus;
-     }
-   else
-     {
-      if( enable )
-        border=+cfg.border;
-      else
-        border=bottom;
-     }
+   VColor border = focus? +cfg.focus : ( enable?+cfg.border:bottom ) ;
 
    fig.curveLoop(art,HalfPos,width,border);
   }

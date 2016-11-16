@@ -82,6 +82,8 @@ class ScrollListShape;
 
 class ButtonShape
  {
+   static MCoord FigEX(Coord fdy,MCoord width);
+
   public:
 
    struct Config

@@ -79,26 +79,42 @@ struct MPane
 
   MPane() noexcept : x(0),y(0),dx(0),dy(0),ex(0),ey(0) {}
 
+  MPane(NothingType) noexcept : MPane() {}
+
   MPane(const Pane &pane)
    {
-    x=MPoint::LShift(pane.x)-MPoint::Half;
-    y=MPoint::LShift(pane.y)-MPoint::Half;
-    dx=MPoint::LShift(pane.dx);
-    dy=MPoint::LShift(pane.dy);
+    if( +pane )
+      {
+       x=MPoint::LShift(pane.x)-MPoint::Half;
+       y=MPoint::LShift(pane.y)-MPoint::Half;
+       dx=MPoint::LShift(pane.dx);
+       dy=MPoint::LShift(pane.dy);
 
-    ex=x+dx;
-    ey=y+dy;
+       ex=x+dx;
+       ey=y+dy;
+      }
+    else
+      {
+       (*this)=Empty;
+      }
    }
 
   MPane(MCoord x_,MCoord ex_,MCoord y_,MCoord ey_)
    {
-    x=x_;
-    y=y_;
-    ex=ex_;
-    ey=ey_;
+    if( x_<ex_ && y_<ey_ )
+      {
+       x=x_;
+       y=y_;
+       ex=ex_;
+       ey=ey_;
 
-    dx=ex-x;
-    dy=ey-y;
+       dx=ex-x;
+       dy=ey-y;
+      }
+    else
+      {
+       (*this)=Empty;
+      }
    }
 
   // methods
