@@ -310,6 +310,10 @@ class ButtonWindowOf : public SubWindow
 
 using ButtonWindow = ButtonWindowOf<ButtonShape> ;
 
+/* type RefButtonWindow */
+
+using RefButtonWindow = ButtonWindowOf<RefButtonShape> ;
+
 /* type KnobWindow */
 
 using KnobWindow = ButtonWindowOf<KnobShape> ;
@@ -828,6 +832,10 @@ using TextWindow = TextWindowOf<TextShape> ;
 /* type LabelWindow */
 
 using LabelWindow = TextWindowOf<LabelShape> ;
+
+/* type RefLabelWindow */
+
+using RefLabelWindow = TextWindowOf<RefLabelShape> ;
 
 /* class DecorWindowOf<Shape> */
 

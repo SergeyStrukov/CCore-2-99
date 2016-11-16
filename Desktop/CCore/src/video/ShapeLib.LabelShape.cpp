@@ -37,6 +37,30 @@ void LabelShape::draw(const DrawBuf &buf) const
   cfg.font->text(buf,pane,TextPlace(align_x,align_y),text.str(),enable?+cfg.text:+cfg.inactive);
  }
 
+/* class RefLabelShape */
+
+Point RefLabelShape::getMinSize() const
+ {
+  LabelShape temp(cfg,text.get(),align_x,align_y);
+
+  temp.pane=pane;
+
+  temp.enable=enable;
+
+  return temp.getMinSize();
+ }
+
+void RefLabelShape::draw(const DrawBuf &buf) const
+ {
+  LabelShape temp(cfg,text.get(),align_x,align_y);
+
+  temp.pane=pane;
+
+  temp.enable=enable;
+
+  temp.draw(buf);
+ }
+
 } // namespace Video
 } // namespace CCore
 

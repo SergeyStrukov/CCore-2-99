@@ -298,7 +298,7 @@ class FileSubWindow : public ComboWindow
 
      RefVal<DefString> text_Ok = "Ok"_def ;
      RefVal<DefString> text_Cancel = "Cancel"_def ;
-     RefVal<DefString> text_new_file = "New file"_def ;
+     RefVal<DefString> text_New_file = "New file"_def ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
@@ -357,15 +357,15 @@ class FileSubWindow : public ComboWindow
 
    XDoubleLineWindow line2;
 
-   ButtonWindow btn_Ok;
-   ButtonWindow btn_Cancel;
+   RefButtonWindow btn_Ok;
+   RefButtonWindow btn_Cancel;
 
    DirHitList hit_list;
    MenuData hit_data;
    SimpleCascadeMenu hit_menu;
 
    CheckWindow check_new_file;
-   LabelWindow label_new_file;
+   RefLabelWindow label_new_file;
    LineEditWindow edit_new_file;
 
    // work

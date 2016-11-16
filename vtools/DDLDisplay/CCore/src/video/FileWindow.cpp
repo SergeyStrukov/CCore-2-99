@@ -899,13 +899,13 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    list_file(wlist,cfg.list_cfg),
    filter_list(wlist,cfg.filter_list_cfg),
    line2(wlist,cfg.line_cfg),
-   btn_Ok(wlist,cfg.btn_cfg,+cfg.text_Ok),
-   btn_Cancel(wlist,cfg.btn_cfg,+cfg.text_Cancel),
+   btn_Ok(wlist,cfg.btn_cfg,cfg.text_Ok),
+   btn_Cancel(wlist,cfg.btn_cfg,cfg.text_Cancel),
 
    hit_menu(host.getFrame()->getDesktop(),cfg.hit_menu_cfg),
 
    check_new_file(wlist,cfg.check_cfg,true),
-   label_new_file(wlist,cfg.label_cfg,+cfg.text_new_file),
+   label_new_file(wlist,cfg.label_cfg,cfg.text_New_file),
    edit_new_file(wlist,cfg.edit_cfg),
 
    connector_file_list_entered(this,&FileSubWindow::file_list_entered,list_file.entered),
@@ -979,6 +979,13 @@ void FileSubWindow::open()
   ComboWindow::open();
 
   file_path=Empty;
+
+  if( param.new_file && !check_new_file.isChecked() )
+    {
+     check_new_file.check(true);
+
+     check_new_file_changed(true);
+    }
 
   setDir(".");
 

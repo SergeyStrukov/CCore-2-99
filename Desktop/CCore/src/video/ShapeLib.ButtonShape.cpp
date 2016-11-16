@@ -103,6 +103,40 @@ void ButtonShape::draw(const DrawBuf &buf) const
   }
  }
 
+/* class RefButtonShape */
+
+Point RefButtonShape::getMinSize() const
+ {
+  ButtonShape temp(cfg,face.get());
+
+  temp.pane=pane;
+
+  temp.enable=enable;
+  temp.focus=focus;
+  temp.mover=mover;
+  temp.down=down;
+
+  temp.mouse=mouse;
+
+  return temp.getMinSize();
+ }
+
+void RefButtonShape::draw(const DrawBuf &buf) const
+ {
+  ButtonShape temp(cfg,face.get());
+
+  temp.pane=pane;
+
+  temp.enable=enable;
+  temp.focus=focus;
+  temp.mover=mover;
+  temp.down=down;
+
+  temp.mouse=mouse;
+
+  temp.draw(buf);
+ }
+
 } // namespace Video
 } // namespace CCore
 

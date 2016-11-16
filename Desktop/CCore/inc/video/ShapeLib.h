@@ -32,6 +32,8 @@ namespace Video {
 
 class ButtonShape;
 
+class RefButtonShape;
+
 class KnobShape;
 
 class CheckShape;
@@ -39,6 +41,8 @@ class CheckShape;
 class RadioShape;
 
 class LabelShape;
+
+class RefLabelShape;
 
 class TextShape;
 
@@ -125,6 +129,42 @@ class ButtonShape
    // methods
 
    ButtonShape(const Config &cfg_,const FaceType &face_) : cfg(cfg_),face(face_) {}
+
+   Point getMinSize() const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   void draw(const DrawBuf &buf) const;
+ };
+
+/* class RefButtonShape */
+
+class RefButtonShape
+ {
+  public:
+
+   using Config = ButtonShape::Config ;
+
+   // parameters
+
+   using FaceType = const RefVal<DefString> & ;
+
+   const Config &cfg;
+   FaceType face;
+   Pane pane;
+
+   // state
+
+   bool enable =  true ;
+   bool focus  = false ;
+   bool mover  = false ;
+   bool down   = false ;
+
+   bool mouse  = false ;
+
+   // methods
+
+   RefButtonShape(const Config &cfg_,FaceType face_) : cfg(cfg_),face(face_) {}
 
    Point getMinSize() const;
 
@@ -315,6 +355,36 @@ class LabelShape
    // methods
 
    LabelShape(const Config &cfg_,const DefString &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
+    : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
+
+   Point getMinSize() const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   void draw(const DrawBuf &buf) const;
+ };
+
+/* class RefLabelShape */
+
+class RefLabelShape
+ {
+  public:
+
+   using Config = LabelShape::Config ;
+
+   const Config &cfg;
+   const RefVal<DefString> &text;
+   AlignX align_x;
+   AlignY align_y;
+   Pane pane;
+
+   // state
+
+   bool enable = true ;
+
+   // methods
+
+   RefLabelShape(const Config &cfg_,const RefVal<DefString> &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
     : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
 
    Point getMinSize() const;
