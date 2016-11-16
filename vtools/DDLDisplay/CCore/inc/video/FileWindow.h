@@ -19,6 +19,7 @@
 #include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
+
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FunctorType.h>
@@ -295,6 +296,10 @@ class FileSubWindow : public ComboWindow
 
      RefVal<VColor> back = Silver ;
 
+     RefVal<DefString> text_Ok = "Ok"_def ;
+     RefVal<DefString> text_Cancel = "Cancel"_def ;
+     RefVal<DefString> text_new_file = "New file"_def ;
+
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<FileFilterListWindow::ConfigType> filter_list_cfg;
@@ -338,15 +343,15 @@ class FileSubWindow : public ComboWindow
 
    // subs
 
-   DirEditWindow dir;
+   DirEditWindow edit_dir;
    KnobWindow knob_hit;
    KnobWindow knob_add;
    KnobWindow knob_back;
 
    XDoubleLineWindow line1;
 
-   ScrollListWindow dir_list;
-   ScrollListWindow file_list;
+   ScrollListWindow list_dir;
+   ScrollListWindow list_file;
 
    FileFilterListWindow filter_list;
 
@@ -359,9 +364,9 @@ class FileSubWindow : public ComboWindow
    MenuData hit_data;
    SimpleCascadeMenu hit_menu;
 
-   CheckWindow check_new;
+   CheckWindow check_new_file;
    LabelWindow label_new_file;
-   LineEditWindow new_file;
+   LineEditWindow edit_new_file;
 
    // work
 
@@ -385,6 +390,8 @@ class FileSubWindow : public ComboWindow
    void setDir(StrLen dir_name,StrLen sub_dir);
 
    void buildFilePath();
+
+   bool isGoodFileName(StrLen file_name);
 
   private:
 
@@ -435,6 +442,16 @@ class FileSubWindow : public ComboWindow
    SignalConnector<FileSubWindow> connector_hit_menu_destroyed;
    SignalConnector<FileSubWindow,int,Point> connector_hit_menu_selected;
    SignalConnector<FileSubWindow,int> connector_hit_menu_deleted;
+
+   void check_new_file_changed(bool check);
+
+   void edit_new_file_changed();
+
+   void edit_new_file_entered();
+
+   SignalConnector<FileSubWindow,bool> connector_check_new_file_changed;
+   SignalConnector<FileSubWindow> connector_edit_new_file_changed;
+   SignalConnector<FileSubWindow> connector_edit_new_file_entered;
 
  public:
 

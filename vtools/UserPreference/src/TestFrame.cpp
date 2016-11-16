@@ -48,6 +48,8 @@ void TestWindow::changeColor(int new_id,int)
 void TestWindow::lightOnOff(bool check)
  {
   light.turn(check);
+
+  edit.alert(check);
  }
 
 void TestWindow::knobPressed()

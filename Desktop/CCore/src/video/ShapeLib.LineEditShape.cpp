@@ -197,7 +197,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   // body
 
-  fig.curveSolid(art,+cfg.back);
+  fig.curveSolid(art,alert?+cfg.alert:+cfg.back);
 
   // border
 

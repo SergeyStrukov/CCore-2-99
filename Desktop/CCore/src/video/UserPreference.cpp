@@ -54,6 +54,7 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("face",ptr->face);
   func("faceUp",ptr->faceUp);
   func("mark",ptr->mark);
+  func("alert",ptr->alert);
   func("text_select",ptr->text_select);
   func("text_cursor",ptr->text_cursor);
   func("label_text",ptr->label_text);
@@ -176,6 +177,7 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("face",face);
    binder.item("faceUp",faceUp);
    binder.item("mark",mark);
+   binder.item("alert",alert);
 
   binder.group("Text");
 
@@ -521,6 +523,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_LineEditWindow.inactive.bind(inactive);
   cfg_LineEditWindow.text.bind(line_edit_text);
   cfg_LineEditWindow.select.bind(text_select);
+  cfg_LineEditWindow.alert.bind(alert);
   cfg_LineEditWindow.cursor.bind(text_cursor);
   cfg_LineEditWindow.font.bind(line_edit_font.font);
   cfg_LineEditWindow.period.bind(line_edit_period);

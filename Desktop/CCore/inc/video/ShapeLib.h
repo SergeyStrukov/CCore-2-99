@@ -1042,6 +1042,7 @@ class LineEditShape
      RefVal<VColor> text     =     Black ;
      RefVal<VColor> inactive =      Gray ;
      RefVal<VColor> select   =    Yellow ;
+     RefVal<VColor> alert    =      Pink ;
 
      RefVal<VColor> cursor   =      Blue ;
 
@@ -1062,6 +1063,7 @@ class LineEditShape
    bool focus  = false ;
    bool cursor = false ;
    bool hide_cursor = false ;
+   bool alert = false ;
    ulen len    =     0 ;
    ulen pos    =     0 ;
    ulen select_off = 0 ;

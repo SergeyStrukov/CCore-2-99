@@ -256,6 +256,8 @@ PaneCut PaneCut::cutLeft(Coord dx,Coord space)
     }
   else
     {
+     pane=Empty;
+
      return PaneCut(space);
     }
  }
@@ -272,6 +274,8 @@ PaneCut PaneCut::cutRight(Coord dx,Coord space)
     }
   else
     {
+     pane=Empty;
+
      return PaneCut(space);
     }
  }
@@ -288,6 +292,8 @@ PaneCut PaneCut::cutTop(Coord dy,Coord space)
     }
   else
     {
+     pane=Empty;
+
      return PaneCut(space);
     }
  }
@@ -304,6 +310,8 @@ PaneCut PaneCut::cutBottom(Coord dy,Coord space)
     }
   else
     {
+     pane=Empty;
+
      return PaneCut(space);
     }
  }

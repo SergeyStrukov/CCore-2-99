@@ -2450,6 +2450,8 @@ class LineEditWindowOf : public SubWindow
 
    bool isEnabled() const { return shape.enable; }
 
+   bool isAlerted() const { return shape.alert; }
+
    void enable(bool enable=true)
     {
      if( enable )
@@ -2487,6 +2489,11 @@ class LineEditWindowOf : public SubWindow
    void hideInactiveCursor(bool flag=true)
     {
      if( Change(shape.hide_cursor,flag) ) redraw();
+    }
+
+   void alert(bool on=true)
+    {
+     if( Change(shape.alert,on) ) redraw();
     }
 
    StrLen getText() const { return Range(text_buf.getPtr(),shape.len); }

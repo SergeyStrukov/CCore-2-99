@@ -381,13 +381,7 @@ Point FileFilterWindow::getMinSize() const
   Coord check_dxy=check.getMinSize().dxy;
   Coord knob_dxy=knob.getMinSize().dxy;
 
-  Coordinate dx(size.x);
-
-  dx+=BoxExt(check_dxy);
-
-  dx+=BoxExt(knob_dxy);
-
-  return Point( +dx , Max_cast(check_dxy,knob_dxy,size.y) );
+  return Point( Coordinate(size.x)+BoxExt(check_dxy)+BoxExt(knob_dxy) , Sup(check_dxy,knob_dxy,size.y) );
  }
 
  // drawing
@@ -469,13 +463,11 @@ Point FileFilterListWindow::getMinSize() const
 
      Coord delta=BoxExt(size.y);
 
-     Coordinate dy=delta*ToCoordinate(count)+knob_dxy;
-
-     return Point( Max(size.x,knob_dxy) , +dy );
+     return Point( Sup(size.x,knob_dxy) , delta*ToCoordinate(count)+knob_dxy );
     }
   else
     {
-     return knob.getMinSize().toSizePoint();
+     return GetMinSize(knob);
     }
  }
 
@@ -614,11 +606,11 @@ void FileSubWindow::applyFilters()
 
      for(ulen i=0; i<count ;i++) obj.addFile(file_info->getLine(i));
 
-     file_list.setInfo(obj.build());
+     list_file.setInfo(obj.build());
     }
   catch(...)
     {
-     file_list.setInfo(ComboInfo());
+     list_file.setInfo(ComboInfo());
 
      throw;
     }
@@ -628,10 +620,10 @@ void FileSubWindow::fillLists()
  {
   try
     {
-     dir_list.enable();
-     file_list.enable();
+     list_dir.enable();
+     list_file.enable(!check_new_file.isChecked());
 
-     FileSystem::DirCursor cur(fs,dir.getText());
+     FileSystem::DirCursor cur(fs,edit_dir.getText());
 
      ComboInfoBuilder dir_builder;
      InfoBuilder file_builder;
@@ -659,14 +651,14 @@ void FileSubWindow::fillLists()
 
      dir_builder.sortGroups(ExtNameLess);
 
-     dir_list.setInfo(dir_builder.complete());
+     list_dir.setInfo(dir_builder.complete());
 
      file_info=file_builder.complete();
     }
   catch(...)
     {
-     dir_list.setInfo(ComboInfo());
-     file_list.setInfo(ComboInfo());
+     list_dir.setInfo(ComboInfo());
+     list_file.setInfo(ComboInfo());
 
      throw;
     }
@@ -682,14 +674,14 @@ void FileSubWindow::setDir(StrLen dir_name)
 
   if( fs.getFileType(path)==FileType_dir )
     {
-     dir.setText(path);
+     edit_dir.setText(path);
 
      fillLists();
     }
   else
     {
-     dir_list.disable();
-     file_list.disable();
+     list_dir.disable();
+     list_file.disable();
 
      Printf(Exception,"CCore::Video::FileSubWindow::setDir(#.q;) : #.q; is not a directory",dir_name,path);
     }
@@ -704,18 +696,34 @@ void FileSubWindow::setDir(StrLen dir_name,StrLen sub_dir)
 
 void FileSubWindow::buildFilePath()
  {
-  const ComboInfo &info=file_list.getInfo();
-  ulen index=file_list.getSelect();
-
-  if( index<info->getLineCount() )
+  if( param.new_file && check_new_file.isChecked() )
     {
-     ComboInfoItem item=info->getLine(index);
+     file_path=file_buf(edit_dir.getText(),edit_new_file.getText());
+    }
+  else
+    {
+     const ComboInfo &info=list_file.getInfo();
+     ulen index=list_file.getSelect();
 
-     if( item.type==ComboInfoText )
+     if( index<info->getLineCount() )
        {
-        file_path=file_buf(dir.getText(),item.text);
+        ComboInfoItem item=info->getLine(index);
+
+        if( item.type==ComboInfoText )
+          {
+           file_path=file_buf(edit_dir.getText(),item.text);
+          }
        }
     }
+ }
+
+bool FileSubWindow::isGoodFileName(StrLen file_name)
+ {
+  if( !file_name ) return false;
+
+  MakeFileName temp(edit_dir.getText(),file_name);
+
+  return fs.getFileType(temp.get())==FileType_none;
  }
 
 void FileSubWindow::file_list_entered()
@@ -732,8 +740,8 @@ void FileSubWindow::filter_list_changed()
 
 void FileSubWindow::dir_list_entered()
  {
-  const ComboInfo &info=dir_list.getInfo();
-  ulen index=dir_list.getSelect();
+  const ComboInfo &info=list_dir.getInfo();
+  ulen index=list_dir.getSelect();
 
   if( index<info->getLineCount() )
     {
@@ -741,27 +749,27 @@ void FileSubWindow::dir_list_entered()
 
      if( item.type==ComboInfoText )
        {
-        setDir(dir.getText(),item.text);
+        setDir(edit_dir.getText(),item.text);
        }
     }
  }
 
 void FileSubWindow::dir_entered()
  {
-  StrLen dir_name=dir.getText();
+  StrLen dir_name=edit_dir.getText();
 
   setDir(dir_name);
  }
 
 void FileSubWindow::dir_changed()
  {
-  dir_list.disable();
-  file_list.disable();
+  list_dir.disable();
+  list_file.disable();
  }
 
 void FileSubWindow::btn_Ok_pressed()
  {
-  hit_list.last(dir.getText());
+  hit_list.last(edit_dir.getText());
 
   buildFilePath();
 
@@ -789,14 +797,14 @@ void FileSubWindow::knob_hit_pressed()
 
 void FileSubWindow::knob_add_pressed()
  {
-  hit_list.add(dir.getText());
+  hit_list.add(edit_dir.getText());
 
   hit_list.prepare(hit_data);
  }
 
 void FileSubWindow::knob_back_pressed()
  {
-  StrLen dir_name=dir.getText();
+  StrLen dir_name=edit_dir.getText();
 
   SplitPath split1(dir_name);
 
@@ -840,36 +848,73 @@ void FileSubWindow::hit_menu_deleted(int id)
   hit_list.prepare(hit_data);
  }
 
+void FileSubWindow::check_new_file_changed(bool check)
+ {
+  edit_new_file.enable(check);
+
+  list_file.enable(!check);
+
+  if( check )
+    {
+     btn_Ok.enable(!edit_new_file.isAlerted());
+    }
+  else
+    {
+     btn_Ok.enable();
+    }
+ }
+
+void FileSubWindow::edit_new_file_changed()
+ {
+  if( isGoodFileName(edit_new_file.getText()) )
+    {
+     edit_new_file.alert(false);
+
+     btn_Ok.enable();
+    }
+  else
+    {
+     edit_new_file.alert(true);
+
+     btn_Ok.disable();
+    }
+ }
+
+void FileSubWindow::edit_new_file_entered()
+ {
+  btn_Ok_pressed();
+ }
+
 FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWindowParam &param_)
  : ComboWindow(host),
    cfg(cfg_),
    param(param_),
 
-   dir(wlist,cfg.edit_cfg),
+   edit_dir(wlist,cfg.edit_cfg),
    knob_hit(wlist,cfg.knob_cfg,KnobShape::FaceDown),
    knob_add(wlist,cfg.knob_cfg,KnobShape::FacePlus),
    knob_back(wlist,cfg.knob_cfg,KnobShape::FaceLeft),
    line1(wlist,cfg.line_cfg),
-   dir_list(wlist,cfg.list_cfg),
-   file_list(wlist,cfg.list_cfg),
+   list_dir(wlist,cfg.list_cfg),
+   list_file(wlist,cfg.list_cfg),
    filter_list(wlist,cfg.filter_list_cfg),
    line2(wlist,cfg.line_cfg),
-   btn_Ok(wlist,cfg.btn_cfg,"Ok"_def),
-   btn_Cancel(wlist,cfg.btn_cfg,"Cancel"_def),
+   btn_Ok(wlist,cfg.btn_cfg,+cfg.text_Ok),
+   btn_Cancel(wlist,cfg.btn_cfg,+cfg.text_Cancel),
 
    hit_menu(host.getFrame()->getDesktop(),cfg.hit_menu_cfg),
 
-   check_new(wlist,cfg.check_cfg,true),
-   label_new_file(wlist,cfg.label_cfg,"New file"_def),
-   new_file(wlist,cfg.edit_cfg),
+   check_new_file(wlist,cfg.check_cfg,true),
+   label_new_file(wlist,cfg.label_cfg,+cfg.text_new_file),
+   edit_new_file(wlist,cfg.edit_cfg),
 
-   connector_file_list_entered(this,&FileSubWindow::file_list_entered,file_list.entered),
-   connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,file_list.dclicked),
+   connector_file_list_entered(this,&FileSubWindow::file_list_entered,list_file.entered),
+   connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,list_file.dclicked),
    connector_filter_list_changed(this,&FileSubWindow::filter_list_changed,filter_list.changed),
-   connector_dir_list_entered(this,&FileSubWindow::dir_list_entered,dir_list.entered),
-   connector_dir_list_dclicked(this,&FileSubWindow::dir_list_entered,dir_list.dclicked),
-   connector_dir_entered(this,&FileSubWindow::dir_entered,dir.entered),
-   connector_dir_changed(this,&FileSubWindow::dir_changed,dir.changed),
+   connector_dir_list_entered(this,&FileSubWindow::dir_list_entered,list_dir.entered),
+   connector_dir_list_dclicked(this,&FileSubWindow::dir_list_entered,list_dir.dclicked),
+   connector_dir_entered(this,&FileSubWindow::dir_entered,edit_dir.entered),
+   connector_dir_changed(this,&FileSubWindow::dir_changed,edit_dir.changed),
    connector_btn_Ok_pressed(this,&FileSubWindow::btn_Ok_pressed,btn_Ok.pressed),
    connector_btn_Cancel_pressed(this,&FileSubWindow::btn_Cancel_pressed,btn_Cancel.pressed),
    connector_knob_hit_pressed(this,&FileSubWindow::knob_hit_pressed,knob_hit.pressed),
@@ -877,13 +922,23 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    connector_knob_back_pressed(this,&FileSubWindow::knob_back_pressed,knob_back.pressed),
    connector_hit_menu_destroyed(this,&FileSubWindow::hit_menu_destroyed,hit_menu.takeDestroyed()),
    connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.takeSelected()),
-   connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted())
+   connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted()),
+   connector_check_new_file_changed(this,&FileSubWindow::check_new_file_changed,check_new_file.changed),
+   connector_edit_new_file_changed(this,&FileSubWindow::edit_new_file_changed,edit_new_file.changed),
+   connector_edit_new_file_entered(this,&FileSubWindow::edit_new_file_entered,edit_new_file.entered)
  {
-  wlist.insTop(dir,knob_hit,knob_add,knob_back,line1,dir_list,file_list,filter_list,line2,btn_Ok,btn_Cancel);
+  wlist.insTop(edit_dir,knob_hit,knob_add,knob_back,line1,list_dir,list_file,filter_list,line2,btn_Ok,btn_Cancel);
 
-  if( param.new_file ) wlist.insBottom(check_new,label_new_file,new_file);
+  if( param.new_file )
+    {
+     wlist.insBottom(check_new_file,label_new_file,edit_new_file);
 
-  dir.hideInactiveCursor();
+     list_file.disable();
+
+     edit_new_file_changed();
+    }
+
+  edit_dir.hideInactiveCursor();
  }
 
 FileSubWindow::~FileSubWindow()
@@ -894,14 +949,25 @@ FileSubWindow::~FileSubWindow()
 
 Point FileSubWindow::getMinSize(StrLen sample_text) const
  {
-  Coord space=+cfg.space_dxy;
+  Coordinate space=+cfg.space_dxy;
 
-  Point dir_size=dir.getMinSize(sample_text);
+  Coordinate knob_ext=BoxExt(knob_hit.getMinSize().dxy);
+
+  Point dir_size=edit_dir.getMinSize(sample_text);
+
+  Coordinate dir_dx=dir_size.x;
+  Coordinate dir_dy=dir_size.y;
 
   Point btn_size=SupMinSize(btn_Ok,btn_Cancel);
 
-  Coord dx=3*space+Max<Coord>(dir_size.x+dir_size.y,2*btn_size.x+space)+3*dir_size.y;
-  Coord dy=5*space+20*dir_size.y+btn_size.y;
+  Coordinate btn_dx=btn_size.x;
+  Coordinate btn_dy=btn_size.y;
+
+  auto dx = Sup( dir_dx + 3*knob_ext + 2*space , 2*btn_dx + 3*space ) ;
+
+  auto dy = 7*space + 20*dir_dy + btn_dy ;
+
+  if( param.new_file ) dy += dir_dy + 2*space ;
 
   return Point(dx,dy);
  }
@@ -937,17 +1003,17 @@ void FileSubWindow::layout()
   // knob_hit , knob_add , dir , knob_back
 
   {
-   Coord knob_size=knob_hit.getMinSize().dxy;
-   Point dir_size=dir.getMinSize();
+   auto knob__hit=CutBox(knob_hit);
+   auto edit__dir=CutPoint(edit_dir);
 
-   Coord dy=Max(knob_size,dir_size.y);
+   Coord dy=SupDY(knob__hit,edit__dir);
 
    PaneCut p=pane.cutTop(dy);
 
-   p.place_cutLeft(knob_hit)
-    .place_cutLeft(knob_add)
+   p.place_cutLeft(knob_add)
+    .place_cutLeft(knob__hit)
     .place_cutRight(knob_back)
-    .place(dir);
+    .place(edit__dir);
   }
 
   // line1
@@ -956,27 +1022,27 @@ void FileSubWindow::layout()
    pane.place_cutTop(line1);
   }
 
-  // dir_list
+  // list_dir
 
   {
-   pane.place_cutTop(dir_list,Rational(1,3));
+   pane.place_cutTop(list_dir,Rational(1,3));
   }
 
   // check_new , label_new_file , new_file
 
   if( param.new_file )
     {
-     auto check=CutBox(check_new);
-     auto label=CutPoint(label_new_file);
-     auto edit=CutPoint(new_file);
+     auto check__new_file=CutBox(check_new_file);
+     auto label__new_file=CutPoint(label_new_file);
+     auto edit__new_file=CutPoint(edit_new_file);
 
-     Coord dy=Max_cast(check.dxy,label.size.y,edit.size.y);
+     Coord dy=SupDY(check__new_file,label__new_file,edit__new_file);
 
      PaneCut p=pane.cutTop(dy);
 
-     p.place_cutLeft(check)
-      .place_cutLeft(label)
-      .place(edit);
+     p.place_cutLeft(check__new_file)
+      .place_cutLeft(label__new_file)
+      .place(edit__new_file);
     }
 
   // btn_Ok , btn_Cancel
@@ -991,10 +1057,10 @@ void FileSubWindow::layout()
    pane.place_cutBottom(line2);
   }
 
-  // file_list , filter_list
+  // list_file , filter_list
 
   {
-   pane.place_cutLeft(file_list,Rational(2,3))
+   pane.place_cutLeft(list_file,Rational(2,3))
        .place(filter_list);
   }
  }

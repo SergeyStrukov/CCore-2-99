@@ -84,6 +84,7 @@ struct UserPreferenceBag
   VColor face     =     Black ;
   VColor faceUp   =      Blue ;
   VColor mark     =     Black ;
+  VColor alert    =      Pink ;
 
   // text
 
