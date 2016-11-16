@@ -23,9 +23,9 @@ namespace Video {
 
 /* class ProgressShape */
 
-Point ProgressShape::getMinSize() const
+SizeY ProgressShape::getMinSize() const
  {
-  return Point(10,40);
+  return +cfg.dy;
  }
 
 void ProgressShape::draw(const DrawBuf &buf) const

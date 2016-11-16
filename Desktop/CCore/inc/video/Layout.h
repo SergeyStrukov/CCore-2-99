@@ -111,6 +111,26 @@ Point SupMinSize(const WW & ... ww) requires ( ... && PlaceType<WW> )
   return Sup( GetMinSize(ww)... );
  }
 
+/* SupDX() */
+
+Coord SupDX(const PlaceType &window) { return GetMinSize(window).x; }
+
+template <class ... WW>
+Coord SupDX(const WW & ... ww) requires ( ... && PlaceType<WW> )
+ {
+  return Sup( SupDX(ww)... );
+ }
+
+/* SupDY() */
+
+Coord SupDY(const PlaceType &window) { return GetMinSize(window).y; }
+
+template <class ... WW>
+Coord SupDY(const WW & ... ww) requires ( ... && PlaceType<WW> )
+ {
+  return Sup( SupDY(ww)... );
+ }
+
 /* ReplaceToSup() */
 
 template <class ... TT>
@@ -154,9 +174,6 @@ struct AlignXProxy
 
 /* AlignX() */
 
-template <Pane Func(Pane pane,Coord dx),PlaceTypeOf<Point> W>
-auto AlignX(W &window) { return AlignXProxy<W,Func>(window); }
-
 template <PlaceTypeOf<Point> W>
 auto AlignLeft(W &window) { return AlignXProxy<W,AlignLeft>(window); }
 
@@ -183,9 +200,6 @@ struct AlignYProxy
 
 /* AlignY() */
 
-template <Pane Func(Pane pane,Coord dy),PlaceTypeOf<Point> W>
-auto AlignY(W &window) { return AlignYProxy<W,Func>(window); }
-
 template <PlaceTypeOf<Point> W>
 auto AlignTop(W &window) { return AlignYProxy<W,AlignTop>(window); }
 
@@ -205,15 +219,24 @@ struct CutBoxProxy
 
   explicit CutBoxProxy(W &window_) : window(window_),dxy(window_.getMinSize().dxy) {}
 
+  CutBoxProxy(W &window_,Ratio scale) : window(window_),dxy(scale*window_.getMinSize().dxy) {}
+
   SizeXSpace getMinSize() const { return SizeXSpace(dxy,BoxSpace(dxy)); }
 
   void setPlace(Pane pane) { window.setPlace(AlignCenterY(pane,dxy)); }
+
+  Coord getExt() const { return BoxExt(dxy); }
  };
+
+Coord SupDY(const CutBoxProxy<AnyType> &window) { return window.dxy; }
 
 /* CutBox() */
 
 template <PlaceTypeOf<SizeBox> W>
 auto CutBox(W &window) { return CutBoxProxy<W>(window); }
+
+template <PlaceTypeOf<SizeBox> W>
+auto CutBox(W &window,Ratio scale) { return CutBoxProxy<W>(window,scale); }
 
 /* struct CutPointProxy<W> */
 

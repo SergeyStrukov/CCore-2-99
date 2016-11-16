@@ -173,121 +173,108 @@ TestWindow::~TestWindow()
 
 void TestWindow::layout()
  {
-#if 0
-
   Coord space_dxy=pref.get().space_dxy;
 
-  Pointsor psor(space_dxy);
+  PaneCut pane(getSize(),space_dxy);
+
+  pane.shrink();
 
   // swtch , btn , progress
 
   {
-   Point size=btn.getMinSize();
+   auto temp_swtch=CutBox(swtch);
+   auto temp_btn=CutPoint(btn);
+   auto temp_progress=CutPoint(progress);
 
-   Pointsor psor1=psor.cutY(size.y);
+   temp_progress.size.x=10*temp_progress.size.y;
 
-   psor1.placeX(swtch,size.y,CenterFunc(pref.get().swtch_dxy));
+   Coord dy=SupDY(temp_swtch,temp_btn,temp_progress);
 
-   psor1.placeX(btn,size);
+   PaneCut p=pane.cutTop(dy);
 
-   Coord pdy=pref.get().progress_dy;
-   Coord pdx=10*pdy;
-
-   psor1.placeX(progress,pdx,size.y,CenterYFunc(pdy));
+   p.place_cutLeft(temp_swtch)
+    .place_cutLeftCenter(temp_btn)
+    .place_cutLeftCenter(temp_progress);
   }
 
-  Point lsize=Sup(label1.getMinSize(),label2.getMinSize(),label3.getMinSize());
-
-  Point inner_size(lsize.x+3*space_dxy+lsize.y,3*lsize.y+4*space_dxy);
-
-  // text_contour
+  // text_contour , label , rad
 
   {
+   auto temp_rad1=CutBox(rad1);
+   auto temp_rad2=CutBox(rad2);
+   auto temp_rad3=CutBox(rad3);
+
+   auto temp_label1=CutPoint(label1);
+   auto temp_label2=CutPoint(label2);
+   auto temp_label3=CutPoint(label3);
+
+   Coord line_dy=SupDY(temp_rad1,temp_label1);
+
+   Coord label_dx=SupDX(temp_label1,temp_label2,temp_label3);
+
+   Point inner_size( temp_rad1.getExt()+label_dx+3*space_dxy , 3*line_dy+4*space_dxy );
+
    Point size=text_contour.getMinSize(inner_size);
 
-   psor.placeY(text_contour,size);
-  }
-
-  // label , rad
-
-  {
-   Panesor psor(text_contour.getInner(),space_dxy);
-
-   psor.shrink();
+   pane.place_cutTopLeft(text_contour,size);
 
    {
-    Panesor psor1=psor.cutY(lsize.y);
+    PaneCut pane(text_contour.getInner(),space_dxy);
 
-    psor1.placeX(rad1,lsize.y,CenterFunc(pref.get().radio_dxy));
+    pane.shrink();
 
-    psor1.placeX(label1,lsize.x);
-   }
-
-   {
-    Panesor psor1=psor.cutY(lsize.y);
-
-    psor1.placeX(rad2,lsize.y,CenterFunc(pref.get().radio_dxy));
-
-    psor1.placeX(label2,lsize.x);
-   }
-
-   {
-    Panesor psor1=psor.cutY(lsize.y);
-
-    psor1.placeX(rad3,lsize.y,CenterFunc(pref.get().radio_dxy));
-
-    psor1.placeX(label3,lsize.x);
+    pane.cutTop(line_dy).place_cutLeft(temp_rad1).place_cutLeft(temp_label1);
+    pane.cutTop(line_dy).place_cutLeft(temp_rad2).place_cutLeft(temp_label2);
+    pane.cutTop(line_dy).place_cutLeft(temp_rad3).place_cutLeft(temp_label3);
    }
   }
 
-  // label , check , light
-
   {
-   Point size=label.getMinSize();
+   auto temp_check=CutBox(check);
+   auto temp_label=CutPoint(label);
+   auto temp_light=CutBox(light);
 
-   Pointsor psor1=psor.cutY(size.y);
+   Coord dy=SupDY(temp_check,temp_label,temp_light);
 
-   psor1.placeX(check,size.y,CenterFunc(pref.get().check_dxy));
+   PaneCut p=pane.cutTop(dy);
 
-   psor1.placeX(label,size);
-
-   psor1.placeX(light,size.y,CenterFunc(pref.get().light_dxy));
+   p.place_cutLeft(temp_check)
+    .place_cutLeft(temp_label)
+    .place_cutLeft(temp_light);
   }
 
-  // xsingle , text , edit , xdouble
+  // xsingle , edit , text , xdouble
 
   {
+   pane.place_cutTop(xsingle);
+
    Point size=edit.getMinSize();
 
    size.x*=3;
-   size.y+=space_dxy;
 
-   psor.placeMinY(xsingle,size.x,MinSize);
+   pane.place_cutTopLeft(edit,size);
 
-   psor.placeY(edit,size);
+   pane.place_cutTopLeft(text,size);
 
-   psor.placeY(text,size);
-
-   psor.placeMinY(xdouble,size.x,MinSize);
+   pane.place_cutTop(xdouble);
   }
 
   // ysingle , knob , ydouble , xscroll
 
   {
-   Coord dy=btn.getSize().y;
+   auto temp_knob=CutBox(knob);
+   auto temp_xscroll=CutPoint(xscroll);
 
-   Pointsor psor1=psor.cutY(dy);
+   temp_xscroll.size.x=10*temp_xscroll.size.y;
 
-   psor1.placeMinX(ysingle,MinSize,dy);
+   Coord dy=SupDY(temp_knob,temp_xscroll);
 
-   psor1.placeX(knob,dy,CenterFunc(pref.get().knob_dxy));
+   PaneCut p=pane.cutTop(dy);
 
-   psor1.placeMinX(ydouble,MinSize,dy);
-
-   Coord sdy=pref.get().scroll_dxy;
-   Coord sdx=10*sdy;
-
-   psor1.placeX(xscroll,sdx,dy,CenterYFunc(sdy));
+   p.place_cutLeft(ysingle)
+    .place_cutLeft(temp_knob)
+    .place_cutLeft(ydouble)
+    .place_cutLeftCenter(temp_xscroll);
   }
 
   // info
@@ -295,24 +282,18 @@ void TestWindow::layout()
   {
    Point size=contour.getMinSize(info.getMinSize());
 
-   psor.placeY(contour,size);
+   pane.place_cutTopLeft(contour,size);
 
    info.setPlace(contour.getInner());
   }
 
   // text_list
 
-  {
-   psor.placeMinY(text_list);
-  }
+  pane.place_cutTop(text_list);
 
   // shade_btn
 
-  {
-   psor.placeMinY(shade_btn);
-  }
-
-#endif
+  pane.place_cutTopLeft(shade_btn);
  }
 
 void TestWindow::draw(DrawBuf buf,bool drag_active) const

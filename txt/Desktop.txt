@@ -23,8 +23,6 @@ ColorField.h         +
 SmoothAlgo.h         +    
 SmoothDrawArt.h      +
             
-FigureLib.h          + 
-
 --- Font -----------------------------------------------------------------------
 
 Font.h               +        
@@ -54,6 +52,10 @@ FontParam.h          +
 ConfigStore.h        +     
 FontDatabase.h       +
 
+--- Drawing --------------------------------------------------------------------
+
+FigureLib.h           
+
 --- Window ---------------------------------------------------------------------
 
 DragWindow.h             
@@ -61,7 +63,8 @@ FixedWindow.h
 ToolWindow.h         
 
 ShapeLib.h                      
-WindowLib.h          +
+WindowLib.h          
+Menu.h
         
 MessageWindow.h           
 WindowReport.h       

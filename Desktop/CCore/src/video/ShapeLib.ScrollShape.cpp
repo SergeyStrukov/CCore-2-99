@@ -89,11 +89,9 @@ void ScrollShape::dragPos(Coord from,Coord to,uCoord len,uCoord dlen)
 
 /* class XScrollShape */
 
-Point XScrollShape::getMinSize() const
+SizeY XScrollShape::getMinSize() const
  {
-  Coord w=RoundUpLen(+cfg.width);
-
-  return Point(40+10*w,8+2*w);
+  return +cfg.dxy;
  }
 
 ScrollType XScrollShape::getType(MPoint point) const

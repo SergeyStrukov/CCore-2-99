@@ -675,6 +675,8 @@ class ScrollShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
+     RefVal<Coord> dxy = 20 ;
+
      RefVal<VColor> top    =      Snow ;
      RefVal<VColor> back   =    Silver ;
      RefVal<VColor> bottom =      Gray ;
@@ -824,7 +826,7 @@ class XScrollShape : public ScrollShape
 
    explicit XScrollShape(const Config &cfg) : ScrollShape(cfg) {}
 
-   Point getMinSize() const;
+   SizeY getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize() && size.x>=5*size.y ; }
 
@@ -849,7 +851,7 @@ class YScrollShape : public ScrollShape
 
    explicit YScrollShape(const Config &cfg) : ScrollShape(cfg) {}
 
-   Point getMinSize() const;
+   SizeX getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize() && size.y>=5*size.x ; }
 
@@ -869,6 +871,8 @@ class ProgressShape
    struct Config
     {
      RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<Coord> dy = 24 ;
 
      RefVal<VColor> border        =     Black ;
 
@@ -906,7 +910,7 @@ class ProgressShape
 
    explicit ProgressShape(const Config &cfg_) : cfg(cfg_) {}
 
-   Point getMinSize() const;
+   SizeY getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 

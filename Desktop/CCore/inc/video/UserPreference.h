@@ -61,7 +61,7 @@ struct UserPreferenceBag
   Coord check_dxy   = 20 ;
   Coord knob_dxy    = 30 ;
   Coord radio_dxy   = 20 ;
-  Coord swtch_dxy   = 30 ;
+  Coord switch_dxy  = 30 ;
   Coord light_dxy   = 20 ;
   Coord scroll_dxy  = 20 ;
   Coord progress_dy = 24 ;
@@ -201,6 +201,9 @@ struct UserPreferenceBag
   UserPreferenceBag() noexcept {}
 
   // methods
+
+  template <class Ptr,class Func>
+  static void Members(Ptr ptr,Func func);
 
   void sync(ConfigMap &map);
 

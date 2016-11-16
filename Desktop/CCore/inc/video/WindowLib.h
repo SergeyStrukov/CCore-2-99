@@ -196,9 +196,7 @@ class ButtonWindowOf : public SubWindow
 
    virtual MouseShape getMouseShape(Point,KeyMod) const
     {
-     if( shape.enable ) return Mouse_Hand;
-
-     return Mouse_Arrow;
+     return shape.enable?Mouse_Hand:Mouse_Arrow;
     }
 
    // user input
@@ -3896,8 +3894,6 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    struct Config : Shape::Config
     {
-     RefVal<Coord> scroll_dxy = 20 ;
-
      CtorRefVal<typename XShape::Config> x_cfg;
      CtorRefVal<typename YShape::Config> y_cfg;
 
@@ -3952,7 +3948,7 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    // methods
 
-   auto getMinSize() const { return inner.getMinSize()+Point(+cfg.scroll_dxy,0); }
+   auto getMinSize() const { return inner.getMinSize()+Point(scroll_y.getMinSize().dx,0); }
 
    bool isGoodSize(Point size) const { return inner.isGoodSize(size); }
 
@@ -3988,13 +3984,14 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
     {
      Pane all(Null,getSize());
      Pane pane(all);
-     Coord delta=+cfg.scroll_dxy;
+     Coord delta_x=scroll_y.getMinSize().dx;
+     Coord delta_y=scroll_x.getMinSize().dy;
 
      inner.setPlace(pane);
 
      if( inner.shortDY() )
        {
-        Pane py=SplitX(pane,delta);
+        Pane py=SplitX(pane,delta_x);
 
         inner.setPlace(pane);
         scroll_y.setPlace(py);
@@ -4003,7 +4000,7 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
         if( inner.shortDX() )
           {
-           Pane px=SplitY(pane,delta);
+           Pane px=SplitY(pane,delta_y);
 
            inner.setPlace(pane);
            scroll_x.setPlace(px);
@@ -4019,15 +4016,15 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
        {
         if( inner.shortDX() )
           {
-           Pane px=SplitY(pane,delta);
+           Pane px=SplitY(pane,delta_y);
 
            inner.setPlace(pane);
 
            if( inner.shortDY() )
              {
               pane=all;
-              Pane py=SplitX(pane,delta);
-              Pane px=SplitY(pane,delta);
+              Pane py=SplitX(pane,delta_x);
+              Pane px=SplitY(pane,delta_y);
 
               inner.setPlace(pane);
               scroll_x.setPlace(px);

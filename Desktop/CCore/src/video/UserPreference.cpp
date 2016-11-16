@@ -28,213 +28,122 @@ namespace Video {
 
 /* struct UserPreferenceBag */
 
+template <class Ptr,class Func>
+void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
+ {
+  func("space_dxy",ptr->space_dxy);
+  func("text_cursor_dx",ptr->text_cursor_dx);
+  func("check_dxy",ptr->check_dxy);
+  func("knob_dxy",ptr->knob_dxy);
+  func("radio_dxy",ptr->radio_dxy);
+  func("switch_dxy",ptr->switch_dxy);
+  func("light_dxy",ptr->light_dxy);
+  func("scroll_dxy",ptr->scroll_dxy);
+  func("progress_dy",ptr->progress_dy);
+  func("width",ptr->width);
+  func("ground",ptr->ground);
+  func("back",ptr->back);
+  func("line",ptr->line);
+  func("inactive",ptr->inactive);
+  func("bottom",ptr->bottom);
+  func("bottomUp",ptr->bottomUp);
+  func("top",ptr->top);
+  func("topUp",ptr->topUp);
+  func("border",ptr->border);
+  func("focus",ptr->focus);
+  func("face",ptr->face);
+  func("faceUp",ptr->faceUp);
+  func("mark",ptr->mark);
+  func("text_select",ptr->text_select);
+  func("text_cursor",ptr->text_cursor);
+  func("label_text",ptr->label_text);
+  func("contour_text",ptr->contour_text);
+  func("button_text",ptr->button_text);
+  func("message_text",ptr->message_text);
+  func("info_text",ptr->info_text);
+  func("line_edit_text",ptr->line_edit_text);
+  func("list_text",ptr->list_text);
+  func("button_space",ptr->button_space);
+  func("message_space",ptr->message_space);
+  func("line_edit_space",ptr->line_edit_space);
+  func("info_space",ptr->info_space);
+  func("list_space",ptr->list_space);
+  func("menu_space",ptr->menu_space);
+  func("menu_back",ptr->menu_back);
+  func("menu_text",ptr->menu_text);
+  func("menu_hilight",ptr->menu_hilight);
+  func("menu_select",ptr->menu_select);
+  func("menu_hot",ptr->menu_hot);
+  func("use_hotcolor",ptr->use_hotcolor);
+  func("scroll_list_title",ptr->scroll_list_title);
+  func("scroll_list_title_top",ptr->scroll_list_title_top);
+  func("scroll_list_title_bottom",ptr->scroll_list_title_bottom);
+  func("line_edit_period",ptr->line_edit_period);
+  func("scroll_speedUpPeriod",ptr->scroll_speedUpPeriod);
+  func("progress_time",ptr->progress_time);
+  func("progress_period",ptr->progress_period);
+  func("line_edit_ex",ptr->line_edit_ex);
+  func("switch_on",ptr->switch_on);
+  func("switch_off",ptr->switch_off);
+  func("progress_border",ptr->progress_border);
+  func("progress_ping_top",ptr->progress_ping_top);
+  func("progress_ping_bottom",ptr->progress_ping_bottom);
+  func("progress_active_top",ptr->progress_active_top);
+  func("progress_active_bottom",ptr->progress_active_bottom);
+  func("blink_time",ptr->blink_time);
+  func("blink_period",ptr->blink_period);
+  func("fatal_error",ptr->fatal_error);
+  func("frame_dxy",ptr->frame_dxy);
+  func("title_dy",ptr->title_dy);
+  func("btn_dx",ptr->btn_dx);
+  func("btn_dy",ptr->btn_dy);
+  func("frame",ptr->frame);
+  func("active_frame",ptr->active_frame);
+  func("inactive_frame",ptr->inactive_frame);
+  func("frameHilight",ptr->frameHilight);
+  func("frameDrag",ptr->frameDrag);
+  func("title",ptr->title);
+  func("drag",ptr->drag);
+  func("dragHilight",ptr->dragHilight);
+  func("dragActive",ptr->dragActive);
+  func("btnFace",ptr->btnFace);
+  func("btnFaceHilight",ptr->btnFaceHilight);
+  func("btnPict",ptr->btnPict);
+  func("btnPictClose",ptr->btnPictClose);
+  func("btnPictAlert",ptr->btnPictAlert);
+  func("btnPictNoAlert",ptr->btnPictNoAlert);
+  func("btnPictCloseAlert",ptr->btnPictCloseAlert);
+  func("shade_color",ptr->shade_color);
+  func("shade_alpha",ptr->shade_alpha);
+  func("exw_back",ptr->exw_back);
+  func("exw_text",ptr->exw_text);
+  func("exw_divider",ptr->exw_divider);
+  func("msgw_knob_dxy",ptr->msgw_knob_dxy);
+
+  func("label_font",ptr->label_font.param);
+  func("contour_font",ptr->contour_font.param);
+  func("message_font",ptr->message_font.param);
+  func("info_font",ptr->info_font.param);
+  func("line_edit_font",ptr->line_edit_font.param);
+  func("list_font",ptr->list_font.param);
+  func("button_font",ptr->button_font.param);
+  func("title_font",ptr->title_font.param);
+  func("menu_font",ptr->menu_font.param);
+ }
+
 void UserPreferenceBag::sync(ConfigMap &map)
  {
-  map.sync("space_dxy",space_dxy);
-  map.sync("text_cursor_dx",text_cursor_dx);
-  map.sync("check_dxy",check_dxy);
-  map.sync("knob_dxy",knob_dxy);
-  map.sync("radio_dxy",radio_dxy);
-  map.sync("swtch_dxy",swtch_dxy);
-  map.sync("light_dxy",light_dxy);
-  map.sync("scroll_dxy",scroll_dxy);
-  map.sync("progress_dy",progress_dy);
-  map.sync("width",width);
-  map.sync("ground",ground);
-  map.sync("back",back);
-  map.sync("line",line);
-  map.sync("inactive",inactive);
-  map.sync("bottom",bottom);
-  map.sync("bottomUp",bottomUp);
-  map.sync("top",top);
-  map.sync("topUp",topUp);
-  map.sync("border",border);
-  map.sync("focus",focus);
-  map.sync("face",face);
-  map.sync("faceUp",faceUp);
-  map.sync("mark",mark);
-  map.sync("text_select",text_select);
-  map.sync("text_cursor",text_cursor);
-  map.sync("label_text",label_text);
-  map.sync("contour_text",contour_text);
-  map.sync("button_text",button_text);
-  map.sync("message_text",message_text);
-  map.sync("info_text",info_text);
-  map.sync("line_edit_text",line_edit_text);
-  map.sync("list_text",list_text);
-  map.sync("button_space",button_space);
-  map.sync("message_space",message_space);
-  map.sync("line_edit_space",line_edit_space);
-  map.sync("info_space",info_space);
-  map.sync("list_space",list_space);
-  map.sync("menu_space",menu_space);
-  map.sync("menu_back",menu_back);
-  map.sync("menu_text",menu_text);
-  map.sync("menu_hilight",menu_hilight);
-  map.sync("menu_select",menu_select);
-  map.sync("menu_hot",menu_hot);
-  map.sync("use_hotcolor",use_hotcolor);
-  map.sync("scroll_list_title",scroll_list_title);
-  map.sync("scroll_list_title_top",scroll_list_title_top);
-  map.sync("scroll_list_title_bottom",scroll_list_title_bottom);
-  map.sync("line_edit_period",line_edit_period);
-  map.sync("scroll_speedUpPeriod",scroll_speedUpPeriod);
-  map.sync("progress_time",progress_time);
-  map.sync("progress_period",progress_period);
-  map.sync("line_edit_ex",line_edit_ex);
-  map.sync("switch_on",switch_on);
-  map.sync("switch_off",switch_off);
-  map.sync("progress_border",progress_border);
-  map.sync("progress_ping_top",progress_ping_top);
-  map.sync("progress_ping_bottom",progress_ping_bottom);
-  map.sync("progress_active_top",progress_active_top);
-  map.sync("progress_active_bottom",progress_active_bottom);
-  map.sync("blink_time",blink_time);
-  map.sync("blink_period",blink_period);
-  map.sync("fatal_error",fatal_error);
-  map.sync("frame_dxy",frame_dxy);
-  map.sync("title_dy",title_dy);
-  map.sync("btn_dx",btn_dx);
-  map.sync("btn_dy",btn_dy);
-  map.sync("frame",frame);
-  map.sync("active_frame",active_frame);
-  map.sync("inactive_frame",inactive_frame);
-  map.sync("frameHilight",frameHilight);
-  map.sync("frameDrag",frameDrag);
-  map.sync("title",title);
-  map.sync("drag",drag);
-  map.sync("dragHilight",dragHilight);
-  map.sync("dragActive",dragActive);
-  map.sync("btnFace",btnFace);
-  map.sync("btnFaceHilight",btnFaceHilight);
-  map.sync("btnPict",btnPict);
-  map.sync("btnPictClose",btnPictClose);
-  map.sync("btnPictAlert",btnPictAlert);
-  map.sync("btnPictNoAlert",btnPictNoAlert);
-  map.sync("btnPictCloseAlert",btnPictCloseAlert);
-  map.sync("shade_color",shade_color);
-  map.sync("shade_alpha",shade_alpha);
-  map.sync("exw_back",exw_back);
-  map.sync("exw_text",exw_text);
-  map.sync("exw_divider",exw_divider);
-  map.sync("msgw_knob_dxy",msgw_knob_dxy);
-
-  map.sync("label_font",label_font.param);
-  map.sync("contour_font",contour_font.param);
-  map.sync("message_font",message_font.param);
-  map.sync("info_font",info_font.param);
-  map.sync("line_edit_font",line_edit_font.param);
-  map.sync("list_font",list_font.param);
-  map.sync("button_font",button_font.param);
-  map.sync("title_font",title_font.param);
-  map.sync("menu_font",menu_font.param);
+  Members(this, [&map] (const char *name,AnyType &obj) { map.sync(name,obj); } );
 
   createFonts();
  }
 
 void UserPreferenceBag::update(ConfigMap &map) const
  {
-  map.update("space_dxy",space_dxy);
-  map.update("text_cursor_dx",text_cursor_dx);
-  map.update("check_dxy",check_dxy);
-  map.update("knob_dxy",knob_dxy);
-  map.update("radio_dxy",radio_dxy);
-  map.update("swtch_dxy",swtch_dxy);
-  map.update("light_dxy",light_dxy);
-  map.update("scroll_dxy",scroll_dxy);
-  map.update("progress_dy",progress_dy);
-  map.update("width",width);
-  map.update("ground",ground);
-  map.update("back",back);
-  map.update("line",line);
-  map.update("inactive",inactive);
-  map.update("bottom",bottom);
-  map.update("bottomUp",bottomUp);
-  map.update("top",top);
-  map.update("topUp",topUp);
-  map.update("border",border);
-  map.update("focus",focus);
-  map.update("face",face);
-  map.update("faceUp",faceUp);
-  map.update("mark",mark);
-  map.update("text_select",text_select);
-  map.update("text_cursor",text_cursor);
-  map.update("label_text",label_text);
-  map.update("contour_text",contour_text);
-  map.update("button_text",button_text);
-  map.update("message_text",message_text);
-  map.update("info_text",info_text);
-  map.update("line_edit_text",line_edit_text);
-  map.update("list_text",list_text);
-  map.update("button_space",button_space);
-  map.update("message_space",message_space);
-  map.update("line_edit_space",line_edit_space);
-  map.update("info_space",info_space);
-  map.update("list_space",list_space);
-  map.update("menu_space",menu_space);
-  map.update("menu_back",menu_back);
-  map.update("menu_text",menu_text);
-  map.update("menu_hilight",menu_hilight);
-  map.update("menu_select",menu_select);
-  map.update("menu_hot",menu_hot);
-  map.update("use_hotcolor",use_hotcolor);
-  map.update("scroll_list_title",scroll_list_title);
-  map.update("scroll_list_title_top",scroll_list_title_top);
-  map.update("scroll_list_title_bottom",scroll_list_title_bottom);
-  map.update("line_edit_period",line_edit_period);
-  map.update("scroll_speedUpPeriod",scroll_speedUpPeriod);
-  map.update("progress_time",progress_time);
-  map.update("progress_period",progress_period);
-  map.update("line_edit_ex",line_edit_ex);
-  map.update("switch_on",switch_on);
-  map.update("switch_off",switch_off);
-  map.update("progress_border",progress_border);
-  map.update("progress_ping_top",progress_ping_top);
-  map.update("progress_ping_bottom",progress_ping_bottom);
-  map.update("progress_active_top",progress_active_top);
-  map.update("progress_active_bottom",progress_active_bottom);
-  map.update("blink_time",blink_time);
-  map.update("blink_period",blink_period);
-  map.update("fatal_error",fatal_error);
-  map.update("frame_dxy",frame_dxy);
-  map.update("title_dy",title_dy);
-  map.update("btn_dx",btn_dx);
-  map.update("btn_dy",btn_dy);
-  map.update("frame",frame);
-  map.update("active_frame",active_frame);
-  map.update("inactive_frame",inactive_frame);
-  map.update("frameHilight",frameHilight);
-  map.update("frameDrag",frameDrag);
-  map.update("title",title);
-  map.update("drag",drag);
-  map.update("dragHilight",dragHilight);
-  map.update("dragActive",dragActive);
-  map.update("btnFace",btnFace);
-  map.update("btnFaceHilight",btnFaceHilight);
-  map.update("btnPict",btnPict);
-  map.update("btnPictClose",btnPictClose);
-  map.update("btnPictAlert",btnPictAlert);
-  map.update("btnPictNoAlert",btnPictNoAlert);
-  map.update("btnPictCloseAlert",btnPictCloseAlert);
-  map.update("shade_color",shade_color);
-  map.update("shade_alpha",shade_alpha);
-  map.update("exw_back",exw_back);
-  map.update("exw_text",exw_text);
-  map.update("exw_divider",exw_divider);
-  map.update("msgw_knob_dxy",msgw_knob_dxy);
-
-  map.update("label_font",label_font.param);
-  map.update("contour_font",contour_font.param);
-  map.update("message_font",message_font.param);
-  map.update("info_font",info_font.param);
-  map.update("line_edit_font",line_edit_font.param);
-  map.update("list_font",list_font.param);
-  map.update("button_font",button_font.param);
-  map.update("title_font",title_font.param);
-  map.update("menu_font",menu_font.param);
+  Members(this, [&map] (const char *name,AnyType &obj) { map.update(name,obj); } );
  }
 
-void UserPreferenceBag::bind(Bind &binder)
+void UserPreferenceBag::bind(Bind &binder) // Update here
  {
   binder.group("Common");
 
@@ -244,10 +153,10 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.item("check box",check_dxy);
    binder.item("knob box",knob_dxy);
    binder.item("radio box",radio_dxy);
-   binder.item("switch box",swtch_dxy);
+   binder.item("switch box",switch_dxy);
    binder.item("light box",light_dxy);
    binder.item("scroll width",scroll_dxy);
-   binder.item("progress width",progress_dy);
+   binder.item("progress height",progress_dy);
    binder.space();
    binder.item("line width",width);
    binder.space();
@@ -366,14 +275,14 @@ void UserPreferenceBag::bind(Bind &binder)
    binder.space();
    binder.item("title font",title_font);
    binder.space();
-   binder.item("shade_color",shade_color);
-   binder.item("shade_alpha",shade_alpha);
+   binder.item("shade color",shade_color);
+   binder.item("shade alpha",shade_alpha);
 
   binder.group("Exception window");
 
-   binder.item("exception back",exw_back);
-   binder.item("exception text",exw_text);
-   binder.item("exception divider",exw_divider);
+   binder.item("back",exw_back);
+   binder.item("text",exw_text);
+   binder.item("divider",exw_divider);
 
   binder.group("Message window");
 
@@ -397,7 +306,7 @@ void UserPreferenceBag::createFonts()
 
 const char *const UserPreference::PrefFile="/UserPreference.ddl";
 
-UserPreference::UserPreference() noexcept
+UserPreference::UserPreference() noexcept // Update here
  {
   // main windows
 
@@ -502,6 +411,16 @@ UserPreference::UserPreference() noexcept
   cfg_CheckWindow.bottomUp.bind(bottomUp);
   cfg_CheckWindow.mark.bind(mark);
 
+  cfg_SwitchWindow.dxy.bind(switch_dxy);
+  cfg_SwitchWindow.border.bind(border);
+  cfg_SwitchWindow.focus.bind(focus);
+  cfg_SwitchWindow.top.bind(top);
+  cfg_SwitchWindow.bottom.bind(bottom);
+  cfg_SwitchWindow.face.bind(face);
+  cfg_SwitchWindow.faceUp.bind(faceUp);
+  cfg_SwitchWindow.on.bind(switch_on);
+  cfg_SwitchWindow.off.bind(switch_off);
+
   cfg_RadioWindow.dxy.bind(radio_dxy);
   cfg_RadioWindow.border.bind(border);
   cfg_RadioWindow.focus.bind(focus);
@@ -509,6 +428,19 @@ UserPreference::UserPreference() noexcept
   cfg_RadioWindow.top.bind(bottom);
   cfg_RadioWindow.bottomUp.bind(bottomUp);
   cfg_RadioWindow.mark.bind(mark);
+
+  cfg_TextWindow.width.bind(width);
+  cfg_TextWindow.space.bind(message_space);
+  cfg_TextWindow.top.bind(bottom);
+  cfg_TextWindow.bottom.bind(top);
+  cfg_TextWindow.inactive.bind(inactive);
+  cfg_TextWindow.back.bind(back);
+  cfg_TextWindow.text.bind(message_text);
+  cfg_TextWindow.font.bind(message_font.font);
+
+  cfg_LabelWindow.inactive.bind(inactive);
+  cfg_LabelWindow.text.bind(label_text);
+  cfg_LabelWindow.font.bind(label_font.font);
 
   cfg_XSingleLineWindow.width.bind(width);
   cfg_XSingleLineWindow.line.bind(line);
@@ -534,18 +466,42 @@ UserPreference::UserPreference() noexcept
   cfg_TextContourWindow.text.bind(contour_text);
   cfg_TextContourWindow.font.bind(contour_font.font);
 
-  cfg_LabelWindow.inactive.bind(inactive);
-  cfg_LabelWindow.text.bind(label_text);
-  cfg_LabelWindow.font.bind(label_font.font);
+  cfg_LightWindow.dxy.bind(light_dxy);
+  cfg_LightWindow.top.bind(bottom);
+  cfg_LightWindow.bottom.bind(top);
+  cfg_LightWindow.inactive.bind(inactive);
 
-  cfg_TextWindow.width.bind(width);
-  cfg_TextWindow.space.bind(message_space);
-  cfg_TextWindow.top.bind(bottom);
-  cfg_TextWindow.bottom.bind(top);
-  cfg_TextWindow.inactive.bind(inactive);
-  cfg_TextWindow.back.bind(back);
-  cfg_TextWindow.text.bind(message_text);
-  cfg_TextWindow.font.bind(message_font.font);
+  cfg_XScrollWindow.width.bind(width);
+  cfg_XScrollWindow.dxy.bind(scroll_dxy);
+  cfg_XScrollWindow.top.bind(top);
+  cfg_XScrollWindow.bottom.bind(bottom);
+  cfg_XScrollWindow.back.bind(back);
+  cfg_XScrollWindow.focus.bind(focus);
+  cfg_XScrollWindow.face.bind(face);
+  cfg_XScrollWindow.faceUp.bind(faceUp);
+  cfg_XScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
+
+  cfg_YScrollWindow.width.bind(width);
+  cfg_YScrollWindow.dxy.bind(scroll_dxy);
+  cfg_YScrollWindow.top.bind(top);
+  cfg_YScrollWindow.bottom.bind(bottom);
+  cfg_YScrollWindow.back.bind(back);
+  cfg_YScrollWindow.focus.bind(focus);
+  cfg_YScrollWindow.face.bind(face);
+  cfg_YScrollWindow.faceUp.bind(faceUp);
+  cfg_YScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
+
+  cfg_ProgressWindow.width.bind(width);
+  cfg_ProgressWindow.dy.bind(progress_dy);
+  cfg_ProgressWindow.top.bind(top);
+  cfg_ProgressWindow.bottom.bind(bottom);
+  cfg_ProgressWindow.border.bind(progress_border);
+  cfg_ProgressWindow.ping_top.bind(progress_ping_top);
+  cfg_ProgressWindow.ping_bottom.bind(progress_ping_bottom);
+  cfg_ProgressWindow.active_top.bind(progress_active_top);
+  cfg_ProgressWindow.active_bottom.bind(progress_active_bottom);
+  cfg_ProgressWindow.time.bind(progress_time);
+  cfg_ProgressWindow.period.bind(progress_period);
 
   cfg_InfoWindow.width.bind(width);
   cfg_InfoWindow.space.bind(info_space);
@@ -568,50 +524,6 @@ UserPreference::UserPreference() noexcept
   cfg_LineEditWindow.cursor.bind(text_cursor);
   cfg_LineEditWindow.font.bind(line_edit_font.font);
   cfg_LineEditWindow.period.bind(line_edit_period);
-
-  cfg_XScrollWindow.width.bind(width);
-  cfg_XScrollWindow.top.bind(top);
-  cfg_XScrollWindow.bottom.bind(bottom);
-  cfg_XScrollWindow.back.bind(back);
-  cfg_XScrollWindow.focus.bind(focus);
-  cfg_XScrollWindow.face.bind(face);
-  cfg_XScrollWindow.faceUp.bind(faceUp);
-  cfg_XScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
-
-  cfg_YScrollWindow.width.bind(width);
-  cfg_YScrollWindow.top.bind(top);
-  cfg_YScrollWindow.bottom.bind(bottom);
-  cfg_YScrollWindow.back.bind(back);
-  cfg_YScrollWindow.focus.bind(focus);
-  cfg_YScrollWindow.face.bind(face);
-  cfg_YScrollWindow.faceUp.bind(faceUp);
-  cfg_YScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
-
-  cfg_LightWindow.dxy.bind(light_dxy);
-  cfg_LightWindow.top.bind(bottom);
-  cfg_LightWindow.bottom.bind(top);
-  cfg_LightWindow.inactive.bind(inactive);
-
-  cfg_SwitchWindow.dxy.bind(swtch_dxy);
-  cfg_SwitchWindow.border.bind(border);
-  cfg_SwitchWindow.focus.bind(focus);
-  cfg_SwitchWindow.top.bind(top);
-  cfg_SwitchWindow.bottom.bind(bottom);
-  cfg_SwitchWindow.face.bind(face);
-  cfg_SwitchWindow.faceUp.bind(faceUp);
-  cfg_SwitchWindow.on.bind(switch_on);
-  cfg_SwitchWindow.off.bind(switch_off);
-
-  cfg_ProgressWindow.width.bind(width);
-  cfg_ProgressWindow.top.bind(top);
-  cfg_ProgressWindow.bottom.bind(bottom);
-  cfg_ProgressWindow.border.bind(progress_border);
-  cfg_ProgressWindow.ping_top.bind(progress_ping_top);
-  cfg_ProgressWindow.ping_bottom.bind(progress_ping_bottom);
-  cfg_ProgressWindow.active_top.bind(progress_active_top);
-  cfg_ProgressWindow.active_bottom.bind(progress_active_bottom);
-  cfg_ProgressWindow.time.bind(progress_time);
-  cfg_ProgressWindow.period.bind(progress_period);
 
   cfg_SimpleTextListWindow.width.bind(width);
   cfg_SimpleTextListWindow.space.bind(list_space);
@@ -660,12 +572,9 @@ UserPreference::UserPreference() noexcept
   cfg_ScrollListWindow.focus.bind(focus);
   cfg_ScrollListWindow.select.bind(text_select);
   cfg_ScrollListWindow.font.bind(list_font.font);
-
   cfg_ScrollListWindow.title.bind(scroll_list_title);
   cfg_ScrollListWindow.title_top.bind(scroll_list_title_top);
   cfg_ScrollListWindow.title_bottom.bind(scroll_list_title_bottom);
-
-  cfg_ScrollListWindow.scroll_dxy.bind(scroll_dxy);
   cfg_ScrollListWindow.x_cfg.bind(cfg_XScrollWindow);
   cfg_ScrollListWindow.y_cfg.bind(cfg_YScrollWindow);
  }

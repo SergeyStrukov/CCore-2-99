@@ -23,11 +23,9 @@ namespace Video {
 
 /* class YScrollShape */
 
-Point YScrollShape::getMinSize() const
+SizeX YScrollShape::getMinSize() const
  {
-  Coord w=RoundUpLen(+cfg.width);
-
-  return Point(8+2*w,40+10*w);
+  return +cfg.dxy;
  }
 
 ScrollType YScrollShape::getType(MPoint point) const
