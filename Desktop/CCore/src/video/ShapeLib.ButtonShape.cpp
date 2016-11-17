@@ -62,9 +62,16 @@ void ButtonShape::draw(const DrawBuf &buf) const
 
   MCoord ex=FigEX(fs.dy,width);
 
-  FigureButton fig(p,ex);
-
   VColor bottom=+cfg.bottom;
+
+  if( ex>p.dx/3 )
+    {
+     art.block(pane,bottom);
+
+     return;
+    }
+
+  FigureButton fig(p,ex);
 
   // body
 

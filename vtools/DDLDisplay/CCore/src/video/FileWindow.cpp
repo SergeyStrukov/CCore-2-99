@@ -621,7 +621,7 @@ void FileSubWindow::fillLists()
   try
     {
      list_dir.enable();
-     list_file.enable(!check_new_file.isChecked());
+     list_file.enable(!alt_new_file.isChecked());
 
      FileSystem::DirCursor cur(fs,edit_dir.getText());
 
@@ -696,7 +696,7 @@ void FileSubWindow::setDir(StrLen dir_name,StrLen sub_dir)
 
 void FileSubWindow::buildFilePath()
  {
-  if( param.new_file && check_new_file.isChecked() )
+  if( param.new_file && alt_new_file.isChecked() )
     {
      file_path=file_buf(edit_dir.getText(),edit_new_file.getText());
     }
@@ -904,7 +904,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
 
    hit_menu(host.getFrame()->getDesktop(),cfg.hit_menu_cfg),
 
-   check_new_file(wlist,cfg.check_cfg,true),
+   alt_new_file(wlist,cfg.alt_cfg,true),
    label_new_file(wlist,cfg.label_cfg,cfg.text_New_file),
    edit_new_file(wlist,cfg.edit_cfg),
 
@@ -923,7 +923,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    connector_hit_menu_destroyed(this,&FileSubWindow::hit_menu_destroyed,hit_menu.takeDestroyed()),
    connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.takeSelected()),
    connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted()),
-   connector_check_new_file_changed(this,&FileSubWindow::check_new_file_changed,check_new_file.changed),
+   connector_check_new_file_changed(this,&FileSubWindow::check_new_file_changed,alt_new_file.changed),
    connector_edit_new_file_changed(this,&FileSubWindow::edit_new_file_changed,edit_new_file.changed),
    connector_edit_new_file_entered(this,&FileSubWindow::edit_new_file_entered,edit_new_file.entered)
  {
@@ -931,7 +931,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
 
   if( param.new_file )
     {
-     wlist.insBottom(check_new_file,label_new_file,edit_new_file);
+     wlist.insBottom(alt_new_file,label_new_file,edit_new_file);
 
      list_file.disable();
 
@@ -980,9 +980,9 @@ void FileSubWindow::open()
 
   file_path=Empty;
 
-  if( param.new_file && !check_new_file.isChecked() )
+  if( param.new_file && !alt_new_file.isChecked() )
     {
-     check_new_file.check(true);
+     alt_new_file.check(true);
 
      check_new_file_changed(true);
     }
@@ -1039,15 +1039,15 @@ void FileSubWindow::layout()
 
   if( param.new_file )
     {
-     auto check__new_file=CutBox(check_new_file);
+     auto alt__new_file=CutPoint(alt_new_file);
      auto label__new_file=CutPoint(label_new_file);
      auto edit__new_file=CutPoint(edit_new_file);
 
-     Coord dy=SupDY(check__new_file,label__new_file,edit__new_file);
+     Coord dy=SupDY(alt__new_file,label__new_file,edit__new_file);
 
      PaneCut p=pane.cutTop(dy);
 
-     p.place_cutLeft(check__new_file)
+     p.place_cutLeftCenter(alt__new_file)
       .place_cutLeft(label__new_file)
       .place(edit__new_file);
     }

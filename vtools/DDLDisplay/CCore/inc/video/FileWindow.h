@@ -20,6 +20,7 @@
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
 
+#include <CCore/inc/video/AltWindow.h>
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/FunctorType.h>
@@ -310,6 +311,7 @@ class FileSubWindow : public ComboWindow
 
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
+     CtorRefVal<AltWindow::ConfigType> alt_cfg;
 
      CtorRefVal<XDoubleLineWindow::ConfigType> line_cfg;
 
@@ -324,6 +326,7 @@ class FileSubWindow : public ComboWindow
         hit_menu_cfg(SmartBind,pref),
         check_cfg(SmartBind,pref),
         label_cfg(SmartBind,pref),
+        //alt_cfg(SmartBind,pref),
         line_cfg(SmartBind,pref)
       {
        space_dxy.bind(pref.get().space_dxy);
@@ -364,7 +367,7 @@ class FileSubWindow : public ComboWindow
    MenuData hit_data;
    SimpleCascadeMenu hit_menu;
 
-   CheckWindow check_new_file;
+   AltWindow alt_new_file;
    RefLabelWindow label_new_file;
    LineEditWindow edit_new_file;
 

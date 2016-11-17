@@ -1,3 +1,4 @@
+./CCore/src/video/AltWindow.cpp
 ./CCore/src/video/FileWindow.cpp
 ./src/Application.cpp
 ./src/Client.cpp

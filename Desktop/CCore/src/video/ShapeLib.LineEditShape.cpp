@@ -191,6 +191,13 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
 
+  if( ex>p.dx/3 )
+    {
+     art.block(pane,+cfg.inactive);
+
+     return;
+    }
+
   VColor text=enable?+cfg.text:+cfg.inactive;
 
   FigureButton fig(p,ex);
