@@ -62,14 +62,15 @@ DragWindow.h
 FixedWindow.h        
 ToolWindow.h         
 
-ShapeLib.h                      
-WindowLib.h          
 Menu.h
 FileWindow.h         +
         
 MessageWindow.h           
 WindowReport.h       
 
+ShapeLib.h                      
+WindowLib.h
+          
 UserPreference.h     
 
 --------------------------------------------------------------------------------

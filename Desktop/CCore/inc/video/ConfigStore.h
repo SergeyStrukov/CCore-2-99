@@ -23,6 +23,7 @@
 
 #include <CCore/inc/TypeSwitch.h>
 #include <CCore/inc/CompactMap.h>
+#include <CCore/inc/CharProp.h>
 
 namespace CCore {
 namespace Video {
@@ -87,6 +88,42 @@ class ConfigItem : NoCopy
 
      static const char * Bool(bool val) { return val?"True":"False"; }
 
+     static void PrintChar(P &out,char ch)
+      {
+       switch( ch )
+         {
+          case '\b' : Putch(out,'\\','b'); break;
+
+          case '\t' : Putch(out,'\\','t'); break;
+
+          case '\n' : Putch(out,'\\','n'); break;
+
+          case '\v' : Putch(out,'\\','v'); break;
+
+          case '\f' : Putch(out,'\\','f'); break;
+
+          case '\r' : Putch(out,'\\','r'); break;
+
+          case '"' : Putch(out,'\\','"'); break;
+
+          case '\\' : Putch(out,'\\','\\'); break;
+
+          default:
+           {
+            if( CharIsPrintable(ch) ) Putch(out,ch); else Putch(out,' ');
+           }
+         }
+      }
+
+     static void PrintStr(P &out,StrLen str)
+      {
+       Putch(out,'"');
+
+       for(char ch : str ) PrintChar(out,ch);
+
+       Putch(out,'"');
+      }
+
      using RetType = void ;
 
      template <class T>
@@ -107,12 +144,16 @@ class ConfigItem : NoCopy
 
      void print(const DefString &obj)
       {
-       Printf(out,"'#;'",obj);
+       PrintStr(out,obj.str());
       }
 
      void print(const FontParam &obj)
       {
-       Printf(out,"{ Font###; , '#;' , ",obj.engine_type,obj.file_name);
+       Printf(out,"{ Font###; , ",obj.engine_type);
+
+       PrintStr(out,Range(obj.file_name));
+
+       Putobj(out," , ");
 
        switch( obj.size_type )
          {
