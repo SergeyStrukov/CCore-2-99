@@ -359,8 +359,14 @@ void TestClient::menu_selected(int id,Point point)
 
 void TestClient::cascade_menu_selected(int id,Point point)
  {
-  Used(id);
-  Used(point);
+  switch( id )
+    {
+     case 101 :
+      {
+       if( !file_window.isAlive() ) file_window.create(point,"Select file"_def);
+      }
+     break;
+    }
 
   cascade_menu.destroy();
 
@@ -384,6 +390,7 @@ TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &
    menu(wlist,pref.getSmartConfig(),menu_data),
    cascade_menu(host.getFrame()->getDesktop(),pref.getSmartConfig()),
    test(wlist,pref),
+   file_window(host.getFrame()->getDesktop(),pref.getSmartConfig(),{true},update),
    connector_menu_selected(this,&TestClient::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&TestClient::cascade_menu_selected,cascade_menu.takeSelected()),
    connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.takePressed()),
@@ -423,6 +430,10 @@ TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &
   menu_window_data("@Split",501)
                   ("@Close all",502)
                   ("S@tack",503);
+
+  file_window.addFilter("*.h");
+  file_window.addFilter("*.cpp");
+  file_window.addFilter("*");
  }
 
 TestClient::~TestClient()

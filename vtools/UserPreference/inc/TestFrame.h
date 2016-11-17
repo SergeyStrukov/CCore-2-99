@@ -18,6 +18,7 @@
 
 #include <CCore/inc/video/UserPreference.h>
 #include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/FileWindow.h>
 #include <CCore/inc/video/Menu.h>
 
 namespace App {
@@ -141,6 +142,8 @@ class TestClient : public ComboWindow
    SimpleCascadeMenu cascade_menu;
 
    TestWindow test;
+
+   FileWindow file_window;
 
   private:
 
