@@ -101,6 +101,7 @@ obj/FileNameCmp.o \
 obj/FileNameMatch.o \
 obj/FileSystem.o \
 obj/FileToMem.o \
+obj/FileWindow.o \
 obj/FixedWindow.o \
 obj/Font.o \
 obj/FontDatabase.o \
@@ -479,6 +480,7 @@ obj/FileNameCmp.s \
 obj/FileNameMatch.s \
 obj/FileSystem.s \
 obj/FileToMem.s \
+obj/FileWindow.s \
 obj/FixedWindow.s \
 obj/Font.s \
 obj/FontDatabase.s \
@@ -857,6 +859,7 @@ obj/FileNameCmp.dep \
 obj/FileNameMatch.dep \
 obj/FileSystem.dep \
 obj/FileToMem.dep \
+obj/FileWindow.dep \
 obj/FixedWindow.dep \
 obj/Font.dep \
 obj/FontDatabase.dep \
@@ -1449,6 +1452,9 @@ obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileToMem.o : ../../HCore/CCore/src/FileToMem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FileWindow.o : ../../Desktop/CCore/src/video/FileWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FixedWindow.o : ../../Desktop/CCore/src/video/FixedWindow.cpp
@@ -2578,6 +2584,9 @@ obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
 obj/FileToMem.s : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileWindow.s : ../../Desktop/CCore/src/video/FileWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FixedWindow.s : ../../Desktop/CCore/src/video/FixedWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3704,6 +3713,9 @@ obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
 
 obj/FileToMem.dep : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileToMem.o $< -MF $@
+
+obj/FileWindow.dep : ../../Desktop/CCore/src/video/FileWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileWindow.o $< -MF $@
 
 obj/FixedWindow.dep : ../../Desktop/CCore/src/video/FixedWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FixedWindow.o $< -MF $@

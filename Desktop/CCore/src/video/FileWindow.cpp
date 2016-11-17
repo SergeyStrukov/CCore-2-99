@@ -19,7 +19,7 @@
 #include <CCore/inc/video/Desktop.h>
 
 #include <CCore/inc/video/Layout.h>
-#include <CCore/inc/video/SmoothDrawArt.h>
+#include <CCore/inc/video/FigureLib.h>
 #include <CCore/inc/video/FileNameCmp.h>
 
 #include <CCore/inc/RangeDel.h>
@@ -523,6 +523,130 @@ void FileFilterListWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
   wlist.draw(buf,pane,drag_active);
  }
 
+/* class FileAltShape */
+
+Point FileAltShape::getMinSize() const
+ {
+  Coordinate dy=+cfg.dy;
+
+  return Point(2*dy,dy);
+ }
+
+auto FileAltShape::getZone(Point point) const -> CheckType
+ {
+  return point.x-pane.x > pane.dx/2 ;
+ }
+
+void FileAltShape::draw(const DrawBuf &buf) const
+ {
+  MPane p(pane);
+
+  if( !p ) return;
+
+  MCoord x_med=p.x+p.dx/2;
+
+  MPane a(p.x,x_med,p.y,p.ey);
+  MPane b(x_med,p.ex,p.y,p.ey);
+
+  SmoothDrawArt art(buf.cut(pane));
+
+  VColor top=+cfg.top;
+  VColor bottom=+cfg.bottom;
+  VColor topUp=+cfg.topUp;
+  VColor back=+cfg.back;
+
+  MCoord width=+cfg.width;
+
+  // body
+
+  {
+   FigureBox fig(a);
+
+   if( enable )
+     {
+      if( check )
+        {
+         VColor top_ = ( mover && !zone )?topUp:top ;
+
+         fig.solid(art,TwoField(a.getTopLeft(),top_,a.getBottomLeft(),bottom));
+        }
+      else
+        {
+         fig.solid(art,back);
+        }
+     }
+   else
+     {
+      fig.solid(art,bottom);
+     }
+  }
+  {
+   FigureBox fig(b);
+
+   if( enable )
+     {
+      if( !check )
+        {
+         VColor top_ = ( mover && zone )?topUp:top ;
+
+         fig.solid(art,TwoField(b.getTopLeft(),top_,b.getTopRight(),bottom));
+        }
+      else
+        {
+         fig.solid(art,back);
+        }
+     }
+   else
+     {
+      fig.solid(art,bottom);
+     }
+  }
+
+  // mark
+
+  {
+   FigureDownArrow fig(a.shrink(p.dy/5));
+
+   if( enable && !check )
+     {
+      fig.curveSolid(art,RadioField(fig.getPoint(),(2*p.dy)/3,top,+cfg.mark_false_on));
+     }
+   else
+     {
+      fig.curveLoop(art,HalfPos,width,+cfg.mark_false);
+     }
+  }
+  {
+   FigureRightArrow fig(b.shrink(p.dy/5));
+
+   if( enable && check )
+     {
+      fig.curveSolid(art,RadioField(fig.getPoint(),(2*p.dy)/3,top,+cfg.mark_true_on));
+     }
+   else
+     {
+      fig.curveLoop(art,HalfPos,width,+cfg.mark_true);
+     }
+  }
+
+  // border
+
+  {
+   FigureBox fig(p);
+
+   MCoord width=p.dy/10;
+
+   VColor border=enable?+cfg.border:top;
+
+   fig.loop(art,HalfPos,width,border);
+
+   art.path(width,border,MPoint(x_med,p.y),MPoint(x_med,p.ey));
+
+   if( focus )
+     fig.loop(art,HalfPos,width/2,+cfg.focus);
+  }
+ }
+
 /* class FileSubWindow::Distributor */
 
 class FileSubWindow::Distributor : NoCopy
@@ -621,7 +745,7 @@ void FileSubWindow::fillLists()
   try
     {
      list_dir.enable();
-     list_file.enable(!alt_new_file.isChecked());
+     list_file.enable( !param.new_file || !alt_new_file.isChecked() );
 
      FileSystem::DirCursor cur(fs,edit_dir.getText());
 

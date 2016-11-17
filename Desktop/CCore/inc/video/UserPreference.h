@@ -25,6 +25,7 @@
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
+#include <CCore/inc/video/FileWindow.h>
 
 namespace CCore {
 namespace Video {
@@ -85,6 +86,9 @@ struct UserPreferenceBag
   VColor faceUp   =      Blue ;
   VColor mark     =     Black ;
   VColor alert    =      Pink ;
+
+  DefString text_Ok = "Ok"_def ;
+  DefString text_Cancel = "Cancel"_def ;
 
   // text
 
@@ -197,6 +201,23 @@ struct UserPreferenceBag
 
   Coord msgw_knob_dxy = 50 ;
 
+  // FileWindow
+
+  Coord filew_alt_dy = 32 ; //---
+
+  VColor filew_accent = Black ;
+  VColor filew_filter_text = Black ;
+
+  VColor filew_hilight       =         PaleGreen ; //---
+  VColor filew_mark_false    = RGBColor(100,0,0) ; //---
+  VColor filew_mark_true     = RGBColor(0,100,0) ; //---
+  VColor filew_mark_false_on =               Red ; //---
+  VColor filew_mark_true_on  =             Green ; //---
+
+  FontCouple filew_filter_font;
+
+  DefString text_New_file = "New file"_def ;
+
   // constructors
 
   UserPreferenceBag() noexcept {}
@@ -282,6 +303,15 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    SimpleCascadeMenuWindow::ConfigType cfg_SimpleCascadeMenuWindow;
    ScrollListWindow::ConfigType cfg_ScrollListWindow;
 
+   // FileWindow
+
+   DirEditWindow::ConfigType cfg_DirEditWindow;
+   LineEditWindow::ConfigType cfg_FilterEditWindow;
+   FileFilterWindow::ConfigType cfg_FileFilterWindow;
+   FileAltShape::Config cfg_FileAltShape;
+   FileSubWindow::ConfigType cfg_FileSubWindow;
+   FileWindow::ConfigType cfg_FileWindow;
+
   public:
 
    // constructors
@@ -360,7 +390,19 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const SimpleCascadeMenuWindow::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenuWindow; }
 
-   const ScrollListWindow::ConfigType & getScrollListWindowConfig() const { return cfg_ScrollListWindow; }
+   const ScrollListWindow::ConfigType & getScrollListConfig() const { return cfg_ScrollListWindow; }
+
+   // FileWindow
+
+   const DirEditWindow::ConfigType & getDirEditConfig() const { return cfg_DirEditWindow; }
+
+   const FileFilterWindow::ConfigType & getFileFilterConfig() const { return cfg_FileFilterWindow; }
+
+   const FileAltShape::Config & getFileAltConfig() const { return cfg_FileAltShape; }
+
+   const FileSubWindow::ConfigType & getFileSubConfig() const { return cfg_FileSubWindow; }
+
+   const FileWindow::ConfigType & getFileWindowConfig() const { return cfg_FileWindow; }
 
    // getSmartConfig()
 
@@ -433,6 +475,18 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_SimpleCascadeMenuWindow; }
 
       operator const auto & () const { return obj->cfg_ScrollListWindow; }
+
+      // FileWindow
+
+      operator const auto & () const { return obj->cfg_DirEditWindow; }
+
+      operator const auto & () const { return obj->cfg_FileFilterWindow; }
+
+      operator const auto & () const { return obj->cfg_FileAltShape; }
+
+      operator const auto & () const { return obj->cfg_FileSubWindow; }
+
+      operator const auto & () const { return obj->cfg_FileWindow; }
     };
 
    Proxy getSmartConfig() const { return this; }

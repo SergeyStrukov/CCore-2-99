@@ -143,6 +143,8 @@ struct MPane
 
   MPoint getSize() const { return MPoint(dx,dy); }
 
+  MPoint getCenter() const { return getBase()+getSize()/2; }
+
   MPoint getTopLeft() const { return MPoint(x,y); }
 
   MPoint getTopRight() const { return MPoint(ex,y); }
@@ -521,6 +523,8 @@ struct FigureLeftArrow : FigureDots<4>
   FigureLeftArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
 
   explicit FigureLeftArrow(const MPane &p) : FigureLeftArrow(p.x,p.ex,p.y,p.ey) {}
+
+  MPoint getPoint() const { return buf[1].point; }
  };
 
 /* struct FigureRightArrow */
@@ -530,6 +534,8 @@ struct FigureRightArrow : FigureDots<4>
   FigureRightArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
 
   explicit FigureRightArrow(const MPane &p) : FigureRightArrow(p.x,p.ex,p.y,p.ey) {}
+
+  MPoint getPoint() const { return buf[1].point; }
  };
 
 /* struct FigureUpArrow */
@@ -539,6 +545,8 @@ struct FigureUpArrow : FigureDots<4>
   FigureUpArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
 
   explicit FigureUpArrow(const MPane &p) : FigureUpArrow(p.x,p.ex,p.y,p.ey) {}
+
+  MPoint getPoint() const { return buf[1].point; }
  };
 
 /* struct FigureDownArrow */
@@ -548,6 +556,8 @@ struct FigureDownArrow : FigureDots<4>
   FigureDownArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
 
   explicit FigureDownArrow(const MPane &p) : FigureDownArrow(p.x,p.ex,p.y,p.ey) {}
+
+  MPoint getPoint() const { return buf[1].point; }
  };
 
 /* struct FigureLeftMark */

@@ -55,6 +55,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("faceUp",ptr->faceUp);
   func("mark",ptr->mark);
   func("alert",ptr->alert);
+  func("text_Ok",ptr->text_Ok);
+  func("text_Cancel",ptr->text_Cancel);
   func("text_select",ptr->text_select);
   func("text_cursor",ptr->text_cursor);
   func("label_text",ptr->label_text);
@@ -120,6 +122,15 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("exw_text",ptr->exw_text);
   func("exw_divider",ptr->exw_divider);
   func("msgw_knob_dxy",ptr->msgw_knob_dxy);
+  func("filew_alt_dy",ptr->filew_alt_dy);
+  func("filew_accent",ptr->filew_accent);
+  func("filew_filter_text",ptr->filew_filter_text);
+  func("filew_hilight",ptr->filew_hilight);
+  func("filew_mark_false",ptr->filew_mark_false);
+  func("filew_mark_true",ptr->filew_mark_true);
+  func("filew_mark_false_on",ptr->filew_mark_false_on);
+  func("filew_mark_true_on",ptr->filew_mark_true_on);
+  func("text_New_file",ptr->text_New_file);
 
   func("label_font",ptr->label_font.param);
   func("contour_font",ptr->contour_font.param);
@@ -128,8 +139,9 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("line_edit_font",ptr->line_edit_font.param);
   func("list_font",ptr->list_font.param);
   func("button_font",ptr->button_font.param);
-  func("title_font",ptr->title_font.param);
   func("menu_font",ptr->menu_font.param);
+  func("title_font",ptr->title_font.param);
+  func("filew_filter_font",ptr->filew_filter_font.param);
  }
 
 void UserPreferenceBag::sync(ConfigMap &map)
@@ -178,6 +190,9 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("faceUp",faceUp);
    binder.item("mark",mark);
    binder.item("alert",alert);
+   binder.space();
+   binder.item("Ok",text_Ok);
+   binder.item("Cancel",text_Cancel);
 
   binder.group("Text");
 
@@ -289,19 +304,41 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
   binder.group("Message window");
 
    binder.item("ok knob box",msgw_knob_dxy);
+
+  binder.group("File window");
+
+   binder.item("alt height",filew_alt_dy);
+   binder.space();
+   binder.item("dir accent",filew_accent);
+   binder.item("filter text",filew_filter_text);
+   binder.space();
+   binder.item("alt hilight",filew_hilight);
+   binder.item("alt down arrow",filew_mark_false);
+   binder.item("alt right arrow",filew_mark_true);
+   binder.item("alt down arrow on",filew_mark_false_on);
+   binder.item("alt right arrow on",filew_mark_true_on);
+   binder.space();
+   binder.item("filter text",filew_filter_text);
+   binder.item("filter font",filew_filter_font);
+   binder.space();
+   binder.item("New file",text_New_file);
  }
 
 void UserPreferenceBag::createFonts()
  {
   label_font.create();
   contour_font.create();
+
+  button_font.create();
   message_font.create();
   info_font.create();
   line_edit_font.create();
   list_font.create();
-  button_font.create();
-  title_font.create();
   menu_font.create();
+
+  title_font.create();
+
+  filew_filter_font.create();
  }
 
 /* class UserPreference */
@@ -345,7 +382,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_DragWindow.drag.bind(drag);
   cfg_DragWindow.dragHilight.bind(dragHilight);
   cfg_DragWindow.dragActive.bind(dragActive);
-
   cfg_DragWindow.btnFace.bind(btnFace);
   cfg_DragWindow.btnFaceHilight.bind(btnFaceHilight);
   cfg_DragWindow.btnPict.bind(btnPict);
@@ -377,6 +413,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FixedWindow.btnPictClose.bind(btnPictClose);
   cfg_FixedWindow.shade_color.bind(shade_color);
   cfg_FixedWindow.shade_alpha.bind(shade_alpha);
+  cfg_FixedWindow.title_font.bind(title_font.font);
 
   cfg_ToolWindow.shade_color.bind(shade_color);
   cfg_ToolWindow.shade_alpha.bind(shade_alpha);
@@ -580,6 +617,77 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_ScrollListWindow.title_bottom.bind(scroll_list_title_bottom);
   cfg_ScrollListWindow.x_cfg.bind(cfg_XScrollWindow);
   cfg_ScrollListWindow.y_cfg.bind(cfg_YScrollWindow);
+
+  // FileWindow
+
+  cfg_DirEditWindow.width.bind(width);
+  cfg_DirEditWindow.space.bind(line_edit_space);
+  cfg_DirEditWindow.ex.bind(line_edit_ex);
+  cfg_DirEditWindow.cursor_dx.bind(text_cursor_dx);
+  cfg_DirEditWindow.back.bind(back);
+  cfg_DirEditWindow.top.bind(bottom);
+  cfg_DirEditWindow.bottom.bind(top);
+  cfg_DirEditWindow.focus.bind(focus);
+  cfg_DirEditWindow.inactive.bind(inactive);
+  cfg_DirEditWindow.text.bind(line_edit_text);
+  cfg_DirEditWindow.select.bind(text_select);
+  cfg_DirEditWindow.alert.bind(alert);
+  cfg_DirEditWindow.cursor.bind(text_cursor);
+  cfg_DirEditWindow.font.bind(line_edit_font.font);
+  cfg_DirEditWindow.period.bind(line_edit_period);
+  cfg_DirEditWindow.accent.bind(filew_accent);
+
+  cfg_FilterEditWindow.width.bind(width);
+  cfg_FilterEditWindow.space.bind(line_edit_space);
+  cfg_FilterEditWindow.ex.bind(line_edit_ex);
+  cfg_FilterEditWindow.cursor_dx.bind(text_cursor_dx);
+  cfg_FilterEditWindow.back.bind(back);
+  cfg_FilterEditWindow.top.bind(bottom);
+  cfg_FilterEditWindow.bottom.bind(top);
+  cfg_FilterEditWindow.focus.bind(focus);
+  cfg_FilterEditWindow.inactive.bind(inactive);
+  cfg_FilterEditWindow.text.bind(filew_filter_text);
+  cfg_FilterEditWindow.select.bind(text_select);
+  cfg_FilterEditWindow.alert.bind(alert);
+  cfg_FilterEditWindow.cursor.bind(text_cursor);
+  cfg_FilterEditWindow.font.bind(filew_filter_font.font);
+  cfg_FilterEditWindow.period.bind(line_edit_period);
+
+  cfg_FileFilterWindow.check_cfg.bind(cfg_CheckWindow);
+  cfg_FileFilterWindow.edit_cfg.bind(cfg_FilterEditWindow);
+  cfg_FileFilterWindow.knob_cfg.bind(cfg_KnobWindow);
+
+  cfg_FileAltShape.width.bind(width);
+  cfg_FileAltShape.dy.bind(filew_alt_dy);
+  cfg_FileAltShape.border.bind(border);
+  cfg_FileAltShape.focus.bind(focus);
+  cfg_FileAltShape.topUp.bind(filew_hilight);
+  cfg_FileAltShape.top.bind(top);
+  cfg_FileAltShape.bottom.bind(bottom);
+  cfg_FileAltShape.back.bind(back);
+  cfg_FileAltShape.mark_false.bind(filew_mark_false);
+  cfg_FileAltShape.mark_true.bind(filew_mark_true);
+  cfg_FileAltShape.mark_false_on.bind(filew_mark_false_on);
+  cfg_FileAltShape.mark_true_on.bind(filew_mark_true_on);
+
+  cfg_FileSubWindow.space_dxy.bind(space_dxy);
+  cfg_FileSubWindow.back.bind(back);
+  cfg_FileSubWindow.text_Ok.bind(text_Ok);
+  cfg_FileSubWindow.text_Cancel.bind(text_Cancel);
+  cfg_FileSubWindow.text_New_file.bind(text_New_file);
+  cfg_FileSubWindow.edit_cfg.bind(cfg_DirEditWindow);
+  cfg_FileSubWindow.list_cfg.bind(cfg_ScrollListWindow);
+  cfg_FileSubWindow.filter_list_cfg.bind(cfg_FileFilterWindow);
+  cfg_FileSubWindow.btn_cfg.bind(cfg_ButtonWindow);
+  cfg_FileSubWindow.knob_cfg.bind(cfg_KnobWindow);
+  cfg_FileSubWindow.hit_menu_cfg.bind(cfg_SimpleCascadeMenu);
+  cfg_FileSubWindow.check_cfg.bind(cfg_CheckWindow);
+  cfg_FileSubWindow.label_cfg.bind(cfg_LabelWindow);
+  cfg_FileSubWindow.alt_cfg.bind(cfg_FileAltShape);
+  cfg_FileSubWindow.line_cfg.bind(cfg_XDoubleLineWindow);
+
+  cfg_FileWindow.frame_cfg.bind(cfg_DragWindow);
+  cfg_FileWindow.file_cfg.bind(cfg_FileSubWindow);
  }
 
 UserPreference::~UserPreference()

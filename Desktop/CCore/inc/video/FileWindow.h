@@ -20,9 +20,6 @@
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
 
-#include <CCore/inc/video/AltWindow.h>
-#include <CCore/inc/video/UserPreference.h>
-
 #include <CCore/inc/FunctorType.h>
 #include <CCore/inc/FileSystem.h>
 #include <CCore/inc/MakeFileName.h>
@@ -278,6 +275,62 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
    Signal<> changed;
  };
 
+/* class FileAltShape */
+
+class FileAltShape
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<Coord> dy = 32 ;
+
+     RefVal<VColor> border   =      Blue ;
+     RefVal<VColor> focus    = OrangeRed ;
+
+     RefVal<VColor> topUp    = PaleGreen ;
+     RefVal<VColor> top      =      Snow ;
+     RefVal<VColor> bottom   =      Gray ;
+     RefVal<VColor> back     =    Silver ;
+
+     RefVal<VColor> mark_false    = RGBColor(100,0,0) ;
+     RefVal<VColor> mark_true     = RGBColor(0,100,0) ;
+     RefVal<VColor> mark_false_on = Red ;
+     RefVal<VColor> mark_true_on  = Green ;
+
+     Config() noexcept {}
+    };
+
+   const Config &cfg;
+   Pane pane;
+
+   // state
+
+   using CheckType = bool ;
+
+   static CheckType Next(CheckType check) { return !check; }
+
+   bool enable     =  true ;
+   bool focus      = false ;
+   bool mover      = false ;
+   CheckType zone  = false ;
+   CheckType check = false ;
+
+   // methods
+
+   explicit FileAltShape(const Config &cfg_,CheckType check_=false) : cfg(cfg_),check(check_) {}
+
+   Point getMinSize() const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   CheckType getZone(Point point) const;
+
+   void draw(const DrawBuf &buf) const;
+ };
+
 /* struct FileWindowParam */
 
 struct FileWindowParam
@@ -289,6 +342,8 @@ struct FileWindowParam
 
 class FileSubWindow : public ComboWindow
  {
+   using AltWindow = AltWindowOf<FileAltShape> ;
+
   public:
 
    struct Config
@@ -316,24 +371,6 @@ class FileSubWindow : public ComboWindow
      CtorRefVal<XDoubleLineWindow::ConfigType> line_cfg;
 
      Config() noexcept {}
-
-     explicit Config(const UserPreference &pref) noexcept
-      : //edit_cfg(SmartBind,pref),
-        list_cfg(SmartBind,pref),
-        //filter_list_cfg(SmartBind,pref),
-        btn_cfg(SmartBind,pref),
-        knob_cfg(SmartBind,pref),
-        hit_menu_cfg(SmartBind,pref),
-        check_cfg(SmartBind,pref),
-        label_cfg(SmartBind,pref),
-        //alt_cfg(SmartBind,pref),
-        line_cfg(SmartBind,pref)
-      {
-       space_dxy.bind(pref.get().space_dxy);
-       back.bind(pref.get().back);
-
-       (LineEditShape::Config &)edit_cfg.takeVal()=pref.getSmartConfig();
-      }
     };
 
    using ConfigType = Config ;
@@ -497,12 +534,6 @@ class FileWindow : public DragWindow
      CtorRefVal<FileSubWindow::ConfigType> file_cfg;
 
      Config() noexcept {}
-
-     explicit Config(const UserPreference &pref) noexcept
-      : frame_cfg(SmartBind,pref),
-        file_cfg(pref)
-      {
-      }
     };
 
    using ConfigType = Config ;

@@ -37,11 +37,11 @@ class ClientWindow : public ComboWindow
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref) // TODO
+     explicit Config(const UserPreference &pref)
       : menu_cfg(SmartBind,pref),
         cascade_menu_cfg(SmartBind,pref),
         display_cfg(pref),
-        file_cfg(pref)
+        file_cfg(SmartBind,pref)
       {
       }
     };
