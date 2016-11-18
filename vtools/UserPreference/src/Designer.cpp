@@ -186,7 +186,7 @@ class DesignerWindow::PrefInfo::Base : public ComboInfoBase
 
    bool en_all = true ;
 
-   bool en[VarLim] = {true,true} ;
+   bool en[VarLim] = {} ;
 
    DynArray<Rec> sublist;
 
@@ -196,7 +196,89 @@ class DesignerWindow::PrefInfo::Base : public ComboInfoBase
     {
      sublist.erase();
 
-     for(const Rec &rec : list ) if( en[rec.type] ) sublist.append_copy(rec);
+     DynArray<Rec> temp;
+
+     {
+      bool item=false;
+
+      for(const Rec &rec : list )
+        switch( rec.type )
+          {
+           case Var_Title :
+            {
+             temp.append_copy(rec);
+
+             item=false;
+            }
+           break;
+
+           case Var_Separator :
+            {
+             if( item )
+               {
+                temp.append_copy(rec);
+
+                item=false;
+               }
+            }
+           break;
+
+           default:
+            {
+             if( en[rec.type] )
+               {
+                temp.append_copy(rec);
+
+                item=true;
+               }
+            }
+          }
+     }
+
+     ulen len=temp.getLen();
+
+     DynArray<bool> flag(len);
+
+     {
+      bool item=false;
+
+      for(ulen i=len; i-- ;)
+        switch( temp[i].type )
+          {
+           case Var_Title :
+            {
+             if( item )
+               {
+                flag[i]=true;
+
+                item=false;
+               }
+            }
+           break;
+
+           case Var_Separator :
+            {
+             if( item )
+               {
+                flag[i]=true;
+
+                item=false;
+               }
+            }
+           break;
+
+           default:
+            {
+             flag[i]=true;
+
+             item=true;
+            }
+          }
+     }
+
+     {
+      for(ulen i=0; i<len ;i++) if( flag[i] ) sublist.append_copy(temp[i]);
+     }
     }
 
    template <class Func>
