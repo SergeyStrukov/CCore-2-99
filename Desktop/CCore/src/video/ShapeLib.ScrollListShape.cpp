@@ -307,18 +307,18 @@ void ScrollListShape::draw(const DrawBuf &buf) const
           {
            SmoothDrawArt tart(tbuf);
 
+           TextSize ts=font->text(item.text);
+           Coord off=ts.dy;
+           Coord len=ts.full_dx;
+
+#if 0
+
            MPane p(row);
            MCoord delta=(p.dy/3);
 
            p=p.shrinkY(delta);
 
            TwoField field(p.getTopLeft(),+cfg.title_top,p.getBottomLeft(),+cfg.title_bottom);
-
-           TextSize ts=font->text(item.text);
-           Coord off=ts.dy;
-           Coord len=ts.full_dx+ts.dy;
-
-           Pane t(row.x+off,row.y,len,row.dy);
 
            MCoord x1=p.x+MPoint::LShift(off);
            MCoord x2=x1+MPoint::LShift(len);
@@ -329,6 +329,18 @@ void ScrollListShape::draw(const DrawBuf &buf) const
            FigureBox(p1).solid(tart,field);
 
            if( +p2 ) FigureBox(p2).solid(tart,field);
+
+#else
+
+           MPane p(row);
+
+           TwoField field(p.getTopLeft(),+cfg.title_top,p.getBottomLeft(),+cfg.title_bottom);
+
+           FigureBox(p).solid(tart,field);
+
+#endif
+
+           Pane t(row.x+off,row.y,len,row.dy);
 
            font->text(tbuf,t,TextPlace(AlignX_Center,AlignY_Top),item.text,title);
           }
