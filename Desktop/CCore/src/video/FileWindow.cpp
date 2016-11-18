@@ -577,7 +577,7 @@ void FileAltShape::draw(const DrawBuf &buf) const
      }
    else
      {
-      fig.solid(art,bottom);
+      fig.solid(art,back);
      }
   }
   {
@@ -598,7 +598,7 @@ void FileAltShape::draw(const DrawBuf &buf) const
      }
    else
      {
-      fig.solid(art,bottom);
+      fig.solid(art,back);
      }
   }
 
@@ -636,7 +636,7 @@ void FileAltShape::draw(const DrawBuf &buf) const
 
    MCoord width=p.dy/10;
 
-   VColor border=enable?+cfg.border:top;
+   VColor border=enable?+cfg.border:bottom;
 
    fig.loop(art,HalfPos,width,border);
 

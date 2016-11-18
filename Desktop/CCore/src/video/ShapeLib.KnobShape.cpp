@@ -35,7 +35,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   // center and radius
 

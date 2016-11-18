@@ -23,6 +23,10 @@
 
 namespace App {
 
+/* types */
+
+using AltWindow = AltWindowOf<FileAltShape> ;
+
 /* classes */
 
 class TestWindow;
@@ -41,6 +45,7 @@ class TestWindow : public ComboWindow
    KnobWindow knob;
    CheckWindow check;
    SwitchWindow swtch;
+   AltWindow alt;
 
    RadioGroup group;
    RadioWindow rad1;

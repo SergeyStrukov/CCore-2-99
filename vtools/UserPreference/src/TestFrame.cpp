@@ -60,6 +60,7 @@ void TestWindow::knobPressed()
 void TestWindow::enableAll(bool en)
  {
   btn.enable(en);
+  alt.enable(en);
   knob.enable(en);
   check.enable(en);
   rad1.enable(en);
@@ -116,6 +117,7 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    knob(wlist,pref.getKnobConfig(),KnobShape::FaceOk),
    check(wlist,pref.getCheckConfig()),
    swtch(wlist,pref.getSwitchConfig(),true),
+   alt(wlist,pref.getFileAltConfig()),
    rad1(wlist,1,pref.getRadioConfig()),
    rad2(wlist,2,pref.getRadioConfig()),
    rad3(wlist,3,pref.getRadioConfig()),
@@ -150,7 +152,7 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    connector_shade_btn_pressed(this,&TestWindow::shade,shade_btn.pressed),
    connector_enable_window_destoyed(this,&TestWindow::unshade,enable_window.destroyed)
  {
-  wlist.insTop(swtch,btn,rad1,rad2,rad3,check,edit,knob,xscroll,info,text_list,
+  wlist.insTop(swtch,btn,alt,rad1,rad2,rad3,check,edit,knob,xscroll,info,text_list,
                label1,label2,label3,label,text,xsingle,ysingle,xdouble,ydouble,
                contour,text_contour,light,progress,shade_btn);
 
@@ -186,16 +188,18 @@ void TestWindow::layout()
   {
    auto temp_swtch=CutBox(swtch);
    auto temp_btn=CutPoint(btn);
+   auto temp_alt=CutPoint(alt);
    auto temp_progress=CutPoint(progress);
 
    temp_progress.size.x=10*temp_progress.size.y;
 
-   Coord dy=SupDY(temp_swtch,temp_btn,temp_progress);
+   Coord dy=SupDY(temp_swtch,temp_btn,temp_alt,temp_progress);
 
    PaneCut p=pane.cutTop(dy);
 
    p.place_cutLeft(temp_swtch)
     .place_cutLeftCenter(temp_btn)
+    .place_cutLeftCenter(alt)
     .place_cutLeftCenter(temp_progress);
   }
 
