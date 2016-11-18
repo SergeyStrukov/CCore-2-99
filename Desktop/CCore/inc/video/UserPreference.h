@@ -203,16 +203,15 @@ struct UserPreferenceBag
 
   // FileWindow
 
-  Coord filew_alt_dy = 32 ; //---
+  Coord filew_alt_dy = 32 ;
 
   VColor filew_accent = Black ;
   VColor filew_filter_text = Black ;
 
-  VColor filew_hilight       =         PaleGreen ; //---
-  VColor filew_mark_false    = RGBColor(100,0,0) ; //---
-  VColor filew_mark_true     = RGBColor(0,100,0) ; //---
-  VColor filew_mark_false_on =               Red ; //---
-  VColor filew_mark_true_on  =             Green ; //---
+  VColor filew_mark_false    = RGBColor(100,0,0) ;
+  VColor filew_mark_true     = RGBColor(0,100,0) ;
+  VColor filew_mark_false_on =               Red ;
+  VColor filew_mark_true_on  =             Green ;
 
   FontCouple filew_filter_font;
 

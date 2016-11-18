@@ -96,7 +96,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
 
    if( down ) shift=Point::Diag( (dy+1)/2 );
 
-   VColor text=enable?+cfg.text:bottom;
+   VColor text = enable? +cfg.text : bottom ;
 
    font->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),face.str(),text);
   }
@@ -104,7 +104,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border = focus? +cfg.focus : ( enable?+cfg.border:bottom ) ;
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : bottom ) ;
 
    fig.curveLoop(art,HalfPos,width,border);
   }

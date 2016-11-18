@@ -125,7 +125,6 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("filew_alt_dy",ptr->filew_alt_dy);
   func("filew_accent",ptr->filew_accent);
   func("filew_filter_text",ptr->filew_filter_text);
-  func("filew_hilight",ptr->filew_hilight);
   func("filew_mark_false",ptr->filew_mark_false);
   func("filew_mark_true",ptr->filew_mark_true);
   func("filew_mark_false_on",ptr->filew_mark_false_on);
@@ -312,7 +311,6 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("dir accent",filew_accent);
    binder.item("filter text",filew_filter_text);
    binder.space();
-   binder.item("alt hilight",filew_hilight);
    binder.item("alt down arrow",filew_mark_false);
    binder.item("alt right arrow",filew_mark_true);
    binder.item("alt down arrow on",filew_mark_false_on);
@@ -661,7 +659,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FileAltShape.dy.bind(filew_alt_dy);
   cfg_FileAltShape.border.bind(border);
   cfg_FileAltShape.focus.bind(focus);
-  cfg_FileAltShape.topUp.bind(filew_hilight);
+  cfg_FileAltShape.topUp.bind(topUp);
   cfg_FileAltShape.top.bind(top);
   cfg_FileAltShape.bottom.bind(bottom);
   cfg_FileAltShape.back.bind(back);

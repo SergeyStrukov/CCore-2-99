@@ -153,6 +153,14 @@ struct MPane
 
   MPoint getBottomRight() const { return MPoint(ex,ey); }
 
+  MPoint getLeftMid() const { return MPoint(x,y+dy/2); }
+
+  MPoint getRightMid() const { return MPoint(ex,y+dy/2); }
+
+  MPoint getTopMid() const { return MPoint(x+dx/2,y); }
+
+  MPoint getBottomMid() const { return MPoint(x+dx/2,ey); }
+
   // shift
 
   MPane operator + (MPoint p) const
@@ -568,7 +576,7 @@ struct FigureLeftMark : FigurePoints<3>
 
   FigureLeftMark(MPoint point,MCoord len) : FigureLeftMark(point.x,point.y,len) {}
 
-  FigureLeftMark(const MPane &p,MCoord len) : FigureLeftMark(p.x,p.y+p.dy/2,len) {}
+  FigureLeftMark(const MPane &p,MCoord len) : FigureLeftMark(p.getLeftMid(),len) {}
  };
 
 /* struct FigureRightMark */
@@ -579,7 +587,7 @@ struct FigureRightMark : FigurePoints<3>
 
   FigureRightMark(MPoint point,MCoord len) : FigureRightMark(point.x,point.y,len) {}
 
-  FigureRightMark(const MPane &p,MCoord len) : FigureRightMark(p.ex,p.y+p.dy/2,len) {}
+  FigureRightMark(const MPane &p,MCoord len) : FigureRightMark(p.getRightMid(),len) {}
  };
 
 /* struct FigureUpMark */
@@ -590,7 +598,7 @@ struct FigureUpMark : FigurePoints<3>
 
   FigureUpMark(MPoint point,MCoord len) : FigureUpMark(point.x,point.y,len) {}
 
-  FigureUpMark(const MPane &p,MCoord len) : FigureUpMark(p.x+p.dx/2,p.y,len) {}
+  FigureUpMark(const MPane &p,MCoord len) : FigureUpMark(p.getTopMid(),len) {}
  };
 
 /* struct FigureDownMark */
@@ -601,7 +609,7 @@ struct FigureDownMark : FigurePoints<3>
 
   FigureDownMark(MPoint point,MCoord len) : FigureDownMark(point.x,point.y,len) {}
 
-  FigureDownMark(const MPane &p,MCoord len) : FigureDownMark(p.x+p.dx/2,p.ey,len) {}
+  FigureDownMark(const MPane &p,MCoord len) : FigureDownMark(p.getBottomMid(),len) {}
  };
 
 /* struct FigureRoundBox */
