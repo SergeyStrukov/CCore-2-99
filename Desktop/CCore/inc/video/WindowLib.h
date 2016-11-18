@@ -427,9 +427,7 @@ class CheckWindowOf : public SubWindow
 
    virtual MouseShape getMouseShape(Point,KeyMod) const
     {
-     if( shape.enable ) return Mouse_Hand;
-
-     return Mouse_Arrow;
+     return shape.enable?Mouse_Hand:Mouse_Arrow;
     }
 
    // user input

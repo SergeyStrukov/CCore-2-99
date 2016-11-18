@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {

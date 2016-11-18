@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -25,11 +24,7 @@ namespace Video {
 
 SizeBox KnobShape::getMinSize() const
  {
-  MCoord width=+cfg.width;
-
-  Coord min_dxy=RoundUpLen(4*width);
-
-  return Max(+cfg.dxy,min_dxy);
+  return +cfg.dxy;
  }
 
 void KnobShape::draw(const DrawBuf &buf) const
@@ -44,11 +39,10 @@ void KnobShape::draw(const DrawBuf &buf) const
 
   // center and radius
 
-  MPoint a=p.getTopLeft();
-
   MCoord len=p.dx;
   MCoord radius=len/2;
-  MPoint center=a.addXY(radius);
+
+  MPoint center=p.getCenter();
 
   VColor bottom=+cfg.bottom;
 
@@ -60,19 +54,14 @@ void KnobShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     VColor top;
+     VColor top = ( mover && enable )? +cfg.topUp : +cfg.top ;
 
-     if( mover && enable )
-       top=+cfg.topUp;
-     else
-       top=+cfg.top;
-
-     art.ball(center,radius,TwoField(a,top,p.getBottomLeft(),bottom));
+     art.ball(center,radius,TwoField(p.getTopLeft(),top,p.getBottomLeft(),bottom));
     }
 
   // face
 
-  VColor fc=enable?+cfg.face:bottom;
+  VColor fc = enable? +cfg.face : bottom ;
 
   switch( face )
     {
@@ -133,6 +122,8 @@ void KnobShape::draw(const DrawBuf &buf) const
        MCoord b=a-2*c;
        MCoord r=Ratio(3,2)*c;
 
+       art.ball(center.addY(b+r),r,fc);
+
        FigureDots<4> fig;
 
        fig[0]={{-c,c-a}};
@@ -143,8 +134,6 @@ void KnobShape::draw(const DrawBuf &buf) const
        fig.shift(center);
 
        fig.curveSolid(art,fc);
-
-       art.ball(center.addY(b+r),r,fc);
       }
      break;
 
@@ -156,6 +145,8 @@ void KnobShape::draw(const DrawBuf &buf) const
        MCoord r=Ratio(3,2)*c;
 
        art.ball(center.addY(b+r),r,fc);
+
+       // TODO
       }
      break;
 
@@ -265,20 +256,9 @@ void KnobShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border;
    MCoord width=+cfg.width;
 
-   if( focus )
-     {
-      border=+cfg.focus;
-     }
-   else
-     {
-      if( enable )
-        border=+cfg.border;
-      else
-        border=bottom;
-     }
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : bottom ) ;
 
    art.circle(center,radius-width/2,width,border);
   }
