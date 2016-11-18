@@ -125,10 +125,10 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("filew_alt_dy",ptr->filew_alt_dy);
   func("filew_accent",ptr->filew_accent);
   func("filew_filter_text",ptr->filew_filter_text);
-  func("filew_mark_false",ptr->filew_mark_false);
-  func("filew_mark_true",ptr->filew_mark_true);
-  func("filew_mark_false_on",ptr->filew_mark_false_on);
-  func("filew_mark_true_on",ptr->filew_mark_true_on);
+
+  func("filew_right",ptr->filew_right);
+  func("filew_down",ptr->filew_down);
+
   func("text_New_file",ptr->text_New_file);
 
   func("label_font",ptr->label_font.param);
@@ -311,10 +311,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("dir accent",filew_accent);
    binder.item("filter text",filew_filter_text);
    binder.space();
-   binder.item("alt down arrow",filew_mark_false);
-   binder.item("alt right arrow",filew_mark_true);
-   binder.item("alt down arrow on",filew_mark_false_on);
-   binder.item("alt right arrow on",filew_mark_true_on);
+   binder.item("alt right",filew_right);
+   binder.item("alt down",filew_down);
    binder.space();
    binder.item("filter text",filew_filter_text);
    binder.item("filter font",filew_filter_font);
@@ -655,18 +653,15 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FileFilterWindow.edit_cfg.bind(cfg_FilterEditWindow);
   cfg_FileFilterWindow.knob_cfg.bind(cfg_KnobWindow);
 
-  cfg_FileAltShape.width.bind(width);
-  cfg_FileAltShape.dy.bind(filew_alt_dy);
-  cfg_FileAltShape.border.bind(border);
-  cfg_FileAltShape.focus.bind(focus);
-  cfg_FileAltShape.topUp.bind(topUp);
-  cfg_FileAltShape.top.bind(top);
-  cfg_FileAltShape.bottom.bind(bottom);
-  cfg_FileAltShape.back.bind(back);
-  cfg_FileAltShape.mark_false.bind(filew_mark_false);
-  cfg_FileAltShape.mark_true.bind(filew_mark_true);
-  cfg_FileAltShape.mark_false_on.bind(filew_mark_false_on);
-  cfg_FileAltShape.mark_true_on.bind(filew_mark_true_on);
+  cfg_FileCheckShape.width.bind(width);
+  cfg_FileCheckShape.dxy.bind(filew_alt_dy);
+  cfg_FileCheckShape.border.bind(border);
+  cfg_FileCheckShape.focus.bind(focus);
+  cfg_FileCheckShape.bottom.bind(bottom);
+  cfg_FileCheckShape.topUp.bind(topUp);
+  cfg_FileCheckShape.top.bind(top);
+  cfg_FileCheckShape.faceRight.bind(filew_right);
+  cfg_FileCheckShape.faceDown.bind(filew_down);
 
   cfg_FileSubWindow.space_dxy.bind(space_dxy);
   cfg_FileSubWindow.back.bind(back);
@@ -681,7 +676,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FileSubWindow.hit_menu_cfg.bind(cfg_SimpleCascadeMenu);
   cfg_FileSubWindow.check_cfg.bind(cfg_CheckWindow);
   cfg_FileSubWindow.label_cfg.bind(cfg_LabelWindow);
-  cfg_FileSubWindow.alt_cfg.bind(cfg_FileAltShape);
+  cfg_FileSubWindow.alt_cfg.bind(cfg_FileCheckShape);
   cfg_FileSubWindow.line_cfg.bind(cfg_XDoubleLineWindow);
 
   cfg_FileWindow.frame_cfg.bind(cfg_DragWindow);

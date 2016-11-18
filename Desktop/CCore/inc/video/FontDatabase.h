@@ -19,6 +19,7 @@
 #include <CCore/inc/video/FreeTypeFont.h>
 #include <CCore/inc/video/Incremental.h>
 #include <CCore/inc/video/ProgressScale.h>
+#include <CCore/inc/video/PrintDDL.h>
 
 #include <CCore/inc/Array.h>
 #include <CCore/inc/String.h>
@@ -80,12 +81,10 @@ struct FontInfo
 
   // print object
 
-  static const char * Bool(bool val) { return val?"True":"False"; }
-
   void printDDL(PrinterType &out) const
    {
-    Printf(out,"{ '#;' , '#;' , '#;' , #; , #; , #; , #; , ",
-               file_name,family,style,Bool(scalable),Bool(monospace),Bool(italic),Bool(bold));
+    Printf(out,"{ #; , #; , #; , #; , #; , #; , #; , ",
+               DDLString(file_name),DDLString(family),DDLString(style),DDLBool(scalable),DDLBool(monospace),DDLBool(italic),DDLBool(bold));
 
     Printf(out,"{ #; , #; , #; , #; , #; , #; , #; } }",
                def_size.min_dx,def_size.max_dx,def_size.dy,def_size.by,def_size.dx0,def_size.dx1,def_size.skew);

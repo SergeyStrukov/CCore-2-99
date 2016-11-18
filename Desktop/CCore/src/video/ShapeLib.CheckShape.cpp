@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -36,15 +35,9 @@ void CheckShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   // border
-
-  MCoord x0=p.x;
-  MCoord x1=p.ex;
-
-  MCoord y0=p.y;
-  MCoord y1=p.ey;
 
   MCoord len=p.dx;
   MCoord width=len/10;
@@ -56,52 +49,36 @@ void CheckShape::draw(const DrawBuf &buf) const
   // body
 
   {
-   VColor bottom;
+   VColor bottom = ( mover && enable )? +cfg.bottomUp : +cfg.bottom ;
 
-   if( mover && enable )
-     bottom=+cfg.bottomUp;
-   else
-     bottom=+cfg.bottom;
-
-   fig.solid(art,TwoField({x0+width,y0+width},top,{x1-width,y1-width},bottom));
+   fig.solid(art,TwoField(p.getTopLeft().addXY(width),top,p.getBottomRight().subXY(width),bottom));
   }
 
   // mark
 
   if( check )
     {
+     MCoord x0=p.x;
+     MCoord x1=p.ex;
+
+     MCoord y0=p.y;
+     MCoord y1=p.ey;
+
      MCoord d=(3*width)/2;
 
-     MPoint a(x0+d,y0+len/2);
-     MPoint b(x0+(len+d)/3,y1-d);
-     MPoint c(x1-d,y0+d);
+     MPoint A(x0+d,y0+len/2);
+     MPoint B(x0+(len+d)/3,y1-d);
+     MPoint C(x1-d,y0+d);
 
-     VColor mark;
+     VColor mark = enable? +cfg.mark : top ;
 
-     if( enable )
-       mark=+cfg.mark;
-     else
-       mark=top;
-
-     art.path(width,mark,a,b,c);
+     art.path(width,mark,A,B,C);
     }
 
   // border
 
   {
-   VColor border;
-
-   if( focus )
-     {
-      border=+cfg.focus;
-     }
-   else
-     {
-      if( enable )
-        border=+cfg.border;
-      else
-        border=top;
-     }
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : top ) ;
 
    fig.loop(art,HalfPos,width,border);
   }

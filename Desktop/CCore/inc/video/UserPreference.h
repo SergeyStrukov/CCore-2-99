@@ -203,15 +203,13 @@ struct UserPreferenceBag
 
   // FileWindow
 
-  Coord filew_alt_dy = 32 ;
+  Coord filew_alt_dy = 40 ;
 
-  VColor filew_accent = Black ;
+  VColor filew_accent      = Black ;
   VColor filew_filter_text = Black ;
 
-  VColor filew_mark_false    = RGBColor(100,0,0) ;
-  VColor filew_mark_true     = RGBColor(0,100,0) ;
-  VColor filew_mark_false_on =               Red ;
-  VColor filew_mark_true_on  =             Green ;
+  VColor filew_right = Green ;
+  VColor filew_down  =   Red ;
 
   FontCouple filew_filter_font;
 
@@ -307,7 +305,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    DirEditWindow::ConfigType cfg_DirEditWindow;
    LineEditWindow::ConfigType cfg_FilterEditWindow;
    FileFilterWindow::ConfigType cfg_FileFilterWindow;
-   FileAltShape::Config cfg_FileAltShape;
+   FileCheckShape::Config cfg_FileCheckShape;
    FileSubWindow::ConfigType cfg_FileSubWindow;
    FileWindow::ConfigType cfg_FileWindow;
 
@@ -397,7 +395,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const FileFilterWindow::ConfigType & getFileFilterConfig() const { return cfg_FileFilterWindow; }
 
-   const FileAltShape::Config & getFileAltConfig() const { return cfg_FileAltShape; }
+   const FileCheckShape::Config & getFileAltConfig() const { return cfg_FileCheckShape; }
 
    const FileSubWindow::ConfigType & getFileSubConfig() const { return cfg_FileSubWindow; }
 
@@ -481,7 +479,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       operator const auto & () const { return obj->cfg_FileFilterWindow; }
 
-      operator const auto & () const { return obj->cfg_FileAltShape; }
+      operator const auto & () const { return obj->cfg_FileCheckShape; }
 
       operator const auto & () const { return obj->cfg_FileSubWindow; }
 

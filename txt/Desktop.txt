@@ -52,6 +52,8 @@ FontParam.h          +
 ConfigStore.h        +     
 FontDatabase.h       +
 
+PrintDDL.h           +
+
 --- Drawing --------------------------------------------------------------------
 
 FigureLib.h          +           
@@ -63,7 +65,7 @@ FixedWindow.h
 ToolWindow.h         
 
 Menu.h
-FileWindow.h         +
+FileWindow.h         
         
 MessageWindow.h           
 WindowReport.h       

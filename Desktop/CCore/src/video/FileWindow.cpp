@@ -21,12 +21,14 @@
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/FigureLib.h>
 #include <CCore/inc/video/FileNameCmp.h>
+#include <CCore/inc/video/PrintDDL.h>
 
 #include <CCore/inc/RangeDel.h>
 #include <CCore/inc/Path.h>
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/CompactList.h>
+#include <CCore/inc/PrintStem.h>
 
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
@@ -132,43 +134,29 @@ void DirHitList::loadDDL(StrLen file_name)
     }
  }
 
-void DirHitList::saveDDL(StrLen file_name)
+void DirHitList::saveDDL(StrLen file_name) const
  {
   PrintFile out(file_name);
 
-  Putobj(out,"HitDirData Hits=\n {\n  {\n");
+  Putobj(out,"HitDirData Hits=\n {\n  {");
 
-  for(ulen i=0; i<hit_len ;i++)
+  PrintFirst stem("\n",",\n");
+
+  for(auto &obj : Range(hit_list,hit_len) )
     {
-     Printf(out,"   '#;'",hit_list[i]);
-
-     if( i+1<hit_len )
-       {
-        Putobj(out,",\n");
-       }
-     else
-       {
-        Putobj(out,"\n");
-       }
+     Printf(out,"#;   #;",stem,DDLString(obj));
     }
 
-  Putobj(out,"  },\n  {\n");
+  Putobj(out,"\n  },\n  {");
 
-  for(ulen i=0; i<last_len ;i++)
+  stem.reset();
+
+  for(auto &obj : Range(last_list,last_len) )
     {
-     Printf(out,"   { '#;' , #; }",last_list[i].dir,last_list[i].count);
-
-     if( i+1<last_len )
-       {
-        Putobj(out,",\n");
-       }
-     else
-       {
-        Putobj(out,"\n");
-       }
+     Printf(out,"#;   { #; , #; }",stem,DDLString(obj.dir),obj.count);
     }
 
-  Putobj(out,"  }\n };\n\n");
+  Putobj(out,"\n  }\n };\n\n");
  }
 
 void DirHitList::load()
@@ -195,7 +183,7 @@ void DirHitList::load()
     }
  }
 
-void DirHitList::save()
+void DirHitList::save() const
  {
   try
     {
@@ -523,128 +511,34 @@ void FileFilterListWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
   wlist.draw(buf,pane,drag_active);
  }
 
-/* class FileAltShape */
+/* class FileCheckShape */
 
-Point FileAltShape::getMinSize() const
+SizeBox FileCheckShape::getMinSize() const
  {
-  Coordinate dy=+cfg.dy;
-
-  return Point(2*dy,dy);
+  return +cfg.dxy;
  }
 
-auto FileAltShape::getZone(Point point) const -> CheckType
+void FileCheckShape::draw(const DrawBuf &buf) const
  {
-  return point.x-pane.x > pane.dx/2 ;
- }
+  KnobShape::Config temp_cfg;
 
-void FileAltShape::draw(const DrawBuf &buf) const
- {
-  MPane p(pane);
+  temp_cfg.width=cfg.width;
+  temp_cfg.border=cfg.border;
+  temp_cfg.focus=cfg.focus;
+  temp_cfg.bottom=cfg.bottom;
+  temp_cfg.topUp=cfg.topUp;
+  temp_cfg.top=cfg.top;
+  temp_cfg.face=check?cfg.faceRight:cfg.faceDown;
 
-  if( !p ) return;
+  KnobShape temp(temp_cfg,check?KnobShape::FaceRight:KnobShape::FaceDown);
 
-  MCoord x_med=p.x+p.dx/2;
+  temp.pane=pane;
 
-  MPane a(p.x,x_med,p.y,p.ey);
-  MPane b(x_med,p.ex,p.y,p.ey);
+  temp.enable=enable;
+  temp.focus=focus;
+  temp.mover=mover;
 
-  SmoothDrawArt art(buf.cut(pane));
-
-  VColor top=+cfg.top;
-  VColor bottom=+cfg.bottom;
-  VColor topUp=+cfg.topUp;
-  VColor back=+cfg.back;
-
-  MCoord width=+cfg.width;
-
-  // body
-
-  {
-   FigureBox fig(a);
-
-   if( enable )
-     {
-      if( check )
-        {
-         VColor top_ = ( mover && !zone )?topUp:top ;
-
-         fig.solid(art,TwoField(a.getTopLeft(),top_,a.getBottomLeft(),bottom));
-        }
-      else
-        {
-         fig.solid(art,back);
-        }
-     }
-   else
-     {
-      fig.solid(art,back);
-     }
-  }
-  {
-   FigureBox fig(b);
-
-   if( enable )
-     {
-      if( !check )
-        {
-         VColor top_ = ( mover && zone )?topUp:top ;
-
-         fig.solid(art,TwoField(b.getTopLeft(),top_,b.getTopRight(),bottom));
-        }
-      else
-        {
-         fig.solid(art,back);
-        }
-     }
-   else
-     {
-      fig.solid(art,back);
-     }
-  }
-
-  // mark
-
-  {
-   FigureDownArrow fig(a.shrink(p.dy/5));
-
-   if( enable && !check )
-     {
-      fig.curveSolid(art,RadioField(fig.getPoint(),(2*p.dy)/3,top,+cfg.mark_false_on));
-     }
-   else
-     {
-      fig.curveLoop(art,HalfPos,width,+cfg.mark_false);
-     }
-  }
-  {
-   FigureRightArrow fig(b.shrink(p.dy/5));
-
-   if( enable && check )
-     {
-      fig.curveSolid(art,RadioField(fig.getPoint(),(2*p.dy)/3,top,+cfg.mark_true_on));
-     }
-   else
-     {
-      fig.curveLoop(art,HalfPos,width,+cfg.mark_true);
-     }
-  }
-
-  // border
-
-  {
-   FigureBox fig(p);
-
-   MCoord width=p.dy/10;
-
-   VColor border=enable?+cfg.border:bottom;
-
-   fig.loop(art,HalfPos,width,border);
-
-   art.path(width,border,MPoint(x_med,p.y),MPoint(x_med,p.ey));
-
-   if( focus )
-     fig.loop(art,HalfPos,width/2,+cfg.focus);
-  }
+  temp.draw(buf);
  }
 
 /* class FileSubWindow::Distributor */

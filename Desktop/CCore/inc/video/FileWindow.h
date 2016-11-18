@@ -38,6 +38,8 @@ class FileFilterWindow;
 
 class FileFilterListWindow;
 
+class FileCheckShape;
+
 struct FileWindowParam;
 
 class FileSubWindow;
@@ -80,11 +82,11 @@ class DirHitList : NoCopy
 
    void loadDDL(StrLen file_name);
 
-   void saveDDL(StrLen file_name);
+   void saveDDL(StrLen file_name) const;
 
    void load();
 
-   void save();
+   void save() const;
 
    void add(StrLen dir_name);
 
@@ -275,9 +277,9 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
    Signal<> changed;
  };
 
-/* class FileAltShape */
+/* class FileCheckShape */
 
-class FileAltShape
+class FileCheckShape
  {
   public:
 
@@ -285,20 +287,17 @@ class FileAltShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<Coord> dy = 32 ;
+     RefVal<Coord> dxy = 40 ;
 
-     RefVal<VColor> border   =      Blue ;
-     RefVal<VColor> focus    = OrangeRed ;
+     RefVal<VColor> border =      Blue ;
+     RefVal<VColor> focus  = OrangeRed ;
 
-     RefVal<VColor> topUp    = PaleGreen ;
-     RefVal<VColor> top      =      Snow ;
-     RefVal<VColor> bottom   =      Gray ;
-     RefVal<VColor> back     =    Silver ;
+     RefVal<VColor> bottom =      Gray ;
+     RefVal<VColor> topUp  =     Green ;
+     RefVal<VColor> top    =      Snow ;
 
-     RefVal<VColor> mark_false    = RGBColor(100,0,0) ;
-     RefVal<VColor> mark_true     = RGBColor(0,100,0) ;
-     RefVal<VColor> mark_false_on = Red ;
-     RefVal<VColor> mark_true_on  = Green ;
+     RefVal<VColor> faceRight =  Green ;
+     RefVal<VColor> faceDown  =    Red ;
 
      Config() noexcept {}
     };
@@ -308,25 +307,18 @@ class FileAltShape
 
    // state
 
-   using CheckType = bool ;
-
-   static CheckType Next(CheckType check) { return !check; }
-
-   bool enable     =  true ;
-   bool focus      = false ;
-   bool mover      = false ;
-   CheckType zone  = false ;
-   CheckType check = false ;
+   bool enable =  true ;
+   bool focus  = false ;
+   bool mover  = false ;
+   bool check  = false ;
 
    // methods
 
-   explicit FileAltShape(const Config &cfg_,CheckType check_=false) : cfg(cfg_),check(check_) {}
+   explicit FileCheckShape(const Config &cfg_,bool check_=false) : cfg(cfg_),check(check_) {}
 
-   Point getMinSize() const;
+   SizeBox getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   CheckType getZone(Point point) const;
 
    void draw(const DrawBuf &buf) const;
  };
@@ -342,7 +334,7 @@ struct FileWindowParam
 
 class FileSubWindow : public ComboWindow
  {
-   using AltWindow = AltWindowOf<FileAltShape> ;
+   using AltWindow = CheckWindowOf<FileCheckShape> ;
 
   public:
 

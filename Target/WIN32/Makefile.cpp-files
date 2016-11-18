@@ -290,6 +290,7 @@
 ../../Desktop/CCore/src/video/MinSizeType.cpp
 ../../Desktop/CCore/src/video/Mouse.cpp
 ../../Desktop/CCore/src/video/Picture.cpp
+../../Desktop/CCore/src/video/PrintDDL.cpp
 ../../Desktop/CCore/src/video/ProgressScale.cpp
 ../../Desktop/CCore/src/video/RefVal.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ButtonShape.cpp

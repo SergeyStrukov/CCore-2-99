@@ -25,7 +25,7 @@ namespace App {
 
 /* types */
 
-using AltWindow = AltWindowOf<FileAltShape> ;
+using AltWindow = CheckWindowOf<FileCheckShape> ;
 
 /* classes */
 

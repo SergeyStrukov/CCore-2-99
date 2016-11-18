@@ -228,6 +228,7 @@ obj/PrintAsyncFile.o \
 obj/PrintBase.o \
 obj/PrintBits.o \
 obj/PrintCon.o \
+obj/PrintDDL.o \
 obj/PrintError.o \
 obj/PrintFile.o \
 obj/PrintPTPCon.o \
@@ -604,6 +605,7 @@ obj/PrintAsyncFile.s \
 obj/PrintBase.s \
 obj/PrintBits.s \
 obj/PrintCon.s \
+obj/PrintDDL.s \
 obj/PrintError.s \
 obj/PrintFile.s \
 obj/PrintPTPCon.s \
@@ -980,6 +982,7 @@ obj/PrintAsyncFile.dep \
 obj/PrintBase.dep \
 obj/PrintBits.dep \
 obj/PrintCon.dep \
+obj/PrintDDL.dep \
 obj/PrintError.dep \
 obj/PrintFile.dep \
 obj/PrintPTPCon.dep \
@@ -1821,6 +1824,9 @@ obj/PrintBits.o : ../../Simple/CCore/src/PrintBits.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PrintCon.o : ../../HCore/CCore/src/print/PrintCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintDDL.o : ../../Desktop/CCore/src/video/PrintDDL.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PrintError.o : ../../Simple/CCore/src/PrintError.cpp
@@ -2944,6 +2950,9 @@ obj/PrintBits.s : ../../Simple/CCore/src/PrintBits.cpp
 obj/PrintCon.s : ../../HCore/CCore/src/print/PrintCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PrintDDL.s : ../../Desktop/CCore/src/video/PrintDDL.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/PrintError.s : ../../Simple/CCore/src/PrintError.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4064,6 +4073,9 @@ obj/PrintBits.dep : ../../Simple/CCore/src/PrintBits.cpp
 
 obj/PrintCon.dep : ../../HCore/CCore/src/print/PrintCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintCon.o $< -MF $@
+
+obj/PrintDDL.dep : ../../Desktop/CCore/src/video/PrintDDL.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintDDL.o $< -MF $@
 
 obj/PrintError.dep : ../../Simple/CCore/src/PrintError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintError.o $< -MF $@

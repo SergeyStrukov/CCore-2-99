@@ -179,7 +179,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   Font font=cfg.font.get();
 
@@ -204,7 +204,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   // body
 
-  fig.curveSolid(art,alert?+cfg.alert:+cfg.back);
+  fig.curveSolid(art,enable? ( alert? +cfg.alert : +cfg.back ) : ( len? +cfg.back : +cfg.inactive ) ) ;
 
   // border
 
