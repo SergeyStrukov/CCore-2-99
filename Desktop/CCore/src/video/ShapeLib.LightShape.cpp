@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -36,17 +35,16 @@ void LightShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
-  MPoint a=p.getBase();
-
-  MCoord len=p.dx;
+  MCoord len=p.dy;
   MCoord radius=len/2;
-  MCoord d=Ratio(424,10)*radius;
+  MCoord d=Ratio(600,10)*radius;
   MCoord radius2=Ratio(819,10)*radius;
-  MPoint center=a.addXY(radius);
 
-  art.ball(center,radius,TwoField(a.addXY(d),+cfg.top,a.addXY(len-d),+cfg.bottom));
+  MPoint center=p.getCenter();
+
+  art.ball(center,radius,TwoField(center.subXY(d),+cfg.top,center.addXY(d),+cfg.bottom));
 
   if( on )
     {

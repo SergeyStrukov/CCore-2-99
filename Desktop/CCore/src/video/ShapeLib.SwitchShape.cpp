@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -36,7 +35,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MPoint a=p.getBase();
 
@@ -54,34 +53,14 @@ void SwitchShape::draw(const DrawBuf &buf) const
     {
      art.ball(center,radius,TwoField(a,top,a.addX(len),bottom));
 
-     art.ball(center,radius/2,enable?+cfg.on:bottom);
+     art.ball(center,radius/2, enable? +cfg.on : bottom );
     }
   else
     {
      art.ball(center,radius,TwoField(a,top,a.addY(len),bottom));
 
-     art.ball(center,radius/2,enable?+cfg.off:bottom);
+     art.ball(center,radius/2, enable? +cfg.off : bottom );
     }
-
-  // border
-
-  {
-   VColor border;
-
-   if( focus )
-     {
-      border=+cfg.focus;
-     }
-   else
-     {
-      if( enable )
-        border=+cfg.border;
-      else
-        border=bottom;
-     }
-
-   art.circle(center,radius-width/2,width,border);
-  }
 
   // face
 
@@ -127,6 +106,14 @@ void SwitchShape::draw(const DrawBuf &buf) const
    fig.shift(a);
 
    fig.solid(art,face);
+  }
+
+  // border
+
+  {
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : bottom ) ;
+
+   art.circle(center,radius-width/2,width,border);
   }
  }
 

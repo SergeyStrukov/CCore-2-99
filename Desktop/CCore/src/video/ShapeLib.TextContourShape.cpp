@@ -41,7 +41,7 @@ Point TextContourShape::getMinSize(Point inner_size) const
 
   Coord dxy=RoundUpLen(+cfg.width);
 
-  return Sup(Point(2*dxy,ts.dy+dxy)+inner_size,2*Point(ts.dy,dxy)+Point(ts.full_dx,ts.dy));
+  return Sup( Point(dxy,dxy)+Point(dxy,ts.dy)+inner_size , 2*Point(ts.dy,dxy)+Point(ts.full_dx,ts.dy) );
  }
 
 Pane TextContourShape::getInner() const
@@ -50,7 +50,7 @@ Pane TextContourShape::getInner() const
 
   Coord dxy=RoundUpLen(+cfg.width);
 
-  if( 2*dxy>=pane.dx || ts.dy+dxy>=pane.dy ) return Empty;
+  if( dxy>=pane.dx-dxy || ts.dy>=pane.dy-dxy ) return Empty;
 
   return Pane(pane.x+dxy,pane.y+ts.dy,pane.dx-2*dxy,pane.dy-ts.dy-dxy);
  }
@@ -73,10 +73,10 @@ void TextContourShape::draw(const DrawBuf &buf) const
   Coord len=pane.dx-2*tx;
   Coord free;
 
-  if( ts.overflow )
+  if( ts.overflow || len<=ts.full_dx )
     free=0;
   else
-    free=(len>ts.full_dx)?len-ts.full_dx:0;
+    free=len-ts.full_dx;
 
   MCoord width=+cfg.width;
 
