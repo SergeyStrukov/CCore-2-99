@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -36,41 +35,31 @@ void RadioShape::draw(const DrawBuf &buf) const
 
   p.square();
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
-  MPoint a=p.getBase();
-
-  MCoord len=p.dx;
+  MCoord len=p.dy;
   MCoord width=len/10;
   MCoord radius=len/2;
-  MPoint center=a.addXY(radius);
-  MCoord d=Ratio(424,10)*radius;
+
+  MPoint center=p.getCenter();
 
   VColor top=+cfg.top;
 
   // body
 
   {
-   VColor bottom;
+   VColor bottom = ( mover && enable )? +cfg.bottomUp : +cfg.bottom ;
 
-   if( mover && enable )
-     bottom=+cfg.bottomUp;
-   else
-     bottom=+cfg.bottom;
+   MCoord d=Ratio(600,10)*radius;
 
-   art.ball(center,radius,TwoField(a.addXY(d),top,a.addXY(len-d),bottom));
+   art.ball(center,radius,TwoField(center.subXY(d),top,center.addXY(d),bottom));
   }
 
   // mark
 
   if( check )
     {
-     VColor mark;
-
-     if( enable )
-       mark=+cfg.mark;
-     else
-       mark=top;
+     VColor mark = enable? +cfg.mark : top ;
 
      art.ball(center,radius/3,mark);
     }
@@ -78,19 +67,7 @@ void RadioShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border;
-
-   if( focus )
-     {
-      border=+cfg.focus;
-     }
-   else
-     {
-      if( enable )
-        border=+cfg.border;
-      else
-        border=top;
-     }
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : top ) ;
 
    art.circle(center,radius-width/2,width,border);
   }

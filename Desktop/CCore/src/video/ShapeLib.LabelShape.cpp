@@ -15,9 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
-#include <CCore/inc/video/FigureLib.h>
-
 namespace CCore {
 namespace Video {
 
@@ -34,7 +31,7 @@ Point LabelShape::getMinSize() const
 
 void LabelShape::draw(const DrawBuf &buf) const
  {
-  cfg.font->text(buf,pane,TextPlace(align_x,align_y),text.str(),enable?+cfg.text:+cfg.inactive);
+  cfg.font->text(buf,pane,TextPlace(align_x,align_y),text.str(), enable? +cfg.text : +cfg.inactive );
  }
 
 /* class RefLabelShape */

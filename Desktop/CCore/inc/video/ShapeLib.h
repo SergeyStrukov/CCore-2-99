@@ -398,6 +398,8 @@ class RefLabelShape
 
 class TextShape
  {
+   static MCoord FigEX(Coord fdy,MCoord width);
+
   public:
 
    struct Config

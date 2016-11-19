@@ -764,7 +764,7 @@ class RadioGroup : NoCopy
 
    // signals
 
-   Signal<int,int> changed; // new_id, prev_id
+   Signal<int,int> changed; // new_id , prev_id
  };
 
 /* class RadioWindowOf<Shape> */
@@ -797,6 +797,8 @@ class RadioWindowOf : public SubWindow , public RadioItem
         redraw();
        }
     }
+
+   // RadioItem
 
    virtual void check(bool check)
     {
@@ -885,9 +887,7 @@ class RadioWindowOf : public SubWindow , public RadioItem
 
    virtual MouseShape getMouseShape(Point,KeyMod) const
     {
-     if( shape.enable ) return Mouse_Hand;
-
-     return Mouse_Arrow;
+     return shape.enable?Mouse_Hand:Mouse_Arrow;
     }
 
    // user input
@@ -990,9 +990,9 @@ class TextWindowOf : public SubWindow
 
    void disable() { enable(false); }
 
-   DefString getText() const { return shape.text; }
+   DefString getText() const requires( IsType<decltype(shape.text),DefString> ) { return shape.text; }
 
-   void setText(const DefString &text)
+   void setText(const DefString &text) requires( IsType<decltype(shape.text),DefString> )
     {
      shape.text=text;
 

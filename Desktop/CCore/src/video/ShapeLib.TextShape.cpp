@@ -23,6 +23,11 @@ namespace Video {
 
 /* class TextShape */
 
+MCoord TextShape::FigEX(Coord fdy,MCoord width)
+ {
+  return (Fraction(fdy)+2*width)/4;
+ }
+
 Point TextShape::getMinSize() const
  {
   return getMinSize(text.str());
@@ -36,7 +41,7 @@ Point TextShape::getMinSize(StrLen text) const
 
   MCoord width=+cfg.width;
 
-  MCoord ex=(Fraction(ts.dy)+2*width)/4;
+  MCoord ex=FigEX(ts.dy,width);
 
   Coord dx=RoundUpLen(ex);
   Coord dy=RoundUpLen(width);
@@ -50,7 +55,7 @@ void TextShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   Font font=cfg.font.get();
 
@@ -60,13 +65,27 @@ void TextShape::draw(const DrawBuf &buf) const
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4;
+  MCoord ex=FigEX(fs.dy,width);
+
+  if( ex>p.dx/3 )
+    {
+     art.block(pane,+cfg.inactive);
+
+     return;
+    }
 
   FigureButton fig(p,ex);
 
   // body
 
   fig.curveSolid(art,+cfg.back);
+
+  // text
+
+  Coord dx=RoundUpLen(ex);
+  Coord dy=RoundUpLen(width);
+
+  font->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),text.str(), enable? +cfg.text : +cfg.inactive );
 
   // border
 
@@ -77,13 +96,6 @@ void TextShape::draw(const DrawBuf &buf) const
   auto fig_bottom=fig.getBottom();
 
   fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
-
-  // text
-
-  Coord dx=RoundUpLen(ex);
-  Coord dy=RoundUpLen(width);
-
-  font->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),text.str(),enable?+cfg.text:+cfg.inactive);
  }
 
 } // namespace Video

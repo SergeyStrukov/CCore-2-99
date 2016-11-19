@@ -69,6 +69,7 @@ void TestWindow::enableAll(bool en)
   xscroll.enable(en);
   info.enable(en);
   edit.enable(en);
+  text_list.enable(en);
 
   label1.enable(en);
   label2.enable(en);
