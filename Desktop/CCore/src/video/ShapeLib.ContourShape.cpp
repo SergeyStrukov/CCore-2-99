@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -25,16 +24,16 @@ namespace Video {
 
 Point ContourShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(+cfg.width);
+  Coordinate dxy=RoundUpLen(+cfg.width);
 
   return Point::Diag(2*dxy+1);
  }
 
 Point ContourShape::getMinSize(Point inner_size) const
  {
-  Coord dxy=RoundUpLen(+cfg.width);
+  Coordinate dxy=RoundUpLen(+cfg.width);
 
-  return inner_size.addXY(2*dxy);
+  return inner_size.addXY(+(2*dxy));
  }
 
 Pane ContourShape::getInner() const
@@ -50,7 +49,7 @@ void ContourShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
 

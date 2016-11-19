@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -25,9 +24,9 @@ namespace Video {
 
 SizeY XSingleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(+cfg.width);
+  Coord dy=RoundUpLen(+cfg.width);
 
-  return dxy;
+  return dy;
  }
 
 void XSingleLineShape::draw(const DrawBuf &buf) const
@@ -40,21 +39,16 @@ void XSingleLineShape::draw(const DrawBuf &buf) const
 
   MCoord width=+cfg.width;
 
-  MCoord x0=p.x+width/2;
-  MCoord x1=p.ex-width/2;
-
-  MCoord y=p.y+p.dy/2;
-
-  art.path(width,+cfg.line,MPoint(x0,y),MPoint(x1,y));
+  art.path(width,+cfg.line,p.getLeftMid(),p.getRightMid());
  }
 
 /* class YSingleLineShape */
 
 SizeX YSingleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(+cfg.width);
+  Coord dx=RoundUpLen(+cfg.width);
 
-  return dxy;
+  return dx;
  }
 
 void YSingleLineShape::draw(const DrawBuf &buf) const
@@ -67,12 +61,7 @@ void YSingleLineShape::draw(const DrawBuf &buf) const
 
   MCoord width=+cfg.width;
 
-  MCoord x=p.x+p.dx/2;
-
-  MCoord y0=p.y+width/2;
-  MCoord y1=p.ey-width/2;
-
-  art.path(width,+cfg.line,MPoint(x,y0),MPoint(x,y1));
+  art.path(width,+cfg.line,p.getTopMid(),p.getBottomMid());
  }
 
 } // namespace Video

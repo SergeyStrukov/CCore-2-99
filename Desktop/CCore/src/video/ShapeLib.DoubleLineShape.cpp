@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -25,9 +24,9 @@ namespace Video {
 
 SizeY XDoubleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(+cfg.width);
+  Coordinate dy=RoundUpLen(+cfg.width);
 
-  return 2*dxy;
+  return 2*dy;
  }
 
 void XDoubleLineShape::draw(const DrawBuf &buf) const
@@ -39,25 +38,19 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
   SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
+  MCoord d=width/2;
 
-  MCoord x0=p.x+width/2;
-  MCoord x1=p.ex-width/2;
-
-  MCoord y=p.y+p.dy/2;
-  MCoord y0=y-width/2;
-  MCoord y1=y+width/2;
-
-  art.path(width,+cfg.top,MPoint(x0,y0),MPoint(x1,y0));
-  art.path(width,+cfg.bottom,MPoint(x0,y1),MPoint(x1,y1));
+  art.path(width,+cfg.top,p.getLeftMid().subY(d),p.getRightMid().subY(d));
+  art.path(width,+cfg.bottom,p.getLeftMid().addY(d),p.getRightMid().addY(d));
  }
 
 /* class YDoubleLineShape */
 
 SizeX YDoubleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(+cfg.width);
+  Coordinate dx=RoundUpLen(+cfg.width);
 
-  return 2*dxy;
+  return 2*dx;
  }
 
 void YDoubleLineShape::draw(const DrawBuf &buf) const
@@ -69,16 +62,10 @@ void YDoubleLineShape::draw(const DrawBuf &buf) const
   SmoothDrawArt art(buf.cut(pane));
 
   MCoord width=+cfg.width;
+  MCoord d=width/2;
 
-  MCoord x=p.x+p.dx/2;
-  MCoord x0=x-width/2;
-  MCoord x1=x+width/2;
-
-  MCoord y0=p.y+width/2;
-  MCoord y1=p.ey-width/2;
-
-  art.path(width,+cfg.top,MPoint(x0,y0),MPoint(x0,y1));
-  art.path(width,+cfg.bottom,MPoint(x1,y0),MPoint(x1,y1));
+  art.path(width,+cfg.top,p.getTopMid().subX(d),p.getBottomMid().subX(d));
+  art.path(width,+cfg.bottom,p.getTopMid().addX(d),p.getBottomMid().addX(d));
  }
 
 } // namespace Video

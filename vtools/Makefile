@@ -15,12 +15,15 @@ OPT = -j 8
 
 all:
 	make $(OPT) -C UserPreference
+	make $(OPT) -C DDLDisplay
 
 clean:
 	make -C UserPreference         clean
+	make -C DDLDisplay             clean
 
 list:
 	make -C UserPreference         list
+	make -C DDLDisplay             list
 
 
 

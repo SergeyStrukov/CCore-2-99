@@ -282,6 +282,10 @@ struct Point : BasePoint<Point,Coord>
 
   static Point Min() { return Point(MinCoord,MinCoord); }
 
+  using BasePoint<Point,Coord>::Diag;
+
+  static Point Diag(Coordinate xy) { return Diag(+xy); }
+
   // constructors
 
   using BasePoint<Point,Coord>::BasePoint;

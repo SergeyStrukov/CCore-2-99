@@ -49,6 +49,8 @@ struct SizeBox
 
   SizeBox(Coord dxy_=0) : dxy(dxy_) {}
 
+  SizeBox(Coordinate dxy_=0) : dxy(+dxy_) {}
+
   Point toSizePoint() const { return {dxy,dxy}; }
  };
 
@@ -60,6 +62,8 @@ struct SizeX
 
   SizeX(Coord dx_=0) : dx(dx_) {}
 
+  SizeX(Coordinate dx_=0) : dx(+dx_) {}
+
   Point toSizePoint() const { return {dx,0}; }
  };
 
@@ -70,6 +74,8 @@ struct SizeY
   Coord dy;
 
   SizeY(Coord dy_=0) : dy(dy_) {}
+
+  SizeY(Coordinate dy_=0) : dy(+dy_) {}
 
   Point toSizePoint() const { return {0,dy}; }
  };
