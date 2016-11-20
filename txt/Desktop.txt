@@ -38,7 +38,6 @@ Incremental.h        +
 Info.h               +
 Picture.h            +
 FileNameCmp.h        +
-FileNameMatch.h      +
 
 ================================================================================
 

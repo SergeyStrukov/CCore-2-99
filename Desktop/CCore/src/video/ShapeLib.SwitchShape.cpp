@@ -37,12 +37,12 @@ void SwitchShape::draw(const DrawBuf &buf) const
 
   SmoothDrawArt art(buf.cut(pane));
 
-  MPoint a=p.getBase();
-
   MCoord len=p.dx;
   MCoord radius=len/2;
-  MPoint center=a.addXY(radius);
   MCoord width=len/16;
+
+  MPoint a=p.getTopLeft();
+  MPoint center=p.getCenter();
 
   VColor top=+cfg.top;
   VColor bottom=+cfg.bottom;
@@ -51,13 +51,13 @@ void SwitchShape::draw(const DrawBuf &buf) const
 
   if( check )
     {
-     art.ball(center,radius,TwoField(a,top,a.addX(len),bottom));
+     art.ball(center,radius,TwoField(a,top,p.getBottomRight(),bottom));
 
      art.ball(center,radius/2, enable? +cfg.on : bottom );
     }
   else
     {
-     art.ball(center,radius,TwoField(a,top,a.addY(len),bottom));
+     art.ball(center,radius,TwoField(a,top,p.getBottomLeft(),bottom));
 
      art.ball(center,radius/2, enable? +cfg.off : bottom );
     }
@@ -65,20 +65,6 @@ void SwitchShape::draw(const DrawBuf &buf) const
   // face
 
   {
-   VColor face;
-
-   if( enable )
-     {
-      if( mover )
-        face=+cfg.faceUp;
-      else
-        face=+cfg.face;
-     }
-   else
-     {
-      face=bottom;
-     }
-
    MCoord d1=len/20;
    MCoord d2=len/8;
 
@@ -104,6 +90,8 @@ void SwitchShape::draw(const DrawBuf &buf) const
      }
 
    fig.shift(a);
+
+   VColor face = enable? ( mover? +cfg.faceUp : +cfg.face ) : bottom ;
 
    fig.solid(art,face);
   }
