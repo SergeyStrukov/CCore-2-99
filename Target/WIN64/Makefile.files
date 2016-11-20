@@ -96,6 +96,7 @@ obj/ExceptionType.o \
 obj/FastMutex.o \
 obj/Fifo.o \
 obj/FigureLib.o \
+obj/FileBoss.o \
 obj/FileName.o \
 obj/FileNameCmp.o \
 obj/FileNameMatch.o \
@@ -477,6 +478,7 @@ obj/ExceptionType.s \
 obj/FastMutex.s \
 obj/Fifo.s \
 obj/FigureLib.s \
+obj/FileBoss.s \
 obj/FileName.s \
 obj/FileNameCmp.s \
 obj/FileNameMatch.s \
@@ -858,6 +860,7 @@ obj/ExceptionType.dep \
 obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FigureLib.dep \
+obj/FileBoss.dep \
 obj/FileName.dep \
 obj/FileNameCmp.dep \
 obj/FileNameMatch.dep \
@@ -1443,6 +1446,9 @@ obj/Fifo.o : ../../Simple/CCore/src/Fifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FigureLib.o : ../../Desktop/CCore/src/video/FigureLib.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FileBoss.o : ../../Desktop/CCore/src/video/FileBoss.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
@@ -2581,6 +2587,9 @@ obj/Fifo.s : ../../Simple/CCore/src/Fifo.cpp
 obj/FigureLib.s : ../../Desktop/CCore/src/video/FigureLib.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileBoss.s : ../../Desktop/CCore/src/video/FileBoss.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3716,6 +3725,9 @@ obj/Fifo.dep : ../../Simple/CCore/src/Fifo.cpp
 
 obj/FigureLib.dep : ../../Desktop/CCore/src/video/FigureLib.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FigureLib.o $< -MF $@
+
+obj/FileBoss.dep : ../../Desktop/CCore/src/video/FileBoss.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileBoss.o $< -MF $@
 
 obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@

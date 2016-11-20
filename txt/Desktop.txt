@@ -38,6 +38,7 @@ Incremental.h        +
 Info.h               +
 Picture.h            +
 FileNameCmp.h        +
+FileBoss.h           +
 
 ================================================================================
 

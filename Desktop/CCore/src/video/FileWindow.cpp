@@ -26,6 +26,7 @@
 #include <CCore/inc/RangeDel.h>
 #include <CCore/inc/Path.h>
 #include <CCore/inc/Print.h>
+#include <CCore/inc/FileSystem.h>
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/CompactList.h>
 #include <CCore/inc/PrintStem.h>
@@ -58,8 +59,6 @@ void DirHitList::Rec::init(StrLen dir_name,unsigned count_)
   dir=String(dir_name);
   count=count_;
  }
-
-const char *const DirHitList::HitFile="/HitDirs.ddl";
 
 const char *const DirHitList::Pretext=
 "struct HitDirData\r\n"
@@ -159,15 +158,17 @@ void DirHitList::saveDDL(StrLen file_name) const
   Putobj(out,"\n  }\n };\n\n");
  }
 
-void DirHitList::load()
+void DirHitList::load(StrLen hit_file)
  {
+  if( !hit_file ) return;
+
   try
     {
      HomeDir home;
 
      MakeString<MaxPathLen> buf;
 
-     buf.add(home.get(),HomeKey,HitFile);
+     buf.add(home.get(),HomeKey,'/',hit_file);
 
      if( !buf )
        {
@@ -183,8 +184,10 @@ void DirHitList::load()
     }
  }
 
-void DirHitList::save() const
+void DirHitList::save(StrLen hit_file) const
  {
+  if( !hit_file ) return;
+
   try
     {
      HomeDir home;
@@ -195,7 +198,7 @@ void DirHitList::save() const
 
      StrLen dir=buf.get();
 
-     buf.add(HitFile);
+     buf.add('/',hit_file);
 
      if( !buf )
        {
@@ -641,31 +644,34 @@ void FileSubWindow::fillLists()
      list_dir.enable();
      list_file.enable( !param.new_file || !alt_new_file.isChecked() );
 
-     FileSystem::DirCursor cur(fs,edit_dir.getText());
-
      ComboInfoBuilder dir_builder;
      InfoBuilder file_builder;
 
-     cur.apply( [&] (StrLen name,FileType ft)
-                    {
-                     switch( ft )
-                       {
-                        case FileType_dir :
-                         {
-                          if( PathBase::IsDot(name) ) break;
+     auto obj=ToFunction<void (StrLen name,FileType type)>(
 
-                          dir_builder.add(name);
-                         }
-                        break;
+       [&] (StrLen name,FileType type)
+           {
+            switch( type )
+              {
+               case FileType_dir :
+                {
+                 if( PathBase::IsDot(name) ) break;
 
-                        case FileType_file :
-                         {
-                          file_builder.add(name);
-                         }
-                        break;
-                       }
+                 dir_builder.add(name);
+                }
+               break;
 
-                   } );
+               case FileType_file :
+                {
+                 file_builder.add(name);
+                }
+               break;
+              }
+           }
+
+     );
+
+     param.file_boss->enumDir(edit_dir.getText(),obj.function());
 
      dir_builder.sortGroups(ExtNameLess);
 
@@ -688,9 +694,9 @@ void FileSubWindow::setDir(StrLen dir_name)
  {
   char temp[MaxPathLen+1];
 
-  StrLen path=fs.pathOf(dir_name,temp);
+  StrLen path=param.file_boss->pathOf(dir_name,temp);
 
-  if( fs.getFileType(path)==FileType_dir )
+  if( param.file_boss->getFileType(path)==FileType_dir )
     {
      edit_dir.setText(path);
 
@@ -741,7 +747,7 @@ bool FileSubWindow::isGoodFileName(StrLen file_name)
 
   MakeFileName temp(edit_dir.getText(),file_name);
 
-  return fs.getFileType(temp.get())==FileType_none;
+  return param.file_boss->getFileType(temp.get())==FileType_none;
  }
 
 void FileSubWindow::file_list_entered()
@@ -1007,14 +1013,14 @@ void FileSubWindow::open()
 
   setDir(".");
 
-  hit_list.load();
+  hit_list.load(param.file_boss->getHitDirFile());
 
   hit_list.prepare(hit_data);
  }
 
 void FileSubWindow::close()
  {
-  hit_list.save();
+  hit_list.save(param.file_boss->getHitDirFile());
  }
 
  // drawing

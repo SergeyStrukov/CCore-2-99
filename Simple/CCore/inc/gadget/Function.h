@@ -32,6 +32,8 @@ template <class FuncType> class Function;
 
 struct Funchor; // Fu(nction) (A)nchor
 
+template <class FuncType,class T> struct ToFunctionProxy;
+
 /* struct DefaultFunction<R> */
 
 template <class R>
@@ -120,7 +122,7 @@ class Function<R (AA...)>
    bool operator ! () const { return obj==0 && ptr.func==FuncProxy && ptr.ctx.func_ptr==(Handle::FuncPtr)EmptyFunction; }
 
    template <class ... TT>
-   R operator () (TT && ... tt)
+   R operator () (TT && ... tt) const
     {
      if( obj ) return (obj->*method)( std::forward<TT>(tt)... );
 
@@ -153,6 +155,25 @@ struct Funchor
 /* type Funchor_nocopy */
 
 using Funchor_nocopy = NoCopyBase<Funchor> ;
+
+/* struct ToFunctionProxy<FuncType,T> */
+
+template <class T,class R,class ... AA>
+struct ToFunctionProxy<R (AA...),T> : Funchor
+ {
+  T obj;
+
+  explicit ToFunctionProxy(const T &obj_) : obj(obj_) {}
+
+  R proxy(AA ... aa) { return obj(aa...); }
+
+  Function<R (AA...)> function() { return FunctionOf(this,&ToFunctionProxy::proxy); }
+ };
+
+/* ToFunction() */
+
+template <class FuncType,class T>
+auto ToFunction(const T &obj) { return ToFunctionProxy<FuncType,T>(obj); }
 
 } // namespace CCore
 

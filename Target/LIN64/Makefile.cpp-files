@@ -270,6 +270,7 @@
 ../../Desktop/CCore/src/video/DrawBuf.cpp
 ../../Desktop/CCore/src/video/DrawTools.cpp
 ../../Desktop/CCore/src/video/FigureLib.cpp
+../../Desktop/CCore/src/video/FileBoss.cpp
 ../../Desktop/CCore/src/video/FileNameCmp.cpp
 ../../Desktop/CCore/src/video/FileWindow.cpp
 ../../Desktop/CCore/src/video/FixedWindow.cpp

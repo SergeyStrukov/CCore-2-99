@@ -19,9 +19,9 @@
 #include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
+#include <CCore/inc/video/FileBoss.h>
 
 #include <CCore/inc/FunctorType.h>
-#include <CCore/inc/FileSystem.h>
 #include <CCore/inc/MakeFileName.h>
 #include <CCore/inc/FileNameMatch.h>
 
@@ -70,8 +70,6 @@ class DirHitList : NoCopy
 
   private:
 
-   static const char *const HitFile;
-
    static const char *const Pretext;
 
   public:
@@ -84,9 +82,9 @@ class DirHitList : NoCopy
 
    void saveDDL(StrLen file_name) const;
 
-   void load();
+   void load(StrLen hit_file);
 
-   void save() const;
+   void save(StrLen hit_file) const;
 
    void add(StrLen dir_name);
 
@@ -328,6 +326,7 @@ class FileCheckShape
 struct FileWindowParam
  {
   bool new_file = false ;
+  FileBoss file_boss;
  };
 
 /* class FileSubWindow */
@@ -401,8 +400,6 @@ class FileSubWindow : public ComboWindow
    LineEditWindow edit_new_file;
 
    // work
-
-   FileSystem fs;
 
    Info file_info;
 
