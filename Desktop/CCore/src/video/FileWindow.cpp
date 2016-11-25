@@ -863,6 +863,8 @@ void FileSubWindow::hit_menu_destroyed()
 void FileSubWindow::hit_menu_selected(int id,Point)
  {
   setDir(hit_list(id));
+
+  hit_menu.destroy();
  }
 
 void FileSubWindow::hit_menu_deleted(int id)
@@ -1011,7 +1013,7 @@ void FileSubWindow::open()
      check_new_file_changed(true);
     }
 
-  setDir(".");
+  if( Change(first_open,false) ) setDir(".");
 
   hit_list.load(param.file_boss->getHitDirFile());
 

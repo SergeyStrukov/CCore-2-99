@@ -67,7 +67,7 @@ ToolWindow.h
 Menu.h
 FileWindow.h         
         
-MessageWindow.h           
+MessageWindow.h      +           
 WindowReport.h       
 
 ShapeLib.h                      

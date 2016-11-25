@@ -271,6 +271,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    ToolWindow::ConfigType cfg_ToolWindow;
    MessageSubWindow::ConfigType cfg_MessageSubWindow;
    MessageWindow::ConfigType cfg_MessageWindow;
+   MessageSubWindow::ConfigType cfg_AlertMessageSubWindow;
+   MessageWindow::ConfigType cfg_AlertMessageWindow;
    ExceptionWindow::ConfigType cfg_ExceptionWindow;
    SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
 
@@ -335,7 +337,13 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const ToolWindow::ConfigType & getToolWindowConfig() const { return cfg_ToolWindow; }
 
+   const MessageSubWindow::ConfigType & getMessageSubWindowConfig() const { return cfg_MessageSubWindow; }
+
    const MessageWindow::ConfigType & getMessageWindowConfig() const { return cfg_MessageWindow; }
+
+   const MessageSubWindow::ConfigType & getAlertMessageSubWindowConfig() const { return cfg_AlertMessageSubWindow; }
+
+   const MessageWindow::ConfigType & getAlertMessageWindowConfig() const { return cfg_AlertMessageWindow; }
 
    const ExceptionWindow::ConfigType & getExceptionWindowConfig() const { return cfg_ExceptionWindow; }
 
@@ -418,6 +426,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_FixedWindow; }
 
       operator const auto & () const { return obj->cfg_ToolWindow; }
+
+      operator const auto & () const { return obj->cfg_MessageSubWindow; }
 
       operator const auto & () const { return obj->cfg_MessageWindow; }
 

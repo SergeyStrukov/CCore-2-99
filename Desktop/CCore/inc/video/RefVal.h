@@ -132,7 +132,7 @@ concept bool SmartConfigType = requires(const Pref &pref)
 /* class CtorRefVal<T> */
 
 template <class T>
-class CtorRefVal : NoCopy
+class CtorRefVal
  {
    const T *ptr;
    T val;

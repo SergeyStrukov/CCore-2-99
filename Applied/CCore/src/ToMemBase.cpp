@@ -29,7 +29,7 @@ uint8 * ToMemBase::alloc(ulen len_)
   return ptr;
  }
 
-ToMemBase::ToMemBase()
+ToMemBase::ToMemBase() noexcept
  {
   ptr=0;
   len=0;

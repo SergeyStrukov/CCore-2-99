@@ -37,7 +37,7 @@ class ToMemBase : NoCopy
 
   public:
 
-   ToMemBase();
+   ToMemBase() noexcept;
 
    ~ToMemBase();
 

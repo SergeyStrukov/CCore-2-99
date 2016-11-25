@@ -217,6 +217,7 @@ class ParserContext : Context
 
    using Context::error;
    using Context::pool;
+   using Context::reset;
 
    // constructors
 

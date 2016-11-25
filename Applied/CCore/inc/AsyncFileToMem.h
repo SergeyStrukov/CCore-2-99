@@ -36,6 +36,8 @@ class AsyncFileToMem : public ToMemBase
  {
   public:
 
+   AsyncFileToMem() noexcept {}
+
    explicit AsyncFileToMem(StrLen file_name,ulen max_len=MaxULen,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
    AsyncFileToMem(StrLen dev_name,StrLen dev_file_name,ulen max_len=MaxULen,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);

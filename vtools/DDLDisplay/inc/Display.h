@@ -15,11 +15,56 @@
 
 #include <CCore/inc/video/MessageWindow.h>
 
+#include <CCore/inc/FileName.h>
+#include <CCore/inc/FileToMem.h>
+#include <CCore/inc/String.h>
+
+#include <CCore/inc/ddl/DDLEngine.h>
+
 namespace App {
 
 /* classes */
 
+class DDLFile;
+
 class DisplayWindow;
+
+/* class DDLFile */
+
+class DDLFile : NoCopy
+ {
+   PrintString eout;
+
+   FileToMem pretext;
+
+   DDL::FileEngine<FileName,FileToMem> engine;
+
+   DDL::EngineResult result;
+
+  private:
+
+   void erase();
+
+  public:
+
+   DDLFile() noexcept;
+
+   ~DDLFile();
+
+   auto getResult() const { return result; }
+
+   struct OpenResult
+    {
+     DefString etext;
+     bool ok;
+    };
+
+   OpenResult open(StrLen file_name);
+
+   OpenResult openPretext(StrLen file_name);
+
+   void noPretext();
+ };
 
 /* class DisplayWindow */
 
@@ -34,7 +79,7 @@ class DisplayWindow : public SubWindow
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
-      : msg_cfg(SmartBind,pref)
+      : msg_cfg(pref.getAlertMessageWindowConfig())
       {
       }
     };
@@ -45,7 +90,17 @@ class DisplayWindow : public SubWindow
 
    const Config &cfg;
 
+   DDLFile file;
+
    MessageWindow msg;
+
+  private:
+
+   void error(StrLen str);
+
+   void setPretextFileName(StrLen file_name);
+
+   void setFileName(StrLen file_name);
 
   public:
 
@@ -56,6 +111,14 @@ class DisplayWindow : public SubWindow
    // methods
 
    void open(StrLen file_name);
+
+   void openPretext(StrLen file_name);
+
+   void noPretext();
+
+   // signals
+
+   Signal<StrLen,bool> opened; // file_name ,  ok
  };
 
 } // namespace App

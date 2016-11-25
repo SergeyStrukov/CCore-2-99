@@ -133,6 +133,20 @@ class Application : public ApplicationBase
 
    SignalConnector<Application> connector_pref_update;
 
+   void client_opened(StrLen file_name,bool ok)
+    {
+     if( ok )
+       {
+        main_win.setTitle(String("DDL file: ")+file_name);
+       }
+     else
+       {
+        main_win.setTitle("DDLDisplay"_def);
+       }
+    }
+
+   SignalConnector<Application,StrLen,bool> connector_client_opened;
+
   public:
 
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
@@ -141,7 +155,8 @@ class Application : public ApplicationBase
       main_win(param.desktop,param.drag_cfg),
       exception_client(main_win,param.exception_cfg,report),
       client(main_win,param.client_cfg),
-      connector_pref_update(this,&Application::pref_update,param.pref.update)
+      connector_pref_update(this,&Application::pref_update,param.pref.update),
+      connector_client_opened(this,&Application::client_opened,client.getOpened())
     {
      main_win.bindAlertClient(exception_client);
      main_win.bindClient(client);

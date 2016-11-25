@@ -44,7 +44,7 @@ class MessageWindow;
 
 /* class MessageSubWindow */
 
-class MessageSubWindow : public SubWindow
+class MessageSubWindow : public ComboWindow
  {
   public:
 
@@ -81,7 +81,7 @@ class MessageSubWindow : public SubWindow
 
      public:
 
-      Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id,MessageSubWindow *owner);
+      Btn(SubWindowHost &host,const ButtonWindow::ConfigType &cfg,const DefString &name,int btn_id,MessageSubWindow *owner);
 
       virtual ~Btn();
     };
@@ -89,27 +89,23 @@ class MessageSubWindow : public SubWindow
   private:
 
    const Config &cfg;
+   const ButtonWindow::ConfigType &btn_cfg;
 
-   WindowList wlist;
-   WindowList dlist;
-
-   InfoWindow showInfo;
+   InfoWindow info;
 
    XDoubleLineWindow dline;
 
-   KnobWindow knobOk;
-
-   const ButtonShape::Config &btn_cfg;
+   KnobWindow knob;
 
    DynArray<OwnPtr<Btn> > btn_list;
 
    ulen btn_count = 0 ; // <= btn_list.getLen()
 
-   SignalConnector<MessageSubWindow> connector_knobOk_pressed;
-
   private:
 
-   void knobOk_pressed();
+   void knob_pressed();
+
+   SignalConnector<MessageSubWindow> connector_knob_pressed;
 
   public:
 
@@ -136,36 +132,6 @@ class MessageSubWindow : public SubWindow
    // base
 
    virtual void open();
-
-   virtual void close();
-
-   // keyboard
-
-   virtual FocusType askFocus() const;
-
-   virtual void gainFocus();
-
-   virtual void looseFocus();
-
-   // tab focus
-
-   virtual void topTabFocus();
-
-   virtual bool nextTabFocus();
-
-   virtual void bottomTabFocus();
-
-   virtual bool prevTabFocus();
-
-   // mouse
-
-   virtual void looseCapture();
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const;
-
-   // user input
-
-   virtual void react(UserAction action);
 
    // signals
 
@@ -215,6 +181,8 @@ class MessageWindow : public FixedWindow
    // methods
 
    MessageWindow & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
+
+   MessageWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
 
    MessageWindow & add(const DefString &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
 

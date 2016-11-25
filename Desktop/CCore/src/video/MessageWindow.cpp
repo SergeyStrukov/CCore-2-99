@@ -27,7 +27,7 @@ void MessageSubWindow::Btn::pressed_id()
   owner->finish.assert(btn_id);
  }
 
-MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const DefString &name,int btn_id_,MessageSubWindow *owner_)
+MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonWindow::ConfigType &cfg,const DefString &name,int btn_id_,MessageSubWindow *owner_)
  : ButtonWindow(host,cfg,name),
    btn_id(btn_id_),
    owner(owner_),
@@ -41,29 +41,22 @@ MessageSubWindow::Btn::~Btn()
 
 /* class MessageSubWindow */
 
-void MessageSubWindow::knobOk_pressed()
+void MessageSubWindow::knob_pressed()
  {
   finish.assert(Button_Ok);
  }
 
 MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
- : SubWindow(host),
+ : ComboWindow(host),
    cfg(cfg_),
-   wlist(*this),
-   dlist(*this),
-
-   showInfo(wlist,cfg.info_cfg),
-   dline(dlist,cfg.dline_cfg),
-   knobOk(wlist,cfg.knob_cfg,KnobShape::FaceOk),
-
    btn_cfg(cfg.btn_cfg),
 
-   connector_knobOk_pressed(this,&MessageSubWindow::knobOk_pressed,knobOk.pressed)
- {
-  dlist.insTop(dline);
+   info(wlist,cfg.info_cfg),
+   dline(wlist,cfg.dline_cfg),
+   knob(wlist,cfg.knob_cfg,KnobShape::FaceOk),
 
-  wlist.enableTabFocus();
-  wlist.enableClickFocus();
+   connector_knob_pressed(this,&MessageSubWindow::knob_pressed,knob.pressed)
+ {
  }
 
 MessageSubWindow::~MessageSubWindow()
@@ -76,35 +69,39 @@ Point MessageSubWindow::getMinSize() const
  {
   Coord space_dxy=+cfg.space_dxy;
 
-  Point size=showInfo.getMinSize().addXY(2*space_dxy);
+  Coord space2=IntMul<Coord>(2,space_dxy);
+
+  Point size=info.getMinSize().addXY(space2);
 
   if( ulen count_=btn_list.getLen() )
     {
+     auto list=Range(btn_list.getPtr(),count_);
+
      Point bs;
 
-     for(ulen ind=0; ind<count_ ;ind++) bs=Sup(bs,btn_list[ind]->getMinSize());
+     for(const OwnPtr<Btn> &obj : list ) bs=Sup(bs,obj->getMinSize());
 
-     Coord delta=IntAdd(bs.y,2*space_dxy);
+     Coord delta=IntAdd(bs.y,space2);
 
      auto count=ToCoordinate(count_);
 
      auto total=count*bs.x+(count+1)*space_dxy;
 
-     return Point(Max(+total,size.x),size.y+delta);
+     return Point(Max(+total,size.x),IntAdd(size.y,delta));
     }
   else
     {
      Coord knob_dxy=+cfg.knob_dxy;
 
-     Coord delta=knob_dxy+2*space_dxy;
+     Coord delta=IntAdd(knob_dxy,space2);
 
-     return Point(Max(delta,size.x),size.y+delta);
+     return Point(Max(delta,size.x),IntAdd(size.y,delta));
     }
  }
 
-MessageSubWindow & MessageSubWindow::setInfo(const Info &info)
+MessageSubWindow & MessageSubWindow::setInfo(const Info &info_)
  {
-  showInfo.setInfo(info);
+  info.setInfo(info_);
 
   return *this;
  }
@@ -124,27 +121,31 @@ void MessageSubWindow::layout()
 
   Coord space_dxy=+cfg.space_dxy;
 
+  Coord space2=IntMul<Coord>(2,space_dxy);
+
   if( ulen count=btn_count )
     {
+     auto list=Range(btn_list.getPtr(),count);
+
      Point bs;
 
-     for(ulen ind=0; ind<count ;ind++) bs=Sup(bs,btn_list[ind]->getMinSize());
+     for(OwnPtr<Btn> &obj : list ) bs=Sup(bs,obj->getMinSize());
 
-     Coord delta=IntAdd(bs.y,2*space_dxy);
+     Coord delta=IntAdd(bs.y,space2);
 
      Pane top(Null,size);
 
      Pane bottom=SplitY(top,delta);
 
-     showInfo.setPlace(top.shrink(space_dxy));
+     info.setPlace(top.shrink(space_dxy));
 
      dline.setPlace(EnvelopeY(bottom.getBase(),bottom.dx,space_dxy));
 
      PlaceRow row(bottom,bs,space_dxy,count);
 
-     for(ulen ind=0; ind<count ;ind++)
+     for(OwnPtr<Btn> &obj : list )
        {
-        btn_list[ind]->setPlace(*row);
+        obj->setPlace(*row);
 
         ++row;
        }
@@ -152,17 +153,17 @@ void MessageSubWindow::layout()
   else
     {
      Coord knob_dxy=+cfg.knob_dxy;
-     Coord delta=knob_dxy+2*space_dxy;
+     Coord delta=IntAdd(knob_dxy,space2);
 
      Pane top(Null,size);
 
      Pane bottom=SplitY(top,delta);
 
-     showInfo.setPlace(top.shrink(space_dxy));
+     info.setPlace(top.shrink(space_dxy));
 
      dline.setPlace(EnvelopeY(bottom.getBase(),bottom.dx,space_dxy));
 
-     knobOk.setPlace(FreeCenter(bottom,knob_dxy));
+     knob.setPlace(FreeCenter(bottom,knob_dxy));
     }
  }
 
@@ -170,7 +171,6 @@ void MessageSubWindow::draw(DrawBuf buf,bool drag_active) const
  {
   buf.erase(+cfg.back);
 
-  dlist.draw(buf,drag_active);
   wlist.draw(buf,drag_active);
  }
 
@@ -178,7 +178,6 @@ void MessageSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
   buf.block_safe(pane,+cfg.back);
 
-  dlist.draw(buf,pane,drag_active);
   wlist.draw(buf,pane,drag_active);
  }
 
@@ -194,82 +193,18 @@ void MessageSubWindow::open()
     {
      btn_list.apply( [this] (OwnPtr<Btn> &obj) { wlist.insBottom(obj.getPtr()); } );
 
-     wlist.insBottom(showInfo);
+     wlist.insBottom(info);
     }
   else
     {
-     wlist.insTop(knobOk,showInfo);
+     wlist.insTop(knob,info);
     }
+
+  wlist.insBottom(dline);
 
   wlist.open();
 
   wlist.focusTop();
-
-  dlist.open();
- }
-
-void MessageSubWindow::close()
- {
-  wlist.close();
-  dlist.close();
- }
-
- // keyboard
-
-FocusType MessageSubWindow::askFocus() const
- {
-  return FocusTab;
- }
-
-void MessageSubWindow::gainFocus()
- {
-  wlist.gainFocus();
- }
-
-void MessageSubWindow::looseFocus()
- {
-  wlist.looseFocus();
- }
-
- // tab focus
-
-void MessageSubWindow::topTabFocus()
- {
-  wlist.topTabFocus();
- }
-
-bool MessageSubWindow::nextTabFocus()
- {
-  return wlist.nextTabFocus();
- }
-
-void MessageSubWindow::bottomTabFocus()
- {
-  wlist.bottomTabFocus();
- }
-
-bool MessageSubWindow::prevTabFocus()
- {
-  return wlist.prevTabFocus();
- }
-
- // mouse
-
-void MessageSubWindow::looseCapture()
- {
-  wlist.looseCapture();
- }
-
-MouseShape MessageSubWindow::getMouseShape(Point point,KeyMod kmod) const
- {
-  return wlist.getMouseShape(point,kmod,Mouse_Arrow);
- }
-
- // user input
-
-void MessageSubWindow::react(UserAction action)
- {
-  wlist.react(action);
  }
 
 /* class MessageWindow */

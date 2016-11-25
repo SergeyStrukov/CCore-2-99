@@ -166,6 +166,8 @@ class FileEngine : ParserContext
 
    ~FileEngine();
 
+   using ParserContext::reset;
+
    EngineResult process(StrLen file_name,StrLen pretext);
 
    EngineResult process(StrLen file_name);

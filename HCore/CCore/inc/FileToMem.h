@@ -56,6 +56,8 @@ class FileToMem : public ToMemBase
  {
   public:
 
+   FileToMem() noexcept {}
+
    explicit FileToMem(StrLen file_name,ulen max_len=MaxULen);
 
    ~FileToMem();

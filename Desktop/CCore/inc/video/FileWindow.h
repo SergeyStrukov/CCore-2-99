@@ -401,6 +401,8 @@ class FileSubWindow : public ComboWindow
 
    // work
 
+   bool first_open = true ;
+
    Info file_info;
 
    MakeFileName file_buf;

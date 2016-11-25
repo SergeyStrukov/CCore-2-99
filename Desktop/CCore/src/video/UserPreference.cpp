@@ -363,6 +363,12 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_MessageWindow.frame_cfg.bind(cfg_FixedWindow);
   cfg_MessageWindow.msg_cfg.bind(cfg_MessageSubWindow);
 
+  cfg_AlertMessageSubWindow=cfg_MessageSubWindow;
+  cfg_AlertMessageSubWindow.back.bind(alert);
+
+  cfg_AlertMessageWindow.frame_cfg.bind(cfg_FixedWindow);
+  cfg_AlertMessageWindow.msg_cfg.bind(cfg_AlertMessageSubWindow);
+
   cfg_DragWindow.width.bind(width);
   cfg_DragWindow.frame_dxy.bind(frame_dxy);
   cfg_DragWindow.title_dy.bind(title_dy);

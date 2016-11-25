@@ -58,7 +58,10 @@ class ClientWindow : public ComboWindow
      Cmd_Options =   2,
 
      Cmd_Open    = 101,
-     Cmd_Exit    = 110
+     Cmd_Exit    = 110,
+
+     Cmd_Pretext = 201,
+     Cmd_NoPretext = 202
     };
 
    MenuData menu_data;
@@ -72,6 +75,7 @@ class ClientWindow : public ComboWindow
    DisplayWindow display;
 
    FileWindow open_file;
+   FileWindow open_pretext;
 
   private:
 
@@ -92,6 +96,10 @@ class ClientWindow : public ComboWindow
    void open_file_destroyed();
 
    SignalConnector<ClientWindow> connector_open_file_destroyed;
+
+   void open_pretext_destroyed();
+
+   SignalConnector<ClientWindow> connector_open_pretext_destroyed;
 
   public:
 
@@ -118,6 +126,10 @@ class ClientWindow : public ComboWindow
    void react_RightClick(Point point,MouseKey mkey);
 
    void react_other(UserAction action);
+
+   // signals
+
+   Signal<StrLen,bool> & getOpened() { return display.opened; }
  };
 
 } // namespace App

@@ -63,6 +63,21 @@ void ClientWindow::cascade_menu_selected(int id,Point base)
       }
      break;
 
+     case Cmd_Pretext :
+      {
+       if( open_pretext.isDead() )
+         {
+          open_pretext.create(getFrame(),base,"Select a DDL pretext"_def);
+         }
+      }
+     break;
+
+     case Cmd_NoPretext :
+      {
+       display.noPretext();
+      }
+     break;
+
      case Cmd_Exit :
       {
        askFrameClose();
@@ -86,6 +101,16 @@ void ClientWindow::open_file_destroyed()
     }
  }
 
+void ClientWindow::open_pretext_destroyed()
+ {
+  StrLen file_name=open_pretext.getFilePath();
+
+  if( +file_name )
+    {
+     display.openPretext(file_name);
+    }
+ }
+
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -93,12 +118,14 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    cascade_menu(host.getFrame()->getDesktop(),cfg.cascade_menu_cfg),
    display(wlist,cfg.display_cfg),
    open_file(host.getFrame()->getDesktop(),cfg.file_cfg,{false}),
+   open_pretext(host.getFrame()->getDesktop(),cfg.file_cfg,{false}),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.takeSelected()),
    connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.takePressed()),
 
-   connector_open_file_destroyed(this,&ClientWindow::open_file_destroyed,open_file.destroyed)
+   connector_open_file_destroyed(this,&ClientWindow::open_file_destroyed,open_file.destroyed),
+   connector_open_pretext_destroyed(this,&ClientWindow::open_pretext_destroyed,open_pretext.destroyed)
  {
   wlist.insTop(menu,display);
 
@@ -107,13 +134,17 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
   menu_data("@File",Cmd_File)
            ("@Options",Cmd_Options);
 
-  menu_file_data("@Open",Cmd_Open)
+  menu_file_data("@Open ...",Cmd_Open)
                 (MenuSeparator)
                 ("E@xit",Cmd_Exit);
 
-  menu_options_data(MenuDisabled,"@DDL",201);
+  menu_options_data("@Pretext ...",Cmd_Pretext)
+                   ("@No Pretext",Cmd_NoPretext)
+                   (MenuDisabled,"@DDL",299);
 
   open_file.addFilter("*.ddl","*");
+
+  open_pretext.addFilter("*.ddl","*");
  }
 
 ClientWindow::~ClientWindow()
