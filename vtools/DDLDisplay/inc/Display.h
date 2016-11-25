@@ -27,6 +27,8 @@ namespace App {
 
 class DDLFile;
 
+class DDLWindow;
+
 class DisplayWindow;
 
 /* class DDLFile */
@@ -66,21 +68,71 @@ class DDLFile : NoCopy
    void noPretext();
  };
 
-/* class DisplayWindow */
+/* class DDLWindow */
 
-class DisplayWindow : public SubWindow
+class DDLWindow : public SubWindow
  {
   public:
 
    struct Config
     {
+     Config() noexcept {}
+
+     explicit Config(const UserPreference &pref) // TODO
+      {
+       Used(pref);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   const DDLFile &file;
+
+  public:
+
+   DDLWindow(SubWindowHost &host,const Config &cfg,const DDLFile &file);
+
+   virtual ~DDLWindow();
+
+   // methods
+
+   Point getMinSize() const { return Null; }
+ };
+
+/* class DisplayWindow */
+
+class DisplayWindow : public ComboWindow
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<Coord> space_dxy = 10 ;
+
+     RefVal<VColor> back = Silver ;
+
      CtorRefVal<MessageWindow::ConfigType> msg_cfg;
+     CtorRefVal<LabelWindow::ConfigType> label_cfg;
+     CtorRefVal<TextWindow::ConfigType> text_cfg;
+     CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
+
+     DDLWindow::Config ddl_cfg;
 
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
-      : msg_cfg(pref.getAlertMessageWindowConfig())
+      : msg_cfg(pref.getAlertMessageWindowConfig()),
+        label_cfg(SmartBind,pref),
+        text_cfg(SmartBind,pref),
+        dline_cfg(SmartBind,pref),
+        ddl_cfg(pref)
       {
+       space_dxy.bind(pref.get().space_dxy);
+       back.bind(pref.get().back);
       }
     };
 
@@ -91,6 +143,20 @@ class DisplayWindow : public SubWindow
    const Config &cfg;
 
    DDLFile file;
+
+   // subwins
+
+   LabelWindow label_pretext;
+   LabelWindow label_file;
+
+   TextWindow text_pretext;
+   TextWindow text_file;
+
+   XDoubleLineWindow dline;
+
+   DDLWindow ddl;
+
+   // msg
 
    MessageWindow msg;
 
@@ -115,6 +181,14 @@ class DisplayWindow : public SubWindow
    void openPretext(StrLen file_name);
 
    void noPretext();
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool drag_active) const;
+
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
 
    // signals
 
