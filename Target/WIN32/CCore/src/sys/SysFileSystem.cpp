@@ -18,6 +18,7 @@
 
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Array.h>
+#include <CCore/inc/Path.h>
 
 namespace CCore {
 namespace Sys {
@@ -520,6 +521,8 @@ auto FileSystem::pathOf(StrLen path_,char buf[MaxPathLen+1]) noexcept -> PathOfR
        }
      else
        {
+        PathBase::TurnSlash(Range(buf,len));
+
         ret.path=StrLen(buf,len);
         ret.error=FileError_Ok;
        }

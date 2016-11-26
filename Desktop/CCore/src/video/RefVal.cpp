@@ -27,6 +27,25 @@ void GuardCtorRefValLock()
   Printf(Exception,"CCore::Video::CtorRefVal<...>::bind(...) : bind is locked");
  }
 
+/* SafeString() */
+
+DefString SafeString(StrLen str,const char *out_of_memory)
+ {
+  try
+    {
+     return String(str);
+    }
+  catch(CatchType)
+    {
+     return out_of_memory;
+    }
+ }
+
+DefString SafeString(StrLen str)
+ {
+  return SafeString(str,"<out-of-memory>");
+ }
+
 } // namespace Video
 } // namespace CCore
 

@@ -62,6 +62,8 @@ struct PathBase
 
   static bool IsTilde(StrLen name) { return name.len==1 && name[0]=='~' ; }
 
+  static void TurnSlash(PtrLen<char> name);
+
   enum NameType
    {
     Name,

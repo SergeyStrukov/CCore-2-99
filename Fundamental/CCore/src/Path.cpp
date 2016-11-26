@@ -19,6 +19,13 @@
 
 namespace CCore {
 
+/* struct PathBase */
+
+void PathBase::TurnSlash(PtrLen<char> name)
+ {
+  for(char &ch : name ) if( IsSlash(ch) ) ch='/';
+ }
+
 /* struct SplitDev */
 
 SplitDev::SplitDev(StrLen dev_path_)

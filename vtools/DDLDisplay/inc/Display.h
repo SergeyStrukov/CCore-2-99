@@ -53,6 +53,8 @@ class DDLFile : NoCopy
 
    ~DDLFile();
 
+   // methods
+
    auto getResult() const { return result; }
 
    struct OpenResult
@@ -66,6 +68,10 @@ class DDLFile : NoCopy
    OpenResult openPretext(StrLen file_name);
 
    void noPretext();
+
+   // signals
+
+   Signal<> updated;
  };
 
 /* class DDLWindow */
@@ -92,9 +98,15 @@ class DDLWindow : public SubWindow
 
    const DDLFile &file;
 
+  private:
+
+   void file_updated();
+
+   SignalConnector<DDLWindow> connector_file_updated;
+
   public:
 
-   DDLWindow(SubWindowHost &host,const Config &cfg,const DDLFile &file);
+   DDLWindow(SubWindowHost &host,const Config &cfg,DDLFile &file);
 
    virtual ~DDLWindow();
 

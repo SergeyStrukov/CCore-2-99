@@ -24,6 +24,8 @@ void DDLFile::erase()
   result=Null;
 
   engine.reset();
+
+  updated.assert();
  }
 
 DDLFile::DDLFile() noexcept
@@ -58,6 +60,8 @@ auto DDLFile::open(StrLen file_name) -> OpenResult
        {
         eout.cleanup();
 
+        updated.assert();
+
         return {Null,true};
        }
     }
@@ -89,6 +93,8 @@ auto DDLFile::openPretext(StrLen file_name) -> OpenResult
 
         eout.cleanup();
 
+        updated.assert();
+
         return {str,false};
        }
      else
@@ -106,6 +112,8 @@ auto DDLFile::openPretext(StrLen file_name) -> OpenResult
     {
      eout.cleanup();
 
+     updated.assert();
+
      return {"Exception"_def,false};
     }
  }
@@ -121,10 +129,17 @@ void DDLFile::noPretext()
 
 /* class DDLWindow */
 
-DDLWindow::DDLWindow(SubWindowHost &host,const Config &cfg_,const DDLFile &file_)
+void DDLWindow::file_updated()
+ {
+  redraw();
+ }
+
+DDLWindow::DDLWindow(SubWindowHost &host,const Config &cfg_,DDLFile &file_)
  : SubWindow(host),
    cfg(cfg_),
-   file(file_)
+   file(file_),
+
+   connector_file_updated(this,&DDLWindow::file_updated,file_.updated)
  {
  }
 
@@ -143,12 +158,12 @@ void DisplayWindow::error(StrLen str)
 
 void DisplayWindow::setPretextFileName(StrLen file_name)
  {
-  text_pretext.setText(String(file_name));
+  text_pretext.setText(SafeString(file_name));
  }
 
 void DisplayWindow::setFileName(StrLen file_name)
  {
-  text_file.setText(String(file_name));
+  text_file.setText(SafeString(file_name));
  }
 
 DisplayWindow::DisplayWindow(SubWindowHost &host,const Config &cfg_)

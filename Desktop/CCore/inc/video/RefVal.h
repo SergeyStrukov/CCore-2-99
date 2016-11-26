@@ -90,6 +90,12 @@ class DefString
 
 inline DefString operator "" _def (const char *str,ulen len) { return DefString(str,len); }
 
+/* SafeString() */
+
+DefString SafeString(StrLen str,const char *out_of_memory);
+
+DefString SafeString(StrLen str);
+
 /* class RefVal<T> */
 
 template <class T>
