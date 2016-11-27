@@ -1,3 +1,4 @@
+./CCore/src/video/TextLineWindow.cpp
 ./src/Application.cpp
 ./src/Client.cpp
 ./src/Display.cpp

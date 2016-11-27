@@ -474,8 +474,9 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_TextWindow.space.bind(message_space);
   cfg_TextWindow.top.bind(bottom);
   cfg_TextWindow.bottom.bind(top);
-  cfg_TextWindow.inactive.bind(inactive);
   cfg_TextWindow.back.bind(back);
+  cfg_TextWindow.inactive.bind(inactive);
+  cfg_TextWindow.alert.bind(alert);
   cfg_TextWindow.text.bind(message_text);
   cfg_TextWindow.font.bind(message_font.font);
 

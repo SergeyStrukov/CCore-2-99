@@ -131,6 +131,8 @@ void DDLFile::noPretext()
 
 void DDLWindow::file_updated()
  {
+  layout();
+
   redraw();
  }
 

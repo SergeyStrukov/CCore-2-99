@@ -983,12 +983,19 @@ class TextWindowOf : public SubWindow
 
    bool isEnabled() const { return shape.enable; }
 
+   bool isAlerted() const { return shape.alert; }
+
    void enable(bool enable=true)
     {
      if( Change(shape.enable,enable) ) redraw();
     }
 
    void disable() { enable(false); }
+
+   void alert(bool on=true)
+    {
+     if( Change(shape.alert,on) ) redraw();
+    }
 
    DefString getText() const requires( IsType<decltype(shape.text),DefString> ) { return shape.text; }
 

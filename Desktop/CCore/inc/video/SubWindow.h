@@ -243,14 +243,18 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    void forward_draw(const DrawBuf &buf,bool drag_active) const
     {
-     draw(buf.cutRebase(place),drag_active);
+     DrawBuf buf1=buf.cutRebase(place);
+
+     if( +buf1 ) draw(buf1,drag_active);
     }
 
    void forward_draw(const DrawBuf &buf,Pane pane,bool drag_active) const
     {
+     DrawBuf buf1=buf.cutRebase(place);
+
      pane=Inf(place,pane);
 
-     if( +pane ) draw(buf.cutRebase(place),pane-place.getBase(),drag_active);
+     if( +buf1 && +pane ) draw(buf1,pane-place.getBase(),drag_active);
     }
 
    void forward_react(UserAction action)
