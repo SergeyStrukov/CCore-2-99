@@ -1219,9 +1219,9 @@ class TextLineWindowOf : public SubWindow
 
    void dragTo(Point point)
     {
-     Coord delta=IntSub(point.x,shape.drag_base.x);
+     Coordinate xoff=shape.xoff_base-(Coordinate(point.x)-shape.drag_base.x);
 
-     setXOff( IntSub(shape.xoff_base,delta) );
+     setXOff(+xoff);
     }
 
    void endDrag()

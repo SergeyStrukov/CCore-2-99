@@ -70,10 +70,10 @@ FileWindow.h
 MessageWindow.h      +           
 WindowReport.h       
 
-ShapeLib.h                      
-WindowLib.h
+ShapeLib.h           .            
+WindowLib.h          .
           
-UserPreference.h     
+UserPreference.h     .
 
 --------------------------------------------------------------------------------
 
