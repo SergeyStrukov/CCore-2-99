@@ -286,7 +286,7 @@ FontSelectorWindow::~FontSelectorWindow()
  {
  }
 
-void FontSelectorWindow::create(FrameWindow *parent,const FontDatabase &fdb,const String &title)
+void FontSelectorWindow::create(FrameWindow *parent,const FontDatabase &fdb,const DefString &title)
  {
   if( frame.isDead() )
     {
@@ -610,7 +610,7 @@ void FontLab::react_Key(VKey vkey,KeyMod kmod)
     {
      case VKey_F10 :
       {
-       selector.create(getFrame(),fb.getDatabase(),cfg.select_title.get().makeString());
+       selector.create(getFrame(),fb.getDatabase(),cfg.select_title.get());
       }
      return;
 

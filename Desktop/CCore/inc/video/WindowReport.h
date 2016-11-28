@@ -327,7 +327,7 @@ void WindowReportOf<Shape>::modalLoop()
 
   Point max_size=main_win.getDesktop()->getScreenSize();
 
-  main_win.createMain(CmdDisplay_Normal,max_size,getTitle().makeString());
+  main_win.createMain(CmdDisplay_Normal,max_size,getTitle());
 
   DeferCallQueue::Loop();
  }

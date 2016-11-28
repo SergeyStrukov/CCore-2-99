@@ -268,7 +268,7 @@ class FontSelectorWindow : NoCopy
 
    ~FontSelectorWindow();
 
-   void create(FrameWindow *parent,const FontDatabase &fdb,const String &title);
+   void create(FrameWindow *parent,const FontDatabase &fdb,const DefString &title);
 
    Signal<String> & takeSignal() { return win.select_font; }
  };

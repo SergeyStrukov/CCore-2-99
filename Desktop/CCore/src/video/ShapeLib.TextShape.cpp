@@ -78,7 +78,7 @@ void TextShape::draw(const DrawBuf &buf) const
 
   // body
 
-  fig.curveSolid(art, alert? +cfg.alert : +cfg.back );
+  fig.curveSolid(art,enable? ( alert? +cfg.alert : +cfg.back ) : +cfg.back );
 
   // text
 

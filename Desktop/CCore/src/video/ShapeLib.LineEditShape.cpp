@@ -206,48 +206,6 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   fig.curveSolid(art,enable? ( alert? +cfg.alert : +cfg.back ) : ( len? +cfg.back : +cfg.inactive ) ) ;
 
-  // border
-
-  if( focus )
-    {
-     fig.curveLoop(art,HalfPos,width,+cfg.focus);
-    }
-  else
-    {
-     auto fig_top=fig.getTop();
-
-     fig_top.curvePath(art,HalfPos,width,+cfg.top);
-
-     auto fig_bottom=fig.getBottom();
-
-     fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
-    }
-
-  // arrows
-
-  {
-   MCoord len=ex-width;
-   MCoord y=p.y+p.dy/2;
-
-   if( xoff>0 ) // Left
-     {
-      MCoord x=p.x+width;
-
-      FigureLeftMark fig(x,y,len);
-
-      fig.solid(art,text);
-     }
-
-   if( xoff<xoffMax ) // Right
-     {
-      MCoord x=p.ex-width;
-
-      FigureRightMark fig(x,y,len);
-
-      fig.solid(art,text);
-     }
-  }
-
   // text
 
   {
@@ -369,6 +327,48 @@ void LineEditShape::draw(const DrawBuf &buf) const
         {
          fig.loop(art,HalfPos,w/3,+cfg.cursor);
         }
+     }
+  }
+
+  // border
+
+  if( focus )
+    {
+     fig.curveLoop(art,HalfPos,width,+cfg.focus);
+    }
+  else
+    {
+     auto fig_top=fig.getTop();
+
+     fig_top.curvePath(art,HalfPos,width,+cfg.top);
+
+     auto fig_bottom=fig.getBottom();
+
+     fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
+    }
+
+  // arrows
+
+  {
+   MCoord len=ex-width;
+   MCoord y=p.y+p.dy/2;
+
+   if( xoff>0 ) // Left
+     {
+      MCoord x=p.x+width;
+
+      FigureLeftMark fig(x,y,len);
+
+      fig.solid(art,text);
+     }
+
+   if( xoff<xoffMax ) // Right
+     {
+      MCoord x=p.ex-width;
+
+      FigureRightMark fig(x,y,len);
+
+      fig.solid(art,text);
      }
   }
  }

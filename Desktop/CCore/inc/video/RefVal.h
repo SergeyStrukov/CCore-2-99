@@ -69,13 +69,6 @@ class DefString
      return Range(dynamic_str);
     }
 
-   String makeString() const
-    {
-     if( +def_const ) return String(def_const);
-
-     return dynamic_str;
-    }
-
    // print object
 
    using PrintOptType = StrPrintOpt ;
