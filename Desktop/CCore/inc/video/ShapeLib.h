@@ -66,6 +66,8 @@ class SwitchShape;
 
 class LightShape;
 
+class TextLineShape;
+
 class ScrollShape;
 
 class XScrollShape;
@@ -712,6 +714,68 @@ class LightShape
    LightShape(const Config &cfg_,VColor face_,bool on_=false) : cfg(cfg_),face(face_),on(on_) {}
 
    SizeBox getMinSize() const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   void draw(const DrawBuf &buf) const;
+ };
+
+/* class TextLineShape */
+
+class TextLineShape
+ {
+   static MCoord FigEX(Coord fdy,MCoord width);
+
+  public:
+
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<Point> space = Point(6,4) ;
+
+     RefVal<VColor> bottom   =      Snow ;
+     RefVal<VColor> top      =      Gray ;
+     RefVal<VColor> back     =    Silver ;
+     RefVal<VColor> focus    = OrangeRed ;
+     RefVal<VColor> text     =     Black ;
+     RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> alert    =      Pink ;
+
+     RefVal<Font> font;
+
+     Config() noexcept {}
+    };
+
+   const Config &cfg;
+   DefString text;
+   Pane pane;
+
+   // state
+
+   bool enable =  true ;
+   bool focus  = false ;
+   bool alert  = false ;
+   Coord xoff  =     0 ;
+
+   Coord xoffMax = 0 ;
+   Coord dxoff   = 0 ;
+
+   bool drag = false ;
+   Point drag_base;
+   Coord xoff_base = 0 ;
+
+   // methods
+
+   TextLineShape(const Config &cfg_,const DefString &text_) : cfg(cfg_),text(text_) {}
+
+   explicit TextLineShape(const Config &cfg_) : cfg(cfg_) {}
+
+   Point getMinSize() const;
+
+   Point getMinSize(StrLen text) const;
+
+   void setMax();
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 

@@ -292,6 +292,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    ContourWindow::ConfigType cfg_ContourWindow;
    TextContourWindow::ConfigType cfg_TextContourWindow;
    LightWindow::ConfigType cfg_LightWindow;
+   TextLineWindow::ConfigType cfg_TextLineWindow;
    XScrollWindow::ConfigType cfg_XScrollWindow;
    YScrollWindow::ConfigType cfg_YScrollWindow;
    ProgressWindow::ConfigType cfg_ProgressWindow;
@@ -379,6 +380,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const LightWindow::ConfigType & getLightConfig() const { return cfg_LightWindow; }
 
+   const TextLineWindow::ConfigType & getTextLineConfig() const { return cfg_TextLineWindow; }
+
    const XScrollWindow::ConfigType & getXScrollConfig() const { return cfg_XScrollWindow; }
 
    const YScrollWindow::ConfigType & getYScrollConfig() const { return cfg_YScrollWindow; }
@@ -464,6 +467,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_TextContourWindow; }
 
       operator const auto & () const { return obj->cfg_LightWindow; }
+
+      operator const auto & () const { return obj->cfg_TextLineWindow; }
 
       operator const auto & () const { return obj->cfg_XScrollWindow; }
 

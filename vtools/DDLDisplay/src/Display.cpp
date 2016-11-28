@@ -174,8 +174,8 @@ DisplayWindow::DisplayWindow(SubWindowHost &host,const Config &cfg_)
 
    label_pretext(wlist,cfg.label_cfg,"Pretext"_def),
    label_file(wlist,cfg.label_cfg,"File"_def),
-   text_pretext(wlist,cfg.text_cfg,AlignX_Left),
-   text_file(wlist,cfg.text_cfg,AlignX_Left),
+   text_pretext(wlist,cfg.textline_cfg),
+   text_file(wlist,cfg.textline_cfg),
    dline(wlist,cfg.dline_cfg),
    ddl(wlist,cfg.ddl_cfg,file),
 

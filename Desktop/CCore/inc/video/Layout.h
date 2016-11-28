@@ -25,10 +25,6 @@
 namespace CCore {
 namespace Video {
 
-/* ToCoordinate() */
-
-Coordinate ToCoordinate(UIntType count) { IntGuard( count<=MaxCoord ); return Coord(count); }
-
 /* FitToScreen() */
 
 Pane FitToScreen(Point base,Point size,Point screen_size);

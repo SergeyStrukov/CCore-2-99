@@ -129,7 +129,7 @@ class DisplayWindow : public ComboWindow
 
      CtorRefVal<MessageWindow::ConfigType> msg_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
-     CtorRefVal<TextWindow::ConfigType> text_cfg;
+     CtorRefVal<TextLineWindow::ConfigType> textline_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
 
      DDLWindow::Config ddl_cfg;
@@ -139,7 +139,7 @@ class DisplayWindow : public ComboWindow
      explicit Config(const UserPreference &pref)
       : msg_cfg(pref.getAlertMessageWindowConfig()),
         label_cfg(SmartBind,pref),
-        text_cfg(SmartBind,pref),
+        textline_cfg(SmartBind,pref),
         dline_cfg(SmartBind,pref),
         ddl_cfg(pref)
       {
@@ -161,8 +161,8 @@ class DisplayWindow : public ComboWindow
    LabelWindow label_pretext;
    LabelWindow label_file;
 
-   TextWindow text_pretext;
-   TextWindow text_file;
+   TextLineWindow text_pretext;
+   TextLineWindow text_file;
 
    XDoubleLineWindow dline;
 

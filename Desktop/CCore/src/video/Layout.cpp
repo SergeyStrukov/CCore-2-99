@@ -199,7 +199,7 @@ PlaceRow::PlaceRow(Pane outer,Point size_,Coord space,ulen count_)
  : size(size_),
    delta_x(IntAdd(size_.x,space))
  {
-  auto count=ToCoordinate(count_);
+  auto count=CountToCoordinate(count_);
 
   auto total=count*size_.x+(count-1)*space;
 
@@ -219,7 +219,7 @@ PlaceColumn::PlaceColumn(Pane outer,Point size_,Coord space,ulen count_)
  : size(size_),
    delta_y(IntAdd(size_.y,space))
  {
-  auto count=ToCoordinate(count_);
+  auto count=CountToCoordinate(count_);
 
   auto total=count*size_.y+(count-1)*space;
 

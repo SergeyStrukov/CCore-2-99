@@ -83,7 +83,7 @@ Point MessageSubWindow::getMinSize() const
 
      Coord delta=IntAdd(bs.y,space2);
 
-     auto count=ToCoordinate(count_);
+     auto count=CountToCoordinate(count_);
 
      auto total=count*bs.x+(count+1)*space_dxy;
 

@@ -48,6 +48,8 @@ template <class Shape> class DecorWindowOf;
 
 template <class Shape> class LightWindowOf;
 
+template <class Shape> class TextLineWindowOf;
+
 template <class Shape> class ScrollWindowOf;
 
 template <class Shape> class ProgressWindowOf;
@@ -1187,6 +1189,240 @@ class LightWindowOf : public SubWindow
 /* type LightWindow */
 
 using LightWindow = LightWindowOf<LightShape> ;
+
+/* class TextLineWindowOf<Shape> */
+
+template <class Shape>
+class TextLineWindowOf : public SubWindow
+ {
+   Shape shape;
+
+  private:
+
+   void setXOff(Coord xoff)
+    {
+     if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
+    }
+
+   void startDrag(Point point)
+    {
+     if( !shape.drag )
+       {
+        shape.drag=true;
+
+        shape.drag_base=point;
+        shape.xoff_base=shape.xoff;
+
+        captureMouse();
+       }
+    }
+
+   void dragTo(Point point)
+    {
+     Coord delta=IntSub(point.x,shape.drag_base.x);
+
+     setXOff( IntSub(shape.xoff_base,delta) );
+    }
+
+   void endDrag()
+    {
+     shape.drag=false;
+
+     releaseMouse();
+    }
+
+   void endDrag(Point point)
+    {
+     shape.drag=false;
+
+     releaseMouse();
+
+     dragTo(point);
+    }
+
+   void shift(Coordinate count)
+    {
+     Coordinate dx=shape.xoff-count*shape.dxoff;
+
+     setXOff(+dx);
+    }
+
+  public:
+
+   using ShapeType = Shape ;
+   using ConfigType = typename Shape::Config ;
+
+   template <class ... TT>
+   TextLineWindowOf(SubWindowHost &host,TT && ... tt)
+    : SubWindow(host),
+      shape( std::forward<TT>(tt)... )
+    {
+    }
+
+   virtual ~TextLineWindowOf()
+    {
+    }
+
+   // methods
+
+   auto getMinSize() const { return shape.getMinSize(); }
+
+   Point getMinSize(StrLen sample_text) const { return shape.getMinSize(sample_text); }
+
+   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+
+   bool isEnabled() const { return shape.enable; }
+
+   bool isAlerted() const { return shape.alert; }
+
+   void enable(bool enable=true)
+    {
+     if( Change(shape.enable,enable) ) redraw();
+    }
+
+   void disable() { enable(false); }
+
+   void alert(bool on=true)
+    {
+     if( Change(shape.alert,on) ) redraw();
+    }
+
+   DefString getText() const { return shape.text; }
+
+   void setText(const DefString &text)
+    {
+     shape.text=text;
+
+     shape.setMax();
+
+     shape.xoff=0;
+
+     redraw();
+    }
+
+   // drawing
+
+   virtual void layout()
+    {
+     shape.pane=Pane(Null,getSize());
+
+     shape.setMax();
+    }
+
+   virtual void draw(DrawBuf buf,bool) const
+    {
+     try { shape.draw(buf); } catch(CatchType) {}
+    }
+
+   // base
+
+   virtual void open()
+    {
+     shape.focus=false;
+     shape.drag=false;
+
+     shape.xoff=0;
+    }
+
+   // keyboard
+
+   virtual FocusType askFocus() const
+    {
+     return shape.enable?FocusOk:NoFocus;
+    }
+
+   virtual void gainFocus()
+    {
+     if( Change(shape.focus,true) ) redraw();
+    }
+
+   virtual void looseFocus()
+    {
+     if( Change(shape.focus,false) ) redraw();
+    }
+
+   // mouse
+
+   virtual void looseCapture()
+    {
+     shape.drag=false;
+    }
+
+   virtual MouseShape getMouseShape(Point,KeyMod) const
+    {
+     if( !shape.enable ) return Mouse_Arrow;
+
+     if( ( shape.xoffMax>0 || shape.xoff>0 ) ) return Mouse_SizeLeftRight;
+
+     return Mouse_Arrow;
+    }
+
+   // user input
+
+   virtual void react(UserAction action)
+    {
+     action.dispatch(*this);
+    }
+
+   void react_Key(VKey vkey,KeyMod,unsigned repeat)
+    {
+     switch( vkey )
+       {
+        case VKey_Left :
+         {
+          shift(CountToCoordinate(repeat));
+         }
+        break;
+
+        case VKey_Right :
+         {
+          shift(-CountToCoordinate(repeat));
+         }
+        break;
+       }
+    }
+
+   void react_LeftClick(Point point,MouseKey)
+    {
+     if( !shape.enable ) return;
+
+     startDrag(point);
+    }
+
+   void react_LeftUp(Point point,MouseKey)
+    {
+     if( shape.drag ) endDrag(point);
+    }
+
+   void react_LeftDClick(Point point,MouseKey mkey)
+    {
+     react_LeftClick(point,mkey);
+    }
+
+   void react_Move(Point point,MouseKey mkey)
+    {
+     if( shape.drag )
+       {
+        if( mkey&MouseKey_Left )
+          {
+           dragTo(point);
+          }
+        else
+          {
+           endDrag();
+          }
+       }
+    }
+
+   void react_Wheel(Point,MouseKey,Coord delta)
+    {
+     shift(delta);
+    }
+ };
+
+/* type TextLineWindow */
+
+using TextLineWindow = TextLineWindowOf<TextLineShape> ;
 
 /* class ScrollWindowOf<Shape> */
 

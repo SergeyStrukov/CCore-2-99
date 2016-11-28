@@ -1,4 +1,4 @@
-/* TextLineWindow.cpp */
+/* ShapeLib.TextLineWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/TextLineWindow.h>
+#include <CCore/inc/video/ShapeLib.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -24,7 +24,7 @@ namespace Video {
 
 MCoord TextLineShape::FigEX(Coord fdy,MCoord width)
  {
-  return (Fraction(fdy)+2*width)/4;
+  return Max_cast(width, (Fraction(fdy)+2*width)/4 );
  }
 
 Point TextLineShape::getMinSize() const
@@ -124,7 +124,7 @@ void TextLineShape::draw(const DrawBuf &buf) const
 
    Pane tpane(-xoff,0,IntAdd(xoff,inner.dx),inner.dy);
 
-   font->text(tbuf,inner,TextPlace(AlignX_Left,AlignY_Center),this->text.str(), enable? text : +cfg.inactive );
+   font->text(tbuf,tpane,TextPlace(AlignX_Left,AlignY_Center),this->text.str(), enable? text : +cfg.inactive );
   }
 
   // border

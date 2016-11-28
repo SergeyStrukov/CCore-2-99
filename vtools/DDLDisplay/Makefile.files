@@ -2,7 +2,6 @@ OBJ_LIST = \
 obj/Application.o \
 obj/Client.o \
 obj/Display.o \
-obj/TextLineWindow.o \
 obj/main.o \
 
 
@@ -10,7 +9,6 @@ ASM_LIST = \
 obj/Application.s \
 obj/Client.s \
 obj/Display.s \
-obj/TextLineWindow.s \
 obj/main.s \
 
 
@@ -18,7 +16,6 @@ DEP_LIST = \
 obj/Application.dep \
 obj/Client.dep \
 obj/Display.dep \
-obj/TextLineWindow.dep \
 obj/main.dep \
 
 
@@ -37,9 +34,6 @@ obj/Client.o : ./src/Client.cpp
 obj/Display.o : ./src/Display.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/TextLineWindow.o : ./CCore/src/video/TextLineWindow.cpp
-	$(CC) $(CCOPT) $< -o $@
-
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -52,9 +46,6 @@ obj/Client.s : ./src/Client.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Display.s : ./src/Display.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/TextLineWindow.s : ./CCore/src/video/TextLineWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -70,9 +61,6 @@ obj/Client.dep : ./src/Client.cpp
 
 obj/Display.dep : ./src/Display.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Display.o $< -MF $@
-
-obj/TextLineWindow.dep : ./CCore/src/video/TextLineWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TextLineWindow.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

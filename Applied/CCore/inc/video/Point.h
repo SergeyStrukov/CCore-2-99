@@ -164,6 +164,10 @@ inline Coordinate Sup(Coordinate a,Coordinate b) { return Coordinate(Max(a.x,b.x
 
 inline Coordinate Inf(Coordinate a,Coordinate b) { return Coordinate(Min(a.x,b.x)); }
 
+/* CountToCoordinate() */
+
+Coordinate CountToCoordinate(UIntType count) { IntGuard( count<=MaxCoord ); return Coord(count); }
+
 /* struct BasePoint<T,Int> */
 
 template <class T,class Int>
