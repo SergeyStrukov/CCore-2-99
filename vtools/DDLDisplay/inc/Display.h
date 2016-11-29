@@ -27,6 +27,8 @@ namespace App {
 
 class DDLFile;
 
+class DDLInnerWindow;
+
 class DDLWindow;
 
 class DisplayWindow;
@@ -74,9 +76,9 @@ class DDLFile : NoCopy
    Signal<> updated;
  };
 
-/* class DDLWindow */
+/* class DDLInnerWindow */
 
-class DDLWindow : public SubWindow
+class DDLInnerWindow : public SubWindow
  {
   public:
 
@@ -98,7 +100,115 @@ class DDLWindow : public SubWindow
 
    const DDLFile &file;
 
+   // scroll
+
+   ulen x_pos   = 0 ;
+   ulen x_total = 0 ;
+   ulen x_page  = 0 ;
+
+   ulen y_pos   = 0 ;
+   ulen y_total = 0 ;
+   ulen y_page  = 0 ;
+
   private:
+
+   void posX(ulen pos);
+
+   void posY(ulen pos);
+
+   SignalConnector<DDLInnerWindow,ulen> connector_posX;
+   SignalConnector<DDLInnerWindow,ulen> connector_posY;
+
+  public:
+
+   DDLInnerWindow(SubWindowHost &host,const Config &cfg,const DDLFile &file);
+
+   virtual ~DDLInnerWindow();
+
+   // special methods
+
+   bool shortDX() const { return x_page<x_total; }
+
+   bool shortDY() const { return y_page<y_total; }
+
+   template <class W>
+   void setScrollX(W &window) { window.setRange(x_total,x_page,x_pos); }
+
+   template <class W>
+   void setScrollY(W &window) { window.setRange(y_total,y_page,y_pos); }
+
+   void bind(Signal<ulen> &scroll_x,Signal<ulen> &scroll_y)
+    {
+     connector_posX.connect(scroll_x);
+     connector_posY.connect(scroll_y);
+    }
+
+   // methods
+
+   Point getMinSize() const { return Null; }
+
+   void update();
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool) const;
+
+   // base
+
+   virtual void open();
+
+   // signals
+
+   Signal<ulen> scroll_x;
+   Signal<ulen> scroll_y;
+ };
+
+/* class DDLWindow */
+
+class DDLWindow : public ComboWindow
+ {
+  public:
+
+   struct Config : DDLInnerWindow::ConfigType
+    {
+     CtorRefVal<XScrollWindow::ConfigType> x_cfg;
+     CtorRefVal<YScrollWindow::ConfigType> y_cfg;
+
+     Config() noexcept {}
+
+     explicit Config(const UserPreference &pref)
+      : DDLInnerWindow::ConfigType(pref),
+        x_cfg(SmartBind,pref),
+        y_cfg(SmartBind,pref)
+      {
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   DDLInnerWindow inner;
+   XScrollWindow scroll_x;
+   YScrollWindow scroll_y;
+
+  private:
+
+   void setScroll()
+    {
+     if( scroll_x.isListed() ) inner.setScrollX(scroll_x);
+
+     if( scroll_y.isListed() ) inner.setScrollY(scroll_y);
+    }
+
+  private:
+
+   SignalConnector<XScrollWindow,ulen> connector_posx;
+   SignalConnector<YScrollWindow,ulen> connector_posy;
 
    void file_updated();
 
@@ -113,6 +223,10 @@ class DDLWindow : public SubWindow
    // methods
 
    Point getMinSize() const { return Null; }
+
+   // drawing
+
+   virtual void layout();
  };
 
 /* class DisplayWindow */
