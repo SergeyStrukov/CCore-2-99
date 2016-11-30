@@ -142,6 +142,10 @@ void DDLView::erase()
   consts=Empty;
 
   field_name.erase();
+
+  index_buf.erase();
+
+  ptr_buf.erase();
  }
 
 void DDLView::SetTail(PtrLen<char> &ret,char ch)
@@ -156,6 +160,18 @@ void DDLView::SetTail(PtrLen<char> &ret,StrLen str)
   ret.suffix(str.len).copy(str.ptr);
 
   ret.len-=str.len;
+ }
+
+void DDLView::ProvideIndex(AnyType &obj,ulen index,ulen min_len)
+ {
+  if( ulen len=obj.getLen() )
+    {
+     if( index >= len ) obj.extend_default(index-len+1);
+    }
+  else
+    {
+     obj.extend_default(Max(min_len,LenAdd(index,1)));
+    }
  }
 
 struct DDLView::GetStructNode
@@ -196,22 +212,27 @@ struct DDLView::GetStructNode
 
 StrLen DDLView::fieldName(ulen index,StrLen name)
  {
-  if( !name ) return Null;
+  if( !name )
+    {
+     Printf(Exception,"App::DDLView::fieldName(...) : internal");
+    }
 
-  if( ulen len=field_name.getLen() )
-    {
-     if( index>=len ) field_name.extend_default(index-len+1);
-    }
-  else
-    {
-     field_name.extend_default(Max<ulen>(100,LenAdd(index,1)));
-    }
+  ProvideIndex(field_name,index);
 
   StrLen &obj=field_name[index];
 
   if( !obj ) obj=pool.dup(name);
 
   return obj;
+ }
+
+StrLen DDLView::fieldName(DDL::StructNode *struct_node,ulen index)
+ {
+  auto cur=begin(struct_node->field_list);
+
+  for(; index ;index--) ++cur;
+
+  return fieldName(*cur);
  }
 
 StrLen DDLView::build(DDL::ConstNode *node)
@@ -299,10 +320,60 @@ StrLen DDLView::toString(DDL::TypeNode::Base *type,DDL::Value value)
     }
  }
 
-void DDLView::setPtr(PtrDesc *desc,DDL::Value value) // TODO
+void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
  {
-  Used(desc);
-  Used(value);
+  auto ptr=value.val_ptr;
+
+  if( ptr.null )
+    {
+     desc->name=StrLen("null",4);
+     desc->index=Empty;
+     desc->target=Empty;
+    }
+  else
+    {
+     // build index list
+
+     ulen len=0;
+
+     auto *node=ptr.ptr_node;
+
+     ProvideIndex(index_buf,len);
+
+     index_buf[len++].set(node->index);
+
+     while( auto *parent=node->parent )
+       {
+        node=parent;
+
+        ProvideIndex(index_buf,len);
+
+        index_buf[len].set(node->index);
+
+        GetStructNode get(node->type);
+
+        if( DDL::StructNode *struct_node = +get )
+          {
+           auto &obj=index_buf[len-1];
+
+           obj.field=fieldName(struct_node,obj.index);
+          }
+
+        len++;
+       }
+
+     PtrLen<PtrDesc::Index> index=pool.createArray<PtrDesc::Index>(len);
+
+     PtrDesc::Index *ptr=index_buf.getPtr()+len;
+
+     for(PtrDesc::Index &obj : index ) obj=*(--ptr);
+
+     desc->index=index;
+
+     // insert
+
+     ptr_buf.append_fill(desc);
+    }
  }
 
 ValueDesc DDLView::build(DDL::TypeNode::Base *type,DDL::Value value)
@@ -324,7 +395,7 @@ PtrLen<FieldDesc> DDLView::buildFields(DDL::StructNode *struct_node)
 
   for(DDL::FieldNode &field : struct_node->field_list )
     {
-     ret[i].name=fieldName(field.index,field.name.name.str);
+     ret[i].name=fieldName(field);
 
      i++;
     }
@@ -397,7 +468,7 @@ ValueDesc DDLView::build(DDL::TypeNode *type,PtrLen<DDL::Value> value)
 
 ValueDesc DDLView::build(DDL::StructNode *struct_node,DDL::Value value)
  {
-  return build(struct_node,Range(&value,1));
+  return build(struct_node,Single(value));
  }
 
 ValueDesc DDLView::build(DDL::AliasNode *alias_node,DDL::Value value)
@@ -472,6 +543,74 @@ ValueDesc DDLView::build(DDL::TypeNode *type,DDL::Value value)
   return ret;
  }
 
+void DDLView::setPtrTarget(PtrDesc *desc)
+ {
+  // build name
+
+  {
+   char buf[TextBufLen];
+   PrintBuf out(Range(buf));
+
+   auto index=desc->index;
+
+   Putobj(out,consts[index->index].name);
+
+   for(++index; +index ;++index)
+     {
+      auto field=index->field;
+
+      if( !field )
+        Printf(out,"[#;]",index->index);
+      else
+        Printf(out,".#;",field);
+     }
+
+   desc->name=toString(out.close());
+  }
+
+  // build target
+
+  {
+   auto index=desc->index;
+
+   ValueDesc *target=&consts[index->index].value;
+
+   for(++index; +index ;++index)
+     {
+      if( !index->field )
+        {
+         if( StructDesc *ptr=target->ptr.castPtr<StructDesc>() )
+           {
+            desc->target=ptr->table[index->index];
+
+            target=0;
+
+            break;
+           }
+         else
+           {
+            PtrLen<ValueDesc> *array=target->ptr.castPtr<PtrLen<ValueDesc> >();
+
+            target=&(*array)[index->index];
+           }
+        }
+      else
+        {
+         StructDesc *ptr=target->ptr.castPtr<StructDesc>();
+
+         target=&ptr->table[0][index->index];
+        }
+     }
+
+   if( target ) desc->target=Range(target,1);
+  }
+ }
+
+void DDLView::setPtrTargets()
+ {
+  for(PtrDesc *desc : ptr_buf ) setPtrTarget(desc);
+ }
+
 void DDLView::build(const DDL::EvalResult &result)
  {
   auto list=Range(result.const_table);
@@ -486,6 +625,14 @@ void DDLView::build(const DDL::EvalResult &result)
      dst.name=build(src.node);
      dst.value=build(src.type,src.value);
     }
+
+  setPtrTargets();
+
+  field_name.erase();
+
+  index_buf.erase();
+
+  ptr_buf.erase();
  }
 
 DDLView::DDLView()

@@ -128,8 +128,25 @@ struct StructDesc
 
 /* struct PtrDesc */
 
-struct PtrDesc // TODO
+struct PtrDesc
  {
+  StrLen name;
+
+  struct Index
+   {
+    ulen index = 0 ;
+    StrLen field;
+
+    void set(ulen index_)
+     {
+      index=index_;
+      field=Null;
+     }
+   };
+
+  PtrLen<Index> index;
+
+  PtrLen<ValueDesc> target;
  };
 
 /* struct ValueDesc */
@@ -165,17 +182,32 @@ class DDLView : NoCopy
 
    DynArray<StrLen> field_name;
 
+   DynArray<PtrDesc::Index> index_buf;
+
+   DynArray<PtrDesc *> ptr_buf;
+
   private:
 
    void erase();
+
+   template <class T>
+   static PtrLen<T> Single(T &obj) { return Range(&obj,1); }
 
    static void SetTail(PtrLen<char> &ret,char ch);
 
    static void SetTail(PtrLen<char> &ret,StrLen str);
 
+   static void ProvideIndex(AnyType &obj,ulen index,ulen min_len);
+
+   static void ProvideIndex(AnyType &obj,ulen index) { ProvideIndex(obj,index,100); }
+
    struct GetStructNode;
 
    StrLen fieldName(ulen index,StrLen name);
+
+   StrLen fieldName(DDL::FieldNode &field) { return fieldName(field.index,field.name.name.str); }
+
+   StrLen fieldName(DDL::StructNode *struct_node,ulen index);
 
    StrLen build(DDL::ConstNode *node);
 
@@ -214,6 +246,10 @@ class DDLView : NoCopy
    ValueDesc build(DDL::TypeNode::Struct *type,DDL::Value value);
 
    ValueDesc build(DDL::TypeNode *type,DDL::Value value);
+
+   void setPtrTarget(PtrDesc *desc);
+
+   void setPtrTargets();
 
    void build(const DDL::EvalResult &result);
 
