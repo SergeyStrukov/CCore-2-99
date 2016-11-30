@@ -148,6 +148,8 @@ void DDLView::erase()
   ptr_buf.erase();
  }
 
+ // utils
+
 void DDLView::SetTail(PtrLen<char> &ret,char ch)
  {
   ret.back(1)=ch;
@@ -174,41 +176,49 @@ void DDLView::ProvideIndex(AnyType &obj,ulen index,ulen min_len)
     }
  }
 
-struct DDLView::GetStructNode
+class DDLView::GetStructNode
  {
-  DDL::StructNode *struct_node = 0 ;
+   DDL::StructNode *struct_node = 0 ;
 
-  explicit GetStructNode(DDL::TypeNode *type) { (*this)(type); }
+  public:
 
-  auto operator + () const { return struct_node; }
+   explicit GetStructNode(DDL::TypeNode *type) { set(type); }
 
-  void operator () (AnyType *) {}
+   auto operator + () const { return struct_node; }
 
-  void operator () (DDL::AliasNode *node)
-   {
-    (*this)(node->result_type);
-   }
+   // operator ()
 
-  void operator () (DDL::StructNode *node)
-   {
-    struct_node=node;
-   }
+   void operator () (AnyType *) {}
 
-  void operator () (DDL::TypeNode::Ref *ptr)
-   {
-    ElaborateAnyPtr(*this,ptr->ptr);
-   }
+   void operator () (DDL::AliasNode *node)
+    {
+     set(node->result_type);
+    }
 
-  void operator () (DDL::TypeNode::Struct *ptr)
-   {
-    struct_node=ptr->struct_node;
-   }
+   void operator () (DDL::StructNode *node)
+    {
+     struct_node=node;
+    }
 
-  void operator () (DDL::TypeNode *type)
-   {
-    ElaborateAnyPtr(*this,type->ptr);
-   }
+   void operator () (DDL::TypeNode::Ref *ptr)
+    {
+     ElaborateAnyPtr(*this,ptr->ptr);
+    }
+
+   void operator () (DDL::TypeNode::Struct *ptr)
+    {
+     struct_node=ptr->struct_node;
+    }
+
+   // set
+
+   void set(DDL::TypeNode *type)
+    {
+     ElaborateAnyPtr(*this,type->ptr);
+    }
  };
+
+ // string
 
 StrLen DDLView::fieldName(ulen index,StrLen name)
  {
@@ -235,7 +245,7 @@ StrLen DDLView::fieldName(DDL::StructNode *struct_node,ulen index)
   return fieldName(*cur);
  }
 
-StrLen DDLView::build(DDL::ConstNode *node)
+StrLen DDLView::buildName(DDL::ConstNode *node)
  {
   ULenSat len=node->name.name.str.len;
 
@@ -251,20 +261,22 @@ StrLen DDLView::build(DDL::ConstNode *node)
 
   if( len>MaxNameLen )
     {
-     Printf(Exception,"App::DDLView::build(...) : too long constant name");
+     Printf(Exception,"App::DDLView::buildName(...) : too long constant name");
     }
 
   PtrLen<char> ret=pool.createArray_raw<char>(len.value);
 
-  SetTail(ret,node->name.name.str);
+  PtrLen<char> cur=ret;
+
+  SetTail(cur,node->name.name.str);
 
   {
    DDL::ScopeNode *scope=node->parent;
 
    for(ulen cnt=node->depth; cnt ;cnt--,scope=scope->parent)
      {
-      SetTail(ret,'#');
-      SetTail(ret,scope->name.name.str);
+      SetTail(cur,'#');
+      SetTail(cur,scope->name.name.str);
      }
   }
 
@@ -320,13 +332,17 @@ StrLen DDLView::toString(DDL::TypeNode::Base *type,DDL::Value value)
     }
  }
 
+ // setPtr
+
 void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
  {
   auto ptr=value.val_ptr;
 
-  if( ptr.null )
+  auto *node=ptr.ptr_node;
+
+  if( !node || ptr.null )
     {
-     desc->name=StrLen("null",4);
+     desc->name=CStr("null");
      desc->index=Empty;
      desc->target=Empty;
     }
@@ -335,8 +351,6 @@ void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
      // build index list
 
      ulen len=0;
-
-     auto *node=ptr.ptr_node;
 
      ProvideIndex(index_buf,len);
 
@@ -362,6 +376,8 @@ void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
         len++;
        }
 
+     // reverse copy
+
      PtrLen<PtrDesc::Index> index=pool.createArray<PtrDesc::Index>(len);
 
      PtrDesc::Index *ptr=index_buf.getPtr()+len;
@@ -376,15 +392,13 @@ void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
     }
  }
 
+ // build
+
 ValueDesc DDLView::build(DDL::TypeNode::Base *type,DDL::Value value)
  {
-  ValueDesc ret;
-
   StrLen *desc=pool.create<StrLen>(toString(type,value));
 
-  ret.ptr=desc;
-
-  return ret;
+  return desc;
  }
 
 PtrLen<FieldDesc> DDLView::buildFields(DDL::StructNode *struct_node)
@@ -429,17 +443,13 @@ ValueDesc DDLView::build(DDL::StructNode *struct_node,PtrLen<DDL::Value> value)
 
   // create desc
 
-  ValueDesc ret;
-
   StructDesc *desc=pool.create<StructDesc>();
 
   desc->fields=buildFields(struct_node);
 
   desc->table=table;
 
-  ret.ptr=desc;
-
-  return ret;
+  return desc;
  }
 
 ValueDesc DDLView::build(DDL::TypeNode *type,PtrLen<DDL::Value> value)
@@ -456,13 +466,9 @@ ValueDesc DDLView::build(DDL::TypeNode *type,PtrLen<DDL::Value> value)
 
      for(ulen i=0; i<list.len ;i++) list[i]=build(type,value[i]);
 
-     ValueDesc ret;
-
      PtrLen<ValueDesc> *desc=pool.create<PtrLen<ValueDesc> >(list);
 
-     ret.ptr=desc;
-
-     return ret;
+     return desc;
     }
  }
 
@@ -487,34 +493,23 @@ ValueDesc DDLView::build(DDL::TypeNode::Ref *type,DDL::Value value)
   return ret;
  }
 
-ValueDesc DDLView::build(DDL::TypeNode::Ptr *type,DDL::Value value)
+ValueDesc DDLView::buildPtr(DDL::Value value)
  {
-  Used(type);
-
-  ValueDesc ret;
-
   PtrDesc *desc=pool.create<PtrDesc>();
 
   setPtr(desc,value);
 
-  ret.ptr=desc;
-
-  return ret;
+  return desc;
  }
 
-ValueDesc DDLView::build(DDL::TypeNode::PolyPtr *type,DDL::Value value)
+ValueDesc DDLView::build(DDL::TypeNode::Ptr *,DDL::Value value)
  {
-  Used(type);
+  return buildPtr(value);
+ }
 
-  ValueDesc ret;
-
-  PtrDesc *desc=pool.create<PtrDesc>();
-
-  setPtr(desc,value);
-
-  ret.ptr=desc;
-
-  return ret;
+ValueDesc DDLView::build(DDL::TypeNode::PolyPtr *,DDL::Value value)
+ {
+  return buildPtr(value);
  }
 
 ValueDesc DDLView::build(DDL::TypeNode::Array *type,DDL::Value value)
@@ -542,6 +537,54 @@ ValueDesc DDLView::build(DDL::TypeNode *type,DDL::Value value)
 
   return ret;
  }
+
+class DDLView::PtrTarget
+ {
+   PtrLen<ValueDesc> target;
+   bool single;
+
+  public:
+
+   explicit PtrTarget(ValueDesc &target_) : target(Single(target_)),single(true) {}
+
+   operator PtrLen<ValueDesc>() const { return target; }
+
+   void operator () (AnyType *,PtrDesc::Index)
+    {
+     Printf(Exception,"App::DDLView::PtrTarget::select(...) : internal");
+    }
+
+   void operator () (StructDesc *desc,PtrDesc::Index index)
+    {
+     if( !index.field )
+       {
+        target=desc->table[index.index];
+        single=false;
+       }
+     else
+       {
+        target=Single(desc->table[0][index.index]);
+       }
+    }
+
+   void operator () (PtrLen<ValueDesc> *desc,PtrDesc::Index index)
+    {
+     target=Single((*desc)[index.index]);
+    }
+
+   void select(PtrDesc::Index index)
+    {
+     if( single )
+       {
+        ElaborateAnyPtr(*this,target->ptr,index);
+       }
+     else
+       {
+        target=Single(target[index.index]);
+        single=true;
+       }
+    }
+ };
 
 void DDLView::setPtrTarget(PtrDesc *desc)
  {
@@ -573,36 +616,11 @@ void DDLView::setPtrTarget(PtrDesc *desc)
   {
    auto index=desc->index;
 
-   ValueDesc *target=&consts[index->index].value;
+   PtrTarget target(consts[index->index].value);
 
-   for(++index; +index ;++index)
-     {
-      if( !index->field )
-        {
-         if( StructDesc *ptr=target->ptr.castPtr<StructDesc>() )
-           {
-            desc->target=ptr->table[index->index];
+   for(++index; +index ;++index) target.select(*index);
 
-            target=0;
-
-            break;
-           }
-         else
-           {
-            PtrLen<ValueDesc> *array=target->ptr.castPtr<PtrLen<ValueDesc> >();
-
-            target=&(*array)[index->index];
-           }
-        }
-      else
-        {
-         StructDesc *ptr=target->ptr.castPtr<StructDesc>();
-
-         target=&ptr->table[0][index->index];
-        }
-     }
-
-   if( target ) desc->target=Range(target,1);
+   desc->target=target;
   }
  }
 
@@ -622,7 +640,7 @@ void DDLView::build(const DDL::EvalResult &result)
      auto &src=list[i];
      auto &dst=consts[i];
 
-     dst.name=build(src.node);
+     dst.name=buildName(src.node);
      dst.value=build(src.type,src.value);
     }
 
@@ -663,6 +681,12 @@ void DDLView::update(DDL::EngineResult result)
 
 /* class DDLInnerWindow */
 
+void DDLInnerWindow::layoutView() // TODO
+ {
+  x_total=600;
+  y_total=600;
+ }
+
 void DDLInnerWindow::posX(ulen pos)
  {
   x_pos=pos;
@@ -692,30 +716,43 @@ DDLInnerWindow::~DDLInnerWindow()
 
  // methods
 
-void DDLInnerWindow::update(DDL::EngineResult result) // TODO
+void DDLInnerWindow::update(DDL::EngineResult result)
  {
   view.update(result);
 
-  x_total=600;
-  y_total=600;
-
   x_pos=0;
   y_pos=0;
+
+  layoutView();
  }
 
  // drawing
 
-void DDLInnerWindow::layout() // TODO
+void DDLInnerWindow::layout()
  {
   Point size=getSize();
 
   x_page=size.x;
 
-  if( x_page>=x_total ) x_pos=0;
+  if( x_page>=x_total )
+    {
+     x_pos=0;
+    }
+  else
+    {
+     Replace_min(x_pos,x_total-x_page);
+    }
 
   y_page=size.y;
 
-  if( y_page>=y_total ) y_pos=0;
+  if( y_page>=y_total )
+    {
+     y_pos=0;
+    }
+  else
+    {
+     Replace_min(y_pos,y_total-y_page);
+    }
  }
 
 void DDLInnerWindow::draw(DrawBuf buf,bool) const // TODO

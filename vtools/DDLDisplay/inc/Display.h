@@ -156,6 +156,10 @@ struct ValueDesc
   uPane place;
 
   AnyPtr<StrLen,PtrLen<ValueDesc>,StructDesc,PtrDesc> ptr;
+
+  ValueDesc() noexcept {}
+
+  ValueDesc(AnyType *ptr_) : ptr(ptr_) {}
  };
 
 /* struct ConstDesc */
@@ -190,8 +194,7 @@ class DDLView : NoCopy
 
    void erase();
 
-   template <class T>
-   static PtrLen<T> Single(T &obj) { return Range(&obj,1); }
+   // utils
 
    static void SetTail(PtrLen<char> &ret,char ch);
 
@@ -201,7 +204,9 @@ class DDLView : NoCopy
 
    static void ProvideIndex(AnyType &obj,ulen index) { ProvideIndex(obj,index,100); }
 
-   struct GetStructNode;
+   class GetStructNode;
+
+   // string
 
    StrLen fieldName(ulen index,StrLen name);
 
@@ -209,7 +214,7 @@ class DDLView : NoCopy
 
    StrLen fieldName(DDL::StructNode *struct_node,ulen index);
 
-   StrLen build(DDL::ConstNode *node);
+   StrLen buildName(DDL::ConstNode *node);
 
    StrLen toString(StrLen value) { return pool.dup(value); }
 
@@ -219,7 +224,11 @@ class DDLView : NoCopy
 
    StrLen toString(DDL::TypeNode::Base *type,DDL::Value value);
 
+   // setPtr
+
    void setPtr(PtrDesc *desc,DDL::Value value);
+
+   // build
 
    ValueDesc build(DDL::TypeNode::Base *type,DDL::Value value);
 
@@ -235,6 +244,8 @@ class DDLView : NoCopy
 
    ValueDesc build(DDL::TypeNode::Ref *type,DDL::Value value);
 
+   ValueDesc buildPtr(DDL::Value value);
+
    ValueDesc build(DDL::TypeNode::Ptr *type,DDL::Value value);
 
    ValueDesc build(DDL::TypeNode::PolyPtr *type,DDL::Value value);
@@ -246,6 +257,8 @@ class DDLView : NoCopy
    ValueDesc build(DDL::TypeNode::Struct *type,DDL::Value value);
 
    ValueDesc build(DDL::TypeNode *type,DDL::Value value);
+
+   class PtrTarget;
 
    void setPtrTarget(PtrDesc *desc);
 
@@ -297,6 +310,10 @@ class DDLInnerWindow : public SubWindow
    ulen y_pos   = 0 ;
    ulen y_total = 0 ;
    ulen y_page  = 0 ;
+
+  private:
+
+   void layoutView();
 
   private:
 
