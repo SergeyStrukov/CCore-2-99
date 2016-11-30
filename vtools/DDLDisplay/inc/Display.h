@@ -18,6 +18,8 @@
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
 #include <CCore/inc/String.h>
+#include <CCore/inc/ElementPool.h>
+#include <CCore/inc/Array.h>
 
 #include <CCore/inc/ddl/DDLEngine.h>
 
@@ -26,6 +28,22 @@ namespace App {
 /* classes */
 
 class DDLFile;
+
+struct uPoint;
+
+struct uPane;
+
+struct FieldDesc;
+
+struct StructDesc;
+
+struct PtrDesc;
+
+struct ValueDesc;
+
+struct ConstDesc;
+
+class DDLView;
 
 class DDLInnerWindow;
 
@@ -76,6 +94,140 @@ class DDLFile : NoCopy
    Signal<> updated;
  };
 
+/* struct uPoint */
+
+struct uPoint
+ {
+  ulen x = 0 ;
+  ulen y = 0 ;
+ };
+
+/* struct uPane */
+
+struct uPane
+ {
+  uPoint base;
+  uPoint size;
+ };
+
+/* struct FieldDesc */
+
+struct FieldDesc
+ {
+  StrLen name;
+  uPane place;
+ };
+
+/* struct StructDesc */
+
+struct StructDesc
+ {
+  PtrLen<FieldDesc> fields;
+  PtrLen<PtrLen<ValueDesc> > table;
+ };
+
+/* struct PtrDesc */
+
+struct PtrDesc // TODO
+ {
+ };
+
+/* struct ValueDesc */
+
+struct ValueDesc
+ {
+  uPane place;
+
+  AnyPtr<StrLen,PtrLen<ValueDesc>,StructDesc,PtrDesc> ptr;
+ };
+
+/* struct ConstDesc */
+
+struct ConstDesc
+ {
+  StrLen name;
+  uPane place;
+
+  ValueDesc value;
+ };
+
+/* class DDLView */
+
+class DDLView : NoCopy
+ {
+   static const ulen TextBufLen = 1_KByte ;
+
+   static const ulen MaxNameLen = 8_KByte ;
+
+   ElementPool pool;
+
+   PtrLen<ConstDesc> consts;
+
+   DynArray<StrLen> field_name;
+
+  private:
+
+   void erase();
+
+   static void SetTail(PtrLen<char> &ret,char ch);
+
+   static void SetTail(PtrLen<char> &ret,StrLen str);
+
+   struct GetStructNode;
+
+   StrLen fieldName(ulen index,StrLen name);
+
+   StrLen build(DDL::ConstNode *node);
+
+   StrLen toString(StrLen value) { return pool.dup(value); }
+
+   StrLen toString(AnyType value);
+
+   StrLen toString(DDL::Text value) { return toString(value.str); }
+
+   StrLen toString(DDL::TypeNode::Base *type,DDL::Value value);
+
+   void setPtr(PtrDesc *desc,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::Base *type,DDL::Value value);
+
+   PtrLen<FieldDesc> buildFields(DDL::StructNode *struct_node);
+
+   ValueDesc build(DDL::StructNode *struct_node,PtrLen<DDL::Value> value);
+
+   ValueDesc build(DDL::TypeNode *type,PtrLen<DDL::Value> value);
+
+   ValueDesc build(DDL::StructNode *struct_node,DDL::Value value);
+
+   ValueDesc build(DDL::AliasNode *alias_node,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::Ref *type,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::Ptr *type,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::PolyPtr *type,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::Array *type,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::ArrayLen *type,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode::Struct *type,DDL::Value value);
+
+   ValueDesc build(DDL::TypeNode *type,DDL::Value value);
+
+   void build(const DDL::EvalResult &result);
+
+  public:
+
+   DDLView();
+
+   ~DDLView();
+
+   PtrLen<ConstDesc> getConstList() const { return consts; }
+
+   void update(DDL::EngineResult result);
+ };
+
 /* class DDLInnerWindow */
 
 class DDLInnerWindow : public SubWindow
@@ -98,7 +250,7 @@ class DDLInnerWindow : public SubWindow
 
    const Config &cfg;
 
-   const DDLFile &file;
+   DDLView view;
 
    // scroll
 
@@ -121,7 +273,7 @@ class DDLInnerWindow : public SubWindow
 
   public:
 
-   DDLInnerWindow(SubWindowHost &host,const Config &cfg,const DDLFile &file);
+   DDLInnerWindow(SubWindowHost &host,const Config &cfg);
 
    virtual ~DDLInnerWindow();
 
@@ -147,7 +299,7 @@ class DDLInnerWindow : public SubWindow
 
    Point getMinSize() const { return Null; }
 
-   void update();
+   void update(DDL::EngineResult result);
 
    // drawing
 
@@ -191,6 +343,7 @@ class DDLWindow : public ComboWindow
   private:
 
    const Config &cfg;
+   const DDLFile &file;
 
    DDLInnerWindow inner;
    XScrollWindow scroll_x;

@@ -15,6 +15,10 @@
 
 #include <CCore/inc/video/Layout.h>
 
+#include <CCore/inc/Printf.h>
+
+#include <CCore/inc/Exception.h>
+
 namespace App {
 
 /* class DDLFile */
@@ -127,6 +131,389 @@ void DDLFile::noPretext()
   erase();
  }
 
+/* class DDLView */
+
+void DDLView::erase()
+ {
+  ElementPool temp;
+
+  Swap(temp,pool);
+
+  consts=Empty;
+
+  field_name.erase();
+ }
+
+void DDLView::SetTail(PtrLen<char> &ret,char ch)
+ {
+  ret.back(1)=ch;
+
+  ret.len--;
+ }
+
+void DDLView::SetTail(PtrLen<char> &ret,StrLen str)
+ {
+  ret.suffix(str.len).copy(str.ptr);
+
+  ret.len-=str.len;
+ }
+
+struct DDLView::GetStructNode
+ {
+  DDL::StructNode *struct_node = 0 ;
+
+  explicit GetStructNode(DDL::TypeNode *type) { (*this)(type); }
+
+  auto operator + () const { return struct_node; }
+
+  void operator () (AnyType *) {}
+
+  void operator () (DDL::AliasNode *node)
+   {
+    (*this)(node->result_type);
+   }
+
+  void operator () (DDL::StructNode *node)
+   {
+    struct_node=node;
+   }
+
+  void operator () (DDL::TypeNode::Ref *ptr)
+   {
+    ElaborateAnyPtr(*this,ptr->ptr);
+   }
+
+  void operator () (DDL::TypeNode::Struct *ptr)
+   {
+    struct_node=ptr->struct_node;
+   }
+
+  void operator () (DDL::TypeNode *type)
+   {
+    ElaborateAnyPtr(*this,type->ptr);
+   }
+ };
+
+StrLen DDLView::fieldName(ulen index,StrLen name)
+ {
+  if( !name ) return Null;
+
+  if( ulen len=field_name.getLen() )
+    {
+     if( index>=len ) field_name.extend_default(index-len+1);
+    }
+  else
+    {
+     field_name.extend_default(Max<ulen>(100,LenAdd(index,1)));
+    }
+
+  StrLen &obj=field_name[index];
+
+  if( !obj ) obj=pool.dup(name);
+
+  return obj;
+ }
+
+StrLen DDLView::build(DDL::ConstNode *node)
+ {
+  ULenSat len=node->name.name.str.len;
+
+  {
+   DDL::ScopeNode *scope=node->parent;
+
+   for(ulen cnt=node->depth; cnt ;cnt--,scope=scope->parent)
+     {
+      len+=scope->name.name.str.len;
+      len+=1u;
+     }
+  }
+
+  if( len>MaxNameLen )
+    {
+     Printf(Exception,"App::DDLView::build(...) : too long constant name");
+    }
+
+  PtrLen<char> ret=pool.createArray_raw<char>(len.value);
+
+  SetTail(ret,node->name.name.str);
+
+  {
+   DDL::ScopeNode *scope=node->parent;
+
+   for(ulen cnt=node->depth; cnt ;cnt--,scope=scope->parent)
+     {
+      SetTail(ret,'#');
+      SetTail(ret,scope->name.name.str);
+     }
+  }
+
+  return ret;
+ }
+
+StrLen DDLView::toString(AnyType value)
+ {
+  char buf[TextBufLen];
+  PrintBuf out(Range(buf));
+
+  Putobj(out,value);
+
+  return toString(out.close());
+ }
+
+StrLen DDLView::toString(DDL::TypeNode::Base *type,DDL::Value value)
+ {
+  switch( type->type )
+    {
+     case DDL::TypeNode::Base::Type_sint : return toString(value.val_sint);
+
+     case DDL::TypeNode::Base::Type_uint : return toString(value.val_uint);
+
+     case DDL::TypeNode::Base::Type_ulen : return toString(value.val_ulen);
+
+     case DDL::TypeNode::Base::Type_sint8 : return toString(value.val_sint8);
+
+     case DDL::TypeNode::Base::Type_uint8 : return toString(value.val_uint8);
+
+     case DDL::TypeNode::Base::Type_sint16 : return toString(value.val_sint16);
+
+     case DDL::TypeNode::Base::Type_uint16 : return toString(value.val_uint16);
+
+     case DDL::TypeNode::Base::Type_sint32 : return toString(value.val_sint32);
+
+     case DDL::TypeNode::Base::Type_uint32 : return toString(value.val_uint32);
+
+     case DDL::TypeNode::Base::Type_sint64 : return toString(value.val_sint64);
+
+     case DDL::TypeNode::Base::Type_uint64 : return toString(value.val_uint64);
+
+     case DDL::TypeNode::Base::Type_text : return toString(value.val_text);
+
+     case DDL::TypeNode::Base::Type_ip : return toString(value.val_ip);
+
+     default:
+      {
+       Printf(Exception,"App::DDLView::toString(...) : internal");
+
+       return Null;
+      }
+    }
+ }
+
+void DDLView::setPtr(PtrDesc *desc,DDL::Value value) // TODO
+ {
+  Used(desc);
+  Used(value);
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::Base *type,DDL::Value value)
+ {
+  ValueDesc ret;
+
+  StrLen *desc=pool.create<StrLen>(toString(type,value));
+
+  ret.ptr=desc;
+
+  return ret;
+ }
+
+PtrLen<FieldDesc> DDLView::buildFields(DDL::StructNode *struct_node)
+ {
+  PtrLen<FieldDesc> ret=pool.createArray<FieldDesc>(struct_node->field_list.count);
+
+  ulen i=0;
+
+  for(DDL::FieldNode &field : struct_node->field_list )
+    {
+     ret[i].name=fieldName(field.index,field.name.name.str);
+
+     i++;
+    }
+
+  return ret;
+ }
+
+ValueDesc DDLView::build(DDL::StructNode *struct_node,PtrLen<DDL::Value> value)
+ {
+  // create table
+
+  PtrLen<PtrLen<ValueDesc> > table=pool.createArray<PtrLen<ValueDesc> >(value.len);
+
+  for(ulen i=0; i<value.len ;i++)
+    {
+     PtrLen<DDL::Value> src=value[i].val_block.data;
+
+     PtrLen<ValueDesc> dst=pool.createArray<ValueDesc>(src.len);
+
+     ulen j=0;
+
+     for(DDL::FieldNode &field : struct_node->field_list )
+       {
+        dst[j]=build(field.type_node,src[j]);
+
+        j++;
+       }
+
+     table[i]=dst;
+    }
+
+  // create desc
+
+  ValueDesc ret;
+
+  StructDesc *desc=pool.create<StructDesc>();
+
+  desc->fields=buildFields(struct_node);
+
+  desc->table=table;
+
+  ret.ptr=desc;
+
+  return ret;
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode *type,PtrLen<DDL::Value> value)
+ {
+  GetStructNode get(type);
+
+  if( DDL::StructNode *struct_node = +get )
+    {
+     return build(struct_node,value);
+    }
+  else
+    {
+     PtrLen<ValueDesc> list=pool.createArray<ValueDesc>(value.len);
+
+     for(ulen i=0; i<list.len ;i++) list[i]=build(type,value[i]);
+
+     ValueDesc ret;
+
+     PtrLen<ValueDesc> *desc=pool.create<PtrLen<ValueDesc> >(list);
+
+     ret.ptr=desc;
+
+     return ret;
+    }
+ }
+
+ValueDesc DDLView::build(DDL::StructNode *struct_node,DDL::Value value)
+ {
+  return build(struct_node,Range(&value,1));
+ }
+
+ValueDesc DDLView::build(DDL::AliasNode *alias_node,DDL::Value value)
+ {
+  return build(alias_node->result_type,value);
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::Ref *type,DDL::Value value)
+ {
+  ValueDesc ret;
+
+  auto obj = [this,&ret] (auto *ptr,DDL::Value value) { ret=this->build(ptr,value); } ;
+
+  ElaborateAnyPtr(obj,type->ptr,value);
+
+  return ret;
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::Ptr *type,DDL::Value value)
+ {
+  Used(type);
+
+  ValueDesc ret;
+
+  PtrDesc *desc=pool.create<PtrDesc>();
+
+  setPtr(desc,value);
+
+  ret.ptr=desc;
+
+  return ret;
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::PolyPtr *type,DDL::Value value)
+ {
+  Used(type);
+
+  ValueDesc ret;
+
+  PtrDesc *desc=pool.create<PtrDesc>();
+
+  setPtr(desc,value);
+
+  ret.ptr=desc;
+
+  return ret;
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::Array *type,DDL::Value value)
+ {
+  return build(type->type_node,value.val_block.data);
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::ArrayLen *type,DDL::Value value)
+ {
+  return build(type->type_node,value.val_block.data);
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode::Struct *type,DDL::Value value)
+ {
+  return build(type->struct_node,value);
+ }
+
+ValueDesc DDLView::build(DDL::TypeNode *type,DDL::Value value)
+ {
+  ValueDesc ret;
+
+  auto obj = [this,&ret] (auto *ptr,DDL::Value value) { ret=this->build(ptr,value); } ;
+
+  ElaborateAnyPtr(obj,type->ptr,value);
+
+  return ret;
+ }
+
+void DDLView::build(const DDL::EvalResult &result)
+ {
+  auto list=Range(result.const_table);
+
+  consts=pool.createArray<ConstDesc>(list.len);
+
+  for(ulen i=0; i<list.len ;i++)
+    {
+     auto &src=list[i];
+     auto &dst=consts[i];
+
+     dst.name=build(src.node);
+     dst.value=build(src.type,src.value);
+    }
+ }
+
+DDLView::DDLView()
+ {
+ }
+
+DDLView::~DDLView()
+ {
+ }
+
+void DDLView::update(DDL::EngineResult result)
+ {
+  erase();
+
+  if( !result ) return;
+
+  try
+    {
+     build(*result.eval);
+    }
+  catch(CatchType)
+    {
+     erase();
+
+     throw;
+    }
+ }
+
 /* class DDLInnerWindow */
 
 void DDLInnerWindow::posX(ulen pos)
@@ -143,10 +530,9 @@ void DDLInnerWindow::posY(ulen pos)
   redraw();
  }
 
-DDLInnerWindow::DDLInnerWindow(SubWindowHost &host,const Config &cfg_,const DDLFile &file_)
+DDLInnerWindow::DDLInnerWindow(SubWindowHost &host,const Config &cfg_)
  : SubWindow(host),
    cfg(cfg_),
-   file(file_),
 
    connector_posX(this,&DDLInnerWindow::posX),
    connector_posY(this,&DDLInnerWindow::posY)
@@ -159,8 +545,10 @@ DDLInnerWindow::~DDLInnerWindow()
 
  // methods
 
-void DDLInnerWindow::update()
+void DDLInnerWindow::update(DDL::EngineResult result) // TODO
  {
+  view.update(result);
+
   x_total=600;
   y_total=600;
 
@@ -198,25 +586,26 @@ void DDLInnerWindow::open() // TODO
 
 void DDLWindow::file_updated()
  {
-  inner.update();
+  inner.update(file.getResult());
 
   layout();
 
   redraw();
  }
 
-DDLWindow::DDLWindow(SubWindowHost &host,const Config &cfg_,DDLFile &file)
+DDLWindow::DDLWindow(SubWindowHost &host,const Config &cfg_,DDLFile &file_)
  : ComboWindow(host),
    cfg(cfg_),
+   file(file_),
 
-   inner(wlist,cfg,file),
+   inner(wlist,cfg),
    scroll_x(wlist,cfg.x_cfg),
    scroll_y(wlist,cfg.y_cfg),
 
    connector_posx(&scroll_x,&XScrollWindow::setPos,inner.scroll_x),
    connector_posy(&scroll_y,&YScrollWindow::setPos,inner.scroll_y),
 
-   connector_file_updated(this,&DDLWindow::file_updated,file.updated)
+   connector_file_updated(this,&DDLWindow::file_updated,file_.updated)
  {
   wlist.insTop(inner);
 
