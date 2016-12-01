@@ -110,6 +110,10 @@ struct uPoint
   friend uPoint Inf(uPoint a,uPoint b) { return {Min(a.x,b.x),Min(a.y,b.y)}; }
 
   friend bool operator < (uPoint a,uPoint b) { return a.x<b.x && a.y<b.y ; }
+
+  static Coord BaseOf(ulen a,ulen b);
+
+  Point baseOf(uPoint pos) const;
  };
 
 /* struct uPane */
@@ -122,8 +126,6 @@ struct uPane
   bool intersect(uPane obj) const;
 
   bool intersect(uPoint base,uPoint size) const { return intersect({base,size}); }
-
-  static Coord BaseOf(ulen a,ulen b);
 
   Pane baseOf(uPoint pos) const;
  };

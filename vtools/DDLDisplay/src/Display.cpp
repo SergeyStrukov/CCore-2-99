@@ -14,6 +14,7 @@
 #include <inc/Display.h>
 
 #include <CCore/inc/video/Layout.h>
+#include <CCore/inc/video/SmoothDrawArt.h>
 
 #include <CCore/inc/Printf.h>
 
@@ -131,6 +132,20 @@ void DDLFile::noPretext()
   erase();
  }
 
+/* struct uPoint */
+
+Coord uPoint::BaseOf(ulen a,ulen b)
+ {
+  if( a<b ) return -Coord(b-a);
+
+  return Coord(a-b);
+ }
+
+Point uPoint::baseOf(uPoint pos) const
+ {
+  return {BaseOf(x,pos.x),BaseOf(y,pos.y)};
+ }
+
 /* struct uPane */
 
 bool uPane::intersect(uPane obj) const
@@ -143,16 +158,9 @@ bool uPane::intersect(uPane obj) const
   return a<b;
  }
 
-Coord uPane::BaseOf(ulen a,ulen b)
- {
-  if( a<b ) return -Coord(b-a);
-
-  return Coord(a-b);
- }
-
 Pane uPane::baseOf(uPoint pos) const
  {
-  return Pane(BaseOf(base.x,pos.x),BaseOf(base.y,pos.y),Coord(size.x),Coord(size.y));
+  return Pane(base.baseOf(pos),Coord(size.x),Coord(size.y));
  }
 
 /* struct ValueDesc */
@@ -1124,6 +1132,7 @@ class DDLInnerWindow::DrawProc
    ulen dxy;
    ulen exy;
    ulen sdx;
+   ulen widthUp;
 
    uPoint pos;
    uPoint size;
@@ -1138,6 +1147,110 @@ class DDLInnerWindow::DrawProc
 
         font->text(buf,pane,{AlignX_Left,AlignY_Top},str,text);
        }
+    }
+
+   static bool CapTo(ulen &x,ulen &len,ulen X,ulen L)
+    {
+     if( x<X )
+       {
+        ulen delta=X-x;
+
+        x=X;
+
+        if( len<=delta ) return false;
+
+        len-=delta;
+       }
+
+     ulen off=x-X;
+
+     if( off>=L ) return false;
+
+     L-=off;
+
+     if( len>L ) len=L;
+
+     return len>0;
+    }
+
+   static bool IntersectUp(ulen x,ulen len,ulen X,ulen L)
+    {
+     return CapTo(x,len,X,L);
+    }
+
+   static bool IntersectDown(ulen x,ulen len,ulen X,ulen L)
+    {
+     if( len==0 ) return false;
+
+     ulen dx=len-1;
+
+     if( x>=dx )
+       {
+        x-=dx;
+       }
+     else
+       {
+        len=x+1;
+        x=0;
+       }
+
+     return IntersectUp(x,len,X,L);
+    }
+
+   void drawLeft(uPoint base,ulen len,VColor vc) const
+    {
+     if( !CapTo(base.y,len,pos.y,size.y) ) return;
+
+     if( !IntersectUp(base.x,widthUp,pos.x,size.x) ) return;
+
+     Point a=base.baseOf(pos);
+     Point b=a.addY(Coord(len-1));
+
+     SmoothDrawArt art(buf);
+
+     art.path(HalfPos,width,vc,MPoint(a).subXY(MPoint::Half),MPoint(b).subXaddY(MPoint::Half));
+    }
+
+   void drawTop(uPoint base,ulen len,VColor vc) const
+    {
+     if( !CapTo(base.x,len,pos.x,size.x) ) return;
+
+     if( !IntersectUp(base.y,widthUp,pos.y,size.y) ) return;
+
+     Point a=base.baseOf(pos);
+     Point b=a.addX(Coord(len-1));
+
+     SmoothDrawArt art(buf);
+
+     art.path(HalfNeg,width,vc,MPoint(a).subXY(MPoint::Half),MPoint(b).addXsubY(MPoint::Half));
+    }
+
+   void drawRight(uPoint base,ulen len,VColor vc) const
+    {
+     if( !CapTo(base.y,len,pos.y,size.y) ) return;
+
+     if( !IntersectDown(base.x,widthUp,pos.x,size.x) ) return;
+
+     Point a=base.baseOf(pos);
+     Point b=a.addY(Coord(len-1));
+
+     SmoothDrawArt art(buf);
+
+     art.path(HalfNeg,width,vc,MPoint(a).addXsubY(MPoint::Half),MPoint(b).addXY(MPoint::Half));
+    }
+
+   void drawBottom(uPoint base,ulen len,VColor vc) const
+    {
+     if( !CapTo(base.x,len,pos.x,size.x) ) return;
+
+     if( !IntersectDown(base.y,widthUp,pos.y,size.y) ) return;
+
+     Point a=base.baseOf(pos);
+     Point b=a.addX(Coord(len-1));
+
+     SmoothDrawArt art(buf);
+
+     art.path(HalfPos,width,vc,MPoint(a).subXaddY(MPoint::Half),MPoint(b).addXY(MPoint::Half));
     }
 
   public:
@@ -1157,11 +1270,17 @@ class DDLInnerWindow::DrawProc
      dxy=Cast(space_dxy);
      exy=2*dxy;
      sdx=Cast(space.x);
+     widthUp=Cast(RoundUpLen(width));
     }
 
-   void drawFrame(uPane place) const // TODO
+   void drawFrame(uPane place) const
     {
-     Used(place);
+     if( place.size.noSize() ) return;
+
+     drawLeft(place.base,place.size.y,top);
+     drawTop(place.base,place.size.x,top);
+     drawRight({place.base.x+place.size.x-1,place.base.y},place.size.y,bottom);
+     drawBottom({place.base.x,place.base.y+place.size.y-1},place.size.x,bottom);
     }
 
    void drawText(StrLen str,uPane place) const
