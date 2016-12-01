@@ -131,6 +131,32 @@ void DDLFile::noPretext()
   erase();
  }
 
+/* struct ValueDesc */
+
+class ValueDesc::IsScalar
+ {
+   bool ret = false ;
+
+  public:
+
+   operator bool() const { return ret; }
+
+   void operator () (AnyType *) {}
+
+   void operator () (StrLen *) { ret=true; }
+
+   void operator () (PtrDesc *) { ret=true; }
+ };
+
+bool ValueDesc::isScalar() const
+ {
+  IsScalar ret;
+
+  ElaborateAnyPtr(ret,ptr);
+
+  return ret;
+ }
+
 /* class DDLView */
 
 void DDLView::erase()
@@ -421,7 +447,7 @@ ValueDesc DDLView::build(DDL::StructNode *struct_node,PtrLen<DDL::Value> value)
  {
   // create table
 
-  PtrLen<PtrLen<ValueDesc> > table=pool.createArray<PtrLen<ValueDesc> >(value.len);
+  PtrLen<StructDesc::Row> table=pool.createArray<StructDesc::Row>(value.len);
 
   for(ulen i=0; i<value.len ;i++)
     {
@@ -438,7 +464,7 @@ ValueDesc DDLView::build(DDL::StructNode *struct_node,PtrLen<DDL::Value> value)
         j++;
        }
 
-     table[i]=dst;
+     table[i].row=dst;
     }
 
   // create desc
@@ -558,12 +584,12 @@ class DDLView::PtrTarget
     {
      if( !index.field )
        {
-        target=desc->table[index.index];
+        target=desc->table[index.index].row;
         single=false;
        }
      else
        {
-        target=Single(desc->table[0][index.index]);
+        target=Single(desc->table[0].row[index.index]);
        }
     }
 
@@ -596,16 +622,16 @@ void DDLView::setPtrTarget(PtrDesc *desc)
 
    auto index=desc->index;
 
-   Putobj(out,consts[index->index].name);
+   Putobj(out,CStr("-> "),consts[index->index].name);
 
    for(++index; +index ;++index)
      {
       auto field=index->field;
 
       if( !field )
-        Printf(out,"[#;]",index->index);
+        Putobj(out,CStr("["),index->index,CStr("]"));
       else
-        Printf(out,".#;",field);
+        Putobj(out,CStr("."),field);
      }
 
    desc->name=toString(out.close());
@@ -681,10 +707,310 @@ void DDLView::update(DDL::EngineResult result)
 
 /* class DDLInnerWindow */
 
-void DDLInnerWindow::layoutView() // TODO
+class DDLInnerWindow::SizeProc : NoCopy
  {
-  x_total=600;
-  y_total=600;
+   Coord space_dxy;
+   Point space;
+   Font font;
+
+   ulen dxy;
+   ulen exy;
+   ulen ex;
+   ulen ey;
+
+  public:
+
+   explicit SizeProc(const Config &cfg)
+    : space_dxy(+cfg.space_dxy),
+      space(+cfg.space),
+      font(+cfg.font)
+    {
+     dxy=Cast(space_dxy);
+     exy=2*dxy;
+     ex=2*Cast(space.x);
+     ey=2*Cast(space.y);
+    }
+
+   uPoint size(StrLen str) const
+    {
+     TextSize ts=font->text(str);
+
+     IntGuard(ts.overflow);
+
+     return {Cast(ts.full_dx)+ex,Cast(ts.dy)+ey};
+    }
+
+   uPoint operator () (StrLen str) const { return size(str); }
+
+   void operator () (uPoint &ret,StrLen *ptr) const
+    {
+     ret=size(*ptr);
+    }
+
+   void operator () (uPoint &ret,PtrLen<ValueDesc> *ptr) const
+    {
+     ulen x=0;
+     ulen y=0;
+
+     for(ValueDesc &obj : *ptr )
+       {
+        set(obj);
+
+        ulen dx=obj.place.size.x;
+        ulen dy=obj.place.size.y;
+
+        if( !obj.isScalar() )
+          {
+           dx+=exy;
+           dy+=exy;
+          }
+
+        Replace_max(x,dx);
+
+        y+=dy;
+       }
+
+     ret.x=x;
+     ret.y=y;
+    }
+
+   void operator () (uPoint &ret,StructDesc *ptr) const
+    {
+     auto fields=ptr->fields;
+
+     ulen y=0;
+
+     for(FieldDesc &field : fields )
+       {
+        field.place.size=size(field.name);
+
+        Replace_max(y,field.place.size.y);
+       }
+
+     for(FieldDesc &field : fields )
+       {
+        field.place.size.y=y;
+       }
+
+     y+=dxy;
+
+     for(StructDesc::Row &row : ptr->table )
+       {
+        ulen row_y=0;
+
+        for(ulen i=0; i<fields.len ;i++)
+          {
+           FieldDesc &field=fields[i];
+           ValueDesc &obj=row.row[i];
+
+           set(obj);
+
+           ulen dx=obj.place.size.x;
+           ulen dy=obj.place.size.y;
+
+           if( !obj.isScalar() )
+             {
+              dx+=exy;
+              dy+=exy;
+             }
+
+           Replace_max(field.place.size.x,dx);
+           Replace_max(row_y,dy);
+          }
+
+        row.dy=row_y;
+
+        y+=row_y;
+       }
+
+     ulen x=0;
+
+     for(FieldDesc &field : fields )
+       {
+        x+=field.place.size.x;
+       }
+
+     ret.x=x;
+     ret.y=y;
+    }
+
+   void operator () (uPoint &ret,PtrDesc *ptr) const
+    {
+     ret=size(ptr->name);
+    }
+
+   void set(ValueDesc &value) const
+    {
+     ElaborateAnyPtr(*this,value.place.size,value.ptr);
+    }
+
+   void operator () (ValueDesc &value) const
+    {
+     set(value);
+    }
+ };
+
+void DDLInnerWindow::sizeView()
+ {
+  SizeProc size(cfg);
+
+  auto list=view.getConstList();
+
+  for(auto &obj : list )
+    {
+     obj.place.size=size(obj.name);
+
+     size(obj.value);
+    }
+ }
+
+class DDLInnerWindow::PlaceProc : NoCopy
+ {
+   Coord space_dxy;
+
+   ulen dxy;
+   ulen exy;
+
+   ulen y = 0 ;
+
+   ulen total_x = 0 ;
+
+  public:
+
+   explicit PlaceProc(const Config &cfg)
+    : space_dxy(+cfg.space_dxy)
+    {
+     dxy=Cast(space_dxy);
+     exy=2*dxy;
+    }
+
+   void operator () (StrLen *ptr,ulen x,ulen y)
+    {
+     Used(ptr);
+     Used(x);
+     Used(y);
+    }
+
+   void operator () (PtrLen<ValueDesc> *ptr,ulen x,ulen y)
+    {
+     for(ValueDesc &obj : *ptr )
+       {
+        if( obj.isScalar() )
+          {
+           set(obj,x,y);
+
+           y+=obj.place.size.y;
+          }
+        else
+          {
+           set(obj,x+dxy,y+dxy);
+
+           y+=obj.place.size.y+exy;
+          }
+       }
+    }
+
+   void operator () (StructDesc *ptr,ulen x,ulen y)
+    {
+     auto fields=ptr->fields;
+
+     {
+      ulen X=x;
+
+      for(FieldDesc &field : fields )
+        {
+         field.place.base.x=X;
+         field.place.base.y=y;
+
+         X+=field.place.size.x;
+        }
+     }
+
+     if( +fields ) y+=fields[0].place.size.y;
+
+     y+=dxy;
+
+     for(StructDesc::Row &row : ptr->table )
+       {
+        ulen X=x;
+
+        for(ulen i=0; i<fields.len ;i++)
+          {
+           FieldDesc &field=fields[i];
+           ValueDesc &obj=row.row[i];
+
+           if( obj.isScalar() )
+             set(obj,X,y);
+           else
+             set(obj,X+dxy,y+dxy);
+
+           X+=field.place.size.x;
+          }
+
+        y+=row.dy;
+       }
+    }
+
+   void operator () (PtrDesc *ptr,ulen x,ulen y)
+    {
+     Used(ptr);
+     Used(x);
+     Used(y);
+    }
+
+   void set(ValueDesc &value,ulen x,ulen y)
+    {
+     value.place.base.x=x;
+     value.place.base.y=y;
+
+     ElaborateAnyPtr(*this,value.ptr,x,y);
+    }
+
+   void operator () (uPane &place,ValueDesc &value)
+    {
+     ulen x=dxy;
+
+     y+=dxy;
+
+     place.base.x=x;
+     place.base.y=y;
+
+     x+=place.size.x+dxy;
+
+     set(value,x,y);
+
+     x+=value.place.size.x;
+
+     Replace_max(total_x,x);
+
+     y+=Max(place.size.y,value.place.size.y);
+    }
+
+   void getTotal(ulen &ret_x,ulen &ret_y)
+    {
+     ret_x=total_x+dxy;
+     ret_y=y+dxy;
+    }
+ };
+
+void DDLInnerWindow::placeView()
+ {
+  PlaceProc place(cfg);
+
+  auto list=view.getConstList();
+
+  for(auto &obj : list )
+    {
+     place(obj.place,obj.value);
+    }
+
+  place.getTotal(x_total,y_total);
+ }
+
+void DDLInnerWindow::layoutView()
+ {
+  sizeView();
+  placeView();
  }
 
 void DDLInnerWindow::posX(ulen pos)
@@ -755,15 +1081,183 @@ void DDLInnerWindow::layout()
     }
  }
 
+class DDLInnerWindow::DrawProc
+ {
+   DrawBuf buf;
+
+   MCoord width;
+
+   Coord space_dxy;
+
+   Point space;
+
+   VColor top;
+   VColor bottom;
+   VColor text;
+
+   Font font;
+
+   ulen dxy;
+   ulen exy;
+
+   uPoint pos;
+   uPoint size;
+
+  public:
+
+   DrawProc(const DrawBuf &buf_,const Config &cfg,uPoint pos_,uPoint size_)
+    : buf(buf_),
+      width(+cfg.width),
+      space_dxy(+cfg.space_dxy),
+      space(+cfg.space),
+      top(+cfg.top),
+      bottom(+cfg.bottom),
+      text(+cfg.text),
+      font(+cfg.font),
+      pos(pos_),
+      size(size_)
+    {
+     dxy=Cast(space_dxy);
+     exy=2*dxy;
+    }
+
+   void drawFrame(uPane place) const // TODO
+    {
+     Used(place);
+    }
+
+   void drawText(StrLen str,uPane place) const // TODO
+    {
+     Used(str);
+     Used(place);
+    }
+
+   void draw(StrLen str,uPane place,bool inside=false) const
+    {
+     if( !inside ) drawFrame(place);
+
+     drawText(str,place);
+    }
+
+   void operator () (uPane place,StrLen *ptr,bool inside) const
+    {
+     draw(*ptr,place,inside);
+    }
+
+   void operator () (uPane place,PtrLen<ValueDesc> *ptr,bool inside) const
+    {
+     Used(inside);
+
+     uPane cell;
+
+     cell.base=place.base;
+     cell.size.x=place.size.x;
+
+     for(ValueDesc &obj : *ptr )
+       {
+        if( obj.isScalar() )
+          cell.size.y=obj.place.size.y;
+        else
+          cell.size.y=obj.place.size.y+exy;
+
+        draw(cell,obj);
+
+        cell.base.y+=cell.size.y;
+       }
+    }
+
+   void operator () (uPane place,StructDesc *ptr,bool inside) const
+    {
+     Used(inside);
+
+     auto fields=ptr->fields;
+
+     for(FieldDesc &field : fields )
+       {
+        draw(field.name,field.place);
+       }
+
+     uPane cell;
+
+     cell.base.y=place.base.y;
+
+     for(StructDesc::Row &row : ptr->table )
+       {
+        cell.size.y=row.dy;
+
+        for(ulen i=0; i<fields.len ;i++)
+          {
+           FieldDesc &field=fields[i];
+           ValueDesc &obj=row.row[i];
+
+           cell.base.x=field.place.base.x;
+           cell.size.x=field.place.size.x;
+
+           draw(cell,obj);
+          }
+
+        cell.base.y+=row.dy;
+       }
+    }
+
+   void operator () (uPane place,PtrDesc *ptr,bool inside) const
+    {
+     draw(ptr->name,place,inside);
+    }
+
+   void draw(const ValueDesc &value,bool inside=false) const
+    {
+     ElaborateAnyPtr(*this,value.place,value.ptr,inside);
+    }
+
+   void draw(uPane cell,const ValueDesc &value) const
+    {
+     drawFrame(cell);
+
+     draw(value,true);
+    }
+
+   void operator () (const ConstDesc &desc) const
+    {
+     draw(desc.name,desc.place);
+
+     draw(desc.value);
+    }
+ };
+
 void DDLInnerWindow::draw(DrawBuf buf,bool) const // TODO
  {
-  buf.erase(Black);
+  buf.erase(+cfg.back);
+
+  Point size=getSize();
+
+  DrawProc proc(buf,cfg,{x_pos,y_pos},{Cast(size.x),Cast(size.y)});
+
+  auto list=view.getConstList();
+
+  for(auto &obj : list )
+    {
+     proc(obj);
+    }
  }
 
  // base
 
-void DDLInnerWindow::open() // TODO
+void DDLInnerWindow::open()
  {
+  focus=false;
+ }
+
+ // keyboard
+
+void DDLInnerWindow::gainFocus()
+ {
+  if( Change(focus,true) ) redraw();
+ }
+
+void DDLInnerWindow::looseFocus()
+ {
+  if( Change(focus,false) ) redraw();
  }
 
 /* class DDLWindow */

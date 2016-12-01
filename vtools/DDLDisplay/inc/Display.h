@@ -123,7 +123,14 @@ struct FieldDesc
 struct StructDesc
  {
   PtrLen<FieldDesc> fields;
-  PtrLen<PtrLen<ValueDesc> > table;
+
+  struct Row
+   {
+    ulen dy = 0 ;
+    PtrLen<ValueDesc> row;
+   };
+
+  PtrLen<Row> table;
  };
 
 /* struct PtrDesc */
@@ -160,6 +167,10 @@ struct ValueDesc
   ValueDesc() noexcept {}
 
   ValueDesc(AnyType *ptr_) : ptr(ptr_) {}
+
+  class IsScalar;
+
+  bool isScalar() const;
  };
 
 /* struct ConstDesc */
@@ -285,11 +296,25 @@ class DDLInnerWindow : public SubWindow
 
    struct Config
     {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<Coord> space_dxy = 3 ;
+
+     RefVal<Point> space = Point(6,4) ;
+
+     RefVal<VColor> back   =    Silver ;
+     RefVal<VColor> top    =      Gray ;
+     RefVal<VColor> bottom =      Snow ;
+     RefVal<VColor> focus  = OrangeRed ;
+     RefVal<VColor> text   =     Black ;
+
+     RefVal<Font> font;
+
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref) // TODO
       {
-       Used(pref);
+       font.bind(pref.get().info_font.font);
       }
     };
 
@@ -300,6 +325,8 @@ class DDLInnerWindow : public SubWindow
    const Config &cfg;
 
    DDLView view;
+
+   bool focus = false ;
 
    // scroll
 
@@ -313,7 +340,19 @@ class DDLInnerWindow : public SubWindow
 
   private:
 
+   static ulen Cast(Coord len) { return (len>0)? ulen(len) : 0 ; }
+
+   class SizeProc;
+
+   void sizeView();
+
+   class PlaceProc;
+
+   void placeView();
+
    void layoutView();
+
+   class DrawProc;
 
   private:
 
@@ -363,6 +402,12 @@ class DDLInnerWindow : public SubWindow
    // base
 
    virtual void open();
+
+   // keyboard
+
+   virtual void gainFocus();
+
+   virtual void looseFocus();
 
    // signals
 
