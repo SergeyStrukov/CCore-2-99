@@ -131,6 +131,30 @@ void DDLFile::noPretext()
   erase();
  }
 
+/* struct uPane */
+
+bool uPane::intersect(uPane obj) const
+ {
+  if( size.noSize() || obj.size.noSize() ) return false;
+
+  uPoint a=Sup(base,obj.base);
+  uPoint b=Inf(base+size,obj.base+obj.size);
+
+  return a<b;
+ }
+
+Coord uPane::BaseOf(ulen a,ulen b)
+ {
+  if( a<b ) return -Coord(b-a);
+
+  return Coord(a-b);
+ }
+
+Pane uPane::baseOf(uPoint pos) const
+ {
+  return Pane(BaseOf(base.x,pos.x),BaseOf(base.y,pos.y),Coord(size.x),Coord(size.y));
+ }
+
 /* struct ValueDesc */
 
 class ValueDesc::IsScalar
@@ -735,7 +759,7 @@ class DDLInnerWindow::SizeProc : NoCopy
     {
      TextSize ts=font->text(str);
 
-     IntGuard(ts.overflow);
+     IntGuard(!ts.overflow);
 
      return {Cast(ts.full_dx)+ex,Cast(ts.dy)+ey};
     }
@@ -1099,9 +1123,22 @@ class DDLInnerWindow::DrawProc
 
    ulen dxy;
    ulen exy;
+   ulen sdx;
 
    uPoint pos;
    uPoint size;
+
+  private:
+
+   void drawText2(StrLen str,uPane outer) const
+    {
+     if( outer.intersect(pos,size) )
+       {
+        Pane pane=outer.baseOf(pos);
+
+        font->text(buf,pane,{AlignX_Left,AlignY_Top},str,text);
+       }
+    }
 
   public:
 
@@ -1119,6 +1156,7 @@ class DDLInnerWindow::DrawProc
     {
      dxy=Cast(space_dxy);
      exy=2*dxy;
+     sdx=Cast(space.x);
     }
 
    void drawFrame(uPane place) const // TODO
@@ -1126,10 +1164,40 @@ class DDLInnerWindow::DrawProc
      Used(place);
     }
 
-   void drawText(StrLen str,uPane place) const // TODO
+   void drawText(StrLen str,uPane place) const
     {
-     Used(str);
-     Used(place);
+     TextSize ts=font->text(str);
+
+     ulen tx=Cast(ts.full_dx);
+     ulen ty=Cast(ts.dy);
+
+     uPane outer;
+
+     outer.base.x=place.base.x+sdx;
+     outer.base.y=place.base.y+(place.size.y-ty)/2;
+
+     outer.size.x=tx;
+     outer.size.y=ty;
+
+     drawText2(str,outer);
+    }
+
+   void drawTextCenter(StrLen str,uPane place) const
+    {
+     TextSize ts=font->text(str);
+
+     ulen tx=Cast(ts.full_dx);
+     ulen ty=Cast(ts.dy);
+
+     uPane outer;
+
+     outer.base.x=place.base.x+(place.size.x-tx)/2;
+     outer.base.y=place.base.y+(place.size.y-ty)/2;
+
+     outer.size.x=tx;
+     outer.size.y=ty;
+
+     drawText2(str,outer);
     }
 
    void draw(StrLen str,uPane place,bool inside=false) const
@@ -1137,6 +1205,13 @@ class DDLInnerWindow::DrawProc
      if( !inside ) drawFrame(place);
 
      drawText(str,place);
+    }
+
+   void drawCenter(StrLen str,uPane place) const
+    {
+     drawFrame(place);
+
+     drawTextCenter(str,place);
     }
 
    void operator () (uPane place,StrLen *ptr,bool inside) const
@@ -1174,7 +1249,7 @@ class DDLInnerWindow::DrawProc
 
      for(FieldDesc &field : fields )
        {
-        draw(field.name,field.place);
+        drawCenter(field.name,field.place);
        }
 
      uPane cell;

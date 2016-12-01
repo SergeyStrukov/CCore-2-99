@@ -100,6 +100,16 @@ struct uPoint
  {
   ulen x = 0 ;
   ulen y = 0 ;
+
+  bool noSize() const { return x==0 || y==0 ; }
+
+  friend uPoint operator + (uPoint a,uPoint b) { return {a.x+b.x,a.y+b.y}; }
+
+  friend uPoint Sup(uPoint a,uPoint b) { return {Max(a.x,b.x),Max(a.y,b.y)}; }
+
+  friend uPoint Inf(uPoint a,uPoint b) { return {Min(a.x,b.x),Min(a.y,b.y)}; }
+
+  friend bool operator < (uPoint a,uPoint b) { return a.x<b.x && a.y<b.y ; }
  };
 
 /* struct uPane */
@@ -108,6 +118,14 @@ struct uPane
  {
   uPoint base;
   uPoint size;
+
+  bool intersect(uPane obj) const;
+
+  bool intersect(uPoint base,uPoint size) const { return intersect({base,size}); }
+
+  static Coord BaseOf(ulen a,ulen b);
+
+  Pane baseOf(uPoint pos) const;
  };
 
 /* struct FieldDesc */
