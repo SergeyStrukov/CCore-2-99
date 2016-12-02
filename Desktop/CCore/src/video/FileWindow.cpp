@@ -31,6 +31,8 @@
 #include <CCore/inc/CompactList.h>
 #include <CCore/inc/PrintStem.h>
 
+#include <CCore/inc/algon/SortUnique.h>
+
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
 
@@ -129,6 +131,8 @@ void DirHitList::loadDDL(StrLen file_name)
       for(ulen i=0; i<len ;i++) last_list[i].init(r[i].dir,r[i].count);
 
       last_len=len;
+
+      Algon::DecrSortBy(Range(last_list,last_len), [] (const Rec &obj) { return obj.count; } );
      }
     }
  }

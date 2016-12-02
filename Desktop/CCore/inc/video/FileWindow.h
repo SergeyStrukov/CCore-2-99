@@ -496,7 +496,7 @@ class FileSubWindow : public ComboWindow
 
    StrLen getFilePath() const { return file_path; }
 
-   void addFilter(StrLen filter) { filter_list.add(filter,true); }
+   void addFilter(StrLen filter,bool check) { filter_list.add(filter,check); }
 
    // drawing
 
@@ -545,14 +545,14 @@ class FileWindow : public DragWindow
 
    // methods
 
-   void addFilter(StrLen filter) { sub_win.addFilter(filter); }
+   void addFilter(StrLen filter,bool check=true) { sub_win.addFilter(filter,check); }
 
    template <class ... TT>
-   void addFilter(StrLen filter,TT ... filters)
+   void addFilters(StrLen filter,TT ... filters)
     {
-     sub_win.addFilter(filter);
+     addFilter(filter);
 
-     addFilter(filters...);
+     addFilters(filters...);
     }
 
    StrLen getFilePath() const { return sub_win.getFilePath(); } // available after the signal "destroyed"

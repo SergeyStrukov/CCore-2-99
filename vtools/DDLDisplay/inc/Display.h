@@ -264,7 +264,9 @@ class DDLView : NoCopy
 
    StrLen toString(AnyType value);
 
-   StrLen toString(DDL::Text value) { return toString(value.str); }
+   struct PrintText;
+
+   StrLen toString(DDL::Text value);
 
    StrLen toString(DDL::TypeNode::Base *type,DDL::Value value);
 

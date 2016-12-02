@@ -142,9 +142,11 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
                    ("@No Pretext",Cmd_NoPretext)
                    (MenuDisabled,"@DDL",299);
 
-  open_file.addFilter("*.ddl","*");
+  open_file.addFilter("*.ddl");
+  open_file.addFilter("*",false);
 
-  open_pretext.addFilter("*.ddl","*");
+  open_pretext.addFilter("*.ddl");
+  open_pretext.addFilter("*",false);
  }
 
 ClientWindow::~ClientWindow()

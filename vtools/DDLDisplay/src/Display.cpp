@@ -351,6 +351,50 @@ StrLen DDLView::toString(AnyType value)
   return toString(out.close());
  }
 
+struct DDLView::PrintText
+ {
+  StrLen str;
+
+  explicit PrintText(StrLen str_) : str(str_) {}
+
+  // print object
+
+  static void PrintChar(PrinterType &out,char ch)
+   {
+    switch( ch )
+      {
+       case '\b' : out.put('\\'); out.put('b'); break;
+
+       case '\t' : out.put('\\'); out.put('t'); break;
+
+       case '\n' : out.put('\\'); out.put('n'); break;
+
+       case '\v' : out.put('\\'); out.put('v'); break;
+
+       case '\f' : out.put('\\'); out.put('f'); break;
+
+       case '\r' : out.put('\\'); out.put('r'); break;
+
+       case '\\' : out.put('\\'); out.put('\\'); break;
+
+       default:
+        {
+         if( CharIsPrintable(ch) ) out.put(ch); else out.put(' ');
+        }
+      }
+   }
+
+  void print(PrinterType &out) const
+   {
+    for(char ch : str ) PrintChar(out,ch);
+   }
+ };
+
+StrLen DDLView::toString(DDL::Text value)
+ {
+  return toString(PrintText(value.str));
+ }
+
 StrLen DDLView::toString(DDL::TypeNode::Base *type,DDL::Value value)
  {
   switch( type->type )
@@ -1041,8 +1085,14 @@ void DDLInnerWindow::placeView()
 
   auto list=view.getConstList();
 
+  ulen x=0;
+
+  for(auto &obj : list ) Replace_max(x,obj.place.size.x);
+
   for(auto &obj : list )
     {
+     obj.place.size.x=x;
+
      place(obj.place,obj.value);
     }
 
@@ -1716,6 +1766,7 @@ void DisplayWindow::openPretext(StrLen file_name)
   if( result.ok )
     {
      setPretextFileName(file_name);
+     setFileName(Empty);
 
      redraw();
     }
@@ -1730,6 +1781,7 @@ void DisplayWindow::noPretext()
   file.noPretext();
 
   setPretextFileName(Empty);
+  setFileName(Empty);
 
   redraw();
  }
