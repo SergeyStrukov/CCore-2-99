@@ -107,6 +107,13 @@ class ClientWindow : public ComboWindow
 
    virtual ~ClientWindow();
 
+   // methods
+
+   void updateCfg()
+    {
+     display.updateCfg();
+    }
+
    // base
 
    virtual void open();

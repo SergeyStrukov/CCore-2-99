@@ -78,6 +78,8 @@ class MemPool : NoCopy
 
    void shrink_extra();
 
+   void erase();
+
    // swap/move objects
 
    void objSwap(MemPool &obj)
@@ -172,6 +174,8 @@ class ElementPool : NoCopy
     }
 
    void shrink_extra() { pool.shrink_extra(); }
+
+   void erase() { pool.erase(); }
 
    // createArray
 

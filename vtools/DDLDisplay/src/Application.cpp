@@ -128,6 +128,8 @@ class Application : public ApplicationBase
 
    void pref_update()
     {
+     client.updateCfg();
+
      main_win.redrawAll(true);
     }
 

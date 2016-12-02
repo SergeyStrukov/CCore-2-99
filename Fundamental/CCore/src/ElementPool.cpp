@@ -102,6 +102,15 @@ void MemPool::shrink_extra()
     }
  }
 
+void MemPool::erase()
+ {
+  while( Node *node=list.del() ) MemFree(node);
+
+  block=Place<void>(0);
+  cur=Place<void>(0);
+  avail=0;
+ }
+
 /* class ElementPool */
 
 StrLen ElementPool::dup(StrLen str)

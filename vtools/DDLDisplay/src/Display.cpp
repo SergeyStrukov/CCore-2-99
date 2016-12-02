@@ -18,6 +18,8 @@
 
 #include <CCore/inc/Printf.h>
 
+#include <CCore/inc/algon/BinarySearch.h>
+
 #include <CCore/inc/Exception.h>
 
 namespace App {
@@ -175,7 +177,7 @@ class ValueDesc::IsScalar
 
    void operator () (AnyType *) {}
 
-   void operator () (StrLen *) { ret=true; }
+   void operator () (StrSize *) { ret=true; }
 
    void operator () (PtrDesc *) { ret=true; }
  };
@@ -193,9 +195,7 @@ bool ValueDesc::isScalar() const
 
 void DDLView::erase()
  {
-  ElementPool temp;
-
-  Swap(temp,pool);
+  pool.erase();
 
   consts=Empty;
 
@@ -454,7 +454,9 @@ void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
 
 ValueDesc DDLView::build(DDL::TypeNode::Base *type,DDL::Value value)
  {
-  StrLen *desc=pool.create<StrLen>(toString(type,value));
+  StrSize *desc=pool.create<StrSize>();
+
+  *desc=toString(type,value);
 
   return desc;
  }
@@ -654,7 +656,7 @@ void DDLView::setPtrTarget(PtrDesc *desc)
 
    auto index=desc->index;
 
-   Putobj(out,CStr("-> "),consts[index->index].name);
+   Putobj(out,CStr("-> "),consts[index->index].name.str);
 
    for(++index; +index ;++index)
      {
@@ -763,18 +765,24 @@ class DDLInnerWindow::SizeProc : NoCopy
      ey=2*Cast(space.y);
     }
 
-   uPoint size(StrLen str) const
+   uPoint size(StrSize &str) const
     {
-     TextSize ts=font->text(str);
+     TextSize ts=font->text(str.str);
 
      IntGuard(!ts.overflow);
 
-     return {Cast(ts.full_dx)+ex,Cast(ts.dy)+ey};
+     ulen x=Cast(ts.full_dx);
+     ulen y=Cast(ts.dy);
+
+     str.size.x=x;
+     str.size.y=y;
+
+     return {x+ex,y+ey};
     }
 
-   uPoint operator () (StrLen str) const { return size(str); }
+   uPoint operator () (StrSize &str) const { return size(str); }
 
-   void operator () (uPoint &ret,StrLen *ptr) const
+   void operator () (uPoint &ret,StrSize *ptr) const
     {
      ret=size(*ptr);
     }
@@ -916,7 +924,7 @@ class DDLInnerWindow::PlaceProc : NoCopy
      exy=2*dxy;
     }
 
-   void operator () (StrLen *ptr,ulen x,ulen y)
+   void operator () (StrSize *ptr,ulen x,ulen y)
     {
      Used(ptr);
      Used(x);
@@ -965,6 +973,8 @@ class DDLInnerWindow::PlaceProc : NoCopy
      for(StructDesc::Row &row : ptr->table )
        {
         ulen X=x;
+
+        row.y=y;
 
         for(ulen i=0; i<fields.len ;i++)
           {
@@ -1139,7 +1149,7 @@ class DDLInnerWindow::DrawProc
 
   private:
 
-   void drawText2(StrLen str,uPane outer) const
+   void drawText(StrLen str,uPane outer) const
     {
      if( outer.intersect(pos,size) )
        {
@@ -1253,6 +1263,71 @@ class DDLInnerWindow::DrawProc
      art.path(HalfPos,width,vc,MPoint(a).subXaddY(MPoint::Half),MPoint(b).addXY(MPoint::Half));
     }
 
+  private:
+
+   struct Extension
+    {
+     ulen x;
+     ulen len;
+
+     bool operator >= (Extension ext) const { return x+len > ext.x ; }
+
+     bool operator <= (Extension ext) const { return x < ext.x+ext.len ; }
+    };
+
+   template <class T,FuncType<Extension,T> Func>
+   static PtrLen<T> Clip(PtrLen<T> list,Func func,Extension ext)
+    {
+     Algon::BinarySearch_if(list, [func,ext] (const T &obj) { return func(obj) >= ext ; } );
+
+     return Algon::BinarySearch_if(list, [func,ext] (const T &obj) { return !( func(obj) <= ext ); } );
+    }
+
+   static Extension ExtX(const FieldDesc &desc)
+    {
+     return {desc.place.base.x,desc.place.size.x};
+    }
+
+   PtrLen<FieldDesc> clipX(PtrLen<FieldDesc> list) const
+    {
+     return Clip(list,ExtX,{pos.x,size.x});
+    }
+
+   static Extension CellExtY(const ValueDesc &desc,ulen dxy,ulen exy)
+    {
+     if( desc.isScalar() )
+       {
+        return {desc.place.base.y,desc.place.size.y};
+       }
+     else
+       {
+        return {desc.place.base.y-dxy,desc.place.size.y+exy};
+       }
+    }
+
+   PtrLen<ValueDesc> clipY(PtrLen<ValueDesc> list) const
+    {
+     ulen dxy=this->dxy;
+     ulen exy=this->exy;
+
+     return Clip(list, [dxy,exy] (const ValueDesc &desc) { return CellExtY(desc,dxy,exy); } ,{pos.y,size.y});
+    }
+
+   static Extension RowExtY(const StructDesc::Row &row)
+    {
+     return {row.y,row.dy};
+    }
+
+   PtrLen<StructDesc::Row> clipY(PtrLen<StructDesc::Row> list) const
+    {
+     return Clip(list,RowExtY,{pos.y,size.y});
+    }
+
+   static Extension ExtY(const ConstDesc &desc)
+    {
+     return {desc.place.base.y,Max(desc.place.size.y,desc.value.place.size.y)};
+    }
+
   public:
 
    DrawProc(const DrawBuf &buf_,const Config &cfg,uPoint pos_,uPoint size_)
@@ -1283,57 +1358,48 @@ class DDLInnerWindow::DrawProc
      drawBottom({place.base.x,place.base.y+place.size.y-1},place.size.x,bottom);
     }
 
-   void drawText(StrLen str,uPane place) const
+   void drawText(StrSize str,uPane place) const
     {
-     TextSize ts=font->text(str);
-
-     ulen tx=Cast(ts.full_dx);
-     ulen ty=Cast(ts.dy);
-
      uPane outer;
 
      outer.base.x=place.base.x+sdx;
-     outer.base.y=place.base.y+(place.size.y-ty)/2;
+     outer.base.y=place.base.y+(place.size.y-str.size.y)/2;
 
-     outer.size.x=tx;
-     outer.size.y=ty;
+     outer.size=str.size;
 
-     drawText2(str,outer);
+     drawText(str.str,outer);
     }
 
-   void drawTextCenter(StrLen str,uPane place) const
+   void drawTextCenter(StrSize str,uPane place) const
     {
-     TextSize ts=font->text(str);
-
-     ulen tx=Cast(ts.full_dx);
-     ulen ty=Cast(ts.dy);
-
      uPane outer;
 
-     outer.base.x=place.base.x+(place.size.x-tx)/2;
-     outer.base.y=place.base.y+(place.size.y-ty)/2;
+     outer.base.x=place.base.x+(place.size.x-str.size.x)/2;
+     outer.base.y=place.base.y+(place.size.y-str.size.y)/2;
 
-     outer.size.x=tx;
-     outer.size.y=ty;
+     outer.size=str.size;
 
-     drawText2(str,outer);
+     drawText(str.str,outer);
     }
 
-   void draw(StrLen str,uPane place,bool inside=false) const
+   void draw(StrSize str,uPane place,bool inside=false) const
     {
-     if( !inside ) drawFrame(place);
+     if( place.intersect(pos,size) )
+       {
+        if( !inside ) drawFrame(place);
 
-     drawText(str,place);
+        drawText(str,place);
+       }
     }
 
-   void drawCenter(StrLen str,uPane place) const
+   void drawCenter(StrSize str,uPane place) const
     {
      drawFrame(place);
 
      drawTextCenter(str,place);
     }
 
-   void operator () (uPane place,StrLen *ptr,bool inside) const
+   void operator () (uPane place,StrSize *ptr,bool inside) const
     {
      draw(*ptr,place,inside);
     }
@@ -1347,50 +1413,58 @@ class DDLInnerWindow::DrawProc
      cell.base=place.base;
      cell.size.x=place.size.x;
 
-     for(ValueDesc &obj : *ptr )
+     for(ValueDesc &obj : clipY(*ptr) )
        {
         if( obj.isScalar() )
-          cell.size.y=obj.place.size.y;
+          {
+           cell.base.y=obj.place.base.y;
+           cell.size.y=obj.place.size.y;
+          }
         else
-          cell.size.y=obj.place.size.y+exy;
+          {
+           cell.base.y=obj.place.base.y-dxy;
+           cell.size.y=obj.place.size.y+exy;
+          }
 
         draw(cell,obj);
-
-        cell.base.y+=cell.size.y;
        }
     }
 
    void operator () (uPane place,StructDesc *ptr,bool inside) const
     {
      Used(inside);
+     Used(place);
 
      auto fields=ptr->fields;
 
-     for(FieldDesc &field : fields )
+     auto clip_fields=clipX(fields);
+
+     if( !clip_fields ) return;
+
+     ulen di=Dist(fields.ptr,clip_fields.ptr);
+
+     for(FieldDesc &field : clip_fields )
        {
         drawCenter(field.name,field.place);
        }
 
      uPane cell;
 
-     cell.base.y=place.base.y;
-
-     for(StructDesc::Row &row : ptr->table )
+     for(StructDesc::Row &row : clipY(ptr->table) )
        {
+        cell.base.y=row.y;
         cell.size.y=row.dy;
 
-        for(ulen i=0; i<fields.len ;i++)
+        for(ulen i=0; i<clip_fields.len ;i++)
           {
-           FieldDesc &field=fields[i];
-           ValueDesc &obj=row.row[i];
+           FieldDesc &field=clip_fields[i];
+           ValueDesc &obj=row.row[i+di];
 
            cell.base.x=field.place.base.x;
            cell.size.x=field.place.size.x;
 
            draw(cell,obj);
           }
-
-        cell.base.y+=row.dy;
        }
     }
 
@@ -1401,7 +1475,8 @@ class DDLInnerWindow::DrawProc
 
    void draw(const ValueDesc &value,bool inside=false) const
     {
-     ElaborateAnyPtr(*this,value.place,value.ptr,inside);
+     if( value.place.intersect(pos,size) )
+       ElaborateAnyPtr(*this,value.place,value.ptr,inside);
     }
 
    void draw(uPane cell,const ValueDesc &value) const
@@ -1417,9 +1492,16 @@ class DDLInnerWindow::DrawProc
 
      draw(desc.value);
     }
+
+   // clip
+
+   PtrLen<ConstDesc> clipY(PtrLen<ConstDesc> list) const
+    {
+     return Clip(list,ExtY,{pos.y,size.y});
+    }
  };
 
-void DDLInnerWindow::draw(DrawBuf buf,bool) const // TODO
+void DDLInnerWindow::draw(DrawBuf buf,bool) const
  {
   buf.erase(+cfg.back);
 
@@ -1429,7 +1511,7 @@ void DDLInnerWindow::draw(DrawBuf buf,bool) const // TODO
 
   auto list=view.getConstList();
 
-  for(auto &obj : list )
+  for(auto &obj : proc.clipY(list) )
     {
      proc(obj);
     }

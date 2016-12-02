@@ -33,6 +33,8 @@ struct uPoint;
 
 struct uPane;
 
+struct StrSize;
+
 struct FieldDesc;
 
 struct StructDesc;
@@ -130,11 +132,21 @@ struct uPane
   Pane baseOf(uPoint pos) const;
  };
 
+/* struct StrSize */
+
+struct StrSize
+ {
+  StrLen str;
+  uPoint size;
+
+  void operator = (StrLen str_) { str=str_; }
+ };
+
 /* struct FieldDesc */
 
 struct FieldDesc
  {
-  StrLen name;
+  StrSize name;
   uPane place;
  };
 
@@ -146,6 +158,7 @@ struct StructDesc
 
   struct Row
    {
+    ulen y = 0 ;
     ulen dy = 0 ;
     PtrLen<ValueDesc> row;
    };
@@ -157,7 +170,7 @@ struct StructDesc
 
 struct PtrDesc
  {
-  StrLen name;
+  StrSize name;
 
   struct Index
    {
@@ -182,7 +195,7 @@ struct ValueDesc
  {
   uPane place;
 
-  AnyPtr<StrLen,PtrLen<ValueDesc>,StructDesc,PtrDesc> ptr;
+  AnyPtr<StrSize,PtrLen<ValueDesc>,StructDesc,PtrDesc> ptr;
 
   ValueDesc() noexcept {}
 
@@ -197,7 +210,7 @@ struct ValueDesc
 
 struct ConstDesc
  {
-  StrLen name;
+  StrSize name;
   uPane place;
 
   ValueDesc value;
@@ -413,6 +426,11 @@ class DDLInnerWindow : public SubWindow
 
    void update(DDL::EngineResult result);
 
+   void updateCfg()
+    {
+     layoutView();
+    }
+
    // drawing
 
    virtual void layout();
@@ -494,6 +512,11 @@ class DDLWindow : public ComboWindow
    // methods
 
    Point getMinSize() const { return Null; }
+
+   void updateCfg()
+    {
+     inner.updateCfg();
+    }
 
    // drawing
 
@@ -578,6 +601,11 @@ class DisplayWindow : public ComboWindow
    void openPretext(StrLen file_name);
 
    void noPretext();
+
+   void updateCfg()
+    {
+     ddl.updateCfg();
+    }
 
    // drawing
 
