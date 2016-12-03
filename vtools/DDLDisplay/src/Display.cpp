@@ -1105,6 +1105,13 @@ void DDLInnerWindow::layoutView()
   placeView();
  }
 
+ValueDesc * DDLInnerWindow::find(uPoint pos) // TODO
+ {
+  Used(pos);
+
+  return 0;
+ }
+
 void DDLInnerWindow::posX(ulen pos)
  {
   slide_x.pos=pos;
@@ -1588,6 +1595,13 @@ void DDLInnerWindow::looseFocus()
 void DDLInnerWindow::react(UserAction action)
  {
   action.dispatch(*this);
+ }
+
+void DDLInnerWindow::react_LeftClick(Point point,MouseKey) // TODO
+ {
+  ValueDesc *desc=find({slide_x.pos+Cast(point.x),slide_y.pos+Cast(point.y)});
+
+  // TODO
  }
 
 void DDLInnerWindow::react_Wheel(Point,MouseKey mkey,Coord delta)

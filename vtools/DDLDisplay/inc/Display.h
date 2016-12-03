@@ -451,6 +451,8 @@ class DDLInnerWindow : public SubWindow
 
    class DrawProc;
 
+   ValueDesc * find(uPoint pos);
+
   private:
 
    void posX(ulen pos);
@@ -514,6 +516,8 @@ class DDLInnerWindow : public SubWindow
    // user input
 
    virtual void react(UserAction action);
+
+   void react_LeftClick(Point point,MouseKey mkey);
 
    void react_Wheel(Point,MouseKey mkey,Coord delta);
 
