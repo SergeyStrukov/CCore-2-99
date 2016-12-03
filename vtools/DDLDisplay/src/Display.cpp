@@ -1096,7 +1096,7 @@ void DDLInnerWindow::placeView()
      place(obj.place,obj.value);
     }
 
-  place.getTotal(x_total,y_total);
+  place.getTotal(slide_x.total,slide_y.total);
  }
 
 void DDLInnerWindow::layoutView()
@@ -1107,14 +1107,14 @@ void DDLInnerWindow::layoutView()
 
 void DDLInnerWindow::posX(ulen pos)
  {
-  x_pos=pos;
+  slide_x.pos=pos;
 
   redraw();
  }
 
 void DDLInnerWindow::posY(ulen pos)
  {
-  y_pos=pos;
+  slide_y.pos=pos;
 
   redraw();
  }
@@ -1138,8 +1138,8 @@ void DDLInnerWindow::update(DDL::EngineResult result)
  {
   view.update(result);
 
-  x_pos=0;
-  y_pos=0;
+  slide_x.pos=0;
+  slide_y.pos=0;
 
   layoutView();
  }
@@ -1150,27 +1150,12 @@ void DDLInnerWindow::layout()
  {
   Point size=getSize();
 
-  x_page=size.x;
+  slide_x.setPage(size.x);
+  slide_y.setPage(size.y);
 
-  if( x_page>=x_total )
-    {
-     x_pos=0;
-    }
-  else
-    {
-     Replace_min(x_pos,x_total-x_page);
-    }
+  FontSize fs=cfg.font->getSize();
 
-  y_page=size.y;
-
-  if( y_page>=y_total )
-    {
-     y_pos=0;
-    }
-  else
-    {
-     Replace_min(y_pos,y_total-y_page);
-    }
+  wheel_mul=fs.dy;
  }
 
 class DDLInnerWindow::DrawProc
@@ -1408,6 +1393,16 @@ class DDLInnerWindow::DrawProc
      drawBottom({place.base.x,place.base.y+place.size.y-1},place.size.x,bottom);
     }
 
+   void drawFrame(uPane place,VColor vc) const
+    {
+     if( place.size.noSize() ) return;
+
+     drawLeft(place.base,place.size.y,vc);
+     drawTop(place.base,place.size.x,vc);
+     drawRight({place.base.x+place.size.x-1,place.base.y},place.size.y,vc);
+     drawBottom({place.base.x,place.base.y+place.size.y-1},place.size.x,vc);
+    }
+
    void drawText(StrSize str,uPane place) const
     {
      uPane outer;
@@ -1557,7 +1552,7 @@ void DDLInnerWindow::draw(DrawBuf buf,bool) const
 
   Point size=getSize();
 
-  DrawProc proc(buf,cfg,{x_pos,y_pos},{Cast(size.x),Cast(size.y)});
+  DrawProc proc(buf,cfg,{slide_x.pos,slide_y.pos},{Cast(size.x),Cast(size.y)});
 
   auto list=view.getConstList();
 
@@ -1565,6 +1560,8 @@ void DDLInnerWindow::draw(DrawBuf buf,bool) const
     {
      proc(obj);
     }
+
+  if( focus ) proc.drawFrame({{0,0},{slide_x.total,slide_y.total}},+cfg.focus);
  }
 
  // base
@@ -1584,6 +1581,35 @@ void DDLInnerWindow::gainFocus()
 void DDLInnerWindow::looseFocus()
  {
   if( Change(focus,false) ) redraw();
+ }
+
+ // user input
+
+void DDLInnerWindow::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+void DDLInnerWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
+ {
+  if( mkey&MouseKey_Shift )
+    {
+     if( slide_x.move(delta,wheel_mul) )
+       {
+        scroll_x.assert(slide_x.pos);
+
+        redraw();
+       }
+    }
+  else
+    {
+     if( slide_y.move(delta,wheel_mul) )
+       {
+        scroll_y.assert(slide_y.pos);
+
+        redraw();
+       }
+    }
  }
 
 /* class DDLWindow */

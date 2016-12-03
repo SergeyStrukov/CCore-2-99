@@ -365,13 +365,75 @@ class DDLInnerWindow : public SubWindow
 
    // scroll
 
-   ulen x_pos   = 0 ;
-   ulen x_total = 0 ;
-   ulen x_page  = 0 ;
+   ulen wheel_mul = 0 ;
 
-   ulen y_pos   = 0 ;
-   ulen y_total = 0 ;
-   ulen y_page  = 0 ;
+   struct Slide
+    {
+     ulen pos = 0 ;
+     ulen page = 0 ;
+     ulen total = 0 ;
+
+     bool isShort() const { return page<total; }
+
+     void setPage(ulen page_)
+      {
+       page=page_;
+
+       if( page>=total )
+         {
+          pos=0;
+         }
+       else
+         {
+          Replace_min(pos,total-page);
+         }
+      }
+
+     bool move(Coord delta,ulen mul)
+      {
+       if( page<total )
+         {
+          if( delta<0 )
+            {
+             ulen d=IntAbs(delta);
+
+             d*=mul;
+
+             Replace_min(d,total-page-pos);
+
+             if( d )
+               {
+                pos+=d;
+
+                return true;
+               }
+            }
+          else
+            {
+             ulen d=IntAbs(delta);
+
+             d*=mul;
+
+             Replace_min(d,pos);
+
+             if( d )
+               {
+                pos-=d;
+
+                return true;
+               }
+            }
+         }
+
+       return false;
+      }
+
+     template <class W>
+     void setScroll(W &window) { window.setRange(total,page,pos); }
+    };
+
+   Slide slide_x;
+   Slide slide_y;
 
   private:
 
@@ -406,15 +468,15 @@ class DDLInnerWindow : public SubWindow
 
    // special methods
 
-   bool shortDX() const { return x_page<x_total; }
+   bool shortDX() const { return slide_x.isShort(); }
 
-   bool shortDY() const { return y_page<y_total; }
-
-   template <class W>
-   void setScrollX(W &window) { window.setRange(x_total,x_page,x_pos); }
+   bool shortDY() const { return slide_y.isShort(); }
 
    template <class W>
-   void setScrollY(W &window) { window.setRange(y_total,y_page,y_pos); }
+   void setScrollX(W &window) { slide_x.setScroll(window); }
+
+   template <class W>
+   void setScrollY(W &window) { slide_y.setScroll(window); }
 
    void bind(Signal<ulen> &scroll_x,Signal<ulen> &scroll_y)
     {
@@ -448,6 +510,12 @@ class DDLInnerWindow : public SubWindow
    virtual void gainFocus();
 
    virtual void looseFocus();
+
+   // user input
+
+   virtual void react(UserAction action);
+
+   void react_Wheel(Point,MouseKey mkey,Coord delta);
 
    // signals
 

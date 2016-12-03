@@ -19,6 +19,7 @@
 #include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
+#include <CCore/inc/Path.h>
 
 namespace App {
 
@@ -139,7 +140,10 @@ class Application : public ApplicationBase
     {
      if( ok )
        {
-        main_win.setTitle(String("DDL file: ")+file_name);
+        SplitPath path(file_name);
+        SplitName name(path.path);
+
+        main_win.setTitle(String("DDL file: ")+name.name);
        }
      else
        {
