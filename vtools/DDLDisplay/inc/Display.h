@@ -113,6 +113,8 @@ struct uPoint
 
   friend bool operator < (uPoint a,uPoint b) { return a.x<b.x && a.y<b.y ; }
 
+  friend bool operator <= (uPoint a,uPoint b) { return a.x<=b.x && a.y<=b.y ; }
+
   static Coord BaseOf(ulen a,ulen b);
 
   Point baseOf(uPoint pos) const;
@@ -124,6 +126,8 @@ struct uPane
  {
   uPoint base;
   uPoint size;
+
+  bool contains(uPoint pos) const { return base<=pos && pos<base+size ; }
 
   bool intersect(uPane obj) const;
 
@@ -449,9 +453,13 @@ class DDLInnerWindow : public SubWindow
 
    void layoutView();
 
+   struct ClipProc;
+
    class DrawProc;
 
-   ValueDesc * find(uPoint pos);
+   class FindProc;
+
+   ValueDesc * find(uPoint pos) const;
 
   private:
 

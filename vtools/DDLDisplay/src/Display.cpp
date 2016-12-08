@@ -1105,11 +1105,168 @@ void DDLInnerWindow::layoutView()
   placeView();
  }
 
-ValueDesc * DDLInnerWindow::find(uPoint pos) // TODO
+struct DDLInnerWindow::ClipProc
  {
-  Used(pos);
+  struct Extension
+   {
+    ulen x;
+    ulen len;
 
-  return 0;
+    bool operator >= (Extension ext) const { return x+len > ext.x ; }
+
+    bool operator <= (Extension ext) const { return x < ext.x+ext.len ; }
+
+    bool operator >= (ulen pos) const { return x+len > pos ; }
+
+    bool operator <= (ulen pos) const { return x <= pos ; }
+   };
+
+  static Extension ExtY(const ConstDesc &desc)
+   {
+    return {desc.place.base.y,Max(desc.place.size.y,desc.value.place.size.y)};
+   }
+
+  static Extension ExtX(const FieldDesc &desc)
+   {
+    return {desc.place.base.x,desc.place.size.x};
+   }
+
+  static Extension CellExtY(const ValueDesc &desc,ulen dxy,ulen exy)
+   {
+    if( desc.isScalar() )
+      {
+       return {desc.place.base.y,desc.place.size.y};
+      }
+    else
+      {
+       return {desc.place.base.y-dxy,desc.place.size.y+exy};
+      }
+   }
+
+  static Extension RowExtY(const StructDesc::Row &row)
+   {
+    return {row.y,row.dy};
+   }
+ };
+
+class DDLInnerWindow::FindProc : ClipProc
+ {
+   uPoint pos;
+
+   ulen dxy;
+   ulen exy;
+
+   ValueDesc *ret = 0 ;
+
+  private:
+
+   template <class T>
+   static T * First(PtrLen<T> list)
+    {
+     if( list.len ) return list.ptr;
+
+     return 0;
+    }
+
+   template <class T,FuncType<Extension,T> Func>
+   static T * Clip(PtrLen<T> list,Func func,ulen pos)
+    {
+     Algon::BinarySearch_if(list, [func,pos] (const T &obj) { return func(obj) >= pos ; } );
+
+     return First( Algon::BinarySearch_if(list, [func,pos] (const T &obj) { return !( func(obj) <= pos ); } ) );
+    }
+
+   ValueDesc * clipY(PtrLen<ValueDesc> list) const
+    {
+     ulen dxy=this->dxy;
+     ulen exy=this->exy;
+
+     return Clip(list, [dxy,exy] (const ValueDesc &desc) { return CellExtY(desc,dxy,exy); } ,pos.y);
+    }
+
+   StructDesc::Row * clipY(PtrLen<StructDesc::Row> list) const
+    {
+     return Clip(list,RowExtY,pos.y);
+    }
+
+   FieldDesc * clipX(PtrLen<FieldDesc> list) const
+    {
+     return Clip(list,ExtX,pos.x);
+    }
+
+  public:
+
+   FindProc(uPoint pos_,const Config &cfg)
+    : pos(pos_)
+    {
+     Coord space_dxy=+cfg.space_dxy;
+
+     dxy=Cast(space_dxy);
+     exy=2*dxy;
+    }
+
+   operator ValueDesc * () const { return ret; }
+
+   void operator () (ValueDesc &desc,StrSize *)
+    {
+     ret=&desc;
+    }
+
+   void operator () (ValueDesc &,PtrLen<ValueDesc> *ptr)
+    {
+     if( auto *desc=clipY(*ptr) )
+       {
+        set(*desc);
+       }
+    }
+
+   void operator () (ValueDesc &,StructDesc *ptr)
+    {
+     if( auto *row=clipY(ptr->table) )
+       {
+        auto fields=ptr->fields;
+
+        if( auto *clip_field=clipX(fields) )
+          {
+           ulen i=Dist(fields.ptr,clip_field);
+
+           set(row->row[i]);
+          }
+       }
+    }
+
+   void operator () (ValueDesc &desc,PtrDesc *)
+    {
+     ret=&desc;
+    }
+
+   void set(ValueDesc &desc)
+    {
+     if( !desc.place.contains(pos) ) return;
+
+     ElaborateAnyPtr(*this,desc,desc.ptr);
+    }
+
+   void operator () (ValueDesc &desc)
+    {
+     set(desc);
+    }
+
+   ConstDesc * clipY(PtrLen<ConstDesc> list) const
+    {
+     return Clip(list,ExtY,pos.y);
+    }
+ };
+
+ValueDesc * DDLInnerWindow::find(uPoint pos) const
+ {
+  FindProc proc(pos,cfg);
+
+  auto list=view.getConstList();
+
+  if( auto *desc=proc.clipY(list) ) proc(desc->value);
+
+  return proc;
  }
 
 void DDLInnerWindow::posX(ulen pos)
@@ -1165,7 +1322,7 @@ void DDLInnerWindow::layout()
   wheel_mul=fs.dy;
  }
 
-class DDLInnerWindow::DrawProc
+class DDLInnerWindow::DrawProc : ClipProc
  {
    DrawBuf buf;
 
@@ -1307,16 +1464,6 @@ class DDLInnerWindow::DrawProc
 
   private:
 
-   struct Extension
-    {
-     ulen x;
-     ulen len;
-
-     bool operator >= (Extension ext) const { return x+len > ext.x ; }
-
-     bool operator <= (Extension ext) const { return x < ext.x+ext.len ; }
-    };
-
    template <class T,FuncType<Extension,T> Func>
    static PtrLen<T> Clip(PtrLen<T> list,Func func,Extension ext)
     {
@@ -1325,26 +1472,9 @@ class DDLInnerWindow::DrawProc
      return Algon::BinarySearch_if(list, [func,ext] (const T &obj) { return !( func(obj) <= ext ); } );
     }
 
-   static Extension ExtX(const FieldDesc &desc)
-    {
-     return {desc.place.base.x,desc.place.size.x};
-    }
-
    PtrLen<FieldDesc> clipX(PtrLen<FieldDesc> list) const
     {
      return Clip(list,ExtX,{pos.x,size.x});
-    }
-
-   static Extension CellExtY(const ValueDesc &desc,ulen dxy,ulen exy)
-    {
-     if( desc.isScalar() )
-       {
-        return {desc.place.base.y,desc.place.size.y};
-       }
-     else
-       {
-        return {desc.place.base.y-dxy,desc.place.size.y+exy};
-       }
     }
 
    PtrLen<ValueDesc> clipY(PtrLen<ValueDesc> list) const
@@ -1355,19 +1485,9 @@ class DDLInnerWindow::DrawProc
      return Clip(list, [dxy,exy] (const ValueDesc &desc) { return CellExtY(desc,dxy,exy); } ,{pos.y,size.y});
     }
 
-   static Extension RowExtY(const StructDesc::Row &row)
-    {
-     return {row.y,row.dy};
-    }
-
    PtrLen<StructDesc::Row> clipY(PtrLen<StructDesc::Row> list) const
     {
      return Clip(list,RowExtY,{pos.y,size.y});
-    }
-
-   static Extension ExtY(const ConstDesc &desc)
-    {
-     return {desc.place.base.y,Max(desc.place.size.y,desc.value.place.size.y)};
     }
 
   public:
