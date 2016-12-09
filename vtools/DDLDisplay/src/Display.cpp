@@ -165,6 +165,23 @@ Pane uPane::baseOf(uPoint pos) const
   return Pane(base.baseOf(pos),Coord(size.x),Coord(size.y));
  }
 
+/* struct ValueTarget */
+
+uPane ValueTarget::frame() const
+ {
+  if( !target ) return {};
+
+  if( single ) return target->place;
+
+  uPane ret=target->place;
+
+  auto cur=target;
+
+  for(++cur; +cur ;++cur) ret.size.x+=cur->place.size.x;
+
+  return ret;
+ }
+
 /* struct ValueDesc */
 
 class ValueDesc::IsScalar
@@ -446,7 +463,7 @@ void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
     {
      desc->name=CStr("null");
      desc->index=Empty;
-     desc->target=Empty;
+     desc->target={};
     }
   else
     {
@@ -651,7 +668,7 @@ class DDLView::PtrTarget
 
    explicit PtrTarget(ValueDesc &target_) : target(Single(target_)),single(true) {}
 
-   operator PtrLen<ValueDesc>() const { return target; }
+   operator ValueTarget() const { return {target,single}; }
 
    void operator () (AnyType *,PtrDesc::Index)
     {
@@ -790,6 +807,7 @@ class DDLInnerWindow::SizeProc : NoCopy
    Coord space_dxy;
    Point space;
    Font font;
+   Font title_font;
 
    ulen dxy;
    ulen exy;
@@ -801,7 +819,8 @@ class DDLInnerWindow::SizeProc : NoCopy
    explicit SizeProc(const Config &cfg)
     : space_dxy(+cfg.space_dxy),
       space(+cfg.space),
-      font(+cfg.font)
+      font(+cfg.font),
+      title_font(+cfg.title_font)
     {
      dxy=Cast(space_dxy);
      exy=2*dxy;
@@ -824,7 +843,20 @@ class DDLInnerWindow::SizeProc : NoCopy
      return {x+ex,y+ey};
     }
 
-   uPoint operator () (StrSize &str) const { return size(str); }
+   uPoint title_size(StrSize &str) const
+    {
+     TextSize ts=title_font->text(str.str);
+
+     IntGuard(!ts.overflow);
+
+     ulen x=Cast(ts.full_dx);
+     ulen y=Cast(ts.dy);
+
+     str.size.x=x;
+     str.size.y=y;
+
+     return {x+ex,y+ey};
+    }
 
    void operator () (uPoint &ret,StrSize *ptr) const
     {
@@ -866,7 +898,7 @@ class DDLInnerWindow::SizeProc : NoCopy
 
      for(FieldDesc &field : fields )
        {
-        field.place.size=size(field.name);
+        field.place.size=title_size(field.name);
 
         Replace_max(y,field.place.size.y);
        }
@@ -942,7 +974,7 @@ void DDLInnerWindow::sizeView()
 
   for(auto &obj : list )
     {
-     obj.place.size=size(obj.name);
+     obj.place.size=size.title_size(obj.name);
 
      size(obj.value);
     }
@@ -1269,6 +1301,35 @@ ValueDesc * DDLInnerWindow::find(uPoint pos) const
   return proc;
  }
 
+void DDLInnerWindow::moveTo(ValueTarget target,Point point)
+ {
+  if( !target ) return;
+
+  moveTo(target.target->place.base,point);
+
+  select(target.frame());
+ }
+
+void DDLInnerWindow::moveTo(uPoint target,Point point)
+ {
+  moveTo(target-uPoint{Cast(point.x),Cast(point.y)});
+ }
+
+void DDLInnerWindow::moveTo(uPoint pos)
+ {
+  slide_x.set(pos.x,scroll_x);
+  slide_y.set(pos.y,scroll_y);
+
+  //redraw();
+ }
+
+void DDLInnerWindow::select(uPane pane)
+ {
+  selection=pane;
+
+  redraw();
+ }
+
 void DDLInnerWindow::posX(ulen pos)
  {
   slide_x.pos=pos;
@@ -1335,8 +1396,10 @@ class DDLInnerWindow::DrawProc : ClipProc
    VColor top;
    VColor bottom;
    VColor text;
+   VColor ptr;
 
    Font font;
+   Font title_font;
 
    ulen dxy;
    ulen exy;
@@ -1348,13 +1411,13 @@ class DDLInnerWindow::DrawProc : ClipProc
 
   private:
 
-   void drawText(StrLen str,uPane outer) const
+   void drawText(StrLen str,uPane outer,Font font,VColor vc) const
     {
      if( outer.intersect(pos,size) )
        {
         Pane pane=outer.baseOf(pos);
 
-        font->text(buf,pane,{AlignX_Left,AlignY_Top},str,text);
+        font->text(buf,pane,{AlignX_Left,AlignY_Top},str,vc);
        }
     }
 
@@ -1500,7 +1563,9 @@ class DDLInnerWindow::DrawProc : ClipProc
       top(+cfg.top),
       bottom(+cfg.bottom),
       text(+cfg.text),
+      ptr(+cfg.ptr),
       font(+cfg.font),
+      title_font(+cfg.title_font),
       pos(pos_),
       size(size_)
     {
@@ -1530,7 +1595,7 @@ class DDLInnerWindow::DrawProc : ClipProc
      drawBottom({place.base.x,place.base.y+place.size.y-1},place.size.x,vc);
     }
 
-   void drawText(StrSize str,uPane place) const
+   void drawText(StrSize str,uPane place,Font font,VColor vc) const
     {
      uPane outer;
 
@@ -1539,7 +1604,7 @@ class DDLInnerWindow::DrawProc : ClipProc
 
      outer.size=str.size;
 
-     drawText(str.str,outer);
+     drawText(str.str,outer,font,vc);
     }
 
    void drawTextCenter(StrSize str,uPane place) const
@@ -1551,16 +1616,16 @@ class DDLInnerWindow::DrawProc : ClipProc
 
      outer.size=str.size;
 
-     drawText(str.str,outer);
+     drawText(str.str,outer,title_font,text);
     }
 
-   void draw(StrSize str,uPane place,bool inside=false) const
+   void draw(StrSize str,uPane place,Font font,VColor vc,bool inside=false) const
     {
      if( place.intersect(pos,size) )
        {
         if( !inside ) drawFrame(place);
 
-        drawText(str,place);
+        drawText(str,place,font,vc);
        }
     }
 
@@ -1573,7 +1638,7 @@ class DDLInnerWindow::DrawProc : ClipProc
 
    void operator () (uPane place,StrSize *ptr,bool inside) const
     {
-     draw(*ptr,place,inside);
+     draw(*ptr,place,font,text,inside);
     }
 
    void operator () (uPane place,PtrLen<ValueDesc> *ptr,bool inside) const
@@ -1642,7 +1707,7 @@ class DDLInnerWindow::DrawProc : ClipProc
 
    void operator () (uPane place,PtrDesc *ptr,bool inside) const
     {
-     draw(ptr->name,place,inside);
+     draw(ptr->name,place,font,this->ptr,inside);
     }
 
    void draw(const ValueDesc &value,bool inside=false) const
@@ -1660,7 +1725,7 @@ class DDLInnerWindow::DrawProc : ClipProc
 
    void operator () (const ConstDesc &desc) const
     {
-     draw(desc.name,desc.place);
+     draw(desc.name,desc.place,title_font,text);
 
      draw(desc.value);
     }
@@ -1689,6 +1754,8 @@ void DDLInnerWindow::draw(DrawBuf buf,bool) const
     }
 
   if( focus ) proc.drawFrame({{0,0},{slide_x.total,slide_y.total}},+cfg.focus);
+
+  proc.drawFrame(selection,+cfg.select);
  }
 
  // base
@@ -1717,30 +1784,41 @@ void DDLInnerWindow::react(UserAction action)
   action.dispatch(*this);
  }
 
-void DDLInnerWindow::react_LeftClick(Point point,MouseKey) // TODO
+void DDLInnerWindow::react_LeftClick(Point point,MouseKey mkey)
  {
-  ValueDesc *desc=find({slide_x.pos+Cast(point.x),slide_y.pos+Cast(point.y)});
-
-  // TODO
+  if( ValueDesc *desc=find({slide_x.pos+Cast(point.x),slide_y.pos+Cast(point.y)}) )
+    {
+     if( PtrDesc *ptr=desc->ptr.castPtr<PtrDesc>() )
+       {
+        if( mkey&MouseKey_Shift )
+          {
+           select(desc->place);
+          }
+        else
+          {
+           moveTo(ptr->target,point);
+          }
+       }
+     else
+       {
+        select(desc->place);
+       }
+    }
  }
 
 void DDLInnerWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
  {
   if( mkey&MouseKey_Shift )
     {
-     if( slide_x.move(delta,wheel_mul) )
+     if( slide_x.move(delta,wheel_mul,scroll_x) )
        {
-        scroll_x.assert(slide_x.pos);
-
         redraw();
        }
     }
   else
     {
-     if( slide_y.move(delta,wheel_mul) )
+     if( slide_y.move(delta,wheel_mul,scroll_y) )
        {
-        scroll_y.assert(slide_y.pos);
-
         redraw();
        }
     }

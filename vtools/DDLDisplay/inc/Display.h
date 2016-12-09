@@ -39,6 +39,8 @@ struct FieldDesc;
 
 struct StructDesc;
 
+struct ValueTarget;
+
 struct PtrDesc;
 
 struct ValueDesc;
@@ -107,6 +109,8 @@ struct uPoint
 
   friend uPoint operator + (uPoint a,uPoint b) { return {a.x+b.x,a.y+b.y}; }
 
+  friend uPoint operator - (uPoint a,uPoint b) { return {PosSub(a.x,b.x),PosSub(a.y,b.y)}; }
+
   friend uPoint Sup(uPoint a,uPoint b) { return {Max(a.x,b.x),Max(a.y,b.y)}; }
 
   friend uPoint Inf(uPoint a,uPoint b) { return {Min(a.x,b.x),Min(a.y,b.y)}; }
@@ -126,6 +130,10 @@ struct uPane
  {
   uPoint base;
   uPoint size;
+
+  bool operator + () const { return !size.noSize(); }
+
+  bool operator ! () const { return size.noSize(); }
 
   bool contains(uPoint pos) const { return base<=pos && pos<base+size ; }
 
@@ -170,6 +178,20 @@ struct StructDesc
   PtrLen<Row> table;
  };
 
+/* struct ValueTarget */
+
+struct ValueTarget
+ {
+  PtrLen<ValueDesc> target;
+  bool single = true ;
+
+  bool operator + () const { return +target; }
+
+  bool operator ! () const { return !target; }
+
+  uPane frame() const;
+ };
+
 /* struct PtrDesc */
 
 struct PtrDesc
@@ -190,7 +212,7 @@ struct PtrDesc
 
   PtrLen<Index> index;
 
-  PtrLen<ValueDesc> target;
+  ValueTarget target;
  };
 
 /* struct ValueDesc */
@@ -346,7 +368,10 @@ class DDLInnerWindow : public SubWindow
      RefVal<VColor> bottom =      Snow ;
      RefVal<VColor> focus  = OrangeRed ;
      RefVal<VColor> text   =     Black ;
+     RefVal<VColor> ptr    =      Blue ;
+     RefVal<VColor> select = OrangeRed ;
 
+     RefVal<Font> title_font;
      RefVal<Font> font;
 
      Config() noexcept {}
@@ -354,6 +379,10 @@ class DDLInnerWindow : public SubWindow
      explicit Config(const UserPreference &pref) // TODO
       {
        font.bind(pref.get().info_font.font);
+
+       //title_font.bind(pref.get().contour_font.font);
+
+       title_font.bind(pref.get().title_font.font);
       }
     };
 
@@ -366,6 +395,8 @@ class DDLInnerWindow : public SubWindow
    DDLView view;
 
    bool focus = false ;
+
+   uPane selection;
 
    // scroll
 
@@ -432,8 +463,41 @@ class DDLInnerWindow : public SubWindow
        return false;
       }
 
+     bool move(Coord delta,ulen mul,Signal<ulen> &sig)
+      {
+       if( move(delta,mul) )
+         {
+          sig.assert(pos);
+
+          return true;
+         }
+
+       return false;
+      }
+
      template <class W>
      void setScroll(W &window) { window.setRange(total,page,pos); }
+
+     bool set(ulen pos_)
+      {
+       if( page>=total ) return false;
+
+       Replace_min(pos_,total-page);
+
+       return Change(pos,pos_);
+      }
+
+     bool set(ulen pos_,Signal<ulen> &sig)
+      {
+       if( set(pos_) )
+         {
+          sig.assert(pos);
+
+          return true;
+         }
+
+       return false;
+      }
     };
 
    Slide slide_x;
@@ -460,6 +524,14 @@ class DDLInnerWindow : public SubWindow
    class FindProc;
 
    ValueDesc * find(uPoint pos) const;
+
+   void moveTo(ValueTarget target,Point point);
+
+   void moveTo(uPoint target,Point point);
+
+   void moveTo(uPoint pos);
+
+   void select(uPane pane);
 
   private:
 
