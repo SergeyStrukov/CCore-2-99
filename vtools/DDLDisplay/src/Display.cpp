@@ -173,11 +173,13 @@ uPane ValueTarget::frame() const
 
   if( single ) return target->place;
 
-  uPane ret=target->place;
+  uPane ret;
 
-  auto cur=target;
+  ret.base.x=parent->place.base.x;
+  ret.size.x=parent->place.size.x;
 
-  for(++cur; +cur ;++cur) ret.size.x+=cur->place.size.x;
+  ret.base.y=row->y;
+  ret.size.y=row->dy;
 
   return ret;
  }
@@ -664,11 +666,19 @@ class DDLView::PtrTarget
    PtrLen<ValueDesc> target;
    bool single;
 
+   ValueDesc *parent = 0 ;
+   StructDesc::Row *row = 0 ;
+
   public:
 
    explicit PtrTarget(ValueDesc &target_) : target(Single(target_)),single(true) {}
 
-   operator ValueTarget() const { return {target,single}; }
+   operator ValueTarget() const
+    {
+     if( single ) return {target,single};
+
+     return {target,single,parent,row};
+    }
 
    void operator () (AnyType *,PtrDesc::Index)
     {
@@ -679,7 +689,11 @@ class DDLView::PtrTarget
     {
      if( !index.field )
        {
-        target=desc->table[index.index].row;
+        parent=target.ptr;
+
+        row=&desc->table[index.index];
+
+        target=row->row;
         single=false;
        }
      else
@@ -1184,6 +1198,7 @@ struct DDLInnerWindow::ClipProc
 class DDLInnerWindow::FindProc : ClipProc
  {
    uPoint pos;
+   bool cell = false ;
 
    ulen dxy;
    ulen exy;
@@ -1241,11 +1256,17 @@ class DDLInnerWindow::FindProc : ClipProc
 
    void operator () (ValueDesc &desc,StrSize *)
     {
+     if( !cell && !desc.place.contains(pos) ) return;
+
      ret=&desc;
     }
 
-   void operator () (ValueDesc &,PtrLen<ValueDesc> *ptr)
+   void operator () (ValueDesc &desc,PtrLen<ValueDesc> *ptr)
     {
+     if( !desc.place.contains(pos) ) return;
+
+     cell=true;
+
      if( auto *desc=clipY(*ptr) )
        {
         set(*desc);
@@ -1254,6 +1275,8 @@ class DDLInnerWindow::FindProc : ClipProc
 
    void operator () (ValueDesc &,StructDesc *ptr)
     {
+     cell=true;
+
      if( auto *row=clipY(ptr->table) )
        {
         auto fields=ptr->fields;
@@ -1269,13 +1292,13 @@ class DDLInnerWindow::FindProc : ClipProc
 
    void operator () (ValueDesc &desc,PtrDesc *)
     {
+     if( !cell && !desc.place.contains(pos) ) return;
+
      ret=&desc;
     }
 
    void set(ValueDesc &desc)
     {
-     if( !desc.place.contains(pos) ) return;
-
      ElaborateAnyPtr(*this,desc,desc.ptr);
     }
 

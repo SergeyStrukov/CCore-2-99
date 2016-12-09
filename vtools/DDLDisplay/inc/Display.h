@@ -185,6 +185,9 @@ struct ValueTarget
   PtrLen<ValueDesc> target;
   bool single = true ;
 
+  ValueDesc *parent = 0 ;
+  StructDesc::Row *row = 0 ;
+
   bool operator + () const { return +target; }
 
   bool operator ! () const { return !target; }
