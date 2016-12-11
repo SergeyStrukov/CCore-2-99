@@ -821,7 +821,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference
  : ComboWindow(host),
    cfg(cfg_),
    self_pref(self_pref_),
-   test_frame(getDesktop(),pref,update),
+   test_frame(getFrameDesktop(),pref,update),
 
    item_list(wlist,cfg.list_cfg),
 
@@ -1062,7 +1062,7 @@ void DesignerWindow::open()
  {
   if( test_frame.isDead() )
     {
-     PlaceFrame place(getDesktop());
+     PlaceFrame place(getFrameDesktop());
 
      test_frame.create(getFrame(),
                        place.getPane(Div(2,3)-Div(1,48),Div(1,3),Div(1,8),Div(3,4)),

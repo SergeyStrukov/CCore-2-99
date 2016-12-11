@@ -1914,7 +1914,7 @@ class WindowsHost : public WindowHost
      SysGuard(format, Win64::SetWindowPos(hWnd,(Win64::HWindow)0,pane.x,pane.y,pane.dx,pane.dy,pos_flags) );
     }
 
-   virtual void move(Pane pane)
+   virtual void setPlace(Pane pane)
     {
      max_flag=false;
 

@@ -2775,7 +2775,7 @@ class X11Host : public WindowHost , WindowDispatcher
        }
     }
 
-   virtual void move(Pane pane)
+   virtual void setPlace(Pane pane)
     {
      max_flag=false;
 

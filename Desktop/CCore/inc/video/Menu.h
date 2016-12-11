@@ -530,7 +530,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      setFocus();
 
-     getWindowHost()->setFocus();
+     getFrameHost()->setFocus();
 
      changeOff(delta);
     }
@@ -991,7 +991,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      setFocus();
 
-     getWindowHost()->setFocus();
+     getFrameHost()->setFocus();
 
      changeOff(delta);
     }

@@ -196,7 +196,7 @@ class WindowHost : public MemBase_nocopy
 
    virtual Pane getPlace()=0; // screen
 
-   virtual void move(Pane pane)=0; // screen
+   virtual void setPlace(Pane pane)=0; // screen
 
    // clipboard
 
@@ -235,12 +235,12 @@ class FrameWindow : public NoCopyBase<MemBase,UserInput>
 
    void move(Point delta)
     {
-     host->move(host->getPlace()+delta);
+     host->setPlace(host->getPlace()+delta);
     }
 
    void resize(Point size)
     {
-     host->move(Pane(host->getPlace().getBase(),size));
+     host->setPlace(Pane(host->getPlace().getBase(),size));
     }
 
    // base

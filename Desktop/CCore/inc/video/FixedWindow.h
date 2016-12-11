@@ -199,7 +199,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
         if( +Inf(place,screen) )
           {
-           host->move(place);
+           host->setPlace(place);
 
            host->invalidate(1);
 

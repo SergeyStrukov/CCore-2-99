@@ -242,7 +242,7 @@ void ColorEditWindow::copy(VColor vc)
 
   Printf(out,"###6.16i;",vc);
 
-  getWindowHost()->textToClipboard(out.close());
+  getFrameHost()->textToClipboard(out.close());
  }
 
 class ColorEditWindow::TextToColor : public Funchor
@@ -287,7 +287,7 @@ bool ColorEditWindow::past(VColor &ret)
  {
   TextToColor temp;
 
-  getWindowHost()->textFromClipboard(temp.function_text());
+  getFrameHost()->textFromClipboard(temp.function_text());
 
   return temp.get(ret);
  }

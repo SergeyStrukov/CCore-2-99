@@ -184,7 +184,7 @@ void WindowList::delAll()
 
   if( is_opened )
     {
-     for(auto cur=list.start(); +cur ;++cur) cur->close();
+     for(auto cur=list.start(); +cur ;++cur) try { cur->close(); } catch(...) {}
     }
 
   list.init();
@@ -352,14 +352,14 @@ void WindowList::open()
   has_focus=false;
   is_opened=true;
 
-  for(auto cur=list.start(); +cur ;++cur) cur->open();
+  for(auto cur=list.start(); +cur ;++cur) try { cur->open(); } catch(...) {}
  }
 
 void WindowList::close()
  {
   is_opened=false;
 
-  for(auto cur=list.start(); +cur ;++cur) cur->close();
+  for(auto cur=list.start(); +cur ;++cur) try { cur->close(); } catch(...) {}
  }
 
  // keyboard

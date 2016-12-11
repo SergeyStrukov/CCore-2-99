@@ -247,7 +247,7 @@ class Progress : public IncrementalProgress
     {
     }
 
-   Progress(SubWindow *sub_win) : Progress(sub_win->getDesktop(),sub_win->getFrame()) {}
+   Progress(SubWindow *sub_win) : Progress(sub_win->getFrameDesktop(),sub_win->getFrame()) {}
 
    ~Progress()
     {

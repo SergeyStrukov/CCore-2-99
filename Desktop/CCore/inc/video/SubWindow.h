@@ -50,6 +50,8 @@ class ComboWindow;
 
 struct SubWindowHost
  {
+  // interface
+
   virtual FrameWindow * getFrame()=0;
 
   virtual Point getScreenOrigin()=0;
@@ -61,6 +63,12 @@ struct SubWindowHost
   virtual void captureMouse(SubWindow *sub_win)=0;
 
   virtual void releaseMouse(SubWindow *sub_win)=0;
+
+  // utilities
+
+  Desktop * getFrameDesktop() { return getFrame()->getDesktop(); }
+
+  WindowHost * getFrameHost() { return getFrame()->getHost(); }
  };
 
 /* struct AliveControl */
@@ -121,9 +129,9 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    FrameWindow * getFrame() const { return host.getFrame(); }
 
-   WindowHost * getWindowHost() const { return host.getFrame()->getHost(); }
+   WindowHost * getFrameHost() const { return host.getFrameHost(); }
 
-   Desktop * getDesktop() const { return host.getFrame()->getDesktop(); }
+   Desktop * getFrameDesktop() const { return host.getFrameDesktop(); }
 
    Point getScreenOrigin() const { return host.getScreenOrigin()+place.getBase(); }
 
@@ -243,18 +251,18 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    void forward_draw(const DrawBuf &buf,bool drag_active) const
     {
-     DrawBuf buf1=buf.cutRebase(place);
+     DrawBuf sub_buf=buf.cutRebase(place);
 
-     if( +buf1 ) draw(buf1,drag_active);
+     if( +sub_buf ) try { draw(sub_buf,drag_active); } catch(...) {}
     }
 
    void forward_draw(const DrawBuf &buf,Pane pane,bool drag_active) const
     {
-     DrawBuf buf1=buf.cutRebase(place);
+     DrawBuf sub_buf=buf.cutRebase(place);
 
      pane=Inf(place,pane);
 
-     if( +buf1 && +pane ) draw(buf1,pane-place.getBase(),drag_active);
+     if( +sub_buf && +pane ) try { draw(sub_buf,pane-place.getBase(),drag_active); } catch(...) {}
     }
 
    void forward_react(UserAction action)
@@ -333,11 +341,11 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
    void moveBottom(SubWindow *sub_win);
 
 
-   void insTop(SubWindow &sub_win) { insTop(&sub_win); }
+   bool insTop(SubWindow &sub_win) { return insTop(&sub_win); }
 
-   void insBottom(SubWindow &sub_win) { insBottom(&sub_win); }
+   bool insBottom(SubWindow &sub_win) { return insBottom(&sub_win); }
 
-   void del(SubWindow &sub_win) { del(&sub_win); }
+   bool del(SubWindow &sub_win) { return del(&sub_win); }
 
    void moveTop(SubWindow &sub_win) { moveTop(&sub_win); }
 

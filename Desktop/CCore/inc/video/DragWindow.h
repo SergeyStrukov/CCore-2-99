@@ -289,7 +289,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
               redrawFrame(DragType_Max);
              }
 
-           host->move(place);
+           host->setPlace(place);
 
            host->invalidate(1);
 

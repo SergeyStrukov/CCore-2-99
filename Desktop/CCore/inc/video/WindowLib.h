@@ -2501,7 +2501,7 @@ class LineEditWindowOf : public SubWindow
     {
      if( !shape.select_len ) return;
 
-     getWindowHost()->textToClipboard(Range(text_buf.getPtr()+shape.select_off,shape.select_len));
+     getFrameHost()->textToClipboard(Range(text_buf.getPtr()+shape.select_off,shape.select_len));
     }
 
    void past()
@@ -2510,7 +2510,7 @@ class LineEditWindowOf : public SubWindow
 
      CopyFunction func(text_buf.getPtr()+shape.len,text_buf.getLen()-shape.len);
 
-     getWindowHost()->textFromClipboard(func.function_copy());
+     getFrameHost()->textFromClipboard(func.function_copy());
 
      func.cutEOL();
 

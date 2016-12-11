@@ -2,13 +2,13 @@
 
 --- Infrastructure -------------------------------------------------------------
 
-ApplicationBase.h    + 
-DrawBuf.h            +            
-FrameWindow.h        +       
-Keyboard.h           +    
-Mouse.h              +         
-SubWindow.h          +        
-UserAction.h         +   
+ApplicationBase.h    ++ 
+DrawBuf.h            ++            
+FrameWindow.h        ++       
+Keyboard.h           ++    
+Mouse.h              ++         
+SubWindow.h          ++        
+UserAction.h         ++   
 
 --- Drawing --------------------------------------------------------------------
 
