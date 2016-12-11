@@ -186,7 +186,7 @@ class RGBGlyph : ColorPlane
 
 /* concept BoolPattern<Pattern> */
 
-template <NothrowCopyableType Pattern>
+template <NothrowCopyableType Pattern> // ref extended
 concept bool BoolPattern = requires(Meta::ToConst<Pattern> &cobj,Coord x)
  {
   { cobj.dX() } -> Coord ;
@@ -196,7 +196,7 @@ concept bool BoolPattern = requires(Meta::ToConst<Pattern> &cobj,Coord x)
 
 /* concept BoolGlyph<Glyph> */
 
-template <NothrowCopyableType Glyph>
+template <NothrowCopyableType Glyph> // ref extended
 concept bool BoolGlyph = requires(Meta::ToConst<Glyph> &cobj,Coord y)
  {
   { cobj.dY() } -> Coord ;

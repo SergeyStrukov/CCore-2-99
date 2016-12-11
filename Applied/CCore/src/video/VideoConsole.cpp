@@ -26,8 +26,7 @@ struct VideoConsole::InitFunc
 
   explicit InitFunc(const ColorPlane &plane_) : plane(plane_) {}
 
-  template <class T>
-  void operator () (T &con) { con.init(plane); }
+  void operator () (AnyType &con) { con.init(plane); }
  };
 
 struct VideoConsole::PrintFunc
@@ -36,14 +35,12 @@ struct VideoConsole::PrintFunc
 
   explicit PrintFunc(StrLen str_) : str(str_) {}
 
-  template <class T>
-  void operator () (T &con) { con.print(str); }
+  void operator () (AnyType &con) { con.print(str); }
  };
 
 struct VideoConsole::ToggleMarkerFunc
  {
-  template <class T>
-  void operator () (T &con) { con.toggleMarker(); }
+  void operator () (AnyType &con) { con.toggleMarker(); }
  };
 
 ColorMode VideoConsole::setDevice()

@@ -81,7 +81,7 @@ class DefaultFont
       bool operator [] (Coord x) const { return pixel[x]; }
     };
 
-   Pattern operator [] (Coord y) const { return Pattern(pixel+Area(y,DX)); }
+   Pattern operator [] (Coord y) const { return Pattern(pixel+Area(DX,y)); }
  };
 
 /* class CharPanel<RawColor> */
