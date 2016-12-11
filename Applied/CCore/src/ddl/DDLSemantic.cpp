@@ -433,10 +433,9 @@ bool Context::setDomainTypes()
   return ret;
  }
 
-Context::Context(PrintBase &msg,ulen mem_cap_)
- : mem_cap(mem_cap_),
-   error(msg),
-   pool(MemPool::DefaultBlockLen,mem_cap_)
+Context::Context(PrintBase &msg,ulen mem_cap)
+ : error(msg),
+   pool(MemPool::DefaultBlockLen,mem_cap)
  {
   name_id_list.init();
   domain_ref_list.init();
@@ -450,9 +449,7 @@ void Context::reset()
  {
   error.reset();
 
-  ElementPool pool_(MemPool::DefaultBlockLen,mem_cap);
-
-  Swap(pool,pool_);
+  pool.erase();
 
   name_id_list.init();
   domain_ref_list.init();

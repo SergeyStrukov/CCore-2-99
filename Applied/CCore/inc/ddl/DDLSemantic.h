@@ -94,8 +94,6 @@ struct SBodyNode;
 
 class Context : NoCopy
  {
-   const ulen mem_cap;
-
    CountList<NameIdNode> name_id_list;
    BaseList<DomainRefNode> domain_ref_list;
 
