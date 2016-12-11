@@ -84,7 +84,7 @@ void CoordEditWindow::layout()
   spin.setPlace(Pane(Null,size.x,size.y/2));
 
   pos.x=size.x/2;
-  pos.y=Rational(3,4)*size.y;
+  pos.y=Div(3,4)*size.y;
  }
 
 void CoordEditWindow::draw(DrawBuf buf,bool drag_active) const

@@ -103,7 +103,7 @@ Point MCoordEditWindow::getMinSize() const
 
   Coordinate dy=Max(size.y,knob_dxy);
 
-  dy=(Rational(5,3)+Rational(1,10))*dy;
+  dy=(Div(5,3)+Div(1,10))*dy;
 
   return Point( +dx , +dy );
  }
@@ -121,7 +121,7 @@ void MCoordEditWindow::layout()
  {
   PaneCut pane(getSize(),0);
 
-  PaneCut p=pane.cutTop(Rational(3,5));
+  PaneCut p=pane.cutTop(Div(3,5));
 
   auto knob_minus=CutBox(minus);
 
@@ -133,11 +133,11 @@ void MCoordEditWindow::layout()
 
   pane.cutLeft(offx);
 
-  pane.place_cutLeftTop(CutPoint(small_minus,Rational(2,3)));
+  pane.place_cutLeftTop(CutPoint(small_minus,Div(2,3)));
 
   pane.cutRight(offx);
 
-  pane.place_cutRightTop(CutPoint(small_plus,Rational(2,3)));
+  pane.place_cutRightTop(CutPoint(small_plus,Div(2,3)));
  }
 
  // user input

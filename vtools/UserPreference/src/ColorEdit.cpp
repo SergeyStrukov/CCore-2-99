@@ -42,7 +42,7 @@ class ColorEditWindow::Art : public SmoothDrawArt
 void ColorEditWindow::draw(Art &art,MPoint center,VColor color,bool select) const
  {
   MCoord radius=Fraction(+cfg.radius);
-  MCoord radius2=Rational(8,10)*radius;
+  MCoord radius2=Div(8,10)*radius;
 
   MCoord delta=Ratio(724,10)*radius;
 
@@ -52,7 +52,7 @@ void ColorEditWindow::draw(Art &art,MPoint center,VColor color,bool select) cons
 
   if( select )
     {
-     MCoord radius3=Rational(7,10)*radius;
+     MCoord radius3=Div(7,10)*radius;
 
      FigureAsterisk fig(center,radius3);
 
@@ -350,7 +350,7 @@ void ColorEditWindow::layout()
   {
    Point base=left_center.addX(radius);
 
-   mix_place=EnvelopeY(base,mix_len,Rational(2,3)*radius);
+   mix_place=EnvelopeY(base,mix_len,Div(2,3)*radius);
    mixUp_place=EnvelopeY(base,mix_len,radius);
   }
 
@@ -368,7 +368,7 @@ void ColorEditWindow::layout()
   {
    Point base=top_center.addY(radius);
 
-   white_place=EnvelopeX(base,white_len,Rational(2,3)*radius);
+   white_place=EnvelopeX(base,white_len,Div(2,3)*radius);
    whiteUp_place=EnvelopeX(base,white_len,radius);
   }
  }
@@ -433,7 +433,7 @@ void ColorEditWindow::draw(DrawBuf buf,bool) const
         {
          MPoint pos(box_mix.getBase()+box_mix.getSize()/2);
 
-         MCoord radius2=Rational(1,3)*Fraction(mix_width);
+         MCoord radius2=Div(1,3)*Fraction(mix_width);
 
          FigureAsterisk fig(pos,radius2);
 
@@ -471,7 +471,7 @@ void ColorEditWindow::draw(DrawBuf buf,bool) const
         {
          MPoint pos(box_white.getBase()+box_white.getSize()/2);
 
-         MCoord radius2=Rational(1,3)*Fraction(mix_width);
+         MCoord radius2=Div(1,3)*Fraction(mix_width);
 
          FigureAsterisk fig(pos,radius2);
 

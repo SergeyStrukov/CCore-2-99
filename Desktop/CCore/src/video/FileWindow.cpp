@@ -1062,7 +1062,7 @@ void FileSubWindow::layout()
   // list_dir
 
   {
-   pane.place_cutTop(list_dir,Rational(1,3));
+   pane.place_cutTop(list_dir,Div(1,3));
   }
 
   // check_new , label_new_file , new_file
@@ -1097,7 +1097,7 @@ void FileSubWindow::layout()
   // list_file , filter_list
 
   {
-   pane.place_cutLeft(list_file,Rational(2,3))
+   pane.place_cutLeft(list_file,Div(2,3))
        .place(filter_list);
   }
  }

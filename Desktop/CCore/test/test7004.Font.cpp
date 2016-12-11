@@ -77,8 +77,8 @@ class ClientSubWindow : public SubWindow
     {
      Point size=getSize();
 
-     Coord dx=Rational(4,21)*size.x;
-     Coord dy=Rational(4,21)*size.y;
+     Coord dx=Div(4,21)*size.x;
+     Coord dy=Div(4,21)*size.y;
 
      Coord x0=dx/4;
      Coord y0=dy/4;

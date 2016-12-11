@@ -437,15 +437,15 @@ struct Ratio
    }
  };
 
-inline Ratio Rational(MCoord a,MCoord b) { return Ratio(a)/Ratio(b); }
+inline Ratio Div(MCoord a,MCoord b) { return Ratio(a)/Ratio(b); }
 
-inline Ratio XdivY(Point size) { return Rational(size.x,size.y); }
+inline Ratio XdivY(Point size) { return Div(size.x,size.y); }
 
-inline Ratio YdivX(Point size) { return Rational(size.y,size.x); }
+inline Ratio YdivX(Point size) { return Div(size.y,size.x); }
 
-inline Ratio XdivY(MPoint size) { return Rational(size.x,size.y); }
+inline Ratio XdivY(MPoint size) { return Div(size.x,size.y); }
 
-inline Ratio YdivX(MPoint size) { return Rational(size.y,size.x); }
+inline Ratio YdivX(MPoint size) { return Div(size.y,size.x); }
 
 /* struct Pane */
 
@@ -462,7 +462,7 @@ struct Pane
 
   Pane(NothingType) : Pane() {}
 
-  Pane(Coord x_,Coord y_,Coord dx_,Coord dy_) // empty if dx_ <=0 OR dy_ <=0
+  Pane(Coord x_,Coord y_,Coord dx_,Coord dy_) // empty if dx_ <= 0 OR dy_ <= 0
    {
     if( dx_>0 && dy_>0 )
       {
@@ -471,7 +471,8 @@ struct Pane
        dx=dx_;
        dy=dy_;
 
-       getLim();
+       IntAdd(x_,dx_);
+       IntAdd(y_,dy_);
       }
     else
       {
@@ -502,7 +503,7 @@ struct Pane
 
   Point getSize() const { return Point(dx,dy); }
 
-  Point getLim() const { return Point(IntAdd(x,dx),IntAdd(y,dy)); }
+  Point getLim() const { return Point(x+dx,y+dy); }
 
   AreaType getArea() const { return Area(dx,dy); }
 
@@ -525,13 +526,23 @@ struct Pane
 
   // operators
 
-  friend Pane operator + (Pane pane,Point point) { return Pane(IntAdd(pane.x,point.x),IntAdd(pane.y,point.y),pane.dx,pane.dy); }
+  friend Pane operator + (Pane pane,Point point) { return Pane(pane.getBase()+point,pane.dx,pane.dy); }
 
   friend Pane operator += (Pane &pane,Point point) { return pane=pane+point; }
 
-  friend Pane operator - (Pane pane,Point point) { return Pane(IntSub(pane.x,point.x),IntSub(pane.y,point.y),pane.dx,pane.dy); }
+  friend Pane operator - (Pane pane,Point point) { return Pane(pane.getBase()-point,pane.dx,pane.dy); }
 
   friend Pane operator -= (Pane &pane,Point point) { return pane=pane-point; }
+
+  // pull
+
+  Pane pullLeft(Coord delta) const { return Pane(IntSub(x,delta),y,IntAdd(dx,delta),dy); }
+
+  Pane pullTop(Coord delta) const { return Pane(x,IntSub(y,delta),dx,IntAdd(dy,delta)); }
+
+  Pane pullRight(Coord delta) const { return Pane(x,y,IntAdd(dx,delta),dy); }
+
+  Pane pullBottom(Coord delta) const { return Pane(x,y,dx,IntAdd(dy,delta)); }
 
   // shrink
 
@@ -559,14 +570,9 @@ struct Pane
 
 /* functions */
 
-inline Pane PaneBaseLim(Point base,Point lim) // base<=lim OR empty
+inline Pane PaneBaseLim(Point base,Point lim) // base <= lim OR empty
  {
-  Coord x=base.x;
-  Coord y=base.y;
-  Coord dx=IntSub(lim.x,base.x);
-  Coord dy=IntSub(lim.y,base.y);
-
-  return Pane(x,y,dx,dy);
+  return Pane(base,lim-base);
  }
 
 

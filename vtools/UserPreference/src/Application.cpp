@@ -83,7 +83,7 @@ class Application : public ApplicationBase
      PlaceFrame place(desktop);
 
      main_win.createMain(cmd_display,
-                         place.getPane(Rational(1,8),Rational(1,2),Rational(1,8),Rational(3,4)),
+                         place.getPane(Div(1,8),Div(1,2),Div(1,8),Div(3,4)),
                          place.getMaxSize(),
                          "User Preference"_def);
     }

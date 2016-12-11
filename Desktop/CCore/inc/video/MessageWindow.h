@@ -146,7 +146,7 @@ class MessageWindow : public FixedWindow
 
    struct Config
     {
-     RefVal<Ratio> ypos_ratio = Rational(5,12) ;
+     RefVal<Ratio> ypos_ratio = Div(5,12) ;
 
      CtorRefVal<FixedWindow::ConfigType> frame_cfg;
      CtorRefVal<MessageSubWindow::ConfigType> msg_cfg;

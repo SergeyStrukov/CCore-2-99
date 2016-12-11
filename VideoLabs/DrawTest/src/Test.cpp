@@ -133,7 +133,7 @@ void Shape3::draw(DrawBuf buf) const
   MCoord len=dx/3;
   MCoord width=Fraction(6,2);
 
-  MCoord radius = Rational(40,100)*Min(len,dy) ;
+  MCoord radius = Div(40,100)*Min(len,dy) ;
 
   TwoField field({x,y},Green,{x,y+dy},DarkGreen);
 

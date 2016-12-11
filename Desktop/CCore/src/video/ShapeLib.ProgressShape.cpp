@@ -67,15 +67,15 @@ void ProgressShape::draw(const DrawBuf &buf) const
   if( has_active )
     {
      MCoord x=x0+width;
-     MCoord y=y0+Rational(1,10)*p.dy;
-     MCoord dy=Rational(8,10)*p.dy;
+     MCoord y=y0+Div(1,10)*p.dy;
+     MCoord dy=Div(8,10)*p.dy;
      MCoord ey=y+dy;
-     MCoord dx=dy+Rational(active_pos,MaxActivePos)*dy;
+     MCoord dx=dy+Div(active_pos,MaxActivePos)*dy;
 
      MCoord len=dx/3;
      MCoord shift=len-width;
 
-     MCoord radius=Rational(40,100)*Min(len,dy);
+     MCoord radius=Div(40,100)*Min(len,dy);
 
      TwoField field({x,y},+cfg.ping_top,{x,ey},+cfg.ping_bottom);
 

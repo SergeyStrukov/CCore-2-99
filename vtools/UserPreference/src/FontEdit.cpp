@@ -623,7 +623,7 @@ void FontEditWindow::layout()
 
   // text_list , file_name_text , family_text
 
-  pane.place_cutLeft(text_list,Rational(1,3))
+  pane.place_cutLeft(text_list,Div(1,3))
       .place_cutTop(file_name_text)
       .place_cutTop(family_text);
 

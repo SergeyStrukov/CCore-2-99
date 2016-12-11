@@ -239,7 +239,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
    MCoord y0=Fraction(ytop);
 
-   MCoord skew1=Rational(h-Fraction(ts.by),h)*skew;
+   MCoord skew1=Div(h-Fraction(ts.by),h)*skew;
 
    // selection
 

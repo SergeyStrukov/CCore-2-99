@@ -166,7 +166,7 @@ EDIDBlock::EDIDBlock(const uint8 buf[EDIDLen])
    ext_count=buf[126];
   }
 
-  //4
+  // 4
   {
    desc[0]=EDIDBlockDesc(buf+54);
    desc[1]=EDIDBlockDesc(buf+72);
