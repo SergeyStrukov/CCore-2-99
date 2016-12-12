@@ -50,7 +50,7 @@ class ComboWindow;
 
 struct SubWindowHost
  {
-  // interface
+  // abstract
 
   virtual FrameWindow * getFrame()=0;
 
@@ -64,7 +64,7 @@ struct SubWindowHost
 
   virtual void releaseMouse(SubWindow *sub_win)=0;
 
-  // utilities
+  // helpers
 
   Desktop * getFrameDesktop() { return getFrame()->getDesktop(); }
 

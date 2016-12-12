@@ -22,18 +22,18 @@ namespace Video {
 
 /* class GammaTable */
 
-template <UIntType T>
-void GammaTable::Fill(PtrLen<T> table,double order)
+template <UIntType UInt>
+void GammaTable::Fill(PtrLen<UInt> table,double order)
  {
   double M=table.len-1;
-  double V=MaxUInt<T>;
+  double V=MaxUInt<UInt>;
 
   for(ulen i=0; i<table.len ;i++)
     {
      double x=i/M;
      double y=pow(x,order);
 
-     table[i]=T( round(V*y) );
+     table[i]=UInt( round(V*y) );
     }
  }
 

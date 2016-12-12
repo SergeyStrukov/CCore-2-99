@@ -96,7 +96,7 @@ class DefaultAppIcon::Base : public PictureBase
 
      if( !p ) return;
 
-     SmoothDrawArt art(buf);
+     SmoothDrawArt art(buf.cut(pane));
 
      p=p.shrinkX(p.dx/10);
      p=p.shrinkY(p.dy/6);

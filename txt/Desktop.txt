@@ -12,14 +12,14 @@ UserAction.h         ++
 
 --- Drawing --------------------------------------------------------------------
 
-GammaTable.h         +    
+GammaTable.h         ++    
 
-DrawTools.h          +          
-CurveDriver.h        +
+DrawTools.h          ++          
+CurveDriver.h        ++
 DrawAlgo.h           +
 CommonDrawArt.h      +
 
-ColorField.h         +
+ColorField.h         ++
 SmoothAlgo.h         +    
 SmoothDrawArt.h      +
             
@@ -31,14 +31,14 @@ FreeTypeFont.h       +
 
 --- Tools ----------------------------------------------------------------------
 
-DesktopKey.h         +        
-FrameGuards.h        +
-ProgressScale.h      +      
-Incremental.h        +        
+DesktopKey.h         ++        
+FrameGuards.h        ++
+ProgressScale.h      ++      
+Picture.h            ++
 Info.h               +
-Picture.h            +
-FileNameCmp.h        +
-FileBoss.h           +
+FileNameCmp.h        ++
+FileBoss.h           ++
+Incremental.h        +        
 
 ================================================================================
 

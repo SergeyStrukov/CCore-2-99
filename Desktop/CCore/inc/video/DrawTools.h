@@ -33,7 +33,7 @@ concept bool MPointSetTypes = ( ... && OneOfTypes<TT,Point,MPoint> ) ;
 
 /* concept PlotType<Plot> */
 
-template <NothrowCopyCtorType Plot>
+template <NothrowCopyCtorType Plot> // ref extended
 concept bool PlotType = requires(Plot &obj,Point p)
  {
   obj(p);
@@ -41,7 +41,7 @@ concept bool PlotType = requires(Plot &obj,Point p)
 
 /* concept SmoothPlotType<SPlot> */
 
-template <class SPlot>
+template <class SPlot> // ref extended
 concept bool SmoothPlotType = PlotType<SPlot> && requires(SPlot &obj,Point p,unsigned alpha)
  {
   obj(p,alpha);
@@ -49,7 +49,7 @@ concept bool SmoothPlotType = PlotType<SPlot> && requires(SPlot &obj,Point p,uns
 
 /* concept HPlotType<HPlot> */
 
-template <class HPlot>
+template <class HPlot> // ref extended
 concept bool HPlotType = PlotType<HPlot> && requires(HPlot &obj,Coord y,Coord a,Coord b)
  {
   obj(y,a,b);
@@ -57,10 +57,10 @@ concept bool HPlotType = PlotType<HPlot> && requires(HPlot &obj,Coord y,Coord a,
 
 /* concept MapType<Map> */
 
-template <NothrowCopyableType Map>
-concept bool MapType = requires(Map &obj,Point p)
+template <NothrowCopyCtorType Map> // ref extended
+concept bool MapType = requires(Meta::ToConst<Map> &cobj,Point p)
  {
-  { obj(p) } -> Point ;
+  { cobj(p) } -> Point ;
  } ;
 
 /* enum SolidFlag */

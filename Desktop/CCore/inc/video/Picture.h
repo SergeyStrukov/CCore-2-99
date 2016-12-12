@@ -47,17 +47,17 @@ struct AbstractPicture
 
   // helpers
 
-  void draw(ulen index,DrawBuf buf,Pane place) const
+  void draw(ulen index,const DrawBuf &buf,Pane place) const
    {
     draw(index,buf.cutRebase(place),place.dx,place.dy);
    }
 
-  void draw(DrawBuf buf,Coord dx,Coord dy) const
+  void draw(const DrawBuf &buf,Coord dx,Coord dy) const
    {
     draw(0,buf,dx,dy);
    }
 
-  void draw(DrawBuf buf,Pane place) const
+  void draw(const DrawBuf &buf,Pane place) const
    {
     draw(0,buf.cutRebase(place),place.dx,place.dy);
    }
@@ -114,7 +114,7 @@ class DefaultAppIcon : public Picture
 
 /* SetAppIcon() */
 
-void SetAppIcon(Picture pict); // implemented by target
+void SetAppIcon(Picture pict); // implemented by the target
 
 } // namespace Video
 } // namespace CCore

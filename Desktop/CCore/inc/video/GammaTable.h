@@ -37,8 +37,8 @@ class GammaTable : NoCopy
 
   private:
 
-   template <UIntType T>
-   static void Fill(PtrLen<T> table,double order);
+   template <UIntType UInt>
+   static void Fill(PtrLen<UInt> table,double order);
 
   public:
 
