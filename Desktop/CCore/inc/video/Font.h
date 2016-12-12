@@ -64,6 +64,8 @@ struct AbstractFont;
 
 class Font;
 
+template <class FontShape> class DotFontBase;
+
 /* struct FontSize */
 
 struct FontSize
@@ -206,18 +208,18 @@ struct AbstractSparseString
     return Algon::GetResult(func);
    }
 
-  ULenSat countLen();
+  ULenSat countLen(bool guard_overflow=false);
 
   void cutSuffix_index(ulen len,ulen &index)
    {
-    index=countLen().value-len;
+    index=countLen(true).value-len;
 
     cutSuffix(len);
    }
 
   bool cutCenter_index(ulen len,ulen &index)
    {
-    index=(countLen().value-len)/2;
+    index=(countLen(true).value-len)/2;
 
     return cutCenter(len);
    }
@@ -409,6 +411,371 @@ class Font
    const AbstractFont * getPtr() const { return ptr.getPtr(); }
 
    const AbstractFont * operator -> () const { return ptr.getPtr(); }
+ };
+
+/* class DotFontBase<FontShape> */
+
+ //
+ // class FontShape
+ //  {
+ //    ...
+ //
+ //   public:
+ //
+ //    ...
+ //
+ //    Coord dX() const;
+ //
+ //    Coord dY() const;
+ //
+ //    Coord bY() const;
+ //
+ //    BoolGlyph operator () (char ch) const;
+ //  };
+ //
+
+template <class FontShape>
+class DotFontBase : public FontBase
+ {
+   FontShape shape;
+
+   ulen max_len;
+
+  private:
+
+   TextSize text(ulen len,bool overflow) const
+    {
+     TextSize ret;
+
+     if( overflow )
+       {
+        ret.dx=MaxCoord;
+        ret.overflow=true;
+       }
+     else
+       {
+        ret.dx=Coord( len*shape.dX() );
+        ret.overflow=false;
+       }
+
+     ret.full_dx=ret.dx;
+
+     ret.dy=shape.dY();
+     ret.by=shape.bY();
+     ret.dx0=0;
+     ret.dx1=0;
+     ret.skew=0;
+
+     return ret;
+    }
+
+   class WorkBuf : public DrawBuf
+    {
+      const FontShape &shape;
+
+     public:
+
+      WorkBuf(const DrawBuf &buf,const FontShape &shape_) : DrawBuf(buf),shape(shape_) {}
+
+      // char
+
+      static void Line(Raw *ptr,BoolPatternType pat,Coord gx,Coord len,DesktopColor color) // len > 0
+       {
+        Coord lim=gx+len;
+
+        if( pat[gx] ) color.copyTo(ptr);
+
+        while( ++gx<lim )
+          {
+           ptr=NextX(ptr);
+
+           if( pat[gx] ) color.copyTo(ptr);
+          }
+       }
+
+      static void Line(Raw *ptr,BoolPatternType pat,Coord len,DesktopColor color) // len > 0
+       {
+        Line(ptr,pat,0,len,color);
+       }
+
+      void text(Coord x,Coord y,char ch,DesktopColor color) //  x < dx , y < dy , y > -fdy
+       {
+        Coord fdx=shape.dX();
+        Coord fdy=shape.dY();
+
+        if( x <= -fdx ) return;
+
+        auto glyph=shape(ch);
+
+        Coord gy;
+        Coord lim;
+
+        if( y<0 )
+          {
+           gy=-y;
+           y=0;
+
+           lim=(dy<fdy)?Min<Coord>(fdy,dy+gy):fdy; // > gy
+          }
+        else
+          {
+           gy=0;
+
+           lim=Min<Coord>(fdy,dy-y); // > gy
+          }
+
+        if( x>=0 )
+          {
+           Coord len=Min<Coord>(fdx,dx-x); // > 0
+
+           Raw *ptr=place(Point(x,y));
+
+           Line(ptr,glyph[gy],len,color);
+
+           while( ++gy<lim )
+             {
+              ptr=nextY(ptr);
+
+              Line(ptr,glyph[gy],len,color);
+             }
+          }
+        else
+          {
+           Coord gx=-x;
+
+           Coord len=Min<Coord>(fdx-gx,dx); // > 0
+
+           Raw *ptr=place(Point(0,y));
+
+           Line(ptr,glyph[gy],gx,len,color);
+
+           while( ++gy<lim )
+             {
+              ptr=nextY(ptr);
+
+              Line(ptr,glyph[gy],gx,len,color);
+             }
+          }
+       }
+
+      // text
+
+      Point prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str,ulen &index) const // TODO
+       {
+        Coord fdx=shape.dX();
+        Coord fdy=shape.dY();
+        Coord fby=shape.bY();
+
+        Coord y;
+
+        switch( place.align_y )
+          {
+           case AlignY_Top : y=0; break;
+
+           case AlignY_Center : y=(py-fdy)/2; break;
+
+           case AlignY_Bottom : y=py-fdy; break;
+
+           default: y=IntSub(place.y,fby);
+          }
+
+        Coord x;
+
+        switch( place.align_x )
+          {
+           case AlignX_Left : index=0; x=0; break;
+
+           case AlignX_Right :
+            {
+             ULenSat len=str.countLen();
+
+             ulen cap=ulen(px/fdx)+1;
+
+             if( len<=cap )
+               {
+                index=0;
+
+                x=Coord( px-len.value*fdx );
+               }
+             else
+               {
+                str.cutSuffix_index(cap,index);
+
+                x=Coord( px-cap*fdx );
+               }
+            }
+           break;
+
+           case AlignX_Center :
+            {
+             ULenSat len=str.countLen();
+
+             ulen cap=ulen(px/fdx)+1;
+
+             if( len<=cap )
+               {
+                index=0;
+
+                x=Coord( px-len.value*fdx )/2;
+               }
+             else
+               {
+                ulen new_len=cap+str.cutCenter_index(cap,index);
+
+                x=Coord( px-new_len*fdx )/2;
+               }
+            }
+           break;
+
+           default: index=0; x=place.x;
+          }
+
+        return Point(x,y);
+       }
+
+      void text(Point point,AbstractSparseString &str,DesktopColor color)
+       {
+        Coord fdx=shape.dX();
+        Coord fdy=shape.dY();
+
+        Coord x=mapX(point.x);
+        Coord y=mapY(point.y);
+
+        if( y>=dy || y<=-fdy ) return;
+
+        str.applyChar( [&] (char ch)
+                           {
+                            if( x>=dx ) return false;
+
+                            text(x,y,ch,color);
+
+                            x+=fdx;
+
+                            return true;
+
+                           } );
+       }
+
+      void text(Point point,AbstractSparseString &str,ulen index,CharFunction func)
+       {
+        Coord fdx=shape.dX();
+        Coord fdy=shape.dY();
+        Coord fby=shape.bY();
+
+        Coord x=mapX(point.x);
+        Coord y=mapY(point.y);
+
+        if( y>=dy || y<=-fdy ) return;
+
+        PointMap map=-getMapper();
+
+        str.applyChar( [&] (char ch)
+                           {
+                            if( x>=dx ) return false;
+
+                            VColor vc=func(index++,ch,map(Point(x,y+fby)),Point(fdx,0));
+
+                            text(x,y,ch,vc);
+
+                            x+=fdx;
+
+                            return true;
+
+                           } );
+       }
+
+      void text(Coord px,Coord py,TextPlace place,AbstractSparseString &str,DesktopColor color)
+       {
+        if( !*this ) return;
+
+        ulen index;
+        Point point=prepare(px,py,place,str,index);
+
+        text(point,str,color);
+       }
+
+      void text(Coord px,Coord py,TextPlace place,AbstractSparseString &str,CharFunction func)
+       {
+        if( !*this ) return;
+
+        ulen index;
+        Point point=prepare(px,py,place,str,index);
+
+        text(point,str,index,func);
+       }
+    };
+
+  public:
+
+   template <class ... TT>
+   explicit DotFontBase(TT && ... tt)
+    : shape( std::forward<TT>(tt)... )
+    {
+     max_len=ulen(MaxCoord/shape.dX());
+    }
+
+   virtual ~DotFontBase() {}
+
+   // AbstractFont
+
+   virtual FontSize getSize() const
+    {
+     FontSize ret;
+
+     ret.min_dx=shape.dX();
+     ret.max_dx=shape.dX();
+     ret.dy=shape.dY();
+     ret.by=shape.bY();
+     ret.dx0=0;
+     ret.dx1=0;
+     ret.skew=0;
+
+     return ret;
+    }
+
+   virtual TextSize text(AbstractSparseString &str) const
+    {
+     ULenSat len=str.countLen();
+
+     return text(len.value,len>max_len);
+    }
+
+   virtual ulen position(AbstractSparseString &,Point point) const
+    {
+     if( point.x<0 ) return 0;
+
+     return 1+ulen(point.x/shape.dX());
+    }
+
+   virtual TextSize text(AbstractSparseString &,ulen pos) const
+    {
+     return text(pos,pos>max_len);
+    }
+
+   virtual ulen fit(AbstractSparseString &str,Coord full_dx) const
+    {
+     ULenSat len=str.countLen();
+
+     ulen max_len=full_dx/shape.dX();
+
+     if( len<=max_len ) return len.value;
+
+     return max_len;
+    }
+
+   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const
+    {
+     WorkBuf out(buf.cutRebase(pane),shape);
+
+     out.text(pane.dx,pane.dy,place,str,vc);
+    }
+
+   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,CharFunction func) const
+    {
+     WorkBuf out(buf.cutRebase(pane),shape);
+
+     out.text(pane.dx,pane.dy,place,str,func);
+    }
  };
 
 } // namespace Video

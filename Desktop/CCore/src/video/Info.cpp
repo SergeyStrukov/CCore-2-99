@@ -70,17 +70,20 @@ Info::Info() noexcept
 
 /* class InfoFromString */
 
-InfoFromString::StringSet::StringSet(StrLen str)
- : buf(DoReserve,100)
+InfoFromString::StringSet::StringSet(StrLen str_)
+ : str(str_),
+   list(DoReserve,100)
  {
-  while( +str )
-    {
-     StrLen line=CutLine(str);
+  StrLen total=Range(str);
 
-     buf.append_fill(line);
+  while( +total )
+    {
+     StrLen line=CutLine(total);
+
+     list.append_fill(line);
     }
 
-  buf.shrink_extra();
+  list.shrink_extra();
  }
 
 InfoFromString::StringSet::~StringSet()
@@ -89,12 +92,12 @@ InfoFromString::StringSet::~StringSet()
 
 ulen InfoFromString::StringSet::getLineCount() const
  {
-  return buf.getLen();
+  return list.getLen();
  }
 
 StrLen InfoFromString::StringSet::getLine(ulen index) const
  {
-  return Range(buf.at(index));
+  return list.at(index);
  }
 
 InfoFromString::InfoFromString(StrLen str)

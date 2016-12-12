@@ -81,10 +81,10 @@ enum EventMarker
 
 const char * GetTextDesc(EventMarker marker);
 
-/* concept EventValue<T> */
+/* concept EventValueType<T> */
 
 template <class T,OneOfTypes<uint8,uint16,uint32> V>
-concept bool EventValue2 = requires()
+concept bool EventValueType2 = requires()
  {
   { T::Base } -> V ;
   { T::Lim } -> V ;
@@ -95,11 +95,11 @@ concept bool EventValue2 = requires()
  } ;
 
 template <class T>
-concept bool EventValue = requires()
+concept bool EventValueType = requires()
  {
   typename T::ValueType;
 
-  requires ( EventValue2<T,typename T::ValueType> );
+  requires ( EventValueType2<T,typename T::ValueType> );
  } ;
 
 /* classes */
@@ -108,7 +108,7 @@ struct EventRecordPos;
 
 struct EventPrefix;
 
-template <EventValue T> class EventEnumValue;
+template <EventValueType T> class EventEnumValue;
 
 class EventMetaInfo;
 
@@ -141,7 +141,7 @@ struct EventPrefix // each event type must be layout-compatible with EventPrefix
  //  };
  //
 
-template <EventValue T>
+template <EventValueType T>
 class EventEnumValue
  {
    using ValueType = typename T::ValueType ;
@@ -169,16 +169,16 @@ class EventEnumValue
    static void Append(Desc &desc);
  };
 
-template <EventValue T>
+template <EventValueType T>
 Sys::Atomic EventEnumValue<T>::Next{T::Base};
 
-template <EventValue T>
+template <EventValueType T>
 Sys::Atomic EventEnumValue<T>::Total{0};
 
-template <EventValue T>
+template <EventValueType T>
 InitStorage<EventEnumValue<T>::Len> EventEnumValue<T>::Storage;
 
-template <EventValue T>
+template <EventValueType T>
 auto EventEnumValue<T>::Reserve(TextLabel name) -> ValueType
  {
   ValueType ret=Next++;
@@ -197,7 +197,7 @@ auto EventEnumValue<T>::Reserve(TextLabel name) -> ValueType
   return T::Lim;
  }
 
-template <EventValue T>
+template <EventValueType T>
 template <class Desc>
 void EventEnumValue<T>::Append(Desc &desc)
  {

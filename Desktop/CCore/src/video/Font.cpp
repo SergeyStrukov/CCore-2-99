@@ -17,10 +17,23 @@
 
 #include <CCore/inc/video/SimpleConsole.h>
 
+#include <CCore/inc/Exception.h>
+
 namespace CCore {
 namespace Video {
 
 namespace Private_Font {
+
+struct DefFontShape
+ {
+  static Coord dX() { return DefaultFont::DX; }
+
+  static Coord dY() { return DefaultFont::DY; }
+
+  static Coord bY() { return DefaultFont::BY; }
+
+  auto operator () (char ch) const { return DefaultFont(ch); }
+ };
 
 class DefFont : public FontBase
  {
@@ -34,7 +47,7 @@ class DefFont : public FontBase
 
       // char
 
-      static void Line(Raw *ptr,BoolPattern pat,Coord gx,Coord len,DesktopColor color) // len > 0
+      static void Line(Raw *ptr,BoolPatternType pat,Coord gx,Coord len,DesktopColor color) // len > 0
        {
         Coord lim=gx+len;
 
@@ -48,7 +61,7 @@ class DefFont : public FontBase
           }
        }
 
-      static void Line(Raw *ptr,BoolPattern pat,Coord len,DesktopColor color) // len > 0
+      static void Line(Raw *ptr,BoolPatternType pat,Coord len,DesktopColor color) // len > 0
        {
         Line(ptr,pat,0,len,color);
        }
@@ -350,11 +363,16 @@ using namespace Private_Font;
 
 /* struct AbstractSparseString */
 
-ULenSat AbstractSparseString::countLen()
+ULenSat AbstractSparseString::countLen(bool guard_overflow)
  {
   ULenSat ret;
 
   apply( [&ret] (StrLen str) { ret+=str.len; } );
+
+  if( guard_overflow && ret.overflow )
+    {
+     Printf(Exception,"CCore::Video::AbstractSparseString::countLen(true) : overflow");
+    }
 
   return ret;
  }

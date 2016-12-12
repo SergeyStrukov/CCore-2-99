@@ -96,7 +96,8 @@ class InfoFromString : public Info
  {
    class StringSet : public InfoBase
     {
-      DynArray<String> buf;
+      String str;
+      DynArray<StrLen> list;
 
      public:
 
@@ -214,7 +215,7 @@ class ComboInfoBuilder : NoCopy
 
         for(; +r && r->type==ComboInfoText ;++r);
 
-        IncrSort(temp.prefix(r), [=] (ComboInfoItem a,ComboInfoItem b) { return less(a.text,b.text); } );
+        IncrSort(temp.prefix(r), [less] (ComboInfoItem a,ComboInfoItem b) { return less(a.text,b.text); } );
        }
     }
 

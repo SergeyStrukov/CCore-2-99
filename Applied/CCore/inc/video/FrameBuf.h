@@ -184,26 +184,26 @@ class RGBGlyph : ColorPlane
     }
  };
 
-/* concept BoolPattern<Pattern> */
+/* concept BoolPatternType<Pattern> */
 
 template <NothrowCopyableType Pattern> // ref extended
-concept bool BoolPattern = requires(Meta::ToConst<Pattern> &cobj,Coord x)
+concept bool BoolPatternType = requires(Meta::ToConst<Pattern> &cobj,Coord x)
  {
   { cobj.dX() } -> Coord ;
 
   { cobj[x] } -> bool ;
  } ;
 
-/* concept BoolGlyph<Glyph> */
+/* concept BoolGlyphType<Glyph> */
 
 template <NothrowCopyableType Glyph> // ref extended
-concept bool BoolGlyph = requires(Meta::ToConst<Glyph> &cobj,Coord y)
+concept bool BoolGlyphType = requires(Meta::ToConst<Glyph> &cobj,Coord y)
  {
   { cobj.dY() } -> Coord ;
 
   cobj[y];
 
-  requires ( BoolPattern<decltype( cobj[y] )> );
+  requires ( BoolPatternType<decltype( cobj[y] )> );
  } ;
 
 /* class FrameBuf<RawColor> */
@@ -249,9 +249,9 @@ class FrameBuf : protected ColorPlane
 
    static void Load(Raw *ptr,Coord len,const RawColor buf[/* len */]);
 
-   static void HLine(Raw *ptr,BoolPattern pat,RawColor back,RawColor fore);
+   static void HLine(Raw *ptr,BoolPatternType pat,RawColor back,RawColor fore);
 
-   static void HLine(Raw *ptr,BoolPattern pat,RawColor fore);
+   static void HLine(Raw *ptr,BoolPatternType pat,RawColor fore);
 
    static void HLine_mono(Raw *ptr,const uint8 *base,unsigned bitoff,Coord dx,RawColor color);
 
@@ -305,9 +305,9 @@ class FrameBuf : protected ColorPlane
 
    void load_unsafe(Pane pane,const RawColor buf[/* pane.getArea() */]);
 
-   void glyph_unsafe(Point p,BoolGlyph gly,RawColor back,RawColor fore);
+   void glyph_unsafe(Point p,BoolGlyphType gly,RawColor back,RawColor fore);
 
-   void glyph_unsafe(Point p,BoolGlyph gly,RawColor fore);
+   void glyph_unsafe(Point p,BoolGlyphType gly,RawColor fore);
 
    void glyph_unsafe(Point p,MonoGlyph gly,RawColor color);
 
@@ -367,7 +367,7 @@ void FrameBuf<RawColor>::Load(Raw *ptr,Coord len,const RawColor buf[])
  }
 
 template <RawColorType RawColor>
-void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPattern pat,RawColor back,RawColor fore)
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,RawColor back,RawColor fore)
  {
   Coord bdx=pat.dX();
 
@@ -379,7 +379,7 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPattern pat,RawColor back,RawColor f
  }
 
 template <RawColorType RawColor>
-void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPattern pat,RawColor fore)
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,RawColor fore)
  {
   Coord bdx=pat.dX();
 
@@ -579,7 +579,7 @@ void FrameBuf<RawColor>::load_unsafe(Pane pane,const RawColor buf[])
  }
 
 template <RawColorType RawColor>
-void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyph gly,RawColor back,RawColor fore)
+void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyphType gly,RawColor back,RawColor fore)
  {
   Coord bdy=gly.dY();
 
@@ -597,7 +597,7 @@ void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyph gly,RawColor back,RawCol
  }
 
 template <RawColorType RawColor>
-void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyph gly,RawColor fore)
+void FrameBuf<RawColor>::glyph_unsafe(Point p,BoolGlyphType gly,RawColor fore)
  {
   Coord bdy=gly.dY();
 

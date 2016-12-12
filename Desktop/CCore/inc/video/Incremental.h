@@ -40,10 +40,23 @@ void GuardIncrementalInProgress();
 
 struct IncrementalProgress;
 
-/* concept StepBuilder<Step,T> */
+/* struct IncrementalProgress */
+
+struct IncrementalProgress
+ {
+  virtual void start()=0;
+
+  virtual void setTotal(unsigned total)=0;
+
+  virtual bool setPos(unsigned pos)=0; // false to cancel
+
+  virtual void stop() noexcept =0;
+ };
+
+/* concept StepBuilderType<Step,T> */
 
 template <class Step,class T>
-concept bool StepBuilder = requires(Step &obj,T &t,IncrementalProgress &progress)
+concept bool StepBuilderType = requires(Step &obj,T &t,IncrementalProgress &progress)
  {
   Step();
 
@@ -62,20 +75,7 @@ class IncrementalNode;
 
 class IncrementalDriver;
 
-template <class T,StepBuilder<T> Step> class IncrementalBuilder;
-
-/* struct IncrementalProgress */
-
-struct IncrementalProgress
- {
-  virtual void start()=0;
-
-  virtual void setTotal(unsigned total)=0;
-
-  virtual bool setPos(unsigned pos)=0; // false to cancel
-
-  virtual void stop() noexcept =0;
- };
+template <class T,StepBuilderType<T> Step> class IncrementalBuilder;
 
 /* class IncrementalNode */
 
@@ -151,7 +151,7 @@ class Step
 
 #endif
 
-template <class T,StepBuilder<T> Step>
+template <class T,StepBuilderType<T> Step>
 class IncrementalBuilder : IncrementalNode
  {
    IncrementalProgress &progress;
@@ -177,19 +177,19 @@ class IncrementalBuilder : IncrementalNode
    Signal<bool> complete; // ok
  };
 
-template <class T,StepBuilder<T> Step>
+template <class T,StepBuilderType<T> Step>
 IncrementalBuilder<T,Step>::IncrementalBuilder(IncrementalProgress &progress_)
  : progress(progress_)
  {
  }
 
-template <class T,StepBuilder<T> Step>
+template <class T,StepBuilderType<T> Step>
 IncrementalBuilder<T,Step>::~IncrementalBuilder()
  {
   cancel();
  }
 
-template <class T,StepBuilder<T> Step>
+template <class T,StepBuilderType<T> Step>
 void IncrementalBuilder<T,Step>::start(T &obj_)
  {
   if( obj )
@@ -241,7 +241,7 @@ void IncrementalBuilder<T,Step>::start(T &obj_)
   obj=&obj_;
  }
 
-template <class T,StepBuilder<T> Step>
+template <class T,StepBuilderType<T> Step>
 void IncrementalBuilder<T,Step>::step(TimeScope time_scope)
  {
   if( !obj ) return;
@@ -287,7 +287,7 @@ void IncrementalBuilder<T,Step>::step(TimeScope time_scope)
     }
  }
 
-template <class T,StepBuilder<T> Step>
+template <class T,StepBuilderType<T> Step>
 void IncrementalBuilder<T,Step>::cancel() noexcept
  {
   if( !obj ) return;

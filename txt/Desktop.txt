@@ -35,10 +35,10 @@ DesktopKey.h         ++
 FrameGuards.h        ++
 ProgressScale.h      ++      
 Picture.h            ++
-Info.h               +
+Info.h               ++
 FileNameCmp.h        ++
 FileBoss.h           ++
-Incremental.h        +        
+Incremental.h        ++        
 
 ================================================================================
 
