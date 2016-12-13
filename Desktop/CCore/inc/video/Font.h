@@ -479,88 +479,83 @@ class DotFontBase : public FontBase
 
       // char
 
-      static void Line(Raw *ptr,BoolPatternType pat,Coord gx,Coord len,DesktopColor color) // len > 0
+      void text(Coord x,Coord y,char ch,DesktopColor color)
        {
-        Coord lim=gx+len;
-
-        if( pat[gx] ) color.copyTo(ptr);
-
-        while( ++gx<lim )
-          {
-           ptr=NextX(ptr);
-
-           if( pat[gx] ) color.copyTo(ptr);
-          }
-       }
-
-      static void Line(Raw *ptr,BoolPatternType pat,Coord len,DesktopColor color) // len > 0
-       {
-        Line(ptr,pat,0,len,color);
-       }
-
-      void text(Coord x,Coord y,char ch,DesktopColor color) //  x < dx , y < dy , y > -fdy
-       {
-        Coord fdx=shape.dX();
-        Coord fdy=shape.dY();
-
-        if( x <= -fdx ) return;
-
-        auto glyph=shape(ch);
-
-        Coord gy;
-        Coord lim;
-
-        if( y<0 )
-          {
-           gy=-y;
-           y=0;
-
-           lim=(dy<fdy)?Min<Coord>(fdy,dy+gy):fdy; // > gy
-          }
-        else
-          {
-           gy=0;
-
-           lim=Min<Coord>(fdy,dy-y); // > gy
-          }
-
-        if( x>=0 )
-          {
-           Coord len=Min<Coord>(fdx,dx-x); // > 0
-
-           Raw *ptr=place(Point(x,y));
-
-           Line(ptr,glyph[gy],len,color);
-
-           while( ++gy<lim )
-             {
-              ptr=nextY(ptr);
-
-              Line(ptr,glyph[gy],len,color);
-             }
-          }
-        else
-          {
-           Coord gx=-x;
-
-           Coord len=Min<Coord>(fdx-gx,dx); // > 0
-
-           Raw *ptr=place(Point(0,y));
-
-           Line(ptr,glyph[gy],gx,len,color);
-
-           while( ++gy<lim )
-             {
-              ptr=nextY(ptr);
-
-              Line(ptr,glyph[gy],gx,len,color);
-             }
-          }
+        glyph_safe(Point(x,y),shape(ch),color);
        }
 
       // text
 
-      Point prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str,ulen &index) const // TODO
+      Point prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str) const
+       {
+        Coord fdx=shape.dX();
+        Coord fdy=shape.dY();
+        Coord fby=shape.bY();
+
+        Coord y;
+
+        switch( place.align_y )
+          {
+           case AlignY_Top : y=0; break;
+
+           case AlignY_Center : y=(py-fdy)/2; break;
+
+           case AlignY_Bottom : y=py-fdy; break;
+
+           default: y=IntSub(place.y,fby);
+          }
+
+        Coord x;
+
+        switch( place.align_x )
+          {
+           case AlignX_Left : x=0; break;
+
+           case AlignX_Right :
+            {
+             ULenSat len=str.countLen();
+
+             ulen cap=ulen(px/fdx)+1;
+
+             if( len<=cap )
+               {
+                x=Coord( px-MCoord(len.value)*fdx );
+               }
+             else
+               {
+                str.cutSuffix(cap);
+
+                x=Coord( px-MCoord(cap)*fdx );
+               }
+            }
+           break;
+
+           case AlignX_Center :
+            {
+             ULenSat len=str.countLen();
+
+             ulen cap=ulen(px/fdx)+1;
+
+             if( len<=cap )
+               {
+                x=Coord( (px-MCoord(len.value)*fdx)/2 );
+               }
+             else
+               {
+                ulen new_len=cap+str.cutCenter(cap);
+
+                x=Coord( (px-MCoord(new_len)*fdx)/2 );
+               }
+            }
+           break;
+
+           default: x=place.x;
+          }
+
+        return Point(x,y);
+       }
+
+      Point prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str,ulen &index) const
        {
         Coord fdx=shape.dX();
         Coord fdy=shape.dY();
@@ -595,13 +590,13 @@ class DotFontBase : public FontBase
                {
                 index=0;
 
-                x=Coord( px-len.value*fdx );
+                x=Coord( px-MCoord(len.value)*fdx );
                }
              else
                {
                 str.cutSuffix_index(cap,index);
 
-                x=Coord( px-cap*fdx );
+                x=Coord( px-MCoord(cap)*fdx );
                }
             }
            break;
@@ -616,13 +611,13 @@ class DotFontBase : public FontBase
                {
                 index=0;
 
-                x=Coord( px-len.value*fdx )/2;
+                x=Coord( (px-MCoord(len.value)*fdx)/2 );
                }
              else
                {
                 ulen new_len=cap+str.cutCenter_index(cap,index);
 
-                x=Coord( px-new_len*fdx )/2;
+                x=Coord( (px-MCoord(new_len)*fdx)/2 );
                }
             }
            break;
@@ -688,8 +683,7 @@ class DotFontBase : public FontBase
        {
         if( !*this ) return;
 
-        ulen index;
-        Point point=prepare(px,py,place,str,index);
+        Point point=prepare(px,py,place,str);
 
         text(point,str,color);
        }

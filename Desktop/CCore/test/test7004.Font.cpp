@@ -32,7 +32,7 @@ class ClientSubWindow : public SubWindow
      RefVal<VColor> field =  White ;
      RefVal<VColor> text  =  Black ;
 
-     RefVal<Font> font = GetFont() ;
+     RefVal<Font> font; // = GetFont() ;
 
      ConfigType() {}
 
@@ -183,6 +183,8 @@ using namespace Private_7004;
 template <>
 int TestMain<7004>(CmdDisplay cmd_display)
  {
+  FreeTypeFont::InitExit font_init;
+
   return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7004");
  }
 

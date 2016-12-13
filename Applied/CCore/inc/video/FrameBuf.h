@@ -253,6 +253,10 @@ class FrameBuf : protected ColorPlane
 
    static void HLine(Raw *ptr,BoolPatternType pat,RawColor fore);
 
+   static void HLine(Raw *ptr,BoolPatternType pat,Coord len,RawColor fore);
+
+   static void HLine(Raw *ptr,BoolPatternType pat,MCoord gx,Coord len,RawColor fore);
+
    static void HLine_mono(Raw *ptr,const uint8 *base,unsigned bitoff,Coord dx,RawColor color);
 
    static void HLine(Raw *ptr,const Clr *base,Coord dx,VColor vc,GammaFunc gamma);
@@ -335,6 +339,8 @@ class FrameBuf : protected ColorPlane
 
    void block_safe(Pane pane,VColor vc,Clr alpha);
 
+   void glyph_safe(Point p,BoolGlyphType gly,RawColor fore);
+
    void glyph_safe(Point p,MonoGlyph gly,RawColor color);
 
    void glyph_safe(Point p,GrayGlyph gly,VColor vc,GammaFunc gamma);
@@ -386,6 +392,31 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,RawColor fore)
   for(Coord bx=0; bx<bdx ;bx++,ptr=NextX(ptr))
     if( pat[bx] )
       fore.copyTo(ptr);
+ }
+
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,Coord len,RawColor fore)
+ {
+  HLine(ptr,pat,0,len,fore);
+ }
+
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,MCoord gx,Coord len,RawColor fore)
+ {
+  Coord gdx=pat.dX();
+
+  Coord lim=(Coord)Min<MCoord>(gdx,gx+len);
+
+  if( gx>=lim ) return;
+
+  if( pat[gx] ) fore.copyTo(ptr);
+
+  while( ++gx<lim )
+    {
+     ptr=NextX(ptr);
+
+     if( pat[gx] ) fore.copyTo(ptr);
+    }
  }
 
 template <RawColorType RawColor>
@@ -771,6 +802,72 @@ template <RawColorType RawColor>
 void FrameBuf<RawColor>::block_safe(Pane pane,VColor vc,Clr alpha)
  {
   block_unsafe(Inf(pane,getPane()),vc,alpha);
+ }
+
+template <RawColorType RawColor>
+void FrameBuf<RawColor>::glyph_safe(Point p,BoolGlyphType gly,RawColor fore)
+ {
+  if( !*this ) return;
+
+  Coord gdy=gly.dY();
+
+  Coord gy;
+  Coord lim;
+
+  if( p.y<0 )
+    {
+     if( p.y+dy<=0 ) return;
+
+     gy=-p.y;
+     p.y=0;
+
+     lim=(Coord)Min<MCoord>(gdy,MCoord(gy)+dy);
+    }
+  else
+    {
+     gy=0;
+
+     if( p.y>=dy ) return;
+
+     lim=Min<Coord>(gdy,dy-p.y);
+    }
+
+  if( gy>=lim ) return;
+
+  if( p.x>=0 )
+    {
+     if( p.x>=dx ) return;
+
+     Coord len=dx-p.x;
+
+     Raw *ptr=place(p);
+
+     HLine(ptr,gly[gy],len,fore);
+
+     while( ++gy<lim )
+       {
+        ptr=nextY(ptr);
+
+        HLine(ptr,gly[gy],len,fore);
+       }
+    }
+  else
+    {
+     MCoord gx=-(MCoord)p.x;
+
+     p.x=0;
+
+     Raw *ptr=place(p);
+
+     HLine(ptr,gly[gy],gx,dx,fore);
+
+     while( ++gy<lim )
+       {
+        ptr=nextY(ptr);
+
+        HLine(ptr,gly[gy],gx,dx,fore);
+       }
+    }
  }
 
 template <RawColorType RawColor>

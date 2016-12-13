@@ -27,7 +27,7 @@ const CCore::AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
 int main()
  {
-  return App::TestMain<7006>(StartDisplay());
+  return App::TestMain<7004>(StartDisplay());
  }
 
 
