@@ -32,12 +32,10 @@ VideoLabs/FontLab/freetype/*
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
 *.out
-*.app
 
 # =========================
 # Operating System Files
