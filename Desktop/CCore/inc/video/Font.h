@@ -424,11 +424,11 @@ class Font
  //
  //    ...
  //
- //    Coord dX() const;
+ //    Coord dX() const; // > 0
  //
- //    Coord dY() const;
+ //    Coord dY() const; // > 0
  //
- //    Coord bY() const;
+ //    Coord bY() const; // > 0
  //
  //    BoolGlyph operator () (char ch) const;
  //  };
@@ -454,7 +454,7 @@ class DotFontBase : public FontBase
        }
      else
        {
-        ret.dx=Coord( len*shape.dX() );
+        ret.dx=Coord(len)*shape.dX();
         ret.overflow=false;
        }
 
@@ -633,7 +633,7 @@ class DotFontBase : public FontBase
         Coord fdx=shape.dX();
         Coord fdy=shape.dY();
 
-        Coord x=mapX(point.x);
+        MCoord x=mapX(point.x);
         Coord y=mapY(point.y);
 
         if( y>=dy || y<=-fdy ) return;
@@ -642,7 +642,7 @@ class DotFontBase : public FontBase
                            {
                             if( x>=dx ) return false;
 
-                            text(x,y,ch,color);
+                            text((Coord)x,y,ch,color);
 
                             x+=fdx;
 
@@ -657,22 +657,24 @@ class DotFontBase : public FontBase
         Coord fdy=shape.dY();
         Coord fby=shape.bY();
 
-        Coord x=mapX(point.x);
+        MCoord x=mapX(point.x);
         Coord y=mapY(point.y);
 
         if( y>=dy || y<=-fdy ) return;
 
-        PointMap map=-getMapper();
+        point=point.addY(fby);
 
         str.applyChar( [&] (char ch)
                            {
                             if( x>=dx ) return false;
 
-                            VColor vc=func(index++,ch,map(Point(x,y+fby)),Point(fdx,0));
+                            VColor vc=func(index++,ch,point,Point(fdx,0));
 
-                            text(x,y,ch,vc);
+                            text((Coord)x,y,ch,vc);
 
                             x+=fdx;
+
+                            point=point.addX(fdx);
 
                             return true;
 

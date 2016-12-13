@@ -36,6 +36,8 @@ class GrayGlyph;
 
 class RGBGlyph;
 
+struct CutExtension;
+
 template <RawColorType RawColor> class FrameBuf;
 
 /* struct ColorPlane */
@@ -189,7 +191,7 @@ class RGBGlyph : ColorPlane
 template <NothrowCopyableType Pattern> // ref extended
 concept bool BoolPatternType = requires(Meta::ToConst<Pattern> &cobj,Coord x)
  {
-  { cobj.dX() } -> Coord ;
+  { cobj.dX() } -> Coord ; // > 0
 
   { cobj[x] } -> bool ;
  } ;
@@ -199,12 +201,57 @@ concept bool BoolPatternType = requires(Meta::ToConst<Pattern> &cobj,Coord x)
 template <NothrowCopyableType Glyph> // ref extended
 concept bool BoolGlyphType = requires(Meta::ToConst<Glyph> &cobj,Coord y)
  {
-  { cobj.dY() } -> Coord ;
+  { cobj.dX() } -> Coord ; // > 0
+
+  { cobj.dY() } -> Coord ; // > 0
 
   cobj[y];
 
   requires ( BoolPatternType<decltype( cobj[y] )> );
  } ;
+
+/* struct CutExtension */
+
+struct CutExtension
+ {
+  Coord pos;
+  Coord ind;
+  Coord lim;
+
+  CutExtension(Coord len,Coord glen,Coord pos) // len >= 0 , glen >= 0
+   {
+    if( pos<0 )
+      {
+       this->pos=0;
+
+       if( glen+pos>0 )
+         {
+          ind=-pos;
+          lim=ind+Min_cast(len,glen-ind);
+         }
+       else
+         {
+          ind=0;
+          lim=0;
+         }
+      }
+    else
+      {
+       this->pos=pos;
+
+       ind=0;
+
+       if( pos<len )
+         lim=Min_cast(glen,len-pos);
+       else
+         lim=0;
+      }
+   }
+
+  bool operator + () const { return ind<lim; }
+
+  bool operator ! () const { return ind>=lim; }
+ };
 
 /* class FrameBuf<RawColor> */
 
@@ -253,9 +300,7 @@ class FrameBuf : protected ColorPlane
 
    static void HLine(Raw *ptr,BoolPatternType pat,RawColor fore);
 
-   static void HLine(Raw *ptr,BoolPatternType pat,Coord len,RawColor fore);
-
-   static void HLine(Raw *ptr,BoolPatternType pat,MCoord gx,Coord len,RawColor fore);
+   static void HLine(Raw *ptr,BoolPatternType pat,Coord gx,Coord lim,RawColor fore); // gx < lim
 
    static void HLine_mono(Raw *ptr,const uint8 *base,unsigned bitoff,Coord dx,RawColor color);
 
@@ -395,20 +440,8 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,RawColor fore)
  }
 
 template <RawColorType RawColor>
-void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,Coord len,RawColor fore)
+void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,Coord gx,Coord lim,RawColor fore)
  {
-  HLine(ptr,pat,0,len,fore);
- }
-
-template <RawColorType RawColor>
-void FrameBuf<RawColor>::HLine(Raw *ptr,BoolPatternType pat,MCoord gx,Coord len,RawColor fore)
- {
-  Coord gdx=pat.dX();
-
-  Coord lim=(Coord)Min<MCoord>(gdx,gx+len);
-
-  if( gx>=lim ) return;
-
   if( pat[gx] ) fore.copyTo(ptr);
 
   while( ++gx<lim )
@@ -809,64 +842,26 @@ void FrameBuf<RawColor>::glyph_safe(Point p,BoolGlyphType gly,RawColor fore)
  {
   if( !*this ) return;
 
-  Coord gdy=gly.dY();
+  CutExtension y(dy,gly.dY(),p.y);
 
-  Coord gy;
-  Coord lim;
+  if( !y ) return;
 
-  if( p.y<0 )
+  CutExtension x(dx,gly.dX(),p.x);
+
+  if( !x ) return;
+
+  Coord gy=y.ind;
+  Coord lim=y.lim;
+
+  Raw *ptr=place(Point(x.pos,y.pos));
+
+  HLine(ptr,gly[gy],x.ind,x.lim,fore);
+
+  while( ++gy<lim )
     {
-     if( p.y+dy<=0 ) return;
+     ptr=nextY(ptr);
 
-     gy=-p.y;
-     p.y=0;
-
-     lim=(Coord)Min<MCoord>(gdy,MCoord(gy)+dy);
-    }
-  else
-    {
-     gy=0;
-
-     if( p.y>=dy ) return;
-
-     lim=Min<Coord>(gdy,dy-p.y);
-    }
-
-  if( gy>=lim ) return;
-
-  if( p.x>=0 )
-    {
-     if( p.x>=dx ) return;
-
-     Coord len=dx-p.x;
-
-     Raw *ptr=place(p);
-
-     HLine(ptr,gly[gy],len,fore);
-
-     while( ++gy<lim )
-       {
-        ptr=nextY(ptr);
-
-        HLine(ptr,gly[gy],len,fore);
-       }
-    }
-  else
-    {
-     MCoord gx=-(MCoord)p.x;
-
-     p.x=0;
-
-     Raw *ptr=place(p);
-
-     HLine(ptr,gly[gy],gx,dx,fore);
-
-     while( ++gy<lim )
-       {
-        ptr=nextY(ptr);
-
-        HLine(ptr,gly[gy],gx,dx,fore);
-       }
+     HLine(ptr,gly[gy],x.ind,x.lim,fore);
     }
  }
 
