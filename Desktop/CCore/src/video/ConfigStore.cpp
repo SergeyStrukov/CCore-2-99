@@ -213,23 +213,23 @@ struct ConfigMap::TypeFilter
           {
            StrLen name=ptr->name.getStr();
 
-           if( name.equal(StrLen("Coord",5)) )
+           if( name.equal(CStr("Coord")) )
              {
               func.do_Coord();
              }
-           else if( name.equal(StrLen("MCoord",6)) )
+           else if( name.equal(CStr("MCoord")) )
              {
               func.do_MCoord();
              }
-           else if( name.equal(StrLen("VColor",6)) )
+           else if( name.equal(CStr("VColor")) )
              {
               func.do_VColor();
              }
-           else if( name.equal(StrLen("Clr",3)) )
+           else if( name.equal(CStr("Clr")) )
              {
               func.do_Clr();
              }
-           else if( name.equal(StrLen("Bool",4)) )
+           else if( name.equal(CStr("Bool")) )
              {
               func.do_Bool();
              }
@@ -242,11 +242,11 @@ struct ConfigMap::TypeFilter
           {
            StrLen name=ptr->name.getStr();
 
-           if( name.equal(StrLen("Font",4)) )
+           if( name.equal(CStr("Font")) )
              {
               func.do_Font();
              }
-           else if( name.equal(StrLen("Point",5)) )
+           else if( name.equal(CStr("Point")) )
              {
               func.do_Point();
              }
@@ -395,7 +395,7 @@ void ConfigMap::add_Font(StrLen name,const FontParam &value) { add(name,value); 
 
 void ConfigMap::add_Bool(StrLen name,uint8 value)
  {
-  if( !name.equal(StrLen("True",4)) && !name.equal(StrLen("False",5)) ) add(name,bool(value));
+  if( !name.equal(CStr("True")) && !name.equal(CStr("False")) ) add(name,bool(value));
  }
 
 ConfigMap::ConfigMap() noexcept
