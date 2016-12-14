@@ -542,29 +542,29 @@ struct Pane
 
   // pull
 
-  Pane pullLeft(Coord delta) const { return Pane(IntSub(x,delta),y,IntAdd(dx,delta),dy); }
+  Pane pullLeft(Coordinate delta) const { return Pane(x-delta,y,dx+delta,dy); }
 
-  Pane pullTop(Coord delta) const { return Pane(x,IntSub(y,delta),dx,IntAdd(dy,delta)); }
+  Pane pullTop(Coordinate delta) const { return Pane(x,y-delta,dx,dy+delta); }
 
-  Pane pullRight(Coord delta) const { return Pane(x,y,IntAdd(dx,delta),dy); }
+  Pane pullRight(Coordinate delta) const { return Pane(x,y,dx+delta,dy); }
 
-  Pane pullBottom(Coord delta) const { return Pane(x,y,dx,IntAdd(dy,delta)); }
+  Pane pullBottom(Coordinate delta) const { return Pane(x,y,dx,dy+delta); }
 
   // shrink
 
   Pane shrink(Point delta) const { return Pane(getBase()+delta,getSize()-2*delta); }
 
-  Pane shrink(Coord delta_x,Coord delta_y) const { return shrink(Point(delta_x,delta_y)); }
+  Pane shrink(Coordinate delta_x,Coordinate delta_y) const { return shrink(Point(delta_x,delta_y)); }
 
-  Pane shrink(Coord delta_xy) const { return shrink(Point(delta_xy,delta_xy)); }
+  Pane shrink(Coordinate delta_xy) const { return shrink(Point(delta_xy,delta_xy)); }
 
   // expand
 
   Pane expand(Point delta) const { return shrink(-delta); }
 
-  Pane expand(Coord delta_x,Coord delta_y) const { return expand(Point(delta_x,delta_y)); }
+  Pane expand(Coordinate delta_x,Coordinate delta_y) const { return expand(Point(delta_x,delta_y)); }
 
-  Pane expand(Coord delta_xy) const { return expand(Point(delta_xy,delta_xy)); }
+  Pane expand(Coordinate delta_xy) const { return expand(Point(delta_xy,delta_xy)); }
 
   // print object
 
@@ -625,40 +625,40 @@ inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pa
 
 /* Split...() */
 
-inline Pane SplitX(Coord delta,Pane &pane)
+inline Pane SplitX(Coordinate delta,Pane &pane)
  {
   Pane ret=Pane(pane.x,pane.y,delta,pane.dy);
 
-  pane=Pane(IntAdd(pane.x,delta),pane.y,IntSub(pane.dx,delta),pane.dy);
+  pane=Pane(pane.x+delta,pane.y,pane.dx-delta,pane.dy);
 
   return ret;
  }
 
-inline Pane SplitX(Pane &pane,Coord delta)
+inline Pane SplitX(Pane &pane,Coordinate delta)
  {
-  Coord dx=IntSub(pane.dx,delta);
+  auto dx=pane.dx-delta;
 
-  Pane ret=Pane(IntAdd(pane.x,dx),pane.y,delta,pane.dy);
+  Pane ret=Pane(pane.x+dx,pane.y,delta,pane.dy);
 
   pane=Pane(pane.x,pane.y,dx,pane.dy);
 
   return ret;
  }
 
-inline Pane SplitY(Coord delta,Pane &pane)
+inline Pane SplitY(Coordinate delta,Pane &pane)
  {
   Pane ret=Pane(pane.x,pane.y,pane.dx,delta);
 
-  pane=Pane(pane.x,IntAdd(pane.y,delta),pane.dx,IntSub(pane.dy,delta));
+  pane=Pane(pane.x,pane.y+delta,pane.dx,pane.dy-delta);
 
   return ret;
  }
 
-inline Pane SplitY(Pane &pane,Coord delta)
+inline Pane SplitY(Pane &pane,Coordinate delta)
  {
-  Coord dy=IntSub(pane.dy,delta);
+  auto dy=pane.dy-delta;
 
-  Pane ret=Pane(pane.x,IntAdd(pane.y,dy),pane.dx,delta);
+  Pane ret=Pane(pane.x,pane.y+dy,pane.dx,delta);
 
   pane=Pane(pane.x,pane.y,pane.dx,dy);
 
@@ -666,28 +666,28 @@ inline Pane SplitY(Pane &pane,Coord delta)
  }
 
 
-inline Pane TrySplitX(Coord delta,Pane &pane)
+inline Pane TrySplitX(Coordinate delta,Pane &pane)
  {
   if( delta<=pane.dx ) return SplitX(delta,pane);
 
   return Empty;
  }
 
-inline Pane TrySplitX(Pane &pane,Coord delta)
+inline Pane TrySplitX(Pane &pane,Coordinate delta)
  {
   if( delta<=pane.dx ) return SplitX(pane,delta);
 
   return Empty;
  }
 
-inline Pane TrySplitY(Coord delta,Pane &pane)
+inline Pane TrySplitY(Coordinate delta,Pane &pane)
  {
   if( delta<=pane.dy ) return SplitY(delta,pane);
 
   return Empty;
  }
 
-inline Pane TrySplitY(Pane &pane,Coord delta)
+inline Pane TrySplitY(Pane &pane,Coordinate delta)
  {
   if( delta<=pane.dy ) return SplitY(pane,delta);
 

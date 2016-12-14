@@ -37,15 +37,15 @@ Pane GetWindowPlace(Desktop *desktop,Ratio ypos_ratio,Point size);
 
 /* Envelope...() */
 
-inline Pane EnvelopeX(Point base,Coord dy,Coordinate delta_x) { return Pane(base.x-delta_x,base.y,2*delta_x,dy); }
+inline Pane EnvelopeX(Point base,Coordinate dy,Coordinate delta_x) { return Pane(base.x-delta_x,base.y,2*delta_x,dy); }
 
-inline Pane EnvelopeY(Point base,Coord dx,Coordinate delta_y) { return Pane(base.x,base.y-delta_y,dx,2*delta_y); }
+inline Pane EnvelopeY(Point base,Coordinate dx,Coordinate delta_y) { return Pane(base.x,base.y-delta_y,dx,2*delta_y); }
 
 /* FreeCenter...() */
 
 Pane FreeCenter(Pane outer,Point size);
 
-inline Pane FreeCenter(Pane outer,Coord dxy) { return FreeCenter(outer,{dxy,dxy}); }
+inline Pane FreeCenter(Pane outer,Coordinate dxy) { return FreeCenter(outer,{dxy,dxy}); }
 
 Pane FreeCenterX(Pane outer,Coordinate dx);
 

@@ -49,9 +49,9 @@ class DrawBuf : public FrameBuf<DesktopColor>
    template <class T>
    T map(T obj) const { return obj+origin; }
 
-   Coord mapX(Coord x) const { return IntAdd(x,origin.x); }
+   Coordinate mapX(Coordinate x) const { return x+origin.x; }
 
-   Coord mapY(Coord y) const { return IntAdd(y,origin.y); }
+   Coordinate mapY(Coordinate y) const { return y+origin.y; }
 
    PointMap getMapper() const { return PointMap(origin); }
  };

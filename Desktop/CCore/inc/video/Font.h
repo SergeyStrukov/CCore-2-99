@@ -107,11 +107,11 @@ struct TextPlace
 
   TextPlace(AlignX align_x_,AlignY align_y_) : align_x(align_x_),align_y(align_y_) {}
 
-  TextPlace(AlignX align_x_,Coord y_) : align_x(align_x_),align_y(AlignY_Given),y(y_) {}
+  TextPlace(AlignX align_x_,Coordinate y_) : align_x(align_x_),align_y(AlignY_Given),y(+y_) {}
 
-  TextPlace(Coord x_,AlignY align_y_) : align_x(AlignX_Given),align_y(align_y_),x(x_) {}
+  TextPlace(Coordinate x_,AlignY align_y_) : align_x(AlignX_Given),align_y(align_y_),x(+x_) {}
 
-  TextPlace(Coord x_,Coord y_) : align_x(AlignX_Given),align_y(AlignY_Given),x(x_),y(y_) {}
+  TextPlace(Coordinate x_,Coordinate y_) : align_x(AlignX_Given),align_y(AlignY_Given),x(+x_),y(+y_) {}
 
   TextPlace(Point pos) : TextPlace(pos.x,pos.y) {}
  };
@@ -319,11 +319,11 @@ struct AbstractFont
     return text(obj,pos);
    }
 
-  ulen fit(StrLen str,Coord full_dx) const
+  ulen fit(StrLen str,Coordinate full_dx) const
    {
     SingleString obj(str);
 
-    return fit(obj,full_dx);
+    return fit(obj,+full_dx);
    }
 
   void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,VColor vc) const
@@ -363,11 +363,11 @@ struct AbstractFont
     return text(obj,pos);
    }
 
-  ulen fit(StrLen str1,StrLen str2,Coord full_dx) const
+  ulen fit(StrLen str1,StrLen str2,Coordinate full_dx) const
    {
     DoubleString obj(str1,str2);
 
-    return fit(obj,full_dx);
+    return fit(obj,+full_dx);
    }
 
   void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str1,StrLen str2,VColor vc) const
@@ -633,8 +633,8 @@ class DotFontBase : public FontBase
         Coord fdx=shape.dX();
         Coord fdy=shape.dY();
 
-        MCoord x=mapX(point.x);
-        Coord y=mapY(point.y);
+        MCoord x=+mapX(point.x);
+        Coord y=+mapY(point.y);
 
         if( y>=dy || y<=-fdy ) return;
 
@@ -657,8 +657,8 @@ class DotFontBase : public FontBase
         Coord fdy=shape.dY();
         Coord fby=shape.bY();
 
-        MCoord x=mapX(point.x);
-        Coord y=mapY(point.y);
+        MCoord x=+mapX(point.x);
+        Coord y=+mapY(point.y);
 
         if( y>=dy || y<=-fdy ) return;
 
