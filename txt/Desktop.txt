@@ -42,15 +42,15 @@ Incremental.h        ++
 
 --- Tools ----------------------------------------------------------------------
 
-RefVal.h             +
+RefVal.h             ++
 MinSizeType.h        +                     
 Layout.h             +
 
-FontParam.h          +          
+FontParam.h          ++          
 ConfigStore.h        +     
-FontDatabase.h       +
+FontDatabase.h       ++
 
-PrintDDL.h           +
+PrintDDL.h           ++
 
 ================================================================================
 

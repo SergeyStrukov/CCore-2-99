@@ -128,6 +128,11 @@ FontInfo::FontInfo(const String &file_name_,bool &is_font)
     }
  }
 
+void FontInfo::turnSlash()
+ {
+  PathBase::TurnSlash(file_name.modify());
+ }
+
 /* class FontDatabase */
 
 const char *const FontDatabase::CacheFile="/FontCache.ddl";
@@ -199,8 +204,6 @@ void FontDatabase::Append(Collector<FontInfo> &obj,StrLen dir)
    {
     Collector<FontInfo> &obj;
 
-    explicit Proc(Collector<FontInfo> &obj_) : obj(obj_) {}
-
     using DataType = void ;
 
     DataType * dir(StrLen) { return 0; }
@@ -215,7 +218,7 @@ void FontDatabase::Append(Collector<FontInfo> &obj,StrLen dir)
     void enddir(StrLen,StrLen,DataType *) {}
    };
 
-  Proc proc(obj);
+  Proc proc{obj};
 
   DirTreeRun run(dir);
 
@@ -263,6 +266,13 @@ void FontDatabase::populate()
   for(StrLen dir : sysdirs.getList() ) Append(temp,dir);
 
   temp.extractTo(list);
+
+  turnSlash();
+ }
+
+void FontDatabase::turnSlash()
+ {
+  for(auto &obj : list ) obj.turnSlash();
  }
 
  // cache methods
@@ -328,6 +338,8 @@ void FontDatabase::loadDDL(StrLen file_name)
        }
 
      list.shrink_extra();
+
+     turnSlash();
     }
  }
 
@@ -479,6 +491,8 @@ StepResult FontDatabase::Step::stepInfo(IncrementalProgress &progress,FontDataba
   else
     {
      info_list.extractTo(obj.list);
+
+     obj.turnSlash();
 
      try
        {

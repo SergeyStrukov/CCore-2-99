@@ -23,7 +23,7 @@ namespace Video {
 
 /* DDLBool() */
 
-inline StrLen DDLBool(bool val) { return val?StrLen("True",4):StrLen("False",5); }
+inline StrLen DDLBool(bool val) { return val?CStr("True"):CStr("False"); }
 
 /* classes */
 

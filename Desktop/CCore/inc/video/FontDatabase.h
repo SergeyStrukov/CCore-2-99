@@ -79,6 +79,10 @@ struct FontInfo
 
   FontInfo(const String &file_name,bool &is_font);
 
+  // methods
+
+  void turnSlash();
+
   // print object
 
   void printDDL(PrinterType &out) const
@@ -135,6 +139,8 @@ class FontDatabase : NoCopy
    // methods
 
    void populate();
+
+   void turnSlash();
 
    PtrLen<const FontInfo> getList() const { return Range(list); }
 

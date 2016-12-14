@@ -55,6 +55,10 @@ class String
 
    ~String() {}
 
+   // methods
+
+   PtrLen<char> modify() { return data.modify(); }
+
    // range access
 
    const char * getPtr() const { return data.getPtr(); }

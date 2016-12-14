@@ -52,6 +52,11 @@ Font FontParam::create() const
  {
   switch( engine_type )
     {
+     default:
+      {
+       Printf(Exception,"CCore::Video::FontParam::create() : unknown engine type #;",engine_type);
+      }
+
      case EngineDefault : return Font();
 
      case EngineFreeType :
@@ -87,13 +92,6 @@ Font FontParam::create() const
        ret.setConfig(cfg);
 
        return ret;
-      }
-
-     default:
-      {
-       Printf(Exception,"CCore::Video::FontParam::create() : unknown engine type #;",engine_type);
-
-       return Font();
       }
     }
  }

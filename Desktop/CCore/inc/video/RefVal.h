@@ -122,8 +122,8 @@ class RefVal
 
 /* concept SmartConfigType<Pref> */
 
-template <class Pref>
-concept bool SmartConfigType = requires(const Pref &pref)
+template <class Pref> // ref extended
+concept bool SmartConfigType = requires(Meta::ToConst<Pref> &pref)
  {
   pref.getSmartConfig();
  } ;
