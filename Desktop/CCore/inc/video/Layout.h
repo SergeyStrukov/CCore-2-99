@@ -37,9 +37,9 @@ Pane GetWindowPlace(Desktop *desktop,Ratio ypos_ratio,Point size);
 
 /* Envelope...() */
 
-inline Pane EnvelopeX(Point base,Coord dy,Coord delta_x) { return Pane(IntSub(base.x,delta_x),base.y,IntAdd(delta_x,delta_x),dy); }
+inline Pane EnvelopeX(Point base,Coord dy,Coordinate delta_x) { return Pane(base.x-delta_x,base.y,2*delta_x,dy); }
 
-inline Pane EnvelopeY(Point base,Coord dx,Coord delta_y) { return Pane(base.x,IntSub(base.y,delta_y),dx,IntAdd(delta_y,delta_y)); }
+inline Pane EnvelopeY(Point base,Coord dx,Coordinate delta_y) { return Pane(base.x,base.y-delta_y,dx,2*delta_y); }
 
 /* FreeCenter...() */
 
@@ -47,9 +47,9 @@ Pane FreeCenter(Pane outer,Point size);
 
 inline Pane FreeCenter(Pane outer,Coord dxy) { return FreeCenter(outer,{dxy,dxy}); }
 
-Pane FreeCenterX(Pane outer,Coord dx);
+Pane FreeCenterX(Pane outer,Coordinate dx);
 
-Pane FreeCenterY(Pane outer,Coord dy);
+Pane FreeCenterY(Pane outer,Coordinate dy);
 
 //----------------------------------------------------------------------------------------
 
@@ -419,6 +419,7 @@ class PaneCut
    void place(PlaceType &&window) const { window.setPlace(pane); }
 
    void placeMin(PlaceType &&window) const { window.setPlace(Pane(pane.getBase(),GetMinSize(window))); }
+
 
    PaneCut & place_cutLeft(PlaceType &&window,OneOfTypes<Coord,Ratio> dx) { window.setPlace(cutLeft(dx)); return *this; }
 

@@ -483,11 +483,17 @@ struct Pane
       }
    }
 
+  Pane(Coordinate x,Coordinate y,Coordinate dx,Coordinate dy) : Pane(+x,+y,+dx,+dy) {}
+
   Pane(Point base,Coord dx,Coord dy) : Pane(base.x,base.y,dx,dy) {}
+
+  Pane(Point base,Coordinate dx,Coordinate dy) : Pane(base,+dx,+dy) {}
 
   Pane(Point base,Point size) : Pane(base.x,base.y,size.x,size.y) {}
 
   Pane(Point base,Coord dxy) : Pane(base.x,base.y,dxy,dxy) {}
+
+  Pane(Point base,Coordinate dxy) : Pane(base,+dxy) {}
 
   // methods
 

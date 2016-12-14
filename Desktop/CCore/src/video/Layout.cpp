@@ -28,12 +28,12 @@ Pane FitToScreen(Point base,Point size,Point screen_size)
     }
   else
     {
-     Replace_min<Coord>(base.x,screen_size.x-size.x);
+     Replace_min(base.x,screen_size.x-size.x);
     }
 
   if( base.y<0 ) base.y=0;
 
-  if( base.y>screen_size.y )
+  if( base.y>=screen_size.y )
     {
      if( screen_size.y>size.y )
        {
@@ -47,7 +47,7 @@ Pane FitToScreen(Point base,Point size,Point screen_size)
     }
   else
     {
-     Replace_min<Coord>(size.y,screen_size.y-base.y);
+     Replace_min(size.y,screen_size.y-base.y);
     }
 
   return Pane(base,size);
@@ -84,14 +84,18 @@ Pane FreeCenter(Pane outer,Point size)
   return Pane(outer.getBase()+pos,size);
  }
 
-Pane FreeCenterX(Pane outer,Coord dx)
+Pane FreeCenterX(Pane outer,Coordinate dx)
  {
-  return Pane(IntAdd(outer.x,IntSub(outer.dx,dx)/2),outer.y,dx,outer.dy);
+  auto x=outer.x+(outer.dx-dx)/2;
+
+  return Pane(x,outer.y,dx,outer.dy);
  }
 
-Pane FreeCenterY(Pane outer,Coord dy)
+Pane FreeCenterY(Pane outer,Coordinate dy)
  {
-  return Pane(outer.x,IntAdd(outer.y,IntSub(outer.dy,dy)/2),outer.dx,dy);
+  auto y=outer.y+(outer.dy-dy)/2;
+
+  return Pane(outer.x,y,outer.dx,dy);
  }
 
 //----------------------------------------------------------------------------------------
@@ -203,7 +207,7 @@ PlaceRow::PlaceRow(Pane outer,Point size_,Coord space,ulen count_)
 
   auto total=count*size_.x+(count-1)*space;
 
-  Point total_size(+total,size_.y);
+  Point total_size(total,size_.y);
 
   Pane pane=AlignCenter(outer,total_size);
 
@@ -223,7 +227,7 @@ PlaceColumn::PlaceColumn(Pane outer,Point size_,Coord space,ulen count_)
 
   auto total=count*size_.y+(count-1)*space;
 
-  Point total_size(size_.x,+total);
+  Point total_size(size_.x,total);
 
   Pane pane=AlignCenter(outer,total_size);
 

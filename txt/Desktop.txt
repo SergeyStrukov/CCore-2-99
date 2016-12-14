@@ -43,7 +43,7 @@ Incremental.h        ++
 --- Tools ----------------------------------------------------------------------
 
 RefVal.h             ++
-MinSizeType.h        +                     
+MinSizeType.h        ++                     
 Layout.h             +
 
 FontParam.h          ++          
