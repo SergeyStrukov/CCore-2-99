@@ -183,8 +183,6 @@ int Main(CmdDisplay cmd_display)
 
      Param param;
      WindowReport report(param);
-     FreeTypeFont::InitExit freetype_initexit;
-     DefaultGuard<UserPreferenceBag> guard(param.pref.take());
 
      SetAppIcon(DefaultAppIcon());
 

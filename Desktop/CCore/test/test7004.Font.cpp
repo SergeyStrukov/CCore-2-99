@@ -183,8 +183,6 @@ using namespace Private_7004;
 template <>
 int TestMain<7004>(CmdDisplay cmd_display)
  {
-  FreeTypeFont::InitExit font_init;
-
   return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7004");
  }
 

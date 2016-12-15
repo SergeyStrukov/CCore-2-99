@@ -57,6 +57,8 @@ const char * GetTextDesc(FontSmoothType fsm);
 
 class FreeTypeFont : public Font
  {
+   struct Global;
+
    struct Inner;
 
    class Base;
@@ -66,15 +68,6 @@ class FreeTypeFont : public Font
    Base * getBase() const;
 
   public:
-
-   class InitExit : NoCopy
-    {
-     public:
-
-      InitExit();
-
-      ~InitExit();
-    };
 
    struct Config
     {

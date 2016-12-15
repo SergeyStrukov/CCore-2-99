@@ -17,6 +17,8 @@
 
 #include <CCore/inc/video/FreeType.h>
 
+#include <CCore/inc/AutoGlobal.h>
+
 #include <CCore/inc/Exception.h>
 
 namespace CCore {
@@ -81,9 +83,20 @@ inline FT_Render_Mode ToMode(FontSmoothType fsm)
     }
  }
 
+/* struct FreeTypeFont::Global */
+
+struct FreeTypeFont::Global
+ {
+  Mutex mutex;
+  FreeType::Lib lib;
+  CharMapTable map;
+
+  Global() : mutex("FreeTypeFont"),lib(FT_LCD_FILTER_DEFAULT) {}
+ };
+
 /* struct FreeTypeFont::Inner */
 
-struct FreeTypeFont::Inner
+struct FreeTypeFont::Inner : AutoGlobal<Global>::Lock
  {
   // data
 
@@ -105,13 +118,15 @@ struct FreeTypeFont::Inner
   // constructors
 
   explicit Inner(StrLen file_name)
-   : face(Object->lib,Object->mutex,file_name)
+   : AutoGlobal<Global>::Lock(Object),
+     face(Object->lib,Object->mutex,file_name)
    {
     updateFontSize();
    }
 
   Inner(StrLen file_name,bool &is_font)
-   : face(Object->lib,Object->mutex,file_name,is_font)
+   : AutoGlobal<Global>::Lock(Object),
+     face(Object->lib,Object->mutex,file_name,is_font)
    {
     if( is_font )
       {
@@ -129,10 +144,13 @@ struct FreeTypeFont::Inner
    }
 
   Inner(StrLen dir,StrLen file_name)
-   : face(Object->lib,Object->mutex,dir,file_name)
+   : AutoGlobal<Global>::Lock(Object),
+     face(Object->lib,Object->mutex,dir,file_name)
    {
     updateFontSize();
    }
+
+  ~Inner() {}
 
   // methods
 
@@ -362,19 +380,10 @@ struct FreeTypeFont::Inner
 
   // global
 
-  struct Global
-   {
-    Mutex mutex;
-    FreeType::Lib lib;
-    CharMapTable map;
-
-    Global() : lib(FT_LCD_FILTER_DEFAULT) {}
-   };
-
-  static InitExitObject<Global> Object;
+  static AutoGlobal<Global> Object;
  };
 
-InitExitObject<FreeTypeFont::Inner::Global> FreeTypeFont::Inner::Object{};
+AutoGlobal<FreeTypeFont::Global> FreeTypeFont::Inner::Object CCORE_INITPRI_3 ;
 
 /* class FreeTypeFont::Base */
 
@@ -709,10 +718,6 @@ class FreeTypeFont::Base : public FontBase , Inner
 
   public:
 
-   static void Init() { Object.init(); }
-
-   static void Exit() { Object.exit(); }
-
    // constructors
 
    explicit Base(StrLen file_name) : Inner(file_name) {}
@@ -869,18 +874,6 @@ class FreeTypeFont::Base : public FontBase , Inner
      for(auto size : face.getSizeList() ) func(size.width,size.height);
     }
  };
-
-/* class FreeTypeFont::InitExit */
-
-FreeTypeFont::InitExit::InitExit()
- {
-  FreeTypeFont::Base::Init();
- }
-
-FreeTypeFont::InitExit::~InitExit()
- {
-  FreeTypeFont::Base::Exit();
- }
 
 /* class FreeTypeFont */
 

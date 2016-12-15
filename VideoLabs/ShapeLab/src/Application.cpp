@@ -155,7 +155,6 @@ int Main(CmdDisplay cmd_display)
 
      Param param;
      WindowReport report(param);
-     FreeTypeFont::InitExit freetype_initexit;
 
      Application app(report,param,cmd_display);
 

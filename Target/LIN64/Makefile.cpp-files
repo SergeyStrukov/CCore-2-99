@@ -90,6 +90,7 @@
 ../../Fundamental/CCore/src/array/TempArray.cpp
 ../../Fundamental/CCore/src/Array.cpp
 ../../Fundamental/CCore/src/AttachmentHost.cpp
+../../Fundamental/CCore/src/AutoGlobal.cpp
 ../../Fundamental/CCore/src/CharProp.cpp
 ../../Fundamental/CCore/src/CompactList.cpp
 ../../Fundamental/CCore/src/CompactMap.cpp

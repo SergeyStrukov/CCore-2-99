@@ -19,6 +19,7 @@ obj/AsyncFileToMem.o \
 obj/Atomic.o \
 obj/AtomicRefArray.o \
 obj/AttachmentHost.o \
+obj/AutoGlobal.o \
 obj/AutoText.o \
 obj/BaseRangeAlgo.o \
 obj/BinarySearch.o \
@@ -361,6 +362,7 @@ obj/AsyncFileToMem.s \
 obj/Atomic.s \
 obj/AtomicRefArray.s \
 obj/AttachmentHost.s \
+obj/AutoGlobal.s \
 obj/AutoText.s \
 obj/BaseRangeAlgo.s \
 obj/BinarySearch.s \
@@ -703,6 +705,7 @@ obj/AsyncFileToMem.dep \
 obj/Atomic.dep \
 obj/AtomicRefArray.dep \
 obj/AttachmentHost.dep \
+obj/AutoGlobal.dep \
 obj/AutoText.dep \
 obj/BaseRangeAlgo.dep \
 obj/BinarySearch.dep \
@@ -1098,6 +1101,9 @@ obj/AtomicRefArray.o : ../../Fundamental/CCore/src/array/AtomicRefArray.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AttachmentHost.o : ../../Fundamental/CCore/src/AttachmentHost.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AutoGlobal.o : ../../Fundamental/CCore/src/AutoGlobal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AutoText.o : ../../XCore/CCore/src/task/AutoText.cpp
@@ -2119,6 +2125,9 @@ obj/AtomicRefArray.s : ../../Fundamental/CCore/src/array/AtomicRefArray.cpp
 obj/AttachmentHost.s : ../../Fundamental/CCore/src/AttachmentHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AutoGlobal.s : ../../Fundamental/CCore/src/AutoGlobal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/AutoText.s : ../../XCore/CCore/src/task/AutoText.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3137,6 +3146,9 @@ obj/AtomicRefArray.dep : ../../Fundamental/CCore/src/array/AtomicRefArray.cpp
 
 obj/AttachmentHost.dep : ../../Fundamental/CCore/src/AttachmentHost.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AttachmentHost.o $< -MF $@
+
+obj/AutoGlobal.dep : ../../Fundamental/CCore/src/AutoGlobal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AutoGlobal.o $< -MF $@
 
 obj/AutoText.dep : ../../XCore/CCore/src/task/AutoText.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AutoText.o $< -MF $@
