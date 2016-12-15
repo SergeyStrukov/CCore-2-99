@@ -110,7 +110,7 @@ Pane AlignLeft(Pane pane,Coord dx)
     }
   else
     {
-     return Empty;
+     return pane;
     }
  }
 
@@ -124,7 +124,7 @@ Pane AlignCenterX(Pane pane,Coord dx)
     }
   else
     {
-     return Empty;
+     return pane;
     }
  }
 
@@ -138,7 +138,7 @@ Pane AlignRight(Pane pane,Coord dx)
     }
   else
     {
-     return Empty;
+     return pane;
     }
  }
 
@@ -150,7 +150,7 @@ Pane AlignTop(Pane pane,Coord dy)
     }
   else
     {
-     return Empty;
+     return pane;
     }
  }
 
@@ -164,7 +164,7 @@ Pane AlignCenterY(Pane pane,Coord dy)
     }
   else
     {
-     return Empty;
+     return pane;
     }
  }
 
@@ -178,22 +178,40 @@ Pane AlignBottom(Pane pane,Coord dy)
     }
   else
     {
-     return Empty;
+     return pane;
     }
  }
 
 Pane AlignCenter(Pane pane,Coord dx,Coord dy)
  {
-  if( dx<=pane.dx && dy<=pane.dy )
+  if( dx<=pane.dx )
     {
-     Coord off_x=(pane.dx-dx)/2;
-     Coord off_y=(pane.dy-dy)/2;
+     if( dy<=pane.dy )
+       {
+        Coord off_x=(pane.dx-dx)/2;
+        Coord off_y=(pane.dy-dy)/2;
 
-     return Pane(pane.x+off_x,pane.y+off_y,dx,dy);
+        return Pane(pane.x+off_x,pane.y+off_y,dx,dy);
+       }
+     else
+       {
+        Coord off_x=(pane.dx-dx)/2;
+
+        return Pane(pane.x+off_x,pane.y,dx,pane.dy);
+       }
     }
   else
     {
-     return Empty;
+     if( dy<=pane.dy )
+       {
+        Coord off_y=(pane.dy-dy)/2;
+
+        return Pane(pane.x,pane.y+off_y,pane.dx,dy);
+       }
+     else
+       {
+        return pane;
+       }
     }
  }
 
@@ -211,7 +229,7 @@ PlaceRow::PlaceRow(Pane outer,Point size_,Coord space,ulen count_)
 
   Pane pane=AlignCenter(outer,total_size);
 
-  if( +pane )
+  if( pane.dx==total )
     base=pane.getBase();
   else
     size=Null;
@@ -231,7 +249,7 @@ PlaceColumn::PlaceColumn(Pane outer,Point size_,Coord space,ulen count_)
 
   Pane pane=AlignCenter(outer,total_size);
 
-  if( +pane )
+  if( pane.dy==total )
     base=pane.getBase();
   else
     size=Null;
@@ -260,9 +278,11 @@ PaneCut PaneCut::cutLeft(Coord dx,Coord space)
     }
   else
     {
+     PaneCut ret(*this);
+
      pane=Empty;
 
-     return PaneCut(space);
+     return ret;
     }
  }
 
@@ -278,9 +298,11 @@ PaneCut PaneCut::cutRight(Coord dx,Coord space)
     }
   else
     {
+     PaneCut ret(*this);
+
      pane=Empty;
 
-     return PaneCut(space);
+     return ret;
     }
  }
 
@@ -296,9 +318,11 @@ PaneCut PaneCut::cutTop(Coord dy,Coord space)
     }
   else
     {
+     PaneCut ret(*this);
+
      pane=Empty;
 
-     return PaneCut(space);
+     return ret;
     }
  }
 
@@ -314,9 +338,11 @@ PaneCut PaneCut::cutBottom(Coord dy,Coord space)
     }
   else
     {
+     PaneCut ret(*this);
+
      pane=Empty;
 
-     return PaneCut(space);
+     return ret;
     }
  }
 

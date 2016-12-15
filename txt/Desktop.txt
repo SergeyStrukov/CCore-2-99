@@ -44,7 +44,7 @@ Incremental.h        ++
 
 RefVal.h             ++
 MinSizeType.h        ++                     
-Layout.h             +
+Layout.h             ++
 
 FontParam.h          ++          
 ConfigStore.h        ++     

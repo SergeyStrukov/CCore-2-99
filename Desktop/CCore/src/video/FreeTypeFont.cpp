@@ -81,251 +81,305 @@ inline FT_Render_Mode ToMode(FontSmoothType fsm)
     }
  }
 
+/* struct FreeTypeFont::Inner */
+
+struct FreeTypeFont::Inner
+ {
+  // data
+
+  mutable FreeType::Face face;
+  Config cfg;
+  GammaTable gamma_table;
+
+  FontSize font_size;
+
+  struct CharX
+   {
+    Coord dx;
+    Coord dx0;
+    Coord dx1;
+   };
+
+  CharX char_x[256];
+
+  // constructors
+
+  explicit Inner(StrLen file_name)
+   : face(Object->lib,Object->mutex,file_name)
+   {
+    updateFontSize();
+   }
+
+  Inner(StrLen file_name,bool &is_font)
+   : face(Object->lib,Object->mutex,file_name,is_font)
+   {
+    if( is_font )
+      {
+       try
+         {
+          updateFontSize();
+         }
+       catch(...)
+         {
+          Printf(NoException,"file_name #;",file_name);
+
+          is_font=false;
+         }
+      }
+   }
+
+  Inner(StrLen dir,StrLen file_name)
+   : face(Object->lib,Object->mutex,dir,file_name)
+   {
+    updateFontSize();
+   }
+
+  // methods
+
+  using IndexType = FT_UInt ;
+
+  CharX text(char ch)
+   {
+    auto index=face.getGlyphIndex(Object->map(ch));
+
+    face.loadGlyph(index,ToFlags(cfg.fht));
+
+    if( cfg.strength )
+      {
+       if( !face.tryEmboldenGlyph(cfg.strength) ) cfg.strength=0;
+      }
+
+    face.renderGlyph(ToMode(cfg.fsm));
+
+    auto placement=face.getGlyphPlacement();
+
+    auto &metrics=face.getGlyphMetrics();
+
+    Coord dx0=0;
+    Coord dx1=0;
+
+    if( metrics.horiBearingX<0 )
+      {
+       dx0=FreeType::RoundUp(-metrics.horiBearingX);
+      }
+
+    FT_Pos extra=metrics.horiBearingX+metrics.width-metrics.horiAdvance;
+
+    if( extra>0 )
+      {
+       dx1=FreeType::RoundUp(extra);
+      }
+
+    return {placement.getDelta().x,dx0,dx1};
+   }
+
+  Coord kerning(IndexType &prev_index,char ch) const
+   {
+    Coord ret=0;
+
+    auto index=face.getGlyphIndex(Object->map(ch));
+
+    if( prev_index && index )
+      {
+       FT_Vector delta=face.getKerning(prev_index,index);
+
+       ret=FreeType::Round(delta.x);
+      }
+
+    prev_index=index;
+
+    return ret;
+   }
+
+  CharX table_text(char ch) const
+   {
+    return char_x[uint8(ch)];
+   }
+
+  CharX table_text(IndexType &prev_index,char ch) const
+   {
+    CharX ret=table_text(ch);
+    Coord delta=kerning(prev_index,ch);
+
+    ret.dx+=delta;
+
+    return ret;
+   }
+
+  void updateFontSize()
+   {
+    if( !face.hasKerning() ) cfg.use_kerning=false;
+
+    font_size.min_dx=MaxCoord;
+    font_size.max_dx=0;
+    font_size.dx0=0;
+    font_size.dx1=0;
+
+    for(int i=-128; i<128 ;i++)
+      {
+       char ch=char(i);
+       CharX cx=text(ch);
+
+       Replace_min(font_size.min_dx,cx.dx);
+       Replace_max(font_size.max_dx,cx.dx);
+       Replace_max(font_size.dx0,cx.dx0);
+       Replace_max(font_size.dx1,cx.dx1);
+
+       char_x[uint8(ch)]=cx;
+      }
+
+    Coord dy=FreeType::RoundUp(face.getMetrics().height);
+    Coord by=FreeType::RoundUp(face.getMetrics().ascender);
+    Coord ey=FreeType::RoundUp(-face.getMetrics().descender);
+
+    if( by+ey>dy )
+      {
+       font_size.dy=by+ey;
+       font_size.by=by;
+      }
+    else
+      {
+       font_size.dy=dy;
+       font_size.by=by+(dy-by-ey)/2;
+      }
+
+    font_size.skew=0;
+
+    if( face.isSFNT() )
+      {
+       if( const TT_HoriHeader *ptr=face.getTTHoriHeader() )
+         {
+          MCoord P=ptr->caret_Slope_Run;
+          MCoord Q=ptr->caret_Slope_Rise;
+
+          if( P!=0 && Q>0 )
+            {
+             font_size.skew=Coord( (DCoord(P)*font_size.dy)/Q ); // (P/Q)*font_size.dy
+            }
+         }
+      }
+   }
+
+  bool glyph(FrameBuf<DesktopColor> &buf,Point &base,char ch,VColor vc) const
+   {
+    auto index=face.getGlyphIndex(Object->map(ch));
+
+    face.loadGlyph(index,ToFlags(cfg.fht));
+
+    if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+
+    face.renderGlyph(ToMode(cfg.fsm));
+
+    auto placement=face.getGlyphPlacement();
+
+    bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
+
+    base+=placement.getDelta();
+
+    return ret;
+   }
+
+  bool glyph(FrameBuf<DesktopColor> &buf,Point &base,IndexType &prev_index,char ch,VColor vc) const
+   {
+    auto index=face.getGlyphIndex(Object->map(ch));
+
+    if( prev_index && index )
+      {
+       FT_Vector delta=face.getKerning(prev_index,index);
+
+       base+={FreeType::Round(delta.x),FreeType::Round(delta.y)};
+      }
+
+    prev_index=index;
+
+    face.loadGlyph(index,ToFlags(cfg.fht));
+
+    if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+
+    face.renderGlyph(ToMode(cfg.fsm));
+
+    auto placement=face.getGlyphPlacement();
+
+    bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
+
+    base+=placement.getDelta();
+
+    return ret;
+   }
+
+  bool glyph(FrameBuf<DesktopColor> &buf,Point &base,char ch,ulen ch_index,PointMap map,CharFunction func) const
+   {
+    auto index=face.getGlyphIndex(Object->map(ch));
+
+    face.loadGlyph(index,ToFlags(cfg.fht));
+
+    if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+
+    face.renderGlyph(ToMode(cfg.fsm));
+
+    auto placement=face.getGlyphPlacement();
+
+    Point delta=placement.getDelta();
+    VColor vc=func(ch_index,ch,map(base),delta);
+
+    bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
+
+    base+=delta;
+
+    return ret;
+   }
+
+  bool glyph(FrameBuf<DesktopColor> &buf,Point &base,IndexType &prev_index,char ch,ulen ch_index,PointMap map,CharFunction func) const
+   {
+    auto index=face.getGlyphIndex(Object->map(ch));
+
+    if( prev_index && index )
+      {
+       FT_Vector delta=face.getKerning(prev_index,index);
+
+       base+={FreeType::Round(delta.x),FreeType::Round(delta.y)};
+      }
+
+    prev_index=index;
+
+    face.loadGlyph(index,ToFlags(cfg.fht));
+
+    if( cfg.strength ) face.emboldenGlyph(cfg.strength);
+
+    face.renderGlyph(ToMode(cfg.fsm));
+
+    auto placement=face.getGlyphPlacement();
+
+    Point delta=placement.getDelta();
+    VColor vc=func(ch_index,ch,map(base),delta);
+
+    bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
+
+    base+=delta;
+
+    return ret;
+   }
+
+  // global
+
+  struct Global
+   {
+    Mutex mutex;
+    FreeType::Lib lib;
+    CharMapTable map;
+
+    Global() : lib(FT_LCD_FILTER_DEFAULT) {}
+   };
+
+  static InitExitObject<Global> Object;
+ };
+
+InitExitObject<FreeTypeFont::Inner::Global> FreeTypeFont::Inner::Object{};
+
 /* class FreeTypeFont::Base */
 
-class FreeTypeFont::Base : public FontBase
+class FreeTypeFont::Base : public FontBase , Inner
  {
-   mutable FreeType::Face face;
-   Config cfg;
-   GammaTable gamma_table;
-
-   FontSize font_size;
-
-   struct CharX
-    {
-     Coord dx;
-     Coord dx0;
-     Coord dx1;
-    };
-
-   CharX char_x[256];
-
-  private:
-
-   using IndexType = FT_UInt ;
-
-   CharX text(char ch)
-    {
-     auto index=face.getGlyphIndex(Object->map(ch));
-
-     face.loadGlyph(index,ToFlags(cfg.fht));
-
-     if( cfg.strength )
-       {
-        if( !face.tryEmboldenGlyph(cfg.strength) ) cfg.strength=0;
-       }
-
-     face.renderGlyph(ToMode(cfg.fsm));
-
-     auto placement=face.getGlyphPlacement();
-
-     auto &metrics=face.getGlyphMetrics();
-
-     Coord dx0=0;
-     Coord dx1=0;
-
-     if( metrics.horiBearingX<0 )
-       {
-        dx0=FreeType::RoundUp(-metrics.horiBearingX);
-       }
-
-     FT_Pos extra=metrics.horiBearingX+metrics.width-metrics.horiAdvance;
-
-     if( extra>0 )
-       {
-        dx1=FreeType::RoundUp(extra);
-       }
-
-     return {placement.getDelta().x,dx0,dx1};
-    }
-
-   Coord kerning(IndexType &prev_index,char ch) const
-    {
-     Coord ret=0;
-
-     auto index=face.getGlyphIndex(Object->map(ch));
-
-     if( prev_index && index )
-       {
-        FT_Vector delta=face.getKerning(prev_index,index);
-
-        ret=FreeType::Round(delta.x);
-       }
-
-     prev_index=index;
-
-     return ret;
-    }
-
-   CharX table_text(char ch) const
-    {
-     return char_x[uint8(ch)];
-    }
-
-   CharX table_text(IndexType &prev_index,char ch) const
-    {
-     CharX ret=table_text(ch);
-     Coord delta=kerning(prev_index,ch);
-
-     ret.dx+=delta;
-
-     return ret;
-    }
-
-   void updateFontSize()
-    {
-     if( !face.hasKerning() ) cfg.use_kerning=false;
-
-     font_size.min_dx=MaxCoord;
-     font_size.max_dx=0;
-     font_size.dx0=0;
-     font_size.dx1=0;
-
-     for(int i=-128; i<128 ;i++)
-       {
-        char ch=char(i);
-        CharX cx=text(ch);
-
-        Replace_min(font_size.min_dx,cx.dx);
-        Replace_max(font_size.max_dx,cx.dx);
-        Replace_max(font_size.dx0,cx.dx0);
-        Replace_max(font_size.dx1,cx.dx1);
-
-        char_x[uint8(ch)]=cx;
-       }
-
-     Coord dy=FreeType::RoundUp(face.getMetrics().height);
-     Coord by=FreeType::RoundUp(face.getMetrics().ascender);
-     Coord ey=FreeType::RoundUp(-face.getMetrics().descender);
-
-     if( by+ey>dy )
-       {
-        font_size.dy=by+ey;
-        font_size.by=by;
-       }
-     else
-       {
-        font_size.dy=dy;
-        font_size.by=by+(dy-by-ey)/2;
-       }
-
-     font_size.skew=0;
-
-     if( face.isSFNT() )
-       {
-        if( const TT_HoriHeader *ptr=face.getTTHoriHeader() )
-          {
-           MCoord P=ptr->caret_Slope_Run;
-           MCoord Q=ptr->caret_Slope_Rise;
-
-           if( P!=0 && Q>0 )
-             {
-              font_size.skew=Coord( (DCoord(P)*font_size.dy)/Q ); // (P/Q)*font_size.dy
-             }
-          }
-       }
-    }
-
-   bool text(FrameBuf<DesktopColor> &buf,Point &base,char ch,VColor vc) const
-    {
-     auto index=face.getGlyphIndex(Object->map(ch));
-
-     face.loadGlyph(index,ToFlags(cfg.fht));
-
-     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
-
-     face.renderGlyph(ToMode(cfg.fsm));
-
-     auto placement=face.getGlyphPlacement();
-
-     bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
-
-     base+=placement.getDelta();
-
-     return ret;
-    }
-
-   bool text(FrameBuf<DesktopColor> &buf,Point &base,IndexType &prev_index,char ch,VColor vc) const
-    {
-     auto index=face.getGlyphIndex(Object->map(ch));
-
-     if( prev_index && index )
-       {
-        FT_Vector delta=face.getKerning(prev_index,index);
-
-        base+={FreeType::Round(delta.x),FreeType::Round(delta.y)};
-       }
-
-     prev_index=index;
-
-     face.loadGlyph(index,ToFlags(cfg.fht));
-
-     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
-
-     face.renderGlyph(ToMode(cfg.fsm));
-
-     auto placement=face.getGlyphPlacement();
-
-     bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
-
-     base+=placement.getDelta();
-
-     return ret;
-    }
-
-   bool text(FrameBuf<DesktopColor> &buf,Point &base,char ch,ulen ch_index,PointMap map,CharFunction func) const
-    {
-     auto index=face.getGlyphIndex(Object->map(ch));
-
-     face.loadGlyph(index,ToFlags(cfg.fht));
-
-     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
-
-     face.renderGlyph(ToMode(cfg.fsm));
-
-     auto placement=face.getGlyphPlacement();
-
-     Point delta=placement.getDelta();
-     VColor vc=func(ch_index,ch,map(base),delta);
-
-     bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
-
-     base+=delta;
-
-     return ret;
-    }
-
-   bool text(FrameBuf<DesktopColor> &buf,Point &base,IndexType &prev_index,char ch,ulen ch_index,PointMap map,CharFunction func) const
-    {
-     auto index=face.getGlyphIndex(Object->map(ch));
-
-     if( prev_index && index )
-       {
-        FT_Vector delta=face.getKerning(prev_index,index);
-
-        base+={FreeType::Round(delta.x),FreeType::Round(delta.y)};
-       }
-
-     prev_index=index;
-
-     face.loadGlyph(index,ToFlags(cfg.fht));
-
-     if( cfg.strength ) face.emboldenGlyph(cfg.strength);
-
-     face.renderGlyph(ToMode(cfg.fsm));
-
-     auto placement=face.getGlyphPlacement();
-
-     Point delta=placement.getDelta();
-     VColor vc=func(ch_index,ch,map(base),delta);
-
-     bool ret=face.drawGlyph(buf,placement.toPos(base),vc,gamma_table.getFunc(),cfg.fsm==FontSmoothLCD_BGR);
-
-     base+=delta;
-
-     return ret;
-    }
-
   private:
 
    void textRun(AbstractSparseString &str,FuncArgType<CharX> func) const
@@ -571,11 +625,11 @@ class FreeTypeFont::Base : public FontBase
        {
         IndexType index=0;
 
-        str.applyChar( [&] (char ch) { return text(buf,base,index,ch,vc); } );
+        str.applyChar( [&] (char ch) { return glyph(buf,base,index,ch,vc); } );
        }
      else
        {
-        str.applyChar( [&] (char ch) { return text(buf,base,ch,vc); } );
+        str.applyChar( [&] (char ch) { return glyph(buf,base,ch,vc); } );
        }
     }
 
@@ -587,11 +641,11 @@ class FreeTypeFont::Base : public FontBase
        {
         IndexType index=0;
 
-        str.applyChar( [&] (char ch) { return text(buf,base,index,ch,ch_index++,map,func); } );
+        str.applyChar( [&] (char ch) { return glyph(buf,base,index,ch,ch_index++,map,func); } );
        }
      else
        {
-        str.applyChar( [&] (char ch) { return text(buf,base,ch,ch_index++,map,func); } );
+        str.applyChar( [&] (char ch) { return glyph(buf,base,ch,ch_index++,map,func); } );
        }
     }
 
@@ -615,19 +669,6 @@ class FreeTypeFont::Base : public FontBase
      text(buf,buf.map(base),str,index,-buf.getMapper(),func);
     }
 
-  private:
-
-   struct Global
-    {
-     Mutex mutex;
-     FreeType::Lib lib;
-     CharMapTable map;
-
-     Global() : lib(FT_LCD_FILTER_DEFAULT) {}
-    };
-
-   static InitExitObject<Global> Object;
-
   public:
 
    static void Init() { Object.init(); }
@@ -636,35 +677,11 @@ class FreeTypeFont::Base : public FontBase
 
    // constructors
 
-   explicit Base(StrLen file_name)
-    : face(Object->lib,Object->mutex,file_name)
-    {
-     updateFontSize();
-    }
+   explicit Base(StrLen file_name) : Inner(file_name) {}
 
-   Base(StrLen file_name,bool &is_font)
-    : face(Object->lib,Object->mutex,file_name,is_font)
-    {
-     if( is_font )
-       {
-        try
-          {
-           updateFontSize();
-          }
-        catch(...)
-          {
-           Printf(NoException,"file_name #;",file_name);
+   Base(StrLen file_name,bool &is_font) : Inner(file_name,is_font) {}
 
-           is_font=false;
-          }
-       }
-    }
-
-   Base(StrLen dir,StrLen file_name)
-    : face(Object->lib,Object->mutex,dir,file_name)
-    {
-     updateFontSize();
-    }
+   Base(StrLen dir,StrLen file_name) : Inner(dir,file_name) {}
 
    virtual ~Base() {}
 
@@ -831,8 +848,6 @@ class FreeTypeFont::Base : public FontBase
     }
  };
 
-InitExitObject<FreeTypeFont::Base::Global> FreeTypeFont::Base::Object{};
-
 /* class FreeTypeFont::InitExit */
 
 FreeTypeFont::InitExit::InitExit()
@@ -906,7 +921,7 @@ StrLen FreeTypeFont::getFamily() const
  {
   if( Base *base=getBase() ) return base->getFamily();
 
-  return "Unknown";
+  return CStr("Unknown");
  }
 
 StrLen FreeTypeFont::getStyle() const

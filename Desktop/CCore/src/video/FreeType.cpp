@@ -252,6 +252,8 @@ void Face::setFixedSize(FT_Int index)
 
  // metrics
 
+#if 0
+
 FT_BBox Face::getScaledBBox() const
  {
   FT_BBox ret;
@@ -268,6 +270,8 @@ FT_BBox Face::getScaledBBox() const
 
   return ret;
  }
+
+#endif
 
 FT_Vector Face::getKerning(FT_UInt prev_index,FT_UInt next_index,FT_UInt mode) const
  {
@@ -302,7 +306,7 @@ bool Face::emboldenGlyph(FT_Pos strength)
 
   if( FT_Error error = FT_Outline_Embolden(&face->glyph->outline,strength) )
     {
-     Printf(Exception,"CCore::Video::FreeType::Face::embolden(...) : #;",Error(error));
+     Printf(Exception,"CCore::Video::FreeType::Face::emboldenGlyph(...) : #;",Error(error));
     }
 
   return true;

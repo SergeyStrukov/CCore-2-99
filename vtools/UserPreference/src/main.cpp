@@ -21,7 +21,7 @@
 
 using namespace App;
 
-const AbortMsgFuncType AbortMsgFunc = AbortMsgBox ;
+const AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
 int main()
  {

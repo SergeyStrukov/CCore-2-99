@@ -57,6 +57,8 @@ const char * GetTextDesc(FontSmoothType fsm);
 
 class FreeTypeFont : public Font
  {
+   struct Inner;
+
    class Base;
 
   private:

@@ -171,11 +171,15 @@ class Face : NoCopy
 
    // tables
 
-   const TT_Header * getTTHeader() const { return static_cast<const TT_Header *>(FT_Get_Sfnt_Table(face,FT_SFNT_HEAD)); }
-
    const TT_HoriHeader * getTTHoriHeader() const { return static_cast<const TT_HoriHeader *>(FT_Get_Sfnt_Table(face,FT_SFNT_HHEA)); }
 
+#if 0
+
+   const TT_Header * getTTHeader() const { return static_cast<const TT_Header *>(FT_Get_Sfnt_Table(face,FT_SFNT_HEAD)); }
+
    const TT_OS2 * getTTOS2Header() const { return static_cast<const TT_OS2 *>(FT_Get_Sfnt_Table(face,FT_SFNT_OS2)); }
+
+#endif
 
    // set size
 
@@ -187,9 +191,13 @@ class Face : NoCopy
 
    const FT_Size_Metrics & getMetrics() const { return face->size->metrics; }
 
+#if 0
+
    const FT_BBox & getBBox() const { return face->bbox; }
 
    FT_BBox getScaledBBox() const;
+
+#endif
 
    FT_Vector getKerning(FT_UInt prev_index,FT_UInt next_index,FT_UInt mode=FT_KERNING_DEFAULT) const;
 
@@ -213,9 +221,9 @@ class Face : NoCopy
 
    Placement getGlyphPlacement() const { return face->glyph; }
 
-   const FT_Bitmap & getGlyphBitmap() const { return face->glyph->bitmap; }
-
    // draw
+
+   const FT_Bitmap & getGlyphBitmap() const { return face->glyph->bitmap; }
 
    bool drawGlyph(FrameBuf<DesktopColor> &buf,Point pos,VColor vc,GammaFunc gamma,bool bgr=false) const
     {
