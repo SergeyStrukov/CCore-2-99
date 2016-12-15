@@ -78,6 +78,15 @@ StrLen SingleString::next()
   return Empty;
  }
 
+void SingleString::cutPrefix(ulen len)
+ {
+  GuardLen(len,str.len);
+
+  str=str.prefix(len);
+
+  first=true;
+ }
+
 void SingleString::cutSuffix(ulen len)
  {
   GuardLen(len,str.len);
@@ -128,6 +137,25 @@ StrLen DoubleString::next()
 
      default: return Empty;
     }
+ }
+
+void DoubleString::cutPrefix(ulen len)
+ {
+  if( len>str1.len )
+    {
+     len-=str1.len;
+
+     GuardLen(len,str2.len);
+
+     str2=str2.prefix(len);
+    }
+  else
+    {
+     str1=str1.prefix(len);
+     str2=Empty;
+    }
+
+  ind=1;
  }
 
 void DoubleString::cutSuffix(ulen len)

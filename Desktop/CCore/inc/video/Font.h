@@ -44,7 +44,7 @@ enum AlignY
 
 /* types */
 
-using CharFunction = Function<VColor (ulen index,char ch,Point base,Point delta)> ;
+using CharFunction = Function<VColor (ulen index,char ch,Point base,Point delta)> ; // base relative pane
 
 /* classes */
 
@@ -91,7 +91,7 @@ struct TextSize
   Coord dx0;
   Coord dx1;
   Coord skew;
-  Coord full_dx; // dx+font_size.dx0+font_size.dx1 , MaxCoord if overflowed
+  Coord full_dx; // dx+dx0+dx1 , MaxCoord if overflowed
   bool overflow; // full_dx overflowed
  };
 
@@ -125,6 +125,8 @@ struct AbstractSparseString
   virtual void restart()=0;
 
   virtual StrLen next()=0;
+
+  virtual void cutPrefix(ulen len)=0;
 
   virtual void cutSuffix(ulen len)=0;
 
@@ -244,6 +246,8 @@ class SingleString : public AbstractSparseString
 
    virtual StrLen next();
 
+   virtual void cutPrefix(ulen len);
+
    virtual void cutSuffix(ulen len);
 
    virtual bool cutCenter(ulen len);
@@ -269,6 +273,8 @@ class DoubleString : public AbstractSparseString
 
    virtual StrLen next();
 
+   virtual void cutPrefix(ulen len);
+
    virtual void cutSuffix(ulen len);
 
    virtual bool cutCenter(ulen len);
@@ -284,17 +290,22 @@ struct AbstractFont
 
   virtual TextSize text(AbstractSparseString &str) const =0;
 
+  virtual ulen fit(AbstractSparseString &str,Coord full_dx) const =0; // prefix length
+
   virtual ulen position(AbstractSparseString &str,Point point) const =0; // 1-based cell index, 0 -- before the first
-
-  virtual TextSize text(AbstractSparseString &str,ulen pos) const =0; // 0-based, implementation-defined if pos is out of range
-
-  virtual ulen fit(AbstractSparseString &str,Coord full_dx) const =0; // 0-based
 
   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const =0;
 
   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,CharFunction func) const =0;
 
   // helpers
+
+  TextSize text(AbstractSparseString &str,ulen len) const
+   {
+    str.cutPrefix(len);
+
+    return text(str);
+   }
 
   // single
 
@@ -303,13 +314,6 @@ struct AbstractFont
     SingleString obj(str);
 
     return text(obj);
-   }
-
-  ulen position(StrLen str,Point point) const
-   {
-    SingleString obj(str);
-
-    return position(obj,point);
    }
 
   TextSize text(StrLen str,ulen pos) const
@@ -324,6 +328,13 @@ struct AbstractFont
     SingleString obj(str);
 
     return fit(obj,+full_dx);
+   }
+
+  ulen position(StrLen str,Point point) const
+   {
+    SingleString obj(str);
+
+    return position(obj,point);
    }
 
   void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,VColor vc) const
@@ -349,13 +360,6 @@ struct AbstractFont
     return text(obj);
    }
 
-  ulen position(StrLen str1,StrLen str2,Point point) const
-   {
-    DoubleString obj(str1,str2);
-
-    return position(obj,point);
-   }
-
   TextSize text(StrLen str1,StrLen str2,ulen pos) const
    {
     DoubleString obj(str1,str2);
@@ -368,6 +372,13 @@ struct AbstractFont
     DoubleString obj(str1,str2);
 
     return fit(obj,+full_dx);
+   }
+
+  ulen position(StrLen str1,StrLen str2,Point point) const
+   {
+    DoubleString obj(str1,str2);
+
+    return position(obj,point);
    }
 
   void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str1,StrLen str2,VColor vc) const
@@ -736,18 +747,6 @@ class DotFontBase : public FontBase
      return text(len.value,len>max_len);
     }
 
-   virtual ulen position(AbstractSparseString &,Point point) const
-    {
-     if( point.x<0 ) return 0;
-
-     return 1+ulen(point.x/shape.dX());
-    }
-
-   virtual TextSize text(AbstractSparseString &,ulen pos) const
-    {
-     return text(pos,pos>max_len);
-    }
-
    virtual ulen fit(AbstractSparseString &str,Coord full_dx) const
     {
      ULenSat len=str.countLen();
@@ -757,6 +756,13 @@ class DotFontBase : public FontBase
      if( len<=max_len ) return len.value;
 
      return max_len;
+    }
+
+   virtual ulen position(AbstractSparseString &,Point point) const
+    {
+     if( point.x<0 ) return 0;
+
+     return 1+ulen(point.x/shape.dX());
     }
 
    virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const

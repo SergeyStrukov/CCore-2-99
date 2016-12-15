@@ -218,14 +218,14 @@ struct FreeTypeFont::Inner
     for(int i=-128; i<128 ;i++)
       {
        char ch=char(i);
-       CharX cx=text(ch);
+       CharX met=text(ch);
 
-       Replace_min(font_size.min_dx,cx.dx);
-       Replace_max(font_size.max_dx,cx.dx);
-       Replace_max(font_size.dx0,cx.dx0);
-       Replace_max(font_size.dx1,cx.dx1);
+       Replace_min(font_size.min_dx,met.dx);
+       Replace_max(font_size.max_dx,met.dx);
+       Replace_max(font_size.dx0,met.dx0);
+       Replace_max(font_size.dx1,met.dx1);
 
-       char_x[uint8(ch)]=cx;
+       char_x[uint8(ch)]=met;
       }
 
     Coord dy=FreeType::RoundUp(face.getMetrics().height);
@@ -396,40 +396,6 @@ class FreeTypeFont::Base : public FontBase , Inner
        }
     }
 
-   void textRun(AbstractSparseString &str,ulen pos,FuncArgType<CharX> func) const
-    {
-     if( cfg.use_kerning )
-       {
-        IndexType index=0;
-
-        str.applyChar( [this,&index,&pos,func] (char ch)
-                                               {
-                                                if( !pos ) return false;
-
-                                                pos--;
-
-                                                func( table_text(index,ch) );
-
-                                                return true;
-
-                                               } );
-       }
-     else
-       {
-        str.applyChar( [this,&pos,func] (char ch)
-                                        {
-                                         if( !pos ) return false;
-
-                                         pos--;
-
-                                         func( table_text(ch) );
-
-                                         return true;
-
-                                        } );
-       }
-    }
-
    void textRunWhile(AbstractSparseString &str,FuncType<bool,CharX> func) const
     {
      if( cfg.use_kerning )
@@ -450,7 +416,7 @@ class FreeTypeFont::Base : public FontBase , Inner
        {
         Coord delta=To16( (font_size.skew*MCoord(point.y))/font_size.dy ); // (skew/dy)*y
 
-        return point.x-delta;
+        return IntAdd(point.x,delta);
        }
      else
        {
@@ -458,17 +424,17 @@ class FreeTypeFont::Base : public FontBase , Inner
        }
     }
 
-   ulen fitBase(AbstractSparseString &str,Coord base_dx) const
+   ulen position(AbstractSparseString &str,Coord x) const
     {
      ulen ret=0;
 
-     if( base_dx<0 ) return ret;
+     if( x<0 ) return ret;
 
-     textRunWhile(str,[&] (CharX cx)
+     textRunWhile(str,[&] (CharX met)
                           {
-                           base_dx-=cx.dx;
+                           x-=met.dx;
 
-                           if( base_dx<0 ) return false;
+                           if( x<0 ) return false;
 
                            ret++;
 
@@ -479,18 +445,29 @@ class FreeTypeFont::Base : public FontBase , Inner
      return ret;
     }
 
+   // draw text
+
    MCoord text_dx(AbstractSparseString &str) const
     {
      MCoord ret=0;
 
-     textRun(str, [&] (CharX cx) { ret+=cx.dx; } );
+     textRun(str, [&] (CharX met)
+                      {
+                       if( ret>=0 && met.dx>MaxMCoord-ret )
+                         {
+                          Printf(Exception,"CCore::Video::FreeTypeFont::Base::text_dx(...) : overflow");
+                         }
+
+                       ret+=met.dx;
+
+                      } );
 
      return ret;
     }
 
    ulen skipCount(AbstractSparseString &str,MCoord &x) const // return suffix length
     {
-     ulen ret=0;
+     ULenSat ret;
 
      if( cfg.use_kerning )
        {
@@ -498,7 +475,7 @@ class FreeTypeFont::Base : public FontBase , Inner
 
         str.apply( [&] (StrLen str)
                        {
-                        if( ret )
+                        if( ret>0 )
                           {
                            ret+=str.len;
                           }
@@ -508,11 +485,11 @@ class FreeTypeFont::Base : public FontBase , Inner
                              {
                               char ch=*str;
                               Coord delta=kerning(index,ch);
-                              CharX cx=table_text(ch);
+                              CharX met=table_text(ch);
 
-                              if( x+cx.dx+cx.dx1<0 )
+                              if( x+met.dx+met.dx1<0 )
                                 {
-                                 x+=delta+cx.dx;
+                                 x+=delta+met.dx;
                                 }
                               else
                                 {
@@ -529,7 +506,7 @@ class FreeTypeFont::Base : public FontBase , Inner
        {
         str.apply( [&] (StrLen str)
                        {
-                        if( ret )
+                        if( ret>0 )
                           {
                            ret+=str.len;
                           }
@@ -537,11 +514,11 @@ class FreeTypeFont::Base : public FontBase , Inner
                           {
                            for(; +str ;++str)
                              {
-                              CharX cx=table_text(*str);
+                              CharX met=table_text(*str);
 
-                              if( x+cx.dx+cx.dx1<0 )
+                              if( x+met.dx+met.dx1<0 )
                                 {
-                                 x+=cx.dx;
+                                 x+=met.dx;
                                 }
                               else
                                 {
@@ -555,7 +532,26 @@ class FreeTypeFont::Base : public FontBase , Inner
                        } );
        }
 
-     return ret;
+     if( ret.overflow )
+       {
+        Printf(Exception,"CCore::Video::FreeTypeFont::Base::skipCount(...) : overflow");
+       }
+
+     return ret.value;
+    }
+
+   Coord skip(AbstractSparseString &str,MCoord x) const
+    {
+     if( x>=0 )
+       {
+        return Coord(x);
+       }
+
+     ulen len=skipCount(str,x);
+
+     str.cutSuffix(len);
+
+     return Coord(x);
     }
 
    Coord skip(AbstractSparseString &str,MCoord x,ulen &index) const
@@ -572,6 +568,49 @@ class FreeTypeFont::Base : public FontBase , Inner
      str.cutSuffix_index(len,index);
 
      return Coord(x);
+    }
+
+   Point prepare(Coord dx,Coord dy,TextPlace place,AbstractSparseString &str) const
+    {
+     Coord y;
+
+     switch( place.align_y )
+       {
+        case AlignY_Top : y=font_size.by; break;
+
+        case AlignY_Center : y=(dy-font_size.dy)/2+font_size.by; break;
+
+        case AlignY_Bottom : y=dy-font_size.dy+font_size.by; break;
+
+        default: y=place.y;
+       }
+
+     Coord x;
+
+     switch( place.align_x )
+       {
+        case AlignX_Left : x=font_size.dx0; break;
+
+        case AlignX_Right :
+         {
+          MCoord tdx=text_dx(str);
+
+          x=skip(str,dx-font_size.dx1-tdx);
+         }
+        break;
+
+        case AlignX_Center :
+         {
+          MCoord tdx=text_dx(str);
+
+          x=skip(str,(dx-tdx)/2);
+         }
+        break;
+
+        default: x=place.x;
+       }
+
+     return {x,y};
     }
 
    Point prepare(Coord dx,Coord dy,TextPlace place,AbstractSparseString &str,ulen &index) const
@@ -619,7 +658,7 @@ class FreeTypeFont::Base : public FontBase , Inner
 
    void text(FrameBuf<DesktopColor> &buf,Point base,AbstractSparseString &str,VColor vc) const
     {
-     if( base.y<font_size.by-font_size.dy || base.y>buf.dY()+font_size.by ) return;
+     if( base.y<font_size.by-font_size.dy || base.y>buf.dY()+(MCoord)font_size.by ) return;
 
      if( cfg.use_kerning )
        {
@@ -635,7 +674,7 @@ class FreeTypeFont::Base : public FontBase , Inner
 
    void text(FrameBuf<DesktopColor> &buf,Point base,AbstractSparseString &str,ulen ch_index,PointMap map,CharFunction func) const
     {
-     if( base.y<font_size.by-font_size.dy || base.y>buf.dY()+font_size.by ) return;
+     if( base.y<font_size.by-font_size.dy || base.y>buf.dY()+(MCoord)font_size.by ) return;
 
      if( cfg.use_kerning )
        {
@@ -653,8 +692,7 @@ class FreeTypeFont::Base : public FontBase , Inner
     {
      if( !buf ) return;
 
-     ulen index;
-     Point base=prepare(dx,dy,place,str,index);
+     Point base=prepare(dx,dy,place,str);
 
      text(buf,buf.map(base),str,vc);
     }
@@ -705,13 +743,13 @@ class FreeTypeFont::Base : public FontBase , Inner
      CoordAcc acc;
      bool first=true;
 
-     textRun(str, [&] (CharX cx)
+     textRun(str, [&] (CharX met)
                       {
-                       acc.add(cx.dx);
+                       acc.add(met.dx);
 
-                       if( first ) first=false,ret.dx0=cx.dx0;
+                       if( first ) first=false,ret.dx0=met.dx0;
 
-                       ret.dx1=cx.dx1;
+                       ret.dx1=met.dx1;
 
                       } );
 
@@ -719,11 +757,36 @@ class FreeTypeFont::Base : public FontBase , Inner
 
      if( ret.dx<0 ) ret.dx=0;
 
-     acc.add(font_size.dx0);
-     acc.add(font_size.dx1);
+     acc.add(ret.dx0);
+     acc.add(ret.dx1);
 
      ret.full_dx=acc.value;
      ret.overflow=acc.overflow;
+
+     return ret;
+    }
+
+   virtual ulen fit(AbstractSparseString &str,Coord full_dx) const
+    {
+     ulen ret=0;
+
+     if( full_dx<0 ) return ret;
+
+     bool first=true;
+
+     textRunWhile(str,[&] (CharX met)
+                          {
+                           if( first ) first=false,full_dx-=met.dx0;
+
+                           full_dx-=met.dx;
+
+                           if( full_dx<met.dx1 ) return false;
+
+                           ret++;
+
+                           return true;
+
+                          } );
 
      return ret;
     }
@@ -734,48 +797,7 @@ class FreeTypeFont::Base : public FontBase , Inner
 
      if( x<0 ) return 0;
 
-     return 1+fitBase(str,x);
-    }
-
-   virtual TextSize text(AbstractSparseString &str,ulen pos) const
-    {
-     TextSize ret;
-
-     ret.dy=font_size.dy;
-     ret.by=font_size.by;
-     ret.dx0=0;
-     ret.dx1=0;
-     ret.skew=font_size.skew;
-
-     CoordAcc acc;
-     bool first=true;
-
-     textRun(str,pos, [&] (CharX cx)
-                          {
-                           acc.add(cx.dx);
-
-                           if( first ) first=false,ret.dx0=cx.dx0;
-
-                           ret.dx1=cx.dx1;
-
-                          } );
-
-     ret.dx=acc.value;
-
-     if( ret.dx<0 ) ret.dx=0;
-
-     acc.add(font_size.dx0);
-     acc.add(font_size.dx1);
-
-     ret.full_dx=acc.value;
-     ret.overflow=acc.overflow;
-
-     return ret;
-    }
-
-   virtual ulen fit(AbstractSparseString &str,Coord full_dx) const
-    {
-     return fitBase(str,full_dx-font_size.dx0-font_size.dx1);
+     return 1+position(str,x);
     }
 
    virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const

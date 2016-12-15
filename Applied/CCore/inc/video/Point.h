@@ -39,9 +39,11 @@ using AreaType = uint32 ;
 
 /* consts */
 
-const Coord MaxCoord = 32767 ;
+const Coord MaxCoord = 32'767 ;
 
-const Coord MinCoord = -32768 ;
+const Coord MinCoord = -32'768 ;
+
+const MCoord MaxMCoord = 2'147'483'647 ;
 
 /* functions */
 
