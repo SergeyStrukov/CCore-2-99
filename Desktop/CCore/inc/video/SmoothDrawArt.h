@@ -31,9 +31,11 @@ namespace Smooth {
 template <Algon::RangeType R>
 R PrefixPlus(R r,R suffix)
  {
-  auto len=Algon::BaseRangeAlgo<R>::GetLen(r)-Algon::BaseRangeAlgo<R>::GetLen(suffix)+1;
+  using Algo=Algon::BaseRangeAlgo<R>;
 
-  return Algon::BaseRangeAlgo<R>::GetPrefix(r,len);
+  auto len=Algo::GetLen(r)-Algo::GetLen(suffix)+1;
+
+  return Algo::GetPrefix(r,len);
  }
 
 /* classes */
@@ -301,7 +303,7 @@ class NextLine
 
    NextLine(const R &dots_,const Map &map_) : dots(dots_),map(map_) {}
 
-   bool first()
+   bool first() // sets b -> c , b != c
     {
      if( !dots ) return false;
 
@@ -326,7 +328,7 @@ class NextLine
      return false;
     }
 
-   bool next()
+   bool next() // sets b -> c , b != c , a <- b , a != b
     {
      while( +dots )
        {
@@ -374,12 +376,10 @@ class DotsBase : NoCopy
     {
      Collector<MPoint> &buf;
 
-     explicit AddBuf(Collector<MPoint> &buf_) : buf(buf_) {}
-
      void operator () (MPoint point) { buf.append_copy(point); }
     };
 
-   AddBuf getAdd() { return AddBuf(buf); }
+   AddBuf getAdd() { return {buf}; }
 
    void addPoint(MPoint point) { buf.append_copy(point); }
 
@@ -387,6 +387,8 @@ class DotsBase : NoCopy
     {
      for(++r; +r ;++r) addPoint(*r);
     }
+
+   // path/loop elements
 
    void addRound(MPoint a,MCoord width)
     {

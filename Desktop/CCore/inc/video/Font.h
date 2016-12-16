@@ -91,8 +91,10 @@ struct TextSize
   Coord dx0;
   Coord dx1;
   Coord skew;
-  Coord full_dx; // dx+dx0+dx1 , MaxCoord if overflowed
+  Coord full_dx; // dx+font_size.dx0+font_size.dx1 , MaxCoord if overflowed
   bool overflow; // full_dx overflowed
+
+  Coord extDX() const { return dx+dx0+dx1; }
  };
 
 /* struct TextPlace */
@@ -300,11 +302,29 @@ struct AbstractFont
 
   // helpers
 
+  TextSize text_guarded(AbstractSparseString &str) const
+   {
+    TextSize ts=text(str);
+
+    IntGuard( !ts.overflow );
+
+    return ts;
+   }
+
   TextSize text(AbstractSparseString &str,ulen len) const
    {
     str.cutPrefix(len);
 
     return text(str);
+   }
+
+  TextSize text_guarded(AbstractSparseString &str,ulen len) const
+   {
+    TextSize ts=text(str,len);
+
+    IntGuard( !ts.overflow );
+
+    return ts;
    }
 
   // single
@@ -316,11 +336,25 @@ struct AbstractFont
     return text(obj);
    }
 
-  TextSize text(StrLen str,ulen pos) const
+  TextSize text(StrLen str,ulen len) const
    {
     SingleString obj(str);
 
-    return text(obj,pos);
+    return text(obj,len);
+   }
+
+  TextSize text_guarded(StrLen str) const
+   {
+    SingleString obj(str);
+
+    return text_guarded(obj);
+   }
+
+  TextSize text_guarded(StrLen str,ulen len) const
+   {
+    SingleString obj(str);
+
+    return text_guarded(obj,len);
    }
 
   ulen fit(StrLen str,Coordinate full_dx) const
@@ -360,11 +394,25 @@ struct AbstractFont
     return text(obj);
    }
 
-  TextSize text(StrLen str1,StrLen str2,ulen pos) const
+  TextSize text(StrLen str1,StrLen str2,ulen len) const
    {
     DoubleString obj(str1,str2);
 
-    return text(obj,pos);
+    return text(obj,len);
+   }
+
+  TextSize text_guarded(StrLen str1,StrLen str2) const
+   {
+    DoubleString obj(str1,str2);
+
+    return text_guarded(obj);
+   }
+
+  TextSize text_guarded(StrLen str1,StrLen str2,ulen len) const
+   {
+    DoubleString obj(str1,str2);
+
+    return text_guarded(obj,len);
    }
 
   ulen fit(StrLen str1,StrLen str2,Coordinate full_dx) const

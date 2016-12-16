@@ -433,7 +433,7 @@ class FreeTypeFont::Base : public FontBase , Inner
        }
     }
 
-   ulen position(AbstractSparseString &str,Coord x) const
+   ulen prefixLen(AbstractSparseString &str,Coord x) const
     {
      ulen ret=0;
 
@@ -762,8 +762,8 @@ class FreeTypeFont::Base : public FontBase , Inner
 
      if( ret.dx<0 ) ret.dx=0;
 
-     acc.add(ret.dx0);
-     acc.add(ret.dx1);
+     acc.add(font_size.dx0);
+     acc.add(font_size.dx1);
 
      ret.full_dx=acc.value;
      ret.overflow=acc.overflow;
@@ -773,27 +773,9 @@ class FreeTypeFont::Base : public FontBase , Inner
 
    virtual ulen fit(AbstractSparseString &str,Coord full_dx) const
     {
-     ulen ret=0;
+     if( full_dx<0 ) return 0;
 
-     if( full_dx<0 ) return ret;
-
-     bool first=true;
-
-     textRunWhile(str,[&] (CharX met)
-                          {
-                           if( first ) first=false,full_dx-=met.dx0;
-
-                           full_dx-=met.dx;
-
-                           if( full_dx<met.dx1 ) return false;
-
-                           ret++;
-
-                           return true;
-
-                          } );
-
-     return ret;
+     return prefixLen(str,full_dx-font_size.dx0-font_size.dx1);
     }
 
    virtual ulen position(AbstractSparseString &str,Point point) const
@@ -802,7 +784,7 @@ class FreeTypeFont::Base : public FontBase , Inner
 
      if( x<0 ) return 0;
 
-     return 1+position(str,x);
+     return 1+prefixLen(str,x);
     }
 
    virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,VColor vc) const

@@ -101,11 +101,13 @@ struct RationalType
   MCoord a;
   SInt b;
 
-  RationalType(MCoord a_,SInt b_) : a(a_),b(b_) { IntGuard(b!=0); }
+  RationalType(MCoord a_,SInt b_) : a(a_),b(b_) { IntGuard( b!=0 ); }
 
-  MCoord operator * (MCoord x) const { return MCoord( (DCoord(a)*x)/b ); }
+  MCoord mul(MCoord x) const { return MCoord( (DCoord(a)*x)/b ); }
 
-  MPoint operator * (MPoint a) const { return MPoint( (*this)*a.x , (*this)*a.y ); }
+  MCoord operator * (MCoord x) const { return mul(x); }
+
+  MPoint operator * (MPoint a) const { return MPoint(mul(a.x),mul(a.y)); }
  };
 
 /* Rational() */
@@ -133,15 +135,14 @@ class Rotate
      IntGuard( c!=0 );
     }
 
-   MPoint operator () (MCoord x,MCoord y) const
+   MPoint mul(MCoord x,MCoord y) const
     {
      return MPoint(MCoord(Prod(a,-b,x,y)/c),MCoord(Prod(b,a,x,y)/c));
     }
 
-   MPoint operator () (MPoint point) const
-    {
-     return (*this)(point.x,point.y);
-    }
+   MPoint operator () (MCoord x,MCoord y) const { return mul(x,y); }
+
+   MPoint operator () (MPoint point) const { return mul(point.x,point.y); }
  };
 
 /* class ArcDriver */
@@ -340,7 +341,7 @@ void AddLineOutCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init) // a != b
 /* AddLineArc() */
 
 template <FuncInitArgType<MPoint> FuncInit>
-void AddLineArc(MPoint a,MPoint b,MPoint c,MCoord radius,FuncInit func_init)
+void AddLineArc(MPoint a,MPoint b,MPoint c,MCoord radius,FuncInit func_init) // a != b , b != c
  {
   FunctorTypeOf<FuncInit> func(func_init);
 
