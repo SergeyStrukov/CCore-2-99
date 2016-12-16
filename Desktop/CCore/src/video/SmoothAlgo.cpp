@@ -111,13 +111,21 @@ MPoint LineArc::Bisect(MPoint a,MPoint b,MCoord radius)
 
   if( p==Null ) return Rotate90(a);
 
-  auto L=Length(p);
+  {
+   DCoord L=Length(p);
 
-  if( L>=radius ) return Rational(radius,L)*p;
+   if( L>=radius ) return Rational(radius,L)*p;
+  }
 
   MPoint q=a-b;
 
-  return Rotate90(Rational(radius,Length(q))*q);
+  {
+   DCoord L=Length(q);
+
+   if( L>=radius ) return Rotate90(Rational(radius,L)*q);
+  }
+
+  return a;
  }
 
 unsigned LineArc::SBits(DCoord a)

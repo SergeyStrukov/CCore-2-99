@@ -197,6 +197,8 @@ struct LineArc
 
   ArcType type;
 
+  // internal
+
   static DCoord Sigma(MPoint a,MPoint b);
 
   static DCoord Sigma(MPoint a,MPoint b,MPoint c);
@@ -208,6 +210,8 @@ struct LineArc
   static MPoint Sect(DCoord A,DCoord B,MPoint p);
 
   void intersect(MPoint a,MPoint b,MPoint c,MPoint d,MPoint base);
+
+  // constructor
 
   LineArc(MPoint a,MPoint b,MPoint c,MCoord radius);
  };
