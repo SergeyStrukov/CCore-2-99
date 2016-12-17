@@ -91,6 +91,10 @@ struct LineRound;
 
 struct LineArc;
 
+struct SolidBox;
+
+template <PlotType Plot> class SolidRow;
+
 class SolidDriver;
 
 /* struct RationalType<SInt> */
@@ -384,6 +388,598 @@ void AddLineArc(MPoint a,MPoint b,MPoint c,MCoord radius,FuncInit func_init) // 
     }
  }
 
+/* Intersect() */
+
+inline uMCoord uIntersect(uMCoord x,uMCoord y,uMCoord Y)
+ {
+  uDCoord p=uDCoord(x)*y;
+  uMCoord q=uMCoord( p/Y );
+  uMCoord r=uMCoord( p%Y );
+
+  return (r>Y/2)?q+1:q;
+ }
+
+inline MCoord Intersect(MCoord a,MCoord b,uMCoord y,uMCoord Y)
+ {
+  if( y<=0 ) return a;
+
+  if( y>=Y ) return b;
+
+  if( a<b )
+    {
+     return IntMovePos(a,uIntersect(IntDist(a,b),y,Y));
+    }
+  else
+    {
+     return IntMoveNeg(a,uIntersect(IntDist(b,a),y,Y));
+    }
+ }
+
+inline MCoord Intersect(MPoint a,MPoint b,MCoord y)
+ {
+  return Intersect(a.x,b.x,IntDist(a.y,y),IntDist(a.y,b.y));
+ }
+
+/* struct SolidBox */
+
+struct SolidBox
+ {
+  MPoint base; // whole
+  MCoord dx;   // in whole pixels
+  MCoord dy;   // in whole pixels
+
+  static MCoord Len(MCoord len) { return IntRShift(len,MPoint::Precision)+1; }
+
+  template <class R>
+  SolidBox(R dots,MPointMapType<R> map)
+   {
+    if( +dots )
+      {
+       MPoint a=map(*dots);
+       MPoint b=a;
+
+       for(++dots; +dots ;++dots)
+         {
+          MPoint c=map(*dots);
+
+          a=Inf(a,c);
+          b=Sup(b,c);
+         }
+
+       base=a.round();
+
+       MPoint p=b.round()-base;
+
+       dx=Len(p.x);
+       dy=Len(p.y);
+      }
+    else
+      {
+       dx=0;
+       dy=0;
+      }
+   }
+ };
+
+/* class SolidRow<Plot> */
+
+template <PlotType Plot>
+class SolidRow : NoCopy
+ {
+   using Area = uint32 ;
+
+   static const Area FullArea = Area(1)<<(2*MPoint::Precision) ;
+
+   static unsigned ToAlpha(Area s)
+    {
+     const unsigned Bits=2*MPoint::Precision-ClrBits;
+     const Area Half = Area(1)<<(Bits-1) ;
+
+     return (s+Half)>>Bits;
+    }
+
+   static Area PixelArea(MCoord c,MCoord e)
+    {
+     if( c>=MPoint::Half ) return 0;
+
+     if( e<=-MPoint::Half ) return FullArea;
+
+     if( c>=-MPoint::Half )
+       {
+        if( e>MPoint::Half )
+          {
+           Area E=Area(e-MPoint::Half);
+           Area C=Area(MPoint::Half-c);
+
+           return (C*((C<<MPoint::Precision)/(C+E)))/2;
+          }
+        else
+          {
+           Area H=Area(MPoint::Half-(e+c)/2);
+
+           return H<<MPoint::Precision;
+          }
+       }
+     else
+       {
+        if( e>MPoint::Half )
+          {
+           Area C=Area(-c);
+           Area E=Area(e);
+           Area H=(C<<MPoint::Precision)/(C+E);
+
+           return H<<MPoint::Precision;
+          }
+        else
+          {
+           Area E=Area(e+MPoint::Half);
+           Area C=Area(-MPoint::Half-c);
+
+           return FullArea-(E*((E<<MPoint::Precision)/(C+E)))/2;
+          }
+       }
+    }
+
+   static Area PixelArea(MCoord c,MCoord e,MCoord d,MCoord f,MCoord x)
+    {
+     return PosSub(FullArea,PixelArea(x-e,x-c),PixelArea(d-x,f-x));
+    }
+
+   static Area PixelArea(MCoord H,MCoord c,MCoord e,MCoord d,MCoord f,MCoord x)
+    {
+     return (PixelArea(c,e,d,f,x)*Area(H))>>MPoint::Precision;
+    }
+
+   class Part : NoCopy
+    {
+      MPoint base;
+      MCoord a = 0 ;
+      MCoord b = 0 ;
+
+      StackArray<Area> line;
+      ulen off = 0 ;
+      ulen lim = 0 ;
+
+     private:
+
+      void add(ulen ind,Area s)
+       {
+        if( ind>=line.getLen() ) return;
+
+        if( off<lim )
+          {
+           while( ind<off ) line[--off]=0;
+
+           while( ind>=lim ) line[lim++]=0;
+
+           line[ind]+=s;
+          }
+        else
+          {
+           off=ind;
+           lim=ind+1;
+
+           line[ind]=s;
+          }
+       }
+
+      void pixel(MCoord x,Area s)
+       {
+        if( x<base.x ) return;
+
+        ulen ind=(ulen)IntRShift(x-base.x,MPoint::Precision);
+
+        add(ind,s);
+       }
+
+     public:
+
+      explicit Part(SolidBox box) : base(box.base),line(box.dx) {}
+
+      void start(MCoord y)
+       {
+        base.y=y;
+        a=y-MPoint::Half;
+        b=y+MPoint::Half;
+
+        off=0;
+        lim=0;
+       }
+
+      void next(MCoord bottom,MCoord top,MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end)
+       {
+        if( bottom>=b || top<=a ) return;
+
+        MCoord A,c,d;
+
+        if( bottom<a )
+          {
+           c=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),a);
+           d=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),a);
+
+           A=a;
+          }
+        else
+          {
+           c=bottom_start;
+           d=bottom_end;
+
+           A=bottom;
+          }
+
+        MCoord B,e,f;
+
+        if( top>b )
+          {
+           e=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),b);
+           f=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),b);
+
+           B=b;
+          }
+        else
+          {
+           e=top_start;
+           f=top_end;
+
+           B=top;
+          }
+
+        if( c>e ) Swap(c,e);
+        if( d>f ) Swap(d,f);
+
+        MCoord x=MPoint::Round(c);
+        MCoord x1=MPoint::Round(e+MPoint::One-1);
+
+        MCoord x2=MPoint::Round(d);
+        MCoord x3=MPoint::Round(f+MPoint::One-1);
+
+        MCoord H=B-A;
+        Area S=Area(H)<<MPoint::Precision;
+
+        for(; x<x1 ;x+=MPoint::One) pixel(x,PixelArea(H,c,e,d,f,x));
+
+        for(; x<x2 ;x+=MPoint::One) pixel(x,S);
+
+        for(; x<x3 ;x+=MPoint::One) pixel(x,PixelArea(H,c,e,d,f,x));
+       }
+
+      void complete(Plot &plot)
+       {
+        auto *ptr=line.getPtr()+off;
+
+        MPoint p=base;
+
+        p.x+=MCoord(off)*MPoint::One;
+
+        for(ulen cnt=lim-off; cnt ;cnt--,ptr++,p.x+=MPoint::One) plot(p,ToAlpha(*ptr));
+       }
+    };
+
+   class Full : NoCopy
+    {
+      MPoint base;
+      MCoord a = 0 ;
+      MCoord b = 0 ;
+
+      static const ulen Len = 10 ;
+
+      TempArray<Area,Len> buf;
+      ulen count = 0 ;
+
+     private:
+
+      static ulen ExtLen(ulen len)
+       {
+        if( len<=Len ) return Len;
+
+        return Max<ulen>(len,len+Len+len/2);
+       }
+
+      static bool PushLen(ulen delta,ulen count)
+       {
+        return delta>=Len && delta>=count/3 ;
+       }
+
+      void push(MCoord x,PlotType &plot)
+       {
+        if( count )
+          {
+           if( x<base.x ) return;
+
+           ulen delta=(ulen)IntRShift(x-base.x,MPoint::Precision);
+
+           if( delta>=count )
+             {
+              complete(plot);
+
+              return;
+             }
+
+           if( PushLen(delta,count) )
+             {
+              {
+               for(Area s : Range(buf.getPtr(),delta) )
+                 {
+                  plot(base,ToAlpha(s));
+
+                  base.x+=MPoint::One;
+                 }
+              }
+
+              count-=delta;
+
+              {
+               auto *ptr=buf.getPtr();
+
+               for(ulen i=0,len=count; i<len ;i++) ptr[i]=ptr[i+delta];
+              }
+             }
+          }
+       }
+
+      void first(MCoord x,Area s)
+       {
+        base.x=x;
+
+        buf.provide(ExtLen(1));
+
+        buf[count++]=s;
+       }
+
+      void add(ulen ind,Area s)
+       {
+        if( ind<count )
+          {
+           buf[ind]+=s;
+          }
+        else
+          {
+           buf.extend(ExtLen(ind+1));
+
+           while( count<ind ) buf[count++]=0;
+
+           buf[count++]=s;
+          }
+       }
+
+      void pixel(MCoord x,Area s)
+       {
+        if( count )
+          {
+           if( x<base.x ) return;
+
+           ulen ind=(ulen)IntRShift(x-base.x,MPoint::Precision);
+
+           add(ind,s);
+          }
+        else
+          {
+           first(x,s);
+          }
+       }
+
+      void pixel(MCoord x,PlotType &plot)
+       {
+        plot(MPoint(x,base.y));
+       }
+
+     public:
+
+      Full() noexcept {}
+
+      ~Full() {}
+
+      void start(MCoord y)
+       {
+        base.y=y;
+        a=y-MPoint::Half;
+        b=y+MPoint::Half;
+
+        count=0;
+       }
+
+      void next(MCoord bottom,MCoord top,MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,Plot &plot)
+       {
+        MCoord c=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),a);
+        MCoord e=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),b);
+        MCoord d=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),a);
+        MCoord f=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),b);
+
+        if( c>e ) Swap(c,e);
+        if( d>f ) Swap(d,f);
+
+        MCoord x=MPoint::Round(c);
+        MCoord x1=MPoint::Round(e+MPoint::One-1);
+
+        MCoord x2=MPoint::Round(d);
+        MCoord x3=MPoint::Round(f+MPoint::One-1);
+
+        push(x,plot);
+
+        for(; x<x1 ;x+=MPoint::One) pixel(x,PixelArea(c,e,d,f,x));
+
+        if( x<x2 )
+          {
+           complete(plot);
+
+           for(; x<x2 ;x+=MPoint::One) pixel(x,plot);
+          }
+
+        for(; x<x3 ;x+=MPoint::One) pixel(x,PixelArea(c,e,d,f,x));
+       }
+
+      void complete(Plot &plot)
+       {
+        if( count )
+          {
+           for(Area s : Range(buf.getPtr(),count) )
+             {
+              plot(base,ToAlpha(s));
+
+              base.x+=MPoint::One;
+             }
+
+           count=0;
+
+           buf.erase();
+          }
+       }
+    };
+
+   Part part1;
+   Part part2;
+
+   MCoord bottom = 0 ;
+   MCoord top = 0 ;
+
+   Part *bottom_part;
+   Part *top_part;
+   StackArray<Full> fulls;
+   ulen count = 0 ;
+   bool top_on = false ;
+   bool bottom_on = false ;
+
+   Plot plot;
+
+  private:
+
+   PtrLen<Full> getFulls() { return Range(fulls.getPtr(),count); }
+
+   void startFulls(MCoord y)
+    {
+     if( count )
+       {
+        Replace_min(count,fulls.getLen());
+
+        for(Full &f : getFulls() )
+          {
+           f.start(y);
+
+           y+=MPoint::One;
+          }
+       }
+    }
+
+  public:
+
+   SolidRow(SolidBox box,const PlotType &plot_)
+    : part1(box),
+      part2(box),
+      fulls(box.dy),
+      plot(plot_)
+    {
+     bottom_part=&part1;
+     top_part=&part2;
+    }
+
+   void start(MCoord bottom_,MCoord top_)
+    {
+     bottom=bottom_;
+     top=top_;
+
+     MCoord a=MPoint::Round(bottom_);
+     MCoord b=MPoint::Round(top_);
+
+     if( bottom_==a-MPoint::Half )
+       {
+        bottom_on=false;
+
+        count=IntRShift(b-a,MPoint::Precision);
+
+        if( top_==b-MPoint::Half )
+          {
+           top_on=false;
+          }
+        else
+          {
+           top_on=true;
+
+           top_part->start(b);
+          }
+
+        startFulls(a);
+       }
+     else
+       {
+        if( top_==b-MPoint::Half )
+          {
+           count=IntRShift(b-a,MPoint::Precision)-1;
+
+           bottom_on=true;
+
+           if( top_on )
+             {
+              Swap(top_part,bottom_part);
+             }
+           else
+             {
+              bottom_part->start(a);
+             }
+
+           top_on=false;
+          }
+        else
+          {
+           if( a==b )
+             {
+              if( !top_on )
+                {
+                 top_on=true;
+
+                 top_part->start(b);
+                }
+
+              count=0;
+
+              bottom_on=false;
+             }
+           else
+             {
+              if( top_on )
+                {
+                 Swap(top_part,bottom_part);
+                }
+              else
+                {
+                 top_on=true;
+
+                 bottom_part->start(a);
+                }
+
+              top_part->start(b);
+
+              bottom_on=true;
+
+              count=IntRShift(b-a,MPoint::Precision)-1;
+             }
+          }
+
+        startFulls(a+MPoint::One);
+       }
+    }
+
+   void next(MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end)
+    {
+     if( top_on ) top_part->next(bottom,top,bottom_start,bottom_end,top_start,top_end);
+
+     if( bottom_on ) bottom_part->next(bottom,top,bottom_start,bottom_end,top_start,top_end);
+
+     for(Full &f : getFulls() ) f.next(bottom,top,bottom_start,bottom_end,top_start,top_end,plot);
+    }
+
+   void end()
+    {
+     if( bottom_on ) bottom_part->complete(plot);
+
+     for(Full &f : getFulls() ) f.complete(plot);
+    }
+
+   void complete()
+    {
+     if( top_on ) top_part->complete(plot);
+    }
+ };
+
 /* class SolidDriver */
 
 class SolidDriver : NoCopy
@@ -411,36 +1007,6 @@ class SolidDriver : NoCopy
     };
 
    using IndexType = int ;
-
-   static uMCoord Intersect(uMCoord x,uMCoord y,uMCoord Y)
-    {
-     uDCoord p=uDCoord(x)*y;
-     uMCoord q=uMCoord( p/Y );
-     uMCoord r=uMCoord( p%Y );
-
-     return (r>Y/2)?q+1:q;
-    }
-
-   static MCoord Intersect(MCoord a,MCoord b,uMCoord y,uMCoord Y)
-    {
-     if( y==0 ) return a;
-
-     if( y==Y ) return b;
-
-     if( a<b )
-       {
-        return IntMovePos(a,Intersect(IntDist(a,b),y,Y));
-       }
-     else
-       {
-        return IntMoveNeg(a,Intersect(IntDist(b,a),y,Y));
-       }
-    }
-
-   static MCoord Intersect(MPoint a,MPoint b,MCoord y)
-    {
-     return Intersect(a.x,b.x,IntDist(a.y,y),IntDist(a.y,b.y));
-    }
 
    struct Line : CmpComparable<Line>
     {
@@ -493,6 +1059,8 @@ class SolidDriver : NoCopy
 
      void setCur(MCoord y) { x_cur=Intersect(a,b,y); }
 
+     void setCurTop() { x_cur=x_top; }
+
      void setTop(MCoord y) { x_top=Intersect(a,b,y); }
 
      void copyX() { x_bottom=x_cur; }
@@ -535,569 +1103,11 @@ class SolidDriver : NoCopy
 
    ulen sect_count = 0 ;
 
-   class Row : NoCopy
-    {
-      struct Box
-       {
-        MPoint base;
-        MCoord dx;
-        MCoord dy;
-
-        template <class R>
-        Box(R dots,MPointMapType<R> map)
-         {
-          if( +dots )
-            {
-             MPoint a=map(*dots);
-             MPoint b=a;
-
-             for(++dots; +dots ;++dots)
-               {
-                MPoint c=map(*dots);
-
-                a=Inf(a,c);
-                b=Sup(b,c);
-               }
-
-             base=a.round();
-
-             MPoint p=b.round()-base;
-
-             dx=IntRShift(p.x,MPoint::Precision)+1;
-             dy=IntRShift(p.y,MPoint::Precision)+1;
-            }
-          else
-            {
-             dx=0;
-             dy=0;
-            }
-         }
-       };
-
-      using Area = uint32 ;
-
-      static const Area FullArea = Area(1)<<(2*MPoint::Precision) ;
-
-      static unsigned ToAlpha(Area s)
-       {
-        const unsigned Bits=2*MPoint::Precision-ClrBits;
-        const Area Half = Area(1)<<(Bits-1) ;
-
-        return (s+Half)>>Bits;
-       }
-
-      static Area PixelArea(MCoord c,MCoord e)
-       {
-        if( c>=MPoint::Half ) return 0;
-
-        if( e<=-MPoint::Half ) return FullArea;
-
-        if( c>=-MPoint::Half )
-          {
-           if( e>MPoint::Half )
-             {
-              Area E=Area(e-MPoint::Half);
-              Area C=Area(MPoint::Half-c);
-
-              return (C*((C<<MPoint::Precision)/(C+E)))/2;
-             }
-           else
-             {
-              Area H=Area(MPoint::Half-(e+c)/2);
-
-              return H<<MPoint::Precision;
-             }
-          }
-        else
-          {
-           if( e>MPoint::Half )
-             {
-              Area C=Area(-c);
-              Area E=Area(e);
-              Area H=(C<<MPoint::Precision)/(C+E);
-
-              return H<<MPoint::Precision;
-             }
-           else
-             {
-              Area E=Area(e+MPoint::Half);
-              Area C=Area(-MPoint::Half-c);
-
-              return FullArea-(E*((E<<MPoint::Precision)/(C+E)))/2;
-             }
-          }
-       }
-
-      static Area PixelArea(MCoord c,MCoord e,MCoord d,MCoord f,MCoord x)
-       {
-        return PosSub(FullArea,PixelArea(x-e,x-c),PixelArea(d-x,f-x));
-       }
-
-      static Area PixelArea(MCoord H,MCoord c,MCoord e,MCoord d,MCoord f,MCoord x)
-       {
-        return (PixelArea(c,e,d,f,x)*Area(H))>>MPoint::Precision;
-       }
-
-      class Part : NoCopy
-       {
-         MPoint base;
-         MCoord a = 0 ;
-         MCoord b = 0 ;
-
-         StackArray<Area> line;
-         ulen off = 0 ;
-         ulen lim = 0 ;
-
-        private:
-
-         void add(ulen ind,Area s)
-          {
-           if( ind>=line.getLen() ) return;
-
-           if( off<lim )
-             {
-              while( ind<off ) line[--off]=0;
-
-              while( ind>=lim ) line[lim++]=0;
-
-              line[ind]+=s;
-             }
-           else
-             {
-              off=ind;
-              lim=ind+1;
-
-              line[ind]=s;
-             }
-          }
-
-         void pixel(MCoord x,Area s)
-          {
-           if( x<base.x ) return;
-
-           ulen ind=(ulen)IntRShift(x-base.x,MPoint::Precision);
-
-           add(ind,s);
-          }
-
-        public:
-
-         explicit Part(Box box) : base(box.base),line(box.dx) {}
-
-         void start(MCoord y)
-          {
-           base.y=y;
-           a=y-MPoint::Half;
-           b=y+MPoint::Half;
-
-           off=0;
-           lim=0;
-          }
-
-         void next(MCoord bottom,MCoord top,MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end)
-          {
-           if( bottom>=b || top<=a ) return;
-
-           MCoord A,c,d;
-
-           if( bottom<a )
-             {
-              c=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),a);
-              d=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),a);
-
-              A=a;
-             }
-           else
-             {
-              c=bottom_start;
-              d=bottom_end;
-
-              A=bottom;
-             }
-
-           MCoord B,e,f;
-
-           if( top>b )
-             {
-              e=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),b);
-              f=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),b);
-
-              B=b;
-             }
-           else
-             {
-              e=top_start;
-              f=top_end;
-
-              B=top;
-             }
-
-           if( c>e ) Swap(c,e);
-           if( d>f ) Swap(d,f);
-
-           MCoord x=MPoint::Round(c);
-           MCoord x1=MPoint::Round(e+1)+MPoint::One;
-
-           MCoord x2=MPoint::Round(d);
-           MCoord x3=MPoint::Round(f+1)+MPoint::One;
-
-           MCoord H=B-A;
-           Area S=Area(H)<<MPoint::Precision;
-
-           for(; x<x1 ;x+=MPoint::One) pixel(x,PixelArea(H,c,e,d,f,x));
-
-           for(; x<x2 ;x+=MPoint::One) pixel(x,S);
-
-           for(; x<x3 ;x+=MPoint::One) pixel(x,PixelArea(H,c,e,d,f,x));
-          }
-
-         void complete(PlotType &plot)
-          {
-           auto *ptr=line.getPtr()+off;
-
-           MPoint p=base;
-
-           p.x+=MCoord(off)*MPoint::One;
-
-           for(ulen cnt=lim-off; cnt ;cnt--,ptr++,p.x+=MPoint::One) plot(p,ToAlpha(*ptr));
-          }
-       };
-
-      class Full : NoCopy
-       {
-         MPoint base;
-         MCoord a = 0 ;
-         MCoord b = 0 ;
-
-         static const ulen Len = 10 ;
-
-         TempArray<Area,Len> buf;
-         ulen count = 0 ;
-
-        private:
-
-         static ulen ExtLen(ulen len)
-          {
-           if( len<=Len ) return Len;
-
-           return Max<ulen>(len,len+Len+len/2);
-          }
-
-         static bool PushLen(ulen delta,ulen count)
-          {
-           return delta>=Len && delta>=count/3 ;
-          }
-
-         void push(MCoord x,PlotType &plot)
-          {
-           if( count )
-             {
-              if( x<base.x ) return;
-
-              ulen delta=(ulen)IntRShift(x-base.x,MPoint::Precision);
-
-              if( delta>=count )
-                {
-                 complete(plot);
-
-                 return;
-                }
-
-              if( PushLen(delta,count) )
-                {
-                 {
-                  for(Area s : Range(buf.getPtr(),delta) )
-                    {
-                     plot(base,ToAlpha(s));
-
-                     base.x+=MPoint::One;
-                    }
-                 }
-
-                 count-=delta;
-
-                 {
-                  auto *ptr=buf.getPtr();
-
-                  for(ulen i=0,len=count; i<len ;i++) ptr[i]=ptr[i+delta];
-                 }
-                }
-             }
-          }
-
-         void first(MCoord x,Area s)
-          {
-           base.x=x;
-
-           buf.extend(ExtLen(1));
-
-           buf[count++]=s;
-          }
-
-         void add(ulen ind,Area s)
-          {
-           if( ind<count )
-             {
-              buf[ind]+=s;
-             }
-           else
-             {
-              buf.extend(ExtLen(ind+1));
-
-              while( count<ind ) buf[count++]=0;
-
-              buf[count++]=s;
-             }
-          }
-
-         void pixel(MCoord x,Area s)
-          {
-           if( count )
-             {
-              if( x<base.x ) return;
-
-              ulen ind=(ulen)IntRShift(x-base.x,MPoint::Precision);
-
-              add(ind,s);
-             }
-           else
-             {
-              first(x,s);
-             }
-          }
-
-         void pixel(MCoord x,PlotType &plot)
-          {
-           plot(MPoint(x,base.y));
-          }
-
-        public:
-
-         Full() noexcept {}
-
-         ~Full() {}
-
-         void start(MCoord y)
-          {
-           base.y=y;
-           a=y-MPoint::Half;
-           b=y+MPoint::Half;
-
-           count=0;
-          }
-
-         void next(MCoord bottom,MCoord top,MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,PlotType &plot)
-          {
-           MCoord c=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),a);
-           MCoord e=Intersect(MPoint(bottom_start,bottom),MPoint(top_start,top),b);
-           MCoord d=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),a);
-           MCoord f=Intersect(MPoint(bottom_end,bottom),MPoint(top_end,top),b);
-
-           if( c>e ) Swap(c,e);
-           if( d>f ) Swap(d,f);
-
-           MCoord x=MPoint::Round(c);
-           MCoord x1=MPoint::Round(e+1)+MPoint::One;
-
-           MCoord x2=MPoint::Round(d);
-           MCoord x3=MPoint::Round(f+1)+MPoint::One;
-
-           push(x,plot);
-
-           for(; x<x1 ;x+=MPoint::One) pixel(x,PixelArea(c,e,d,f,x));
-
-           if( x<x2 )
-             {
-              complete(plot);
-
-              for(; x<x2 ;x+=MPoint::One) pixel(x,plot);
-             }
-
-           for(; x<x3 ;x+=MPoint::One) pixel(x,PixelArea(c,e,d,f,x));
-          }
-
-         void complete(PlotType &plot)
-          {
-           if( count )
-             {
-              for(Area s : Range(buf.getPtr(),count) )
-                {
-                 plot(base,ToAlpha(s));
-
-                 base.x+=MPoint::One;
-                }
-
-              count=0;
-
-              buf.reset(0);
-             }
-          }
-       };
-
-      Part part1;
-      Part part2;
-
-      MCoord bottom = 0 ;
-      MCoord top = 0 ;
-
-      Part *bottom_part;
-      Part *top_part;
-      StackArray<Full> fulls;
-      ulen count = 0 ;
-      bool top_on = false ;
-      bool bottom_on = false ;
-
-     private:
-
-      PtrLen<Full> getFulls() { return Range(fulls.getPtr(),count); }
-
-      void startFulls(MCoord y)
-       {
-        if( count )
-          {
-           Replace_min(count,fulls.getLen());
-
-           for(Full &f : getFulls() )
-             {
-              f.start(y);
-
-              y+=MPoint::One;
-             }
-          }
-       }
-
-     public:
-
-      explicit Row(Box box)
-       : part1(box),
-         part2(box),
-         fulls(box.dy)
-       {
-        bottom_part=&part1;
-        top_part=&part2;
-       }
-
-      template <class R>
-      Row(R dots,MPointMapType<R> map) : Row(Box(dots,map)) {}
-
-      void start(MCoord bottom_,MCoord top_)
-       {
-        bottom=bottom_;
-        top=top_;
-
-        MCoord a=MPoint::Round(bottom_);
-        MCoord b=MPoint::Round(top_);
-
-        if( bottom_==a-MPoint::Half )
-          {
-           bottom_on=false;
-
-           count=IntRShift(b-a,MPoint::Precision);
-
-           if( top_==b-MPoint::Half )
-             {
-              top_on=false;
-             }
-           else
-             {
-              top_on=true;
-
-              top_part->start(b);
-             }
-
-           startFulls(a);
-          }
-        else
-          {
-           if( top_==b-MPoint::Half )
-             {
-              count=IntRShift(b-a,MPoint::Precision)-1;
-
-              bottom_on=true;
-
-              if( top_on )
-                {
-                 Swap(top_part,bottom_part);
-                }
-              else
-                {
-                 bottom_part->start(a);
-                }
-
-              top_on=false;
-             }
-           else
-             {
-              if( a==b )
-                {
-                 if( !top_on )
-                   {
-                    top_on=true;
-
-                    top_part->start(b);
-                   }
-
-                 count=0;
-
-                 bottom_on=false;
-                }
-              else
-                {
-                 if( top_on )
-                   {
-                    Swap(top_part,bottom_part);
-                   }
-                 else
-                   {
-                    top_on=true;
-
-                    bottom_part->start(a);
-                   }
-
-                 top_part->start(b);
-
-                 bottom_on=true;
-
-                 count=IntRShift(b-a,MPoint::Precision)-1;
-                }
-             }
-
-           startFulls(a+MPoint::One);
-          }
-       }
-
-      void next(MCoord bottom_start,MCoord bottom_end,MCoord top_start,MCoord top_end,PlotType &plot)
-       {
-        if( top_on ) top_part->next(bottom,top,bottom_start,bottom_end,top_start,top_end);
-
-        if( bottom_on ) bottom_part->next(bottom,top,bottom_start,bottom_end,top_start,top_end);
-
-        for(Full &f : getFulls() ) f.next(bottom,top,bottom_start,bottom_end,top_start,top_end,plot);
-       }
-
-      void next(Line *start,Line *end,PlotType &plot)
-       {
-        next(start->x_bottom,end->x_bottom,start->x_cur,end->x_cur,plot);
-       }
-
-      void end(PlotType &plot)
-       {
-        if( bottom_on ) bottom_part->complete(plot);
-
-        for(Full &f : getFulls() ) f.complete(plot);
-       }
-
-      void complete(PlotType &plot)
-       {
-        if( top_on ) top_part->complete(plot);
-       }
-    };
-
-   Row row;
+   SolidBox box;
 
   private:
 
-   void substep(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,PlotType &plot)
+   void substep(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,AnyType &row)
     {
      row.start(bottom,top);
 
@@ -1112,7 +1122,7 @@ class SolidDriver : NoCopy
 
            index+=line->delta_index;
 
-           if( index==0 ) row.next(start,line,plot);
+           if( index==0 ) row.next(start->x_bottom,line->x_bottom,start->x_cur,line->x_cur);
           }
        }
      else
@@ -1126,16 +1136,16 @@ class SolidDriver : NoCopy
 
            odd=!odd;
 
-           if( !odd ) row.next(start,line,plot);
+           if( !odd ) row.next(start->x_bottom,line->x_bottom,start->x_cur,line->x_cur);
           }
        }
 
-     row.end(plot);
+     row.end();
 
      for(Line *line : set ) line->copyX();
     }
 
-   void step(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,PlotType &plot)
+   void step(MCoord bottom,MCoord top,PtrLen<Line *> set,SolidFlag solid_flag,AnyType &row)
     {
      for(Line *line : set ) line->setTop(top);
 
@@ -1157,16 +1167,16 @@ class SolidDriver : NoCopy
 
         if( best_y==top )
           {
-           for(Line *line : set ) line->x_cur=line->x_top;
+           for(Line *line : set ) line->setCurTop();
 
-           substep(bottom,top,set,solid_flag,plot);
+           substep(bottom,top,set,solid_flag,row);
 
            return;
           }
 
         for(Line *line : set ) line->setCur(best_y);
 
-        substep(bottom,best_y,set,solid_flag,plot);
+        substep(bottom,best_y,set,solid_flag,row);
 
         bottom=best_y;
        }
@@ -1181,7 +1191,7 @@ class SolidDriver : NoCopy
       sect(dot_count),
       line_buf(dot_count),
       lines(dot_count),
-      row(dots,map)
+      box(dots,map)
     {
      if( !dot_count ) return;
 
@@ -1218,9 +1228,12 @@ class SolidDriver : NoCopy
 
    ~SolidDriver() {}
 
-   void operator () (SolidFlag solid_flag,PlotType plot)
+   template <PlotType Plot>
+   void operator () (SolidFlag solid_flag,const Plot &plot)
     {
      if( !dot_count ) return;
+
+     SolidRow<Plot> row(box,plot);
 
      ulen off=0;
      ulen lim=0;
@@ -1257,12 +1270,14 @@ class SolidDriver : NoCopy
 
         off=ind;
 
-        step(bottom,top,Range(lines).part(off,lim-off),solid_flag,plot);
+        // [off,lim) : bottom < s && top >= s
+
+        step(bottom,top,Range(lines).part(off,lim-off),solid_flag,row);
 
         bottom=top;
        }
 
-     row.complete(plot);
+     row.complete();
     }
  };
 

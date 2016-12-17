@@ -139,6 +139,12 @@ class TempArray : NoCopy
      return true;
     }
 
+   void erase()
+    {
+     free();
+     init(0);
+    }
+
    // range access
 
    T * getPtr() { return ptr; }

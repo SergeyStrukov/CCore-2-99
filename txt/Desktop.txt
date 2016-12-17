@@ -20,7 +20,7 @@ DrawAlgo.h           +
 CommonDrawArt.h      +
 
 ColorField.h         ++
-SmoothAlgo.h         +    
+SmoothAlgo.h         ++    
 SmoothDrawArt.h      ++
             
 --- Font -----------------------------------------------------------------------
