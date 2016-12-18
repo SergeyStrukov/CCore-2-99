@@ -532,9 +532,9 @@ void FileCheckShape::draw(const DrawBuf &buf) const
   temp_cfg.width=cfg.width;
   temp_cfg.border=cfg.border;
   temp_cfg.focus=cfg.focus;
-  temp_cfg.bottom=cfg.bottom;
-  temp_cfg.topUp=cfg.topUp;
-  temp_cfg.top=cfg.top;
+  temp_cfg.gray=cfg.gray;
+  temp_cfg.hilight=cfg.hilight;
+  temp_cfg.snow=cfg.snow;
   temp_cfg.face=check?cfg.faceRight:cfg.faceDown;
 
   KnobShape temp(temp_cfg,check?KnobShape::FaceRight:KnobShape::FaceDown);

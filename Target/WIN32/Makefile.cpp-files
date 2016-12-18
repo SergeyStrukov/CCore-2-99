@@ -287,6 +287,8 @@
 ../../Desktop/CCore/src/video/Info.cpp
 ../../Desktop/CCore/src/video/Keyboard.cpp
 ../../Desktop/CCore/src/video/Layout.cpp
+../../Desktop/CCore/src/video/lib/Shape.Button.cpp
+../../Desktop/CCore/src/video/lib/Window.Button.cpp
 ../../Desktop/CCore/src/video/Menu.cpp
 ../../Desktop/CCore/src/video/MessageWindow.cpp
 ../../Desktop/CCore/src/video/MinSizeType.cpp
@@ -295,12 +297,10 @@
 ../../Desktop/CCore/src/video/PrintDDL.cpp
 ../../Desktop/CCore/src/video/ProgressScale.cpp
 ../../Desktop/CCore/src/video/RefVal.cpp
-../../Desktop/CCore/src/video/ShapeLib.ButtonShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.DoubleLineShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.InfoShape.cpp
-../../Desktop/CCore/src/video/ShapeLib.KnobShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.LabelShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.LightShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.LineEditShape.cpp

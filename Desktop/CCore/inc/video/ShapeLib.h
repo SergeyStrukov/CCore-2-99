@@ -25,16 +25,12 @@
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
 
+#include <CCore/inc/video/lib/Shape.Button.h>
+
 namespace CCore {
 namespace Video {
 
 /* classes */
-
-class ButtonShape;
-
-class RefButtonShape;
-
-class KnobShape;
 
 class CheckShape;
 
@@ -83,166 +79,6 @@ class LineEditShape;
 class SimpleTextListShape;
 
 class ScrollListShape;
-
-/* class ButtonShape */
-
-class ButtonShape
- {
-   static MCoord FigEX(Coord fdy,MCoord width);
-
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(6,4) ;
-
-     RefVal<VColor> border =      Blue ;
-     RefVal<VColor> focus  = OrangeRed ;
-
-     RefVal<VColor> bottom =      Gray ;
-     RefVal<VColor> topUp  =     Green ;
-     RefVal<VColor> top    =      Snow ;
-     RefVal<VColor> text   =     Black ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
-   // parameters
-
-   using FaceType = DefString ;
-
-   const Config &cfg;
-   FaceType face;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   bool mover  = false ;
-   bool down   = false ;
-
-   bool mouse  = false ;
-
-   // methods
-
-   ButtonShape(const Config &cfg_,const FaceType &face_) : cfg(cfg_),face(face_) {}
-
-   Point getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class RefButtonShape */
-
-class RefButtonShape
- {
-  public:
-
-   using Config = ButtonShape::Config ;
-
-   // parameters
-
-   using FaceType = const RefVal<DefString> & ;
-
-   const Config &cfg;
-   FaceType face;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   bool mover  = false ;
-   bool down   = false ;
-
-   bool mouse  = false ;
-
-   // methods
-
-   RefButtonShape(const Config &cfg_,FaceType face_) : cfg(cfg_),face(face_) {}
-
-   Point getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class KnobShape */
-
-class KnobShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Coord> dxy = 30 ;
-
-     RefVal<VColor> border =      Blue ;
-     RefVal<VColor> focus  = OrangeRed ;
-
-     RefVal<VColor> bottom =      Gray ;
-     RefVal<VColor> topUp  =     Green ;
-     RefVal<VColor> top    =      Snow ;
-     RefVal<VColor> face   =     Black ;
-
-     Config() noexcept {}
-    };
-
-   // parameters
-
-   enum FaceType
-    {
-     FaceOk,
-     FacePlus,
-     FaceMinus,
-     FaceCross,
-     FaceAsterisk,
-     FaceExclamation,
-     FaceQuestion,
-     FaceLeft,
-     FaceRight,
-     FaceUp,
-     FaceDown,
-     FaceStop,
-     FaceRightRight,
-     FaceLeftLeft,
-
-     FaceLim
-    };
-
-   const Config &cfg;
-   FaceType face;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   bool mover  = false ;
-   bool down   = false ;
-
-   bool mouse  = false ;
-
-   // methods
-
-   KnobShape(const Config &cfg_,const FaceType &face_) : cfg(cfg_),face(face_) {}
-
-   SizeBox getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
 
 /* class CheckShape */
 

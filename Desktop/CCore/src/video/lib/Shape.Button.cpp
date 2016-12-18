@@ -1,4 +1,4 @@
-/* ShapeLib.KnobShape.cpp */
+/* Shape.Button.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,12 +13,133 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Button.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
 namespace Video {
+
+/* class ButtonShape */
+
+MCoord ButtonShape::FigEX(Coord fdy,MCoord width)
+ {
+  return (Fraction(fdy)+2*width)/4;
+ }
+
+Point ButtonShape::getMinSize() const
+ {
+  TextSize ts=cfg.font->text_guarded(face.str());
+
+  MCoord width=+cfg.width;
+
+  MCoord ex=FigEX(ts.dy,width);
+
+  Coord dx=RoundUpLen(ex);
+  Coord dy=RoundUpLen(width);
+
+  return 2*Point(dx,dy)+Point(ts.full_dx,ts.dy)+(+cfg.space);
+ }
+
+void ButtonShape::draw(const DrawBuf &buf) const
+ {
+  MPane p(pane);
+
+  if( !p ) return;
+
+  SmoothDrawArt art(buf.cut(pane));
+
+  Font font=cfg.font.get();
+
+  // figure
+
+  MCoord width=+cfg.width;
+
+  FontSize fs=font->getSize();
+
+  MCoord ex=FigEX(fs.dy,width);
+
+  VColor gray=+cfg.gray;
+
+  if( ex>p.dx/3 )
+    {
+     art.block(pane,gray);
+
+     return;
+    }
+
+  FigureButton fig(p,ex);
+
+  // body
+
+  if( down )
+    {
+     fig.curveSolid(art,gray);
+    }
+  else
+    {
+     VColor top = ( mover && enable )? +cfg.hilight : +cfg.snow ;
+
+     fig.curveSolid(art,TwoField(p.getTopLeft(),top,p.getBottomLeft(),gray));
+    }
+
+  // text
+
+  {
+   Coord dx=RoundUpLen(ex);
+   Coord dy=RoundUpLen(width);
+
+   Point shift=Null;
+
+   if( down ) shift=Point::Diag( (dy+1)/2 );
+
+   VColor text = enable? +cfg.text : gray ;
+
+   font->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),face.str(),text);
+  }
+
+  // border
+
+  {
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
+
+   fig.curveLoop(art,HalfPos,width,border);
+  }
+ }
+
+/* class RefButtonShape */
+
+Point RefButtonShape::getMinSize() const
+ {
+  ButtonShape temp(cfg,face.get());
+
+  temp.pane=pane;
+
+  temp.enable=enable;
+  temp.focus=focus;
+  temp.mover=mover;
+  temp.down=down;
+
+  temp.mouse=mouse;
+
+  return temp.getMinSize();
+ }
+
+void RefButtonShape::draw(const DrawBuf &buf) const
+ {
+  ButtonShape temp(cfg,face.get());
+
+  temp.pane=pane;
+
+  temp.enable=enable;
+  temp.focus=focus;
+  temp.mover=mover;
+  temp.down=down;
+
+  temp.mouse=mouse;
+
+  temp.draw(buf);
+ }
 
 /* class KnobShape */
 
@@ -44,24 +165,24 @@ void KnobShape::draw(const DrawBuf &buf) const
 
   MPoint center=p.getCenter();
 
-  VColor bottom=+cfg.bottom;
+  VColor gray=+cfg.gray;
 
   // body
 
   if( down )
     {
-     art.ball(center,radius,bottom);
+     art.ball(center,radius,gray);
     }
   else
     {
-     VColor top = ( mover && enable )? +cfg.topUp : +cfg.top ;
+     VColor top = ( mover && enable )? +cfg.hilight : +cfg.snow ;
 
-     art.ball(center,radius,TwoField(p.getTopLeft(),top,p.getBottomLeft(),bottom));
+     art.ball(center,radius,TwoField(p.getTopLeft(),top,p.getBottomLeft(),gray));
     }
 
   // face
 
-  VColor fc = enable? +cfg.face : bottom ;
+  VColor fc = enable? +cfg.face : gray ;
 
   switch( face )
     {
@@ -258,7 +379,7 @@ void KnobShape::draw(const DrawBuf &buf) const
   {
    MCoord width=+cfg.width;
 
-   VColor border = focus? +cfg.focus : ( enable? +cfg.border : bottom ) ;
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
 
    art.circle(center,radius-width/2,width,border);
   }
@@ -266,5 +387,4 @@ void KnobShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 

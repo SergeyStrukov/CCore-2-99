@@ -425,24 +425,9 @@ UserPreference::UserPreference() noexcept // Update here
 
   // sub windows
 
-  cfg_ButtonWindow.width.bind(width);
-  cfg_ButtonWindow.space.bind(button_space);
-  cfg_ButtonWindow.border.bind(border);
-  cfg_ButtonWindow.focus.bind(focus);
-  cfg_ButtonWindow.bottom.bind(bottom);
-  cfg_ButtonWindow.top.bind(top);
-  cfg_ButtonWindow.topUp.bind(topUp);
-  cfg_ButtonWindow.text.bind(button_text);
-  cfg_ButtonWindow.font.bind(button_font.font);
+  cfg_ButtonWindow.bind(get());
 
-  cfg_KnobWindow.width.bind(width);
-  cfg_KnobWindow.dxy.bind(knob_dxy);
-  cfg_KnobWindow.border.bind(border);
-  cfg_KnobWindow.focus.bind(focus);
-  cfg_KnobWindow.bottom.bind(bottom);
-  cfg_KnobWindow.top.bind(top);
-  cfg_KnobWindow.topUp.bind(topUp);
-  cfg_KnobWindow.face.bind(face);
+  cfg_KnobWindow.bind(get());
 
   cfg_CheckWindow.dxy.bind(check_dxy);
   cfg_CheckWindow.border.bind(border);
@@ -675,9 +660,9 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FileCheckShape.dxy.bind(filew_alt_dy);
   cfg_FileCheckShape.border.bind(border);
   cfg_FileCheckShape.focus.bind(focus);
-  cfg_FileCheckShape.bottom.bind(bottom);
-  cfg_FileCheckShape.topUp.bind(topUp);
-  cfg_FileCheckShape.top.bind(top);
+  cfg_FileCheckShape.gray.bind(gray);
+  cfg_FileCheckShape.hilight.bind(hilight);
+  cfg_FileCheckShape.snow.bind(snow);
   cfg_FileCheckShape.faceRight.bind(filew_right);
   cfg_FileCheckShape.faceDown.bind(filew_down);
 

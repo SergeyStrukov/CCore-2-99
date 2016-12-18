@@ -290,9 +290,9 @@ class FileCheckShape
      RefVal<VColor> border =      Blue ;
      RefVal<VColor> focus  = OrangeRed ;
 
-     RefVal<VColor> bottom =      Gray ;
-     RefVal<VColor> topUp  =     Green ;
-     RefVal<VColor> top    =      Snow ;
+     RefVal<VColor> gray    =      Gray ;
+     RefVal<VColor> hilight =     Green ;
+     RefVal<VColor> snow    =      Snow ;
 
      RefVal<VColor> faceRight =  Green ;
      RefVal<VColor> faceDown  =    Red ;

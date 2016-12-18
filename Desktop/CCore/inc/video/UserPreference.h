@@ -74,10 +74,14 @@ struct UserPreferenceBag
   VColor line     =      Gray ;
   VColor inactive =      Gray ;
 
-  VColor bottom   =      Gray ;
-  VColor bottomUp =     Green ;
-  VColor top      =      Snow ;
-  VColor topUp    =     Green ;
+  VColor gray    =      Gray ; // +
+  VColor snow    =      Snow ; // +
+  VColor hilight = PaleGreen ; // +
+
+  VColor bottom   =      Gray ; // -
+  VColor bottomUp =     Green ; // -
+  VColor top      =      Snow ; // -
+  VColor topUp    =     Green ; // -
 
   VColor border   =      Blue ;
   VColor focus    = OrangeRed ;

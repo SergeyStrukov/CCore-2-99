@@ -60,6 +60,9 @@ FigureLib.h          +
 
 --- Window ---------------------------------------------------------------------
 
+ShapeLib.h           .            
+WindowLib.h          .
+          
 DragWindow.h             
 FixedWindow.h        
 ToolWindow.h         
@@ -70,9 +73,6 @@ FileWindow.h
 MessageWindow.h      +           
 WindowReport.h       
 
-ShapeLib.h           .            
-WindowLib.h          .
-          
 UserPreference.h     .
 
 --------------------------------------------------------------------------------

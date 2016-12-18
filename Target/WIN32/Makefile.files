@@ -275,12 +275,11 @@ obj/ScanTools.o \
 obj/Scanf.o \
 obj/ScopeGuard.o \
 obj/Sem.o \
-obj/ShapeLib.ButtonShape.o \
+obj/Shape.Button.o \
 obj/ShapeLib.CheckShape.o \
 obj/ShapeLib.ContourShape.o \
 obj/ShapeLib.DoubleLineShape.o \
 obj/ShapeLib.InfoShape.o \
-obj/ShapeLib.KnobShape.o \
 obj/ShapeLib.LabelShape.o \
 obj/ShapeLib.LightShape.o \
 obj/ShapeLib.LineEditShape.o \
@@ -373,6 +372,7 @@ obj/UserPreference.o \
 obj/UtilFunc.o \
 obj/VideoConsole.o \
 obj/VideoDevice.o \
+obj/Window.Button.o \
 obj/WindowLib.o \
 obj/WindowReport.o \
 obj/XPoint.o \
@@ -655,12 +655,11 @@ obj/ScanTools.s \
 obj/Scanf.s \
 obj/ScopeGuard.s \
 obj/Sem.s \
-obj/ShapeLib.ButtonShape.s \
+obj/Shape.Button.s \
 obj/ShapeLib.CheckShape.s \
 obj/ShapeLib.ContourShape.s \
 obj/ShapeLib.DoubleLineShape.s \
 obj/ShapeLib.InfoShape.s \
-obj/ShapeLib.KnobShape.s \
 obj/ShapeLib.LabelShape.s \
 obj/ShapeLib.LightShape.s \
 obj/ShapeLib.LineEditShape.s \
@@ -753,6 +752,7 @@ obj/UserPreference.s \
 obj/UtilFunc.s \
 obj/VideoConsole.s \
 obj/VideoDevice.s \
+obj/Window.Button.s \
 obj/WindowLib.s \
 obj/WindowReport.s \
 obj/XPoint.s \
@@ -1035,12 +1035,11 @@ obj/ScanTools.dep \
 obj/Scanf.dep \
 obj/ScopeGuard.dep \
 obj/Sem.dep \
-obj/ShapeLib.ButtonShape.dep \
+obj/Shape.Button.dep \
 obj/ShapeLib.CheckShape.dep \
 obj/ShapeLib.ContourShape.dep \
 obj/ShapeLib.DoubleLineShape.dep \
 obj/ShapeLib.InfoShape.dep \
-obj/ShapeLib.KnobShape.dep \
 obj/ShapeLib.LabelShape.dep \
 obj/ShapeLib.LightShape.dep \
 obj/ShapeLib.LineEditShape.dep \
@@ -1133,6 +1132,7 @@ obj/UserPreference.dep \
 obj/UtilFunc.dep \
 obj/VideoConsole.dep \
 obj/VideoDevice.dep \
+obj/Window.Button.dep \
 obj/WindowLib.dep \
 obj/WindowReport.dep \
 obj/XPoint.dep \
@@ -1976,7 +1976,7 @@ obj/ScopeGuard.o : ../../Simple/CCore/src/gadget/ScopeGuard.cpp
 obj/Sem.o : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ShapeLib.ButtonShape.o : ../../Desktop/CCore/src/video/ShapeLib.ButtonShape.cpp
+obj/Shape.Button.o : ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.CheckShape.o : ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
@@ -1989,9 +1989,6 @@ obj/ShapeLib.DoubleLineShape.o : ../../Desktop/CCore/src/video/ShapeLib.DoubleLi
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.InfoShape.o : ../../Desktop/CCore/src/video/ShapeLib.InfoShape.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ShapeLib.KnobShape.o : ../../Desktop/CCore/src/video/ShapeLib.KnobShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.LabelShape.o : ../../Desktop/CCore/src/video/ShapeLib.LabelShape.cpp
@@ -2268,6 +2265,9 @@ obj/VideoConsole.o : ../../Applied/CCore/src/video/VideoConsole.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/VideoDevice.o : ../../Applied/CCore/src/video/VideoDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.Button.o : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/WindowLib.o : ../../Desktop/CCore/src/video/WindowLib.cpp
@@ -3109,7 +3109,7 @@ obj/ScopeGuard.s : ../../Simple/CCore/src/gadget/ScopeGuard.cpp
 obj/Sem.s : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ShapeLib.ButtonShape.s : ../../Desktop/CCore/src/video/ShapeLib.ButtonShape.cpp
+obj/Shape.Button.s : ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.CheckShape.s : ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
@@ -3122,9 +3122,6 @@ obj/ShapeLib.DoubleLineShape.s : ../../Desktop/CCore/src/video/ShapeLib.DoubleLi
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.InfoShape.s : ../../Desktop/CCore/src/video/ShapeLib.InfoShape.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ShapeLib.KnobShape.s : ../../Desktop/CCore/src/video/ShapeLib.KnobShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.LabelShape.s : ../../Desktop/CCore/src/video/ShapeLib.LabelShape.cpp
@@ -3401,6 +3398,9 @@ obj/VideoConsole.s : ../../Applied/CCore/src/video/VideoConsole.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/VideoDevice.s : ../../Applied/CCore/src/video/VideoDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.Button.s : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/WindowLib.s : ../../Desktop/CCore/src/video/WindowLib.cpp
@@ -4242,8 +4242,8 @@ obj/ScopeGuard.dep : ../../Simple/CCore/src/gadget/ScopeGuard.cpp
 obj/Sem.dep : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sem.o $< -MF $@
 
-obj/ShapeLib.ButtonShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ButtonShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ButtonShape.o $< -MF $@
+obj/Shape.Button.dep : ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Button.o $< -MF $@
 
 obj/ShapeLib.CheckShape.dep : ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.CheckShape.o $< -MF $@
@@ -4256,9 +4256,6 @@ obj/ShapeLib.DoubleLineShape.dep : ../../Desktop/CCore/src/video/ShapeLib.Double
 
 obj/ShapeLib.InfoShape.dep : ../../Desktop/CCore/src/video/ShapeLib.InfoShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.InfoShape.o $< -MF $@
-
-obj/ShapeLib.KnobShape.dep : ../../Desktop/CCore/src/video/ShapeLib.KnobShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.KnobShape.o $< -MF $@
 
 obj/ShapeLib.LabelShape.dep : ../../Desktop/CCore/src/video/ShapeLib.LabelShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.LabelShape.o $< -MF $@
@@ -4536,6 +4533,9 @@ obj/VideoConsole.dep : ../../Applied/CCore/src/video/VideoConsole.cpp
 obj/VideoDevice.dep : ../../Applied/CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@
 
+obj/Window.Button.dep : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Button.o $< -MF $@
+
 obj/WindowLib.dep : ../../Desktop/CCore/src/video/WindowLib.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowLib.o $< -MF $@
 
@@ -4561,9 +4561,5 @@ obj/SysTime.s.o : ../../Target/WIN32/CCore/src/sys/SysTime.s
 
 
 
-ifneq ($(MAKECMDGOALS),clean)
-
 include $(DEP_FILE)
-
-endif
 
