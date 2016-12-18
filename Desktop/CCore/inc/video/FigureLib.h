@@ -473,6 +473,10 @@ struct FigureDots : FigureBase<SmoothDot,Len> , DrawDots
    }
  };
 
+ //
+ // contraclockwise
+ //
+
 /* struct FigureBox */
 
 struct FigureBox : FigurePoints<4>
@@ -622,19 +626,19 @@ struct FigureRoundBox : FigureDots<28>
 
   MPoint getLeftTop() const { return buf[0].point; }
 
-  MPoint getRightTop() const { return buf[15].point; }
-
   MPoint getLeftBottom() const { return buf[1].point; }
+
+  MPoint getBottomLeft() const { return buf[7].point; }
+
+  MPoint getBottomRight() const { return buf[8].point; }
+
+  MPoint getRightTop() const { return buf[15].point; }
 
   MPoint getRightBottom() const { return buf[14].point; }
 
   MPoint getTopLeft() const { return buf[22].point; }
 
   MPoint getTopRight() const { return buf[21].point; }
-
-  MPoint getBottomLeft() const { return buf[7].point; }
-
-  MPoint getBottomRight() const { return buf[8].point; }
  };
 
 } // namespace Video
