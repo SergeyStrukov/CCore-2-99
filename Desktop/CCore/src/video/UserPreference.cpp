@@ -433,13 +433,7 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_SwitchWindow.bind(get());
 
-  cfg_RadioWindow.dxy.bind(radio_dxy);
-  cfg_RadioWindow.border.bind(border);
-  cfg_RadioWindow.focus.bind(focus);
-  cfg_RadioWindow.bottom.bind(top);
-  cfg_RadioWindow.top.bind(bottom);
-  cfg_RadioWindow.bottomUp.bind(bottomUp);
-  cfg_RadioWindow.mark.bind(mark);
+  cfg_RadioWindow.bind(get());
 
   cfg_TextWindow.width.bind(width);
   cfg_TextWindow.space.bind(message_space);

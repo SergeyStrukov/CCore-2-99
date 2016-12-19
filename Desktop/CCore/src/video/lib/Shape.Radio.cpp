@@ -1,4 +1,4 @@
-/* ShapeLib.RadioShape.cpp */
+/* Shape.Radio.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Radio.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -43,23 +43,23 @@ void RadioShape::draw(const DrawBuf &buf) const
 
   MPoint center=p.getCenter();
 
-  VColor top=+cfg.top;
+  VColor gray=+cfg.gray;
 
   // body
 
   {
-   VColor bottom = ( mover && enable )? +cfg.bottomUp : +cfg.bottom ;
+   VColor bottom = ( mover && enable )? +cfg.grayUp : +cfg.snow ;
 
    MCoord d=Ratio(600,10)*radius;
 
-   art.ball(center,radius,TwoField(center.subXY(d),top,center.addXY(d),bottom));
+   art.ball(center,radius,TwoField(center.subXY(d),gray,center.addXY(d),bottom));
   }
 
   // mark
 
   if( check )
     {
-     VColor mark = enable? +cfg.mark : top ;
+     VColor mark = enable? +cfg.mark : gray ;
 
      art.ball(center,radius/3,mark);
     }
@@ -67,7 +67,7 @@ void RadioShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border = focus? +cfg.focus : ( enable? +cfg.border : top ) ;
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
 
    art.circle(center,radius-width/2,width,border);
   }
@@ -75,5 +75,4 @@ void RadioShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 
