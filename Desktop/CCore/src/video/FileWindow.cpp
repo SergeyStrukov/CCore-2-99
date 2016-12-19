@@ -533,7 +533,7 @@ void FileCheckShape::draw(const DrawBuf &buf) const
   temp_cfg.border=cfg.border;
   temp_cfg.focus=cfg.focus;
   temp_cfg.gray=cfg.gray;
-  temp_cfg.hilight=cfg.hilight;
+  temp_cfg.snowUp=cfg.snowUp;
   temp_cfg.snow=cfg.snow;
   temp_cfg.face=check?cfg.faceRight:cfg.faceDown;
 

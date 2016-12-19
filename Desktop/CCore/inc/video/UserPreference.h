@@ -75,8 +75,9 @@ struct UserPreferenceBag
   VColor inactive =      Gray ;
 
   VColor gray    =      Gray ; // +
+  VColor grayUp  =     Green ; // +
   VColor snow    =      Snow ; // +
-  VColor hilight = PaleGreen ; // +
+  VColor snowUp  = PaleGreen ; // +
 
   VColor bottom   =      Gray ; // -
   VColor bottomUp =     Green ; // -

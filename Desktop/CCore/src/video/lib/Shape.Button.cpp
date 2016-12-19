@@ -78,7 +78,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     VColor top = ( mover && enable )? +cfg.hilight : +cfg.snow ;
+     VColor top = ( mover && enable )? +cfg.snowUp : +cfg.snow ;
 
      fig.curveSolid(art,TwoField(p.getTopLeft(),top,p.getBottomLeft(),gray));
     }
@@ -175,7 +175,7 @@ void KnobShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     VColor top = ( mover && enable )? +cfg.hilight : +cfg.snow ;
+     VColor top = ( mover && enable )? +cfg.snowUp : +cfg.snow ;
 
      art.ball(center,radius,TwoField(p.getTopLeft(),top,p.getBottomLeft(),gray));
     }

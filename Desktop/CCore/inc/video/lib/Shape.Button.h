@@ -44,12 +44,12 @@ class ButtonShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<VColor> border  =      Blue ;
-     RefVal<VColor> focus   = OrangeRed ;
-     RefVal<VColor> gray    =      Gray ;
-     RefVal<VColor> snow    =      Snow ;
-     RefVal<VColor> hilight = PaleGreen ;
-     RefVal<VColor> text    =     Black ;
+     RefVal<VColor> border =      Blue ;
+     RefVal<VColor> focus  = OrangeRed ;
+     RefVal<VColor> gray   =      Gray ;
+     RefVal<VColor> snow   =      Snow ;
+     RefVal<VColor> snowUp = PaleGreen ;
+     RefVal<VColor> text   =     Black ;
 
      RefVal<Point> space = Point(6,4) ;
 
@@ -61,12 +61,11 @@ class ButtonShape
      void bind(const Bag &bag)
       {
        width.bind(bag.width);
-
        border.bind(bag.border);
        focus.bind(bag.focus);
        gray.bind(bag.gray);
        snow.bind(bag.snow);
-       hilight.bind(bag.hilight);
+       snowUp.bind(bag.snowUp);
 
        text.bind(bag.button_text);
        space.bind(bag.button_space);
@@ -148,12 +147,12 @@ class KnobShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<VColor> border  =      Blue ;
-     RefVal<VColor> focus   = OrangeRed ;
-     RefVal<VColor> gray    =      Gray ;
-     RefVal<VColor> snow    =      Snow ;
-     RefVal<VColor> hilight = PaleGreen ;
-     RefVal<VColor> face    =     Black ;
+     RefVal<VColor> border =      Blue ;
+     RefVal<VColor> focus  = OrangeRed ;
+     RefVal<VColor> gray   =      Gray ;
+     RefVal<VColor> snow   =      Snow ;
+     RefVal<VColor> snowUp = PaleGreen ;
+     RefVal<VColor> face   =     Black ;
 
      RefVal<Coord> dxy = 30 ;
 
@@ -163,12 +162,11 @@ class KnobShape
      void bind(const Bag &bag)
       {
        width.bind(bag.width);
-
        border.bind(bag.border);
        focus.bind(bag.focus);
        gray.bind(bag.gray);
        snow.bind(bag.snow);
-       hilight.bind(bag.hilight);
+       snowUp.bind(bag.snowUp);
        face.bind(bag.face);
 
        dxy.bind(bag.knob_dxy);

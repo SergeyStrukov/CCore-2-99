@@ -276,7 +276,8 @@ obj/Scanf.o \
 obj/ScopeGuard.o \
 obj/Sem.o \
 obj/Shape.Button.o \
-obj/ShapeLib.CheckShape.o \
+obj/Shape.Check.o \
+obj/Shape.Switch.o \
 obj/ShapeLib.ContourShape.o \
 obj/ShapeLib.DoubleLineShape.o \
 obj/ShapeLib.InfoShape.o \
@@ -289,7 +290,6 @@ obj/ShapeLib.ScrollListShape.o \
 obj/ShapeLib.ScrollShape.o \
 obj/ShapeLib.SimpleTextListShape.o \
 obj/ShapeLib.SingleLineShape.o \
-obj/ShapeLib.SwitchShape.o \
 obj/ShapeLib.TextContourShape.o \
 obj/ShapeLib.TextLineWindow.o \
 obj/ShapeLib.TextShape.o \
@@ -373,6 +373,7 @@ obj/UtilFunc.o \
 obj/VideoConsole.o \
 obj/VideoDevice.o \
 obj/Window.Button.o \
+obj/Window.Check.o \
 obj/WindowLib.o \
 obj/WindowReport.o \
 obj/XPoint.o \
@@ -656,7 +657,8 @@ obj/Scanf.s \
 obj/ScopeGuard.s \
 obj/Sem.s \
 obj/Shape.Button.s \
-obj/ShapeLib.CheckShape.s \
+obj/Shape.Check.s \
+obj/Shape.Switch.s \
 obj/ShapeLib.ContourShape.s \
 obj/ShapeLib.DoubleLineShape.s \
 obj/ShapeLib.InfoShape.s \
@@ -669,7 +671,6 @@ obj/ShapeLib.ScrollListShape.s \
 obj/ShapeLib.ScrollShape.s \
 obj/ShapeLib.SimpleTextListShape.s \
 obj/ShapeLib.SingleLineShape.s \
-obj/ShapeLib.SwitchShape.s \
 obj/ShapeLib.TextContourShape.s \
 obj/ShapeLib.TextLineWindow.s \
 obj/ShapeLib.TextShape.s \
@@ -753,6 +754,7 @@ obj/UtilFunc.s \
 obj/VideoConsole.s \
 obj/VideoDevice.s \
 obj/Window.Button.s \
+obj/Window.Check.s \
 obj/WindowLib.s \
 obj/WindowReport.s \
 obj/XPoint.s \
@@ -1036,7 +1038,8 @@ obj/Scanf.dep \
 obj/ScopeGuard.dep \
 obj/Sem.dep \
 obj/Shape.Button.dep \
-obj/ShapeLib.CheckShape.dep \
+obj/Shape.Check.dep \
+obj/Shape.Switch.dep \
 obj/ShapeLib.ContourShape.dep \
 obj/ShapeLib.DoubleLineShape.dep \
 obj/ShapeLib.InfoShape.dep \
@@ -1049,7 +1052,6 @@ obj/ShapeLib.ScrollListShape.dep \
 obj/ShapeLib.ScrollShape.dep \
 obj/ShapeLib.SimpleTextListShape.dep \
 obj/ShapeLib.SingleLineShape.dep \
-obj/ShapeLib.SwitchShape.dep \
 obj/ShapeLib.TextContourShape.dep \
 obj/ShapeLib.TextLineWindow.dep \
 obj/ShapeLib.TextShape.dep \
@@ -1133,6 +1135,7 @@ obj/UtilFunc.dep \
 obj/VideoConsole.dep \
 obj/VideoDevice.dep \
 obj/Window.Button.dep \
+obj/Window.Check.dep \
 obj/WindowLib.dep \
 obj/WindowReport.dep \
 obj/XPoint.dep \
@@ -1979,7 +1982,10 @@ obj/Sem.o : ../../HCore/CCore/src/task/Sem.cpp
 obj/Shape.Button.o : ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ShapeLib.CheckShape.o : ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
+obj/Shape.Check.o : ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Shape.Switch.o : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.ContourShape.o : ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
@@ -2016,9 +2022,6 @@ obj/ShapeLib.SimpleTextListShape.o : ../../Desktop/CCore/src/video/ShapeLib.Simp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.SingleLineShape.o : ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ShapeLib.SwitchShape.o : ../../Desktop/CCore/src/video/ShapeLib.SwitchShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.TextContourShape.o : ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
@@ -2268,6 +2271,9 @@ obj/VideoDevice.o : ../../Applied/CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Button.o : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.Check.o : ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/WindowLib.o : ../../Desktop/CCore/src/video/WindowLib.cpp
@@ -3112,7 +3118,10 @@ obj/Sem.s : ../../HCore/CCore/src/task/Sem.cpp
 obj/Shape.Button.s : ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ShapeLib.CheckShape.s : ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
+obj/Shape.Check.s : ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Shape.Switch.s : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.ContourShape.s : ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
@@ -3149,9 +3158,6 @@ obj/ShapeLib.SimpleTextListShape.s : ../../Desktop/CCore/src/video/ShapeLib.Simp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.SingleLineShape.s : ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ShapeLib.SwitchShape.s : ../../Desktop/CCore/src/video/ShapeLib.SwitchShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.TextContourShape.s : ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
@@ -3401,6 +3407,9 @@ obj/VideoDevice.s : ../../Applied/CCore/src/video/VideoDevice.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Button.s : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.Check.s : ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/WindowLib.s : ../../Desktop/CCore/src/video/WindowLib.cpp
@@ -4245,8 +4254,11 @@ obj/Sem.dep : ../../HCore/CCore/src/task/Sem.cpp
 obj/Shape.Button.dep : ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Button.o $< -MF $@
 
-obj/ShapeLib.CheckShape.dep : ../../Desktop/CCore/src/video/ShapeLib.CheckShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.CheckShape.o $< -MF $@
+obj/Shape.Check.dep : ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Check.o $< -MF $@
+
+obj/Shape.Switch.dep : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Switch.o $< -MF $@
 
 obj/ShapeLib.ContourShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ContourShape.o $< -MF $@
@@ -4283,9 +4295,6 @@ obj/ShapeLib.SimpleTextListShape.dep : ../../Desktop/CCore/src/video/ShapeLib.Si
 
 obj/ShapeLib.SingleLineShape.dep : ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.SingleLineShape.o $< -MF $@
-
-obj/ShapeLib.SwitchShape.dep : ../../Desktop/CCore/src/video/ShapeLib.SwitchShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.SwitchShape.o $< -MF $@
 
 obj/ShapeLib.TextContourShape.dep : ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.TextContourShape.o $< -MF $@
@@ -4536,6 +4545,9 @@ obj/VideoDevice.dep : ../../Applied/CCore/src/video/VideoDevice.cpp
 obj/Window.Button.dep : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Button.o $< -MF $@
 
+obj/Window.Check.dep : ../../Desktop/CCore/src/video/lib/Window.Check.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Check.o $< -MF $@
+
 obj/WindowLib.dep : ../../Desktop/CCore/src/video/WindowLib.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowLib.o $< -MF $@
 
@@ -4561,5 +4573,9 @@ obj/SysTime.s.o : ../../Target/WIN32/CCore/src/sys/SysTime.s
 
 
 
+ifneq ($(MAKECMDGOALS),clean)
+
 include $(DEP_FILE)
+
+endif
 

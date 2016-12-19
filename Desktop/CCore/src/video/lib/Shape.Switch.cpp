@@ -1,4 +1,4 @@
-/* ShapeLib.SwitchShape.cpp */
+/* Shape.Switch.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Switch.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -44,22 +44,22 @@ void SwitchShape::draw(const DrawBuf &buf) const
   MPoint a=p.getTopLeft();
   MPoint center=p.getCenter();
 
-  VColor top=+cfg.top;
-  VColor bottom=+cfg.bottom;
+  VColor snow=+cfg.snow;
+  VColor gray=+cfg.gray;
 
   // body
 
   if( check )
     {
-     art.ball(center,radius,TwoField(a,top,p.getBottomRight(),bottom));
+     art.ball(center,radius,TwoField(a,snow,p.getTopRight(),gray));
 
-     art.ball(center,radius/2, enable? +cfg.on : bottom );
+     art.ball(center,radius/2, enable? +cfg.on : gray );
     }
   else
     {
-     art.ball(center,radius,TwoField(a,top,p.getBottomLeft(),bottom));
+     art.ball(center,radius,TwoField(a,snow,p.getBottomLeft(),gray));
 
-     art.ball(center,radius/2, enable? +cfg.off : bottom );
+     art.ball(center,radius/2, enable? +cfg.off : gray );
     }
 
   // face
@@ -91,7 +91,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
 
    fig.shift(a);
 
-   VColor face = enable? ( mover? +cfg.faceUp : +cfg.face ) : bottom ;
+   VColor face = enable? ( mover? +cfg.faceUp : +cfg.face ) : gray ;
 
    fig.solid(art,face);
   }
@@ -99,7 +99,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border = focus? +cfg.focus : ( enable? +cfg.border : bottom ) ;
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
 
    art.circle(center,radius-width/2,width,border);
   }
@@ -107,5 +107,4 @@ void SwitchShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 

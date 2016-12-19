@@ -26,13 +26,13 @@
 #include <CCore/inc/DeferCall.h>
 
 #include <CCore/inc/video/lib/Shape.Button.h>
+#include <CCore/inc/video/lib/Shape.Check.h>
+#include <CCore/inc/video/lib/Shape.Switch.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
-
-class CheckShape;
 
 class RadioShape;
 
@@ -58,8 +58,6 @@ class ContourShape;
 
 class TextContourShape;
 
-class SwitchShape;
-
 class LightShape;
 
 class TextLineShape;
@@ -79,48 +77,6 @@ class LineEditShape;
 class SimpleTextListShape;
 
 class ScrollListShape;
-
-/* class CheckShape */
-
-class CheckShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<Coord> dxy = 20 ;
-
-     RefVal<VColor> border   =      Blue ;
-     RefVal<VColor> focus    = OrangeRed ;
-
-     RefVal<VColor> bottomUp =     Green ;
-     RefVal<VColor> bottom   =      Snow ;
-     RefVal<VColor> top      =      Gray ;
-     RefVal<VColor> mark     =     Black ;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   bool mover  = false ;
-   bool check  = false ;
-
-   // methods
-
-   explicit CheckShape(const Config &cfg_,bool check_=false) : cfg(cfg_),check(check_) {}
-
-   SizeBox getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
 
 /* class RadioShape */
 
@@ -470,50 +426,6 @@ class TextContourShape
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    Pane getInner() const;
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class SwitchShape */
-
-class SwitchShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<Coord> dxy = 30 ;
-
-     RefVal<VColor> border =      Blue ;
-     RefVal<VColor> focus  = OrangeRed ;
-
-     RefVal<VColor> top    =      Snow ;
-     RefVal<VColor> bottom =      Gray ;
-     RefVal<VColor> faceUp =      Blue ;
-     RefVal<VColor> face   =     Black ;
-     RefVal<VColor> on     =     Green ;
-     RefVal<VColor> off    =       Red ;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   bool mover  = false ;
-   bool check  = false ;
-
-   // methods
-
-   explicit SwitchShape(const Config &cfg_,bool check_=false) : cfg(cfg_),check(check_) {}
-
-   SizeBox getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void draw(const DrawBuf &buf) const;
  };

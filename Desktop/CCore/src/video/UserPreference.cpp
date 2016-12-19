@@ -429,23 +429,9 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_KnobWindow.bind(get());
 
-  cfg_CheckWindow.dxy.bind(check_dxy);
-  cfg_CheckWindow.border.bind(border);
-  cfg_CheckWindow.focus.bind(focus);
-  cfg_CheckWindow.bottom.bind(top);
-  cfg_CheckWindow.top.bind(bottom);
-  cfg_CheckWindow.bottomUp.bind(bottomUp);
-  cfg_CheckWindow.mark.bind(mark);
+  cfg_CheckWindow.bind(get());
 
-  cfg_SwitchWindow.dxy.bind(switch_dxy);
-  cfg_SwitchWindow.border.bind(border);
-  cfg_SwitchWindow.focus.bind(focus);
-  cfg_SwitchWindow.top.bind(top);
-  cfg_SwitchWindow.bottom.bind(bottom);
-  cfg_SwitchWindow.face.bind(face);
-  cfg_SwitchWindow.faceUp.bind(faceUp);
-  cfg_SwitchWindow.on.bind(switch_on);
-  cfg_SwitchWindow.off.bind(switch_off);
+  cfg_SwitchWindow.bind(get());
 
   cfg_RadioWindow.dxy.bind(radio_dxy);
   cfg_RadioWindow.border.bind(border);
@@ -661,7 +647,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FileCheckShape.border.bind(border);
   cfg_FileCheckShape.focus.bind(focus);
   cfg_FileCheckShape.gray.bind(gray);
-  cfg_FileCheckShape.hilight.bind(hilight);
+  cfg_FileCheckShape.snowUp.bind(snowUp);
   cfg_FileCheckShape.snow.bind(snow);
   cfg_FileCheckShape.faceRight.bind(filew_right);
   cfg_FileCheckShape.faceDown.bind(filew_down);

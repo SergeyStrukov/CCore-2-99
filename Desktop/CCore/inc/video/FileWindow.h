@@ -291,7 +291,7 @@ class FileCheckShape
      RefVal<VColor> focus  = OrangeRed ;
 
      RefVal<VColor> gray    =      Gray ;
-     RefVal<VColor> hilight =     Green ;
+     RefVal<VColor> snowUp  = PaleGreen ;
      RefVal<VColor> snow    =      Snow ;
 
      RefVal<VColor> faceRight =  Green ;

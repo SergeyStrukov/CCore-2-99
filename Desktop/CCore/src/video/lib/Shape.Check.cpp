@@ -1,4 +1,4 @@
-/* ShapeLib.CheckShape.cpp */
+/* Shape.Check.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Check.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -44,14 +44,14 @@ void CheckShape::draw(const DrawBuf &buf) const
 
   FigureBox fig(p);
 
-  VColor top=+cfg.top;
+  VColor gray=+cfg.gray;
 
   // body
 
   {
-   VColor bottom = ( mover && enable )? +cfg.bottomUp : +cfg.bottom ;
+   VColor bottom = ( mover && enable )? +cfg.grayUp : +cfg.snow ;
 
-   fig.solid(art,TwoField(p.getTopLeft().addXY(width),top,p.getBottomRight().subXY(width),bottom));
+   fig.solid(art,TwoField(p.getTopLeft().addXY(width),gray,p.getBottomRight().subXY(width),bottom));
   }
 
   // mark
@@ -70,7 +70,7 @@ void CheckShape::draw(const DrawBuf &buf) const
      MPoint B(x0+(len+d)/3,y1-d);
      MPoint C(x1-d,y0+d);
 
-     VColor mark = enable? +cfg.mark : top ;
+     VColor mark = enable? +cfg.mark : gray ;
 
      art.path(width,mark,A,B,C);
     }
@@ -78,7 +78,7 @@ void CheckShape::draw(const DrawBuf &buf) const
   // border
 
   {
-   VColor border = focus? +cfg.focus : ( enable? +cfg.border : top ) ;
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
 
    fig.loop(art,HalfPos,width,border);
   }
@@ -86,5 +86,4 @@ void CheckShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 
