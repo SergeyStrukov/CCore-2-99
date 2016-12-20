@@ -25,6 +25,7 @@
 #include <CCore/inc/video/lib/Shape.Check.h>
 #include <CCore/inc/video/lib/Shape.Switch.h>
 #include <CCore/inc/video/lib/Shape.Radio.h>
+#include <CCore/inc/video/lib/Shape.Light.h>
 
 namespace CCore {
 namespace Video {
@@ -52,8 +53,6 @@ class YDoubleLineShape;
 class ContourShape;
 
 class TextContourShape;
-
-class LightShape;
 
 class TextLineShape;
 
@@ -379,44 +378,6 @@ class TextContourShape
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    Pane getInner() const;
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class LightShape */
-
-class LightShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<Coord> dxy = 20 ;
-
-     RefVal<VColor> top      = Gray ;
-     RefVal<VColor> bottom   = Snow ;
-     RefVal<VColor> inactive = Gray ;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   VColor face = Green ;
-   Pane pane;
-
-   // state
-
-   bool on;
-
-   // methods
-
-   explicit LightShape(const Config &cfg_,bool on_=false) : cfg(cfg_),on(on_) {}
-
-   LightShape(const Config &cfg_,VColor face_,bool on_=false) : cfg(cfg_),face(face_),on(on_) {}
-
-   SizeBox getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void draw(const DrawBuf &buf) const;
  };

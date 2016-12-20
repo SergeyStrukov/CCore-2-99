@@ -514,10 +514,10 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    file_name_text(wlist,cfg.text_cfg,AlignX_Left),
    family_text(wlist,cfg.text_cfg,AlignX_Left),
 
-   scalable_light(wlist,cfg.light_cfg),
-   monospace_light(wlist,cfg.light_cfg),
-   bold_light(wlist,cfg.light_cfg),
-   italic_light(wlist,cfg.light_cfg),
+   scalable_light(wlist,cfg.light_cfg,Green),
+   monospace_light(wlist,cfg.light_cfg,Green),
+   bold_light(wlist,cfg.light_cfg,Green),
+   italic_light(wlist,cfg.light_cfg,Green),
 
    scalable_label(wlist,cfg.label_cfg,"scalable"_def,AlignX_Left),
    monospace_label(wlist,cfg.label_cfg,"monospace"_def,AlignX_Left),

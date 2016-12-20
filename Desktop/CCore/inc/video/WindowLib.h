@@ -28,6 +28,7 @@
 #include <CCore/inc/video/lib/Window.Button.h>
 #include <CCore/inc/video/lib/Window.Check.h>
 #include <CCore/inc/video/lib/Window.Radio.h>
+#include <CCore/inc/video/lib/Window.Light.h>
 
 namespace CCore {
 namespace Video {
@@ -37,8 +38,6 @@ namespace Video {
 template <class Shape> class TextWindowOf;
 
 template <class Shape> class DecorWindowOf;
-
-template <class Shape> class LightWindowOf;
 
 template <class Shape> class TextLineWindowOf;
 
@@ -224,75 +223,6 @@ using ContourWindow = DecorWindowOf<ContourShape> ;
 /* type TextContourWindow */
 
 using TextContourWindow = DecorWindowOf<TextContourShape> ;
-
-/* class LightWindowOf<Shape> */
-
-template <class Shape>
-class LightWindowOf : public SubWindow
- {
-   Shape shape;
-
-  public:
-
-   using ShapeType = Shape ;
-   using ConfigType = typename Shape::Config ;
-
-   template <class ... TT>
-   LightWindowOf(SubWindowHost &host,TT && ... tt)
-    : SubWindow(host),
-      shape( std::forward<TT>(tt)... )
-    {
-    }
-
-   virtual ~LightWindowOf() {}
-
-   // methods
-
-   auto getMinSize() const { return shape.getMinSize(); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
-   VColor getFace() const { return shape.face; }
-
-   void setFace(VColor face)
-    {
-     if( Change(shape.face,face) ) redraw();
-    }
-
-   bool isOn() const { return shape.on; }
-
-   void turn(bool on)
-    {
-     if( Change(shape.on,on) ) redraw();
-    }
-
-   void turnOn() { turn(true); }
-
-   void turnOff() { turn(false); }
-
-   // drawing
-
-   virtual void layout()
-    {
-     shape.pane=Pane(Null,getSize());
-    }
-
-   virtual void draw(DrawBuf buf,bool) const
-    {
-     try { shape.draw(buf); } catch(CatchType) {}
-    }
-
-   // keyboard
-
-   virtual FocusType askFocus() const
-    {
-     return NoFocus;
-    }
- };
-
-/* type LightWindow */
-
-using LightWindow = LightWindowOf<LightShape> ;
 
 /* class TextLineWindowOf<Shape> */
 

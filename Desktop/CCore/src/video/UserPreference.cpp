@@ -435,6 +435,8 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_RadioWindow.bind(get());
 
+  cfg_LightWindow.bind(get());
+
   cfg_TextWindow.width.bind(width);
   cfg_TextWindow.space.bind(message_space);
   cfg_TextWindow.top.bind(bottom);
@@ -472,11 +474,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_TextContourWindow.bottom.bind(top);
   cfg_TextContourWindow.text.bind(contour_text);
   cfg_TextContourWindow.font.bind(contour_font.font);
-
-  cfg_LightWindow.dxy.bind(light_dxy);
-  cfg_LightWindow.top.bind(bottom);
-  cfg_LightWindow.bottom.bind(top);
-  cfg_LightWindow.inactive.bind(inactive);
 
   cfg_TextLineWindow.width.bind(width);
   cfg_TextLineWindow.space.bind(message_space);

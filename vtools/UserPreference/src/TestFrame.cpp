@@ -138,7 +138,7 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    ydouble(wlist,pref.getYDoubleLineConfig()),
    contour(wlist,pref.getContourConfig()),
    text_contour(wlist,pref.getTextContourConfig(),"Select color"_def),
-   light(wlist,pref.getLightConfig()),
+   light(wlist,pref.getLightConfig(),Red),
    progress(wlist,pref.getProgressConfig()),
    shade_btn(wlist,pref.getButtonConfig(),"Shade"_def),
 
@@ -158,8 +158,6 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
                contour,text_contour,light,progress,shade_btn);
 
   group.add(rad1,rad2,rad3);
-
-  light.setFace(Red);
 
   xscroll.setRange(KnobShape::FaceLim,1);
 

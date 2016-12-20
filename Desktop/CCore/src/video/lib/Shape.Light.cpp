@@ -1,4 +1,4 @@
-/* ShapeLib.LightShape.cpp */
+/* Shape.Light.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Light.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -44,7 +44,7 @@ void LightShape::draw(const DrawBuf &buf) const
 
   MPoint center=p.getCenter();
 
-  art.ball(center,radius,TwoField(center.subXY(d),+cfg.top,center.addXY(d),+cfg.bottom));
+  art.ball(center,radius,TwoField(center.subXY(d),+cfg.gray,center.addXY(d),+cfg.snow));
 
   if( on )
     {
@@ -58,5 +58,4 @@ void LightShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 
