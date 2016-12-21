@@ -26,17 +26,13 @@
 #include <CCore/inc/video/lib/Shape.Switch.h>
 #include <CCore/inc/video/lib/Shape.Radio.h>
 #include <CCore/inc/video/lib/Shape.Light.h>
+#include <CCore/inc/video/lib/Shape.Label.h>
+#include <CCore/inc/video/lib/Shape.Text.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
-
-class LabelShape;
-
-class RefLabelShape;
-
-class TextShape;
 
 class SingleLineShape;
 
@@ -71,128 +67,6 @@ class LineEditShape;
 class SimpleTextListShape;
 
 class ScrollListShape;
-
-/* class LabelShape */
-
-class LabelShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<VColor> inactive =  Gray ;
-     RefVal<VColor> text     = Black ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   DefString text;
-   AlignX align_x;
-   AlignY align_y;
-   Pane pane;
-
-   // state
-
-   bool enable = true ;
-
-   // methods
-
-   LabelShape(const Config &cfg_,const DefString &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
-    : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
-
-   Point getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class RefLabelShape */
-
-class RefLabelShape
- {
-  public:
-
-   using Config = LabelShape::Config ;
-
-   const Config &cfg;
-   const RefVal<DefString> &text;
-   AlignX align_x;
-   AlignY align_y;
-   Pane pane;
-
-   // state
-
-   bool enable = true ;
-
-   // methods
-
-   RefLabelShape(const Config &cfg_,const RefVal<DefString> &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
-    : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
-
-   Point getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class TextShape */
-
-class TextShape
- {
-   static MCoord FigEX(Coord fdy,MCoord width);
-
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(6,4) ;
-
-     RefVal<VColor> bottom   =   Snow ;
-     RefVal<VColor> top      =   Gray ;
-     RefVal<VColor> back     = Silver ;
-     RefVal<VColor> text     =  Black ;
-     RefVal<VColor> inactive =   Gray ;
-     RefVal<VColor> alert    =   Pink ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   DefString text;
-   AlignX align_x;
-   AlignY align_y;
-   Pane pane;
-
-   // state
-
-   bool enable = true ;
-   bool alert  = false ;
-
-   // methods
-
-   TextShape(const Config &cfg_,const DefString &text_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
-    : cfg(cfg_),text(text_),align_x(align_x_),align_y(align_y_) {}
-
-   explicit TextShape(const Config &cfg_,AlignX align_x_=AlignX_Center,AlignY align_y_=AlignY_Center)
-    : cfg(cfg_),align_x(align_x_),align_y(align_y_) {}
-
-   Point getMinSize() const;
-
-   Point getMinSize(StrLen text) const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void draw(const DrawBuf &buf) const;
- };
 
 /* class SingleLineShape */
 

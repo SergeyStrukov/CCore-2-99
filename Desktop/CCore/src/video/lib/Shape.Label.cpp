@@ -1,4 +1,4 @@
-/* ShapeLib.LabelShape.cpp */
+/* Shape.Label.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Label.h>
 
 namespace CCore {
 namespace Video {
@@ -58,5 +58,4 @@ void RefLabelShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 

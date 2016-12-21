@@ -437,19 +437,9 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_LightWindow.bind(get());
 
-  cfg_TextWindow.width.bind(width);
-  cfg_TextWindow.space.bind(message_space);
-  cfg_TextWindow.top.bind(bottom);
-  cfg_TextWindow.bottom.bind(top);
-  cfg_TextWindow.back.bind(back);
-  cfg_TextWindow.inactive.bind(inactive);
-  cfg_TextWindow.alert.bind(alert);
-  cfg_TextWindow.text.bind(message_text);
-  cfg_TextWindow.font.bind(message_font.font);
+  cfg_LabelWindow.bind(get());
 
-  cfg_LabelWindow.inactive.bind(inactive);
-  cfg_LabelWindow.text.bind(label_text);
-  cfg_LabelWindow.font.bind(label_font.font);
+  cfg_TextWindow.bind(get());
 
   cfg_XSingleLineWindow.width.bind(width);
   cfg_XSingleLineWindow.line.bind(line);

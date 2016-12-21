@@ -29,13 +29,12 @@
 #include <CCore/inc/video/lib/Window.Check.h>
 #include <CCore/inc/video/lib/Window.Radio.h>
 #include <CCore/inc/video/lib/Window.Light.h>
+#include <CCore/inc/video/lib/Window.Text.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
-
-template <class Shape> class TextWindowOf;
 
 template <class Shape> class DecorWindowOf;
 
@@ -56,98 +55,6 @@ struct ScrollListWindowBase;
 template <class Shape> class ScrollListInnerWindowOf;
 
 template <class Shape,class XShape,class YShape> class ScrollListWindowOf;
-
-/* class TextWindowOf<Shape> */
-
-template <class Shape>
-class TextWindowOf : public SubWindow
- {
-   Shape shape;
-
-  public:
-
-   using ShapeType = Shape ;
-   using ConfigType = typename Shape::Config ;
-
-   template <class ... TT>
-   TextWindowOf(SubWindowHost &host,TT && ... tt)
-    : SubWindow(host),
-      shape( std::forward<TT>(tt)... )
-    {
-    }
-
-   virtual ~TextWindowOf() {}
-
-   // methods
-
-   auto getMinSize() const { return shape.getMinSize(); }
-
-   Point getMinSize(StrLen text) const { return shape.getMinSize(text); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
-   bool isEnabled() const { return shape.enable; }
-
-   bool isAlerted() const { return shape.alert; }
-
-   void enable(bool enable=true)
-    {
-     if( Change(shape.enable,enable) ) redraw();
-    }
-
-   void disable() { enable(false); }
-
-   void alert(bool on=true)
-    {
-     if( Change(shape.alert,on) ) redraw();
-    }
-
-   DefString getText() const requires( IsType<decltype(shape.text),DefString> ) { return shape.text; }
-
-   void setText(const DefString &text) requires( IsType<decltype(shape.text),DefString> )
-    {
-     shape.text=text;
-
-     redraw();
-    }
-
-   template <class ... TT>
-   void printf(const char *format,const TT & ... tt)
-    {
-     setText( Stringf(format,tt...) );
-    }
-
-   // drawing
-
-   virtual void layout()
-    {
-     shape.pane=Pane(Null,getSize());
-    }
-
-   virtual void draw(DrawBuf buf,bool) const
-    {
-     try { shape.draw(buf); } catch(CatchType) {}
-    }
-
-   // keyboard
-
-   virtual FocusType askFocus() const
-    {
-     return NoFocus;
-    }
- };
-
-/* type TextWindow */
-
-using TextWindow = TextWindowOf<TextShape> ;
-
-/* type LabelWindow */
-
-using LabelWindow = TextWindowOf<LabelShape> ;
-
-/* type RefLabelWindow */
-
-using RefLabelWindow = TextWindowOf<RefLabelShape> ;
 
 /* class DecorWindowOf<Shape> */
 

@@ -289,13 +289,16 @@
 ../../Desktop/CCore/src/video/Layout.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
+../../Desktop/CCore/src/video/lib/Shape.Label.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Light.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Radio.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
+../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 ../../Desktop/CCore/src/video/lib/Window.Light.cpp
 ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
+../../Desktop/CCore/src/video/lib/Window.Text.cpp
 ../../Desktop/CCore/src/video/Menu.cpp
 ../../Desktop/CCore/src/video/MessageWindow.cpp
 ../../Desktop/CCore/src/video/MinSizeType.cpp
@@ -307,7 +310,6 @@
 ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.DoubleLineShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.InfoShape.cpp
-../../Desktop/CCore/src/video/ShapeLib.LabelShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.LineEditShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ProgressShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
@@ -316,7 +318,6 @@
 ../../Desktop/CCore/src/video/ShapeLib.SingleLineShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.TextLineWindow.cpp
-../../Desktop/CCore/src/video/ShapeLib.TextShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
 ../../Desktop/CCore/src/video/SmoothAlgo.cpp
 ../../Desktop/CCore/src/video/SmoothDrawArt.cpp

@@ -1,4 +1,4 @@
-/* ShapeLib.TextShape.cpp */
+/* Shape.Text.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,9 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Text.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -35,9 +34,7 @@ Point TextShape::getMinSize() const
 
 Point TextShape::getMinSize(StrLen text) const
  {
-  TextSize ts=cfg.font->text(text);
-
-  IntGuard( !ts.overflow );
+  TextSize ts=cfg.font->text_guarded(text);
 
   MCoord width=+cfg.width;
 
@@ -91,14 +88,13 @@ void TextShape::draw(const DrawBuf &buf) const
 
   auto fig_top=fig.getTop();
 
-  fig_top.curvePath(art,HalfPos,width,+cfg.top);
+  fig_top.curvePath(art,HalfPos,width,+cfg.gray);
 
   auto fig_bottom=fig.getBottom();
 
-  fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
+  fig_bottom.curvePath(art,HalfPos,width,+cfg.snow);
  }
 
 } // namespace Video
 } // namespace CCore
-
 
