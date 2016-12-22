@@ -114,9 +114,9 @@ void TextLineShape::draw(const DrawBuf &buf) const
 
    Pane inner=pane.shrink(dx,dy);
 
-   if( !inner ) return;
+   Coord pos_x=fs.dx0-xoff;
 
-   font->text(buf.cut(inner),inner.pullLeft(xoff),TextPlace(AlignX_Left,AlignY_Center),this->text.str(), enable? text : +cfg.inactive );
+   font->text(buf,inner,TextPlace(pos_x,AlignY_Center),this->text.str(), enable? text : +cfg.inactive );
   }
 
   // border

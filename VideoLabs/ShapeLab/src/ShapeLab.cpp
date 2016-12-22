@@ -113,7 +113,7 @@ ShapeLab1::ShapeLab1(SubWindowHost &host,const Config &cfg_)
    label2(dlist,cfg.label_cfg,String("Red"),AlignX_Left),
    label3(dlist,cfg.label_cfg,String("Blue"),AlignX_Left),
 
-   light(dlist,cfg.light_cfg),
+   light(dlist,cfg.light_cfg,Green),
 
    contour(dlist,cfg.contour_cfg),
    text_contour(dlist,cfg.text_contour_cfg,String("Title"),AlignX_Center),
