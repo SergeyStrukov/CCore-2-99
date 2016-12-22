@@ -441,6 +441,8 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_TextWindow.bind(get());
 
+  cfg_TextLineWindow.bind(get());
+
   cfg_XSingleLineWindow.width.bind(width);
   cfg_XSingleLineWindow.line.bind(line);
 
@@ -464,17 +466,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_TextContourWindow.bottom.bind(top);
   cfg_TextContourWindow.text.bind(contour_text);
   cfg_TextContourWindow.font.bind(contour_font.font);
-
-  cfg_TextLineWindow.width.bind(width);
-  cfg_TextLineWindow.space.bind(message_space);
-  cfg_TextLineWindow.bottom.bind(top);
-  cfg_TextLineWindow.top.bind(bottom);
-  cfg_TextLineWindow.back.bind(back);
-  cfg_TextLineWindow.focus.bind(focus);
-  cfg_TextLineWindow.text.bind(message_text);
-  cfg_TextLineWindow.inactive.bind(inactive);
-  cfg_TextLineWindow.alert.bind(alert);
-  cfg_TextLineWindow.font.bind(message_font.font);
 
   cfg_XScrollWindow.width.bind(width);
   cfg_XScrollWindow.dxy.bind(scroll_dxy);

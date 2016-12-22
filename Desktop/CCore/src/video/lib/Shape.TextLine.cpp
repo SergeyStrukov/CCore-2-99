@@ -1,4 +1,4 @@
-/* ShapeLib.TextLineWindow.cpp */
+/* Shape.TextLine.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.TextLine.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -34,9 +34,7 @@ Point TextLineShape::getMinSize() const
 
 Point TextLineShape::getMinSize(StrLen text) const
  {
-  TextSize ts=cfg.font->text(text);
-
-  IntGuard( !ts.overflow );
+  TextSize ts=cfg.font->text_guarded(text);
 
   MCoord width=+cfg.width;
 
@@ -63,9 +61,7 @@ void TextLineShape::setMax()
 
   Pane inner=pane.shrink(dx,dy);
 
-  TextSize ts=font->text(text.str());
-
-  IntGuard( !ts.overflow );
+  TextSize ts=font->text_guarded(text.str());
 
   Coord tx=ts.full_dx;
 
@@ -120,11 +116,7 @@ void TextLineShape::draw(const DrawBuf &buf) const
 
    if( !inner ) return;
 
-   DrawBuf tbuf=buf.cutRebase(inner);
-
-   Pane tpane(-xoff,0,IntAdd(xoff,inner.dx),inner.dy);
-
-   font->text(tbuf,tpane,TextPlace(AlignX_Left,AlignY_Center),this->text.str(), enable? text : +cfg.inactive );
+   font->text(buf.cut(inner),inner.pullLeft(xoff),TextPlace(AlignX_Left,AlignY_Center),this->text.str(), enable? text : +cfg.inactive );
   }
 
   // border
@@ -137,11 +129,11 @@ void TextLineShape::draw(const DrawBuf &buf) const
     {
      auto fig_top=fig.getTop();
 
-     fig_top.curvePath(art,HalfPos,width,+cfg.top);
+     fig_top.curvePath(art,HalfPos,width,+cfg.gray);
 
      auto fig_bottom=fig.getBottom();
 
-     fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
+     fig_bottom.curvePath(art,HalfPos,width,+cfg.snow);
     }
 
   // arrows

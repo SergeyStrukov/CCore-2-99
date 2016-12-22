@@ -282,6 +282,7 @@ obj/Shape.Light.o \
 obj/Shape.Radio.o \
 obj/Shape.Switch.o \
 obj/Shape.Text.o \
+obj/Shape.TextLine.o \
 obj/ShapeLib.ContourShape.o \
 obj/ShapeLib.DoubleLineShape.o \
 obj/ShapeLib.InfoShape.o \
@@ -292,7 +293,6 @@ obj/ShapeLib.ScrollShape.o \
 obj/ShapeLib.SimpleTextListShape.o \
 obj/ShapeLib.SingleLineShape.o \
 obj/ShapeLib.TextContourShape.o \
-obj/ShapeLib.TextLineWindow.o \
 obj/ShapeLib.YScrollShape.o \
 obj/ShortSort.o \
 obj/Signal.o \
@@ -377,6 +377,7 @@ obj/Window.Check.o \
 obj/Window.Light.o \
 obj/Window.Radio.o \
 obj/Window.Text.o \
+obj/Window.TextLine.o \
 obj/WindowLib.o \
 obj/WindowReport.o \
 obj/XPoint.o \
@@ -666,6 +667,7 @@ obj/Shape.Light.s \
 obj/Shape.Radio.s \
 obj/Shape.Switch.s \
 obj/Shape.Text.s \
+obj/Shape.TextLine.s \
 obj/ShapeLib.ContourShape.s \
 obj/ShapeLib.DoubleLineShape.s \
 obj/ShapeLib.InfoShape.s \
@@ -676,7 +678,6 @@ obj/ShapeLib.ScrollShape.s \
 obj/ShapeLib.SimpleTextListShape.s \
 obj/ShapeLib.SingleLineShape.s \
 obj/ShapeLib.TextContourShape.s \
-obj/ShapeLib.TextLineWindow.s \
 obj/ShapeLib.YScrollShape.s \
 obj/ShortSort.s \
 obj/Signal.s \
@@ -761,6 +762,7 @@ obj/Window.Check.s \
 obj/Window.Light.s \
 obj/Window.Radio.s \
 obj/Window.Text.s \
+obj/Window.TextLine.s \
 obj/WindowLib.s \
 obj/WindowReport.s \
 obj/XPoint.s \
@@ -1050,6 +1052,7 @@ obj/Shape.Light.dep \
 obj/Shape.Radio.dep \
 obj/Shape.Switch.dep \
 obj/Shape.Text.dep \
+obj/Shape.TextLine.dep \
 obj/ShapeLib.ContourShape.dep \
 obj/ShapeLib.DoubleLineShape.dep \
 obj/ShapeLib.InfoShape.dep \
@@ -1060,7 +1063,6 @@ obj/ShapeLib.ScrollShape.dep \
 obj/ShapeLib.SimpleTextListShape.dep \
 obj/ShapeLib.SingleLineShape.dep \
 obj/ShapeLib.TextContourShape.dep \
-obj/ShapeLib.TextLineWindow.dep \
 obj/ShapeLib.YScrollShape.dep \
 obj/ShortSort.dep \
 obj/Signal.dep \
@@ -1145,6 +1147,7 @@ obj/Window.Check.dep \
 obj/Window.Light.dep \
 obj/Window.Radio.dep \
 obj/Window.Text.dep \
+obj/Window.TextLine.dep \
 obj/WindowLib.dep \
 obj/WindowReport.dep \
 obj/XPoint.dep \
@@ -2009,6 +2012,9 @@ obj/Shape.Switch.o : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 obj/Shape.Text.o : ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Shape.TextLine.o : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ShapeLib.ContourShape.o : ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2037,9 +2043,6 @@ obj/ShapeLib.SingleLineShape.o : ../../Desktop/CCore/src/video/ShapeLib.SingleLi
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.TextContourShape.o : ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ShapeLib.TextLineWindow.o : ../../Desktop/CCore/src/video/ShapeLib.TextLineWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.YScrollShape.o : ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
@@ -2292,6 +2295,9 @@ obj/Window.Radio.o : ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Text.o : ../../Desktop/CCore/src/video/lib/Window.Text.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.TextLine.o : ../../Desktop/CCore/src/video/lib/Window.TextLine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/WindowLib.o : ../../Desktop/CCore/src/video/WindowLib.cpp
@@ -3154,6 +3160,9 @@ obj/Shape.Switch.s : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 obj/Shape.Text.s : ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.TextLine.s : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ShapeLib.ContourShape.s : ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3182,9 +3191,6 @@ obj/ShapeLib.SingleLineShape.s : ../../Desktop/CCore/src/video/ShapeLib.SingleLi
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.TextContourShape.s : ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ShapeLib.TextLineWindow.s : ../../Desktop/CCore/src/video/ShapeLib.TextLineWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.YScrollShape.s : ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
@@ -3437,6 +3443,9 @@ obj/Window.Radio.s : ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Text.s : ../../Desktop/CCore/src/video/lib/Window.Text.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.TextLine.s : ../../Desktop/CCore/src/video/lib/Window.TextLine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/WindowLib.s : ../../Desktop/CCore/src/video/WindowLib.cpp
@@ -4299,6 +4308,9 @@ obj/Shape.Switch.dep : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 obj/Shape.Text.dep : ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Text.o $< -MF $@
 
+obj/Shape.TextLine.dep : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.TextLine.o $< -MF $@
+
 obj/ShapeLib.ContourShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ContourShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ContourShape.o $< -MF $@
 
@@ -4328,9 +4340,6 @@ obj/ShapeLib.SingleLineShape.dep : ../../Desktop/CCore/src/video/ShapeLib.Single
 
 obj/ShapeLib.TextContourShape.dep : ../../Desktop/CCore/src/video/ShapeLib.TextContourShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.TextContourShape.o $< -MF $@
-
-obj/ShapeLib.TextLineWindow.dep : ../../Desktop/CCore/src/video/ShapeLib.TextLineWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.TextLineWindow.o $< -MF $@
 
 obj/ShapeLib.YScrollShape.dep : ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.YScrollShape.o $< -MF $@
@@ -4583,6 +4592,9 @@ obj/Window.Radio.dep : ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
 
 obj/Window.Text.dep : ../../Desktop/CCore/src/video/lib/Window.Text.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Text.o $< -MF $@
+
+obj/Window.TextLine.dep : ../../Desktop/CCore/src/video/lib/Window.TextLine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.TextLine.o $< -MF $@
 
 obj/WindowLib.dep : ../../Desktop/CCore/src/video/WindowLib.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowLib.o $< -MF $@
