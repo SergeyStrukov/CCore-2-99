@@ -1,4 +1,4 @@
-/* ShapeLib.TextContourShape.cpp */
+/* Shape.Contour.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,20 +13,60 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Contour.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
 namespace Video {
 
+/* class ContourShape */
+
+Point ContourShape::getMinSize() const
+ {
+  Coordinate dxy=RoundUpLen(+cfg.width);
+
+  return Point::Diag(2*dxy+1);
+ }
+
+Point ContourShape::getMinSize(Point inner_size) const
+ {
+  Coordinate dxy=RoundUpLen(+cfg.width);
+
+  return inner_size.addXY(+(2*dxy));
+ }
+
+Pane ContourShape::getInner() const
+ {
+  Coord dxy=RoundUpLen(+cfg.width);
+
+  return pane.shrink(dxy);
+ }
+
+void ContourShape::draw(const DrawBuf &buf) const
+ {
+  MPane p(pane);
+
+  if( !p ) return;
+
+  SmoothDrawArt art(buf.cut(pane));
+
+  MCoord width=+cfg.width;
+
+  FigureTopBorder fig_top(p,width);
+
+  fig_top.solid(art,+cfg.gray);
+
+  FigureBottomBorder fig_bottom(p,width);
+
+  fig_bottom.solid(art,+cfg.snow);
+ }
+
 /* class TextContourShape */
 
 Point TextContourShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(title.str());
-
-  IntGuard( !ts.overflow );
+  TextSize ts=cfg.font->text_guarded(title.str());
 
   Coord dxy=RoundUpLen(+cfg.width);
 
@@ -35,9 +75,7 @@ Point TextContourShape::getMinSize() const
 
 Point TextContourShape::getMinSize(Point inner_size) const
  {
-  TextSize ts=cfg.font->text(title.str());
-
-  IntGuard( !ts.overflow );
+  TextSize ts=cfg.font->text_guarded(title.str());
 
   Coord dxy=RoundUpLen(+cfg.width);
 
@@ -123,17 +161,17 @@ void TextContourShape::draw(const DrawBuf &buf) const
 
   // border
 
-  VColor top=+cfg.top;
+  VColor gray=+cfg.gray;
 
   FigureTopBorder fig_top(x0,x1,y0,y1,width);
 
-  fig_top.getLeftCut(t0).solid(art,top);
+  fig_top.getLeftCut(t0).solid(art,gray);
 
-  fig_top.getRightCut(t1).solid(art,top);
+  fig_top.getRightCut(t1).solid(art,gray);
 
   FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
 
-  fig_bottom.solid(art,+cfg.bottom);
+  fig_bottom.solid(art,+cfg.snow);
 
   // title
 
@@ -142,5 +180,4 @@ void TextContourShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 

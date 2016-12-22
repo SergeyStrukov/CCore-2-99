@@ -443,29 +443,17 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_TextLineWindow.bind(get());
 
-  cfg_XSingleLineWindow.width.bind(width);
-  cfg_XSingleLineWindow.line.bind(line);
+  cfg_XSingleLineWindow.bind(get());
 
-  cfg_YSingleLineWindow.width.bind(width);
-  cfg_YSingleLineWindow.line.bind(line);
+  cfg_YSingleLineWindow.bind(get());
 
-  cfg_XDoubleLineWindow.width.bind(width);
-  cfg_XDoubleLineWindow.top.bind(top);
-  cfg_XDoubleLineWindow.bottom.bind(bottom);
+  cfg_XDoubleLineWindow.bind(get());
 
-  cfg_YDoubleLineWindow.width.bind(width);
-  cfg_YDoubleLineWindow.top.bind(top);
-  cfg_YDoubleLineWindow.bottom.bind(bottom);
+  cfg_YDoubleLineWindow.bind(get());
 
-  cfg_ContourWindow.width.bind(width);
-  cfg_ContourWindow.top.bind(bottom);
-  cfg_ContourWindow.bottom.bind(top);
+  cfg_ContourWindow.bind(get());
 
-  cfg_TextContourWindow.width.bind(width);
-  cfg_TextContourWindow.top.bind(bottom);
-  cfg_TextContourWindow.bottom.bind(top);
-  cfg_TextContourWindow.text.bind(contour_text);
-  cfg_TextContourWindow.font.bind(contour_font.font);
+  cfg_TextContourWindow.bind(get());
 
   cfg_XScrollWindow.width.bind(width);
   cfg_XScrollWindow.dxy.bind(scroll_dxy);

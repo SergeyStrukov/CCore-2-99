@@ -31,19 +31,18 @@
 #include <CCore/inc/video/lib/Window.Light.h>
 #include <CCore/inc/video/lib/Window.Text.h>
 #include <CCore/inc/video/lib/Window.TextLine.h>
+#include <CCore/inc/video/lib/Window.Decor.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
 
-template <class Shape> class DecorWindowOf;
-
-template <class Shape> class ScrollWindowOf;
-
 template <class Shape> class ProgressWindowOf;
 
 template <class Shape> class InfoWindowOf;
+
+template <class Shape> class ScrollWindowOf;
 
 template <class Shape> class LineEditWindowOf;
 
@@ -54,81 +53,6 @@ struct ScrollListWindowBase;
 template <class Shape> class ScrollListInnerWindowOf;
 
 template <class Shape,class XShape,class YShape> class ScrollListWindowOf;
-
-/* class DecorWindowOf<Shape> */
-
-template <class Shape>
-class DecorWindowOf : public SubWindow
- {
-   Shape shape;
-
-  public:
-
-   using ShapeType = Shape ;
-   using ConfigType = typename Shape::Config ;
-
-   template <class ... TT>
-   DecorWindowOf(SubWindowHost &host,TT && ... tt)
-    : SubWindow(host),
-      shape( std::forward<TT>(tt)... )
-    {
-    }
-
-   virtual ~DecorWindowOf() {}
-
-   // methods
-
-   auto getMinSize() const { return shape.getMinSize(); }
-
-   Point getMinSize(Point inner_size) const { return shape.getMinSize(inner_size); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
-   Pane getInner() const { return shape.getInner()+getPlace().getBase(); }
-
-   // drawing
-
-   virtual void layout()
-    {
-     shape.pane=Pane(Null,getSize());
-    }
-
-   virtual void draw(DrawBuf buf,bool) const
-    {
-     try { shape.draw(buf); } catch(CatchType) {}
-    }
-
-   // keyboard
-
-   virtual FocusType askFocus() const
-    {
-     return NoFocus;
-    }
- };
-
-/* type XSingleLineWindow */
-
-using XSingleLineWindow = DecorWindowOf<XSingleLineShape> ;
-
-/* type YSingleLineWindow */
-
-using YSingleLineWindow = DecorWindowOf<YSingleLineShape> ;
-
-/* type XDoubleLineWindow */
-
-using XDoubleLineWindow = DecorWindowOf<XDoubleLineShape> ;
-
-/* type YDoubleLineWindow */
-
-using YDoubleLineWindow = DecorWindowOf<YDoubleLineShape> ;
-
-/* type ContourWindow */
-
-using ContourWindow = DecorWindowOf<ContourShape> ;
-
-/* type TextContourWindow */
-
-using TextContourWindow = DecorWindowOf<TextContourShape> ;
 
 /* class ScrollWindowOf<Shape> */
 
