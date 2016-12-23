@@ -210,6 +210,11 @@ struct MPane
     return MPane(x+dx,ex-dx,y+dy,ey-dy);
    }
 
+  MPane shrink(MPoint delta) const
+   {
+    return shrink(delta.x,delta.y);
+   }
+
   MPane shrink(MCoord dxy) const
    {
     return MPane(x+dxy,ex-dxy,y+dxy,ey-dxy);

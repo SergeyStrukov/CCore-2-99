@@ -1,4 +1,4 @@
-/* ShapeLib.InfoShape.cpp */
+/* Shape.Info.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,9 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Info.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -28,17 +27,15 @@ Point InfoShape::getMinSize() const
   Font font=cfg.font.get();
 
   Coord dx=0;
-  Coord dy=0;
+  Coordinate dy=0;
 
   for(ulen index=0,count=info->getLineCount(); index<count ;index++)
     {
-     TextSize ts=font->text(info->getLine(index));
-
-     IntGuard( !ts.overflow );
+     TextSize ts=font->text_guarded(info->getLine(index));
 
      Replace_max(dx,ts.full_dx);
 
-     dy=IntAdd(dy,ts.dy);
+     dy+=ts.dy;
     }
 
   return 2*(+cfg.space)+Point(dx,dy);
@@ -60,9 +57,7 @@ void InfoShape::setMax()
 
      for(ulen index=0; index<count ;index++)
        {
-        TextSize ts=font->text(info->getLine(index));
-
-        IntGuard( !ts.overflow );
+        TextSize ts=font->text_guarded(info->getLine(index));
 
         Replace_max(dx,ts.full_dx);
        }
@@ -93,9 +88,9 @@ void InfoShape::draw(const DrawBuf &buf) const
  {
   if( !pane ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
-  VColor text=enable?+cfg.text:+cfg.inactive;
+  VColor text = enable? +cfg.text : +cfg.inactive ;
 
   Point space=+cfg.space;
 
@@ -105,15 +100,18 @@ void InfoShape::draw(const DrawBuf &buf) const
    MPane p(pane);
 
    MCoord width=+cfg.width;
-   MCoord dx=Fraction(space.x)-width;
-   MCoord dy=Fraction(space.y)-width;
+
+   MPoint delta(space);
 
    if( focus )
      {
-      FigureBox fig(p.shrink(Fraction(space.x)/2,Fraction(space.y)/2));
+      FigureBox fig(p.shrink(delta/2));
 
       fig.loop(art,width,+cfg.focus);
      }
+
+   MCoord dx=delta.x-width;
+   MCoord dy=delta.y-width;
 
    if( xoff>0 )
      {
@@ -158,18 +156,21 @@ void InfoShape::draw(const DrawBuf &buf) const
 
    FontSize fs=font->getSize();
 
-   DrawBuf tbuf=buf.cutRebase(inner);
+   DrawBuf tbuf=buf.cut(inner);
 
-   Pane row(-xoff,0,IntAdd(xoff,inner.dx),fs.dy);
+   Pane row=inner;
 
-   for(; index<count && row.y+row.dy<=inner.dy ;index++,row.y+=row.dy)
+   row.dy=fs.dy;
+
+   Coord pos_x=fs.dx0-xoff;
+
+   for(; index<count && IntAdd(row.y,row.dy)<=inner.y+inner.dy ;index++,row.y+=row.dy)
      {
-      font->text(tbuf,row,TextPlace(AlignX_Left,AlignY_Top),info->getLine(index),text);
+      font->text(tbuf,row,TextPlace(pos_x,AlignY_Top),info->getLine(index),text);
      }
   }
  }
 
 } // namespace Video
 } // namespace CCore
-
 

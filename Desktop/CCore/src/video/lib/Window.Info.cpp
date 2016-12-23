@@ -1,4 +1,4 @@
-/* WindowLib.cpp */
+/* Window.Info.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/lib/Window.Info.h>
 
 namespace CCore {
 namespace Video {
@@ -21,5 +21,4 @@ namespace Video {
 
 } // namespace Video
 } // namespace CCore
-
 

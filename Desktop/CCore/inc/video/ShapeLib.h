@@ -16,11 +16,6 @@
 #ifndef CCore_inc_video_ShapeLib_h
 #define CCore_inc_video_ShapeLib_h
 
-#include <CCore/inc/video/Info.h>
-
-#include <CCore/inc/String.h>
-#include <CCore/inc/DeferCall.h>
-
 #include <CCore/inc/video/lib/Shape.Button.h>
 #include <CCore/inc/video/lib/Shape.Check.h>
 #include <CCore/inc/video/lib/Shape.Switch.h>
@@ -32,6 +27,7 @@
 #include <CCore/inc/video/lib/Shape.Line.h>
 #include <CCore/inc/video/lib/Shape.Contour.h>
 #include <CCore/inc/video/lib/Shape.Progress.h>
+#include <CCore/inc/video/lib/Shape.Info.h>
 
 namespace CCore {
 namespace Video {
@@ -43,8 +39,6 @@ class ScrollShape;
 class XScrollShape;
 
 class YScrollShape;
-
-class InfoShape;
 
 class LineEditShape;
 
@@ -268,64 +262,6 @@ class YScrollShape : public ScrollShape
    ScrollType getType(MPoint point) const;
 
    void drag(Point point) { dragPos(drag_base.y,point.y,pane.dy,pane.dx); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class InfoShape */
-
-class InfoShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(8,8) ;
-
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> focus    = OrangeRed ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
-   // parameters
-
-   const Config &cfg;
-   Info info;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-
-   ulen yoff  = 0 ;
-   Coord xoff = 0 ;
-
-   ulen yoffMax  = 0 ;
-   Coord xoffMax = 0 ;
-   Coord dxoff   = 0 ;
-
-   bool drag = false ;
-   Point drag_base;
-   Coord xoff_base = 0 ;
-
-   // methods
-
-   explicit InfoShape(const Config &cfg_) : cfg(cfg_) {}
-
-   InfoShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
-
-   Point getMinSize() const;
-
-   void setMax();
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void draw(const DrawBuf &buf) const;
  };

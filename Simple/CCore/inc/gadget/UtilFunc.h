@@ -75,6 +75,19 @@ bool Change(T &obj,T val)
   return false;
  }
 
+template <class T>
+T AddToCap(T val,T delta,T cap)
+ {
+  if( val<cap )
+    {
+     return val+Min_cast(delta,cap-val);
+    }
+  else
+    {
+     return val;
+    }
+ }
+
 /* functions */
 
 template <UIntType UInt,class S>
