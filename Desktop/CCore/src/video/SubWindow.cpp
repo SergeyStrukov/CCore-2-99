@@ -272,6 +272,13 @@ void WindowList::focusOn(Point point)
 
  // draw
 
+bool WindowList::hasGoodSize() const
+ {
+  for(auto cur=list.start(); +cur ;++cur) if( !cur->hasGoodSize() ) return false;
+
+  return true;
+ }
+
 void WindowList::draw(const DrawBuf &buf,bool drag_active) const
  {
   for(auto cur=list.start_rev(); +cur ;++cur) cur->forward_draw(buf,drag_active);

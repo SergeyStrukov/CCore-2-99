@@ -32,13 +32,12 @@
 #include <CCore/inc/video/lib/Window.Text.h>
 #include <CCore/inc/video/lib/Window.TextLine.h>
 #include <CCore/inc/video/lib/Window.Decor.h>
+#include <CCore/inc/video/lib/Window.Progress.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
-
-template <class Shape> class ProgressWindowOf;
 
 template <class Shape> class InfoWindowOf;
 
@@ -608,141 +607,6 @@ using XScrollWindow = ScrollWindowOf<XScrollShape> ;
 /* type YScrollWindow */
 
 using YScrollWindow = ScrollWindowOf<YScrollShape> ;
-
-/* class ProgressWindowOf<Shape> */
-
-template <class Shape>
-class ProgressWindowOf : public SubWindow
- {
-   Shape shape;
-
-   DeferInput<ProgressWindowOf<Shape> > input;
-
-   DeferTick defer_tick;
-
-  private:
-
-   void tick()
-    {
-     if( shape.time )
-       {
-        shape.time--;
-
-        if( shape.tick() )
-          {
-           shape.nextActive();
-
-           redraw();
-          }
-       }
-     else
-       {
-        stopPing();
-       }
-    }
-
-  public:
-
-   using ShapeType = Shape ;
-   using ConfigType = typename Shape::Config ;
-
-   template <class ... TT>
-   ProgressWindowOf(SubWindowHost &host,TT && ... tt)
-    : SubWindow(host),
-      shape( std::forward<TT>(tt)... ),
-      input(this)
-    {
-     defer_tick=input.create(&ProgressWindowOf<Shape>::tick);
-    }
-
-   virtual ~ProgressWindowOf() {}
-
-   // methods
-
-   auto getMinSize() const { return shape.getMinSize(); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
-   unsigned getPos() const { return shape.pos; }
-
-   unsigned getTotal() const { return shape.total; }
-
-   void setTotal(unsigned total)
-    {
-     shape.total=total;
-     shape.pos=0;
-     shape.stopActive();
-
-     redraw();
-    }
-
-   void setPos(unsigned pos)
-    {
-     if( Change(shape.pos,pos) )
-       {
-        shape.adjustPos();
-
-        redraw();
-       }
-    }
-
-   void setPosPing(unsigned pos)
-    {
-     if( Change(shape.pos,pos) )
-       {
-        shape.adjustPos();
-
-        shape.resetTime();
-
-        defer_tick.start();
-
-        shape.startActive();
-
-        redraw();
-       }
-    }
-
-   void ping()
-    {
-     shape.resetTime();
-
-     defer_tick.start();
-
-     if( shape.startActive() ) redraw();
-    }
-
-   void stopPing()
-    {
-     defer_tick.stop();
-
-     shape.stopActive();
-
-     redraw();
-    }
-
-   // drawing
-
-   virtual void layout()
-    {
-     shape.pane=Pane(Null,getSize());
-    }
-
-   virtual void draw(DrawBuf buf,bool) const
-    {
-     try { shape.draw(buf); } catch(CatchType) {}
-    }
-
-   // keyboard
-
-   virtual FocusType askFocus() const
-    {
-     return NoFocus;
-    }
- };
-
-/* type ProgressWindow */
-
-using ProgressWindow = ProgressWindowOf<ProgressShape> ;
 
 /* class InfoWindowOf<Shape> */
 

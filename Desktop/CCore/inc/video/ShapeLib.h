@@ -31,6 +31,7 @@
 #include <CCore/inc/video/lib/Shape.TextLine.h>
 #include <CCore/inc/video/lib/Shape.Line.h>
 #include <CCore/inc/video/lib/Shape.Contour.h>
+#include <CCore/inc/video/lib/Shape.Progress.h>
 
 namespace CCore {
 namespace Video {
@@ -42,8 +43,6 @@ class ScrollShape;
 class XScrollShape;
 
 class YScrollShape;
-
-class ProgressShape;
 
 class InfoShape;
 
@@ -269,103 +268,6 @@ class YScrollShape : public ScrollShape
    ScrollType getType(MPoint point) const;
 
    void drag(Point point) { dragPos(drag_base.y,point.y,pane.dy,pane.dx); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class ProgressShape */
-
-class ProgressShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Coord> dy = 24 ;
-
-     RefVal<VColor> border        =     Black ;
-
-     RefVal<VColor> top           =      Snow ;
-     RefVal<VColor> bottom        =      Gray ;
-
-     RefVal<VColor> active_top    =     Green ;
-     RefVal<VColor> active_bottom = DarkGreen ;
-
-     RefVal<VColor> ping_top      =      Snow ;
-     RefVal<VColor> ping_bottom   =     Black ;
-
-     RefVal<unsigned> time   = 3_sectick ;
-     RefVal<unsigned> period =    2_tick ;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   Pane pane;
-
-   // state
-
-   static const unsigned MaxActivePos = 100 ;
-
-   unsigned total      =   100 ;
-   unsigned pos        =     0 ;
-   unsigned active_pos =     0 ;
-   bool has_active     = false ;
-
-   unsigned time  = 0 ;
-   unsigned count = 0 ;
-
-   // methods
-
-   explicit ProgressShape(const Config &cfg_) : cfg(cfg_) {}
-
-   SizeY getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void adjustPos()
-    {
-     Replace_min(pos,total);
-    }
-
-   void resetTime() { time=+cfg.time; }
-
-   bool tick()
-    {
-     if( ++count >= +cfg.period )
-       {
-        count=0;
-
-        return true;
-       }
-
-     return false;
-    }
-
-   bool startActive()
-    {
-     if( !has_active )
-       {
-        has_active=true;
-        active_pos=0;
-
-        return true;
-       }
-
-     return false;
-    }
-
-   void nextActive()
-    {
-     if( (active_pos+=MaxActivePos/10)>MaxActivePos ) active_pos=0;
-    }
-
-   void stopActive()
-    {
-     has_active=false;
-    }
 
    void draw(const DrawBuf &buf) const;
  };

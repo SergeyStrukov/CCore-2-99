@@ -166,6 +166,18 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    // drawing
 
+   virtual bool isGoodSize(Point size) const
+    {
+     Used(size);
+
+     return true;
+    }
+
+   virtual bool hasGoodSize() const
+    {
+     return isGoodSize(getSize());
+    }
+
    virtual void layout()
     {
      // do nothing
@@ -406,6 +418,8 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
    void enableClickFocus(bool enable_click_=true) { enable_click=enable_click_; }
 
    // draw
+
+   bool hasGoodSize() const;
 
    void draw(const DrawBuf &buf,bool drag_active) const;
 
@@ -659,6 +673,8 @@ class SomeWindow : public SubWindow
 
    // drawing
 
+   virtual bool hasGoodSize() const;
+
    virtual void layout();
 
    virtual void draw(DrawBuf buf,bool drag_active) const;
@@ -712,6 +728,13 @@ SomeWindow::~SomeWindow()
  }
 
  // drawing
+
+bool SomeWindow::hasGoodSize() const
+ {
+  // TODO
+
+  return wlist.hasGoodSize();
+ }
 
 void SomeWindow::layout()
  {
@@ -845,6 +868,11 @@ class ComboWindow : public SubWindow
   public:
 
    // drawing
+
+   virtual bool hasGoodSize() const
+    {
+     return wlist.hasGoodSize();
+    }
 
    virtual void draw(DrawBuf buf,bool drag_active) const
     {

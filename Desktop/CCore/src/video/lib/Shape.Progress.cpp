@@ -1,4 +1,4 @@
-/* ShapeLib.ProgressShape.cpp */
+/* Shape.Progress.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,9 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.Progress.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -34,29 +33,25 @@ void ProgressShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
-  MCoord x0=p.x;
-  MCoord x2=p.ex;
-
-  MCoord y0=p.y;
-  MCoord y1=p.ey;
-
-  MCoord x1=Position(pos,total,x0,x2);
+  MCoord t=Position(pos,total,p.x,p.ex);
 
   MCoord width=+cfg.width;
 
   VColor border=+cfg.border;
 
-  {
-   FigureBox fig(x0,x1,y0,y1);
+  // body
 
-   fig.solid(art,TwoField({x0,y0},+cfg.active_top,{x0,y1},+cfg.active_bottom));
+  {
+   FigureBox fig(p.cutLeft(t));
+
+   fig.solid(art,TwoField(p.getTopLeft(),+cfg.snowUp,p.getBottomLeft(),+cfg.grayUp));
   }
   {
-   FigureBox fig(x1,x2,y0,y1);
+   FigureBox fig(p.cutRight(t));
 
-   fig.solid(art,TwoField({x0,y0},+cfg.top,{x0,y1},+cfg.bottom));
+   fig.solid(art,TwoField(p.getTopLeft(),+cfg.snow,p.getBottomLeft(),+cfg.gray));
   }
   {
    FigureBox fig(p);
@@ -64,12 +59,15 @@ void ProgressShape::draw(const DrawBuf &buf) const
    fig.loop(art,HalfPos,width,border);
   }
 
+  // active
+
   if( has_active )
     {
-     MCoord x=x0+width;
-     MCoord y=y0+Div(1,10)*p.dy;
+     MCoord y=p.y+Div(1,10)*p.dy;
      MCoord dy=Div(8,10)*p.dy;
      MCoord ey=y+dy;
+
+     MCoord x=p.x+width;
      MCoord dx=dy+Div(active_pos,MaxActivePos)*dy;
 
      MCoord len=dx/3;
@@ -77,7 +75,7 @@ void ProgressShape::draw(const DrawBuf &buf) const
 
      MCoord radius=Div(40,100)*Min(len,dy);
 
-     TwoField field({x,y},+cfg.ping_top,{x,ey},+cfg.ping_bottom);
+     TwoField field({x,y},+cfg.snowPing,{x,ey},+cfg.grayPing);
 
      for(unsigned count=5; count ;count--,x+=shift)
        {
@@ -92,5 +90,4 @@ void ProgressShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 

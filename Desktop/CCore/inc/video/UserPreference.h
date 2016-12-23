@@ -154,11 +154,16 @@ struct UserPreferenceBag
   VColor switch_on        =  Green ;
   VColor switch_off       =    Red ;
 
-  VColor progress_border        =     Black ;
-  VColor progress_ping_top      =      Snow ;
-  VColor progress_ping_bottom   =     Black ;
-  VColor progress_active_top    =     Green ;
-  VColor progress_active_bottom = DarkGreen ;
+  VColor progress_border   =     Black ;
+  VColor progress_grayUp   = DarkGreen ; // +
+  VColor progress_snowUp   =     Green ; // +
+  VColor progress_grayPing =     Black ; // +
+  VColor progress_snowPing =      Snow ; // +
+
+  VColor progress_ping_top      =      Snow ; // -
+  VColor progress_ping_bottom   =     Black ; // -
+  VColor progress_active_top    =     Green ; // -
+  VColor progress_active_bottom = DarkGreen ; // -
 
   // TopWindow
 

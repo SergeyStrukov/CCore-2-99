@@ -55,7 +55,7 @@ class TextWindowOf : public SubWindow
 
    Point getMinSize(StrLen text) const { return shape.getMinSize(text); }
 
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
    bool isEnabled() const { return shape.enable; }
 

@@ -455,6 +455,8 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_TextContourWindow.bind(get());
 
+  cfg_ProgressWindow.bind(get());
+
   cfg_XScrollWindow.width.bind(width);
   cfg_XScrollWindow.dxy.bind(scroll_dxy);
   cfg_XScrollWindow.top.bind(top);
@@ -474,18 +476,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_YScrollWindow.face.bind(face);
   cfg_YScrollWindow.faceUp.bind(faceUp);
   cfg_YScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
-
-  cfg_ProgressWindow.width.bind(width);
-  cfg_ProgressWindow.dy.bind(progress_dy);
-  cfg_ProgressWindow.top.bind(top);
-  cfg_ProgressWindow.bottom.bind(bottom);
-  cfg_ProgressWindow.border.bind(progress_border);
-  cfg_ProgressWindow.ping_top.bind(progress_ping_top);
-  cfg_ProgressWindow.ping_bottom.bind(progress_ping_bottom);
-  cfg_ProgressWindow.active_top.bind(progress_active_top);
-  cfg_ProgressWindow.active_bottom.bind(progress_active_bottom);
-  cfg_ProgressWindow.time.bind(progress_time);
-  cfg_ProgressWindow.period.bind(progress_period);
 
   cfg_InfoWindow.width.bind(width);
   cfg_InfoWindow.space.bind(info_space);

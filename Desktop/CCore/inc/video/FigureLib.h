@@ -214,6 +214,16 @@ struct MPane
    {
     return MPane(x+dxy,ex-dxy,y+dxy,ey-dxy);
    }
+
+  // part
+
+  MPane cutLeft(MCoord t) const { return MPane(x,t,y,ey); }
+
+  MPane cutRight(MCoord t) const { return MPane(t,ex,y,ey); }
+
+  MPane cutTop(MCoord t) const { return MPane(x,ex,y,t); }
+
+  MPane cutBottom(MCoord t) const { return MPane(x,ex,t,ey); }
  };
 
 /* struct FigureBase<T,ulen Len> */
