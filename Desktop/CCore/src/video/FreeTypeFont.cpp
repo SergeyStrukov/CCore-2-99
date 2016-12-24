@@ -703,7 +703,7 @@ class FreeTypeFont::Base : public FontBase , Inner
 
      Point base=prepare(dx,dy,place,str);
 
-     text(buf.getBuf(),buf.map(base),str,vc);
+     text(buf.getFrameBuf(),buf.map(base),str,vc);
     }
 
    void text(DrawBuf buf,Coord dx,Coord dy,TextPlace place,AbstractSparseString &str,CharFunction func) const
@@ -713,7 +713,7 @@ class FreeTypeFont::Base : public FontBase , Inner
      ulen index;
      Point base=prepare(dx,dy,place,str,index);
 
-     text(buf.getBuf(),buf.map(base),str,index,-buf.getMapper(),func);
+     text(buf.getFrameBuf(),buf.map(base),str,index,-buf.getMapper(),func);
     }
 
   public:

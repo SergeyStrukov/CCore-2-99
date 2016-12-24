@@ -277,14 +277,14 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
                           {
                            Coord div_y=(y-text_by)+text_dy/2;
 
-                           art.path(+cfg.divider,Point(0,div_y-1),Point(buf.getBuf().dX()-1,div_y-1));
-                           art.path(+cfg.divider,Point(0,div_y+1),Point(buf.getBuf().dX()-1,div_y+1));
+                           art.path(+cfg.divider,Point(0,div_y-1),Point(buf.getFrameBuf().dX()-1,div_y-1));
+                           art.path(+cfg.divider,Point(0,div_y+1),Point(buf.getFrameBuf().dX()-1,div_y+1));
                           }
                         else
                           {
                            Coord div_y=(y-text_by)+text_dy/2;
 
-                           art.path(+cfg.divider,Point(0,div_y),Point(buf.getBuf().dX()-1,div_y));
+                           art.path(+cfg.divider,Point(0,div_y),Point(buf.getFrameBuf().dX()-1,div_y));
                           }
 
                         y+=text_dy;

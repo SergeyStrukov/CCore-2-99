@@ -49,9 +49,9 @@ class DrawBuf
 
    bool operator ! () const { return !buf; }
 
-   const FrameBuf<DesktopColor> & getBuf() const { return buf; }
+   const FrameBuf<DesktopColor> & getFrameBuf() const { return buf; }
 
-   FrameBuf<DesktopColor> & getBuf() { return buf; }
+   FrameBuf<DesktopColor> & getFrameBuf() { return buf; }
 
    // cut
 
