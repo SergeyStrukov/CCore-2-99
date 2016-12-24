@@ -238,6 +238,70 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
      return new W(host,pref.getSmartConfig());
     }
 
+   class TextContourWindow_Left : public TextContourWindow
+    {
+     public:
+
+      TextContourWindow_Left(SubWindowHost &host,const ConfigType &cfg) : TextContourWindow(host,cfg,"Title left"_def,AlignX_Left) {}
+    };
+
+   class TextContourWindow_Right : public TextContourWindow
+    {
+     public:
+
+      TextContourWindow_Right(SubWindowHost &host,const ConfigType &cfg) : TextContourWindow(host,cfg,"Title right"_def,AlignX_Right) {}
+    };
+
+   class TextContourWindow_Center : public TextContourWindow
+    {
+     public:
+
+      TextContourWindow_Center(SubWindowHost &host,const ConfigType &cfg) : TextContourWindow(host,cfg,"Title center"_def,AlignX_Center) {}
+    };
+
+   class ButtonWindow_Button : public ButtonWindow
+    {
+     public:
+
+      ButtonWindow_Button(SubWindowHost &host,const ConfigType &cfg) : ButtonWindow(host,cfg,"Button"_def) {}
+    };
+
+   class KnobWindow_Asterisk : public KnobWindow
+    {
+     public:
+
+      KnobWindow_Asterisk(SubWindowHost &host,const ConfigType &cfg) : KnobWindow(host,cfg,KnobShape::FaceAsterisk) {}
+    };
+
+   class KnobWindow_auto : public KnobWindow
+    {
+      static KnobShape::FaceType NextFace(KnobShape::FaceType face)
+       {
+        auto ret=KnobShape::FaceType(face+1);
+
+        if( ret==KnobShape::FaceLim ) return KnobShape::FaceOk;
+
+        return ret;
+       }
+
+      void nextFace()
+       {
+        auto face=getFace();
+
+        setFace(NextFace(face));
+       }
+
+      SignalConnector<KnobWindow_auto> connector_pressed;
+
+     public:
+
+      KnobWindow_auto(SubWindowHost &host,const ConfigType &cfg)
+       : KnobWindow(host,cfg,KnobShape::FaceOk),
+         connector_pressed(this,&KnobWindow_auto::nextFace,pressed)
+       {
+       }
+    };
+
   public:
 
    Base() // TODO
@@ -249,6 +313,25 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("XDoubleLine"_def,Create<XDoubleLineWindow>);
        add("YDoubleLine"_def,Create<YDoubleLineWindow>);
        add("Contour"_def,Create<ContourWindow>);
+       add("TextContour left"_def,Create<TextContourWindow_Left>);
+       add("TextContour right"_def,Create<TextContourWindow_Right>);
+       add("TextContour center"_def,Create<TextContourWindow_Center>);
+
+     add("Button"_def);
+
+       add("Button"_def,Create<ButtonWindow_Button>);
+       add("Knob"_def,Create<KnobWindow_Asterisk>);
+       add("Knob auto"_def,Create<KnobWindow_auto>);
+
+       //add(""_def,Create<>);
+
+     // Window.Check
+     // Window.Radio
+     // Window.Info
+     // Window.Light
+     // Window.Progress
+     // Window.Text
+     // Window.TextLine
     }
 
    virtual ~Base()
