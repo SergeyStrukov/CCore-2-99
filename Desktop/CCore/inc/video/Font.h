@@ -540,7 +540,7 @@ class DotFontBase : public FontBase
 
       void text(Coord x,Coord y,char ch,DesktopColor color)
        {
-        glyph_safe(Point(x,y),shape(ch),color);
+        buf.glyph_safe(Point(x,y),shape(ch),color);
        }
 
       // text
@@ -689,11 +689,16 @@ class DotFontBase : public FontBase
 
       void text(Point point,AbstractSparseString &str,DesktopColor color)
        {
+        Coord dx=buf.dX();
+        Coord dy=buf.dY();
+
         Coord fdx=shape.dX();
         Coord fdy=shape.dY();
 
-        MCoord x=+mapX(point.x);
-        Coord y=+mapY(point.y);
+        Point p=map(point);
+
+        MCoord x=p.x;
+        Coord y=p.y;
 
         if( y>=dy || y<=-fdy ) return;
 
@@ -712,12 +717,17 @@ class DotFontBase : public FontBase
 
       void text(Point point,AbstractSparseString &str,ulen index,CharFunction func)
        {
+        Coord dx=buf.dX();
+        Coord dy=buf.dY();
+
         Coord fdx=shape.dX();
         Coord fdy=shape.dY();
         Coord fby=shape.bY();
 
-        MCoord x=+mapX(point.x);
-        Coord y=+mapY(point.y);
+        Point p=map(point);
+
+        MCoord x=p.x;
+        Coord y=p.y;
 
         if( y>=dy || y<=-fdy ) return;
 

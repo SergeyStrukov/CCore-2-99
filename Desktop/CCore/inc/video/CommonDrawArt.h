@@ -94,15 +94,13 @@ class CommonDrawArt
        }
     };
 
-   class WorkBuf : public DrawBuf
+   class WorkBuf : public FrameBuf<DesktopColor>
     {
       static void Prepare(Coord &a,Coord &b,Coord d);
 
      public:
 
-      explicit WorkBuf(const DrawBuf &buf) : DrawBuf(buf) {}
-
-      // FrameBuf coord
+      explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
 
       void lineY(Coord abx,Coord ay,Coord by,RawPlotType plot); // [a,b) , plot(Raw *ptr)
 
@@ -120,12 +118,11 @@ class CommonDrawArt
     };
 
    WorkBuf buf;
+   PointMap map;
 
   public:
 
-   CommonDrawArt(const DrawBuf &buf_) : buf(buf_) {}
-
-   const DrawBuf & getBuf() const { return buf; }
+   explicit CommonDrawArt(const DrawBuf &buf);
 
    // simple
 

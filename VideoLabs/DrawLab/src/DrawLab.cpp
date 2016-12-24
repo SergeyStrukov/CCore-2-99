@@ -295,7 +295,7 @@ void DrawLab::setEmpty()
 
  // draw
 
-void DrawLab::drawMark(Smooth::DrawArt &art,Point point,Smooth::DotType dot_type) const
+void DrawLab::drawMark(SmoothDrawArt &art,Point point,Smooth::DotType dot_type) const
  {
   switch( dot_type )
     {
@@ -313,18 +313,18 @@ void DrawLab::drawMark(Smooth::DrawArt &art,Point point,Smooth::DotType dot_type
     }
  }
 
-void DrawLab::drawPickMark(Smooth::DrawArt &art,Point point) const
+void DrawLab::drawPickMark(SmoothDrawArt &art,Point point) const
  {
   art.ball_gen(point,Fraction(cfg.pick_len),ConstantAlphaField(cfg.pick,MedClr));
  }
 
-void DrawLab::drawNearMark(Smooth::DrawArt &art,Point point) const
+void DrawLab::drawNearMark(SmoothDrawArt &art,Point point) const
  {
   art.circle(point,Fraction(cfg.near_len),cfg.width,cfg.near);
  }
 
 template <class Map>
-void DrawLab::drawPath(Smooth::DrawArt art,Map map,bool do_loop) const
+void DrawLab::drawPath(SmoothDrawArt art,Map map,bool do_loop) const
  {
   if( pick_ind<dots.getLen() )
     {
@@ -383,13 +383,13 @@ void DrawLab::drawNormal(DrawBuf buf) const
     {
      case DrawPath :
       {
-       drawPath(buf, [] (Smooth::Dot dot) { return dot.point.toPoint(); } ,false);
+       drawPath(SmoothDrawArt(buf), [] (Smooth::Dot dot) { return dot.point.toPoint(); } ,false);
       }
      break;
 
      case DrawLoop :
       {
-       drawPath(buf, [] (Smooth::Dot dot) { return dot.point.toPoint(); } ,true);
+       drawPath(SmoothDrawArt(buf), [] (Smooth::Dot dot) { return dot.point.toPoint(); } ,true);
       }
      break;
 

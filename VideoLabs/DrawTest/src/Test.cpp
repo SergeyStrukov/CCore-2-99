@@ -169,7 +169,7 @@ void Shape4::draw(DrawBuf buf) const
  {
   Pane pane(10,10,RoundUpLen(dx),RoundUpLen(dy));
 
-  buf.block_safe(pane,pict->defaultGround());
+  buf.erase(pane,pict->defaultGround());
 
   pict->draw(buf,pane);
  }

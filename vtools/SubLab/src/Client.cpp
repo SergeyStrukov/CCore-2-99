@@ -491,7 +491,7 @@ void ClientWindow::draw(DrawBuf buf,bool drag_active) const
 
 void ClientWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  buf.block_safe(pane,getBack());
+  buf.erase(pane,getBack());
 
   wlist.draw(buf,pane,drag_active);
  }

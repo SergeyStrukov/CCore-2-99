@@ -1051,7 +1051,7 @@ void DesignerWindow::draw(DrawBuf buf,bool drag_active) const
 
 void DesignerWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  buf.block_safe(pane,+cfg.back);
+  buf.erase(pane,+cfg.back);
 
   wlist.draw(buf,pane,drag_active);
  }

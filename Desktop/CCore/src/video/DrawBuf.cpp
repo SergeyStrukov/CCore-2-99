@@ -22,11 +22,11 @@ namespace Video {
 
 DrawBuf DrawBuf::cut(Pane pane) const
  {
-  pane=Inf(pane+origin,getPane());
+  pane=Inf(map(pane),buf.getPane());
 
   if( !pane ) return DrawBuf();
 
-  return DrawBuf(cutFrame_unsafe(pane),origin-pane.getBase());
+  return DrawBuf(buf.cutFrame_unsafe(pane),origin-pane.getBase());
  }
 
 DrawBuf DrawBuf::cutRebase(Pane pane) const

@@ -191,12 +191,12 @@ class FieldPlotBase : public DrawBuf
 
    void plot(Point p,VColor vc)
     {
-     pixel_unsafe(p,vc);
+     buf.pixel_unsafe(p,vc);
     }
 
    void plot(Point p,VColor vc,unsigned alpha)
     {
-     DesktopColor::BlendTo(Blender(Clr(alpha),vc),place(p));
+     DesktopColor::BlendTo(Blender(Clr(alpha),vc),buf.place(p));
     }
 
    // AlphaColor
@@ -255,7 +255,7 @@ class FieldPlot : FieldPlotBase
 
   public:
 
-   FieldPlot(const DrawBuf &buf,const Field &field_) : FieldPlotBase(buf),field(field_) { size=getSize(); }
+   FieldPlot(const DrawBuf &buf_,const Field &field_) : FieldPlotBase(buf_),field(field_) { size=buf.getSize(); }
 
    void operator () (MPoint point)
     {
@@ -1378,7 +1378,7 @@ class GenDrawArt
 
   public:
 
-   GenDrawArt(const DrawBuf &buf_) : buf(buf_) {}
+   explicit GenDrawArt(const DrawBuf &buf_) : buf(buf_) {}
 
    const DrawBuf & getBuf() const { return buf; }
 
@@ -1829,7 +1829,7 @@ class DrawArt : public GenDrawArt
  {
   public:
 
-   DrawArt(const DrawBuf &buf) : GenDrawArt(buf) {}
+   explicit DrawArt(const DrawBuf &buf) : GenDrawArt(buf) {}
 
    // simple
 

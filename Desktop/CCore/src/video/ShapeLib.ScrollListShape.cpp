@@ -276,7 +276,7 @@ void ScrollListShape::draw(const DrawBuf &buf) const
 
    for(; index<count && row.y+row.dy<=inner.dy ;index++,row.y+=row.dy)
      {
-      if( enable && index==select ) tbuf.block_safe(row,+cfg.select);
+      if( enable && index==select ) tbuf.erase(row,+cfg.select);
 
       ComboInfoItem item=info->getLine(index);
 

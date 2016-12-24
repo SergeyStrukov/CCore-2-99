@@ -38,7 +38,7 @@ const char * GetTextDesc(DotType type)
 
 void DrawArt::pixel(Point p,DesktopColor color)
  {
-  buf.pixel_safe(buf.map(p),color);
+  buf.pixel(p,color);
  }
 
 void DrawArt::erase(DesktopColor color)
@@ -53,12 +53,12 @@ void DrawArt::erase(VColor vc,Clr alpha)
 
 void DrawArt::block(Pane pane,DesktopColor color)
  {
-  buf.block_safe(buf.map(pane),color);
+  buf.erase(pane,color);
  }
 
 void DrawArt::block(Pane pane,VColor vc,Clr alpha)
  {
-  buf.block_safe(buf.map(pane),vc,alpha);
+  buf.erase(pane,vc,alpha);
  }
 
  // special

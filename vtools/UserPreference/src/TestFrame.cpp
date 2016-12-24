@@ -314,7 +314,7 @@ void TestWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
   VColor ground=pref.get().ground;
 
-  buf.block_safe(pane,ground);
+  buf.erase(pane,ground);
 
   wlist.draw(buf,pane,drag_active);
  }

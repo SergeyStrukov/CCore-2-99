@@ -30,12 +30,14 @@ void SpecialDrawArt::erase(DesktopColor color)
 
 void SpecialDrawArt::block(Pane pane,DesktopColor color)
  {
-  buf.block_unsafe(Inf(buf.getPane(),buf.map(pane)),color);
+  buf.erase(pane,color);
  }
 
 void SpecialDrawArt::block(Pane pane,Blender blender)
  {
-  buf.block_unsafe(Inf(buf.getPane(),buf.map(pane)),blender);
+  auto &fb=buf.getBuf();
+
+  fb.block_unsafe(Inf(fb.getPane(),buf.map(pane)),blender);
  }
 
 void SpecialDrawArt::lineX(Coord x,Coord y,Coord len,DesktopColor line)

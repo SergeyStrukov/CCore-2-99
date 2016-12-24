@@ -720,6 +720,8 @@ class PointMap
 
    explicit PointMap(Point origin_) : origin(origin_) {}
 
+   Point getOrigin() const { return origin; }
+
    PointMap operator - () const { return PointMap(-origin); }
 
    template <class T>

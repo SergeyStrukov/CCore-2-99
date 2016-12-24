@@ -296,11 +296,17 @@ void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,VColor vc)
 
 /* class CommonDrawArt */
 
+CommonDrawArt::CommonDrawArt(const DrawBuf &buf_)
+ : buf(buf_.getBuf()),
+   map(buf_.getOrigin())
+ {
+ }
+
  // simple
 
 void CommonDrawArt::pixel(Point p,DesktopColor color)
  {
-  buf.pixel_safe(buf.map(p),color);
+  buf.pixel_safe(map(p),color);
  }
 
 void CommonDrawArt::erase(DesktopColor color)
@@ -310,7 +316,7 @@ void CommonDrawArt::erase(DesktopColor color)
 
 void CommonDrawArt::block(Pane pane,DesktopColor color)
  {
-  buf.block_safe(buf.map(pane),color);
+  buf.block_safe(map(pane),color);
  }
 
  // path
@@ -319,11 +325,11 @@ void CommonDrawArt::path(PtrLen<const Point> dots,DesktopColor color)
  {
   if( +dots )
     {
-     Point a=buf.map(*dots);
+     Point a=map(*dots);
 
      for(++dots; +dots ;++dots)
        {
-        Point b=buf.map(*dots);
+        Point b=map(*dots);
 
         buf.line(a,b,color);
 
@@ -338,7 +344,7 @@ void CommonDrawArt::loop(PtrLen<const Point> dots,DesktopColor color)
  {
   if( +dots )
     {
-     Point a=buf.map(*dots);
+     Point a=map(*dots);
 
      if( dots.len==1 )
        {
@@ -351,7 +357,7 @@ void CommonDrawArt::loop(PtrLen<const Point> dots,DesktopColor color)
 
      for(++dots; +dots ;++dots)
        {
-        Point b=buf.map(*dots);
+        Point b=map(*dots);
 
         buf.line(a,b,color);
 
@@ -366,7 +372,7 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
  {
   if( dots.len>=3 )
     {
-     DrawAlgo::CurvePath(dots,buf.getMapper(),HPlot(buf,color));
+     DrawAlgo::CurvePath(dots,map,HPlot(buf,color));
     }
   else
     {
@@ -376,7 +382,7 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
 
 void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
  {
-  DrawAlgo::CurveLoop(dots,buf.getMapper(),HPlot(buf,color));
+  DrawAlgo::CurveLoop(dots,map,HPlot(buf,color));
  }
 
  // path smooth
@@ -385,11 +391,11 @@ void CommonDrawArt::path_smooth(PtrLen<const Point> dots,VColor vc)
  {
   if( +dots )
     {
-     Point a=buf.map(*dots);
+     Point a=map(*dots);
 
      for(++dots; +dots ;++dots)
        {
-        Point b=buf.map(*dots);
+        Point b=map(*dots);
 
         buf.line_smooth(a,b,vc);
 
@@ -404,7 +410,7 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,VColor vc)
  {
   if( +dots )
     {
-     Point a=buf.map(*dots);
+     Point a=map(*dots);
 
      if( dots.len==1 )
        {
@@ -417,7 +423,7 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,VColor vc)
 
      for(++dots; +dots ;++dots)
        {
-        Point b=buf.map(*dots);
+        Point b=map(*dots);
 
         buf.line_smooth(a,b,vc);
 
@@ -432,7 +438,7 @@ void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,VColor vc)
  {
   if( dots.len>=3 )
     {
-     DrawAlgo::CurvePathSmooth(dots,buf.getMapper(),SPlot(buf,vc));
+     DrawAlgo::CurvePathSmooth(dots,map,SPlot(buf,vc));
     }
   else
     {
@@ -442,19 +448,19 @@ void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,VColor vc)
 
 void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,VColor vc)
  {
-  DrawAlgo::CurveLoopSmooth(dots,buf.getMapper(),SPlot(buf,vc));
+  DrawAlgo::CurveLoopSmooth(dots,map,SPlot(buf,vc));
  }
 
  // solid
 
 void CommonDrawArt::solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color)
  {
-  DrawAlgo::Solid(dots,buf.getMapper(),flag,HPlot(buf,color));
+  DrawAlgo::Solid(dots,map,flag,HPlot(buf,color));
  }
 
 void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color)
  {
-  DrawAlgo::CurveBorder border(dots,buf.getMapper());
+  DrawAlgo::CurveBorder border(dots,map);
 
   DrawAlgo::SolidBorder(border.complete(),flag,HPlot(buf,color));
  }
@@ -463,7 +469,7 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopCo
 
 void CommonDrawArt::ball(Point center,Coord radius,DesktopColor color)
  {
-  DrawAlgo::Ball(buf.map(center),radius,HPlot(buf,color));
+  DrawAlgo::Ball(map(center),radius,HPlot(buf,color));
  }
 
 void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
@@ -484,7 +490,7 @@ void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
 
 void CommonDrawArt::circle(Point center,Coord radius,DesktopColor color)
  {
-  DrawAlgo::Circle(buf.map(center),radius,HPlot(buf,color));
+  DrawAlgo::Circle(map(center),radius,HPlot(buf,color));
  }
 
 void CommonDrawArt::circleSpline(Point center,Coord radius,DesktopColor color)
