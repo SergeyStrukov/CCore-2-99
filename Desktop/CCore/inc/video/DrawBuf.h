@@ -53,8 +53,6 @@ class DrawBuf
 
    FrameBuf<DesktopColor> & getBuf() { return buf; }
 
-   Point getOrigin() const { return origin; }
-
    // cut
 
    DrawBuf cut(Pane pane) const;

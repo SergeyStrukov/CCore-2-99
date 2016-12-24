@@ -124,6 +124,8 @@ class CommonDrawArt
 
    explicit CommonDrawArt(const DrawBuf &buf);
 
+   DrawBuf getBuf() const { return DrawBuf(buf,map.getOrigin()); }
+
    // simple
 
    void pixel(Point p,DesktopColor color);

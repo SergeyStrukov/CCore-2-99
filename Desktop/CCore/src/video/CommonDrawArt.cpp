@@ -298,7 +298,7 @@ void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,VColor vc)
 
 CommonDrawArt::CommonDrawArt(const DrawBuf &buf_)
  : buf(buf_.getBuf()),
-   map(buf_.getOrigin())
+   map(buf_.getMapper())
  {
  }
 
