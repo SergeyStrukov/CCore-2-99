@@ -55,11 +55,14 @@ class DecorWindowOf : public SubWindow
 
    Point getMinSize(Point inner_size) const { return shape.getMinSize(inner_size); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    Pane getInner() const { return shape.getInner()+getPlace().getBase(); }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

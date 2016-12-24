@@ -14,12 +14,179 @@
 #include <inc/Client.h>
 
 #include <CCore/inc/video/Layout.h>
+#include <CCore/inc/video/FigureLib.h>
 
 #include <CCore/inc/Array.h>
 
 #include <CCore/inc/Exception.h>
 
 namespace App {
+
+/* class SpaceWindow */
+
+void SpaceWindow::startDrag(Point point)
+ {
+  if( !drag )
+    {
+     drag=true;
+
+     drag_base=point;
+     space_base=space;
+
+     captureMouse();
+
+     redraw();
+    }
+ }
+
+void SpaceWindow::dragTo(Point point)
+ {
+  Point delta=point-drag_base;
+
+  space=space_base+delta;
+
+  redraw();
+
+  changed.assert();
+ }
+
+void SpaceWindow::endDrag()
+ {
+  drag=false;
+
+  releaseMouse();
+ }
+
+void SpaceWindow::endDrag(Point point)
+ {
+  endDrag();
+
+  dragTo(point);
+ }
+
+SpaceWindow::SpaceWindow(SubWindowHost &host,const ConfigType &cfg_)
+ : SubWindow(host),
+   cfg(cfg_)
+ {
+  space=Point::Diag(+cfg.space_dxy);
+ }
+
+SpaceWindow::~SpaceWindow()
+ {
+ }
+
+ // drawing
+
+bool SpaceWindow::isGoodSize(Point size) const
+ {
+  return size/2 >= space ;
+ }
+
+void SpaceWindow::layout()
+ {
+  // do nothing
+ }
+
+void SpaceWindow::draw(DrawBuf buf,bool) const
+ {
+  Pane pane(Null,getSize());
+
+  Pane inner=pane.shrink(space);
+
+  if( +inner )
+    {
+     if( drag )
+       {
+        MPane p(inner);
+
+        SmoothDrawArt art(buf.cut(pane));
+
+        FigureBox fig(p);
+
+        fig.loop(art,HalfNeg,Fraction(+cfg.border_dxy),+cfg.border);
+       }
+    }
+  else
+    {
+     SmoothDrawArt art(buf.cut(pane));
+
+     art.erase(+cfg.border);
+    }
+ }
+
+ // base
+
+void SpaceWindow::open()
+ {
+  drag=false;
+ }
+
+ // keyboard
+
+FocusType SpaceWindow::askFocus() const
+ {
+  return NoFocus;
+ }
+
+ // mouse
+
+void SpaceWindow::looseCapture()
+ {
+  drag=false;
+ }
+
+MouseShape SpaceWindow::getMouseShape(Point,KeyMod) const
+ {
+  return drag?Mouse_SizeAll:Mouse_Arrow;
+ }
+
+ // user input
+
+void SpaceWindow::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+void SpaceWindow::react_LeftClick(Point point,MouseKey mkey)
+ {
+  if( mkey&MouseKey_Shift )
+    {
+     space=point;
+
+     changed.assert();
+
+     redraw();
+    }
+  else
+    {
+     startDrag(point);
+    }
+ }
+
+void SpaceWindow::react_LeftUp(Point point,MouseKey)
+ {
+  if( drag ) endDrag(point);
+ }
+
+void SpaceWindow::react_LeftDClick(Point point,MouseKey mkey)
+ {
+  react_LeftClick(point,mkey);
+ }
+
+void SpaceWindow::react_Move(Point point,MouseKey mkey)
+ {
+  if( drag )
+    {
+     if( mkey&MouseKey_Left )
+       {
+        dragTo(point);
+       }
+     else
+       {
+        endDrag();
+       }
+    }
+ }
 
 /* class ClientWindow::TypeInfo::Base */
 
@@ -150,12 +317,22 @@ void ClientWindow::type_selected(ulen index)
 
      cur.set( info.getFactory(index)(wlist,pref) );
 
-     wlist.insBottom(*cur);
+     wlist.insTop(*cur);
 
      // update
 
      layout();
      redraw();
+    }
+ }
+
+void ClientWindow::space_changed()
+ {
+  if( +cur )
+    {
+     cur->setPlace(space.getInner());
+
+     cur->redraw();
     }
  }
 
@@ -167,11 +344,13 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_,const UserPref
    check_wheat(wlist,cfg.check_cfg,false),
    label_wheat(wlist,cfg.label_cfg,"Wheat"_def),
    list_type(wlist,cfg.list_cfg,info),
+   space(wlist,cfg.space_cfg),
 
    connector_wheat_changed(this,&ClientWindow::wheat_changed,check_wheat.changed),
-   connector_type_selected(this,&ClientWindow::type_selected,list_type.selected)
+   connector_type_selected(this,&ClientWindow::type_selected,list_type.selected),
+   connector_space_changed(this,&ClientWindow::space_changed,space.changed)
  {
-  wlist.insTop(check_wheat,label_wheat,list_type);
+  wlist.insTop(check_wheat,label_wheat,list_type,space);
  }
 
 ClientWindow::~ClientWindow()
@@ -208,13 +387,15 @@ void ClientWindow::layout()
    p.place(list__type);
   }
 
+  // space
+
+  pane.place(space);
+
   // cur
 
   if( +cur )
     {
-     Pane p=pane;
-
-     cur->setPlace(p.shrink(+cfg.spaceInner_dxy));
+     cur->setPlace(space.getInner());
     }
  }
 

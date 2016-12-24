@@ -52,8 +52,6 @@ class LightWindowOf : public SubWindow
 
    auto getMinSize() const { return shape.getMinSize(); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    VColor getFace() const { return shape.face; }
 
    void setFace(VColor face)
@@ -73,6 +71,11 @@ class LightWindowOf : public SubWindow
    void turnOff() { turn(false); }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

@@ -19,7 +19,98 @@ namespace App {
 
 /* classes */
 
+class SpaceWindow;
+
 class ClientWindow;
+
+/* class SpaceWindow */
+
+class SpaceWindow : public SubWindow
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<Coord> space_dxy = 100 ;
+     RefVal<Coord> border_dxy = 10 ;
+
+     RefVal<VColor> border = SkyBlue ;
+
+     Config() noexcept {}
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   Point space;
+
+   bool drag = false ;
+   Point drag_base;
+   Point space_base;
+
+  private:
+
+   void startDrag(Point point);
+
+   void dragTo(Point point);
+
+   void endDrag();
+
+   void endDrag(Point point);
+
+  public:
+
+   SpaceWindow(SubWindowHost &host,const ConfigType &cfg);
+
+   virtual ~SpaceWindow();
+
+   // methods
+
+   Point getMinSize() const { return Null; }
+
+   Pane getInner() const { return getPlace().shrink(space); }
+
+   // drawing
+
+   virtual bool isGoodSize(Point size) const;
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool drag_active) const;
+
+   // base
+
+   virtual void open();
+
+   // keyboard
+
+   virtual FocusType askFocus() const;
+
+   // mouse
+
+   virtual void looseCapture();
+
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const;
+
+   // user input
+
+   virtual void react(UserAction action);
+
+   void react_LeftClick(Point point,MouseKey);
+
+   void react_LeftUp(Point point,MouseKey);
+
+   void react_LeftDClick(Point point,MouseKey mkey);
+
+   void react_Move(Point point,MouseKey mkey);
+
+   // signals
+
+   Signal<> changed;
+ };
 
 /* class ClientWindow */
 
@@ -40,7 +131,8 @@ class ClientWindow : public ComboWindow
      // special
 
      RefVal<VColor> backAlt = Wheat ;
-     RefVal<Coord> spaceInner_dxy = 100 ;
+
+     CtorRefVal<SpaceWindow::ConfigType> space_cfg;
 
      Config() noexcept {}
 
@@ -89,6 +181,7 @@ class ClientWindow : public ComboWindow
    CheckWindow check_wheat;
    LabelWindow label_wheat;
    ScrollListWindow list_type;
+   SpaceWindow space;
 
    ulen cur_index = MaxULen ;
    OwnPtr<SubWindow> cur;
@@ -104,6 +197,10 @@ class ClientWindow : public ComboWindow
    void type_selected(ulen index);
 
    SignalConnector<ClientWindow,ulen> connector_type_selected;
+
+   void space_changed();
+
+   SignalConnector<ClientWindow> connector_space_changed;
 
   public:
 

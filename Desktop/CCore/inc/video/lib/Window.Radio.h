@@ -165,8 +165,6 @@ class RadioWindowOf : public SubWindow , public RadioItem
 
    auto getMinSize() const { return shape.getMinSize(); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    bool isEnabled() const { return shape.enable; }
 
    void enable(bool enable=true)
@@ -181,6 +179,11 @@ class RadioWindowOf : public SubWindow , public RadioItem
    void check() { select(false); }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

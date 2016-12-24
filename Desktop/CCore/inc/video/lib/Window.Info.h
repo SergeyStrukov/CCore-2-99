@@ -85,9 +85,7 @@ class InfoWindowOf : public SubWindow
 
    void endDrag(Point point)
     {
-     shape.drag=false;
-
-     releaseMouse();
+     endDrag();
 
      dragTo(point);
     }
@@ -119,8 +117,6 @@ class InfoWindowOf : public SubWindow
 
    auto getMinSize() const { return shape.getMinSize(); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    bool isEnabled() const { return shape.enable; }
 
    void enable(bool enable=true)
@@ -142,6 +138,11 @@ class InfoWindowOf : public SubWindow
     }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

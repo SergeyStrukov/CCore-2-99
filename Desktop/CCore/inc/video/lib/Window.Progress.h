@@ -77,8 +77,6 @@ class ProgressWindowOf : public SubWindow
 
    auto getMinSize() const { return shape.getMinSize(); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    unsigned getPos() const { return shape.pos; }
 
    unsigned getTotal() const { return shape.total; }
@@ -137,6 +135,11 @@ class ProgressWindowOf : public SubWindow
     }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

@@ -76,8 +76,6 @@ class ButtonWindowOf : public SubWindow
 
    auto getMinSize() const { return shape.getMinSize(); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    bool isEnabled() const { return shape.enable; }
 
    void enable(bool enable=true)
@@ -99,6 +97,11 @@ class ButtonWindowOf : public SubWindow
     }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

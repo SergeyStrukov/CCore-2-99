@@ -70,9 +70,7 @@ class TextLineWindowOf : public SubWindow
 
    void endDrag(Point point)
     {
-     shape.drag=false;
-
-     releaseMouse();
+     endDrag();
 
      dragTo(point);
     }
@@ -106,8 +104,6 @@ class TextLineWindowOf : public SubWindow
 
    Point getMinSize(StrLen sample_text) const { return shape.getMinSize(sample_text); }
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
-
    bool isEnabled() const { return shape.enable; }
 
    bool isAlerted() const { return shape.alert; }
@@ -138,6 +134,11 @@ class TextLineWindowOf : public SubWindow
     }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {
