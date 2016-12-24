@@ -254,7 +254,7 @@ class TextLineWindowOf : public SubWindow
 
    void react_Wheel(Point,MouseKey,Coord delta)
     {
-     shift(delta);
+     shift(-delta);
     }
  };
 

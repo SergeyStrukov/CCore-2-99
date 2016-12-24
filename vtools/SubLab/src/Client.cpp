@@ -242,35 +242,50 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
     {
      public:
 
-      TextContourWindow_Left(SubWindowHost &host,const ConfigType &cfg) : TextContourWindow(host,cfg,"Title left"_def,AlignX_Left) {}
+      TextContourWindow_Left(SubWindowHost &host,const ConfigType &cfg)
+       : TextContourWindow(host,cfg,"Title left"_def,AlignX_Left)
+       {
+       }
     };
 
    class TextContourWindow_Right : public TextContourWindow
     {
      public:
 
-      TextContourWindow_Right(SubWindowHost &host,const ConfigType &cfg) : TextContourWindow(host,cfg,"Title right"_def,AlignX_Right) {}
+      TextContourWindow_Right(SubWindowHost &host,const ConfigType &cfg)
+       : TextContourWindow(host,cfg,"Title right"_def,AlignX_Right)
+       {
+       }
     };
 
    class TextContourWindow_Center : public TextContourWindow
     {
      public:
 
-      TextContourWindow_Center(SubWindowHost &host,const ConfigType &cfg) : TextContourWindow(host,cfg,"Title center"_def,AlignX_Center) {}
+      TextContourWindow_Center(SubWindowHost &host,const ConfigType &cfg)
+       : TextContourWindow(host,cfg,"Title center"_def,AlignX_Center)
+       {
+       }
     };
 
    class ButtonWindow_Button : public ButtonWindow
     {
      public:
 
-      ButtonWindow_Button(SubWindowHost &host,const ConfigType &cfg) : ButtonWindow(host,cfg,"Button"_def) {}
+      ButtonWindow_Button(SubWindowHost &host,const ConfigType &cfg)
+       : ButtonWindow(host,cfg,"Button"_def)
+       {
+       }
     };
 
    class KnobWindow_Asterisk : public KnobWindow
     {
      public:
 
-      KnobWindow_Asterisk(SubWindowHost &host,const ConfigType &cfg) : KnobWindow(host,cfg,KnobShape::FaceAsterisk) {}
+      KnobWindow_Asterisk(SubWindowHost &host,const ConfigType &cfg)
+       : KnobWindow(host,cfg,KnobShape::FaceAsterisk)
+       {
+       }
     };
 
    class KnobWindow_auto : public KnobWindow
@@ -302,6 +317,208 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
+   class LabelWindow_Label : public LabelWindow
+    {
+     public:
+
+      LabelWindow_Label(SubWindowHost &host,const ConfigType &cfg)
+       : LabelWindow(host,cfg,"Label"_def,AlignX_Center,AlignY_Center)
+       {
+       }
+    };
+
+   class TextWindow_SampleText : public TextWindow
+    {
+     public:
+
+      TextWindow_SampleText(SubWindowHost &host,const ConfigType &cfg)
+       : TextWindow(host,cfg,"Sample text line"_def,AlignX_Center,AlignY_Center)
+       {
+       }
+    };
+
+   class TextLineWindow_SampleText : public TextLineWindow
+    {
+     public:
+
+      TextLineWindow_SampleText(SubWindowHost &host,const ConfigType &cfg)
+       : TextLineWindow(host,cfg,"Sample text long line 1234567890"_def)
+       {
+       }
+    };
+
+   class ProgressWindow_Sample : public ProgressWindow
+    {
+      DeferInput<ProgressWindow_Sample> input;
+
+      DeferTick defer_tick;
+
+      unsigned pos = 0 ;
+      unsigned count = 0 ;
+
+     private:
+
+      void tick()
+       {
+        if( !count )
+          {
+           count=2_sectick;
+
+           if( pos<=getTotal() )
+             setPosPing(pos++);
+           else
+             defer_tick.stop();
+          }
+
+        count--;
+       }
+
+     public:
+
+      ProgressWindow_Sample(SubWindowHost &host,const ConfigType &cfg)
+       : ProgressWindow(host,cfg),
+         input(this)
+       {
+        defer_tick=input.create(&ProgressWindow_Sample::tick);
+
+        setTotal(100);
+       }
+
+      // base
+
+      virtual void open()
+       {
+        defer_tick.start();
+       }
+
+      virtual void close()
+       {
+        defer_tick.stop();
+       }
+    };
+
+   class InfoWindow_SampleInfo : public InfoWindow
+    {
+      static constexpr const char *Sample=
+        "type AtomIndex = uint32 ;\r\n"
+        "type SyntIndex = uint32 ;\r\n"
+        "type KindIndex = uint32 ;\r\n"
+        "type ElementIndex = uint32 ;\r\n"
+        "type RuleIndex = uint32 ;\r\n"
+        "type StateIndex = uint32 ;\r\n"
+        "type FinalIndex = uint32 ;\r\n"
+        "\r\n"
+        "struct Lang\r\n"
+        " {\r\n"
+        "  Atom[] atoms;\r\n"
+        "  Synt[] synts;\r\n"
+        "  Synt * [] lang;\r\n"
+        "  Element[] elements;\r\n"
+        "  Rule[] rules;\r\n"
+        "  TopRule[] top_rules;\r\n"
+        "  State[] states;\r\n"
+        "  Final[] finals;\r\n"
+        " };\r\n"
+        "\r\n"
+        "struct Atom\r\n"
+        " {\r\n"
+        "  AtomIndex index;\r\n"
+        "  text name;\r\n"
+        "  \r\n"
+        "  Element *element;\r\n"
+        " };\r\n"
+        "\r\n"
+        "struct Synt\r\n"
+        " {\r\n"
+        "  SyntIndex index;\r\n"
+        "  text name;\r\n"
+        "  \r\n"
+        "  Kind[] kinds;\r\n"
+        "  Rule * [] rules;\r\n"
+        " };\r\n"
+        "\r\n"
+        "struct Kind\r\n"
+        " {\r\n"
+        "  KindIndex kindex; // index among all kinds\r\n"
+        "  KindIndex index; // index in synt array\r\n"
+        "  text name;\r\n"
+        "\r\n"
+        "  Synt *synt;\r\n"
+        "  \r\n"
+        "  Element *element;\r\n"
+        "  \r\n"
+        "  TopRule * [] rules;\r\n"
+        " };\r\n"
+        "\r\n"
+        "struct Element\r\n"
+        " {\r\n"
+        "  ElementIndex index;\r\n"
+        "  \r\n"
+        "  {Atom,Kind} * elem;\r\n"
+        " };\r\n"
+        "\r\n"
+        "struct Rule\r\n"
+        " {\r\n"
+        "  RuleIndex index;\r\n"
+        "  text name;\r\n"
+        "\r\n"
+        "  Kind *result;\r\n"
+        "\r\n"
+        "  type Arg = {Atom,Synt} * ;\r\n"
+        "\r\n"
+        "  Arg[] args;\r\n"
+        " };\r\n"
+        " \r\n"
+        "struct TopRule\r\n"
+        " {\r\n"
+        "  RuleIndex index;\r\n"
+        "  text name;\r\n"
+        "  \r\n"
+        "  Rule *bottom;\r\n"
+        "\r\n"
+        "  Kind *result;\r\n"
+        "\r\n"
+        "  type Arg = {Atom,Kind} * ;\r\n"
+        "\r\n"
+        "  Arg[] args;\r\n"
+        " }; \r\n"
+        "\r\n"
+        "struct State\r\n"
+        " {\r\n"
+        "  StateIndex index;\r\n"
+        "  Final *final;\r\n"
+        "\r\n"
+        "  struct Transition\r\n"
+        "   {\r\n"
+        "    Element *element;\r\n"
+        "    State *state;\r\n"
+        "   };\r\n"
+        "\r\n"
+        "  Transition[] transitions;\r\n"
+        " };\r\n"
+        "\r\n"
+        "struct Final\r\n"
+        " {\r\n"
+        "  FinalIndex index;\r\n"
+        "\r\n"
+        "  struct Action\r\n"
+        "   {\r\n"
+        "    Atom *atom; // null for (End)\r\n"
+        "    Rule *rule; // null for <- ( STOP if atom is (END) )\r\n"
+        "   };\r\n"
+        "\r\n"
+        "  Action[] actions;\r\n"
+        " };\r\n"
+        "\r\n";
+
+     public:
+
+      InfoWindow_SampleInfo(SubWindowHost &host,const ConfigType &cfg)
+       : InfoWindow(host,cfg,InfoFromString(Sample))
+       {
+       }
+    };
+
   public:
 
    Base() // TODO
@@ -323,15 +540,28 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("Knob"_def,Create<KnobWindow_Asterisk>);
        add("Knob auto"_def,Create<KnobWindow_auto>);
 
-       //add(""_def,Create<>);
+     add("Box"_def);
 
-     // Window.Check
-     // Window.Radio
-     // Window.Info
-     // Window.Light
-     // Window.Progress
-     // Window.Text
-     // Window.TextLine
+       add("Check"_def,Create<CheckWindow>);
+       add("Switch"_def,Create<SwitchWindow>);
+
+       // Window.Check  AltWindow
+
+       // Window.Radio
+       // Window.Light
+
+     add("Line"_def);
+
+       add("Label"_def,Create<LabelWindow_Label>); // Window.Text
+       add("Text"_def,Create<TextWindow_SampleText>); // Window.Text
+       add("TextLine"_def,Create<TextLineWindow_SampleText>);
+       add("Progress"_def,Create<ProgressWindow_Sample>);
+
+     add("Pane"_def);
+
+       add("Info"_def,Create<InfoWindow_SampleInfo>);
+
+       //add(""_def,Create<>);
     }
 
    virtual ~Base()

@@ -62,6 +62,14 @@ void SwitchShape::draw(const DrawBuf &buf) const
      art.ball(center,radius/2, enable? +cfg.off : gray );
     }
 
+  // border
+
+  {
+   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
+
+   art.circle(center,radius-width/2,width,border);
+  }
+
   // face
 
   {
@@ -94,14 +102,6 @@ void SwitchShape::draw(const DrawBuf &buf) const
    VColor face = enable? ( mover? +cfg.faceUp : +cfg.face ) : gray ;
 
    fig.solid(art,face);
-  }
-
-  // border
-
-  {
-   VColor border = focus? +cfg.focus : ( enable? +cfg.border : gray ) ;
-
-   art.circle(center,radius-width/2,width,border);
   }
  }
 
