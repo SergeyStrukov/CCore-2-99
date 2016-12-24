@@ -16,14 +16,17 @@ OPT = -j 8
 all:
 	make $(OPT) -C UserPreference
 	make $(OPT) -C DDLDisplay
+	make $(OPT) -C SubLab
 
 clean:
 	make -C UserPreference         clean
 	make -C DDLDisplay             clean
+	make -C SubLab                 clean
 
 list:
 	make -C UserPreference         list
 	make -C DDLDisplay             list
+	make -C SubLab                 list
 
 
 
