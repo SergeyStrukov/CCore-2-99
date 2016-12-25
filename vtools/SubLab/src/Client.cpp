@@ -22,6 +22,104 @@
 
 namespace App {
 
+/* class AltShape */
+
+Point AltShape::getMinSize() const
+ {
+  Coordinate dy=+cfg.dy;
+
+  return Point(2*dy,dy);
+ }
+
+auto AltShape::getZone(Point point) const -> CheckType
+ {
+  return point.x-pane.x > pane.dx/2 ;
+ }
+
+void AltShape::draw(const DrawBuf &buf) const
+ {
+  MPane p(pane);
+
+  if( !p ) return;
+
+  MCoord t=p.x+p.dx/2;
+  MCoord space=p.dy/5;
+
+  MPane a=p.cutLeft(t);
+  MPane b=p.cutRight(t);
+
+  SmoothDrawArt art(buf.cut(pane));
+
+  VColor snow=+cfg.snow;
+  VColor gray=+cfg.gray;
+  VColor snowUp=+cfg.snowUp;
+
+  // body
+
+  {
+   FigureBox fig(a);
+
+   if( enable && check )
+     {
+      VColor top_ = ( mover && !zone )? snowUp : snow ;
+
+      fig.solid(art,TwoField(a.getTopLeft(),top_,a.getBottomLeft(),gray));
+     }
+   else
+     {
+      fig.solid(art,gray);
+     }
+  }
+  {
+   FigureBox fig(b);
+
+   if( enable && !check )
+     {
+      VColor top_ = ( mover && zone )? snowUp : snow ;
+
+      fig.solid(art,TwoField(b.getTopLeft(),top_,b.getTopRight(),gray));
+     }
+   else
+     {
+      fig.solid(art,gray);
+     }
+  }
+
+  // mark
+
+  {
+   FigureDownArrow fig(a.shrink(space));
+
+   VColor mark = ( enable && !check )? +cfg.mark_false_on : +cfg.mark_false ;
+
+   fig.curveSolid(art,mark);
+  }
+  {
+   FigureRightArrow fig(b.shrink(space));
+
+   VColor mark = ( enable && check )? +cfg.mark_true_on : +cfg.mark_true ;
+
+   fig.curveSolid(art,mark);
+  }
+
+  // border
+
+  {
+   FigureBox fig(p);
+
+   MCoord width=space/2;
+
+   VColor border = enable? +cfg.border : snow ;
+
+   fig.loop(art,HalfPos,width,border);
+
+   art.path(width,border,p.getTopMid(),p.getBottomMid());
+
+   if( focus )
+     fig.loop(art,HalfPos,width/2,+cfg.focus);
+  }
+ }
+
 /* class SpaceWindow */
 
 void SpaceWindow::startDrag(Point point)
@@ -231,6 +329,8 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
     {
      list.append_fill(name,factory);
     }
+
+   // Create()
 
    template <class W>
    static SubWindow * Create(SubWindowHost &host,const UserPreference &pref)
@@ -519,9 +619,262 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
+   // CreateCombo()
+
+   template <class W>
+   static SubWindow * CreateCombo(SubWindowHost &host,const UserPreference &pref)
+    {
+     return new W(host,pref);
+    }
+
+   class RadioLightWindow : public ComboWindow
+    {
+      RadioGroup group;
+
+      RadioWindow radio_Off;
+      RadioWindow radio_Red;
+      RadioWindow radio_Green;
+      RadioWindow radio_Blue;
+
+      LightWindow light;
+
+     private:
+
+      void group_changed(int new_id,int)
+       {
+        switch( new_id )
+          {
+           case 0 :
+            {
+             light.turnOff();
+            }
+           break;
+
+           case 1 :
+            {
+             light.setFace(Red);
+
+             light.turnOn();
+            }
+           break;
+
+           case 2 :
+            {
+             light.setFace(Green);
+
+             light.turnOn();
+            }
+           break;
+
+           case 3 :
+            {
+             light.setFace(Blue);
+
+             light.turnOn();
+            }
+           break;
+          }
+       }
+
+      SignalConnector<RadioLightWindow,int,int> connector_group_changed;
+
+     public:
+
+      RadioLightWindow(SubWindowHost &host,const UserPreference &pref)
+       : ComboWindow(host),
+
+         radio_Off(wlist,0,pref.getSmartConfig()),
+         radio_Red(wlist,1,pref.getSmartConfig()),
+         radio_Green(wlist,2,pref.getSmartConfig()),
+         radio_Blue(wlist,3,pref.getSmartConfig()),
+
+         light(wlist,pref.getSmartConfig(),Red,false),
+
+         connector_group_changed(this,&RadioLightWindow::group_changed,group.changed)
+       {
+        wlist.insTop(radio_Off,radio_Red,radio_Green,radio_Blue,light);
+
+        group.add(radio_Off,radio_Red,radio_Green,radio_Blue);
+       }
+
+      // drawing
+
+      virtual void layout()
+       {
+        Point size=getSize();
+
+        {
+         Pane pane(Null,size.x/2,size.y/7);
+
+         Coord delta=2*pane.dy;
+
+         radio_Off.setPlace(pane); pane.y+=delta;
+         radio_Red.setPlace(pane); pane.y+=delta;
+         radio_Green.setPlace(pane); pane.y+=delta;
+         radio_Blue.setPlace(pane); pane.y+=delta;
+        }
+
+        {
+         Coord dx=size.x/3;
+
+         light.setPlace(Pane(2*dx,(size.y-dx)/2,dx,dx));
+        }
+       }
+    };
+
+   template <class W>
+   class AlignWindow : public ComboWindow
+    {
+      RadioGroup group;
+
+      RadioWindow radio_TopLeft;
+      RadioWindow radio_TopCenter;
+      RadioWindow radio_TopRight;
+
+      RadioWindow radio_BottomLeft;
+      RadioWindow radio_BottomCenter;
+      RadioWindow radio_BottomRight;
+
+      RadioWindow radio_LeftCenter;
+      RadioWindow radio_RightCenter;
+
+      W window;
+
+      RefVal<Coord> radio_dxy;
+      RefVal<Coord> space_dxy;
+
+     private:
+
+      void group_changed(int new_id,int)
+       {
+        switch( new_id )
+          {
+           case 0 :
+            {
+             window.setAlign(AlignX_Left,AlignY_Top);
+            }
+           break;
+
+           case 1 :
+            {
+             window.setAlign(AlignX_Center,AlignY_Top);
+            }
+           break;
+
+           case 2 :
+            {
+             window.setAlign(AlignX_Right,AlignY_Top);
+            }
+           break;
+
+           case 3 :
+            {
+             window.setAlign(AlignX_Left,AlignY_Bottom);
+            }
+           break;
+
+           case 4 :
+            {
+             window.setAlign(AlignX_Center,AlignY_Bottom);
+            }
+           break;
+
+           case 5 :
+            {
+             window.setAlign(AlignX_Right,AlignY_Bottom);
+            }
+           break;
+
+           case 6 :
+            {
+             window.setAlign(AlignX_Left,AlignY_Center);
+            }
+           break;
+
+           case 7 :
+            {
+             window.setAlign(AlignX_Right,AlignY_Center);
+            }
+           break;
+          }
+       }
+
+      SignalConnector<AlignWindow,int,int> connector_group_changed;
+
+     public:
+
+      AlignWindow(SubWindowHost &host,const UserPreference &pref)
+       : ComboWindow(host),
+
+         radio_TopLeft(wlist,0,pref.getSmartConfig()),
+         radio_TopCenter(wlist,1,pref.getSmartConfig()),
+         radio_TopRight(wlist,2,pref.getSmartConfig()),
+         radio_BottomLeft(wlist,3,pref.getSmartConfig()),
+         radio_BottomCenter(wlist,4,pref.getSmartConfig()),
+         radio_BottomRight(wlist,5,pref.getSmartConfig()),
+         radio_LeftCenter(wlist,6,pref.getSmartConfig()),
+         radio_RightCenter(wlist,7,pref.getSmartConfig()),
+
+         window(wlist,pref.getSmartConfig()),
+
+         connector_group_changed(this,&AlignWindow::group_changed,group.changed)
+       {
+        wlist.insTop(radio_TopLeft,radio_TopCenter,radio_TopRight,
+                     radio_BottomLeft,radio_BottomCenter,radio_BottomRight,
+                     radio_LeftCenter,radio_RightCenter,window);
+
+        group.add(radio_TopLeft,radio_TopCenter,radio_TopRight,
+                  radio_BottomLeft,radio_BottomCenter,radio_BottomRight,
+                  radio_LeftCenter,radio_RightCenter);
+
+        radio_dxy.bind(pref.get().radio_dxy);
+        space_dxy.bind(pref.get().space_dxy);
+
+        window.setAlign(AlignX_Left,AlignY_Top);
+       }
+
+      // drawing
+
+      virtual void layout()
+       {
+        PaneCut pane(getSize(),+space_dxy);
+
+        Coord dxy=+radio_dxy;
+
+        pane.cutTop(dxy).place_cutLeft(radio_TopLeft)
+                        .place_cutRight(radio_TopRight)
+                        .place(AlignCenterX(radio_TopCenter));
+
+        pane.cutBottom(dxy).place_cutLeft(radio_BottomLeft)
+                           .place_cutRight(radio_BottomRight)
+                           .place(AlignCenterX(radio_BottomCenter));
+
+        pane.cutLeft(dxy).place(AlignCenterY(radio_LeftCenter));
+
+        pane.cutRight(dxy).place(AlignCenterY(radio_RightCenter));
+
+        pane.place(window);
+       }
+    };
+
+   using AltWindow = AltWindowOf<AltShape> ;
+
+   using AltConfig = AltWindow::ConfigType ;
+
+   class AltWindow_Sample : AltConfig , public AltWindow
+    {
+     public:
+
+      AltWindow_Sample(SubWindowHost &host,const UserPreference &pref)
+       : AltConfig(pref),
+         AltWindow(host,(AltConfig &)*this)
+       {
+       }
+    };
+
   public:
 
-   Base() // TODO
+   Base()
     {
      add("Decorative"_def);
 
@@ -544,16 +897,15 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
        add("Check"_def,Create<CheckWindow>);
        add("Switch"_def,Create<SwitchWindow>);
-
-       // Window.Check  AltWindow
-
-       // Window.Radio
-       // Window.Light
+       add("RadioLight"_def,CreateCombo<RadioLightWindow>);
+       add("Alt"_def,CreateCombo<AltWindow_Sample>);
 
      add("Line"_def);
 
-       add("Label"_def,Create<LabelWindow_Label>); // Window.Text
-       add("Text"_def,Create<TextWindow_SampleText>); // Window.Text
+       add("Label"_def,Create<LabelWindow_Label>);
+       add("Text"_def,Create<TextWindow_SampleText>);
+       add("Label align"_def,CreateCombo<AlignWindow<LabelWindow_Label> >);
+       add("Text align"_def,CreateCombo<AlignWindow<TextWindow_SampleText> >);
        add("TextLine"_def,Create<TextLineWindow_SampleText>);
        add("Progress"_def,Create<ProgressWindow_Sample>);
 

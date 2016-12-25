@@ -58,10 +58,8 @@ class InfoWindowOf : public SubWindow
 
    void startDrag(Point point)
     {
-     if( !shape.drag )
+     if( Change(shape.drag,true) )
        {
-        shape.drag=true;
-
         shape.drag_base=point;
         shape.xoff_base=shape.xoff;
 

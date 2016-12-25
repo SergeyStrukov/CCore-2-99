@@ -139,9 +139,9 @@ void ReplaceToSup(TT & ... tt)
 
 /* classes */
 
-template <PlaceTypeOf<Point> W,Pane Func(Pane pane,Coord dx)> struct AlignXProxy;
+template <PlaceType W,Pane Func(Pane pane,Coord dx)> struct AlignXProxy;
 
-template <PlaceTypeOf<Point> W,Pane Func(Pane pane,Coord dy)> struct AlignYProxy;
+template <PlaceType W,Pane Func(Pane pane,Coord dy)> struct AlignYProxy;
 
 template <PlaceTypeOf<SizeBox> W> struct CutBoxProxy;
 
@@ -155,13 +155,13 @@ class PaneCut;
 
 /* struct AlignXProxy<W,Pane Func(Pane pane,Coord dx)> */
 
-template <PlaceTypeOf<Point> W,Pane Func(Pane pane,Coord dx)>
+template <PlaceType W,Pane Func(Pane pane,Coord dx)>
 struct AlignXProxy
  {
   W &window;
   Point size;
 
-  explicit AlignXProxy(W &window_) : window(window_),size(window_.getMinSize()) {}
+  explicit AlignXProxy(W &window_) : window(window_),size(GetMinSize(window_)) {}
 
   SizeY getMinSize() const { return size.y; }
 
@@ -170,24 +170,24 @@ struct AlignXProxy
 
 /* AlignX() */
 
-template <PlaceTypeOf<Point> W>
+template <PlaceType W>
 auto AlignLeft(W &window) { return AlignXProxy<W,AlignLeft>(window); }
 
-template <PlaceTypeOf<Point> W>
+template <PlaceType W>
 auto AlignCenterX(W &window) { return AlignXProxy<W,AlignCenterX>(window); }
 
-template <PlaceTypeOf<Point> W>
+template <PlaceType W>
 auto AlignRight(W &window) { return AlignXProxy<W,AlignRight>(window); }
 
 /* struct AlignYProxy<W,Pane Func(Pane pane,Coord dy)> */
 
-template <PlaceTypeOf<Point> W,Pane Func(Pane pane,Coord dy)>
+template <PlaceType W,Pane Func(Pane pane,Coord dy)>
 struct AlignYProxy
  {
   W &window;
   Point size;
 
-  explicit AlignYProxy(W &window_) : window(window_),size(window_.getMinSize()) {}
+  explicit AlignYProxy(W &window_) : window(window_),size(GetMinSize(window_)) {}
 
   SizeX getMinSize() const { return size.x; }
 
@@ -196,13 +196,13 @@ struct AlignYProxy
 
 /* AlignY() */
 
-template <PlaceTypeOf<Point> W>
+template <PlaceType W>
 auto AlignTop(W &window) { return AlignYProxy<W,AlignTop>(window); }
 
-template <PlaceTypeOf<Point> W>
+template <PlaceType W>
 auto AlignCenterY(W &window) { return AlignYProxy<W,AlignCenterY>(window); }
 
-template <PlaceTypeOf<Point> W>
+template <PlaceType W>
 auto AlignBottom(W &window) { return AlignYProxy<W,AlignBottom>(window); }
 
 /* struct CutBoxProxy<W> */

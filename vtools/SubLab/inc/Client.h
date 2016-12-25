@@ -19,9 +19,78 @@ namespace App {
 
 /* classes */
 
+class AltShape;
+
 class SpaceWindow;
 
 class ClientWindow;
+
+/* class AltShape */
+
+class AltShape
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<VColor> border =      Blue ;
+     RefVal<VColor> focus  = OrangeRed ;
+     RefVal<VColor> gray   =      Gray ;
+     RefVal<VColor> snow   =      Snow ;
+     RefVal<VColor> snowUp = PaleGreen ;
+
+     RefVal<Coord> dy = 32 ;
+
+     RefVal<VColor> mark_false    = RGBColor(64,0,0) ;
+     RefVal<VColor> mark_true     = RGBColor(0,64,0) ;
+     RefVal<VColor> mark_false_on = RGBColor(255,100,100) ;
+     RefVal<VColor> mark_true_on  = RGBColor(100,255,100) ;
+
+     Config() noexcept {}
+
+     explicit Config(const UserPreference &pref)
+      {
+       bind(pref.get());
+      }
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       border.bind(bag.border);
+       focus.bind(bag.focus);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       snowUp.bind(bag.snowUp);
+      }
+    };
+
+   const Config &cfg;
+   Pane pane;
+
+   // state
+
+   using CheckType = bool ;
+
+   static CheckType Next(CheckType check) { return !check; }
+
+   bool enable     =  true ;
+   bool focus      = false ;
+   bool mover      = false ;
+   CheckType zone  = false ;
+   CheckType check = false ;
+
+   // methods
+
+   explicit AltShape(const Config &cfg_,CheckType check_=false) : cfg(cfg_),check(check_) {}
+
+   Point getMinSize() const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   CheckType getZone(Point point) const;
+
+   void draw(const DrawBuf &buf) const;
+ };
 
 /* class SpaceWindow */
 

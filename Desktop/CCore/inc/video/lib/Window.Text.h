@@ -80,6 +80,28 @@ class TextWindowOf : public SubWindow
      redraw();
     }
 
+   void setAlign(AlignX align_x)
+    {
+     shape.align_x=align_x;
+
+     redraw();
+    }
+
+   void setAlign(AlignY align_y)
+    {
+     shape.align_y=align_y;
+
+     redraw();
+    }
+
+   void setAlign(AlignX align_x,AlignY align_y)
+    {
+     shape.align_x=align_x;
+     shape.align_y=align_y;
+
+     redraw();
+    }
+
    template <class ... TT>
    void printf(const char *format,const TT & ... tt)
     {

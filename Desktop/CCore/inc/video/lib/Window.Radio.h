@@ -122,10 +122,8 @@ class RadioWindowOf : public SubWindow , public RadioItem
 
    void select(bool signal=true)
     {
-     if( !shape.check )
+     if( Change(shape.check,true) )
        {
-        shape.check=true;
-
         setCheck(signal);
 
         redraw();
