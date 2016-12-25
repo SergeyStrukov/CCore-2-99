@@ -31,6 +31,7 @@ FreeTypeFont.h       ++
 
 --- Tools ----------------------------------------------------------------------
 
+ButtonId.h           ++
 DesktopKey.h         ++        
 FrameGuards.h        ++
 ProgressScale.h      ++      
@@ -67,10 +68,10 @@ DragWindow.h
 FixedWindow.h        
 ToolWindow.h         
 
+MessageWindow.h      +           
 Menu.h
 FileWindow.h         
         
-MessageWindow.h      +           
 WindowReport.h       
 
 UserPreference.h     .

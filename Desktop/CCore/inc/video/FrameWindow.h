@@ -243,6 +243,15 @@ class FrameWindow : public NoCopyBase<MemBase,UserInput>
      host->setPlace(Pane(host->getPlace().getBase(),size));
     }
 
+   // destroy
+
+   void destroy()
+    {
+     host->destroy();
+
+     destroyed.assert();
+    }
+
    // base
 
    virtual void alive()

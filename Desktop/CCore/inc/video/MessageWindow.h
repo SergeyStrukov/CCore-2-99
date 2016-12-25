@@ -1,7 +1,7 @@
 /* MessageWindow.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -18,23 +18,13 @@
 
 #include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/ButtonId.h>
 
 #include <CCore/inc/OwnPtr.h>
 #include <CCore/inc/Array.h>
 
 namespace CCore {
 namespace Video {
-
-/* consts */
-
-enum ButtonId : int
- {
-  Button_Cancel = -1 ,
-  Button_Ok     =  0 ,
-
-  Button_Yes    =  1 ,
-  Button_No     =  2
- };
 
 /* classes */
 
@@ -50,7 +40,6 @@ class MessageSubWindow : public ComboWindow
 
    struct Config
     {
-     RefVal<Coord> knob_dxy  = 50 ;
      RefVal<Coord> space_dxy = 10 ;
 
      RefVal<VColor> back = Silver ;
@@ -60,7 +49,24 @@ class MessageSubWindow : public ComboWindow
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
 
+     RefVal<Coord> knob_dxy  = 50 ;
+
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       space_dxy.bind(bag.space_dxy);
+
+       back.bind(bag.back);
+
+       info_cfg.bind(proxy);
+       knob_cfg.bind(proxy);
+       btn_cfg.bind(proxy);
+       dline_cfg.bind(proxy);
+
+       knob_dxy.bind(bag.message_knob_dxy);
+      }
     };
 
    using ConfigType = Config ;
@@ -73,11 +79,11 @@ class MessageSubWindow : public ComboWindow
 
       MessageSubWindow *owner;
 
-      SignalConnector<Btn> connector_pressed;
-
      private:
 
-      void pressed_id();
+      void finish();
+
+      SignalConnector<Btn> connector_pressed;
 
      public:
 
@@ -146,12 +152,21 @@ class MessageWindow : public FixedWindow
 
    struct Config
     {
-     RefVal<Ratio> ypos_ratio = Div(5,12) ;
-
      CtorRefVal<FixedWindow::ConfigType> frame_cfg;
      CtorRefVal<MessageSubWindow::ConfigType> msg_cfg;
 
+     RefVal<Ratio> pos_ry = Div(5,12) ;
+
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       frame_cfg.bind(proxy);
+       msg_cfg.bind(proxy);
+
+       pos_ry.bind(bag.message_pos_ry);
+      }
     };
 
    using ConfigType = Config ;

@@ -27,6 +27,7 @@ obj/BinarySearch.o \
 obj/BlockCipher.o \
 obj/BlockFifo.o \
 obj/Bridge.o \
+obj/ButtonId.o \
 obj/CancelPacketList.o \
 obj/CapString.o \
 obj/CharProp.o \
@@ -413,6 +414,7 @@ obj/BinarySearch.s \
 obj/BlockCipher.s \
 obj/BlockFifo.s \
 obj/Bridge.s \
+obj/ButtonId.s \
 obj/CancelPacketList.s \
 obj/CapString.s \
 obj/CharProp.s \
@@ -799,6 +801,7 @@ obj/BinarySearch.dep \
 obj/BlockCipher.dep \
 obj/BlockFifo.dep \
 obj/Bridge.dep \
+obj/ButtonId.dep \
 obj/CancelPacketList.dep \
 obj/CapString.dep \
 obj/CharProp.dep \
@@ -1248,6 +1251,9 @@ obj/BlockFifo.o : ../../Simple/CCore/src/BlockFifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Bridge.o : ../../Applied/CCore/src/net/Bridge.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ButtonId.o : ../../Desktop/CCore/src/video/ButtonId.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CancelPacketList.o : ../../Applied/CCore/src/CancelPacketList.cpp
@@ -2401,6 +2407,9 @@ obj/BlockFifo.s : ../../Simple/CCore/src/BlockFifo.cpp
 obj/Bridge.s : ../../Applied/CCore/src/net/Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ButtonId.s : ../../Desktop/CCore/src/video/ButtonId.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/CancelPacketList.s : ../../Applied/CCore/src/CancelPacketList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3551,6 +3560,9 @@ obj/BlockFifo.dep : ../../Simple/CCore/src/BlockFifo.cpp
 
 obj/Bridge.dep : ../../Applied/CCore/src/net/Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Bridge.o $< -MF $@
+
+obj/ButtonId.dep : ../../Desktop/CCore/src/video/ButtonId.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ButtonId.o $< -MF $@
 
 obj/CancelPacketList.dep : ../../Applied/CCore/src/CancelPacketList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CancelPacketList.o $< -MF $@

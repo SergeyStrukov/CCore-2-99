@@ -705,16 +705,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      create(parent,pane,max_size,title);
     }
 
-   void destroy()
-    {
-     if( client_ac->askDestroy() )
-       {
-        host->destroy();
-
-        destroyed.assert();
-       }
-    }
-
    void minimize()
     {
      if( shape.is_main ) host->display(CmdDisplay_Minimized);
@@ -877,7 +867,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
 
    virtual void askClose()
     {
-     destroy();
+     if( client_ac->askDestroy() ) destroy();
     }
 
    virtual void setSize(Point size_,bool buf_dirty)

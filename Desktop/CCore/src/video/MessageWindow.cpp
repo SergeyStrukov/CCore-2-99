@@ -1,7 +1,7 @@
 /* MessageWindow.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -22,7 +22,7 @@ namespace Video {
 
 /* class MessageSubWindow::Btn */
 
-void MessageSubWindow::Btn::pressed_id()
+void MessageSubWindow::Btn::finish()
  {
   owner->finish.assert(btn_id);
  }
@@ -31,7 +31,7 @@ MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonWindow::ConfigType &c
  : ButtonWindow(host,cfg,name),
    btn_id(btn_id_),
    owner(owner_),
-   connector_pressed(this,&MessageSubWindow::Btn::pressed_id,pressed)
+   connector_pressed(this,&Btn::finish,pressed)
  {
  }
 
@@ -245,7 +245,7 @@ void MessageWindow::alive()
 
 Pane MessageWindow::getPane(StrLen title) const
  {
-  return GetWindowPlace(desktop,+cfg.ypos_ratio,getMinSize(title,sub_win.getMinSize()));
+  return GetWindowPlace(desktop,+cfg.pos_ry,getMinSize(title,sub_win.getMinSize()));
  }
 
 } // namespace Video

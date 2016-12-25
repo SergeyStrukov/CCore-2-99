@@ -89,8 +89,6 @@ class ToolWindow : public FrameWindow , public SubWindowHost
 
    void create(FrameWindow *parent,Pane pane);
 
-   void destroy();
-
    void redrawAll(bool do_layout=false);
 
    void redrawClient();

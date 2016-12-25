@@ -352,16 +352,9 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_ExceptionWindow.font.bind(info_font.font);
   cfg_ExceptionWindow.scroll_cfg.bind(cfg_XScrollWindow);
 
-  cfg_MessageSubWindow.back.bind(back);
-  cfg_MessageSubWindow.knob_dxy.bind(msgw_knob_dxy);
-  cfg_MessageSubWindow.space_dxy.bind(space_dxy);
-  cfg_MessageSubWindow.info_cfg.bind(cfg_InfoWindow);
-  cfg_MessageSubWindow.knob_cfg.bind(cfg_KnobWindow);
-  cfg_MessageSubWindow.btn_cfg.bind(cfg_ButtonWindow);
-  cfg_MessageSubWindow.dline_cfg.bind(cfg_XDoubleLineWindow);
+  cfg_MessageSubWindow.bind(get(),getSmartConfig());
 
-  cfg_MessageWindow.frame_cfg.bind(cfg_FixedWindow);
-  cfg_MessageWindow.msg_cfg.bind(cfg_MessageSubWindow);
+  cfg_MessageWindow.bind(get(),getSmartConfig());
 
   cfg_AlertMessageSubWindow=cfg_MessageSubWindow;
   cfg_AlertMessageSubWindow.back.bind(alert);

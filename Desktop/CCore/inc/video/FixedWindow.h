@@ -485,16 +485,6 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      host->show();
     }
 
-   void destroy()
-    {
-     if( client_ac->askDestroy() )
-       {
-        host->destroy();
-
-        destroyed.assert();
-       }
-    }
-
    void redrawAll(bool do_layout=false)
     {
      if( do_layout )
@@ -624,7 +614,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
    virtual void askClose()
     {
-     destroy();
+     if( client_ac->askDestroy() ) destroy();
     }
 
    virtual void setSize(Point size_,bool buf_dirty)

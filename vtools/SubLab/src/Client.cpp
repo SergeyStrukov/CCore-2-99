@@ -13,6 +13,8 @@
 
 #include <inc/Client.h>
 
+#include <CCore/inc/video/MessageWindow.h>
+
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/FigureLib.h>
 
@@ -872,9 +874,51 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
+   class MessageSubWindow_knob : public MessageSubWindow
+    {
+      static constexpr const char *Message="Knob message window\n\n"
+                                           "setInfo(InfoFromString(Message));";
+
+     public:
+
+      MessageSubWindow_knob(SubWindowHost &host,const ConfigType &cfg)
+       : MessageSubWindow(host,cfg)
+       {
+        setInfo(InfoFromString(Message));
+       }
+    };
+
+   class MessageSubWindow_ok : public MessageSubWindow
+    {
+      static constexpr const char *Message="Ok message window\n\n"
+                                           "add(\"Ok\"_def,Button_Ok).setInfo(InfoFromString(Message));";
+
+     public:
+
+      MessageSubWindow_ok(SubWindowHost &host,const ConfigType &cfg)
+       : MessageSubWindow(host,cfg)
+       {
+        add("Ok"_def,Button_Ok).setInfo(InfoFromString(Message));
+       }
+    };
+
+   class MessageSubWindow_yes_no : public MessageSubWindow
+    {
+      static constexpr const char *Message="Yes/No message window\n\n"
+                                           "add(\"Yes\"_def,Button_Yes).add(\"No\"_def,Button_No).setInfo(InfoFromString(Message));";
+
+     public:
+
+      MessageSubWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
+       : MessageSubWindow(host,cfg)
+       {
+        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(InfoFromString(Message));
+       }
+    };
+
   public:
 
-   Base()
+   Base() // Update here
     {
      add("Decorative"_def);
 
@@ -912,6 +956,9 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
      add("Pane"_def);
 
        add("Info"_def,Create<InfoWindow_SampleInfo>);
+       add("Message knob"_def,Create<MessageSubWindow_knob>);
+       add("Message ok"_def,Create<MessageSubWindow_ok>);
+       add("Message yes/no"_def,Create<MessageSubWindow_yes_no>);
 
        //add(""_def,Create<>);
     }

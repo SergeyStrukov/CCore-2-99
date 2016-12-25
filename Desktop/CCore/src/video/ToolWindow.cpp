@@ -127,13 +127,6 @@ void ToolWindow::create(FrameWindow *parent,Pane pane)
   host->show();
  }
 
-void ToolWindow::destroy()
- {
-  host->destroy();
-
-  destroyed.assert();
- }
-
 void ToolWindow::redrawAll(bool do_layout)
  {
   if( do_layout )

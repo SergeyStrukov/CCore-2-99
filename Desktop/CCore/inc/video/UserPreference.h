@@ -209,7 +209,11 @@ struct UserPreferenceBag
 
   // MessageWindow
 
-  Coord msgw_knob_dxy = 50 ;
+  Coord msgw_knob_dxy = 50 ; // -
+
+  Coord message_knob_dxy = 50 ; // +
+
+  Ratio message_pos_ry = Div(5,12) ; // +
 
   // FileWindow
 
