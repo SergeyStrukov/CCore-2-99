@@ -115,6 +115,11 @@ MessageSubWindow & MessageSubWindow::add(const DefString &name,int btn_id)
 
  // drawing
 
+bool MessageSubWindow::isGoodSize(Point size) const
+ {
+  return size>=getMinSize();
+ }
+
 void MessageSubWindow::layout()
  {
   Point size=getSize();

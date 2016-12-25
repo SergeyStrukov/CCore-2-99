@@ -125,9 +125,13 @@ class MessageSubWindow : public ComboWindow
 
    MessageSubWindow & setInfo(const Info &info);
 
+   MessageSubWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
+
    MessageSubWindow & add(const DefString &name,int btn_id);
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const;
 
    virtual void layout();
 

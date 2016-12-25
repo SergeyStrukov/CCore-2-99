@@ -876,43 +876,40 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
    class MessageSubWindow_knob : public MessageSubWindow
     {
-      static constexpr const char *Message="Knob message window\n\n"
-                                           "setInfo(InfoFromString(Message));";
+      static constexpr const char *Message="Knob message window";
 
      public:
 
       MessageSubWindow_knob(SubWindowHost &host,const ConfigType &cfg)
        : MessageSubWindow(host,cfg)
        {
-        setInfo(InfoFromString(Message));
+        setInfo(Message);
        }
     };
 
    class MessageSubWindow_ok : public MessageSubWindow
     {
-      static constexpr const char *Message="Ok message window\n\n"
-                                           "add(\"Ok\"_def,Button_Ok).setInfo(InfoFromString(Message));";
+      static constexpr const char *Message="Ok message window";
 
      public:
 
       MessageSubWindow_ok(SubWindowHost &host,const ConfigType &cfg)
        : MessageSubWindow(host,cfg)
        {
-        add("Ok"_def,Button_Ok).setInfo(InfoFromString(Message));
+        add("Ok"_def,Button_Ok).setInfo(Message);
        }
     };
 
    class MessageSubWindow_yes_no : public MessageSubWindow
     {
-      static constexpr const char *Message="Yes/No message window\n\n"
-                                           "add(\"Yes\"_def,Button_Yes).add(\"No\"_def,Button_No).setInfo(InfoFromString(Message));";
+      static constexpr const char *Message="Yes/No message window";
 
      public:
 
       MessageSubWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
        : MessageSubWindow(host,cfg)
        {
-        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(InfoFromString(Message));
+        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(Message);
        }
     };
 
