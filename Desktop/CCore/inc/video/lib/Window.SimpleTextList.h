@@ -1,4 +1,4 @@
-/* Window.Info.h */
+/* Window.SimpleTextList.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,24 +13,24 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_lib_Window_Info_h
-#define CCore_inc_video_lib_Window_Info_h
+#ifndef CCore_inc_video_lib_Window_SimpleTextList_h
+#define CCore_inc_video_lib_Window_SimpleTextList_h
 
 #include <CCore/inc/video/SubWindow.h>
 
-#include <CCore/inc/video/lib/Shape.Info.h>
+#include <CCore/inc/video/lib/Shape.SimpleTextList.h>
 
 namespace CCore {
 namespace Video {
 
 /* classes */
 
-template <class Shape> class InfoWindowOf;
+template <class Shape> class SimpleTextListWindowOf;
 
-/* class InfoWindowOf<Shape> */
+/* class SimpleTextListWindowOf<Shape> */
 
 template <class Shape>
-class InfoWindowOf : public SubWindow
+class SimpleTextListWindowOf : public SubWindow
  {
    Shape shape;
 
@@ -63,36 +63,52 @@ class InfoWindowOf : public SubWindow
      setYOff(PosSub(shape.yoff,delta));
     }
 
-   void startDrag(Point point)
+   void selectFirst()
     {
-     if( Change(shape.drag,true) )
-       {
-        shape.drag_base=point;
-        shape.xoff_base=shape.xoff;
+     setSelect(0);
+    }
 
-        captureMouse();
+   void selectLast()
+    {
+     if( ulen count=shape.info->getLineCount() )
+       {
+        setSelect2(count-1,count);
        }
     }
 
-   void dragTo(Point point)
+   void setSelect2(ulen select,ulen count,bool signal=true)
     {
-     Coordinate xoff=shape.xoff_base-(Coordinate(point.x)-shape.drag_base.x);
+     if( select>=count )
+       {
+        select=count?count-1:0;
+       }
 
-     setXOff(+xoff);
+     if( Change(shape.select,select) )
+       {
+        shape.showSelect();
+
+        if( signal ) selected.assert(shape.select);
+
+        redraw();
+       }
     }
 
-   void endDrag()
+   void setSelect(ulen select,bool signal=true)
     {
-     shape.drag=false;
-
-     releaseMouse();
+     setSelect2(select,shape.info->getLineCount(),signal);
     }
 
-   void endDrag(Point point)
+   void addSelect(ulen delta)
     {
-     endDrag();
+     if( ulen count=shape.info->getLineCount() )
+       {
+        setSelect2(AddToCap(shape.select,delta,count-1),count);
+       }
+    }
 
-     dragTo(point);
+   void subSelect(ulen delta)
+    {
+     setSelect(PosSub(shape.select,delta));
     }
 
   public:
@@ -101,13 +117,13 @@ class InfoWindowOf : public SubWindow
    using ConfigType = typename Shape::Config ;
 
    template <class ... TT>
-   InfoWindowOf(SubWindowHost &host,TT && ... tt)
+   SimpleTextListWindowOf(SubWindowHost &host,TT && ... tt)
     : SubWindow(host),
       shape( std::forward<TT>(tt)... )
     {
     }
 
-   virtual ~InfoWindowOf()
+   virtual ~SimpleTextListWindowOf()
     {
     }
 
@@ -129,18 +145,22 @@ class InfoWindowOf : public SubWindow
      shape.info=info;
      shape.yoff=0;
      shape.xoff=0;
+     shape.select=0;
 
      shape.setMax();
 
      redraw();
     }
 
+   const Info & getInfo() const { return shape.info; }
+
+   ulen getSelect() const { return shape.select; }
+
+   void select(ulen select) { setSelect(select,false); }
+
    // drawing
 
-   virtual bool isGoodSize(Point size) const
-    {
-     return shape.isGoodSize(size);
-    }
+   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
 
    virtual void layout()
     {
@@ -159,10 +179,6 @@ class InfoWindowOf : public SubWindow
    virtual void open()
     {
      shape.focus=false;
-     shape.drag=false;
-
-     shape.xoff=0;
-     shape.yoff=0;
     }
 
    // keyboard
@@ -186,15 +202,11 @@ class InfoWindowOf : public SubWindow
 
    virtual void looseCapture()
     {
-     shape.drag=false;
+     // do nothing
     }
 
    virtual MouseShape getMouseShape(Point,KeyMod) const
     {
-     if( !shape.enable ) return Mouse_Arrow;
-
-     if( shape.xoffMax>0 || shape.xoff>0 ) return Mouse_SizeLeftRight;
-
      return Mouse_Arrow;
     }
 
@@ -205,8 +217,10 @@ class InfoWindowOf : public SubWindow
      action.dispatch(*this);
     }
 
-   void react_Key(VKey vkey,KeyMod,unsigned repeat)
+   void react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
     {
+     if( !shape.enable ) return;
+
      switch( vkey )
        {
         case VKey_Left :
@@ -223,13 +237,63 @@ class InfoWindowOf : public SubWindow
 
         case VKey_Up :
          {
-          subYOff(repeat);
+          if( kmod&KeyMod_Shift )
+            {
+             subYOff(repeat);
+            }
+          else
+            {
+             subSelect(repeat);
+            }
          }
         break;
 
         case VKey_Down :
          {
-          addYOff(repeat);
+          if( kmod&KeyMod_Shift )
+            {
+             addYOff(repeat);
+            }
+          else
+            {
+             addSelect(repeat);
+            }
+         }
+        break;
+
+        case VKey_PageUp :
+         {
+          ulen delta=shape.page*repeat;
+
+          subYOff(delta);
+          subSelect(delta);
+         }
+        break;
+
+        case VKey_PageDown :
+         {
+          ulen delta=shape.page*repeat;
+
+          addYOff(delta);
+          addSelect(delta);
+         }
+        break;
+
+        case VKey_Home :
+         {
+          selectFirst();
+         }
+        break;
+
+        case VKey_End :
+         {
+          selectLast();
+         }
+        break;
+
+        case VKey_Enter :
+         {
+          entered.assert();
          }
         break;
        }
@@ -239,50 +303,58 @@ class InfoWindowOf : public SubWindow
     {
      if( !shape.enable ) return;
 
-     startDrag(point);
-    }
-
-   void react_LeftUp(Point point,MouseKey)
-    {
-     if( shape.drag ) endDrag(point);
+     setSelect(shape.getPosition(point));
     }
 
    void react_LeftDClick(Point point,MouseKey mkey)
     {
+     if( !shape.enable ) return;
+
      react_LeftClick(point,mkey);
+
+     dclicked.assert();
     }
 
-   void react_Move(Point point,MouseKey mkey)
+   void react_Wheel(Point,MouseKey mkey,Coord delta_)
     {
-     if( shape.drag )
+     if( !shape.enable ) return;
+
+     ulen delta=IntAbs(delta_);
+
+     if( delta_>0 )
        {
-        if( mkey&MouseKey_Left )
+        if( mkey&MouseKey_Shift )
           {
-           dragTo(point);
+           addYOff(delta);
           }
         else
           {
-           endDrag();
+           addSelect(delta);
+          }
+       }
+     else
+       {
+        if( mkey&MouseKey_Shift )
+          {
+           subYOff(delta);
+          }
+        else
+          {
+           subSelect(delta);
           }
        }
     }
 
-   void react_Wheel(Point,MouseKey,Coord delta)
-    {
-     if( delta>0 )
-       {
-        addYOff(IntAbs(delta));
-       }
-     else
-       {
-        subYOff(IntAbs(delta));
-       }
-    }
+   // signals
+
+   Signal<> entered;
+   Signal<> dclicked;
+   Signal<ulen> selected; // select
  };
 
-/* type InfoWindow */
+/* type SimpleTextListWindow */
 
-using InfoWindow = InfoWindowOf<InfoShape> ;
+using SimpleTextListWindow = SimpleTextListWindowOf<SimpleTextListShape> ;
 
 } // namespace Video
 } // namespace CCore

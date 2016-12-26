@@ -67,36 +67,37 @@ MessageSubWindow::~MessageSubWindow()
 
 Point MessageSubWindow::getMinSize() const
  {
-  Coord space_dxy=+cfg.space_dxy;
+  Coordinate space_dxy=+cfg.space_dxy;
 
-  Coord space2=IntMul<Coord>(2,space_dxy);
+  Coordinate space2=2*space_dxy;
 
-  Point size=info.getMinSize().addXY(space2);
+  Point top=info.getMinSize().addXY(+space2);
+
+  Coordinate line_dy=dline.getMinSize().dy;
+
+  Point btn;
 
   if( ulen count_=btn_list.getLen() )
     {
      auto list=Range(btn_list.getPtr(),count_);
 
-     Point bs;
-
-     for(const OwnPtr<Btn> &obj : list ) bs=Sup(bs,obj->getMinSize());
-
-     Coord delta=IntAdd(bs.y,space2);
+     Point bs=BtnSize(list);
 
      auto count=CountToCoordinate(count_);
 
-     auto total=count*bs.x+(count+1)*space_dxy;
+     auto total=count*bs.x+(count-1)*space_dxy;
 
-     return Point(Max(+total,size.x),IntAdd(size.y,delta));
+     btn.x=+total;
+     btn.y=bs.y;
     }
   else
     {
-     Coord knob_dxy=+cfg.knob_dxy;
-
-     Coord delta=IntAdd(knob_dxy,space2);
-
-     return Point(Max(delta,size.x),IntAdd(size.y,delta));
+     btn=Point::Diag(+cfg.knob_dxy);
     }
+
+  Point bottom=btn.addXY(+space2);
+
+  return Point( Max(bottom.x,top.x) , bottom.y+line_dy+top.y );
  }
 
 MessageSubWindow & MessageSubWindow::setInfo(const Info &info_)
@@ -122,31 +123,19 @@ bool MessageSubWindow::isGoodSize(Point size) const
 
 void MessageSubWindow::layout()
  {
-  Point size=getSize();
-
   Coord space_dxy=+cfg.space_dxy;
 
-  Coord space2=IntMul<Coord>(2,space_dxy);
+  PaneCut pane(getSize(),0);
+
+  pane.cutBottom(space_dxy);
 
   if( ulen count=btn_count )
     {
      auto list=Range(btn_list.getPtr(),count);
 
-     Point bs;
+     Point bs=BtnSize(list);
 
-     for(OwnPtr<Btn> &obj : list ) bs=Sup(bs,obj->getMinSize());
-
-     Coord delta=IntAdd(bs.y,space2);
-
-     Pane top(Null,size);
-
-     Pane bottom=SplitY(top,delta);
-
-     info.setPlace(top.shrink(space_dxy));
-
-     dline.setPlace(EnvelopeY(bottom.getBase(),bottom.dx,space_dxy));
-
-     PlaceRow row(bottom,bs,space_dxy,count);
+     PlaceRow row(pane.cutBottom(bs.y),bs,space_dxy,count);
 
      for(OwnPtr<Btn> &obj : list )
        {
@@ -158,18 +147,15 @@ void MessageSubWindow::layout()
   else
     {
      Coord knob_dxy=+cfg.knob_dxy;
-     Coord delta=IntAdd(knob_dxy,space2);
 
-     Pane top(Null,size);
-
-     Pane bottom=SplitY(top,delta);
-
-     info.setPlace(top.shrink(space_dxy));
-
-     dline.setPlace(EnvelopeY(bottom.getBase(),bottom.dx,space_dxy));
-
-     knob.setPlace(FreeCenter(bottom,knob_dxy));
+     knob.setPlace( pane.cutBottomCenter(knob_dxy,knob_dxy) );
     }
+
+  pane.cutBottom(space_dxy);
+
+  Pane top=pane.place_cutBottom(dline);
+
+  info.setPlace( top.shrink(space_dxy) );
  }
 
 void MessageSubWindow::draw(DrawBuf buf,bool drag_active) const

@@ -164,7 +164,9 @@ void InfoShape::draw(const DrawBuf &buf) const
 
    Coord pos_x=fs.dx0-xoff;
 
-   for(; index<count && IntAdd(row.y,row.dy)<=inner.y+inner.dy ;index++,row.y+=row.dy)
+   Coord lim=inner.y+inner.dy;
+
+   for(; index<count && IntAdd(row.y,row.dy)<=lim ;index++,row.y+=row.dy)
      {
       font->text(tbuf,row,TextPlace(pos_x,AlignY_Top),info->getLine(index),text);
      }

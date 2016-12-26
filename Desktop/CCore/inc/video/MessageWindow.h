@@ -109,6 +109,15 @@ class MessageSubWindow : public ComboWindow
 
   private:
 
+   static Point BtnSize(AnyType list)
+    {
+     Point ret;
+
+     for(const OwnPtr<Btn> &obj : list ) ret=Sup(ret,obj->getMinSize());
+
+     return ret;
+    }
+
    void knob_pressed();
 
    SignalConnector<MessageSubWindow> connector_knob_pressed;

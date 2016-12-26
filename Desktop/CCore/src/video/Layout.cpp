@@ -55,7 +55,7 @@ Pane FitToScreen(Point base,Point size,Point screen_size)
 
 /* GetWindowPlace() */
 
-Pane GetWindowPlace(Pane outer,Ratio ypos_ratio,Point size)
+Pane GetWindowPlace(Pane outer,Ratio ry,Point size)
  {
   Point s=outer.getSize();
 
@@ -63,14 +63,14 @@ Pane GetWindowPlace(Pane outer,Ratio ypos_ratio,Point size)
 
   Point p=s-size;
 
-  Point pos( p.x/2 , ypos_ratio*p.y );
+  Point pos( p.x/2 , ry*p.y );
 
   return Pane(outer.getBase()+pos,size);
  }
 
-Pane GetWindowPlace(Desktop *desktop,Ratio ypos_ratio,Point size)
+Pane GetWindowPlace(Desktop *desktop,Ratio ry,Point size)
  {
-  return GetWindowPlace(desktop->getMaxPane(),ypos_ratio,size);
+  return GetWindowPlace(desktop->getMaxPane(),ry,size);
  }
 
 /* FreeCenter() */

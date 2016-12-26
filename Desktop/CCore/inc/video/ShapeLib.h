@@ -28,6 +28,7 @@
 #include <CCore/inc/video/lib/Shape.Contour.h>
 #include <CCore/inc/video/lib/Shape.Progress.h>
 #include <CCore/inc/video/lib/Shape.Info.h>
+#include <CCore/inc/video/lib/Shape.SimpleTextList.h>
 
 namespace CCore {
 namespace Video {
@@ -41,8 +42,6 @@ class XScrollShape;
 class YScrollShape;
 
 class LineEditShape;
-
-class SimpleTextListShape;
 
 class ScrollListShape;
 
@@ -356,71 +355,6 @@ class LineEditShape
    ulen getPosition(Point point) const;
 
    virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class SimpleTextListShape */
-
-class SimpleTextListShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(8,8) ;
-
-     RefVal<VColor> back   = Silver ;
-     RefVal<VColor> top    =   Gray ;
-     RefVal<VColor> bottom =   Snow ;
-
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> focus    = OrangeRed ;
-     RefVal<VColor> select   =    Yellow ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
-   // parameters
-
-   const Config &cfg;
-   Info info;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   ulen select = 0 ;
-
-   ulen yoff  = 0 ;
-   Coord xoff = 0 ;
-
-   ulen page     = 0 ;
-   ulen yoffMax  = 0 ;
-   Coord xoffMax = 0 ;
-   Coord dxoff   = 0 ;
-
-   // methods
-
-   explicit SimpleTextListShape(const Config &cfg_) : cfg(cfg_) {}
-
-   SimpleTextListShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
-
-   Point getMinSize() const;
-
-   void setMax();
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   void showSelect();
-
-   ulen getPosition(Point point) const;
 
    void draw(const DrawBuf &buf) const;
  };

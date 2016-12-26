@@ -1,4 +1,4 @@
-/* ShapeLib.SimpleTextListWindow.cpp */
+/* Shape.SimpleTextList.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.SimpleTextList.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -27,17 +27,15 @@ Point SimpleTextListShape::getMinSize() const
   Font font=cfg.font.get();
 
   Coord dx=0;
-  Coord dy=0;
+  Coordinate dy=0;
 
   for(ulen index=0,count=info->getLineCount(); index<count ;index++)
     {
-     TextSize ts=font->text(info->getLine(index));
-
-     IntGuard( !ts.overflow );
+     TextSize ts=font->text_guarded(info->getLine(index));
 
      Replace_max(dx,ts.full_dx);
 
-     dy=IntAdd(dy,ts.dy);
+     dy+=ts.dy;
     }
 
   return 2*(+cfg.space)+Point(dx,dy);
@@ -59,9 +57,7 @@ void SimpleTextListShape::setMax()
 
      for(ulen index=0; index<count ;index++)
        {
-        TextSize ts=font->text(info->getLine(index));
-
-        IntGuard( !ts.overflow );
+        TextSize ts=font->text_guarded(info->getLine(index));
 
         Replace_max(dx,ts.full_dx);
        }
@@ -97,9 +93,7 @@ void SimpleTextListShape::showSelect()
     }
   else
     {
-     ulen i=select-yoff;
-
-     if( i>=page && page>0 )
+     if( select-yoff>=page && page>0 )
        {
         yoff=Min<ulen>(select-page+1,yoffMax);
        }
@@ -125,11 +119,11 @@ void SimpleTextListShape::draw(const DrawBuf &buf) const
  {
   if( !pane ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   art.block(pane,+cfg.back);
 
-  VColor text=enable?+cfg.text:+cfg.inactive;
+  VColor text = enable? +cfg.text : +cfg.inactive ;
 
   Point space=+cfg.space;
 
@@ -139,23 +133,26 @@ void SimpleTextListShape::draw(const DrawBuf &buf) const
    MPane p(pane);
 
    MCoord width=+cfg.width;
-   MCoord dx=Fraction(space.x)-width;
-   MCoord dy=Fraction(space.y)-width;
+
+   MPoint s(space);
 
    FigureTopBorder fig_top(p,width);
 
-   fig_top.solid(art,+cfg.top);
+   fig_top.solid(art,+cfg.gray);
 
    FigureBottomBorder fig_bottom(p,width);
 
-   fig_bottom.solid(art,+cfg.bottom);
+   fig_bottom.solid(art,+cfg.snow);
 
    if( focus )
      {
-      FigureBox fig(p.shrink(Fraction(space.x)/2,Fraction(space.y)/2));
+      FigureBox fig(p.shrink(s/2));
 
       fig.loop(art,width,+cfg.focus);
      }
+
+   MCoord dx=s.x-width;
+   MCoord dy=s.y-width;
 
    if( xoff>0 )
      {
@@ -200,15 +197,21 @@ void SimpleTextListShape::draw(const DrawBuf &buf) const
 
    FontSize fs=font->getSize();
 
-   DrawBuf tbuf=buf.cutRebase(inner);
+   DrawBuf tbuf=buf.cut(inner);
 
-   Pane row(-xoff,0,IntAdd(xoff,inner.dx),fs.dy);
+   Pane row=inner;
 
-   for(; index<count && row.y+row.dy<=inner.dy ;index++,row.y+=row.dy)
+   row.dy=fs.dy;
+
+   Coord pos_x=fs.dx0-xoff;
+
+   Coord lim=inner.y+inner.dy;
+
+   for(; index<count && IntAdd(row.y,row.dy)<=lim ;index++,row.y+=row.dy)
      {
       if( enable && index==select ) tbuf.erase(row,+cfg.select);
 
-      font->text(tbuf,row,TextPlace(AlignX_Left,AlignY_Top),info->getLine(index),text);
+      font->text(tbuf,row,TextPlace(pos_x,AlignY_Top),info->getLine(index),text);
      }
   }
  }

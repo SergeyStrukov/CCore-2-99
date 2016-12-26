@@ -403,9 +403,7 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
       void nextFace()
        {
-        auto face=getFace();
-
-        setFace(NextFace(face));
+        setFace(NextFace(getFace()));
        }
 
       SignalConnector<KnobWindow_auto> connector_pressed;
@@ -617,6 +615,64 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
       InfoWindow_SampleInfo(SubWindowHost &host,const ConfigType &cfg)
        : InfoWindow(host,cfg,InfoFromString(Sample))
+       {
+       }
+    };
+
+   class MessageSubWindow_knob : public MessageSubWindow
+    {
+      static constexpr const char *Message="Knob message window";
+
+     public:
+
+      MessageSubWindow_knob(SubWindowHost &host,const ConfigType &cfg)
+       : MessageSubWindow(host,cfg)
+       {
+        setInfo(Message);
+       }
+    };
+
+   class MessageSubWindow_ok : public MessageSubWindow
+    {
+      static constexpr const char *Message="Ok message window";
+
+     public:
+
+      MessageSubWindow_ok(SubWindowHost &host,const ConfigType &cfg)
+       : MessageSubWindow(host,cfg)
+       {
+        add("Ok"_def,Button_Ok).setInfo(Message);
+       }
+    };
+
+   class MessageSubWindow_yes_no : public MessageSubWindow
+    {
+      static constexpr const char *Message="Yes/No message window";
+
+     public:
+
+      MessageSubWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
+       : MessageSubWindow(host,cfg)
+       {
+        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(Message);
+       }
+    };
+
+   class SimpleTextListWindow_SampleList : public SimpleTextListWindow
+    {
+      static constexpr const char *List="XSingleLine\r\n"
+                                        "YSingleLine\r\n"
+                                        "XDoubleLine\r\n"
+                                        "YDoubleLine\r\n"
+                                        "Contour\r\n"
+                                        "TextContour left\r\n"
+                                        "TextContour right\r\n"
+                                        "TextContour center\r\n";
+
+     public:
+
+      SimpleTextListWindow_SampleList(SubWindowHost &host,const ConfigType &cfg)
+       : SimpleTextListWindow(host,cfg,InfoFromString(List))
        {
        }
     };
@@ -874,45 +930,6 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
-   class MessageSubWindow_knob : public MessageSubWindow
-    {
-      static constexpr const char *Message="Knob message window";
-
-     public:
-
-      MessageSubWindow_knob(SubWindowHost &host,const ConfigType &cfg)
-       : MessageSubWindow(host,cfg)
-       {
-        setInfo(Message);
-       }
-    };
-
-   class MessageSubWindow_ok : public MessageSubWindow
-    {
-      static constexpr const char *Message="Ok message window";
-
-     public:
-
-      MessageSubWindow_ok(SubWindowHost &host,const ConfigType &cfg)
-       : MessageSubWindow(host,cfg)
-       {
-        add("Ok"_def,Button_Ok).setInfo(Message);
-       }
-    };
-
-   class MessageSubWindow_yes_no : public MessageSubWindow
-    {
-      static constexpr const char *Message="Yes/No message window";
-
-     public:
-
-      MessageSubWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
-       : MessageSubWindow(host,cfg)
-       {
-        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(Message);
-       }
-    };
-
   public:
 
    Base() // Update here
@@ -956,6 +973,7 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("Message knob"_def,Create<MessageSubWindow_knob>);
        add("Message ok"_def,Create<MessageSubWindow_ok>);
        add("Message yes/no"_def,Create<MessageSubWindow_yes_no>);
+       add("SimpleTextList"_def,Create<SimpleTextListWindow_SampleList>);
 
        //add(""_def,Create<>);
     }

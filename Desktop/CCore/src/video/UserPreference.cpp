@@ -452,6 +452,8 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_InfoWindow.bind(get());
 
+  cfg_SimpleTextListWindow.bind(get());
+
   cfg_XScrollWindow.width.bind(width);
   cfg_XScrollWindow.dxy.bind(scroll_dxy);
   cfg_XScrollWindow.top.bind(top);
@@ -487,17 +489,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_LineEditWindow.cursor.bind(text_cursor);
   cfg_LineEditWindow.font.bind(line_edit_font.font);
   cfg_LineEditWindow.period.bind(line_edit_period);
-
-  cfg_SimpleTextListWindow.width.bind(width);
-  cfg_SimpleTextListWindow.space.bind(list_space);
-  cfg_SimpleTextListWindow.back.bind(back);
-  cfg_SimpleTextListWindow.top.bind(bottom);
-  cfg_SimpleTextListWindow.bottom.bind(top);
-  cfg_SimpleTextListWindow.text.bind(list_text);
-  cfg_SimpleTextListWindow.inactive.bind(inactive);
-  cfg_SimpleTextListWindow.focus.bind(focus);
-  cfg_SimpleTextListWindow.select.bind(text_select);
-  cfg_SimpleTextListWindow.font.bind(list_font.font);
 
   cfg_SimpleTopMenuWindow.width.bind(width);
   cfg_SimpleTopMenuWindow.space.bind(menu_space);

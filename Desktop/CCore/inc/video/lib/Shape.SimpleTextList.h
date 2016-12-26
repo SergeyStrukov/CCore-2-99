@@ -1,4 +1,4 @@
-/* Shape.Info.h */
+/* Shape.SimpleTextList.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,8 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_lib_Shape_Info_h
-#define CCore_inc_video_lib_Shape_Info_h
+#ifndef CCore_inc_video_lib_Shape_SimpleTextList_h
+#define CCore_inc_video_lib_Shape_SimpleTextList_h
 
 #include <CCore/inc/video/MinSizeType.h>
 #include <CCore/inc/video/Color.h>
@@ -28,11 +28,11 @@ namespace Video {
 
 /* classes */
 
-class InfoShape;
+class SimpleTextListShape;
 
-/* class InfoShape */
+/* class SimpleTextListShape */
 
-class InfoShape
+class SimpleTextListShape
  {
   public:
 
@@ -40,8 +40,12 @@ class InfoShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
+     RefVal<VColor> back     =    Silver ;
      RefVal<VColor> focus    = OrangeRed ;
+     RefVal<VColor> gray     =      Gray ;
+     RefVal<VColor> snow     =      Snow ;
      RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> select   =    Yellow ;
      RefVal<VColor> text     =     Black ;
 
      RefVal<Point> space = Point(8,8) ;
@@ -54,12 +58,16 @@ class InfoShape
      void bind(const Bag &bag)
       {
        width.bind(bag.width);
+       back.bind(bag.back);
        focus.bind(bag.focus);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
        inactive.bind(bag.inactive);
+       select.bind(bag.text_select);
 
-       text.bind(bag.info_text);
-       space.bind(bag.info_space);
-       font.bind(bag.info_font.font);
+       text.bind(bag.list_text);
+       space.bind(bag.list_space);
+       font.bind(bag.list_font.font);
       }
     };
 
@@ -73,29 +81,31 @@ class InfoShape
 
    bool enable =  true ;
    bool focus  = false ;
+   ulen select = 0 ;
 
    ulen yoff  = 0 ;
    Coord xoff = 0 ;
 
+   ulen page     = 0 ;
    ulen yoffMax  = 0 ;
    Coord xoffMax = 0 ;
    Coord dxoff   = 0 ;
 
-   bool drag = false ;
-   Point drag_base;
-   Coord xoff_base = 0 ;
-
    // methods
 
-   explicit InfoShape(const Config &cfg_) : cfg(cfg_) {}
+   explicit SimpleTextListShape(const Config &cfg_) : cfg(cfg_) {}
 
-   InfoShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
+   SimpleTextListShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
 
    Point getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void setMax();
+
+   void showSelect();
+
+   ulen getPosition(Point point) const;
 
    void draw(const DrawBuf &buf) const;
  };

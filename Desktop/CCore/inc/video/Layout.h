@@ -31,15 +31,9 @@ Pane FitToScreen(Point base,Point size,Point screen_size);
 
 /* GetWindowPlace() */
 
-Pane GetWindowPlace(Pane outer,Ratio ypos_ratio,Point size);
+Pane GetWindowPlace(Pane outer,Ratio ry,Point size);
 
-Pane GetWindowPlace(Desktop *desktop,Ratio ypos_ratio,Point size);
-
-/* Envelope...() */
-
-inline Pane EnvelopeX(Point base,Coordinate dy,Coordinate delta_x) { return Pane(base.x-delta_x,base.y,2*delta_x,dy); }
-
-inline Pane EnvelopeY(Point base,Coordinate dx,Coordinate delta_y) { return Pane(base.x,base.y-delta_y,dx,2*delta_y); }
+Pane GetWindowPlace(Desktop *desktop,Ratio ry,Point size);
 
 /* FreeCenter...() */
 
@@ -355,13 +349,13 @@ class PaneCut
    PaneCut cutBottom(SizeYSpace size) { return cutBottom(size.dy,size.space); }
 
 
-   PaneCut cutLeft(Ratio dx) { return cutLeft(dx*pane.dx); }
+   PaneCut cutLeft(Ratio rx) { return cutLeft(rx*pane.dx); }
 
-   PaneCut cutRight(Ratio dx) { return cutRight(dx*pane.dx); }
+   PaneCut cutRight(Ratio rx) { return cutRight(rx*pane.dx); }
 
-   PaneCut cutTop(Ratio dy) { return cutTop(dy*pane.dy); }
+   PaneCut cutTop(Ratio ry) { return cutTop(ry*pane.dy); }
 
-   PaneCut cutBottom(Ratio dy) { return cutBottom(dy*pane.dy); }
+   PaneCut cutBottom(Ratio ry) { return cutBottom(ry*pane.dy); }
 
    // cut + align
 
