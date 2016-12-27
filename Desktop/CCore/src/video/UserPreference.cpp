@@ -454,6 +454,8 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_SimpleTextListWindow.bind(get());
 
+  cfg_LineEditWindow.bind(get());
+
   cfg_XScrollWindow.width.bind(width);
   cfg_XScrollWindow.dxy.bind(scroll_dxy);
   cfg_XScrollWindow.top.bind(top);
@@ -473,22 +475,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_YScrollWindow.face.bind(face);
   cfg_YScrollWindow.faceUp.bind(faceUp);
   cfg_YScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
-
-  cfg_LineEditWindow.width.bind(width);
-  cfg_LineEditWindow.space.bind(line_edit_space);
-  cfg_LineEditWindow.ex.bind(line_edit_ex);
-  cfg_LineEditWindow.cursor_dx.bind(text_cursor_dx);
-  cfg_LineEditWindow.back.bind(back);
-  cfg_LineEditWindow.top.bind(bottom);
-  cfg_LineEditWindow.bottom.bind(top);
-  cfg_LineEditWindow.focus.bind(focus);
-  cfg_LineEditWindow.inactive.bind(inactive);
-  cfg_LineEditWindow.text.bind(line_edit_text);
-  cfg_LineEditWindow.select.bind(text_select);
-  cfg_LineEditWindow.alert.bind(alert);
-  cfg_LineEditWindow.cursor.bind(text_cursor);
-  cfg_LineEditWindow.font.bind(line_edit_font.font);
-  cfg_LineEditWindow.period.bind(line_edit_period);
 
   cfg_SimpleTopMenuWindow.width.bind(width);
   cfg_SimpleTopMenuWindow.space.bind(menu_space);
@@ -539,8 +525,8 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_DirEditWindow.ex.bind(line_edit_ex);
   cfg_DirEditWindow.cursor_dx.bind(text_cursor_dx);
   cfg_DirEditWindow.back.bind(back);
-  cfg_DirEditWindow.top.bind(bottom);
-  cfg_DirEditWindow.bottom.bind(top);
+  cfg_DirEditWindow.snow.bind(snow);
+  cfg_DirEditWindow.gray.bind(gray);
   cfg_DirEditWindow.focus.bind(focus);
   cfg_DirEditWindow.inactive.bind(inactive);
   cfg_DirEditWindow.text.bind(line_edit_text);
@@ -556,8 +542,8 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FilterEditWindow.ex.bind(line_edit_ex);
   cfg_FilterEditWindow.cursor_dx.bind(text_cursor_dx);
   cfg_FilterEditWindow.back.bind(back);
-  cfg_FilterEditWindow.top.bind(bottom);
-  cfg_FilterEditWindow.bottom.bind(top);
+  cfg_FilterEditWindow.snow.bind(snow);
+  cfg_FilterEditWindow.gray.bind(gray);
   cfg_FilterEditWindow.focus.bind(focus);
   cfg_FilterEditWindow.inactive.bind(inactive);
   cfg_FilterEditWindow.text.bind(filew_filter_text);

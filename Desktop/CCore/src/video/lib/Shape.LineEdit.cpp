@@ -22,9 +22,14 @@ namespace Video {
 
 /* class LineEditShape */
 
+MCoord LineEditShape::FigEX(Coord fdy,MCoord width,Coord ex)
+ {
+  return (Fraction(fdy)+2*width)/4+Fraction(ex);
+ }
+
 Point LineEditShape::getMinSize() const
  {
-  return getMinSize("Sample12345");
+  return getMinSize("Sample 1234567890");
  }
 
 Point LineEditShape::getMinSize(StrLen sample_text) const
@@ -35,16 +40,16 @@ Point LineEditShape::getMinSize(StrLen sample_text) const
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
-  Coord dx=RoundUpLen(ex+width);
-  Coord dy=RoundUpLen(width)+(+cfg.cursor_dx);
+  Coordinate dx=RoundUpLen(ex+width);
+  Coordinate dy=+cfg.cursor_dx;
 
-  TextSize ts=font->text(sample_text);
+  dy+=RoundUpLen(width);
 
-  IntGuard( !ts.overflow );
+  TextSize ts=font->text_guarded(sample_text);
 
-  return Point(ts.full_dx,ts.dy)+Point(2*dx+dy,2*dy)+(+cfg.space);
+  return Point(ts.full_dx,ts.dy)+Point(2*dx+dy+IntAbs(fs.skew),2*dy)+(+cfg.space);
  }
 
 void LineEditShape::setMax()
@@ -55,23 +60,21 @@ void LineEditShape::setMax()
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
   Coord dx=RoundUpLen(ex+width);
   Coord dy=RoundUpLen(width);
 
   Pane inner=pane.shrink(dx,dy);
 
-  TextSize ts=font->text(text_buf.prefix(len));
+  TextSize ts=font->text_guarded(text_buf.prefix(len));
 
-  IntGuard( !ts.overflow );
+  Coordinate extra=Coordinate(+cfg.cursor_dx)+RoundUpLen(width)+IntAbs(fs.skew);
 
-  Coord extra=2*(+cfg.cursor_dx)+IntAbs(ts.skew);
-
-  Coord tx=IntAdd(ts.full_dx,extra);
+  Coordinate tx=ts.full_dx+extra;
 
   if( tx>inner.dx )
-    xoffMax=tx-inner.dx;
+    xoffMax=+tx-inner.dx;
   else
     xoffMax=0;
 
@@ -86,17 +89,17 @@ void LineEditShape::showCursor()
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
   Coord dx=RoundUpLen(ex+width);
   Coord inner_dx=pane.dx-2*dx;
 
   if( inner_dx<=0 ) return;
 
-  TextSize ts=font->text(text_buf.prefix(pos));
+  TextSize ts=font->text_guarded(text_buf.prefix(pos));
 
   Coord cursor_dx=+cfg.cursor_dx;
-  Coord x=ts.dx0+ts.dx-xoff;
+  Coord x=IntAdd(fs.dx0-xoff,ts.dx);
 
   inner_dx-=2*cursor_dx;
 
@@ -128,7 +131,7 @@ ulen LineEditShape::getPosition(Point point) const
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
   Coord dx=RoundUpLen(ex+width);
   Coord dy=RoundUpLen(width);
@@ -139,15 +142,13 @@ ulen LineEditShape::getPosition(Point point) const
 
   point-=inner.getBase();
 
-  point+=Point(xoff,0);
-
   TextSize ts=font->text(text_buf.prefix(pos));
 
   Coord cursor_dx=+cfg.cursor_dx;
 
-  Coord x1=ts.dx0;
-  Coord x2=x1+ts.dx;
-  Coord x3=x2+cursor_dx;
+  Coord x1=fs.dx0-xoff;
+  Coord x2=IntAdd(x1,ts.dx);
+  Coord x3=IntAdd(x2,cursor_dx);
 
   Coord ytop=(inner.dy-ts.dy)/2;
   Coord ybase=ytop+ts.by;
@@ -188,7 +189,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   FontSize fs=font->getSize();
 
-  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
   if( ex>p.dx/3 )
     {
@@ -197,7 +198,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
      return;
     }
 
-  VColor text=enable?+cfg.text:+cfg.inactive;
+  VColor text = enable? +cfg.text : +cfg.inactive ;
 
   FigureButton fig(p,ex);
 
@@ -215,19 +216,21 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
    if( !inner ) return;
 
-   DrawBuf tbuf=buf.cutRebase(inner);
+   bool show_cursor = enable && ( !hide_cursor || focus ) ;
 
-   Pane tpane(-xoff,0,IntAdd(xoff,inner.dx),inner.dy);
+   DrawBuf tbuf=buf.cut(inner);
 
-   ulen pos=enable?this->pos:len;
+   SmoothDrawArt tart(tbuf);
 
-   TextSize ts=font->text(text_buf.prefix(pos));
+   ulen pos = show_cursor? this->pos : len ;
+
+   TextSize ts=font->text_guarded(text_buf.prefix(pos));
 
    Coord cursor_dx=+cfg.cursor_dx;
 
-   Coord x1=ts.dx0;
-   Coord x2=x1+ts.dx;
-   Coord x3=x2+cursor_dx;
+   Coord x1=fs.dx0-xoff;
+   Coord x2=IntAdd(x1,ts.dx);
+   Coord x3=IntAdd(x2,cursor_dx);
 
    Coord ytop=(inner.dy-ts.dy)/2;
    Coord ybase=ytop+ts.by;
@@ -236,7 +239,8 @@ void LineEditShape::draw(const DrawBuf &buf) const
    MCoord h=Fraction(ts.dy);
    MCoord skew=Fraction(ts.skew);
 
-   MCoord y0=Fraction(ytop);
+   MCoord y0=Fraction(ytop)+Fraction(dy);
+   MCoord y1=y0+h;
 
    MCoord skew1=Div(h-Fraction(ts.by),h)*skew;
 
@@ -244,63 +248,59 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
    if( enable && select_len )
      {
-      Coord xs0;
+      MCoord xs0;
 
       if( select_off<pos )
         {
-         xs0=x1+font->text(text_buf.prefix(pos),select_off).dx;
+         xs0=Fraction(x1)+Fraction( font->text_guarded(text_buf.prefix(pos),select_off).dx );
         }
       else
         {
-         xs0=x3+font->text(text_buf.part(pos,len-pos),select_off-pos).dx;
+         xs0=Fraction(x3)+Fraction( font->text_guarded(text_buf.part(pos,len-pos),select_off-pos).dx );
         }
 
       ulen lim=select_off+select_len;
 
-      Coord xs1;
+      MCoord xs1;
 
       if( lim<=pos )
         {
-         xs1=x1+font->text(text_buf.prefix(pos),lim).dx;
+         xs1=Fraction(x1)+Fraction( font->text_guarded(text_buf.prefix(pos),lim).dx );
         }
       else
         {
-         xs1=x3+font->text(text_buf.part(pos,len-pos),lim-pos).dx;
+         xs1=Fraction(x3)+Fraction( font->text_guarded(text_buf.part(pos,len-pos),lim-pos).dx );
         }
-
-      Smooth::DrawArt art(tbuf);
 
       FigurePoints<4> fig;
 
-      MCoord a=Fraction(xs0-xoff)-skew1;
-      MCoord b=Fraction(xs1-xoff)-skew1;
+      MCoord a=xs0+Fraction(dx)-skew1;
+      MCoord b=xs1+Fraction(dx)-skew1;
 
-      fig[0]={a+skew,y0-w};
-      fig[1]={a,y0+h+w};
-      fig[2]={b,y0+h+w};
-      fig[3]={b+skew,y0-w};
+      fig[0]={a+skew,y0};
+      fig[1]={a,y1};
+      fig[2]={b,y1};
+      fig[3]={b+skew,y0};
 
-      fig.solid(art,+cfg.select);
+      fig.solid(tart,+cfg.select);
      }
 
-   drawText(font,tbuf,tpane,TextPlace(x1,ybase),text_buf.prefix(pos),text);
+   drawText(font,tbuf,inner,TextPlace(x1,ybase),text_buf.prefix(pos),text);
 
-   drawText(font,tbuf,tpane,TextPlace(x3,ybase),text_buf.part(pos,len-pos),text);
+   drawText(font,tbuf,inner,TextPlace(x3,ybase),text_buf.part(pos,len-pos),text);
 
    // cursor
 
-   if( enable && ( !hide_cursor || focus ) )
+   if( show_cursor )
      {
-      MCoord c0=y0+Fraction(dy);
-      MCoord c1=c0+h;
+      MCoord c0=y0;
+      MCoord c1=y1;
 
-      MCoord b0=Fraction(x2-xoff+dx)-skew1;
+      MCoord b0=Fraction(x2)+Fraction(dx)-skew1;
       MCoord b1=b0+w;
 
       MCoord a0=b0+skew;
       MCoord a1=a0+w;
-
-      Smooth::DrawArt art(buf);
 
       FigurePoints<12> fig;
 
@@ -320,11 +320,11 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
       if( focus && cursor )
         {
-         fig.solid(art,+cfg.cursor);
+         fig.solid(tart,+cfg.cursor);
         }
       else
         {
-         fig.loop(art,HalfPos,w/3,+cfg.cursor);
+         fig.loop(tart,HalfPos,w/3,+cfg.cursor);
         }
      }
   }
@@ -339,11 +339,11 @@ void LineEditShape::draw(const DrawBuf &buf) const
     {
      auto fig_top=fig.getTop();
 
-     fig_top.curvePath(art,HalfPos,width,+cfg.top);
+     fig_top.curvePath(art,HalfPos,width,+cfg.gray);
 
      auto fig_bottom=fig.getBottom();
 
-     fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
+     fig_bottom.curvePath(art,HalfPos,width,+cfg.snow);
     }
 
   // arrows

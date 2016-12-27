@@ -34,34 +34,57 @@ class LineEditShape;
 
 class LineEditShape
  {
+   static MCoord FigEX(Coord fdy,MCoord width,Coord ex);
+
   public:
 
    struct Config
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<Point> space = Point(6,4) ;
+     RefVal<VColor> back     =    Silver ;
+     RefVal<VColor> focus    = OrangeRed ;
+     RefVal<VColor> gray     =      Gray ;
+     RefVal<VColor> snow     =      Snow ;
+     RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> alert    =      Pink ;
+     RefVal<VColor> select   =    Yellow ;
+     RefVal<VColor> cursor   =      Blue ;
 
-     RefVal<Coord> ex = 3 ;
      RefVal<Coord> cursor_dx = 3 ;
 
-     RefVal<VColor> back     =    Silver ;
-     RefVal<VColor> bottom   =      Snow ;
-     RefVal<VColor> top      =      Gray ;
-     RefVal<VColor> focus    = OrangeRed ;
+     RefVal<VColor> text = Black ;
 
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> select   =    Yellow ;
-     RefVal<VColor> alert    =      Pink ;
+     RefVal<Coord> ex = 3 ;
 
-     RefVal<VColor> cursor   =      Blue ;
+     RefVal<Point> space = Point(6,4) ;
 
      RefVal<Font> font;
 
      RefVal<unsigned> period = 10_tick ;
 
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       width.bind(bag.width);
+       back.bind(bag.back);
+       focus.bind(bag.focus);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       inactive.bind(bag.inactive);
+       alert.bind(bag.alert);
+       select.bind(bag.text_select);
+       cursor.bind(bag.text_cursor);
+       cursor_dx.bind(bag.text_cursor_dx);
+
+       text.bind(bag.line_edit_text);
+       ex.bind(bag.line_edit_ex);
+       space.bind(bag.line_edit_space);
+       font.bind(bag.line_edit_font.font);
+       period.bind(bag.line_edit_period);
+      }
     };
 
    const Config &cfg;
