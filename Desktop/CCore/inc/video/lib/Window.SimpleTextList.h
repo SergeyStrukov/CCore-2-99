@@ -160,7 +160,10 @@ class SimpleTextListWindowOf : public SubWindow
 
    // drawing
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {

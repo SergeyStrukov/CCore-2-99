@@ -1,4 +1,4 @@
-/* ShapeLib.LineEditShape.cpp */
+/* Shape.LineEdit.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,9 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.LineEdit.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -375,5 +374,4 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
 } // namespace Video
 } // namespace CCore
-
 

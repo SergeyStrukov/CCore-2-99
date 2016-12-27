@@ -29,6 +29,7 @@
 #include <CCore/inc/video/lib/Shape.Progress.h>
 #include <CCore/inc/video/lib/Shape.Info.h>
 #include <CCore/inc/video/lib/Shape.SimpleTextList.h>
+#include <CCore/inc/video/lib/Shape.LineEdit.h>
 
 namespace CCore {
 namespace Video {
@@ -40,8 +41,6 @@ class ScrollShape;
 class XScrollShape;
 
 class YScrollShape;
-
-class LineEditShape;
 
 class ScrollListShape;
 
@@ -261,100 +260,6 @@ class YScrollShape : public ScrollShape
    ScrollType getType(MPoint point) const;
 
    void drag(Point point) { dragPos(drag_base.y,point.y,pane.dy,pane.dx); }
-
-   void draw(const DrawBuf &buf) const;
- };
-
-/* class LineEditShape */
-
-class LineEditShape
- {
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(6,4) ;
-
-     RefVal<Coord> ex = 3 ;
-     RefVal<Coord> cursor_dx = 3 ;
-
-     RefVal<VColor> back     =    Silver ;
-     RefVal<VColor> bottom   =      Snow ;
-     RefVal<VColor> top      =      Gray ;
-     RefVal<VColor> focus    = OrangeRed ;
-
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> select   =    Yellow ;
-     RefVal<VColor> alert    =      Pink ;
-
-     RefVal<VColor> cursor   =      Blue ;
-
-     RefVal<Font> font;
-
-     RefVal<unsigned> period = 10_tick ;
-
-     Config() noexcept {}
-    };
-
-   const Config &cfg;
-   PtrLen<char> text_buf;
-   Pane pane;
-
-   // state
-
-   bool enable =  true ;
-   bool focus  = false ;
-   bool cursor = false ;
-   bool hide_cursor = false ;
-   bool alert  = false ;
-   ulen len    =     0 ;
-   ulen pos    =     0 ;
-   ulen select_off = 0 ;
-   ulen select_len = 0 ;
-   Coord xoff  =     0 ;
-
-   Coord xoffMax = 0 ;
-   Coord dxoff   = 0 ;
-
-   bool drag = false ;
-   Point drag_base;
-   Coord xoff_base = 0 ;
-   bool mouse_pos = false ;
-
-   unsigned count = 0 ;
-
-   // methods
-
-   LineEditShape(PtrLen<char> text_buf_,const Config &cfg_) : cfg(cfg_),text_buf(text_buf_) {}
-
-   Point getMinSize() const;
-
-   Point getMinSize(StrLen sample_text) const;
-
-   void setMax();
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
-
-   bool tick()
-    {
-     if( ++count >= +cfg.period )
-       {
-        count=0;
-
-        return true;
-       }
-
-     return false;
-    }
-
-   void showCursor();
-
-   ulen getPosition(Point point) const;
-
-   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
 
    void draw(const DrawBuf &buf) const;
  };

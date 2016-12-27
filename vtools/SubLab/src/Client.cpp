@@ -974,6 +974,7 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("Message ok"_def,Create<MessageSubWindow_ok>);
        add("Message yes/no"_def,Create<MessageSubWindow_yes_no>);
        add("SimpleTextList"_def,Create<SimpleTextListWindow_SampleList>);
+       add("LineEdit"_def,Create<LineEditWindow>);
 
        //add(""_def,Create<>);
     }

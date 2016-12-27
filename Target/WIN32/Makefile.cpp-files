@@ -295,6 +295,7 @@
 ../../Desktop/CCore/src/video/lib/Shape.Label.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Light.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Line.cpp
+../../Desktop/CCore/src/video/lib/Shape.LineEdit.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Radio.cpp
 ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
@@ -306,6 +307,7 @@
 ../../Desktop/CCore/src/video/lib/Window.Decor.cpp
 ../../Desktop/CCore/src/video/lib/Window.Info.cpp
 ../../Desktop/CCore/src/video/lib/Window.Light.cpp
+../../Desktop/CCore/src/video/lib/Window.LineEdit.cpp
 ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
 ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
 ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
@@ -319,7 +321,6 @@
 ../../Desktop/CCore/src/video/PrintDDL.cpp
 ../../Desktop/CCore/src/video/ProgressScale.cpp
 ../../Desktop/CCore/src/video/RefVal.cpp
-../../Desktop/CCore/src/video/ShapeLib.LineEditShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
 ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp

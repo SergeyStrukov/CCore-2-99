@@ -283,13 +283,13 @@ obj/Shape.Info.o \
 obj/Shape.Label.o \
 obj/Shape.Light.o \
 obj/Shape.Line.o \
+obj/Shape.LineEdit.o \
 obj/Shape.Progress.o \
 obj/Shape.Radio.o \
 obj/Shape.SimpleTextList.o \
 obj/Shape.Switch.o \
 obj/Shape.Text.o \
 obj/Shape.TextLine.o \
-obj/ShapeLib.LineEditShape.o \
 obj/ShapeLib.ScrollListShape.o \
 obj/ShapeLib.ScrollShape.o \
 obj/ShapeLib.YScrollShape.o \
@@ -376,6 +376,7 @@ obj/Window.Check.o \
 obj/Window.Decor.o \
 obj/Window.Info.o \
 obj/Window.Light.o \
+obj/Window.LineEdit.o \
 obj/Window.Progress.o \
 obj/Window.Radio.o \
 obj/Window.SimpleTextList.o \
@@ -671,13 +672,13 @@ obj/Shape.Info.s \
 obj/Shape.Label.s \
 obj/Shape.Light.s \
 obj/Shape.Line.s \
+obj/Shape.LineEdit.s \
 obj/Shape.Progress.s \
 obj/Shape.Radio.s \
 obj/Shape.SimpleTextList.s \
 obj/Shape.Switch.s \
 obj/Shape.Text.s \
 obj/Shape.TextLine.s \
-obj/ShapeLib.LineEditShape.s \
 obj/ShapeLib.ScrollListShape.s \
 obj/ShapeLib.ScrollShape.s \
 obj/ShapeLib.YScrollShape.s \
@@ -764,6 +765,7 @@ obj/Window.Check.s \
 obj/Window.Decor.s \
 obj/Window.Info.s \
 obj/Window.Light.s \
+obj/Window.LineEdit.s \
 obj/Window.Progress.s \
 obj/Window.Radio.s \
 obj/Window.SimpleTextList.s \
@@ -1059,13 +1061,13 @@ obj/Shape.Info.dep \
 obj/Shape.Label.dep \
 obj/Shape.Light.dep \
 obj/Shape.Line.dep \
+obj/Shape.LineEdit.dep \
 obj/Shape.Progress.dep \
 obj/Shape.Radio.dep \
 obj/Shape.SimpleTextList.dep \
 obj/Shape.Switch.dep \
 obj/Shape.Text.dep \
 obj/Shape.TextLine.dep \
-obj/ShapeLib.LineEditShape.dep \
 obj/ShapeLib.ScrollListShape.dep \
 obj/ShapeLib.ScrollShape.dep \
 obj/ShapeLib.YScrollShape.dep \
@@ -1152,6 +1154,7 @@ obj/Window.Check.dep \
 obj/Window.Decor.dep \
 obj/Window.Info.dep \
 obj/Window.Light.dep \
+obj/Window.LineEdit.dep \
 obj/Window.Progress.dep \
 obj/Window.Radio.dep \
 obj/Window.SimpleTextList.dep \
@@ -2024,6 +2027,9 @@ obj/Shape.Light.o : ../../Desktop/CCore/src/video/lib/Shape.Light.cpp
 obj/Shape.Line.o : ../../Desktop/CCore/src/video/lib/Shape.Line.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Shape.LineEdit.o : ../../Desktop/CCore/src/video/lib/Shape.LineEdit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Shape.Progress.o : ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2040,9 +2046,6 @@ obj/Shape.Text.o : ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Shape.TextLine.o : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ShapeLib.LineEditShape.o : ../../Desktop/CCore/src/video/ShapeLib.LineEditShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.ScrollListShape.o : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
@@ -2301,6 +2304,9 @@ obj/Window.Info.o : ../../Desktop/CCore/src/video/lib/Window.Info.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Light.o : ../../Desktop/CCore/src/video/lib/Window.Light.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.LineEdit.o : ../../Desktop/CCore/src/video/lib/Window.LineEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Progress.o : ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
@@ -3181,6 +3187,9 @@ obj/Shape.Light.s : ../../Desktop/CCore/src/video/lib/Shape.Light.cpp
 obj/Shape.Line.s : ../../Desktop/CCore/src/video/lib/Shape.Line.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.LineEdit.s : ../../Desktop/CCore/src/video/lib/Shape.LineEdit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Shape.Progress.s : ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3197,9 +3206,6 @@ obj/Shape.Text.s : ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Shape.TextLine.s : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ShapeLib.LineEditShape.s : ../../Desktop/CCore/src/video/ShapeLib.LineEditShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.ScrollListShape.s : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
@@ -3458,6 +3464,9 @@ obj/Window.Info.s : ../../Desktop/CCore/src/video/lib/Window.Info.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Light.s : ../../Desktop/CCore/src/video/lib/Window.Light.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.LineEdit.s : ../../Desktop/CCore/src/video/lib/Window.LineEdit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Progress.s : ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
@@ -4338,6 +4347,9 @@ obj/Shape.Light.dep : ../../Desktop/CCore/src/video/lib/Shape.Light.cpp
 obj/Shape.Line.dep : ../../Desktop/CCore/src/video/lib/Shape.Line.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Line.o $< -MF $@
 
+obj/Shape.LineEdit.dep : ../../Desktop/CCore/src/video/lib/Shape.LineEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.LineEdit.o $< -MF $@
+
 obj/Shape.Progress.dep : ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Progress.o $< -MF $@
 
@@ -4355,9 +4367,6 @@ obj/Shape.Text.dep : ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
 
 obj/Shape.TextLine.dep : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.TextLine.o $< -MF $@
-
-obj/ShapeLib.LineEditShape.dep : ../../Desktop/CCore/src/video/ShapeLib.LineEditShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.LineEditShape.o $< -MF $@
 
 obj/ShapeLib.ScrollListShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ScrollListShape.o $< -MF $@
@@ -4616,6 +4625,9 @@ obj/Window.Info.dep : ../../Desktop/CCore/src/video/lib/Window.Info.cpp
 
 obj/Window.Light.dep : ../../Desktop/CCore/src/video/lib/Window.Light.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Light.o $< -MF $@
+
+obj/Window.LineEdit.dep : ../../Desktop/CCore/src/video/lib/Window.LineEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.LineEdit.o $< -MF $@
 
 obj/Window.Progress.dep : ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Progress.o $< -MF $@

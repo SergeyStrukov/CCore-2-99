@@ -151,6 +151,18 @@ class ProgressWindowOf : public SubWindow
      shape.draw(buf);
     }
 
+   // base
+
+   virtual void open()
+    {
+     shape.has_active=false;
+    }
+
+   virtual void close()
+    {
+     defer_tick.stop();
+    }
+
    // keyboard
 
    virtual FocusType askFocus() const

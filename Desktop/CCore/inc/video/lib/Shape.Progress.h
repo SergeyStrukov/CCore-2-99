@@ -126,14 +126,18 @@ class ProgressShape
 
    bool tick()
     {
-     if( ++count >= +cfg.period )
+     if( count )
        {
-        count=0;
+        count--;
+
+        return false;
+       }
+     else
+       {
+        count=PosSub(+cfg.period,1u);
 
         return true;
        }
-
-     return false;
     }
 
    bool startActive()
@@ -142,6 +146,7 @@ class ProgressShape
        {
         has_active=true;
         active_pos=0;
+        count=0;
 
         return true;
        }

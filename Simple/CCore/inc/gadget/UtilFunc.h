@@ -88,6 +88,12 @@ T AddToCap(T val,T delta,T cap)
     }
  }
 
+template <class T,class S>
+void CapDown(T &obj,S cap)
+ {
+  if( obj>cap ) obj=(T)cap;
+ }
+
 /* functions */
 
 template <UIntType UInt,class S>
