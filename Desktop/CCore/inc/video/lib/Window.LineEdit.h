@@ -98,98 +98,6 @@ class LineEditWindowOf : public SubWindow
      dragTo(point);
     }
 
-   void insChar(char ch)
-    {
-     if( shape.len<text_buf.getLen() )
-       {
-        InsChar(text_buf.getPtr(),shape.len,shape.pos,ch);
-
-        shape.len++;
-        shape.pos++;
-       }
-    }
-
-   void delRange(ulen off,ulen len)
-    {
-     shape.len-=DelCharRange(text_buf.getPtr(),shape.len,off,len);
-    }
-
-   void delTextSelection()
-    {
-     if( !shape.select_len ) return;
-
-     delRange(shape.select_off,shape.select_len);
-
-     shape.pos=shape.select_off;
-     shape.select_off=0;
-     shape.select_len=0;
-    }
-
-   void finishChange()
-    {
-     shape.cursor=true;
-
-     shape.setMax();
-
-     Replace_min(shape.xoff,shape.xoffMax);
-
-     shape.showCursor();
-
-     changed.assert();
-
-     redraw();
-    }
-
-   void delChar(unsigned repeat=1)
-    {
-     delRange(shape.pos,repeat);
-
-     finishChange();
-    }
-
-   void delSelection()
-    {
-     delTextSelection();
-
-     finishChange();
-    }
-
-   void copy()
-    {
-     if( !shape.select_len ) return;
-
-     getFrameHost()->textToClipboard(Range(text_buf.getPtr()+shape.select_off,shape.select_len));
-    }
-
-   void cut()
-    {
-     copy();
-
-     delSelection();
-    }
-
-   void past()
-    {
-     delTextSelection();
-
-     char *base=text_buf.getPtr();
-
-     CopyFunction func(base+shape.len,text_buf.getLen()-shape.len);
-
-     getFrameHost()->textFromClipboard(func.function_copy());
-
-     func.cutEOL();
-
-     ulen len=func.buf.len;
-
-     RotateCharRange(base,shape.len,shape.pos,len);
-
-     shape.len+=len;
-     shape.pos+=len;
-
-     finishChange();
-    }
-
    void select(ulen pos1,ulen pos2)
     {
      if( pos1<pos2 )
@@ -232,7 +140,7 @@ class LineEditWindowOf : public SubWindow
 
    void posCursor(Point point)
     {
-     ulen new_pos=shape.getPosition(point);
+     ulen new_pos=Min(shape.getPosition(point),shape.len);
 
      if( shape.mouse_pos )
        {
@@ -333,6 +241,98 @@ class LineEditWindowOf : public SubWindow
      shape.xoff=shape.xoffMax;
 
      redraw();
+    }
+
+   void insChar(char ch)
+    {
+     if( shape.len<text_buf.getLen() )
+       {
+        InsChar(text_buf.getPtr(),shape.len,shape.pos,ch);
+
+        shape.len++;
+        shape.pos++;
+       }
+    }
+
+   void delRange(ulen off,ulen len)
+    {
+     shape.len-=DelCharRange(text_buf.getPtr(),shape.len,off,len);
+    }
+
+   void delSelectedRange()
+    {
+     if( !shape.select_len ) return;
+
+     delRange(shape.select_off,shape.select_len);
+
+     shape.pos=shape.select_off;
+     shape.select_off=0;
+     shape.select_len=0;
+    }
+
+   void finishChange()
+    {
+     shape.cursor=true;
+
+     shape.setMax();
+
+     Replace_min(shape.xoff,shape.xoffMax);
+
+     shape.showCursor();
+
+     changed.assert();
+
+     redraw();
+    }
+
+   void delChar(unsigned repeat=1)
+    {
+     delRange(shape.pos,repeat);
+
+     finishChange();
+    }
+
+   void delSelection()
+    {
+     delSelectedRange();
+
+     finishChange();
+    }
+
+   void copy()
+    {
+     if( !shape.select_len ) return;
+
+     getFrameHost()->textToClipboard(Range(text_buf.getPtr()+shape.select_off,shape.select_len));
+    }
+
+   void cut()
+    {
+     copy();
+
+     delSelection();
+    }
+
+   void past()
+    {
+     delSelectedRange();
+
+     char *base=text_buf.getPtr();
+
+     CopyFunction func(base+shape.len,text_buf.getLen()-shape.len);
+
+     getFrameHost()->textFromClipboard(func.function_copy());
+
+     func.cutEOL();
+
+     ulen len=func.buf.len;
+
+     RotateCharRange(base,shape.len,shape.pos,len);
+
+     shape.len+=len;
+     shape.pos+=len;
+
+     finishChange();
     }
 
    void keyOther(VKey vkey,KeyMod kmod)
@@ -810,7 +810,7 @@ class LineEditWindowOf : public SubWindow
     {
      if( shape.enable && CharIsPrintable(ch) )
        {
-        delTextSelection();
+        delSelectedRange();
 
         insChar(ch);
 
