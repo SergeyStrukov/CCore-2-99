@@ -247,7 +247,10 @@ class ScrollWindowOf : public SubWindow
 
    // drawing
 
-   virtual bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
 
    virtual void layout()
     {
@@ -431,7 +434,7 @@ class ScrollWindowOf : public SubWindow
        {
         case Shape::DownKey :
          {
-          if( shape.down && !shape.mouse && shape.press_type==ScrollType_Down )
+          if( shape.down==ScrollType_Down && !shape.mouse )
             {
              shape.down=ScrollType_None;
 
@@ -444,7 +447,7 @@ class ScrollWindowOf : public SubWindow
 
         case Shape::UpKey :
          {
-          if( shape.down && !shape.mouse && shape.press_type==ScrollType_Up )
+          if( shape.down==ScrollType_Up && !shape.mouse )
             {
              shape.down=ScrollType_None;
 
@@ -457,7 +460,7 @@ class ScrollWindowOf : public SubWindow
 
         case VKey_PageUp :
          {
-          if( shape.down && !shape.mouse && shape.press_type==ScrollType_DownPage )
+          if( shape.down==ScrollType_DownPage && !shape.mouse )
             {
              shape.down=ScrollType_None;
 
@@ -470,7 +473,7 @@ class ScrollWindowOf : public SubWindow
 
         case VKey_PageDown :
          {
-          if( shape.down && !shape.mouse && shape.press_type==ScrollType_UpPage )
+          if( shape.down==ScrollType_UpPage && !shape.mouse )
             {
              shape.down=ScrollType_None;
 
@@ -524,7 +527,7 @@ class ScrollWindowOf : public SubWindow
 
    void react_Move(Point point,MouseKey mkey)
     {
-     if( shape.down && shape.mouse && shape.press_type==ScrollType_Drag )
+     if( shape.down==ScrollType_Drag && shape.mouse )
        {
         if( mkey&MouseKey_Left )
           drag(point);
@@ -549,7 +552,7 @@ class ScrollWindowOf : public SubWindow
 
    void react_Leave()
     {
-     if( shape.down && shape.mouse && shape.press_type==ScrollType_Drag )
+     if( shape.down==ScrollType_Drag && shape.mouse )
        {
         // do nothing
        }
