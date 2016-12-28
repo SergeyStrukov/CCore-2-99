@@ -289,13 +289,12 @@ obj/Shape.Line.o \
 obj/Shape.LineEdit.o \
 obj/Shape.Progress.o \
 obj/Shape.Radio.o \
+obj/Shape.Scroll.o \
 obj/Shape.SimpleTextList.o \
 obj/Shape.Switch.o \
 obj/Shape.Text.o \
 obj/Shape.TextLine.o \
 obj/ShapeLib.ScrollListShape.o \
-obj/ShapeLib.ScrollShape.o \
-obj/ShapeLib.YScrollShape.o \
 obj/ShortSort.o \
 obj/Signal.o \
 obj/SimpleArray.o \
@@ -383,6 +382,7 @@ obj/Window.Light.o \
 obj/Window.LineEdit.o \
 obj/Window.Progress.o \
 obj/Window.Radio.o \
+obj/Window.Scroll.o \
 obj/Window.SimpleTextList.o \
 obj/Window.Text.o \
 obj/Window.TextLine.o \
@@ -682,13 +682,12 @@ obj/Shape.Line.s \
 obj/Shape.LineEdit.s \
 obj/Shape.Progress.s \
 obj/Shape.Radio.s \
+obj/Shape.Scroll.s \
 obj/Shape.SimpleTextList.s \
 obj/Shape.Switch.s \
 obj/Shape.Text.s \
 obj/Shape.TextLine.s \
 obj/ShapeLib.ScrollListShape.s \
-obj/ShapeLib.ScrollShape.s \
-obj/ShapeLib.YScrollShape.s \
 obj/ShortSort.s \
 obj/Signal.s \
 obj/SimpleArray.s \
@@ -776,6 +775,7 @@ obj/Window.Light.s \
 obj/Window.LineEdit.s \
 obj/Window.Progress.s \
 obj/Window.Radio.s \
+obj/Window.Scroll.s \
 obj/Window.SimpleTextList.s \
 obj/Window.Text.s \
 obj/Window.TextLine.s \
@@ -1075,13 +1075,12 @@ obj/Shape.Line.dep \
 obj/Shape.LineEdit.dep \
 obj/Shape.Progress.dep \
 obj/Shape.Radio.dep \
+obj/Shape.Scroll.dep \
 obj/Shape.SimpleTextList.dep \
 obj/Shape.Switch.dep \
 obj/Shape.Text.dep \
 obj/Shape.TextLine.dep \
 obj/ShapeLib.ScrollListShape.dep \
-obj/ShapeLib.ScrollShape.dep \
-obj/ShapeLib.YScrollShape.dep \
 obj/ShortSort.dep \
 obj/Signal.dep \
 obj/SimpleArray.dep \
@@ -1169,6 +1168,7 @@ obj/Window.Light.dep \
 obj/Window.LineEdit.dep \
 obj/Window.Progress.dep \
 obj/Window.Radio.dep \
+obj/Window.Scroll.dep \
 obj/Window.SimpleTextList.dep \
 obj/Window.Text.dep \
 obj/Window.TextLine.dep \
@@ -2060,6 +2060,9 @@ obj/Shape.Progress.o : ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 obj/Shape.Radio.o : ../../Desktop/CCore/src/video/lib/Shape.Radio.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Shape.Scroll.o : ../../Desktop/CCore/src/video/lib/Shape.Scroll.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Shape.SimpleTextList.o : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2073,12 +2076,6 @@ obj/Shape.TextLine.o : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib.ScrollListShape.o : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ShapeLib.ScrollShape.o : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/ShapeLib.YScrollShape.o : ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShortSort.o : ../../Fundamental/CCore/src/sort/ShortSort.cpp
@@ -2340,6 +2337,9 @@ obj/Window.Progress.o : ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Radio.o : ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.Scroll.o : ../../Desktop/CCore/src/video/lib/Window.Scroll.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.SimpleTextList.o : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
@@ -3232,6 +3232,9 @@ obj/Shape.Progress.s : ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 obj/Shape.Radio.s : ../../Desktop/CCore/src/video/lib/Shape.Radio.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.Scroll.s : ../../Desktop/CCore/src/video/lib/Shape.Scroll.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Shape.SimpleTextList.s : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3245,12 +3248,6 @@ obj/Shape.TextLine.s : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLib.ScrollListShape.s : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ShapeLib.ScrollShape.s : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ShapeLib.YScrollShape.s : ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShortSort.s : ../../Fundamental/CCore/src/sort/ShortSort.cpp
@@ -3512,6 +3509,9 @@ obj/Window.Progress.s : ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Radio.s : ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.Scroll.s : ../../Desktop/CCore/src/video/lib/Window.Scroll.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.SimpleTextList.s : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
@@ -4404,6 +4404,9 @@ obj/Shape.Progress.dep : ../../Desktop/CCore/src/video/lib/Shape.Progress.cpp
 obj/Shape.Radio.dep : ../../Desktop/CCore/src/video/lib/Shape.Radio.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Radio.o $< -MF $@
 
+obj/Shape.Scroll.dep : ../../Desktop/CCore/src/video/lib/Shape.Scroll.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Scroll.o $< -MF $@
+
 obj/Shape.SimpleTextList.dep : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.SimpleTextList.o $< -MF $@
 
@@ -4418,12 +4421,6 @@ obj/Shape.TextLine.dep : ../../Desktop/CCore/src/video/lib/Shape.TextLine.cpp
 
 obj/ShapeLib.ScrollListShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ScrollListShape.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ScrollListShape.o $< -MF $@
-
-obj/ShapeLib.ScrollShape.dep : ../../Desktop/CCore/src/video/ShapeLib.ScrollShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.ScrollShape.o $< -MF $@
-
-obj/ShapeLib.YScrollShape.dep : ../../Desktop/CCore/src/video/ShapeLib.YScrollShape.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib.YScrollShape.o $< -MF $@
 
 obj/ShortSort.dep : ../../Fundamental/CCore/src/sort/ShortSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShortSort.o $< -MF $@
@@ -4685,6 +4682,9 @@ obj/Window.Progress.dep : ../../Desktop/CCore/src/video/lib/Window.Progress.cpp
 
 obj/Window.Radio.dep : ../../Desktop/CCore/src/video/lib/Window.Radio.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Radio.o $< -MF $@
+
+obj/Window.Scroll.dep : ../../Desktop/CCore/src/video/lib/Window.Scroll.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Scroll.o $< -MF $@
 
 obj/Window.SimpleTextList.dep : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.SimpleTextList.o $< -MF $@
