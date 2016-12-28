@@ -61,16 +61,24 @@ void TextLineShape::setMax()
 
   Pane inner=pane.shrink(dx,dy);
 
-  TextSize ts=font->text_guarded(text.str());
+  if( +inner )
+    {
+     TextSize ts=font->text_guarded(text.str());
 
-  Coord tx=ts.full_dx;
+     Coord tx=ts.full_dx;
 
-  if( tx>inner.dx )
-    xoffMax=tx-inner.dx;
+     if( tx>inner.dx )
+       xoffMax=tx-inner.dx;
+     else
+       xoffMax=0;
+
+     dxoff=fs.medDx();
+    }
   else
-    xoffMax=0;
-
-  dxoff=fs.medDx();
+    {
+     xoffMax=0;
+     dxoff=0;
+    }
  }
 
 void TextLineShape::draw(const DrawBuf &buf) const

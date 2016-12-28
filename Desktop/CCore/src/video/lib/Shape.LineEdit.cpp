@@ -67,59 +67,71 @@ void LineEditShape::setMax()
 
   Pane inner=pane.shrink(dx,dy);
 
-  TextSize ts=font->text_guarded(text_buf.prefix(len));
+  if( +inner )
+    {
+     TextSize ts=font->text_guarded(text_buf.prefix(len));
 
-  Coordinate cursor_dx=+cfg.cursor_dx;
+     Coordinate cursor_dx=+cfg.cursor_dx;
 
-  Coordinate extra=2*cursor_dx+dy+IntAbs(fs.skew);
+     Coordinate extra=2*cursor_dx+dy+IntAbs(fs.skew);
 
-  Coordinate tx=ts.full_dx+extra;
+     Coordinate tx=ts.full_dx+extra;
 
-  if( tx>inner.dx )
-    xoffMax=+tx-inner.dx;
+     if( tx>inner.dx )
+       xoffMax=+tx-inner.dx;
+     else
+       xoffMax=0;
+
+     dxoff=fs.medDx();
+    }
   else
-    xoffMax=0;
+    {
+     xoffMax=0;
 
-  dxoff=fs.medDx();
+     dxoff=fs.medDx();
+    }
  }
 
 void LineEditShape::showCursor()
  {
-  MCoord width=+cfg.width;
-
   Font font=cfg.font.get();
+
+  MCoord width=+cfg.width;
 
   FontSize fs=font->getSize();
 
   MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
-  Coordinate dx=RoundUpLen(ex+width);
-  Coordinate inner_dx=pane.dx-2*dx;
+  Coord dx=RoundUpLen(ex+width);
+  Coord dy=RoundUpLen(width);
 
-  if( inner_dx<=0 ) return;
+  Pane inner=pane.shrink(dx,dy);
 
-  bool show_cursor = enable && ( !hide_cursor || focus ) ;
-
-  ulen pos = show_cursor? this->pos : len ;
-
-  TextSize ts=font->text_guarded(text_buf.prefix(pos));
-
-  Coordinate cursor_dx=+cfg.cursor_dx;
-
-  Coordinate x1=(fs.dx0+cursor_dx)-xoff;
-
-  Coordinate x=x1+ts.dx;
-
-  Coordinate a=cursor_dx;
-  Coordinate b=inner_dx-2*cursor_dx;
-
-  if( x<a )
+  if( +inner )
     {
-     xoff -= +Min_cast(a-x,xoff) ;
-    }
-  else if( x>b )
-    {
-     xoff += +Min_cast(x-b,xoffMax-xoff) ;
+     bool show_cursor = enable && ( !hide_cursor || focus ) ;
+
+     ulen pos = show_cursor? this->pos : len ;
+
+     TextSize ts=font->text_guarded(text_buf.prefix(pos));
+
+     Coordinate cursor_dx=+cfg.cursor_dx;
+
+     Coordinate x1=(fs.dx0+cursor_dx)-xoff;
+
+     Coordinate x=x1+ts.dx;
+
+     Coordinate a=cursor_dx;
+     Coordinate b=inner.dx-2*cursor_dx;
+
+     if( x<a )
+       {
+        xoff -= +Min_cast(a-x,xoff) ;
+       }
+     else if( x>b )
+       {
+        xoff += +Min_cast(x-b,xoffMax-xoff) ;
+       }
     }
  }
 
@@ -333,6 +345,8 @@ void LineEditShape::draw(const DrawBuf &buf) const
       fig[2]={b,Y1};
       fig[3]={b+skew,Y0};
 
+      fig.shift(pane.getBase());
+
       fig.solid(tart,+cfg.select);
      }
 
@@ -368,6 +382,8 @@ void LineEditShape::draw(const DrawBuf &buf) const
       fig[9]={b1+w,c1+w};
       fig[10]={b1+w,c1};
       fig[11]={b1,c1};
+
+      fig.shift(pane.getBase());
 
       if( focus && cursor )
         {
