@@ -43,13 +43,13 @@ Point LineEditShape::getMinSize(StrLen sample_text) const
   MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
   Coordinate dx=RoundUpLen(ex+width);
-  Coordinate dy=+cfg.cursor_dx;
+  Coordinate dy=RoundUpLen(width);
 
-  dy+=RoundUpLen(width);
+  Coordinate cursor_dx=+cfg.cursor_dx;
 
   TextSize ts=font->text_guarded(sample_text);
 
-  return Point(ts.full_dx,ts.dy)+Point(2*dx+dy+IntAbs(fs.skew),2*dy)+(+cfg.space);
+  return Point(ts.full_dx,ts.dy)+Point(2*dx+2*cursor_dx+dy+IntAbs(fs.skew),2*dy+2*cursor_dx)+(+cfg.space);
  }
 
 void LineEditShape::setMax()
@@ -69,7 +69,9 @@ void LineEditShape::setMax()
 
   TextSize ts=font->text_guarded(text_buf.prefix(len));
 
-  Coordinate extra=Coordinate(+cfg.cursor_dx)+RoundUpLen(width)+IntAbs(fs.skew);
+  Coordinate cursor_dx=+cfg.cursor_dx;
+
+  Coordinate extra=2*cursor_dx+dy+IntAbs(fs.skew);
 
   Coordinate tx=ts.full_dx+extra;
 
@@ -91,35 +93,33 @@ void LineEditShape::showCursor()
 
   MCoord ex=FigEX(fs.dy,width,+cfg.ex);
 
-  Coord dx=RoundUpLen(ex+width);
-  Coord inner_dx=pane.dx-2*dx;
+  Coordinate dx=RoundUpLen(ex+width);
+  Coordinate inner_dx=pane.dx-2*dx;
 
   if( inner_dx<=0 ) return;
 
+  bool show_cursor = enable && ( !hide_cursor || focus ) ;
+
+  ulen pos = show_cursor? this->pos : len ;
+
   TextSize ts=font->text_guarded(text_buf.prefix(pos));
 
-  Coord cursor_dx=+cfg.cursor_dx;
-  Coord x=IntAdd(fs.dx0-xoff,ts.dx);
+  Coordinate cursor_dx=+cfg.cursor_dx;
 
-  inner_dx-=2*cursor_dx;
+  Coordinate x1=(fs.dx0+cursor_dx)-xoff;
 
-  if( x<cursor_dx )
+  Coordinate x=x1+ts.dx;
+
+  Coordinate a=cursor_dx;
+  Coordinate b=inner_dx-2*cursor_dx;
+
+  if( x<a )
     {
-     x=cursor_dx-x;
-
-     if( xoff>x )
-       xoff-=x;
-     else
-       xoff=0;
+     xoff -= +Min_cast(a-x,xoff) ;
     }
-  else if( x>=inner_dx )
+  else if( x>b )
     {
-     x=x-inner_dx;
-
-     if( xoff<xoffMax-x )
-       xoff+=x;
-     else
-       xoff=xoffMax;
+     xoff += +Min_cast(x-b,xoffMax-xoff) ;
     }
  }
 
@@ -140,15 +140,19 @@ ulen LineEditShape::getPosition(Point point) const
 
   if( !inner ) return 0;
 
+  bool show_cursor = enable && ( !hide_cursor || focus ) ;
+
+  ulen pos = show_cursor? this->pos : len ;
+
   point-=inner.getBase();
 
-  TextSize ts=font->text(text_buf.prefix(pos));
+  TextSize ts=font->text_guarded(text_buf.prefix(pos));
 
-  Coord cursor_dx=+cfg.cursor_dx;
+  Coordinate cursor_dx=+cfg.cursor_dx;
 
-  Coord x1=fs.dx0-xoff;
-  Coord x2=IntAdd(x1,ts.dx);
-  Coord x3=IntAdd(x2,cursor_dx);
+  Coordinate x1=(fs.dx0+cursor_dx)-xoff;
+  Coordinate x2=x1+ts.dx;
+  Coordinate x3=x2+cursor_dx;
 
   Coord ytop=(inner.dy-ts.dy)/2;
   Coord ybase=ytop+ts.by;
@@ -206,129 +210,6 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
   fig.curveSolid(art,enable? ( alert? +cfg.alert : +cfg.back ) : ( len? +cfg.back : +cfg.inactive ) ) ;
 
-  // text
-
-  {
-   Coord dx=RoundUpLen(ex+width);
-   Coord dy=RoundUpLen(width);
-
-   Pane inner=pane.shrink(dx,dy);
-
-   if( !inner ) return;
-
-   bool show_cursor = enable && ( !hide_cursor || focus ) ;
-
-   DrawBuf tbuf=buf.cut(inner);
-
-   SmoothDrawArt tart(tbuf);
-
-   ulen pos = show_cursor? this->pos : len ;
-
-   TextSize ts=font->text_guarded(text_buf.prefix(pos));
-
-   Coord cursor_dx=+cfg.cursor_dx;
-
-   Coord x1=fs.dx0-xoff;
-   Coord x2=IntAdd(x1,ts.dx);
-   Coord x3=IntAdd(x2,cursor_dx);
-
-   Coord ytop=(inner.dy-ts.dy)/2;
-   Coord ybase=ytop+ts.by;
-
-   MCoord w=Fraction(cursor_dx);
-   MCoord h=Fraction(ts.dy);
-   MCoord skew=Fraction(ts.skew);
-
-   MCoord y0=Fraction(ytop)+Fraction(dy);
-   MCoord y1=y0+h;
-
-   MCoord skew1=Div(h-Fraction(ts.by),h)*skew;
-
-   // selection
-
-   if( enable && select_len )
-     {
-      MCoord xs0;
-
-      if( select_off<pos )
-        {
-         xs0=Fraction(x1)+Fraction( font->text_guarded(text_buf.prefix(pos),select_off).dx );
-        }
-      else
-        {
-         xs0=Fraction(x3)+Fraction( font->text_guarded(text_buf.part(pos,len-pos),select_off-pos).dx );
-        }
-
-      ulen lim=select_off+select_len;
-
-      MCoord xs1;
-
-      if( lim<=pos )
-        {
-         xs1=Fraction(x1)+Fraction( font->text_guarded(text_buf.prefix(pos),lim).dx );
-        }
-      else
-        {
-         xs1=Fraction(x3)+Fraction( font->text_guarded(text_buf.part(pos,len-pos),lim-pos).dx );
-        }
-
-      FigurePoints<4> fig;
-
-      MCoord a=xs0+Fraction(dx)-skew1;
-      MCoord b=xs1+Fraction(dx)-skew1;
-
-      fig[0]={a+skew,y0};
-      fig[1]={a,y1};
-      fig[2]={b,y1};
-      fig[3]={b+skew,y0};
-
-      fig.solid(tart,+cfg.select);
-     }
-
-   drawText(font,tbuf,inner,TextPlace(x1,ybase),text_buf.prefix(pos),text);
-
-   drawText(font,tbuf,inner,TextPlace(x3,ybase),text_buf.part(pos,len-pos),text);
-
-   // cursor
-
-   if( show_cursor )
-     {
-      MCoord c0=y0;
-      MCoord c1=y1;
-
-      MCoord b0=Fraction(x2)+Fraction(dx)-skew1;
-      MCoord b1=b0+w;
-
-      MCoord a0=b0+skew;
-      MCoord a1=a0+w;
-
-      FigurePoints<12> fig;
-
-      fig[0]={a1,c0};
-      fig[1]={a1+w,c0};
-      fig[2]={a1+w,c0-w};
-      fig[3]={a0-w,c0-w};
-      fig[4]={a0-w,c0};
-      fig[5]={a0,c0};
-
-      fig[6]={b0,c1};
-      fig[7]={b0-w,c1};
-      fig[8]={b0-w,c1+w};
-      fig[9]={b1+w,c1+w};
-      fig[10]={b1+w,c1};
-      fig[11]={b1,c1};
-
-      if( focus && cursor )
-        {
-         fig.solid(tart,+cfg.cursor);
-        }
-      else
-        {
-         fig.loop(tart,HalfPos,w/3,+cfg.cursor);
-        }
-     }
-  }
-
   // border
 
   if( focus )
@@ -368,6 +249,134 @@ void LineEditShape::draw(const DrawBuf &buf) const
       FigureRightMark fig(x,y,len);
 
       fig.solid(art,text);
+     }
+  }
+
+  // text
+
+  {
+   Coord dx=RoundUpLen(ex+width);
+   Coord dy=RoundUpLen(width);
+
+   Pane inner=pane.shrink(dx,dy);
+
+   if( !inner ) return;
+
+   bool show_cursor = enable && ( !hide_cursor || focus ) ;
+
+   DrawBuf tbuf=buf.cut(inner);
+
+   SmoothDrawArt tart(tbuf);
+
+   ulen pos = show_cursor? this->pos : len ;
+
+   TextSize ts=font->text_guarded(text_buf.prefix(pos));
+
+   Coordinate cursor_dx=+cfg.cursor_dx;
+
+   Coordinate x1=(fs.dx0+cursor_dx)-xoff;
+   Coordinate x2=x1+ts.dx;
+   Coordinate x3=x2+cursor_dx;
+
+   MCoord DX=Fraction(dx);
+   MCoord X1=Fraction(x1)+DX;
+   MCoord X2=Fraction(x2)+DX;
+   MCoord X3=Fraction(x3)+DX;
+
+   Coord ytop=(inner.dy-ts.dy)/2;
+   Coord ybase=ytop+ts.by;
+
+   MCoord w=Fraction(cursor_dx);
+   MCoord h=Fraction(ts.dy);
+   MCoord skew=Fraction(ts.skew);
+
+   MCoord Y0=Fraction(ytop)+Fraction(dy);
+   MCoord Y1=Y0+h;
+
+   MCoord skew1=Div(h-Fraction(ts.by),h)*skew;
+
+   // selection
+
+   if( enable && select_len )
+     {
+      MCoord xs0;
+
+      if( select_off<pos )
+        {
+         xs0=X1+Fraction( font->text_guarded(text_buf.prefix(pos),select_off).dx );
+        }
+      else
+        {
+         xs0=X3+Fraction( font->text_guarded(text_buf.part(pos,len-pos),select_off-pos).dx );
+        }
+
+      ulen lim=select_off+select_len;
+
+      MCoord xs1;
+
+      if( lim<=pos )
+        {
+         xs1=X1+Fraction( font->text_guarded(text_buf.prefix(pos),lim).dx );
+        }
+      else
+        {
+         xs1=X3+Fraction( font->text_guarded(text_buf.part(pos,len-pos),lim-pos).dx );
+        }
+
+      FigurePoints<4> fig;
+
+      MCoord a=xs0-skew1;
+      MCoord b=xs1-skew1;
+
+      fig[0]={a+skew,Y0};
+      fig[1]={a,Y1};
+      fig[2]={b,Y1};
+      fig[3]={b+skew,Y0};
+
+      fig.solid(tart,+cfg.select);
+     }
+
+   drawText(font,tbuf,inner,TextPlace(x1,ybase),text_buf.prefix(pos),text);
+
+   drawText(font,tbuf,inner,TextPlace(x3,ybase),text_buf.part(pos,len-pos),text);
+
+   // cursor
+
+   if( show_cursor )
+     {
+      MCoord c0=Y0;
+      MCoord c1=Y1;
+
+      MCoord b0=X2-skew1;
+      MCoord b1=b0+w;
+
+      MCoord a0=b0+skew;
+      MCoord a1=a0+w;
+
+      FigurePoints<12> fig;
+
+      fig[0]={a1,c0};
+      fig[1]={a1+w,c0};
+      fig[2]={a1+w,c0-w};
+      fig[3]={a0-w,c0-w};
+      fig[4]={a0-w,c0};
+      fig[5]={a0,c0};
+
+      fig[6]={b0,c1};
+      fig[7]={b0-w,c1};
+      fig[8]={b0-w,c1+w};
+      fig[9]={b1+w,c1+w};
+      fig[10]={b1+w,c1};
+      fig[11]={b1,c1};
+
+      if( focus && cursor )
+        {
+         fig.solid(tart,+cfg.cursor);
+        }
+      else
+        {
+         fig.loop(tart,HalfPos,w/3,+cfg.cursor);
+        }
      }
   }
  }

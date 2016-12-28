@@ -191,6 +191,15 @@ class LineEditWindowOf : public SubWindow
 
    void keyLeft(bool shift,unsigned repeat=1)
     {
+     if( !shape.pos )
+       {
+        shape.xoff=0;
+
+        redraw();
+
+        return;
+       }
+
      CapDown(repeat,shape.pos);
 
      if( repeat )
@@ -207,6 +216,15 @@ class LineEditWindowOf : public SubWindow
 
    void keyRight(bool shift,unsigned repeat=1)
     {
+     if( shape.pos==shape.len )
+       {
+        shape.xoff=shape.xoffMax;
+
+        redraw();
+
+        return;
+       }
+
      CapDown(repeat,shape.len-shape.pos);
 
      if( repeat )

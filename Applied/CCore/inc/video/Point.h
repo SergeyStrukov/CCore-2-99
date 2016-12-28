@@ -349,6 +349,8 @@ inline MCoord Fraction(MCoord value,unsigned prec=0) // prec <= MPoint::Precisio
   return IntLShift(value,MPoint::Precision-prec);
  }
 
+inline MCoord Fraction(Coordinate x) { return Fraction(+x); }
+
 inline Coord RoundUpLen(MCoord dx)
  {
   return To16( IntRShift(dx+MPoint::One-1,MPoint::Precision) );
