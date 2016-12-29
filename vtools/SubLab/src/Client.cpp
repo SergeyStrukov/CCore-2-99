@@ -677,6 +677,28 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
+   class XScrollWindow_Sample : public XScrollWindow
+    {
+     public:
+
+      XScrollWindow_Sample(SubWindowHost &host,const ConfigType &cfg)
+       : XScrollWindow(host,cfg)
+       {
+        setRange(1000,10);
+       }
+    };
+
+   class YScrollWindow_Sample : public YScrollWindow
+    {
+     public:
+
+      YScrollWindow_Sample(SubWindowHost &host,const ConfigType &cfg)
+       : YScrollWindow(host,cfg)
+       {
+        setRange(1000,10);
+       }
+    };
+
    // CreateCombo()
 
    template <class W>
@@ -966,6 +988,9 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("Text align"_def,CreateCombo<AlignWindow<TextWindow_SampleText> >);
        add("TextLine"_def,Create<TextLineWindow_SampleText>);
        add("Progress"_def,Create<ProgressWindow_Sample>);
+       add("LineEdit"_def,Create<LineEditWindow>);
+       add("ScrollX"_def,Create<XScrollWindow_Sample>);
+       add("ScrollY"_def,Create<YScrollWindow_Sample>);
 
      add("Pane"_def);
 
@@ -974,7 +999,6 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("Message ok"_def,Create<MessageSubWindow_ok>);
        add("Message yes/no"_def,Create<MessageSubWindow_yes_no>);
        add("SimpleTextList"_def,Create<SimpleTextListWindow_SampleList>);
-       add("LineEdit"_def,Create<LineEditWindow>);
 
        //add(""_def,Create<>);
     }

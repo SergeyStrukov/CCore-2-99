@@ -1,4 +1,4 @@
-/* ShapeLib.ScrollListShape.cpp */
+/* Shape.ScrollList.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/ShapeLib.h>
+#include <CCore/inc/video/lib/Shape.ScrollList.h>
 
 #include <CCore/inc/video/FigureLib.h>
 

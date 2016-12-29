@@ -35,9 +35,7 @@ void SpecialDrawArt::block(Pane pane,DesktopColor color)
 
 void SpecialDrawArt::block(Pane pane,Blender blender)
  {
-  auto &fb=buf.getBuf();
-
-  fb.block_unsafe(Inf(fb.getPane(),buf.map(pane)),blender);
+  buf.erase(pane,blender);
  }
 
 void SpecialDrawArt::lineX(Coord x,Coord y,Coord len,DesktopColor line)

@@ -71,6 +71,8 @@ class DrawBuf
 
    void erase(Pane pane,VColor vc,Clr alpha) { buf.block_safe(map(pane),vc,alpha); }
 
+   void erase(Pane pane,BlenderType blender) { buf.block_safe(map(pane),blender); }
+
    // map
 
    template <class T>

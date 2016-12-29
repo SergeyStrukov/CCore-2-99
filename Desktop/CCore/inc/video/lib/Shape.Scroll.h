@@ -67,18 +67,33 @@ class ScrollShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<Coord> dxy = 20 ;
-
-     RefVal<VColor> top    =      Snow ;
      RefVal<VColor> back   =    Silver ;
-     RefVal<VColor> bottom =      Gray ;
      RefVal<VColor> focus  = OrangeRed ;
+     RefVal<VColor> gray   =      Gray ;
+     RefVal<VColor> snow   =      Snow ;
      RefVal<VColor> face   =     Black ;
      RefVal<VColor> faceUp =      Blue ;
+
+     RefVal<Coord> dxy = 20 ;
 
      RefVal<unsigned> speedUpPeriod = 12_tick ;
 
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       width.bind(bag.width);
+       back.bind(bag.back);
+       focus.bind(bag.focus);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       face.bind(bag.face);
+       faceUp.bind(bag.faceUp);
+
+       dxy.bind(bag.scroll_dxy);
+       speedUpPeriod.bind(bag.scroll_speedUpPeriod);
+      }
     };
 
    const Config &cfg;

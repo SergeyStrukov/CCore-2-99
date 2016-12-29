@@ -456,25 +456,9 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_LineEditWindow.bind(get());
 
-  cfg_XScrollWindow.width.bind(width);
-  cfg_XScrollWindow.dxy.bind(scroll_dxy);
-  cfg_XScrollWindow.top.bind(top);
-  cfg_XScrollWindow.bottom.bind(bottom);
-  cfg_XScrollWindow.back.bind(back);
-  cfg_XScrollWindow.focus.bind(focus);
-  cfg_XScrollWindow.face.bind(face);
-  cfg_XScrollWindow.faceUp.bind(faceUp);
-  cfg_XScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
+  cfg_XScrollWindow.bind(get());
 
-  cfg_YScrollWindow.width.bind(width);
-  cfg_YScrollWindow.dxy.bind(scroll_dxy);
-  cfg_YScrollWindow.top.bind(top);
-  cfg_YScrollWindow.bottom.bind(bottom);
-  cfg_YScrollWindow.back.bind(back);
-  cfg_YScrollWindow.focus.bind(focus);
-  cfg_YScrollWindow.face.bind(face);
-  cfg_YScrollWindow.faceUp.bind(faceUp);
-  cfg_YScrollWindow.speedUpPeriod.bind(scroll_speedUpPeriod);
+  cfg_YScrollWindow.bind(get());
 
   cfg_SimpleTopMenuWindow.width.bind(width);
   cfg_SimpleTopMenuWindow.space.bind(menu_space);
