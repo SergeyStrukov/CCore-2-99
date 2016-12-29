@@ -42,24 +42,43 @@ class ScrollListShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
+     RefVal<VColor> back         =    Silver ;
+     RefVal<VColor> focus        = OrangeRed ;
+     RefVal<VColor> gray         =      Gray ;
+     RefVal<VColor> snow         =      Snow ;
+     RefVal<VColor> inactive     =      Gray ;
+     RefVal<VColor> select       =    Yellow ;
+     RefVal<VColor> title        =      Navy ;
+     RefVal<VColor> title_top    =      Aqua ;
+     RefVal<VColor> title_bottom =      Gray ;
+     RefVal<VColor> text         =     Black ;
+
      RefVal<Point> space = Point(8,8) ;
-
-     RefVal<VColor> back   = Silver ;
-     RefVal<VColor> top    =   Gray ;
-     RefVal<VColor> bottom =   Snow ;
-
-     RefVal<VColor> title_top    = Aqua ;
-     RefVal<VColor> title_bottom = Gray ;
-
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> title    =      Navy ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> focus    = OrangeRed ;
-     RefVal<VColor> select   =    Yellow ;
 
      RefVal<Font> font;
 
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       width.bind(bag.width);
+       back.bind(bag.back);
+       focus.bind(bag.focus);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       inactive.bind(bag.inactive);
+
+       select.bind(bag.text_select);
+
+       text.bind(bag.list_text);
+       space.bind(bag.list_space);
+       font.bind(bag.list_font.font);
+
+       title.bind(bag.scroll_list_title);
+       title_top.bind(bag.scroll_list_title_top);
+       title_bottom.bind(bag.scroll_list_title_bottom);
+      }
     };
 
    // parameters
@@ -88,11 +107,11 @@ class ScrollListShape
 
    ScrollListShape(const Config &cfg_,const ComboInfo &info_) : cfg(cfg_),info(info_) {}
 
-   Point getMinSize() const;
+   Point getMinSize(Point cap=Point::Max()) const;
+
+   bool isGoodSize(Point size,Point cap=Point::Max()) const { return size>=getMinSize(cap); }
 
    void setMax();
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void initSelect();
 

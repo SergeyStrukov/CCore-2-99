@@ -17,28 +17,20 @@
 
 #include <CCore/inc/video/FigureLib.h>
 
+#include <CCore/inc/video/InfoSize.h>
+
 namespace CCore {
 namespace Video {
 
 /* class SimpleTextListShape */
 
-Point SimpleTextListShape::getMinSize() const
+Point SimpleTextListShape::getMinSize(Point cap) const
  {
   Font font=cfg.font.get();
 
-  Coord dx=0;
-  Coordinate dy=0;
+  Point space=+cfg.space;
 
-  for(ulen index=0,count=info->getLineCount(); index<count ;index++)
-    {
-     TextSize ts=font->text_guarded(info->getLine(index));
-
-     Replace_max(dx,ts.full_dx);
-
-     dy+=ts.dy;
-    }
-
-  return 2*(+cfg.space)+Point(dx,dy);
+  return 2*space+Inf(InfoSize(font,info),cap-2*space);
  }
 
 void SimpleTextListShape::setMax()

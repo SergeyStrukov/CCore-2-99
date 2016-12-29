@@ -286,6 +286,7 @@
 ../../Desktop/CCore/src/video/GammaTable.cpp
 ../../Desktop/CCore/src/video/Incremental.cpp
 ../../Desktop/CCore/src/video/Info.cpp
+../../Desktop/CCore/src/video/InfoSize.cpp
 ../../Desktop/CCore/src/video/Keyboard.cpp
 ../../Desktop/CCore/src/video/Layout.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Button.cpp

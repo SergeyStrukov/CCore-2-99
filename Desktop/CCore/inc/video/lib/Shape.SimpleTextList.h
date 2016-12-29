@@ -97,9 +97,9 @@ class SimpleTextListShape
 
    SimpleTextListShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
 
-   Point getMinSize() const;
+   Point getMinSize(Point cap=Point::Max()) const;
 
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+   bool isGoodSize(Point size,Point cap=Point::Max()) const { return size>=getMinSize(cap); }
 
    void setMax();
 

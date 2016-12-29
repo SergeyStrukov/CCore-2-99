@@ -53,47 +53,28 @@ class ScrollListInnerWindowOf : public SubWindow
 
   private:
 
-   void showSelect()
-    {
-     if( shape.showSelect() ) scroll_y.assert(shape.yoff);
-    }
-
    void setXOff(Coord xoff)
     {
-     if( xoff<0 )
-       xoff=0;
-     else if( xoff>shape.xoffMax )
-       xoff=shape.xoffMax;
-
-     if( xoff!=shape.xoff )
+     if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) )
        {
-        shape.xoff=xoff;
-
-        scroll_x.assert((ulen)xoff);
+        scroll_x.assert((ulen)shape.xoff);
 
         redraw();
        }
     }
 
-   void addXOff(Coord delta)
+   void shiftX(Coordinate count)
     {
-     setXOff( IntAdd(shape.xoff,delta) );
-    }
+     Coordinate dx=shape.xoff-count*shape.dxoff;
 
-   void subXOff(Coord delta)
-    {
-     setXOff( IntSub(shape.xoff,delta) );
+     setXOff(+dx);
     }
 
    void setYOff(ulen yoff)
     {
-     if( yoff>shape.yoffMax ) yoff=shape.yoffMax;
-
-     if( yoff!=shape.yoff )
+     if( Change(shape.yoff,Min(yoff,shape.yoffMax)) )
        {
-        shape.yoff=yoff;
-
-        scroll_y.assert(yoff);
+        scroll_y.assert(shape.yoff);
 
         redraw();
        }
@@ -101,24 +82,17 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void addYOff(ulen delta)
     {
-     if( shape.yoff<shape.yoffMax )
-       {
-        ulen cap=shape.yoffMax-shape.yoff;
-
-        setYOff(shape.yoff+Min(delta,cap));
-       }
+     setYOff(AddToCap(shape.yoff,delta,shape.yoffMax));
     }
 
    void subYOff(ulen delta)
     {
-     ulen yoff=shape.yoff;
+     setYOff(PosSub(shape.yoff,delta));
+    }
 
-     if( yoff>delta )
-       yoff-=delta;
-     else
-       yoff=0;
-
-     setYOff(yoff);
+   void showSelect()
+    {
+     if( shape.showSelect() ) scroll_y.assert(shape.yoff);
     }
 
    void selectFirst()
@@ -149,21 +123,22 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void addSelect(ulen delta)
     {
-     ulen count=shape.info->getLineCount();
-
-     if( delta && count && shape.select<count-1 && shape.setSelectDown(shape.select+Min<ulen>(delta,count-1-shape.select)) )
+     if( ulen count=shape.info->getLineCount() )
        {
-        showSelect();
+        if( shape.setSelectDown( AddToCap(shape.select,delta,count-1) ) )
+          {
+           showSelect();
 
-        outer->selected.assert(shape.select);
+           outer->selected.assert(shape.select);
 
-        redraw();
+           redraw();
+          }
        }
     }
 
    void subSelect(ulen delta)
     {
-     if( delta && shape.select && shape.setSelectUp(PosSub(shape.select,delta)) )
+     if( shape.setSelectUp( PosSub(shape.select,delta) ) )
        {
         showSelect();
 
@@ -175,20 +150,16 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void setSelect(ulen select,bool signal=true)
     {
-     ulen count=shape.info->getLineCount();
-
-     if( select>=count )
+     if( ulen count=shape.info->getLineCount() )
        {
-        select=count?count-1:0;
-       }
+        if( shape.setSelectDown( Min_cast(select,count-1) ) )
+          {
+           showSelect();
 
-     if( shape.select!=select && shape.setSelectDown(select) )
-       {
-        showSelect();
+           if( signal ) outer->selected.assert(shape.select);
 
-        if( signal ) outer->selected.assert(shape.select);
-
-        redraw();
+           redraw();
+          }
        }
     }
 
@@ -237,13 +208,13 @@ class ScrollListInnerWindowOf : public SubWindow
    bool shortDY() const { return shape.yoffMax>0; }
 
    template <class W>
-   void setScrollX(W &window)
+   void setScrollXRange(W &window)
     {
-     window.setRange((ulen)(shape.xoffMax+shape.dxoff),(ulen)shape.dxoff,(ulen)shape.xoff);
+     window.setRange((ulen)shape.xoffMax+(ulen)shape.dxoff,(ulen)shape.dxoff,(ulen)shape.xoff);
     }
 
    template <class W>
-   void setScrollY(W &window)
+   void setScrollYRange(W &window)
     {
      window.setRange(shape.yoffMax+shape.page,shape.page,shape.yoff);
     }
@@ -256,9 +227,7 @@ class ScrollListInnerWindowOf : public SubWindow
 
    // methods
 
-   auto getMinSize() const { return shape.getMinSize(); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   auto getMinSize(Point cap=Point::Max()) const { return shape.getMinSize(cap); }
 
    bool isEnabled() const { return shape.enable; }
 
@@ -290,6 +259,11 @@ class ScrollListInnerWindowOf : public SubWindow
 
    // drawing
 
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
+
    virtual void layout()
     {
      shape.pane=Pane(Null,getSize());
@@ -299,7 +273,7 @@ class ScrollListInnerWindowOf : public SubWindow
 
    virtual void draw(DrawBuf buf,bool) const
     {
-     try { shape.draw(buf); } catch(CatchType) {}
+     shape.draw(buf);
     }
 
    // base
@@ -318,16 +292,12 @@ class ScrollListInnerWindowOf : public SubWindow
 
    virtual void gainFocus()
     {
-     shape.focus=true;
-
-     redraw();
+     if( Change(shape.focus,true) ) redraw();
     }
 
    virtual void looseFocus()
     {
-     shape.focus=false;
-
-     redraw();
+     if( Change(shape.focus,false) ) redraw();
     }
 
    // mouse
@@ -357,13 +327,13 @@ class ScrollListInnerWindowOf : public SubWindow
        {
         case VKey_Left :
          {
-          subXOff(Coord(repeat)*shape.dxoff);
+          shiftX(CountToCoordinate(repeat));
          }
         break;
 
         case VKey_Right :
          {
-          addXOff(Coord(repeat)*shape.dxoff);
+          shiftX(-CountToCoordinate(repeat));
          }
         break;
 
@@ -451,23 +421,10 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      if( !shape.enable ) return;
 
+     ulen delta=IntAbs(delta_);
+
      if( delta_>0 )
        {
-        ulen delta=IntDist<Coord>(0,delta_);
-
-        if( mkey&MouseKey_Shift )
-          {
-           subYOff(delta);
-          }
-        else
-          {
-           subSelect(delta);
-          }
-       }
-     else if( delta_<0 )
-       {
-        ulen delta=IntDist<Coord>(delta_,0);
-
         if( mkey&MouseKey_Shift )
           {
            addYOff(delta);
@@ -475,6 +432,17 @@ class ScrollListInnerWindowOf : public SubWindow
         else
           {
            addSelect(delta);
+          }
+       }
+     else
+       {
+        if( mkey&MouseKey_Shift )
+          {
+           subYOff(delta);
+          }
+        else
+          {
+           subSelect(delta);
           }
        }
     }
@@ -498,6 +466,15 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
      CtorRefVal<typename YShape::Config> y_cfg;
 
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       Shape::Config::bind(bag);
+
+       x_cfg.bind(proxy);
+       y_cfg.bind(proxy);
+      }
     };
 
   private:
@@ -512,9 +489,9 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    void setScroll()
     {
-     if( scroll_x.isListed() ) inner.setScrollX(scroll_x);
+     if( scroll_x.isListed() ) inner.setScrollXRange(scroll_x);
 
-     if( scroll_y.isListed() ) inner.setScrollY(scroll_y);
+     if( scroll_y.isListed() ) inner.setScrollYRange(scroll_y);
     }
 
   private:
@@ -548,9 +525,12 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    // methods
 
-   auto getMinSize() const { return inner.getMinSize()+Point(scroll_y.getMinSize().dx,0); }
+   auto getMinSize(Point cap=Point::Max()) const
+    {
+     Point delta(scroll_y.getMinSize().dx,0);
 
-   bool isGoodSize(Point size) const { return inner.isGoodSize(size); }
+     return inner.getMinSize(cap-delta)+delta;
+    }
 
    bool isEnabled() const { return inner.isEnabled(); }
 
@@ -580,10 +560,16 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    // drawing
 
+   virtual bool isGoodSize(Point size) const
+    {
+     return inner.isGoodSize(size);
+    }
+
    virtual void layout()
     {
      Pane all(Null,getSize());
      Pane pane(all);
+
      Coord delta_x=scroll_y.getMinSize().dx;
      Coord delta_y=scroll_x.getMinSize().dy;
 

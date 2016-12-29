@@ -22,7 +22,7 @@ namespace Video {
 
 /* class ScrollListShape */
 
-Point ScrollListShape::getMinSize() const
+Point ScrollListShape::getMinSize(Point cap) const
  {
   Font font=cfg.font.get();
 
@@ -198,8 +198,8 @@ void ScrollListShape::draw(const DrawBuf &buf) const
 
   VColor text=enable?+cfg.text:+cfg.inactive;
   VColor title=enable?+cfg.title:+cfg.inactive;
-  VColor top=+cfg.top;
-  VColor bottom=+cfg.bottom;
+  VColor top=+cfg.gray;
+  VColor bottom=+cfg.snow;
 
   Point space=+cfg.space;
 

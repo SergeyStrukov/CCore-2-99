@@ -460,6 +460,8 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_YScrollWindow.bind(get());
 
+  cfg_ScrollListWindow.bind(get(),getSmartConfig());
+
   cfg_SimpleTopMenuWindow.width.bind(width);
   cfg_SimpleTopMenuWindow.space.bind(menu_space);
   cfg_SimpleTopMenuWindow.use_hotcolor.bind(use_hotcolor);
@@ -485,22 +487,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_SimpleCascadeMenuWindow.top.bind(top);
   cfg_SimpleCascadeMenuWindow.bottom.bind(bottom);
   cfg_SimpleCascadeMenuWindow.font.bind(menu_font.font);
-
-  cfg_ScrollListWindow.width.bind(width);
-  cfg_ScrollListWindow.space.bind(list_space);
-  cfg_ScrollListWindow.back.bind(back);
-  cfg_ScrollListWindow.top.bind(bottom);
-  cfg_ScrollListWindow.bottom.bind(top);
-  cfg_ScrollListWindow.text.bind(list_text);
-  cfg_ScrollListWindow.inactive.bind(inactive);
-  cfg_ScrollListWindow.focus.bind(focus);
-  cfg_ScrollListWindow.select.bind(text_select);
-  cfg_ScrollListWindow.font.bind(list_font.font);
-  cfg_ScrollListWindow.title.bind(scroll_list_title);
-  cfg_ScrollListWindow.title_top.bind(scroll_list_title_top);
-  cfg_ScrollListWindow.title_bottom.bind(scroll_list_title_bottom);
-  cfg_ScrollListWindow.x_cfg.bind(cfg_XScrollWindow);
-  cfg_ScrollListWindow.y_cfg.bind(cfg_YScrollWindow);
 
   // FileWindow
 

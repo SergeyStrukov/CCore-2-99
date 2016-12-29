@@ -132,6 +132,7 @@ obj/HeapEngine.o \
 obj/HeapSort.o \
 obj/Incremental.o \
 obj/Info.o \
+obj/InfoSize.o \
 obj/Init.o \
 obj/InstanceLock.o \
 obj/IntOp.o \
@@ -527,6 +528,7 @@ obj/HeapEngine.s \
 obj/HeapSort.s \
 obj/Incremental.s \
 obj/Info.s \
+obj/InfoSize.s \
 obj/Init.s \
 obj/InstanceLock.s \
 obj/IntOp.s \
@@ -922,6 +924,7 @@ obj/HeapEngine.dep \
 obj/HeapSort.dep \
 obj/Incremental.dep \
 obj/Info.dep \
+obj/InfoSize.dep \
 obj/Init.dep \
 obj/InstanceLock.dep \
 obj/IntOp.dep \
@@ -1593,6 +1596,9 @@ obj/Incremental.o : ../../Desktop/CCore/src/video/Incremental.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Info.o : ../../Desktop/CCore/src/video/Info.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/InfoSize.o : ../../Desktop/CCore/src/video/InfoSize.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Init.o : ../../Simple/CCore/src/gadget/Init.cpp
@@ -2773,6 +2779,9 @@ obj/Incremental.s : ../../Desktop/CCore/src/video/Incremental.cpp
 obj/Info.s : ../../Desktop/CCore/src/video/Info.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/InfoSize.s : ../../Desktop/CCore/src/video/InfoSize.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Init.s : ../../Simple/CCore/src/gadget/Init.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3950,6 +3959,9 @@ obj/Incremental.dep : ../../Desktop/CCore/src/video/Incremental.cpp
 
 obj/Info.dep : ../../Desktop/CCore/src/video/Info.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Info.o $< -MF $@
+
+obj/InfoSize.dep : ../../Desktop/CCore/src/video/InfoSize.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/InfoSize.o $< -MF $@
 
 obj/Init.dep : ../../Simple/CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Init.o $< -MF $@
