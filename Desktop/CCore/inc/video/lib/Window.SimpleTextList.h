@@ -78,10 +78,9 @@ class SimpleTextListWindowOf : public SubWindow
 
    void setSelect2(ulen select,ulen count,bool signal=true)
     {
-     if( select>=count )
-       {
-        select=count?count-1:0;
-       }
+     if( !count ) return;
+
+     Replace_min(select,count-1);
 
      if( Change(shape.select,select) )
        {
@@ -145,7 +144,8 @@ class SimpleTextListWindowOf : public SubWindow
      shape.info=info;
      shape.yoff=0;
      shape.xoff=0;
-     shape.select=0;
+
+     shape.initSelect();
 
      shape.setMax();
 
@@ -154,7 +154,7 @@ class SimpleTextListWindowOf : public SubWindow
 
    const Info & getInfo() const { return shape.info; }
 
-   ulen getSelect() const { return shape.select; }
+   ulen getSelect() const { return shape.select; } // valid OR MaxULen, if there is no positions
 
    void select(ulen select) { setSelect(select,false); }
 
@@ -324,7 +324,7 @@ class SimpleTextListWindowOf : public SubWindow
 
      ulen delta=IntAbs(delta_);
 
-     if( delta_>0 )
+     if( delta_<0 )
        {
         if( mkey&MouseKey_Shift )
           {
@@ -352,7 +352,7 @@ class SimpleTextListWindowOf : public SubWindow
 
    Signal<> entered;
    Signal<> dclicked;
-   Signal<ulen> selected; // select
+   Signal<ulen> selected; // select, always valid
  };
 
 /* type SimpleTextListWindow */

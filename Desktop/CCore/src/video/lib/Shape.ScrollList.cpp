@@ -22,25 +22,63 @@ namespace Video {
 
 /* class ScrollListShape */
 
+Coord ScrollListShape::AddSat(Coord a,Coord b)
+ {
+  MCoord ret=MCoord(a)+b;
+
+  if( ret>MaxCoord ) return MaxCoord;
+
+  return (Coord)ret;
+ }
+
+Coord ScrollListShape::GetLineDX(Font font,ComboInfoItem item,Coord off)
+ {
+  switch( item.type )
+    {
+     case ComboInfoText :
+      {
+       TextSize ts=font->text(item.text);
+
+       return ts.full_dx;
+      }
+     break;
+
+     case ComboInfoTitle :
+      {
+       TextSize ts=font->text(item.text);
+
+       return AddSat(ts.full_dx,off);
+      }
+     break;
+
+     default: // case ComboInfoSeparator :
+      {
+       return 0;
+      }
+    }
+ }
+
 Point ScrollListShape::getMinSize(Point cap) const
  {
   Font font=cfg.font.get();
 
+  Point space=+cfg.space;
+
+  FontSize fs=font->getSize();
+
+  Coord off=fs.dy;
+
   Coord dx=0;
-  Coord dy=0;
+  CoordAcc dy;
 
   for(ulen index=0,count=info->getLineCount(); index<count ;index++)
     {
-     TextSize ts=font->text(GetText(info->getLine(index)));
+     Replace_max(dx,GetLineDX(font,info->getLine(index),off));
 
-     IntGuard( !ts.overflow );
-
-     Replace_max(dx,ts.full_dx);
-
-     dy=IntAdd(dy,ts.dy);
+     dy.add(fs.dy);
     }
 
-  return 2*(+cfg.space)+Point(dx,dy);
+  return 2*space+Inf(Point(dx,dy.value),cap-2*space);
  }
 
 void ScrollListShape::setMax()
@@ -55,15 +93,13 @@ void ScrollListShape::setMax()
 
      FontSize fs=font->getSize();
 
+     Coord off=fs.dy;
+
      Coord dx=0;
 
      for(ulen index=0; index<count ;index++)
        {
-        TextSize ts=font->text(GetText(info->getLine(index)));
-
-        IntGuard( !ts.overflow );
-
-        Replace_max(dx,ts.full_dx);
+        Replace_max(dx,GetLineDX(font,info->getLine(index),off));
        }
 
      if( dx>inner.dx )
@@ -152,6 +188,8 @@ bool ScrollListShape::setSelectUp(ulen pos) // pos -> up , -> down , unchanged
 
 bool ScrollListShape::showSelect()
  {
+  if( select==MaxULen ) return false;
+
   if( select<yoff )
     {
      yoff=select;
@@ -164,7 +202,7 @@ bool ScrollListShape::showSelect()
 
      if( i>=page && page>0 )
        {
-        yoff=Min<ulen>(select-page+1,yoffMax);
+        yoff=Min_cast(yoffMax,select-page+1);
 
         return true;
        }
@@ -192,14 +230,14 @@ void ScrollListShape::draw(const DrawBuf &buf) const
  {
   if( !pane ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   art.block(pane,+cfg.back);
 
-  VColor text=enable?+cfg.text:+cfg.inactive;
-  VColor title=enable?+cfg.title:+cfg.inactive;
-  VColor top=+cfg.gray;
-  VColor bottom=+cfg.snow;
+  VColor text = enable? +cfg.text : +cfg.inactive ;
+  VColor title = enable? +cfg.title : +cfg.inactive ;
+  VColor gray=+cfg.gray;
+  VColor snow=+cfg.snow;
 
   Point space=+cfg.space;
 
@@ -209,23 +247,26 @@ void ScrollListShape::draw(const DrawBuf &buf) const
    MPane p(pane);
 
    MCoord width=+cfg.width;
-   MCoord dx=Fraction(space.x)-width;
-   MCoord dy=Fraction(space.y)-width;
+
+   MPoint s(space);
 
    FigureTopBorder fig_top(p,width);
 
-   fig_top.solid(art,top);
+   fig_top.solid(art,gray);
 
    FigureBottomBorder fig_bottom(p,width);
 
-   fig_bottom.solid(art,bottom);
+   fig_bottom.solid(art,snow);
 
    if( focus )
      {
-      FigureBox fig(p.shrink(Fraction(space.x)/2,Fraction(space.y)/2));
+      FigureBox fig(p.shrink(s/2));
 
       fig.loop(art,width,+cfg.focus);
      }
+
+   MCoord dx=s.x-width;
+   MCoord dy=s.y-width;
 
    if( xoff>0 )
      {
@@ -270,11 +311,23 @@ void ScrollListShape::draw(const DrawBuf &buf) const
 
    FontSize fs=font->getSize();
 
-   DrawBuf tbuf=buf.cutRebase(inner);
+   DrawBuf tbuf=buf.cut(inner);
 
-   Pane row(-xoff,0,IntAdd(xoff,inner.dx),fs.dy);
+   SmoothDrawArt tart(tbuf);
 
-   for(; index<count && row.y+row.dy<=inner.dy ;index++,row.y+=row.dy)
+   Pane row=inner;
+
+   row.dy=fs.dy;
+
+   Coord pos_x=fs.dx0-xoff;
+
+   Coord lim=inner.y+inner.dy;
+
+   VColor title_top=+cfg.title_top;
+   VColor title_bottom=+cfg.title_bottom;
+   Coord off=fs.dy;
+
+   for(; index<count && IntAdd(row.y,row.dy)<=lim ;index++,row.y+=row.dy)
      {
       if( enable && index==select ) tbuf.erase(row,+cfg.select);
 
@@ -284,67 +337,33 @@ void ScrollListShape::draw(const DrawBuf &buf) const
         {
          case ComboInfoText :
           {
-           font->text(tbuf,row,TextPlace(AlignX_Left,AlignY_Top),item.text,text);
-          }
-         break;
-
-         case ComboInfoSeparator :
-          {
-           SmoothDrawArt tart(tbuf);
-
-           MPane p(row);
-           MCoord delta=2*(p.dy/5);
-
-           p=p.shrinkY(delta);
-
-           TwoField field(p.getTopLeft(),bottom,p.getBottomLeft(),top);
-
-           FigureBox(p).solid(tart,field);
+           font->text(tbuf,row,TextPlace(pos_x,AlignY_Top),item.text,text);
           }
          break;
 
          case ComboInfoTitle :
           {
-           SmoothDrawArt tart(tbuf);
-
-           TextSize ts=font->text(item.text);
-           Coord off=ts.dy;
-           Coord len=ts.full_dx;
-
-#if 0
-
-           MPane p(row);
-           MCoord delta=(p.dy/3);
-
-           p=p.shrinkY(delta);
-
-           TwoField field(p.getTopLeft(),+cfg.title_top,p.getBottomLeft(),+cfg.title_bottom);
-
-           MCoord x1=p.x+MPoint::LShift(off);
-           MCoord x2=x1+MPoint::LShift(len);
-
-           MPane p1(p.x,x1,p.y,p.ey);
-           MPane p2(x2,p.ex,p.y,p.ey);
-
-           FigureBox(p1).solid(tart,field);
-
-           if( +p2 ) FigureBox(p2).solid(tart,field);
-
-#else
-
            MPane p(row);
 
-           TwoField field(p.getTopLeft(),+cfg.title_top,p.getBottomLeft(),+cfg.title_bottom);
+           TwoField field(p.getTopLeft(),title_top,p.getBottomLeft(),title_bottom);
 
            FigureBox(p).solid(tart,field);
 
-#endif
-
-           Pane t(row.x+off,row.y,len,row.dy);
-
-           font->text(tbuf,t,TextPlace(AlignX_Center,AlignY_Top),item.text,title);
+           font->text(tbuf,row,TextPlace(pos_x+off,AlignY_Top),item.text,title);
           }
          break;
+
+         default: // case ComboInfoSeparator :
+          {
+           MPane p(row);
+           MCoord delta=2*(p.dy/5);
+
+           p=p.shrinkY(delta);
+
+           TwoField field(p.getTopLeft(),snow,p.getBottomLeft(),gray);
+
+           FigureBox(p).solid(tart,field);
+          }
         }
      }
   }

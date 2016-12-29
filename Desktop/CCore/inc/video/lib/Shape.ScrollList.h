@@ -34,7 +34,9 @@ class ScrollListShape;
 
 class ScrollListShape
  {
-   static StrLen GetText(ComboInfoItem item) { return (item.type==ComboInfoText)?item.text:Empty; }
+   static Coord AddSat(Coord a,Coord b);
+
+   static Coord GetLineDX(Font font,ComboInfoItem item,Coord off);
 
   public:
 
@@ -91,7 +93,7 @@ class ScrollListShape
 
    bool enable =  true ;
    bool focus  = false ;
-   ulen select = 0 ;
+   ulen select = MaxULen ;
 
    ulen yoff  = 0 ;
    Coord xoff = 0 ;
@@ -105,7 +107,7 @@ class ScrollListShape
 
    explicit ScrollListShape(const Config &cfg_) : cfg(cfg_) {}
 
-   ScrollListShape(const Config &cfg_,const ComboInfo &info_) : cfg(cfg_),info(info_) {}
+   ScrollListShape(const Config &cfg_,const ComboInfo &info_) : cfg(cfg_),info(info_) { setSelectDown(0); }
 
    Point getMinSize(Point cap=Point::Max()) const;
 

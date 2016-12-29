@@ -1073,6 +1073,8 @@ void ClientWindow::type_selected(ulen index)
 
      // update
 
+     list_type.setFocus();
+
      layout();
      redraw();
     }
@@ -1103,6 +1105,17 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_,const UserPref
    connector_space_changed(this,&ClientWindow::space_changed,space.changed)
  {
   wlist.insTop(check_wheat,label_wheat,list_type,space);
+
+  ulen index=list_type.getSelect();
+
+  if( Change(cur_index,index) )
+    {
+     // create new
+
+     cur.set( info.getFactory(index)(wlist,pref) );
+
+     wlist.insTop(*cur);
+    }
  }
 
 ClientWindow::~ClientWindow()

@@ -79,6 +79,8 @@ void SimpleTextListShape::setMax()
 
 void SimpleTextListShape::showSelect()
  {
+  if( select==MaxULen ) return;
+
   if( select<yoff )
     {
      yoff=select;

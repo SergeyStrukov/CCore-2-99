@@ -409,7 +409,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
 
   if( !p ) return;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MCoord h=p.dx;
 

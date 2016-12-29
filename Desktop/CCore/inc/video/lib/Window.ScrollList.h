@@ -39,7 +39,7 @@ struct ScrollListWindowBase
 
   Signal<> entered;
   Signal<> dclicked;
-  Signal<ulen> selected; // select
+  Signal<ulen> selected; // select, always valid
  };
 
 /* class ScrollListInnerWindowOf<Shape> */
@@ -123,6 +123,8 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void addSelect(ulen delta)
     {
+     if( shape.select==MaxULen ) return;
+
      if( ulen count=shape.info->getLineCount() )
        {
         if( shape.setSelectDown( AddToCap(shape.select,delta,count-1) ) )
@@ -133,11 +135,17 @@ class ScrollListInnerWindowOf : public SubWindow
 
            redraw();
           }
+        else
+          {
+           addYOff(delta);
+          }
        }
     }
 
    void subSelect(ulen delta)
     {
+     if( shape.select==MaxULen ) return;
+
      if( shape.setSelectUp( PosSub(shape.select,delta) ) )
        {
         showSelect();
@@ -145,6 +153,10 @@ class ScrollListInnerWindowOf : public SubWindow
         outer->selected.assert(shape.select);
 
         redraw();
+       }
+     else
+       {
+        subYOff(delta);
        }
     }
 
@@ -253,7 +265,7 @@ class ScrollListInnerWindowOf : public SubWindow
 
    const ComboInfo & getInfo() const { return shape.info; }
 
-   ulen getSelect() const { return shape.select; }
+   ulen getSelect() const { return shape.select; } // valid OR MaxULen, if there is no positions
 
    void select(ulen select) { setSelect(select,false); }
 
@@ -423,7 +435,7 @@ class ScrollListInnerWindowOf : public SubWindow
 
      ulen delta=IntAbs(delta_);
 
-     if( delta_>0 )
+     if( delta_<0 )
        {
         if( mkey&MouseKey_Shift )
           {

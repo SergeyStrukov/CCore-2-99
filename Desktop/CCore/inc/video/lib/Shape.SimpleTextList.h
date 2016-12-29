@@ -81,7 +81,7 @@ class SimpleTextListShape
 
    bool enable =  true ;
    bool focus  = false ;
-   ulen select = 0 ;
+   ulen select = MaxULen ;
 
    ulen yoff  = 0 ;
    Coord xoff = 0 ;
@@ -95,13 +95,18 @@ class SimpleTextListShape
 
    explicit SimpleTextListShape(const Config &cfg_) : cfg(cfg_) {}
 
-   SimpleTextListShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
+   SimpleTextListShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) { initSelect(); }
 
    Point getMinSize(Point cap=Point::Max()) const;
 
    bool isGoodSize(Point size,Point cap=Point::Max()) const { return size>=getMinSize(cap); }
 
    void setMax();
+
+   void initSelect()
+    {
+     if( info->getLineCount() ) select=0; else select=MaxULen;
+    }
 
    void showSelect();
 
