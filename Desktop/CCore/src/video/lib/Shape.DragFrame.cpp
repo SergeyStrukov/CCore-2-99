@@ -1,4 +1,4 @@
-/* DragWindow.cpp */
+/* Shape.DragFrame.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/DragWindow.h>
+#include <CCore/inc/video/lib/Shape.DragFrame.h>
 
 #include <CCore/inc/video/FigureLib.h>
 
@@ -22,14 +22,14 @@ namespace Video {
 
 /* class DragShape */
 
-class DragShape::DrawArt : public SmoothDrawArt
+class DragFrameShape::DrawArt : public SmoothDrawArt
  {
   public:
 
    DrawArt(const DrawBuf &buf) : SmoothDrawArt(buf) {}
  };
 
-VColor DragShape::dragColor(DragType zone) const
+VColor DragFrameShape::dragColor(DragType zone) const
  {
   if( drag_type==zone ) return +cfg.dragActive;
 
@@ -38,7 +38,7 @@ VColor DragShape::dragColor(DragType zone) const
   return +cfg.drag;
  }
 
-void DragShape::draw_Frame(DrawArt &art) const
+void DragFrameShape::draw_Frame(DrawArt &art) const
  {
   VColor top=+cfg.frame;
   VColor bottom=+cfg.top;
@@ -124,7 +124,7 @@ void DragShape::draw_Frame(DrawArt &art) const
   }
  }
 
-void DragShape::draw_TopLeft(DrawArt &art) const
+void DragFrameShape::draw_TopLeft(DrawArt &art) const
  {
   if( +dragTopLeft )
     {
@@ -144,7 +144,7 @@ void DragShape::draw_TopLeft(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Left(DrawArt &art) const
+void DragFrameShape::draw_Left(DrawArt &art) const
  {
   if( +dragLeft )
     {
@@ -162,7 +162,7 @@ void DragShape::draw_Left(DrawArt &art) const
     }
  }
 
-void DragShape::draw_BottomLeft(DrawArt &art) const
+void DragFrameShape::draw_BottomLeft(DrawArt &art) const
  {
   if( +dragBottomLeft )
     {
@@ -182,7 +182,7 @@ void DragShape::draw_BottomLeft(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Bottom(DrawArt &art) const
+void DragFrameShape::draw_Bottom(DrawArt &art) const
  {
   if( +dragBottom )
     {
@@ -200,7 +200,7 @@ void DragShape::draw_Bottom(DrawArt &art) const
     }
  }
 
-void DragShape::draw_BottomRight(DrawArt &art) const
+void DragFrameShape::draw_BottomRight(DrawArt &art) const
  {
   if( +dragBottomRight )
     {
@@ -220,7 +220,7 @@ void DragShape::draw_BottomRight(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Right(DrawArt &art) const
+void DragFrameShape::draw_Right(DrawArt &art) const
  {
   if( +dragRight )
     {
@@ -238,7 +238,7 @@ void DragShape::draw_Right(DrawArt &art) const
     }
  }
 
-void DragShape::draw_TopRight(DrawArt &art) const
+void DragFrameShape::draw_TopRight(DrawArt &art) const
  {
   if( +dragTopRight )
     {
@@ -258,7 +258,7 @@ void DragShape::draw_TopRight(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Bar(DrawArt &art) const
+void DragFrameShape::draw_Bar(DrawArt &art) const
  {
   if( +titleBar )
     {
@@ -284,7 +284,7 @@ void DragShape::draw_Bar(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Alert(DrawArt &art) const
+void DragFrameShape::draw_Alert(DrawArt &art) const
  {
   if( +btnAlert )
     {
@@ -352,7 +352,7 @@ void DragShape::draw_Alert(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Min(DrawArt &art) const
+void DragFrameShape::draw_Min(DrawArt &art) const
  {
   if( +btnMin )
     {
@@ -392,7 +392,7 @@ void DragShape::draw_Min(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Max(DrawArt &art) const
+void DragFrameShape::draw_Max(DrawArt &art) const
  {
   if( +btnMax )
     {
@@ -445,7 +445,7 @@ void DragShape::draw_Max(DrawArt &art) const
     }
  }
 
-void DragShape::draw_Close(DrawArt &art) const
+void DragFrameShape::draw_Close(DrawArt &art) const
  {
   if( +btnClose )
     {
@@ -488,7 +488,7 @@ void DragShape::draw_Close(DrawArt &art) const
     }
  }
 
-Point DragShape::getDeltaSize() const
+Point DragFrameShape::getDeltaSize() const
  {
   Coord dxy=+cfg.frame_dxy;
   Coord tdy=+cfg.title_dy;
@@ -496,7 +496,7 @@ Point DragShape::getDeltaSize() const
   return Point(2*dxy,tdy+dxy);
  }
 
-Coord DragShape::getMinDx(bool is_main,StrLen title) const
+Coord DragFrameShape::getMinDx(bool is_main,StrLen title) const
  {
   Coord width=RoundUpLen(+cfg.width);
   Coord tdy=+cfg.title_dy;
@@ -513,7 +513,7 @@ Coord DragShape::getMinDx(bool is_main,StrLen title) const
   return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+btn_len+bdx/4);
  }
 
-void DragShape::reset(const DefString &title_,bool is_main_,bool max_button_)
+void DragFrameShape::reset(const DefString &title_,bool is_main_,bool max_button_)
  {
   has_focus=false;
   max_button=max_button_;
@@ -524,11 +524,14 @@ void DragShape::reset(const DefString &title_,bool is_main_,bool max_button_)
   btn_type=DragType_None;
   alert_type=AlertType_No;
   alert_blink=false;
+  help=false;
 
   title=title_;
+
+  time=0;
  }
 
-void DragShape::layout(Point size_)
+void DragFrameShape::layout(Point size_)
  {
   size=size_;
 
@@ -612,7 +615,7 @@ void DragShape::layout(Point size_)
     }
  }
 
-void DragShape::draw(const DrawBuf &buf) const
+void DragFrameShape::draw(const DrawBuf &buf) const
  {
   DrawArt art(buf);
 
@@ -634,7 +637,7 @@ void DragShape::draw(const DrawBuf &buf) const
   draw_Close(art);
  }
 
-void DragShape::draw(const DrawBuf &buf,DragType drag_type) const
+void DragFrameShape::draw(const DrawBuf &buf,DragType drag_type) const
  {
   DrawArt art(buf);
 
@@ -655,7 +658,12 @@ void DragShape::draw(const DrawBuf &buf,DragType drag_type) const
     }
  }
 
-Pane DragShape::getPane(DragType drag_type) const
+void DragFrameShape::shade(FrameBuf<DesktopColor> &buf) const
+ {
+  buf.erase(+cfg.shade_color,+cfg.shade_alpha);
+ }
+
+Pane DragFrameShape::getPane(DragType drag_type) const
  {
   switch( drag_type )
     {
@@ -676,7 +684,7 @@ Pane DragShape::getPane(DragType drag_type) const
     }
  }
 
-DragType DragShape::dragTest(Point point) const
+DragType DragFrameShape::dragTest(Point point) const
  {
   if( dragTopLeft.contains(point) ) return DragType_TopLeft;
 
@@ -710,5 +718,4 @@ DragType DragShape::dragTest(Point point) const
 
 } // namespace Video
 } // namespace CCore
-
 

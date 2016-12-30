@@ -17,7 +17,7 @@
 #define CCore_inc_video_ToolWindow_h
 
 #include <CCore/inc/video/SubWindow.h>
-#include <CCore/inc/video/FrameGuards.h>
+#include <CCore/inc/video/FrameBase.h>
 #include <CCore/inc/video/RefVal.h>
 
 #include <CCore/inc/DeferCall.h>

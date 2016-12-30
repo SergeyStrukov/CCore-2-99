@@ -279,7 +279,7 @@
 ../../Desktop/CCore/src/video/Font.cpp
 ../../Desktop/CCore/src/video/FontDatabase.cpp
 ../../Desktop/CCore/src/video/FontParam.cpp
-../../Desktop/CCore/src/video/FrameGuards.cpp
+../../Desktop/CCore/src/video/FrameBase.cpp
 ../../Desktop/CCore/src/video/FrameWindow.cpp
 ../../Desktop/CCore/src/video/FreeType.cpp
 ../../Desktop/CCore/src/video/FreeTypeFont.cpp
@@ -292,6 +292,7 @@
 ../../Desktop/CCore/src/video/lib/Shape.Button.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Contour.cpp
+../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Label.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Light.cpp
@@ -308,6 +309,7 @@
 ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 ../../Desktop/CCore/src/video/lib/Window.Decor.cpp
+../../Desktop/CCore/src/video/lib/Window.DragFrame.cpp
 ../../Desktop/CCore/src/video/lib/Window.Info.cpp
 ../../Desktop/CCore/src/video/lib/Window.Light.cpp
 ../../Desktop/CCore/src/video/lib/Window.LineEdit.cpp

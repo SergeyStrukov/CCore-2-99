@@ -65,6 +65,7 @@ struct Param
   const DragWindow::ConfigType &drag_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
 
+  DragFrame::ConfigType frame_cfg;
   ClientWindow::ConfigType client_cfg;
 
   Param()
@@ -81,7 +82,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragWindow main_win;
+   DragFrame main_frame;
 
    ExceptionClient exception_client;
 
@@ -106,7 +107,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     main_win.createMain(cmd_display,desktop->getScreenSize(),"SubLab"_def);
+     main_frame.createMain(cmd_display,desktop->getScreenSize(),"SubLab"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -128,7 +129,7 @@ class Application : public ApplicationBase
 
    void pref_update()
     {
-     main_win.redrawAll(true);
+     main_frame.redrawAll(true);
     }
 
    SignalConnector<Application> connector_pref_update;
@@ -138,13 +139,13 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.drag_cfg),
-      exception_client(main_win,param.exception_cfg,report),
-      client(main_win,param.client_cfg,param.pref),
+      main_frame(param.desktop,param.frame_cfg),
+      exception_client(main_frame,param.exception_cfg,report),
+      client(main_frame,param.client_cfg,param.pref),
       connector_pref_update(this,&Application::pref_update,param.pref.update)
     {
-     main_win.bindAlertClient(exception_client);
-     main_win.bindClient(client);
+     main_frame.bindAlertClient(exception_client);
+     main_frame.bindClient(client);
     }
 
    ~Application()

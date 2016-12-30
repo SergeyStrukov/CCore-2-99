@@ -1,7 +1,7 @@
-/* FrameGuards.h */
+/* Window.DragFrame.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -13,23 +13,12 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_FrameGuards_h
-#define CCore_inc_video_FrameGuards_h
-
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/video/lib/Window.DragFrame.h>
 
 namespace CCore {
 namespace Video {
 
-/* functions */
-
-void GuardNoClient();
-
-void GuardNotDead();
 
 } // namespace Video
 } // namespace CCore
-
-#endif
-
 

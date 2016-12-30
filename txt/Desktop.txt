@@ -33,7 +33,6 @@ FreeTypeFont.h       ++
 
 ButtonId.h           ++
 DesktopKey.h         ++        
-FrameGuards.h        ++
 ProgressScale.h      ++      
 Picture.h            ++
 Info.h               ++
@@ -53,6 +52,8 @@ FontDatabase.h       ++
 
 PrintDDL.h           ++
 InfoSize.h           ++
+
+FrameBase.h          ++
 
 ================================================================================
 

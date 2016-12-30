@@ -1084,10 +1084,8 @@ class SimpleCascadeMenuOf
 
      frame.getHost()->setFocus();
 
-     connector_moved.disconnect();
      connector_moved.connect(parent->moved);
 
-     connector_update.disconnect();
      connector_update.connect(data.update);
     }
 

@@ -18,7 +18,7 @@
 
 #include <CCore/inc/video/SubWindow.h>
 #include <CCore/inc/video/Font.h>
-#include <CCore/inc/video/FrameGuards.h>
+#include <CCore/inc/video/FrameBase.h>
 #include <CCore/inc/video/RefVal.h>
 
 #include <CCore/inc/String.h>
@@ -442,7 +442,6 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
    void bindUpdate(Signal<> &update)
     {
-     connector_updateConfig.disconnect();
      connector_updateConfig.connect(update);
     }
 

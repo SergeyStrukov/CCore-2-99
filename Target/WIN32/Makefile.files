@@ -110,8 +110,8 @@ obj/Font.o \
 obj/FontDatabase.o \
 obj/FontParam.o \
 obj/Forget.o \
+obj/FrameBase.o \
 obj/FrameBuf.o \
-obj/FrameGuards.o \
 obj/FrameWindow.o \
 obj/FreeType.o \
 obj/FreeTypeFont.o \
@@ -280,6 +280,7 @@ obj/Sem.o \
 obj/Shape.Button.o \
 obj/Shape.Check.o \
 obj/Shape.Contour.o \
+obj/Shape.DragFrame.o \
 obj/Shape.Info.o \
 obj/Shape.Label.o \
 obj/Shape.Light.o \
@@ -375,6 +376,7 @@ obj/VideoDevice.o \
 obj/Window.Button.o \
 obj/Window.Check.o \
 obj/Window.Decor.o \
+obj/Window.DragFrame.o \
 obj/Window.Info.o \
 obj/Window.Light.o \
 obj/Window.LineEdit.o \
@@ -502,8 +504,8 @@ obj/Font.s \
 obj/FontDatabase.s \
 obj/FontParam.s \
 obj/Forget.s \
+obj/FrameBase.s \
 obj/FrameBuf.s \
-obj/FrameGuards.s \
 obj/FrameWindow.s \
 obj/FreeType.s \
 obj/FreeTypeFont.s \
@@ -672,6 +674,7 @@ obj/Sem.s \
 obj/Shape.Button.s \
 obj/Shape.Check.s \
 obj/Shape.Contour.s \
+obj/Shape.DragFrame.s \
 obj/Shape.Info.s \
 obj/Shape.Label.s \
 obj/Shape.Light.s \
@@ -767,6 +770,7 @@ obj/VideoDevice.s \
 obj/Window.Button.s \
 obj/Window.Check.s \
 obj/Window.Decor.s \
+obj/Window.DragFrame.s \
 obj/Window.Info.s \
 obj/Window.Light.s \
 obj/Window.LineEdit.s \
@@ -894,8 +898,8 @@ obj/Font.dep \
 obj/FontDatabase.dep \
 obj/FontParam.dep \
 obj/Forget.dep \
+obj/FrameBase.dep \
 obj/FrameBuf.dep \
-obj/FrameGuards.dep \
 obj/FrameWindow.dep \
 obj/FreeType.dep \
 obj/FreeTypeFont.dep \
@@ -1064,6 +1068,7 @@ obj/Sem.dep \
 obj/Shape.Button.dep \
 obj/Shape.Check.dep \
 obj/Shape.Contour.dep \
+obj/Shape.DragFrame.dep \
 obj/Shape.Info.dep \
 obj/Shape.Label.dep \
 obj/Shape.Light.dep \
@@ -1159,6 +1164,7 @@ obj/VideoDevice.dep \
 obj/Window.Button.dep \
 obj/Window.Check.dep \
 obj/Window.Decor.dep \
+obj/Window.DragFrame.dep \
 obj/Window.Info.dep \
 obj/Window.Light.dep \
 obj/Window.LineEdit.dep \
@@ -1517,10 +1523,10 @@ obj/FontParam.o : ../../Desktop/CCore/src/video/FontParam.cpp
 obj/Forget.o : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/FrameBuf.o : ../../Applied/CCore/src/video/FrameBuf.cpp
+obj/FrameBase.o : ../../Desktop/CCore/src/video/FrameBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/FrameGuards.o : ../../Desktop/CCore/src/video/FrameGuards.cpp
+obj/FrameBuf.o : ../../Applied/CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FrameWindow.o : ../../Desktop/CCore/src/video/FrameWindow.cpp
@@ -2027,6 +2033,9 @@ obj/Shape.Check.o : ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
 obj/Shape.Contour.o : ../../Desktop/CCore/src/video/lib/Shape.Contour.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Shape.DragFrame.o : ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Shape.Info.o : ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2310,6 +2319,9 @@ obj/Window.Check.o : ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Decor.o : ../../Desktop/CCore/src/video/lib/Window.Decor.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.DragFrame.o : ../../Desktop/CCore/src/video/lib/Window.DragFrame.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Info.o : ../../Desktop/CCore/src/video/lib/Window.Info.cpp
@@ -2686,10 +2698,10 @@ obj/FontParam.s : ../../Desktop/CCore/src/video/FontParam.cpp
 obj/Forget.s : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/FrameBuf.s : ../../Applied/CCore/src/video/FrameBuf.cpp
+obj/FrameBase.s : ../../Desktop/CCore/src/video/FrameBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/FrameGuards.s : ../../Desktop/CCore/src/video/FrameGuards.cpp
+obj/FrameBuf.s : ../../Applied/CCore/src/video/FrameBuf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/FrameWindow.s : ../../Desktop/CCore/src/video/FrameWindow.cpp
@@ -3196,6 +3208,9 @@ obj/Shape.Check.s : ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
 obj/Shape.Contour.s : ../../Desktop/CCore/src/video/lib/Shape.Contour.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.DragFrame.s : ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Shape.Info.s : ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3479,6 +3494,9 @@ obj/Window.Check.s : ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Decor.s : ../../Desktop/CCore/src/video/lib/Window.Decor.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.DragFrame.s : ../../Desktop/CCore/src/video/lib/Window.DragFrame.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Info.s : ../../Desktop/CCore/src/video/lib/Window.Info.cpp
@@ -3855,11 +3873,11 @@ obj/FontParam.dep : ../../Desktop/CCore/src/video/FontParam.cpp
 obj/Forget.dep : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Forget.o $< -MF $@
 
+obj/FrameBase.dep : ../../Desktop/CCore/src/video/FrameBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameBase.o $< -MF $@
+
 obj/FrameBuf.dep : ../../Applied/CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameBuf.o $< -MF $@
-
-obj/FrameGuards.dep : ../../Desktop/CCore/src/video/FrameGuards.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameGuards.o $< -MF $@
 
 obj/FrameWindow.dep : ../../Desktop/CCore/src/video/FrameWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameWindow.o $< -MF $@
@@ -4365,6 +4383,9 @@ obj/Shape.Check.dep : ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
 obj/Shape.Contour.dep : ../../Desktop/CCore/src/video/lib/Shape.Contour.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Contour.o $< -MF $@
 
+obj/Shape.DragFrame.dep : ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.DragFrame.o $< -MF $@
+
 obj/Shape.Info.dep : ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Info.o $< -MF $@
 
@@ -4649,6 +4670,9 @@ obj/Window.Check.dep : ../../Desktop/CCore/src/video/lib/Window.Check.cpp
 
 obj/Window.Decor.dep : ../../Desktop/CCore/src/video/lib/Window.Decor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Decor.o $< -MF $@
+
+obj/Window.DragFrame.dep : ../../Desktop/CCore/src/video/lib/Window.DragFrame.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.DragFrame.o $< -MF $@
 
 obj/Window.Info.dep : ../../Desktop/CCore/src/video/lib/Window.Info.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Info.o $< -MF $@
