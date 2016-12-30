@@ -17,6 +17,7 @@
 #define CCore_inc_video_lib_Window_DragFrame_h
 
 #include <CCore/inc/video/SubWindow.h>
+#include <CCore/inc/video/DrawTools.h>
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
 
@@ -48,6 +49,8 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
    bool client_capture = false ;
    bool delay_draw = false ;
    bool enable_react = true ;
+
+   RedrawSet redraw_set;
 
   private:
 
@@ -286,6 +289,24 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      if( !enable_react ) shape.shade(buf);
     }
 
+   void shade(FrameBuf<DesktopColor> &buf,Pane pane)
+    {
+     if( !enable_react ) shape.shade(buf,pane);
+    }
+
+   void shadeOuter(FrameBuf<DesktopColor> &buf,Pane pane)
+    {
+     if( !enable_react )
+       {
+        PaneSub sub(buf.getPane(),pane);
+
+        shape.shade(buf,sub.top);
+        shape.shade(buf,sub.bottom);
+        shape.shade(buf,sub.left);
+        shape.shade(buf,sub.right);
+       }
+    }
+
    void redrawBuf(FuncArgType<FrameBuf<DesktopColor> &> func)
     {
      if( host->isDead() ) return;
@@ -317,7 +338,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
                        {
                         try { shape.draw(buf); } catch(...) {}
 
-                        shade(buf);
+                        Pane pane=shape.getClient();
+
+                        shadeOuter(buf,pane);
 
                         host->invalidate(1);
 
@@ -334,11 +357,74 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
                                       {
                                        try { shape.draw(buf,drag_type); } catch(...) {}
 
-                                       shade(buf);
+                                       shade(buf,pane);
 
                                        host->invalidate(pane,1);
 
                                       } );
+    }
+
+   void redrawAll(bool do_layout=false)
+    {
+     if( do_layout )
+       {
+        shape.layout(size);
+
+        Pane place=shape.getClient();
+
+        if( client ) client->setPlace(place);
+
+        if( alert_client ) alert_client->setPlace(place);
+       }
+
+     redraw_set.pop();
+
+     redrawBuf( [this] (FrameBuf<DesktopColor> &buf)
+                       {
+                        try { shape.draw(buf); } catch(...) {}
+
+                        getClient().forward_draw(buf,shape.drag_type);
+
+                        shade(buf);
+
+                        host->invalidate(1);
+
+                       } );
+    }
+
+   void redrawClient()
+    {
+     redraw_set.pop();
+
+     redrawBuf( [this] (FrameBuf<DesktopColor> &buf)
+                       {
+                        getClient().forward_draw(buf,shape.drag_type);
+
+                        Pane pane=shape.getClient();
+
+                        shade(buf,pane);
+
+                        host->invalidate(pane,1);
+
+                       } );
+    }
+
+   void redrawSet()
+    {
+     auto r=redraw_set.pop();
+
+     redrawBuf( [this,r] (FrameBuf<DesktopColor> &buf)
+                         {
+                          for(Pane pane : r )
+                            {
+                             getClient().forward_draw(buf,pane,shape.drag_type);
+
+                             shade(buf,pane);
+
+                             host->invalidate(pane,1);
+                            }
+
+                         } );
     }
 
    void pushAlertBlink()
@@ -540,60 +626,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
        }
     }
 
-   void redrawAll(bool do_layout=false)
-    {
-     if( do_layout )
-       {
-        shape.layout(size);
-
-        Pane place=shape.getClient();
-
-        if( client ) client->setPlace(place);
-
-        if( alert_client ) alert_client->setPlace(place);
-       }
-
-     redrawBuf( [this] (FrameBuf<DesktopColor> &buf)
-                       {
-                        try { shape.draw(buf); } catch(...) {}
-
-                        getClient().forward_draw(buf,shape.drag_type);
-
-                        shade(buf);
-
-                        host->invalidate(1);
-
-                       } );
-    }
-
-   void redrawClient()
-    {
-     redrawBuf( [this] (FrameBuf<DesktopColor> &buf)
-                       {
-                        getClient().forward_draw(buf,shape.drag_type);
-
-                        shade(buf);
-
-                        host->invalidate(shape.getClient(),1);
-
-                       } );
-    }
-
-   void redrawClient(Pane pane)
-    {
-     redrawBuf( [this,pane] (FrameBuf<DesktopColor> &buf)
-                            {
-                             getClient().forward_draw(buf,pane,shape.drag_type);
-
-                             shade(buf);
-
-                             host->invalidate(pane,1);
-
-                            } );
-    }
-
-   unsigned getToken() { return host->getToken(); }
-
    void setTitle(const DefString &title)
     {
      shape.title=title;
@@ -621,7 +653,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    virtual void redraw(Pane pane)
     {
-     input.redrawClient(pane);
+     if( redraw_set.add(pane) ) input.redrawSet();
     }
 
    virtual void setFocus(SubWindow *)
@@ -778,9 +810,19 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    // user input
 
-   virtual void disableReact() { enable_react=false; redrawAll(); }
+   virtual void disableReact()
+    {
+     enable_react=false;
 
-   virtual void enableReact() { enable_react=true; redrawAll(); }
+     redrawAll();
+    }
+
+   virtual void enableReact()
+    {
+     enable_react=true;
+
+     redrawAll();
+    }
 
    virtual void react(UserAction action)
     {
@@ -941,9 +983,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
       void redrawAll(bool do_layout=false) { try_post(&DragFrameOf<Shape>::redrawAll,do_layout); }
 
-      void redrawClient() { try_post(&DragFrameOf<Shape>::redrawClient); }
-
-      void redrawClient(Pane pane) { try_post(&DragFrameOf<Shape>::redrawClient,pane); }
+      void redrawSet() { try_post(&DragFrameOf<Shape>::redrawSet); }
     };
 
    Input input;

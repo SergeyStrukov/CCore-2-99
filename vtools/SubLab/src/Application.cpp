@@ -13,6 +13,8 @@
 
 #include <inc/Client.h>
 
+#include <CCore/inc/video/lib/Window.DragFrame.h>
+
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/FreeTypeFont.h>
@@ -129,7 +131,7 @@ class Application : public ApplicationBase
 
    void pref_update()
     {
-     main_frame.redrawAll(true);
+     main_frame.input.redrawAll(true);
     }
 
    SignalConnector<Application> connector_pref_update;

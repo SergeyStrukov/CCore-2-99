@@ -37,6 +37,7 @@ struct Param
 
   Preference pref;
 
+  DragFrame::ConfigType frame_cfg;
   const DragWindow::ConfigType &drag_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
 
@@ -56,7 +57,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragWindow main_win;
+   DragFrame main_frame;
 
    ExceptionClient exception_client;
    DesignerWindow client;
@@ -82,10 +83,10 @@ class Application : public ApplicationBase
     {
      PlaceFrame place(desktop);
 
-     main_win.createMain(cmd_display,
-                         place.getPane(Div(1,8),Div(1,2),Div(1,8),Div(3,4)),
-                         place.getMaxSize(),
-                         "User Preference"_def);
+     main_frame.createMain(cmd_display,
+                           place.getPane(Div(1,8),Div(1,2),Div(1,8),Div(3,4)),
+                           place.getMaxSize(),
+                           "User Preference"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -107,7 +108,7 @@ class Application : public ApplicationBase
 
    void prefUpdate()
     {
-     main_win.redrawAll(true);
+     main_frame.input.redrawAll(true);
     }
 
    SignalConnector<Application> connector_pref_update;
@@ -117,13 +118,13 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.drag_cfg),
-      exception_client(main_win,param.exception_cfg,report),
-      client(main_win,param.designer_cfg,param.pref),
+      main_frame(param.desktop,param.frame_cfg),
+      exception_client(main_frame,param.exception_cfg,report),
+      client(main_frame,param.designer_cfg,param.pref),
       connector_pref_update(this,&Application::prefUpdate,param.pref.update)
     {
-     main_win.bindAlertClient(exception_client);
-     main_win.bindClient(client);
+     main_frame.bindAlertClient(exception_client);
+     main_frame.bindClient(client);
     }
 
    ~Application()

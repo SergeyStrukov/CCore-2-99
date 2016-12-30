@@ -196,6 +196,8 @@ class DragFrameShape
 
    void shade(FrameBuf<DesktopColor> &buf) const;
 
+   void shade(FrameBuf<DesktopColor> &buf,Pane pane) const;
+
    bool resetTime()
     {
      bool ret = !time ;

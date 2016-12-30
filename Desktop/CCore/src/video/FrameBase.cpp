@@ -110,6 +110,65 @@ void DragPane(Pane &place,Point delta,DragType drag_type)
     }
  }
 
+/* class RedrawSet */
+
+AreaType RedrawSet::Excess(Pane a,Pane b,Pane c)
+ {
+  Pane d=Inf(a,b);
+
+  return c.getArea()+d.getArea()-a.getArea()-b.getArea();
+ }
+
+void RedrawSet::compress(Pane pane)
+ {
+  Pane *dst=0;
+  Pane src;
+  AreaType best_e=0;
+
+  for(Pane &p : set )
+    {
+     Pane q=Sup_nonempty(p,pane);
+     AreaType e=Excess(p,pane,q);
+
+     if( !dst || e<best_e )
+       {
+        dst=&p;
+        src=q;
+        best_e=e;
+
+        if( !e ) break;
+       }
+    }
+
+  *dst=src;
+ }
+
+bool RedrawSet::add(Pane pane)
+ {
+  if( +pane )
+    {
+     bool ret=!count;
+
+     if( count<Len )
+       {
+        set[count++]=pane;
+       }
+     else
+       {
+        compress(pane);
+       }
+
+     return ret;
+    }
+
+  return false;
+ }
+
+PtrLen<Pane> RedrawSet::pop()
+ {
+  return Range(set,Replace_null(count));
+ }
+
 } // namespace Video
 } // namespace CCore
 

@@ -65,6 +65,34 @@ void GuardNotDead();
 
 void DragPane(Pane &place,Point delta,DragType drag_type);
 
+/* classes */
+
+class RedrawSet;
+
+/* class RedrawSet */
+
+class RedrawSet : NoCopy
+ {
+   static const ulen Len = 10 ;
+
+   Pane set[Len];
+   ulen count = 0 ;
+
+  private:
+
+   static AreaType Excess(Pane a,Pane b,Pane c);
+
+   void compress(Pane pane);
+
+  public:
+
+   RedrawSet() {}
+
+   bool add(Pane pane);
+
+   PtrLen<Pane> pop();
+ };
+
 } // namespace Video
 } // namespace CCore
 

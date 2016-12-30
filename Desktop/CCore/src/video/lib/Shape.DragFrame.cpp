@@ -663,6 +663,11 @@ void DragFrameShape::shade(FrameBuf<DesktopColor> &buf) const
   buf.erase(+cfg.shade_color,+cfg.shade_alpha);
  }
 
+void DragFrameShape::shade(FrameBuf<DesktopColor> &buf,Pane pane) const
+ {
+  buf.block_safe(pane,+cfg.shade_color,+cfg.shade_alpha);
+ }
+
 Pane DragFrameShape::getPane(DragType drag_type) const
  {
   switch( drag_type )

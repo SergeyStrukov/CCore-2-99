@@ -13,11 +13,32 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/lib/Window.DragFrame.h>
+//#include <CCore/inc/video/lib/Window.DragFrame.h>
+
+#include <utility>
 
 namespace CCore {
 namespace Video {
 
+namespace Bomb {
+
+template <class Func,class R,class ... AA>
+concept bool FuncType = requires(Func func,AA && ... aa) { { func( std::forward<AA>(aa)... ) } -> R ; } ;
+
+template <class Func,class T>
+T Replace_gen(Func func,T &obj) requires ( FuncType<Func,T,T> ) { T ret(obj); obj=func(ret); return ret; }
+
+class Test
+ {
+  void method() {}
+ };
+
+void test(Test &test)
+ {
+  test.method();
+ }
+
+} // namespace Bomb
 
 } // namespace Video
 } // namespace CCore
