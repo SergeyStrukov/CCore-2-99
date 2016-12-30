@@ -377,19 +377,23 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
         if( alert_client ) alert_client->setPlace(place);
        }
 
+     auto &client=getClient();
+
+     shape.has_good_size=client.hasGoodSize();
+
      redraw_set.pop();
 
-     redrawBuf( [this] (FrameBuf<DesktopColor> &buf)
-                       {
-                        try { shape.draw(buf); } catch(...) {}
+     redrawBuf( [this,&client] (FrameBuf<DesktopColor> &buf)
+                               {
+                                try { shape.draw(buf); } catch(...) {}
 
-                        getClient().forward_draw(buf,shape.drag_type);
+                                client.forward_draw(buf,shape.drag_type);
 
-                        shade(buf);
+                                shade(buf);
 
-                        host->invalidate(1);
+                                host->invalidate(1);
 
-                       } );
+                               } );
     }
 
    void redrawClient()
@@ -411,20 +415,26 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void redrawSet()
     {
+     auto &client=getClient();
+
+     if( Change(shape.has_good_size,client.hasGoodSize()) ) redrawFrame();
+
      auto r=redraw_set.pop();
 
-     redrawBuf( [this,r] (FrameBuf<DesktopColor> &buf)
-                         {
-                          for(Pane pane : r )
-                            {
-                             getClient().forward_draw(buf,pane,shape.drag_type);
+     if( !r ) return;
 
-                             shade(buf,pane);
+     redrawBuf( [this,r,&client] (FrameBuf<DesktopColor> &buf)
+                                 {
+                                  for(Pane pane : r )
+                                    {
+                                     client.forward_draw(buf,pane,shape.drag_type);
 
-                             host->invalidate(pane,1);
-                            }
+                                     shade(buf,pane);
 
-                         } );
+                                     host->invalidate(pane,1);
+                                    }
+
+                                 } );
     }
 
    void pushAlertBlink()

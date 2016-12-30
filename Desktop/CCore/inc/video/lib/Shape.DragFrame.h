@@ -155,6 +155,7 @@ class DragFrameShape
    AlertType alert_type = AlertType_No ;
    bool alert_blink = false ;
    bool help = false ;
+   bool has_good_size = true ;
 
    DefString title;
 

@@ -200,7 +200,7 @@ void DragFrameShape::draw_Bottom(DrawArt &art) const
     }
  }
 
-void DragFrameShape::draw_BottomRight(DrawArt &art) const
+void DragFrameShape::draw_BottomRight(DrawArt &art) const // TODO
  {
   if( +dragBottomRight )
     {
@@ -216,7 +216,7 @@ void DragFrameShape::draw_BottomRight(DrawArt &art) const
      fig[1]=p.getBottomRight();
      fig[2]=p.getBottomLeft();
 
-     fig.solid(art,dragColor(DragType_BottomRight));
+     fig.solid(art, has_good_size? dragColor(DragType_BottomRight) : Purple ); // TODO
     }
  }
 
@@ -525,6 +525,7 @@ void DragFrameShape::reset(const DefString &title_,bool is_main_,bool max_button
   alert_type=AlertType_No;
   alert_blink=false;
   help=false;
+  has_good_size=true;
 
   title=title_;
 
