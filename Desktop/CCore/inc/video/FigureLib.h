@@ -39,6 +39,14 @@ struct FigureBox;
 
 struct FigureSkew;
 
+struct FigureTopLeftArrow;
+
+struct FigureBottomLeftArrow;
+
+struct FigureTopRightArrow;
+
+struct FigureBottomRightArrow;
+
 struct FigureTopBorder;
 
 struct FigureBottomBorder;
@@ -66,6 +74,10 @@ struct FigureDownMark;
 struct FigureRoundBox;
 
 struct FigureCursor;
+
+class PolyFigureExclamation;
+
+class PolyFigureQuestion;
 
 /* struct MPane */
 
@@ -514,6 +526,42 @@ struct FigureSkew : FigurePoints<4>
   FigureSkew(const MPane &p,MCoord skew) : FigureSkew(p.x,p.ex,p.y,p.ey,skew) {}
  };
 
+/* struct FigureTopLeftArrow */
+
+struct FigureTopLeftArrow : FigurePoints<3>
+ {
+  FigureTopLeftArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+
+  explicit FigureTopLeftArrow(const MPane &p) : FigureTopLeftArrow(p.x,p.ex,p.y,p.ey) {}
+ };
+
+/* struct FigureBottomLeftArrow */
+
+struct FigureBottomLeftArrow : FigurePoints<3>
+ {
+  FigureBottomLeftArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+
+  explicit FigureBottomLeftArrow(const MPane &p) : FigureBottomLeftArrow(p.x,p.ex,p.y,p.ey) {}
+ };
+
+/* struct FigureTopRightArrow */
+
+struct FigureTopRightArrow : FigurePoints<3>
+ {
+  FigureTopRightArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+
+  explicit FigureTopRightArrow(const MPane &p) : FigureTopRightArrow(p.x,p.ex,p.y,p.ey) {}
+ };
+
+/* struct FigureBottomRightArrow */
+
+struct FigureBottomRightArrow : FigurePoints<3>
+ {
+  FigureBottomRightArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+
+  explicit FigureBottomRightArrow(const MPane &p) : FigureBottomRightArrow(p.x,p.ex,p.y,p.ey) {}
+ };
+
 /* struct FigureTopBorder */
 
 struct FigureTopBorder : FigurePoints<6>
@@ -674,6 +722,48 @@ struct FigureRoundBox : FigureDots<28>
 struct FigureCursor : FigurePoints<12>
  {
   FigureCursor(MCoord x0,MCoord y0,MCoord y1,MCoord width,MCoord skew);
+ };
+
+/* class PolyFigureExclamation */
+
+class PolyFigureExclamation
+ {
+   MPoint o;
+   MCoord r;
+
+   FigureDots<4> fig;
+
+  public:
+
+   PolyFigureExclamation(MPoint center,MCoord radius);
+
+   void solid(SmoothDrawArt &art,VColor vc)
+    {
+     art.ball(o,r,vc);
+
+     fig.curveSolid(art,vc);
+    }
+ };
+
+/* class PolyFigureQuestion */
+
+class PolyFigureQuestion
+ {
+   MPoint o;
+   MCoord r;
+
+   //FigureDots<10> fig;
+
+  public:
+
+   PolyFigureQuestion(MPoint center,MCoord radius);
+
+   void solid(SmoothDrawArt &art,VColor vc)
+    {
+     art.ball(o,r,vc);
+
+     //fig.curveSolid(art,vc);
+    }
  };
 
 } // namespace Video

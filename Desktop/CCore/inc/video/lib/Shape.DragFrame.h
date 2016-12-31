@@ -133,9 +133,10 @@ class DragFrameShape
    Pane dragBottomRight;
    Pane dragRight;
    Pane dragTopRight;
-   Pane dragBar;
 
+   Pane dragBar;
    Pane titleBar;
+
    Pane btnAlert;
    Pane btnHelp;
    Pane btnMin;
@@ -150,7 +151,11 @@ class DragFrameShape
 
    VColor dragColor(DragType zone) const;
 
-   void draw_Frame(DrawArt &art) const;
+   void draw_Frame(DrawArt &art,Pane part) const;
+
+   void draw_Frame(DrawArt &art) const { draw_Frame(art,Pane(Null,size)); }
+
+   void draw_Frame(const DrawBuf &buf,DragType drag_type) const;
 
    void draw_TopLeft(DrawArt &art) const;
 

@@ -177,6 +177,42 @@ FigureSkew::FigureSkew(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord skew)
   buf[3]={x1+skew,y0};
  }
 
+/* struct FigureTopLeftArrow */
+
+FigureTopLeftArrow::FigureTopLeftArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1)
+ {
+  buf[0]={x0,y0};
+  buf[1]={x0,y1};
+  buf[2]={x1,y0};
+ }
+
+/* struct FigureBottomLeftArrow */
+
+FigureBottomLeftArrow::FigureBottomLeftArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1)
+ {
+  buf[0]={x0,y1};
+  buf[1]={x1,y1};
+  buf[2]={x0,y0};
+ }
+
+/* struct FigureTopRightArrow */
+
+FigureTopRightArrow::FigureTopRightArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1)
+ {
+  buf[0]={x1,y0};
+  buf[1]={x0,y0};
+  buf[2]={x1,y1};
+ }
+
+/* struct FigureBottomRightArrow */
+
+FigureBottomRightArrow::FigureBottomRightArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1)
+ {
+  buf[0]={x1,y1};
+  buf[1]={x1,y0};
+  buf[2]={x0,y1};
+ }
+
 /* struct FigureTopBorder */
 
 FigureTopBorder::FigureTopBorder(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord w)
@@ -494,6 +530,41 @@ FigureCursor::FigureCursor(MCoord x0,MCoord y0,MCoord y1,MCoord width,MCoord ske
   buf[9]={b1+width,y1+width};
   buf[10]={b1+width,y1};
   buf[11]={b1,y1};
+ }
+
+/* class PolyFigureExclamation */
+
+PolyFigureExclamation::PolyFigureExclamation(MPoint center,MCoord radius)
+ {
+  MCoord a=Ratio(683,10)*radius;
+  MCoord c=radius/5;
+  MCoord b=a-2*c;
+
+  r=Ratio(3,2)*c;
+
+  o=center.addY(b+r);
+
+  fig[0]={{-c,c-a}};
+  fig[1]={{0,-a}};
+  fig[2]={{c,c-a}};
+  fig[3]={{0,b},Smooth::DotBreak};
+
+  fig.shift(center);
+ }
+
+/* class PolyFigureQuestion */
+
+PolyFigureQuestion::PolyFigureQuestion(MPoint center,MCoord radius) // TODO
+ {
+  MCoord a=Ratio(683,10)*radius;
+  MCoord c=radius/5;
+  MCoord b=a-2*c;
+
+  r=Ratio(3,2)*c;
+
+  o=center.addY(b+r);
+
+  // TODO
  }
 
 } // namespace Video

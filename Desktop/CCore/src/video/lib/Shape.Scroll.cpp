@@ -311,7 +311,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
 
    VColor top = focus? +cfg.focus : snow ;
 
-   fig.solid(art,TwoField({x0,y0},top,{x0,y1},gray));
+   fig.solid(art,YField(y0,top,y1,gray));
   }
 
   {
@@ -594,7 +594,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
 
    VColor top = focus? +cfg.focus : snow ;
 
-   fig.solid(art,TwoField({x0,y0},top,{x1,y0},gray));
+   fig.solid(art,XField(x0,top,x1,gray));
   }
 
   {

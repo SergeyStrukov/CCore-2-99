@@ -238,36 +238,17 @@ void KnobShape::draw(const DrawBuf &buf) const
 
      case FaceExclamation :
       {
-       MCoord a=Ratio(683,10)*radius;
-       MCoord c=radius/5;
-       MCoord b=a-2*c;
-       MCoord r=Ratio(3,2)*c;
+       PolyFigureExclamation fig(center,radius);
 
-       art.ball(center.addY(b+r),r,fc);
-
-       FigureDots<4> fig;
-
-       fig[0]={{-c,c-a}};
-       fig[1]={{0,-a}};
-       fig[2]={{c,c-a}};
-       fig[3]={{0,b},Smooth::DotBreak};
-
-       fig.shift(center);
-
-       fig.curveSolid(art,fc);
+       fig.solid(art,fc);
       }
      break;
 
-     case FaceQuestion : // TODO
+     case FaceQuestion :
       {
-       MCoord a=Ratio(683,10)*radius;
-       MCoord c=radius/5;
-       MCoord b=a-2*c;
-       MCoord r=Ratio(3,2)*c;
+       PolyFigureQuestion fig(center,radius);
 
-       art.ball(center.addY(b+r),r,fc);
-
-       // TODO
+       fig.solid(art,fc);
       }
      break;
 

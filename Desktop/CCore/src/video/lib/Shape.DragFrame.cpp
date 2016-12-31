@@ -15,6 +15,7 @@
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
 
+#include <CCore/inc/video/DrawTools.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -38,7 +39,7 @@ VColor DragFrameShape::dragColor(DragType zone) const
   return +cfg.drag;
  }
 
-void DragFrameShape::draw_Frame(DrawArt &art) const
+void DragFrameShape::draw_Frame(DrawArt &art,Pane part) const
  {
   VColor frame=+cfg.frame;
   VColor gray=+cfg.gray;
@@ -52,38 +53,54 @@ void DragFrameShape::draw_Frame(DrawArt &art) const
      return;
     }
 
-  MPane outer(Pane(Null,size));
+  Pane all(Null,size);
+
+  PaneSub sub(all,client);
+
+  MPane outer(all);
   MPane inner(client);
 
   // top
 
-  {
-   MCoord x0=outer.x;
-   MCoord x1=outer.ex;
+  Pane top=Inf(sub.top,part);
 
-   MCoord y0=outer.y;
-   MCoord y1=inner.y;
+  if( +top )
+    {
+     MCoord y0=outer.y;
+     MCoord y1=inner.y;
 
-   FigureBox fig(x0,x1,y0,y1);
+     FigureBox fig{MPane(top)};
 
-   fig.solid(art,TwoField({x0,y0},frame,{x0,y1},gray));
-  }
+     fig.solid(art,YField(y0,frame,y1,gray));
+    }
 
   // bottom
 
-  {
-   MCoord x0=outer.x;
-   MCoord x1=outer.ex;
+  Pane bottom=Inf(sub.bottom,part);
 
-   MCoord y0=inner.ey;
-   MCoord y1=outer.ey;
+  if( +bottom )
+    {
+     MCoord y0=inner.ey;
+     MCoord y1=outer.ey;
 
-   FigureBox fig(x0,x1,y0,y1);
+     FigureBox fig{MPane(bottom)};
 
-   fig.solid(art,TwoField({x0,y0},frameSmall,{x0,y1},gray));
-  }
+     fig.solid(art,YField(y0,frameSmall,y1,gray));
+    }
 
   // left
+
+  Pane left=Inf(sub.left,part);
+
+  if( +left )
+    {
+     MCoord x0=outer.x;
+     MCoord x1=inner.x;
+
+     FigureBox fig{MPane(left)};
+
+     fig.solid(art,XField(x0,frame,x1,gray));
+    }
 
   {
    MCoord x0=outer.x;
@@ -94,17 +111,28 @@ void DragFrameShape::draw_Frame(DrawArt &art) const
    MCoord y2=inner.ey;
    MCoord y3=outer.ey;
 
-   FigurePoints<4> fig;
+   FigureBottomLeftArrow fig1(x0,x1,y0,y1);
+   FigureTopLeftArrow fig2(x0,x1,y2,y3);
 
-   fig[0]={x0,y0};
-   fig[1]={x1,y1};
-   fig[2]={x1,y2};
-   fig[3]={x0,y3};
+   XField field(x0,frame,x1,gray);
 
-   fig.solid(art,TwoField({x0,y0},frame,{x1,y0},gray));
+   fig1.solid(art,field);
+   fig2.solid(art,field);
   }
 
   // right
+
+  Pane right=Inf(sub.right,part);
+
+  if( +right )
+    {
+     MCoord x0=inner.ex;
+     MCoord x1=outer.ex;
+
+     FigureBox fig{MPane(right)};
+
+     fig.solid(art,XField(x0,frameSmall,x1,gray));
+    }
 
   {
    MCoord x0=inner.ex;
@@ -115,15 +143,23 @@ void DragFrameShape::draw_Frame(DrawArt &art) const
    MCoord y2=inner.ey;
    MCoord y3=outer.ey;
 
-   FigurePoints<4> fig;
+   FigureBottomRightArrow fig1(x0,x1,y0,y1);
+   FigureTopRightArrow fig2(x0,x1,y2,y3);
 
-   fig[0]={x0,y1};
-   fig[1]={x1,y0};
-   fig[2]={x1,y3};
-   fig[3]={x0,y2};
+   XField field(x0,frameSmall,x1,gray);
 
-   fig.solid(art,TwoField({x0,y0},frameSmall,{x1,y0},gray));
+   fig1.solid(art,field);
+   fig2.solid(art,field);
   }
+ }
+
+void DragFrameShape::draw_Frame(const DrawBuf &buf,DragType drag_type) const
+ {
+  Pane part=getPane(drag_type);
+
+  DrawArt art(buf.cut(part));
+
+  draw_Frame(art,part);
  }
 
 void DragFrameShape::draw_TopLeft(DrawArt &art) const
@@ -134,13 +170,7 @@ void DragFrameShape::draw_TopLeft(DrawArt &art) const
 
      MCoord width=+cfg.width;
 
-     p.shrink(width);
-
-     FigurePoints<3> fig;
-
-     fig[0]=p.getTopLeft();
-     fig[1]=p.getTopRight();
-     fig[2]=p.getBottomLeft();
+     FigureTopLeftArrow fig(p.shrink(width));
 
      fig.solid(art,dragColor(DragType_TopLeft));
     }
@@ -172,13 +202,7 @@ void DragFrameShape::draw_BottomLeft(DrawArt &art) const
 
      MCoord width=+cfg.width;
 
-     p.shrink(width);
-
-     FigurePoints<3> fig;
-
-     fig[0]=p.getTopLeft();
-     fig[1]=p.getBottomLeft();
-     fig[2]=p.getBottomRight();
+     FigureBottomLeftArrow fig(p.shrink(width));
 
      fig.solid(art,dragColor(DragType_BottomLeft));
     }
@@ -210,13 +234,7 @@ void DragFrameShape::draw_BottomRight(DrawArt &art) const
 
      MCoord width=+cfg.width;
 
-     p.shrink(width);
-
-     FigurePoints<3> fig;
-
-     fig[0]=p.getTopRight();
-     fig[1]=p.getBottomRight();
-     fig[2]=p.getBottomLeft();
+     FigureBottomRightArrow fig(p.shrink(width));
 
      fig.solid(art,dragColor(DragType_BottomRight));
     }
@@ -248,13 +266,7 @@ void DragFrameShape::draw_TopRight(DrawArt &art) const
 
      MCoord width=+cfg.width;
 
-     p.shrink(width);
-
-     FigurePoints<3> fig;
-
-     fig[0]=p.getTopLeft();
-     fig[1]=p.getTopRight();
-     fig[2]=p.getBottomRight();
+     FigureTopRightArrow fig(p.shrink(width));
 
      fig.solid(art,dragColor(DragType_TopRight));
     }
@@ -745,6 +757,8 @@ void DragFrameShape::draw(const DrawBuf &buf) const
 void DragFrameShape::draw(const DrawBuf &buf,DragType drag_type) const
  {
   DrawArt art(buf);
+
+  draw_Frame(buf,drag_type);
 
   switch( drag_type )
     {

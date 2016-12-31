@@ -48,6 +48,10 @@ class ConstantAlphaField;
 
 class TwoField;
 
+class XField;
+
+class YField;
+
 class RadioField;
 
 struct AbstractField;
@@ -105,6 +109,24 @@ class TwoField
    TwoField(MPoint a,VColor va,MPoint b,VColor vb);
 
    VColor operator () (MPoint point) const;
+ };
+
+/* class XField */
+
+class XField : public TwoField
+ {
+  public:
+
+   XField(MCoord a,VColor va,MCoord b,VColor vb) : TwoField({a,0},va,{b,0},vb) {}
+ };
+
+/* class YField */
+
+class YField : public TwoField
+ {
+  public:
+
+   YField(MCoord a,VColor va,MCoord b,VColor vb) : TwoField({0,a},va,{0,b},vb) {}
  };
 
 /* class RadioField */

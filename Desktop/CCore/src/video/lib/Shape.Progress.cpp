@@ -75,7 +75,7 @@ void ProgressShape::draw(const DrawBuf &buf) const
 
      MCoord radius=Div(40,100)*Min(len,dy);
 
-     TwoField field({x,y},+cfg.snowPing,{x,ey},+cfg.grayPing);
+     YField field(y,+cfg.snowPing,ey,+cfg.grayPing);
 
      for(unsigned count=5; count ;count--,x+=shift)
        {
