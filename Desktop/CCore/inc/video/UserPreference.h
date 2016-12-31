@@ -139,8 +139,10 @@ struct UserPreferenceBag
   // scroll list
 
   VColor scroll_list_title        = Navy ;
-  VColor scroll_list_title_top    = Aqua ;
-  VColor scroll_list_title_bottom = Gray ;
+  VColor scroll_list_title_top    = Aqua ; // -
+  VColor scroll_list_title_bottom = Gray ; // -
+  VColor scroll_list_titleTop    = Aqua ;  // +
+  VColor scroll_list_titleBottom = Gray ;  // +
 
   // other
 
@@ -187,6 +189,7 @@ struct UserPreferenceBag
   VColor drag              =    Silver ;
   VColor dragHilight       =     Green ;
   VColor dragActive        =       Red ;
+  VColor dragSmall         =     Wheat ; // +
 
   VColor btnFace           = SteelBlue ;
   VColor btnFaceHilight    =     Green ;
@@ -290,6 +293,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    ExceptionWindow::ConfigType cfg_ExceptionWindow;
    SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
 
+   DragFrame::ConfigType cfg_DragFrame;
+
    // sub windows
 
    ButtonWindow::ConfigType cfg_ButtonWindow;
@@ -362,7 +367,9 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const ExceptionWindow::ConfigType & getExceptionWindowConfig() const { return cfg_ExceptionWindow; }
 
-   const SimpleCascadeMenu::ConfigType & getSimpleCascadeMenu() const { return cfg_SimpleCascadeMenu; }
+   //const SimpleCascadeMenu::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenu; }
+
+   const DragFrame::ConfigType & getDragFrameConfig() const { return cfg_DragFrame; }
 
    // sub windows
 
@@ -451,6 +458,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_ExceptionWindow; }
 
       operator const auto & () const { return obj->cfg_SimpleCascadeMenu; }
+
+      operator const auto & () const { return obj->cfg_DragFrame; }
 
       // sub windows
 

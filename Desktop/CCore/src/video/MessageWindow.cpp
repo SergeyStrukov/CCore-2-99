@@ -220,7 +220,7 @@ MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg_)
 MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg,Signal<> &update)
  : MessageWindow(desktop,cfg)
  {
-  bindUpdate(update);
+  connectUpdate(update);
  }
 
 MessageWindow::~MessageWindow()

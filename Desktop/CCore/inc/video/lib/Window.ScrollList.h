@@ -231,7 +231,7 @@ class ScrollListInnerWindowOf : public SubWindow
      window.setRange(shape.yoffMax+shape.page,shape.page,shape.yoff);
     }
 
-   void bind(Signal<ulen> &scroll_x,Signal<ulen> &scroll_y)
+   void connect(Signal<ulen> &scroll_x,Signal<ulen> &scroll_y)
     {
      connector_posX.connect(scroll_x);
      connector_posY.connect(scroll_y);
@@ -528,7 +528,7 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
     {
      wlist.insTop(inner);
 
-     inner.bind(scroll_x.changed,scroll_y.changed);
+     inner.connect(scroll_x.changed,scroll_y.changed);
     }
 
    virtual ~ScrollListWindowOf()

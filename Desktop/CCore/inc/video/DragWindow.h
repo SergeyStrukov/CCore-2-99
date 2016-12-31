@@ -578,7 +578,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      return Point(Max(size.x,shape.getMinDx(is_main,title)),size.y);
     }
 
-   void bindUpdate(Signal<> &update)
+   void connectUpdate(Signal<> &update)
     {
      connector_updateConfig.connect(update);
     }

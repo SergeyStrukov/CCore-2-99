@@ -40,23 +40,17 @@ class DragFrameShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<Coord> frame_dxy = 12 ;
-     RefVal<Coord> title_dy  = 32 ;
-
-     RefVal<Coord> btn_dx    = 26 ;
-     RefVal<Coord> btn_dy    = 24 ;
-
-     RefVal<VColor> top               =      Gray ;
-     RefVal<VColor> bottom            =      Snow ;
+     RefVal<VColor> gray              =      Gray ;
+     RefVal<VColor> snow              =      Snow ;
      RefVal<VColor> frame             =      Snow ;
+     RefVal<VColor> active            = RoyalBlue ;
+     RefVal<VColor> inactive          =    Silver ;
+     RefVal<VColor> title             =     Black ;
 
      RefVal<VColor> drag              =    Silver ;
      RefVal<VColor> dragHilight       =     Green ;
      RefVal<VColor> dragActive        =       Red ;
-
-     RefVal<VColor> active            = RoyalBlue ;
-     RefVal<VColor> inactive          =    Silver ;
-     RefVal<VColor> title             =     Black ;
+     RefVal<VColor> dragSmall         =     Wheat ;
 
      RefVal<VColor> btnFace           = SteelBlue ;
      RefVal<VColor> btnFaceHilight    =     Green ;
@@ -69,14 +63,61 @@ class DragFrameShape
      RefVal<VColor> shade_color        =    Violet ;
      RefVal<Clr>    shade_alpha        =        64 ;
 
-     RefVal<Font> title_font;
+     RefVal<Coord> frame_dxy = 12 ;
+     RefVal<Coord> title_dy  = 32 ;
 
-     RefVal<unsigned> blink_time   = 3_sectick ;
-     RefVal<unsigned> blink_period =    3_tick ;
+     RefVal<Coord> btn_dx    = 26 ;
+     RefVal<Coord> btn_dy    = 24 ;
+
+     RefVal<Font> font;
+
+     RefVal<unsigned> time   = 3_sectick ;
+     RefVal<unsigned> period =    3_tick ;
 
      RefVal<DefString> fatal_error = "Fatal error"_def ;
 
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       width.bind(bag.width);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+
+       frame.bind(bag.frame);
+       active.bind(bag.active_frame);
+       inactive.bind(bag.inactive_frame);
+       title.bind(bag.title);
+
+       drag.bind(bag.drag);
+       dragHilight.bind(bag.dragHilight);
+       dragActive.bind(bag.dragActive);
+       dragSmall.bind(bag.dragSmall);
+
+       btnFace.bind(bag.btnFace);
+       btnFaceHilight.bind(bag.btnFaceHilight);
+       btnPict.bind(bag.btnPict);
+       btnPictClose.bind(bag.btnPictClose);
+       btnPictAlert.bind(bag.btnPictAlert);
+       btnPictNoAlert.bind(bag.btnPictNoAlert);
+       btnPictCloseAlert.bind(bag.btnPictCloseAlert);
+
+       shade_color.bind(bag.shade_color);
+       shade_alpha.bind(bag.shade_alpha);
+
+       frame_dxy.bind(bag.frame_dxy);
+       title_dy.bind(bag.title_dy);
+       btn_dx.bind(bag.btn_dx);
+       btn_dy.bind(bag.btn_dy);
+
+       font.bind(bag.title_font.font);
+
+       time.bind(bag.blink_time);
+       period.bind(bag.blink_period);
+
+       fatal_error.bind(bag.fatal_error);
+      }
     };
 
    const Config &cfg;
@@ -96,6 +137,7 @@ class DragFrameShape
 
    Pane titleBar;
    Pane btnAlert;
+   Pane btnHelp;
    Pane btnMin;
    Pane btnMax;
    Pane btnClose;
@@ -127,6 +169,8 @@ class DragFrameShape
    void draw_Bar(DrawArt &art) const;
 
    void draw_Alert(DrawArt &art) const;
+
+   void draw_Help(DrawArt &art) const;
 
    void draw_Min(DrawArt &art) const;
 
@@ -195,15 +239,21 @@ class DragFrameShape
 
    Pane getPane(DragType drag_type) const;
 
-   void shade(FrameBuf<DesktopColor> &buf) const;
+   void shade(FrameBuf<DesktopColor> &buf) const
+    {
+     buf.erase(+cfg.shade_color,+cfg.shade_alpha);
+    }
 
-   void shade(FrameBuf<DesktopColor> &buf,Pane pane) const;
+   void shade(FrameBuf<DesktopColor> &buf,Pane pane) const
+    {
+     buf.block_safe(pane,+cfg.shade_color,+cfg.shade_alpha);
+    }
 
    bool resetTime()
     {
      bool ret = !time ;
 
-     time=+cfg.blink_time;
+     time=+cfg.time;
 
      return ret;
     }
@@ -224,7 +274,7 @@ class DragFrameShape
 
    bool tick() const
     {
-     return !( time % +cfg.blink_period );
+     return !( time % +cfg.period );
     }
 
    void draw(const DrawBuf &buf) const;

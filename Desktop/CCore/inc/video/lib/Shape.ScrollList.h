@@ -51,8 +51,8 @@ class ScrollListShape
      RefVal<VColor> inactive     =      Gray ;
      RefVal<VColor> select       =    Yellow ;
      RefVal<VColor> title        =      Navy ;
-     RefVal<VColor> title_top    =      Aqua ;
-     RefVal<VColor> title_bottom =      Gray ;
+     RefVal<VColor> titleTop     =      Aqua ;
+     RefVal<VColor> titleBottom  =      Gray ;
      RefVal<VColor> text         =     Black ;
 
      RefVal<Point> space = Point(8,8) ;
@@ -78,8 +78,8 @@ class ScrollListShape
        font.bind(bag.list_font.font);
 
        title.bind(bag.scroll_list_title);
-       title_top.bind(bag.scroll_list_title_top);
-       title_bottom.bind(bag.scroll_list_title_bottom);
+       titleTop.bind(bag.scroll_list_titleTop);
+       titleBottom.bind(bag.scroll_list_titleBottom);
       }
     };
 

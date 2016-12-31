@@ -440,7 +440,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      return Point(Max(size.x,shape.getMinDx(title)),size.y);
     }
 
-   void bindUpdate(Signal<> &update)
+   void connectUpdate(Signal<> &update)
     {
      connector_updateConfig.connect(update);
     }

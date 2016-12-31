@@ -511,7 +511,7 @@ void TestClient::react_other(UserAction action)
 /* class TestFrame */
 
 TestFrame::TestFrame(Desktop *desktop,const UserPreference &pref,Signal<> &update)
- : DragWindow(desktop,pref.getDragWindowConfig(),update),
+ : DragFrame(desktop,pref.getDragFrameConfig(),update),
    client(*this,pref,update)
  {
   bindClient(client);

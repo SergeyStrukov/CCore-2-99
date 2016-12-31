@@ -37,14 +37,15 @@ struct Param
 
   Preference pref;
 
-  DragFrame::ConfigType frame_cfg;
+  const DragFrame::ConfigType &frame_cfg;
   const DragWindow::ConfigType &drag_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
 
   DesignerWindow::ConfigType designer_cfg;
 
   Param()
-   : drag_cfg(pref.getDragWindowConfig()),
+   : frame_cfg(pref.getDragFrameConfig()),
+     drag_cfg(pref.getDragWindowConfig()),
      exception_cfg(pref.getExceptionWindowConfig()),
      designer_cfg(pref)
    {

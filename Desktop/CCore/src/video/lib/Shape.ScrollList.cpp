@@ -323,8 +323,8 @@ void ScrollListShape::draw(const DrawBuf &buf) const
 
    Coord lim=inner.y+inner.dy;
 
-   VColor title_top=+cfg.title_top;
-   VColor title_bottom=+cfg.title_bottom;
+   VColor titleTop=+cfg.titleTop;
+   VColor titleBottom=+cfg.titleBottom;
    Coord off=fs.dy;
 
    for(; index<count && IntAdd(row.y,row.dy)<=lim ;index++,row.y+=row.dy)
@@ -345,7 +345,7 @@ void ScrollListShape::draw(const DrawBuf &buf) const
           {
            MPane p(row);
 
-           TwoField field(p.getTopLeft(),title_top,p.getBottomLeft(),title_bottom);
+           TwoField field(p.getTopLeft(),titleTop,p.getBottomLeft(),titleBottom);
 
            FigureBox(p).solid(tart,field);
 

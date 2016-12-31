@@ -199,7 +199,7 @@ class TestClient : public ComboWindow
 
 /* class TestFrame */
 
-class TestFrame : public DragWindow
+class TestFrame : public DragFrame
  {
    TestClient client;
 

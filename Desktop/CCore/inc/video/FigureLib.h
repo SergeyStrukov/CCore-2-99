@@ -37,6 +37,8 @@ template <ulen Len> struct FigureDots;
 
 struct FigureBox;
 
+struct FigureSkew;
+
 struct FigureTopBorder;
 
 struct FigureBottomBorder;
@@ -62,6 +64,8 @@ struct FigureUpMark;
 struct FigureDownMark;
 
 struct FigureRoundBox;
+
+struct FigureCursor;
 
 /* struct MPane */
 
@@ -501,6 +505,15 @@ struct FigureBox : FigurePoints<4>
   explicit FigureBox(const MPane &p) : FigureBox(p.x,p.ex,p.y,p.ey) {}
  };
 
+/* struct FigureSkew */
+
+struct FigureSkew : FigurePoints<4>
+ {
+  FigureSkew(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord skew);
+
+  FigureSkew(const MPane &p,MCoord skew) : FigureSkew(p.x,p.ex,p.y,p.ey,skew) {}
+ };
+
 /* struct FigureTopBorder */
 
 struct FigureTopBorder : FigurePoints<6>
@@ -654,6 +667,13 @@ struct FigureRoundBox : FigureDots<28>
   MPoint getTopLeft() const { return buf[22].point; }
 
   MPoint getTopRight() const { return buf[21].point; }
+ };
+
+/* struct FigureCursor */
+
+struct FigureCursor : FigurePoints<12>
+ {
+  FigureCursor(MCoord x0,MCoord y0,MCoord y1,MCoord width,MCoord skew);
  };
 
 } // namespace Video

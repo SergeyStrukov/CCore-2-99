@@ -261,6 +261,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
            case VKey_Right :
            case VKey_Up    :
            case VKey_Down  :
+           case VKey_F1    :
            case VKey_F2    :
            case VKey_F3    :
            case VKey_F4    :
@@ -516,11 +517,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    Point getMinSize(bool is_main,StrLen title,Point size) const { return shape.getMinSize(is_main,title,size); }
 
-   void bindUpdate(Signal<> &update)
-    {
-     connector_updateConfig.connect(update);
-    }
-
    void bindClient(SubWindow &client_)
     {
      guardDead();
@@ -535,6 +531,16 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
      alert_client=&alert_client_;
      alert_client_ac=alert_client_.getAliveControl();
+    }
+
+   void connectUpdate(Signal<> &update)
+    {
+     connector_updateConfig.connect(update);
+    }
+
+   void connectAlert(Signal<> &signal)
+    {
+     connector_alert.connect(signal);
     }
 
    void createMain(CmdDisplay cmd_display,Point max_size,const DefString &title)
@@ -644,8 +650,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
      redrawFrame();
     }
-
-   void connectAlert(Signal<> &signal) { connector_alert.connect(signal); }
 
    // SubWindowHost
 

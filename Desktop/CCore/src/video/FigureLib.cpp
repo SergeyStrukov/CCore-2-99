@@ -167,6 +167,16 @@ FigureBox::FigureBox(MCoord x0,MCoord x1,MCoord y0,MCoord y1)
   buf[3]={x1,y0};
  }
 
+/* struct FigureSkew */
+
+FigureSkew::FigureSkew(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord skew)
+ {
+  buf[0]={x0+skew,y0};
+  buf[1]={x0,y1};
+  buf[2]={x1,y1};
+  buf[3]={x1+skew,y0};
+ }
+
 /* struct FigureTopBorder */
 
 FigureTopBorder::FigureTopBorder(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord w)
@@ -459,6 +469,31 @@ FigureRoundBox::FigureRoundBox(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord r)
   buf[25]={{cx-dx3,cy-dy3}};
   buf[26]={{cx-dx4,cy-dy4}};
   buf[27]={{cx-dx5,cy-dy5}};
+ }
+
+/* struct FigureCursor */
+
+FigureCursor::FigureCursor(MCoord x0,MCoord y0,MCoord y1,MCoord width,MCoord skew)
+ {
+  MCoord b0=x0;
+  MCoord b1=b0+width;
+
+  MCoord a0=b0+skew;
+  MCoord a1=a0+width;
+
+  buf[0]={a1,y0};
+  buf[1]={a1+width,y0};
+  buf[2]={a1+width,y0-width};
+  buf[3]={a0-width,y0-width};
+  buf[4]={a0-width,y0};
+  buf[5]={a0,y0};
+
+  buf[6]={b0,y1};
+  buf[7]={b0-width,y1};
+  buf[8]={b0-width,y1+width};
+  buf[9]={b1+width,y1+width};
+  buf[10]={b1+width,y1};
+  buf[11]={b1,y1};
  }
 
 } // namespace Video

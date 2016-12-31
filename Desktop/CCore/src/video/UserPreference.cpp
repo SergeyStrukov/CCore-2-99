@@ -416,6 +416,8 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_SimpleCascadeMenu.frame_cfg.bind(cfg_ToolWindow);
   cfg_SimpleCascadeMenu.menu_cfg.bind(cfg_SimpleCascadeMenuWindow);
 
+  cfg_DragFrame.bind(get());
+
   // sub windows
 
   cfg_ButtonWindow.bind(get());

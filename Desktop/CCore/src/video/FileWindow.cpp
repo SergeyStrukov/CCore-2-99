@@ -1130,7 +1130,7 @@ FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam 
 FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update)
  : FileWindow(desktop,cfg,param)
  {
-  bindUpdate(update);
+  connectUpdate(update);
  }
 
 FileWindow::~FileWindow()

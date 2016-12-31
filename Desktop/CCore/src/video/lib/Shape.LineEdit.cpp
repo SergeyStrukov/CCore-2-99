@@ -335,15 +335,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
          xs1=X3+Fraction( font->text_guarded(text_buf.part(pos,len-pos),lim-pos).dx );
         }
 
-      FigurePoints<4> fig;
-
-      MCoord a=xs0-skew1;
-      MCoord b=xs1-skew1;
-
-      fig[0]={a+skew,Y0};
-      fig[1]={a,Y1};
-      fig[2]={b,Y1};
-      fig[3]={b+skew,Y0};
+      FigureSkew fig(xs0-skew1,xs1-skew1,Y0,Y1,skew);
 
       fig.shift(pane.getBase());
 
@@ -358,30 +350,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
 
    if( show_cursor )
      {
-      MCoord c0=Y0;
-      MCoord c1=Y1;
-
-      MCoord b0=X2-skew1;
-      MCoord b1=b0+w;
-
-      MCoord a0=b0+skew;
-      MCoord a1=a0+w;
-
-      FigurePoints<12> fig;
-
-      fig[0]={a1,c0};
-      fig[1]={a1+w,c0};
-      fig[2]={a1+w,c0-w};
-      fig[3]={a0-w,c0-w};
-      fig[4]={a0-w,c0};
-      fig[5]={a0,c0};
-
-      fig[6]={b0,c1};
-      fig[7]={b0-w,c1};
-      fig[8]={b0-w,c1+w};
-      fig[9]={b1+w,c1+w};
-      fig[10]={b1+w,c1};
-      fig[11]={b1,c1};
+      FigureCursor fig(X2-skew1,Y0,Y1,w,skew);
 
       fig.shift(pane.getBase());
 
