@@ -382,10 +382,20 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
    class KnobWindow_Asterisk : public KnobWindow
     {
+      unsigned count = 0 ;
+
+      void testException()
+       {
+        Printf(Exception,"Test exception #;",count);
+       }
+
+      SignalConnector<KnobWindow_Asterisk> connector_pressed;
+
      public:
 
       KnobWindow_Asterisk(SubWindowHost &host,const ConfigType &cfg)
-       : KnobWindow(host,cfg,KnobShape::FaceAsterisk)
+       : KnobWindow(host,cfg,KnobShape::FaceAsterisk),
+         connector_pressed(this,&KnobWindow_Asterisk::testException,pressed)
        {
        }
     };
@@ -567,47 +577,6 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
         "  type Arg = {Atom,Synt} * ;\r\n"
         "\r\n"
         "  Arg[] args;\r\n"
-        " };\r\n"
-        " \r\n"
-        "struct TopRule\r\n"
-        " {\r\n"
-        "  RuleIndex index;\r\n"
-        "  text name;\r\n"
-        "  \r\n"
-        "  Rule *bottom;\r\n"
-        "\r\n"
-        "  Kind *result;\r\n"
-        "\r\n"
-        "  type Arg = {Atom,Kind} * ;\r\n"
-        "\r\n"
-        "  Arg[] args;\r\n"
-        " }; \r\n"
-        "\r\n"
-        "struct State\r\n"
-        " {\r\n"
-        "  StateIndex index;\r\n"
-        "  Final *final;\r\n"
-        "\r\n"
-        "  struct Transition\r\n"
-        "   {\r\n"
-        "    Element *element;\r\n"
-        "    State *state;\r\n"
-        "   };\r\n"
-        "\r\n"
-        "  Transition[] transitions;\r\n"
-        " };\r\n"
-        "\r\n"
-        "struct Final\r\n"
-        " {\r\n"
-        "  FinalIndex index;\r\n"
-        "\r\n"
-        "  struct Action\r\n"
-        "   {\r\n"
-        "    Atom *atom; // null for (End)\r\n"
-        "    Rule *rule; // null for <- ( STOP if atom is (END) )\r\n"
-        "   };\r\n"
-        "\r\n"
-        "  Action[] actions;\r\n"
         " };\r\n"
         "\r\n";
 

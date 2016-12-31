@@ -735,7 +735,7 @@ class PolyFigureExclamation
 
   public:
 
-   PolyFigureExclamation(MPoint center,MCoord radius);
+   PolyFigureExclamation(MCoord x,MCoord y,MCoord h);
 
    void solid(SmoothDrawArt &art,VColor vc)
     {
@@ -756,7 +756,7 @@ class PolyFigureQuestion
 
   public:
 
-   PolyFigureQuestion(MPoint center,MCoord radius);
+   PolyFigureQuestion(MCoord x,MCoord y,MCoord h);
 
    void solid(SmoothDrawArt &art,VColor vc)
     {

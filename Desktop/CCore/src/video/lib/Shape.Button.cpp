@@ -238,7 +238,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
      case FaceExclamation :
       {
-       PolyFigureExclamation fig(center,radius);
+       PolyFigureExclamation fig(center.x,center.y-Div(2,3)*radius,Div(4,3)*radius);
 
        fig.solid(art,fc);
       }
@@ -246,7 +246,7 @@ void KnobShape::draw(const DrawBuf &buf) const
 
      case FaceQuestion :
       {
-       PolyFigureQuestion fig(center,radius);
+       PolyFigureQuestion fig(center.x,center.y-Div(2,3)*radius,Div(4,3)*radius);
 
        fig.solid(art,fc);
       }

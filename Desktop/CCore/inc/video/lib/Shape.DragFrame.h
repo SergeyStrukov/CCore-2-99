@@ -173,6 +173,8 @@ class DragFrameShape
 
    void draw_Bar(DrawArt &art) const;
 
+   auto draw_Btn(DrawArt &art,Pane btn,DragType zone) const;
+
    void draw_Alert(DrawArt &art) const;
 
    void draw_Help(DrawArt &art) const;

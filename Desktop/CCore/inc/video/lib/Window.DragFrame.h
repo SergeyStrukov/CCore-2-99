@@ -232,8 +232,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
            case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
 
-           case VKey_F1    : help(); return true;
-
            case VKey_F2    : minimize(); return true;
 
            case VKey_F3    : maximize(); return true;
@@ -247,7 +245,12 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
        }
      else
        {
-        return false;
+        switch( Shape::Filter(vkey,kmod) )
+          {
+           case VKey_F1    : help(true); return true;
+
+           default: return false;
+          }
        }
     }
 
@@ -261,7 +264,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
            case VKey_Right :
            case VKey_Up    :
            case VKey_Down  :
-           case VKey_F1    :
            case VKey_F2    :
            case VKey_F3    :
            case VKey_F4    :
@@ -272,7 +274,12 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
        }
      else
        {
-        return false;
+        switch( Shape::Filter(vkey,kmod) )
+          {
+           case VKey_F1    : help(false); return true;
+
+           default: return false;
+          }
        }
     }
 
@@ -481,6 +488,13 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
    void help()
     {
      shape.help=!shape.help;
+
+     redrawAll();
+    }
+
+   void help(bool on)
+    {
+     shape.help=on;
 
      redrawAll();
     }

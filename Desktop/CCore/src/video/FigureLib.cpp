@@ -534,37 +534,31 @@ FigureCursor::FigureCursor(MCoord x0,MCoord y0,MCoord y1,MCoord width,MCoord ske
 
 /* class PolyFigureExclamation */
 
-PolyFigureExclamation::PolyFigureExclamation(MPoint center,MCoord radius)
+PolyFigureExclamation::PolyFigureExclamation(MCoord x,MCoord y,MCoord h)
  {
-  MCoord a=Ratio(683,10)*radius;
-  MCoord c=radius/5;
-  MCoord b=a-2*c;
+  MCoord c=h/6;
+  MCoord b=4*c+c/2;
 
   r=Ratio(3,2)*c;
 
-  o=center.addY(b+r);
+  o={x,y+b+r};
 
-  fig[0]={{-c,c-a}};
-  fig[1]={{0,-a}};
-  fig[2]={{c,c-a}};
-  fig[3]={{0,b},Smooth::DotBreak};
-
-  fig.shift(center);
+  fig[0]={{x-c,y+c}};
+  fig[1]={{x,y}};
+  fig[2]={{x+c,y+c}};
+  fig[3]={{x,y+b},Smooth::DotBreak};
  }
 
 /* class PolyFigureQuestion */
 
-PolyFigureQuestion::PolyFigureQuestion(MPoint center,MCoord radius) // TODO
+PolyFigureQuestion::PolyFigureQuestion(MCoord x,MCoord y,MCoord h) // TODO
  {
-  MCoord a=Ratio(683,10)*radius;
-  MCoord c=radius/5;
-  MCoord b=a-2*c;
+  MCoord c=h/6;
+  MCoord b=4*c+c/2;
 
   r=Ratio(3,2)*c;
 
-  o=center.addY(b+r);
-
-  // TODO
+  o={x,y+b+r};
  }
 
 } // namespace Video
