@@ -17,7 +17,6 @@
 #define CCore_inc_video_lib_Window_DragFrame_h
 
 #include <CCore/inc/video/SubWindow.h>
-#include <CCore/inc/video/DrawTools.h>
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
 
@@ -51,6 +50,8 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
    bool enable_react = true ;
 
    RedrawSet redraw_set;
+
+   Hint cur_hint;
 
   private:
 
@@ -331,6 +332,13 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      if( size<=buf.getSize() )
        {
         func(buf);
+
+        if( shape.help )
+          {
+           shape.drawHint(buf,cur_hint);
+
+           host->invalidate(1);
+          }
        }
      else
        {
@@ -487,16 +495,42 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void help()
     {
-     shape.help=!shape.help;
-
-     redrawAll();
+     help(!shape.help);
     }
 
    void help(bool on)
     {
-     shape.help=on;
+     if( Change(shape.help,on) )
+       {
+        if( on )
+          {
+           Point point=host->getMousePos();
 
-     redrawAll();
+           cur_hint=getClient().getHint(point);
+          }
+
+        redrawAll();
+       }
+    }
+
+   void hint(Point point)
+    {
+     setHint(getClient().getHint(point));
+    }
+
+   void setHint(Hint hint)
+    {
+     if( cur_hint.pane!=hint.pane )
+       {
+        cur_hint=hint;
+
+        redrawAll();
+       }
+    }
+
+   void endHint()
+    {
+     setHint(Nothing);
     }
 
   public:
@@ -973,6 +1007,8 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
               getClient().put_Leave();
              }
           }
+
+        if( shape.help ) hint(point);
        }
     }
 
@@ -993,6 +1029,8 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
         getClient().put_Leave();
        }
+
+     endHint();
     }
 
    // DeferInput

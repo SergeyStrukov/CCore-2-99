@@ -1782,25 +1782,7 @@ class X11Host : public WindowHost , WindowDispatcher
     {
      if( vkey==VKey_Shift || vkey==VKey_Ctrl || vkey==VKey_Alt )
        {
-        Window root;
-        Window child;
-        int root_x;
-        int root_y;
-        int win_x;
-        int win_y;
-        unsigned state;
-
-        if( window_ok )
-          {
-           DesktopObject.setFuncName("XQueryPointer");
-
-           if( XQueryPointer(disp,window,&root,&child,&root_x,&root_y,&win_x,&win_y,&state) )
-             {
-              Point point=Point_cast(root_x,root_y);
-
-              frame->setMouseShape(point-origin,kmod);
-             }
-          }
+        frame->setMouseShape(getMousePos(),kmod);
        }
     }
 
@@ -2645,6 +2627,31 @@ class X11Host : public WindowHost , WindowDispatcher
     }
 
    // mouse
+
+   virtual Point getMousePos()
+    {
+     Window root;
+     Window child;
+     int root_x;
+     int root_y;
+     int win_x;
+     int win_y;
+     unsigned state;
+
+     if( window_ok )
+       {
+        DesktopObject.setFuncName("XQueryPointer");
+
+        if( XQueryPointer(disp,window,&root,&child,&root_x,&root_y,&win_x,&win_y,&state) )
+          {
+           Point point=Point_cast(root_x,root_y);
+
+           return point-origin;
+          }
+       }
+
+     return Null;
+    }
 
    virtual void captureMouse()
     {

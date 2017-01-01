@@ -287,6 +287,8 @@ class DragFrameShape
    void draw(const DrawBuf &buf) const;
 
    void draw(const DrawBuf &buf,DragType drag_type) const;
+
+   void drawHint(const DrawBuf &buf,Hint hint) const;
  };
 
 } // namespace Video

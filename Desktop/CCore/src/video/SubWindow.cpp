@@ -270,6 +270,28 @@ void WindowList::focusOn(Point point)
       }
  }
 
+ // hint
+
+Hint WindowList::getHint(Point point) const
+ {
+  Point base=parent.getPlace().getBase();
+  Point p=point-base;
+
+  for(auto cur=list.start(); +cur ;++cur)
+    {
+     Hint ret=cur->getHint(p);
+
+     if( +ret )
+       {
+        ret.pane+=base;
+
+        return ret;
+       }
+    }
+
+  return parent.SubWindow::getHint(point);
+ }
+
  // draw
 
 bool WindowList::hasGoodSize() const

@@ -15,7 +15,6 @@
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
 
-#include <CCore/inc/video/DrawTools.h>
 #include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
@@ -696,6 +695,111 @@ void DragFrameShape::draw(const DrawBuf &buf,DragType drag_type) const
      case DragType_Min         : draw_Min(art); break;
      case DragType_Max         : draw_Max(art); break;
      case DragType_Close       : draw_Close(art); break;
+    }
+ }
+
+void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const // TODO
+ {
+  if( +titleBar )
+    {
+     // 1
+
+     MPane bar(titleBar);
+
+     MCoord width=+cfg.width;
+
+     Coord dxy=RoundUpLen(width);
+
+     MCoord ex=bar.dy/4;
+
+     Pane pane=titleBar.shrink(RoundUpLen(ex)+2*dxy,3*dxy);
+
+     // 2
+
+     SmoothDrawArt art(buf);
+
+     MCoord topY;
+     MCoord minX;
+     MCoord maxX;
+
+     {
+      MPane p(pane);
+
+      topY=p.ey;
+      minX=p.x;
+      maxX=p.ex;
+
+      FigureBox fig(p);
+
+      VColor snow=+cfg.snow;
+      VColor gray=+cfg.gray;
+      VColor back=Wheat;       // TODO
+      VColor hint_text=Blue;   // TODO
+
+      fig.solid(art,back);
+
+      FigureTopBorder fig_top(p,width);
+      FigureBottomBorder fig_bottom(p,width);
+
+      fig_top.solid(art,snow);
+      fig_bottom.solid(art,gray);
+
+      StrLen text;
+
+      if( +hint )
+        {
+         text=hint.text.str();
+        }
+      else
+        {
+         text=CStr("<no hint available>"); // TODO
+        }
+
+      cfg.font->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),text,hint_text); // TODO font
+     }
+
+     // 3
+
+     if( +hint )
+       {
+        MCoord width=Fraction(3); // TODO
+
+        VColor border=Green;      // TODO
+
+        Coord dxy=RoundUpLen(width);
+
+        MPane p(hint.pane.expand(dxy));
+
+        FigureBox fig(p);
+
+        fig.loop(art,HalfNeg,width,border);
+
+        MPoint a=p.getTopMid().subY(width/2);
+        MPoint b(a.x,topY);
+
+        art.path(width,border,a,b);
+
+        if( b.x<minX )
+          {
+           MPoint c(minX,b.y);
+
+           art.path(width,border,b,c);
+
+           art.ball(c,2*width,border);
+          }
+        else if( b.x>maxX )
+          {
+           MPoint c(maxX,b.y);
+
+           art.path(width,border,b,c);
+
+           art.ball(c,2*width,border);
+          }
+        else
+          {
+           art.ball(b,2*width,border);
+          }
+       }
     }
  }
 

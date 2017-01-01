@@ -84,6 +84,8 @@ struct Ratio;
 
 struct Pane;
 
+struct PaneSub;
+
 class PointMap;
 
 struct CoordAcc;
@@ -544,6 +546,10 @@ struct Pane
 
   friend Pane operator -= (Pane &pane,Point point) { return pane=pane-point; }
 
+  friend bool operator == (Pane a,Pane b) { return a.getBase()==b.getBase() && a.getSize()==b.getSize() ; }
+
+  friend bool operator != (Pane a,Pane b) { return !( a==b ); }
+
   // pull
 
   Pane pullLeft(Coordinate delta) const { return Pane(x-delta,y,dx+delta,dy); }
@@ -711,6 +717,19 @@ T Inf(T a,T b,T c,TT ... tt)
  {
   return Inf(a,Inf(b,c,tt...));
  }
+
+/* struct PaneSub */
+
+struct PaneSub
+ {
+  Pane top;    // full width
+  Pane bottom; // full width
+
+  Pane left;
+  Pane right;
+
+  PaneSub(Pane outer,Pane inner);
+ };
 
 /* class PointMap */
 

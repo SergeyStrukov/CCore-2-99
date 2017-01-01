@@ -16,6 +16,8 @@
 #ifndef CCore_inc_video_RefVal_h
 #define CCore_inc_video_RefVal_h
 
+#include <CCore/inc/video/Point.h>
+
 #include <CCore/inc/String.h>
 
 namespace CCore {
@@ -32,6 +34,8 @@ void GuardCtorRefValLock();
 /* classes */
 
 class DefString;
+
+struct Hint;
 
 template <class T> class RefVal;
 
@@ -88,6 +92,24 @@ inline DefString operator "" _def (const char *str,ulen len) { return DefString(
 DefString SafeString(StrLen str,const char *out_of_memory);
 
 DefString SafeString(StrLen str);
+
+/* struct Hint */
+
+struct Hint
+ {
+  Pane pane;
+  DefString text;
+
+  Hint() noexcept {}
+
+  Hint(NothingType) noexcept {}
+
+  Hint(Pane pane_,const DefString &text_) : pane(pane_),text(text_) {}
+
+  bool operator + () const { return +pane; }
+
+  bool operator ! () const { return !pane; }
+ };
 
 /* class RefVal<T> */
 

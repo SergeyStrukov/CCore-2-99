@@ -57,49 +57,6 @@ PaneBorder::PaneBorder(Pane pane)
   buf[3]=Point(x,pane.y);
  }
 
-/* struct PaneSub */
-
-PaneSub::PaneSub(Pane outer,Pane inner)
- {
-  if( !outer ) return;
-
-  if( !inner )
-    {
-     top=outer;
-
-     return;
-    }
-
-  inner=Inf_nonempty(outer,inner);
-
-  if( !inner )
-    {
-     top=outer;
-
-     return;
-    }
-
-  top.x=outer.x;
-  top.y=outer.y;
-  top.dx=outer.dx;
-  top.dy=inner.y-outer.y;
-
-  left.x=outer.x;
-  left.y=inner.y;
-  left.dx=inner.x-outer.x;
-  left.dy=inner.dy;
-
-  right.x=inner.x+inner.dx;
-  right.y=inner.y;
-  right.dx=outer.x+outer.dx-right.x;
-  right.dy=inner.dy;
-
-  bottom.x=outer.x;
-  bottom.y=inner.y+inner.dy;
-  bottom.dx=outer.dx;
-  bottom.dy=outer.y+outer.dy-bottom.y;
- }
-
 } // namespace Video
 } // namespace CCore
 

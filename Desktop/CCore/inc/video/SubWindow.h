@@ -18,6 +18,7 @@
 
 #include <CCore/inc/video/FrameWindow.h>
 #include <CCore/inc/video/DrawBuf.h>
+#include <CCore/inc/video/RefVal.h>
 
 #include <CCore/inc/InterfaceHost.h>
 #include <CCore/inc/List.h>
@@ -106,6 +107,9 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    SubWindowHost &host;
 
+   DefString hint_text;
+   bool hint_ok = false ;
+
    friend class SubWindowHost;
    friend class WindowList;
 
@@ -163,6 +167,21 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
    void enableFrameReact() { getFrame()->enableReact(); }
 
    void askFrameClose() { getFrame()->askClose(); }
+
+   // hint
+
+   void setHintText(const DefString &str)
+    {
+     hint_text=str;
+     hint_ok=true;
+    }
+
+   virtual Hint getHint(Point point) const // relative host coords
+    {
+     if( hint_ok && place.contains(point) ) return Hint(place,hint_text);
+
+     return Nothing;
+    }
 
    // drawing
 
@@ -416,6 +435,10 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
    void enableTabFocus(bool enable_tab_=true) { enable_tab=enable_tab_; }
 
    void enableClickFocus(bool enable_click_=true) { enable_click=enable_click_; }
+
+   // hint
+
+   Hint getHint(Point point) const;
 
    // draw
 
@@ -671,6 +694,10 @@ class SomeWindow : public SubWindow
 
    virtual ~SomeWindow();
 
+   // hint
+
+   virtual Hint getHint(Point point) const;
+
    // drawing
 
    virtual bool hasGoodSize() const;
@@ -725,6 +752,13 @@ SomeWindow::SomeWindow(SubWindowHost &host)
 
 SomeWindow::~SomeWindow()
  {
+ }
+
+ // hint
+
+Hint SomeWindow::getHint(Point point) const
+ {
+  return wlist.getHint(point);
  }
 
  // drawing
@@ -866,6 +900,13 @@ class ComboWindow : public SubWindow
     }
 
   public:
+
+   // hint
+
+   virtual Hint getHint(Point point) const
+    {
+     return wlist.getHint(point);
+    }
 
    // drawing
 

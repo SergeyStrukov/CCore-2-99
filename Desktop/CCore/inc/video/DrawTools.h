@@ -85,8 +85,6 @@ struct CircleSpline;
 
 struct PaneBorder;
 
-struct PaneSub;
-
 /* struct CircleSpline */
 
 struct CircleSpline
@@ -115,19 +113,6 @@ struct PaneBorder
   Point topRight() const { return buf[3]; }
 
   PtrLen<const Point> get() const { return Range(buf); }
- };
-
-/* struct PaneSub */
-
-struct PaneSub
- {
-  Pane top;    // full width
-  Pane bottom; // full width
-
-  Pane left;
-  Pane right;
-
-  PaneSub(Pane outer,Pane inner);
  };
 
 } // namespace Video

@@ -1127,14 +1127,7 @@ class WindowsHost : public WindowHost
     {
      if( vkey==VKey_Shift || vkey==VKey_Ctrl || vkey==VKey_Alt )
        {
-        Win32::Point point_;
-
-        if( Win32::GetCursorPos(&point_) )
-          {
-           Point point(point_.x,point_.y);
-
-           frame->setMouseShape(point-origin,kmod);
-          }
+        frame->setMouseShape(getMousePos(),kmod);
        }
     }
 
@@ -1832,6 +1825,20 @@ class WindowsHost : public WindowHost
     }
 
    // mouse
+
+   virtual Point getMousePos()
+    {
+     Win32::Point point_;
+
+     if( Win32::GetCursorPos(&point_) )
+       {
+        Point point(point_.x,point_.y);
+
+        return point-origin;
+       }
+
+     return Null;
+    }
 
    virtual void captureMouse()
     {

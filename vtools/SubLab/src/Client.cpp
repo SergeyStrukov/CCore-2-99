@@ -1085,6 +1085,14 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_,const UserPref
 
      wlist.insTop(*cur);
     }
+
+  setHintText("Show SubWindow variety"_def);
+
+  check_wheat.setHintText("Check to Wheat the background"_def);
+
+  list_type.setHintText("Select some SubWindow type"_def);
+
+  space.setHintText("Drag here to change the space"_def);
  }
 
 ClientWindow::~ClientWindow()

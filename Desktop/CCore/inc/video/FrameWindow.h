@@ -176,6 +176,8 @@ class WindowHost : public MemBase_nocopy
 
    // mouse
 
+   virtual Point getMousePos()=0;
+
    virtual void captureMouse()=0;
 
    virtual void releaseMouse()=0;
