@@ -60,6 +60,12 @@ class DragFrameShape
      RefVal<VColor> btnPictNoAlert    =      Gray ;
      RefVal<VColor> btnPictCloseAlert =    Orange ;
 
+     RefVal<MCoord> hintWidth = Fraction(3) ;
+
+     RefVal<VColor> hintBack = Wheat ;
+     RefVal<VColor> hintText = Blue ;
+     RefVal<VColor> hintBorder = Green ;
+
      RefVal<VColor> shade_color        =    Violet ;
      RefVal<Clr>    shade_alpha        =        64 ;
 
@@ -70,11 +76,13 @@ class DragFrameShape
      RefVal<Coord> btn_dy    = 24 ;
 
      RefVal<Font> font;
+     RefVal<Font> fontHint;
 
      RefVal<unsigned> time   = 3_sectick ;
      RefVal<unsigned> period =    3_tick ;
 
-     RefVal<DefString> fatal_error = "Fatal error"_def ;
+     RefVal<DefString> text_Fatal_error = "Fatal error"_def ;
+     RefVal<DefString> text_No_hint = "<No hint available>"_def ;
 
      Config() noexcept {}
 
@@ -103,6 +111,12 @@ class DragFrameShape
        btnPictNoAlert.bind(bag.btnPictNoAlert);
        btnPictCloseAlert.bind(bag.btnPictCloseAlert);
 
+       hintWidth.bind(bag.hintWidth);
+
+       hintBack.bind(bag.hintBack);
+       hintText.bind(bag.hintText);
+       hintBorder.bind(bag.hintBorder);
+
        shade_color.bind(bag.shade_color);
        shade_alpha.bind(bag.shade_alpha);
 
@@ -112,11 +126,13 @@ class DragFrameShape
        btn_dy.bind(bag.btn_dy);
 
        font.bind(bag.title_font.font);
+       fontHint.bind(bag.hint_font.font);
 
        time.bind(bag.blink_time);
        period.bind(bag.blink_period);
 
-       fatal_error.bind(bag.fatal_error);
+       text_Fatal_error.bind(bag.text_Fatal_error);
+       text_No_hint.bind(bag.text_No_hint);
       }
     };
 
@@ -245,6 +261,8 @@ class DragFrameShape
    DragType dragTest(Point point) const;
 
    Pane getPane(DragType drag_type) const;
+
+   Hint getHint(Point point) const;
 
    void shade(FrameBuf<DesktopColor> &buf) const
     {

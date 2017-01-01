@@ -651,6 +651,28 @@ Pane DragFrameShape::getPane(DragType drag_type) const
     }
  }
 
+Hint DragFrameShape::getHint(Point point) const
+ {
+  switch( dragTest(point) )
+    {
+     case DragType_TopLeft     : return {dragTopLeft,"Resize top-left"_def};
+     case DragType_Left        : return {dragLeft,"Resize left"_def};
+     case DragType_BottomLeft  : return {dragBottomLeft,"Resize bottom-left"_def};
+     case DragType_Bottom      : return {dragBottom,"Resize bottom"_def};
+     case DragType_BottomRight : return {dragBottomRight,"Resize bottom-right"_def};
+     case DragType_Right       : return {dragRight,"Resize right"_def};
+     case DragType_TopRight    : return {dragTopRight,"Resize top-right"_def};
+
+     case DragType_Alert       : return {btnAlert,"Open/close alert view"_def};
+     case DragType_Help        : return {btnHelp,"Help on/off"_def};
+     case DragType_Min         : return {btnMin,"Minimize"_def};
+     case DragType_Max         : return {btnMax,max_button?"Maximize"_def:"Restore"_def};
+     case DragType_Close       : return {btnClose,"Close"_def};
+
+     default: return Null;
+    }
+ }
+
 void DragFrameShape::draw(const DrawBuf &buf) const
  {
   DrawArt art(buf);
@@ -698,7 +720,7 @@ void DragFrameShape::draw(const DrawBuf &buf,DragType drag_type) const
     }
  }
 
-void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const // TODO
+void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const
  {
   if( +titleBar )
     {
@@ -712,7 +734,7 @@ void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const // TODO
 
      MCoord ex=bar.dy/4;
 
-     Pane pane=titleBar.shrink(RoundUpLen(ex)+2*dxy,3*dxy);
+     Pane pane=titleBar.shrink(RoundUpLen(ex)+2*dxy,2*dxy);
 
      // 2
 
@@ -733,10 +755,10 @@ void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const // TODO
 
       VColor snow=+cfg.snow;
       VColor gray=+cfg.gray;
-      VColor back=Wheat;       // TODO
-      VColor hint_text=Blue;   // TODO
+      VColor hintBack=+cfg.hintBack;
+      VColor hintText=+cfg.hintText;
 
-      fig.solid(art,back);
+      fig.solid(art,hintBack);
 
       FigureTopBorder fig_top(p,width);
       FigureBottomBorder fig_bottom(p,width);
@@ -752,19 +774,19 @@ void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const // TODO
         }
       else
         {
-         text=CStr("<no hint available>"); // TODO
+         text=cfg.text_No_hint.get().str();
         }
 
-      cfg.font->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),text,hint_text); // TODO font
+      cfg.fontHint->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),text,hintText);
      }
 
      // 3
 
      if( +hint )
        {
-        MCoord width=Fraction(3); // TODO
+        MCoord width=+cfg.hintWidth;
 
-        VColor border=Green;      // TODO
+        VColor border=+cfg.hintBorder;
 
         Coord dxy=RoundUpLen(width);
 
@@ -777,27 +799,30 @@ void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const // TODO
         MPoint a=p.getTopMid().subY(width/2);
         MPoint b(a.x,topY);
 
-        art.path(width,border,a,b);
-
-        if( b.x<minX )
+        if( a.y>b.y )
           {
-           MPoint c(minX,b.y);
+           art.path(width,border,a,b);
 
-           art.path(width,border,b,c);
+           if( b.x<minX )
+             {
+              MPoint c(minX,b.y);
 
-           art.ball(c,2*width,border);
-          }
-        else if( b.x>maxX )
-          {
-           MPoint c(maxX,b.y);
+              art.path(width,border,b,c);
 
-           art.path(width,border,b,c);
+              art.ball(c,2*width,border);
+             }
+           else if( b.x>maxX )
+             {
+              MPoint c(maxX,b.y);
 
-           art.ball(c,2*width,border);
-          }
-        else
-          {
-           art.ball(b,2*width,border);
+              art.path(width,border,b,c);
+
+              art.ball(c,2*width,border);
+             }
+           else
+             {
+              art.ball(b,2*width,border);
+             }
           }
        }
     }

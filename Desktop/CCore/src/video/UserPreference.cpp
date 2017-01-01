@@ -95,7 +95,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("progress_active_bottom",ptr->progress_active_bottom);
   func("blink_time",ptr->blink_time);
   func("blink_period",ptr->blink_period);
-  func("fatal_error",ptr->fatal_error);
+  func("fatal_error",ptr->text_Fatal_error);
+  func("no_hint",ptr->text_No_hint);
   func("frame_dxy",ptr->frame_dxy);
   func("title_dy",ptr->title_dy);
   func("btn_dx",ptr->btn_dx);
@@ -140,6 +141,7 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("button_font",ptr->button_font.param);
   func("menu_font",ptr->menu_font.param);
   func("title_font",ptr->title_font.param);
+  func("hint_font",ptr->hint_font.param);
   func("filew_filter_font",ptr->filew_filter_font.param);
  }
 
@@ -263,7 +265,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("alert blink time",blink_time);
    binder.item("alert blink period",blink_period);
    binder.space();
-   binder.item("fatal error title",fatal_error);
+   binder.item("Fatal error",text_Fatal_error);
+   binder.item("<No hint available>",text_No_hint);
    binder.space();
    binder.item("frame width",frame_dxy);
    binder.item("title height",title_dy);
@@ -290,6 +293,7 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("button close-alert picture",btnPictCloseAlert);
    binder.space();
    binder.item("title font",title_font);
+   binder.item("hint font",hint_font);
    binder.space();
    binder.item("shade color",shade_color);
    binder.item("shade alpha",shade_alpha);
@@ -320,7 +324,7 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("New file",text_New_file);
  }
 
-void UserPreferenceBag::createFonts()
+void UserPreferenceBag::createFonts() // Update fonts here
  {
   label_font.create();
   contour_font.create();
@@ -333,6 +337,7 @@ void UserPreferenceBag::createFonts()
   menu_font.create();
 
   title_font.create();
+  hint_font.create();
 
   filew_filter_font.create();
  }
@@ -386,7 +391,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_DragWindow.btnPictCloseAlert.bind(btnPictCloseAlert);
   cfg_DragWindow.blink_time.bind(blink_time);
   cfg_DragWindow.blink_period.bind(blink_period);
-  cfg_DragWindow.fatal_error.bind(fatal_error);
+  cfg_DragWindow.fatal_error.bind(text_Fatal_error);
   cfg_DragWindow.shade_color.bind(shade_color);
   cfg_DragWindow.shade_alpha.bind(shade_alpha);
 

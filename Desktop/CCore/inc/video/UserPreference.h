@@ -172,7 +172,8 @@ struct UserPreferenceBag
   unsigned blink_time   = 3_sectick ;
   unsigned blink_period =    3_tick ;
 
-  DefString fatal_error = "Fatal error"_def ;
+  DefString text_Fatal_error = "Fatal error"_def ;
+  DefString text_No_hint = "<No hint available>"_def ;
 
   Coord frame_dxy = 12 ;
   Coord title_dy  = 32 ;
@@ -199,7 +200,14 @@ struct UserPreferenceBag
   VColor btnPictNoAlert    =      Gray ;
   VColor btnPictCloseAlert =    Orange ;
 
+  VColor hintBack = Wheat ; // +
+  VColor hintText = Blue ; // +
+  VColor hintBorder = Green ; // +
+
+  MCoord hintWidth = Fraction(3) ; // +
+
   FontCouple title_font;
+  FontCouple hint_font;
 
   VColor shade_color = Violet ;
   Clr    shade_alpha =     64 ;

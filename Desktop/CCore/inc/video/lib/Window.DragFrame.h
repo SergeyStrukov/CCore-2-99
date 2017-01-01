@@ -515,7 +515,12 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void hint(Point point)
     {
-     setHint(getClient().getHint(point));
+     Hint hint=shape.getHint(point);
+
+     if( +hint )
+       setHint(hint);
+     else
+       setHint(getClient().getHint(point));
     }
 
    void setHint(Hint hint)
