@@ -70,12 +70,12 @@ DragWindow.h         .
 FixedWindow.h        .
 ToolWindow.h         .
 
-MessageWindow.h      ++           
-Menu.h
-FileWindow.h         
-        
-WindowReport.h       
+WindowReport.h       .       
 
+MessageWindow.h      ++           
+Menu.h               .
+FileWindow.h         .
+        
 UserPreference.h     .
 
 --------------------------------------------------------------------------------

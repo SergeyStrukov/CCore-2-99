@@ -175,6 +175,21 @@ struct UserPreferenceBag
   DefString text_Fatal_error = "Fatal error"_def ;
   DefString text_No_hint = "<No hint available>"_def ;
 
+  DefString hint_ResizeTopLeft     = "Resize top-left"_def ; // +
+  DefString hint_ResizeLeft        = "Resize left"_def ; // +
+  DefString hint_ResizeBottomLeft  = "Resize bottom-left"_def ; // +
+  DefString hint_ResizeBottom      = "Resize bottom"_def ; // +
+  DefString hint_ResizeBottomRight = "Resize bottom-right"_def ; // +
+  DefString hint_ResizeRight       = "Resize right"_def ; // +
+  DefString hint_ResizeTopRight    = "Resize top-right"_def ; // +
+
+  DefString hint_Alert    = "Open/close alert view"_def ; // +
+  DefString hint_Help     = "Help on/off"_def ; // +
+  DefString hint_Minimize = "Minimize"_def ; // +
+  DefString hint_Maximize = "Maximize"_def ; // +
+  DefString hint_Restore  = "Restore"_def ; // +
+  DefString hint_Close    = "Close"_def ; // +
+
   Coord frame_dxy = 12 ;
   Coord title_dy  = 32 ;
   Coord btn_dx    = 26 ;

@@ -655,19 +655,19 @@ Hint DragFrameShape::getHint(Point point) const
  {
   switch( dragTest(point) )
     {
-     case DragType_TopLeft     : return {dragTopLeft,"Resize top-left"_def};
-     case DragType_Left        : return {dragLeft,"Resize left"_def};
-     case DragType_BottomLeft  : return {dragBottomLeft,"Resize bottom-left"_def};
-     case DragType_Bottom      : return {dragBottom,"Resize bottom"_def};
-     case DragType_BottomRight : return {dragBottomRight,"Resize bottom-right"_def};
-     case DragType_Right       : return {dragRight,"Resize right"_def};
-     case DragType_TopRight    : return {dragTopRight,"Resize top-right"_def};
+     case DragType_TopLeft     : return {dragTopLeft,+cfg.hint_ResizeTopLeft};
+     case DragType_Left        : return {dragLeft,+cfg.hint_ResizeLeft};
+     case DragType_BottomLeft  : return {dragBottomLeft,+cfg.hint_ResizeBottomLeft};
+     case DragType_Bottom      : return {dragBottom,+cfg.hint_ResizeBottom};
+     case DragType_BottomRight : return {dragBottomRight,+cfg.hint_ResizeBottomRight};
+     case DragType_Right       : return {dragRight,+cfg.hint_ResizeRight};
+     case DragType_TopRight    : return {dragTopRight,+cfg.hint_ResizeTopRight};
 
-     case DragType_Alert       : return {btnAlert,"Open/close alert view"_def};
-     case DragType_Help        : return {btnHelp,"Help on/off"_def};
-     case DragType_Min         : return {btnMin,"Minimize"_def};
-     case DragType_Max         : return {btnMax,max_button?"Maximize"_def:"Restore"_def};
-     case DragType_Close       : return {btnClose,"Close"_def};
+     case DragType_Alert       : return {btnAlert,+cfg.hint_Alert};
+     case DragType_Help        : return {btnHelp,+cfg.hint_Help};
+     case DragType_Min         : return {btnMin,+cfg.hint_Minimize};
+     case DragType_Max         : return {btnMax, max_button? +cfg.hint_Maximize : +cfg.hint_Restore };
+     case DragType_Close       : return {btnClose,+cfg.hint_Close};
 
      default: return Null;
     }

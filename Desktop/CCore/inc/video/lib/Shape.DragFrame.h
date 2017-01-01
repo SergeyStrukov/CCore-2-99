@@ -81,8 +81,23 @@ class DragFrameShape
      RefVal<unsigned> time   = 3_sectick ;
      RefVal<unsigned> period =    3_tick ;
 
-     RefVal<DefString> text_Fatal_error = "Fatal error"_def ;
+     //RefVal<DefString> text_Fatal_error = "Fatal error"_def ;
      RefVal<DefString> text_No_hint = "<No hint available>"_def ;
+
+     RefVal<DefString> hint_ResizeTopLeft     = "Resize top-left"_def ;
+     RefVal<DefString> hint_ResizeLeft        = "Resize left"_def ;
+     RefVal<DefString> hint_ResizeBottomLeft  = "Resize bottom-left"_def ;
+     RefVal<DefString> hint_ResizeBottom      = "Resize bottom"_def ;
+     RefVal<DefString> hint_ResizeBottomRight = "Resize bottom-right"_def ;
+     RefVal<DefString> hint_ResizeRight       = "Resize right"_def ;
+     RefVal<DefString> hint_ResizeTopRight    = "Resize top-right"_def ;
+
+     RefVal<DefString> hint_Alert    = "Open/close alert view"_def ;
+     RefVal<DefString> hint_Help     = "Help on/off"_def ;
+     RefVal<DefString> hint_Minimize = "Minimize"_def ;
+     RefVal<DefString> hint_Maximize = "Maximize"_def ;
+     RefVal<DefString> hint_Restore  = "Restore"_def ;
+     RefVal<DefString> hint_Close    = "Close"_def ;
 
      Config() noexcept {}
 
@@ -131,8 +146,23 @@ class DragFrameShape
        time.bind(bag.blink_time);
        period.bind(bag.blink_period);
 
-       text_Fatal_error.bind(bag.text_Fatal_error);
+       //text_Fatal_error.bind(bag.text_Fatal_error);
        text_No_hint.bind(bag.text_No_hint);
+
+       hint_ResizeTopLeft.bind(bag.hint_ResizeTopLeft);
+       hint_ResizeLeft.bind(bag.hint_ResizeLeft);
+       hint_ResizeBottomLeft.bind(bag.hint_ResizeBottomLeft);
+       hint_ResizeBottom.bind(bag.hint_ResizeBottom);
+       hint_ResizeBottomRight.bind(bag.hint_ResizeBottomRight);
+       hint_ResizeRight.bind(bag.hint_ResizeRight);
+       hint_ResizeTopRight.bind(bag.hint_ResizeTopRight);
+
+       hint_Alert.bind(bag.hint_Alert);
+       hint_Help.bind(bag.hint_Help);
+       hint_Minimize.bind(bag.hint_Minimize);
+       hint_Maximize.bind(bag.hint_Maximize);
+       hint_Restore.bind(bag.hint_Restore);
+       hint_Close.bind(bag.hint_Close);
       }
     };
 
