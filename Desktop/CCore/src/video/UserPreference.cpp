@@ -350,12 +350,7 @@ UserPreference::UserPreference() noexcept // Update here
  {
   // main windows
 
-  cfg_ExceptionWindow.back.bind(exw_back);
-  cfg_ExceptionWindow.text.bind(exw_text);
-  cfg_ExceptionWindow.divider.bind(exw_divider);
-  cfg_ExceptionWindow.scroll_dxy.bind(scroll_dxy);
-  cfg_ExceptionWindow.font.bind(info_font.font);
-  cfg_ExceptionWindow.scroll_cfg.bind(cfg_XScrollWindow);
+  cfg_ExceptionWindow.bind(get(),getSmartConfig());
 
   cfg_MessageSubWindow.bind(get(),getSmartConfig());
 

@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------------------------
 
 #include <CCore/inc/video/WindowReport.h>
-#include <CCore/inc/video/CommonDrawArt.h>
+#include <CCore/inc/video/SmoothDrawArt.h>
 
 #include <CCore/inc/CharProp.h>
 #include <CCore/inc/MemBase.h>
@@ -132,11 +132,15 @@ void ExceptionStore::divide()
 
 ulen ExceptionWindow::CountLines(StrLen text)
  {
+  if( !text ) return 1;
+
   ulen ret=0;
 
-  while( +text )
+  for(bool first=true; +text ;first=false)
     {
-     CutLine(text);
+     StrLen line=CutLine(text);
+
+     if( !text && !line && !first ) break;
 
      ret++;
     }
@@ -146,51 +150,38 @@ ulen ExceptionWindow::CountLines(StrLen text)
 
 Coord ExceptionWindow::TotalDX(Font font,ulen index,StrLen text)
  {
-  Coord ret;
+  Coord ret=0;
 
-  {
-   StrLen cur=text;
+  if( !text ) text=CStr("<empty>");
 
-   for(; +cur ;++cur) if( *cur=='\n' ) break;
-
-   StrLen line=text.prefix(cur);
-
-   char temp[TextBufLen];
-   PrintBuf out(Range(temp));
-
-   Printf(out,"#;) ",index);
-
-   StrLen line1=out.close();
-
-   TextSize ts=font->text(line1,line);
-
-   ret=ts.full_dx;
-
-   if( !cur ) return ret;
-
-   text=cur;
-
-   ++text;
-  }
-
-  for(;;)
+  for(bool first=true; +text ;first=false)
     {
-     StrLen cur=text;
+     StrLen line=CutLine(text);
 
-     for(; +cur ;++cur) if( *cur=='\n' ) break;
+     if( !text && !line && !first ) break;
 
-     StrLen line=text.prefix(cur);
+     if( first )
+       {
+        char temp[TextBufLen];
+        PrintBuf out(Range(temp));
 
-     TextSize ts=font->text(line);
+        Printf(out,"#;) ",index);
 
-     Replace_max(ret,ts.full_dx);
+        StrLen line1=out.close();
 
-     if( !cur ) return ret;
+        TextSize ts=font->text(line1,line);
 
-     text=cur;
+        Replace_max(ret,ts.full_dx);
+       }
+     else
+       {
+        TextSize ts=font->text(line);
 
-     ++text;
+        Replace_max(ret,ts.full_dx);
+       }
     }
+
+  return ret;
  }
 
 void ExceptionWindow::setScrollPage()
@@ -224,24 +215,38 @@ void ExceptionWindow::setLines()
 
 void ExceptionWindow::drawText(DrawBuf buf,Pane pane,Coord xoff) const
  {
-  CommonDrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   Font font=cfg.font.get();
   Coord y=text_by;
   ulen ind=0;
   ulen off=yscroll.getPos();
 
+  FontSize fs=font->getSize();
+
+  Coord xpos=fs.dx0-xoff;
+
+  MCoord width=+cfg.width;
+
+  MCoord x0=Fraction(pane.x);
+  MCoord dx=Fraction(pane.dx);
+  MCoord x1=x0+dx/2;
+  MCoord x2=x0+dx;
+
+  VColor vc=+cfg.text;
+  VColor divider=+cfg.divider;
+
   report.apply( [&] (ulen index,StrLen text,bool divide)
                     {
                      if( ind>=off+page ) return;
 
-                     for(bool first=true;;first=false)
+                     if( !text ) text=CStr("<empty>");
+
+                     for(bool first=true; +text ;first=false)
                        {
-                        StrLen cur=text;
+                        StrLen line=CutLine(text);
 
-                        for(; +cur ;++cur) if( *cur=='\n' ) break;
-
-                        StrLen line=text.prefix(cur);
+                        if( !text && !line && !first ) break;
 
                         if( ind>=off )
                           {
@@ -256,41 +261,32 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane,Coord xoff) const
 
                               StrLen line1=out.close();
 
-                              font->text(buf,pane,TextPlace(AlignX_Left,y),line1,line,+cfg.text);
+                              font->text(buf,pane,TextPlace(xpos,y),line1,line,vc);
                              }
                            else
                              {
-                              font->text(buf,pane,TextPlace(AlignX_Left,y),line,+cfg.text);
+                              font->text(buf,pane,TextPlace(xpos,y),line,vc);
                              }
 
                            y+=text_dy;
                           }
 
                         ind++;
-
-                        if( !cur ) break;
-
-                        text=cur;
-
-                        ++text;
                        }
 
                      if( ind>=off )
                        {
                         if( ind>=off+page ) return;
 
+                        MCoord div_y=Fraction(pane.y)-MPoint::Half+Fraction(y-text_by)+Fraction(text_dy)/2;
+
                         if( divide )
                           {
-                           Coord div_y=(y-text_by)+text_dy/2;
-
-                           art.path(+cfg.divider,Point(0,div_y-1),Point(buf.getFrameBuf().dX()-1,div_y-1));
-                           art.path(+cfg.divider,Point(0,div_y+1),Point(buf.getFrameBuf().dX()-1,div_y+1));
+                           art.path(2*width,divider,MPoint(x0,div_y),MPoint(x2,div_y));
                           }
                         else
                           {
-                           Coord div_y=(y-text_by)+text_dy/2;
-
-                           art.path(+cfg.divider,Point(0,div_y),Point(buf.getFrameBuf().dX()-1,div_y));
+                           art.path(width,divider,MPoint(x0,div_y),MPoint(x1,div_y));
                           }
 
                         y+=text_dy;
@@ -415,15 +411,16 @@ void ExceptionWindow::layout()
   delta_dx=fs.medDX();
 
   Point size=getSize();
-  Coord dxy=+cfg.scroll_dxy;
+
+  Coord dxy=+cfg.scroll_cfg.get().dxy;
 
   if( size>Point::Diag(dxy) )
     {
-     Pane yp=Pane(Null,dxy,size.y-dxy);
      Pane xp=Pane(dxy,size.y-dxy,size.x-dxy,dxy);
+     Pane yp=Pane(Null,dxy,size.y-dxy);
 
-     if( yscroll.isGoodSize(yp.getSize()) ) yscroll.setPlace(yp); else yscroll.setPlace(Empty);
      if( xscroll.isGoodSize(xp.getSize()) ) xscroll.setPlace(xp); else xscroll.setPlace(Empty);
+     if( yscroll.isGoodSize(yp.getSize()) ) yscroll.setPlace(yp); else yscroll.setPlace(Empty);
 
      Coord offx=dxy+delta_dx;
 
@@ -437,7 +434,7 @@ void ExceptionWindow::layout()
      ptext=Pane(Null,size);
     }
 
-  page=ptext.dy/text_dy;
+  page=Max<ulen>(ptext.dy/text_dy,1);
 
   setLines();
  }
@@ -547,7 +544,7 @@ void ExceptionWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
  {
   if( mkey&MouseKey_Shift )
     {
-     if( delta>0 )
+     if( delta<0 )
        {
         subXPos(IntAbs(delta));
        }
@@ -558,7 +555,7 @@ void ExceptionWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
     }
   else
     {
-     if( delta>0 )
+     if( delta<0 )
        {
         subYPos(IntAbs(delta));
        }

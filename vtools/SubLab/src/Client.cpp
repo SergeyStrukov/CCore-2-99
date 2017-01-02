@@ -403,7 +403,7 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
            if( (tick_count%period)==0 )
              {
               Printf(NoException,"Tick");
-              Printf(Exception,"Tick exception #;",count++);
+              Printf(Exception,"Tick exception\n>>>>>>>>>>>>>>> #; >>>>>>>>>>>>>>>>>>>>>>>>>>",count++);
              }
           }
         else

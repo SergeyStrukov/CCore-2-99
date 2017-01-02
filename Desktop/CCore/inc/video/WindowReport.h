@@ -111,7 +111,7 @@ class ExceptionWindow : public SubWindow
 
    struct Config
     {
-     RefVal<Coord> scroll_dxy = 20 ;
+     RefVal<MCoord> width = Fraction(6,2) ;
 
      RefVal<VColor> back    = Black ;
      RefVal<VColor> text    = Green ;
@@ -122,6 +122,20 @@ class ExceptionWindow : public SubWindow
      CtorRefVal<XScrollWindow::ConfigType> scroll_cfg;
 
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       width.bind(bag.width);
+
+       back.bind(bag.exw_back);
+       text.bind(bag.exw_text);
+       divider.bind(bag.exw_divider);
+
+       font.bind(bag.info_font.font);
+
+       scroll_cfg.bind(proxy);
+      }
     };
 
    using ConfigType = Config ;
@@ -148,7 +162,7 @@ class ExceptionWindow : public SubWindow
 
    Pane ptext;
 
-   Coord text_dy = 0 ;
+   Coord text_dy = 1 ;
    Coord text_by = 0 ;
    Coord delta_dx = 0 ;
 

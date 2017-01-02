@@ -69,7 +69,7 @@ WindowLib.h          ++
 FixedWindow.h        .
 ToolWindow.h         .
 
-WindowReport.h       +  ExceptionWindow       
+WindowReport.h       ++       
 
 MessageWindow.h      +           
 Menu.h               .
