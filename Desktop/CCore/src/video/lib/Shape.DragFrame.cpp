@@ -824,6 +824,49 @@ void DragFrameShape::drawHint(const DrawBuf &buf,Hint hint) const
               art.ball(b,2*width,border);
              }
           }
+        else
+          {
+           if( p.x-width/2>maxX )
+             {
+              MPoint a=p.getLeftMid().subX(width/2);
+              MPoint b(maxX,a.y);
+
+              art.path(width,border,a,b);
+
+              if( b.y<=topY )
+                {
+                 art.ball(b,2*width,border);
+                }
+              else
+                {
+                 MPoint c(b.x,topY);
+
+                 art.path(width,border,b,c);
+
+                 art.ball(c,2*width,border);
+                }
+             }
+           else if( p.ex+width/2<minX )
+             {
+              MPoint a=p.getRightMid().addX(width/2);
+              MPoint b(minX,a.y);
+
+              art.path(width,border,a,b);
+
+              if( b.y<=topY )
+                {
+                 art.ball(b,2*width,border);
+                }
+              else
+                {
+                 MPoint c(b.x,topY);
+
+                 art.path(width,border,b,c);
+
+                 art.ball(c,2*width,border);
+                }
+             }
+          }
        }
     }
  }

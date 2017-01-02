@@ -128,9 +128,9 @@ class ExceptionWindow : public SubWindow
       {
        width.bind(bag.width);
 
-       back.bind(bag.exw_back);
-       text.bind(bag.exw_text);
-       divider.bind(bag.exw_divider);
+       back.bind(bag.exception_back);
+       text.bind(bag.exception_text);
+       divider.bind(bag.exception_divider);
 
        font.bind(bag.info_font.font);
 

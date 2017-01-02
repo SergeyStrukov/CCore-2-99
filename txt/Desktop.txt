@@ -71,7 +71,7 @@ ToolWindow.h         .
 
 WindowReport.h       ++       
 
-MessageWindow.h      +           
+MessageWindow.h      .           
 Menu.h               .
 FileWindow.h         .
         

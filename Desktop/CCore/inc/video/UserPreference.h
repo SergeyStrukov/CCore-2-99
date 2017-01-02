@@ -68,20 +68,14 @@ struct UserPreferenceBag
 
   MCoord width = Fraction(6,2) ;
 
-  VColor ground   =    Silver ;
+  VColor gray    =      Gray ;
+  VColor grayUp  =     Green ;
+  VColor snow    =      Snow ;
+  VColor snowUp  = PaleGreen ;
+
   VColor back     =    Silver ;
   VColor line     =      Gray ;
   VColor inactive =      Gray ;
-
-  VColor gray    =      Gray ; // +
-  VColor grayUp  =     Green ; // +
-  VColor snow    =      Snow ; // +
-  VColor snowUp  = PaleGreen ; // +
-
-  VColor bottom   =      Gray ; // -
-  VColor bottomUp =     Green ; // -
-  VColor top      =      Snow ; // -
-  VColor topUp    =     Green ; // -
 
   VColor border   =      Blue ;
   VColor focus    = OrangeRed ;
@@ -138,10 +132,8 @@ struct UserPreferenceBag
   // scroll list
 
   VColor scroll_list_title        = Navy ;
-  VColor scroll_list_title_top    = Aqua ; // -
-  VColor scroll_list_title_bottom = Gray ; // -
-  VColor scroll_list_titleTop    = Aqua ;  // +
-  VColor scroll_list_titleBottom = Gray ;  // +
+  VColor scroll_list_titleTop    = Aqua ;
+  VColor scroll_list_titleBottom = Gray ;
 
   // other
 
@@ -156,15 +148,10 @@ struct UserPreferenceBag
   VColor switch_off       =    Red ;
 
   VColor progress_border   =     Black ;
-  VColor progress_grayUp   = DarkGreen ; // +
-  VColor progress_snowUp   =     Green ; // +
-  VColor progress_grayPing =     Black ; // +
-  VColor progress_snowPing =      Snow ; // +
-
-  VColor progress_ping_top      =      Snow ; // -
-  VColor progress_ping_bottom   =     Black ; // -
-  VColor progress_active_top    =     Green ; // -
-  VColor progress_active_bottom = DarkGreen ; // -
+  VColor progress_grayUp   = DarkGreen ;
+  VColor progress_snowUp   =     Green ;
+  VColor progress_grayPing =     Black ;
+  VColor progress_snowPing =      Snow ;
 
   // TopWindow
 
@@ -174,20 +161,20 @@ struct UserPreferenceBag
   DefString text_Fatal_error = "Fatal error"_def ;
   DefString text_No_hint = "<No hint available>"_def ;
 
-  DefString hint_ResizeTopLeft     = "Resize top-left"_def ; // +
-  DefString hint_ResizeLeft        = "Resize left"_def ; // +
-  DefString hint_ResizeBottomLeft  = "Resize bottom-left"_def ; // +
-  DefString hint_ResizeBottom      = "Resize bottom"_def ; // +
-  DefString hint_ResizeBottomRight = "Resize bottom-right"_def ; // +
-  DefString hint_ResizeRight       = "Resize right"_def ; // +
-  DefString hint_ResizeTopRight    = "Resize top-right"_def ; // +
+  DefString hint_ResizeTopLeft     = "Resize top-left"_def ;
+  DefString hint_ResizeLeft        = "Resize left"_def ;
+  DefString hint_ResizeBottomLeft  = "Resize bottom-left"_def ;
+  DefString hint_ResizeBottom      = "Resize bottom"_def ;
+  DefString hint_ResizeBottomRight = "Resize bottom-right"_def ;
+  DefString hint_ResizeRight       = "Resize right"_def ;
+  DefString hint_ResizeTopRight    = "Resize top-right"_def ;
 
-  DefString hint_Alert    = "Open/close alert view"_def ; // +
-  DefString hint_Help     = "Help on/off"_def ; // +
-  DefString hint_Minimize = "Minimize"_def ; // +
-  DefString hint_Maximize = "Maximize"_def ; // +
-  DefString hint_Restore  = "Restore"_def ; // +
-  DefString hint_Close    = "Close"_def ; // +
+  DefString hint_Alert    = "Open/close alert view"_def ;
+  DefString hint_Help     = "Help on/off"_def ;
+  DefString hint_Minimize = "Minimize"_def ;
+  DefString hint_Maximize = "Maximize"_def ;
+  DefString hint_Restore  = "Restore"_def ;
+  DefString hint_Close    = "Close"_def ;
 
   Coord frame_dxy = 12 ;
   Coord title_dy  = 32 ;
@@ -204,7 +191,7 @@ struct UserPreferenceBag
   VColor drag              =    Silver ;
   VColor dragHilight       =     Green ;
   VColor dragActive        =       Red ;
-  VColor dragSmall         =     Wheat ; // +
+  VColor dragSmall         =     Wheat ;
 
   VColor btnFace           = SteelBlue ;
   VColor btnFaceHilight    =     Green ;
@@ -214,11 +201,11 @@ struct UserPreferenceBag
   VColor btnPictNoAlert    =      Gray ;
   VColor btnPictCloseAlert =    Orange ;
 
-  VColor hintBack = Wheat ; // +
-  VColor hintText = Blue ; // +
-  VColor hintBorder = Green ; // +
+  VColor hintBack = Wheat ;
+  VColor hintText = Blue ;
+  VColor hintBorder = Green ;
 
-  MCoord hintWidth = Fraction(3) ; // +
+  MCoord hintWidth = Fraction(3) ;
 
   FontCouple title_font;
   FontCouple hint_font;
@@ -228,15 +215,13 @@ struct UserPreferenceBag
 
   // ExceptionWindow
 
-  VColor exw_back    = Black ;
-  VColor exw_text    = Green ;
-  VColor exw_divider =   Red ;
+  VColor exception_back    = Black ;
+  VColor exception_text    = Green ;
+  VColor exception_divider =   Red ;
 
   // MessageWindow
 
-  Coord msgw_knob_dxy = 50 ; // -
-
-  Coord message_knob_dxy = 50 ; // +
+  Coord message_knob_dxy = 50 ;
 
   Ratio message_pos_ry = Div(5,12) ; // +
 
