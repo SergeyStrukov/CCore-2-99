@@ -78,7 +78,7 @@ struct FontSize
   Coord dx1;
   Coord skew;
 
-  Coord medDx() const { return min_dx+(max_dx-min_dx)/2; }
+  Coord medDX() const { return min_dx+(max_dx-min_dx)/2; }
  };
 
 /* struct TextSize */

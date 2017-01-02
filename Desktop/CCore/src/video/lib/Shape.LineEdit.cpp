@@ -82,13 +82,13 @@ void LineEditShape::setMax()
      else
        xoffMax=0;
 
-     dxoff=fs.medDx();
+     dxoff=fs.medDX();
     }
   else
     {
      xoffMax=0;
 
-     dxoff=fs.medDx();
+     dxoff=fs.medDX();
     }
  }
 

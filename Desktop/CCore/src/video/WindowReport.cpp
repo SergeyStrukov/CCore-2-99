@@ -16,6 +16,7 @@
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/CommonDrawArt.h>
 
+#include <CCore/inc/CharProp.h>
 #include <CCore/inc/MemBase.h>
 
 namespace CCore {
@@ -129,16 +130,21 @@ void ExceptionStore::divide()
 
 /* class ExceptionWindow */
 
-ulen ExceptionWindow::Lines(StrLen text)
+ulen ExceptionWindow::CountLines(StrLen text)
  {
-  ulen ret=1;
+  ulen ret=0;
 
-  for(; +text ;++text) if( *text=='\n' ) ret++;
+  while( +text )
+    {
+     CutLine(text);
+
+     ret++;
+    }
 
   return ret;
  }
 
-Coord ExceptionWindow::VisibleDx(Font font,ulen index,StrLen text)
+Coord ExceptionWindow::TotalDX(Font font,ulen index,StrLen text)
  {
   Coord ret;
 
@@ -187,6 +193,13 @@ Coord ExceptionWindow::VisibleDx(Font font,ulen index,StrLen text)
     }
  }
 
+void ExceptionWindow::setScrollPage()
+ {
+  xscroll.setRange(total_dx,ptext.dx);
+
+  yscroll.setRange(lines+page-1,page);
+ }
+
 void ExceptionWindow::setLines()
  {
   ulen temp=0;
@@ -196,27 +209,20 @@ void ExceptionWindow::setLines()
 
   report.apply( [&] (ulen index,StrLen text,bool)
                     {
-                     temp+=Lines(text)+1;
+                     temp+=CountLines(text)+1;
 
-                     Replace_max(temp_dx,VisibleDx(font,index,text));
+                     Replace_max(temp_dx,TotalDX(font,index,text));
 
                     } );
 
   lines=temp;
 
-  visible_dx=Min<Coord>(temp_dx,MaxCoord-ptext.dx-text_dx)+text_dx;
+  total_dx=Min_cast(temp_dx,MaxCoord-delta_dx)+delta_dx;
 
   setScrollPage();
  }
 
-void ExceptionWindow::setScrollPage()
- {
-  yscroll.setRange(lines+visible_lines-1,visible_lines);
-
-  xscroll.setRange(visible_dx,ptext.dx);
- }
-
-void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
+void ExceptionWindow::drawText(DrawBuf buf,Pane pane,Coord xoff) const
  {
   CommonDrawArt art(buf);
 
@@ -227,7 +233,7 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
 
   report.apply( [&] (ulen index,StrLen text,bool divide)
                     {
-                     if( ind>=off+visible_lines ) return;
+                     if( ind>=off+page ) return;
 
                      for(bool first=true;;first=false)
                        {
@@ -239,7 +245,7 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
 
                         if( ind>=off )
                           {
-                           if( ind>=off+visible_lines ) return;
+                           if( ind>=off+page ) return;
 
                            if( first )
                              {
@@ -271,7 +277,7 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
 
                      if( ind>=off )
                        {
-                        if( ind>=off+visible_lines ) return;
+                        if( ind>=off+page ) return;
 
                         if( divide )
                           {
@@ -295,25 +301,90 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
                     } );
  }
 
+void ExceptionWindow::subYPos(ulen delta)
+ {
+  if( ulen off=yscroll.getPos() )
+    {
+     yscroll.setPos(PosSub(off,delta));
+
+     redraw();
+    }
+ }
+
+void ExceptionWindow::addYPos(ulen delta)
+ {
+  ulen off=yscroll.getPos();
+
+  yscroll.setPos(AddToCap<ulen>(off,delta,lines));
+
+  redraw();
+ }
+
+void ExceptionWindow::subXPos(ulen delta)
+ {
+  if( ulen off=xscroll.getPos() )
+    {
+     delta*=delta_dx;
+
+     xscroll.setPos(PosSub(off,delta));
+
+     redraw();
+    }
+ }
+
+void ExceptionWindow::addXPos(ulen delta)
+ {
+  ulen off=xscroll.getPos();
+
+  delta*=delta_dx;
+
+  xscroll.setPos(AddToCap<ulen>(off,delta,total_dx));
+
+  redraw();
+ }
+
+void ExceptionWindow::update()
+ {
+  if( opened )
+    {
+     setLines();
+
+     redraw();
+    }
+ }
+
+void ExceptionWindow::setXPos(ulen)
+ {
+  redraw();
+ }
+
+void ExceptionWindow::setYPos(ulen)
+ {
+  redraw();
+ }
+
 ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowReportBase &report_)
  : SubWindow(host),
    report(report_),
    cfg(cfg_),
 
    wlist(*this),
-   yscroll(wlist,cfg.scroll_cfg),
-   xscroll(wlist,cfg.scroll_cfg),
 
-   connector_updateReport(this,&ExceptionWindow::updateReport,report.updated),
-   connector_yposChanged(this,&ExceptionWindow::yposChanged,yscroll.changed),
-   connector_xposChanged(this,&ExceptionWindow::xposChanged,xscroll.changed)
+   xscroll(wlist,cfg.scroll_cfg),
+   yscroll(wlist,cfg.scroll_cfg),
+
+   connector_update(this,&ExceptionWindow::update,report.updated),
+   connector_xscroll_changed(this,&ExceptionWindow::setXPos,xscroll.changed),
+   connector_yscroll_changed(this,&ExceptionWindow::setYPos,yscroll.changed)
  {
-  wlist.insTop(yscroll,xscroll);
+  wlist.insTop(xscroll,yscroll);
  }
 
 ExceptionWindow::~ExceptionWindow()
  {
  }
+
+ // methods
 
 void ExceptionWindow::reposition() noexcept
  {
@@ -322,7 +393,7 @@ void ExceptionWindow::reposition() noexcept
 
   report.apply( [&] (ulen,StrLen text,bool divide)
                     {
-                     temp+=Lines(text)+1;
+                     temp+=CountLines(text)+1;
 
                      if( divide ) off=temp;
 
@@ -333,13 +404,15 @@ void ExceptionWindow::reposition() noexcept
   try { redraw(); } catch(...) {}
  }
 
+ // drawing
+
 void ExceptionWindow::layout()
  {
-  FontSize font_size=cfg.font->getSize();
+  FontSize fs=cfg.font->getSize();
 
-  text_by=font_size.by;
-  text_dy=font_size.dy;
-  text_dx=font_size.min_dx;
+  text_dy=fs.dy;
+  text_by=fs.by;
+  delta_dx=fs.medDX();
 
   Point size=getSize();
   Coord dxy=+cfg.scroll_dxy;
@@ -352,19 +425,19 @@ void ExceptionWindow::layout()
      if( yscroll.isGoodSize(yp.getSize()) ) yscroll.setPlace(yp); else yscroll.setPlace(Empty);
      if( xscroll.isGoodSize(xp.getSize()) ) xscroll.setPlace(xp); else xscroll.setPlace(Empty);
 
-     Coord offx=dxy+text_dx;
+     Coord offx=dxy+delta_dx;
 
      ptext=Pane(offx,0,size.x-offx,size.y-dxy);
     }
   else
     {
-     yscroll.setPlace(Empty);
      xscroll.setPlace(Empty);
+     yscroll.setPlace(Empty);
 
      ptext=Pane(Null,size);
     }
 
-  visible_lines=ptext.dy/text_dy;
+  page=ptext.dy/text_dy;
 
   setLines();
  }
@@ -375,20 +448,18 @@ void ExceptionWindow::draw(DrawBuf buf,bool drag_active) const
     {
      buf.erase(+cfg.back);
 
-     DrawBuf tbuf=buf.cutRebase(ptext);
-
      Coord xoff=Coord(xscroll.getPos());
 
-     Pane pane(-xoff,0,IntAdd(ptext.dx,xoff),ptext.dy);
-
-     drawText(tbuf,pane);
-
-     wlist.draw(buf,drag_active);
+     drawText(buf.cut(ptext),ptext,xoff);
     }
   catch(CatchType)
     {
     }
+
+  wlist.draw(buf,drag_active);
  }
+
+ // base
 
 void ExceptionWindow::open()
  {
@@ -402,56 +473,55 @@ void ExceptionWindow::close()
   opened=false;
  }
 
+ // user input
+
+void ExceptionWindow::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+void ExceptionWindow::react_other(UserAction action)
+ {
+  wlist.react(action);
+ }
+
 void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
  {
   switch( vkey )
     {
-     case VKey_PageUp : repeat*=visible_lines; // falldown;
-
-     case VKey_Up :
+     case VKey_PageUp :
       {
-       if( ulen off=yscroll.getPos() )
-         {
-          yscroll.setPos(PosSub(off,repeat));
-
-          redraw();
-         }
+       subYPos(repeat*page);
       }
      break;
 
-     case VKey_PageDown : repeat*=visible_lines; // falldown;
+     case VKey_Up :
+      {
+       subYPos(repeat);
+      }
+     break;
+
+     case VKey_PageDown :
+      {
+       addYPos(repeat*page);
+      }
+     break;
 
      case VKey_Down :
       {
-       ulen off=yscroll.getPos();
-
-       yscroll.setPos(off+repeat);
-
-       redraw();
+       addYPos(repeat);
       }
      break;
 
      case VKey_Left :
       {
-       ulen off=xscroll.getPos();
-
-       off=PosSub(off,(uCoord)text_dx);
-
-       xscroll.setPos(off);
-
-       redraw();
+       subXPos(repeat);
       }
      break;
 
      case VKey_Right :
       {
-       ulen off=xscroll.getPos();
-
-       off+=text_dx;
-
-       xscroll.setPos(off);
-
-       redraw();
+       addXPos(repeat);
       }
      break;
 
@@ -479,78 +549,24 @@ void ExceptionWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
     {
      if( delta>0 )
        {
-        unsigned repeat=IntDist<Coord>(0,delta);
-
-        ulen off=xscroll.getPos();
-
-        off=PosSub(off,text_dx*repeat);
-
-        xscroll.setPos(off);
-
-        redraw();
+        subXPos(IntAbs(delta));
        }
-     else if( delta<0 )
+     else
        {
-        unsigned repeat=IntDist<Coord>(delta,0);
-
-        ulen off=xscroll.getPos();
-
-        off+=text_dx*repeat;
-
-        xscroll.setPos(off);
-
-        redraw();
+        addXPos(IntAbs(delta));
        }
     }
   else
     {
      if( delta>0 )
        {
-        unsigned repeat=IntDist<Coord>(0,delta);
-
-        if( ulen off=yscroll.getPos() )
-          {
-           yscroll.setPos(PosSub(off,repeat));
-
-           redraw();
-          }
+        subYPos(IntAbs(delta));
        }
-     else if( delta<0 )
+     else
        {
-        unsigned repeat=IntDist<Coord>(delta,0);
-
-        ulen off=yscroll.getPos();
-
-        yscroll.setPos(off+repeat);
-
-        redraw();
+        addYPos(IntAbs(delta));
        }
     }
- }
-
-void ExceptionWindow::react(UserAction action)
- {
-  action.dispatch(*this, [this] (UserAction action) { wlist.react(action); } );
- }
-
-void ExceptionWindow::updateReport()
- {
-  if( opened )
-    {
-     setLines();
-
-     redraw();
-    }
- }
-
-void ExceptionWindow::yposChanged(ulen)
- {
-  redraw();
- }
-
-void ExceptionWindow::xposChanged(ulen)
- {
-  redraw();
  }
 
 /* class WindowReportBase */

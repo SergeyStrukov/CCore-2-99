@@ -66,7 +66,7 @@ void InfoShape::setMax()
      else
        yoffMax=0;
 
-     dxoff=fs.medDx();
+     dxoff=fs.medDX();
     }
   else
     {

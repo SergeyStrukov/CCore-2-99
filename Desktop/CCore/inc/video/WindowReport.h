@@ -136,35 +136,56 @@ class ExceptionWindow : public SubWindow
 
    WindowList wlist;
 
-   YScrollWindow yscroll;
    XScrollWindow xscroll;
+   YScrollWindow yscroll;
 
   private:
 
    bool opened = false ;
 
    ulen lines = 0 ;
+   ulen page = 1 ;
 
    Pane ptext;
 
-   Coord text_by = 0 ;
    Coord text_dy = 0 ;
-   Coord text_dx = 0 ;
+   Coord text_by = 0 ;
+   Coord delta_dx = 0 ;
 
-   ulen visible_lines = 0 ;
-   Coord visible_dx = 0 ;
+   Coord total_dx = 0 ;
 
   private:
 
-   static ulen Lines(StrLen text);
+   static ulen CountLines(StrLen text);
 
-   static Coord VisibleDx(Font font,ulen index,StrLen text);
-
-   void setLines();
+   static Coord TotalDX(Font font,ulen index,StrLen text);
 
    void setScrollPage();
 
-   void drawText(DrawBuf buf,Pane pane) const;
+   void setLines();
+
+   void drawText(DrawBuf buf,Pane pane,Coord xoff) const;
+
+   void subYPos(ulen delta);
+
+   void addYPos(ulen delta);
+
+   void subXPos(ulen delta);
+
+   void addXPos(ulen delta);
+
+  private:
+
+   void update();
+
+   SignalConnector<ExceptionWindow> connector_update;
+
+   void setXPos(ulen pos);
+
+   void setYPos(ulen pos);
+
+   SignalConnector<ExceptionWindow,ulen> connector_xscroll_changed;
+   SignalConnector<ExceptionWindow,ulen> connector_yscroll_changed;
 
   public:
 
@@ -190,23 +211,13 @@ class ExceptionWindow : public SubWindow
 
    // user input
 
+   virtual void react(UserAction action);
+
+   void react_other(UserAction action);
+
    void react_Key(VKey vkey,KeyMod kmod,unsigned repeat);
 
    void react_Wheel(Point point,MouseKey mkey,Coord delta);
-
-   virtual void react(UserAction action);
-
-  private:
-
-   void updateReport();
-
-   void yposChanged(ulen pos);
-
-   void xposChanged(ulen pos);
-
-   SignalConnector<ExceptionWindow> connector_updateReport;
-   SignalConnector<ExceptionWindow,ulen> connector_yposChanged;
-   SignalConnector<ExceptionWindow,ulen> connector_xposChanged;
  };
 
 /* class WindowReportBase */
