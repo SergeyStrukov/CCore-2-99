@@ -48,7 +48,7 @@ class AltShape
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
+     explicit Config(const UserPreference &pref) noexcept
       {
        bind(pref.get());
       }
@@ -205,7 +205,7 @@ class ClientWindow : public ComboWindow
 
      Config() noexcept {}
 
-     Config(const UserPreference &pref)
+     Config(const UserPreference &pref) noexcept
       : check_cfg(SmartBind,pref),
         label_cfg(SmartBind,pref),
         list_cfg(SmartBind,pref)

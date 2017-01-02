@@ -16,7 +16,7 @@
 #ifndef Application_h
 #define Application_h
 
-#include <CCore/inc/video/DragWindow.h>
+#include <CCore/inc/video/WindowLib.h>
 
 namespace App {
 

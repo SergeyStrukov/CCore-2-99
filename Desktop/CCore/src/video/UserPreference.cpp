@@ -367,34 +367,6 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_AlertMessageWindow.frame_cfg.bind(cfg_FixedWindow);
   cfg_AlertMessageWindow.msg_cfg.bind(cfg_AlertMessageSubWindow);
 
-  cfg_DragWindow.width.bind(width);
-  cfg_DragWindow.frame_dxy.bind(frame_dxy);
-  cfg_DragWindow.title_dy.bind(title_dy);
-  cfg_DragWindow.btn_dx.bind(btn_dx);
-  cfg_DragWindow.btn_dy.bind(btn_dy);
-  cfg_DragWindow.top.bind(bottom);
-  cfg_DragWindow.bottom.bind(top);
-  cfg_DragWindow.frame.bind(frame);
-  cfg_DragWindow.active.bind(active_frame);
-  cfg_DragWindow.inactive.bind(inactive_frame);
-  cfg_DragWindow.title.bind(title);
-  cfg_DragWindow.title_font.bind(title_font.font);
-  cfg_DragWindow.drag.bind(drag);
-  cfg_DragWindow.dragHilight.bind(dragHilight);
-  cfg_DragWindow.dragActive.bind(dragActive);
-  cfg_DragWindow.btnFace.bind(btnFace);
-  cfg_DragWindow.btnFaceHilight.bind(btnFaceHilight);
-  cfg_DragWindow.btnPict.bind(btnPict);
-  cfg_DragWindow.btnPictClose.bind(btnPictClose);
-  cfg_DragWindow.btnPictAlert.bind(btnPictAlert);
-  cfg_DragWindow.btnPictNoAlert.bind(btnPictNoAlert);
-  cfg_DragWindow.btnPictCloseAlert.bind(btnPictCloseAlert);
-  cfg_DragWindow.blink_time.bind(blink_time);
-  cfg_DragWindow.blink_period.bind(blink_period);
-  cfg_DragWindow.fatal_error.bind(text_Fatal_error);
-  cfg_DragWindow.shade_color.bind(shade_color);
-  cfg_DragWindow.shade_alpha.bind(shade_alpha);
-
   cfg_FixedWindow.width.bind(width);
   cfg_FixedWindow.frame_dxy.bind(frame_dxy);
   cfg_FixedWindow.title_dy.bind(title_dy);
@@ -422,6 +394,8 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_SimpleCascadeMenu.menu_cfg.bind(cfg_SimpleCascadeMenuWindow);
 
   cfg_DragFrame.bind(get());
+
+  cfg_WindowReport.bind(get());
 
   // sub windows
 
@@ -560,7 +534,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_FileSubWindow.alt_cfg.bind(cfg_FileCheckShape);
   cfg_FileSubWindow.line_cfg.bind(cfg_XDoubleLineWindow);
 
-  cfg_FileWindow.frame_cfg.bind(cfg_DragWindow);
+  cfg_FileWindow.frame_cfg.bind(cfg_DragFrame);
   cfg_FileWindow.file_cfg.bind(cfg_FileSubWindow);
  }
 

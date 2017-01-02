@@ -46,7 +46,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragWindow main_win;
+   DragFrame main_win;
 
    ExceptionClient exception_client;
    Life client;
@@ -95,7 +95,7 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.drag_cfg),
+      main_win(param.desktop,param.report_cfg),
       exception_client(main_win,param.exception_cfg,report),
       client(main_win)
     {

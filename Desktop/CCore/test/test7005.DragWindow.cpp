@@ -23,7 +23,7 @@ namespace Private_7005 {
 
 class ClientSubWindow : public SubWindow
  {
-   DragShape::Config &cfg;
+   DragFrameShape::Config &cfg;
    Signal<> &update;
 
    enum Param
@@ -41,7 +41,7 @@ class ClientSubWindow : public SubWindow
 
   public:
 
-   ClientSubWindow(SubWindowHost &host,Signal<> &update_,DragShape::Config &cfg_)
+   ClientSubWindow(SubWindowHost &host,Signal<> &update_,DragFrameShape::Config &cfg_)
     : SubWindow(host),
       cfg(cfg_),
       update(update_)

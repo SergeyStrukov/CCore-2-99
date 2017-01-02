@@ -548,16 +548,16 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
     : FrameWindow(desktop),
       shape(cfg),
       input(this),
-      connector_updateConfig(this,&DragFrameOf<Shape>::updateConfig),
+      connector_update(this,&DragFrameOf<Shape>::update),
       connector_alert(this,&DragFrameOf<Shape>::alert)
     {
      defer_tick=input.create(&DragFrameOf<Shape>::tick);
     }
 
-   DragFrameOf(Desktop *desktop,const ConfigType &cfg,Signal<> &update)
+   DragFrameOf(Desktop *desktop,const ConfigType &cfg,Signal<> &signal)
     : DragFrameOf(desktop,cfg)
     {
-     connector_updateConfig.connect(update);
+     connector_update.connect(signal);
     }
 
    virtual ~DragFrameOf()
@@ -586,9 +586,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      alert_client_ac=alert_client_.getAliveControl();
     }
 
-   void connectUpdate(Signal<> &update)
+   void connectUpdate(Signal<> &signal)
     {
-     connector_updateConfig.connect(update);
+     connector_update.connect(signal);
     }
 
    void connectAlert(Signal<> &signal)
@@ -1063,7 +1063,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    DeferTick defer_tick;
 
-   void updateConfig()
+   void update()
     {
      input.redrawAll(true);
     }
@@ -1087,16 +1087,10 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
           pushAlertBlink();
          }
         break;
-
-        case AlertType_Opened :
-         {
-          redrawClient();
-         }
-        break;
        }
     }
 
-   SignalConnector<DragFrameOf<Shape> > connector_updateConfig;
+   SignalConnector<DragFrameOf<Shape> > connector_update;
    SignalConnector<DragFrameOf<Shape> > connector_alert;
  };
 

@@ -79,7 +79,6 @@ obj/Desktop.o \
 obj/DesktopKey.o \
 obj/DetectProxy.o \
 obj/DirTreeRun.o \
-obj/DragWindow.o \
 obj/DrawAlgo.o \
 obj/DrawBuf.o \
 obj/DrawTools.o \
@@ -473,7 +472,6 @@ obj/Desktop.s \
 obj/DesktopKey.s \
 obj/DetectProxy.s \
 obj/DirTreeRun.s \
-obj/DragWindow.s \
 obj/DrawAlgo.s \
 obj/DrawBuf.s \
 obj/DrawTools.s \
@@ -867,7 +865,6 @@ obj/Desktop.dep \
 obj/DesktopKey.dep \
 obj/DetectProxy.dep \
 obj/DirTreeRun.dep \
-obj/DragWindow.dep \
 obj/DrawAlgo.dep \
 obj/DrawBuf.dep \
 obj/DrawTools.dep \
@@ -1428,9 +1425,6 @@ obj/DetectProxy.o : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DirTreeRun.o : ../../HCore/CCore/src/DirTreeRun.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/DragWindow.o : ../../Desktop/CCore/src/video/DragWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DrawAlgo.o : ../../Desktop/CCore/src/video/DrawAlgo.cpp
@@ -2605,9 +2599,6 @@ obj/DetectProxy.s : ../../Fundamental/CCore/src/DetectProxy.cpp
 obj/DirTreeRun.s : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/DragWindow.s : ../../Desktop/CCore/src/video/DragWindow.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
 obj/DrawAlgo.s : ../../Desktop/CCore/src/video/DrawAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3779,9 +3770,6 @@ obj/DetectProxy.dep : ../../Fundamental/CCore/src/DetectProxy.cpp
 
 obj/DirTreeRun.dep : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DirTreeRun.o $< -MF $@
-
-obj/DragWindow.dep : ../../Desktop/CCore/src/video/DragWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DragWindow.o $< -MF $@
 
 obj/DrawAlgo.dep : ../../Desktop/CCore/src/video/DrawAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawAlgo.o $< -MF $@

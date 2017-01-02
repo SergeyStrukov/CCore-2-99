@@ -16,7 +16,6 @@
 #ifndef CCore_inc_video_WindowReport_h
 #define CCore_inc_video_WindowReport_h
 
-#include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 
 #include <CCore/inc/Exception.h>
@@ -32,9 +31,11 @@ class ExceptionWindow;
 
 class WindowReportBase;
 
-template <class Shape> struct WindowReportParamOf;
+template <class Frame> struct WindowReportConfigOf;
 
-template <class Shape> class WindowReportOf;
+template <class Frame> struct WindowReportParamOf;
+
+template <class Frame> class WindowReportOf;
 
 class ExceptionClient;
 
@@ -250,29 +251,44 @@ class WindowReportBase : public ExceptionStore , public ReportException
 
    ~WindowReportBase();
 
-   void clear() noexcept
-    {
-     ReportException::clear();
-
-     non_cleared=false;
-
-     divide();
-    }
+   void clear() noexcept;
 
    void show() noexcept;
 
-   Signal<> update;
+   Signal<> updated;
  };
 
-/* struct WindowReportParamOf<Shape> */
+/* struct WindowReportConfigOf<Frame> */
 
-template <class Shape>
+template <class Frame>
+struct WindowReportConfigOf : Frame::ConfigType
+ {
+  RefVal<DefString> text_Fatal_error = "Fatal error"_def ;
+
+  WindowReportConfigOf() noexcept {}
+
+  template <class Bag>
+  void bind(const Bag &bag)
+   {
+    Frame::ConfigType::bind(bag);
+
+    text_Fatal_error.bind(bag.text_Fatal_error);
+   }
+ };
+
+/* type WindowReportConfig */
+
+using WindowReportConfig = WindowReportConfigOf<DragFrame> ;
+
+/* struct WindowReportParamOf<Frame> */
+
+template <class Frame>
 struct WindowReportParamOf
  {
   Desktop *desktop = DefaultDesktop ;
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
 
-  typename Shape::Config drag_cfg;
+  WindowReportConfigOf<Frame> report_cfg;
   ExceptionWindow::Config exception_cfg;
 
   WindowReportParamOf() {}
@@ -280,14 +296,14 @@ struct WindowReportParamOf
 
 /* type WindowReportParam */
 
-using WindowReportParam = WindowReportParamOf<DragShape> ;
+using WindowReportParam = WindowReportParamOf<DragFrame> ;
 
-/* class WindowReportOf<Shape> */
+/* class WindowReportOf<Frame> */
 
-template <class Shape>
+template <class Frame>
 class WindowReportOf : public WindowReportBase
  {
-   const typename Shape::Config &drag_cfg;
+   const WindowReportConfigOf<Frame> &report_cfg;
 
   private:
 
@@ -300,7 +316,7 @@ class WindowReportOf : public WindowReportBase
    template <class Param>
    explicit WindowReportOf(const Param &param)
     : WindowReportBase(param.desktop,param.tick_period,param.exception_cfg),
-      drag_cfg(param.drag_cfg)
+      report_cfg(param.report_cfg)
     {
     }
 
@@ -310,31 +326,29 @@ class WindowReportOf : public WindowReportBase
     }
  };
 
-template <class Shape>
-DefString WindowReportOf<Shape>::getTitle()
+template <class Frame>
+DefString WindowReportOf<Frame>::getTitle()
  {
-  return drag_cfg.fatal_error.get();
+  return report_cfg.text_Fatal_error.get();
  }
 
-template <class Shape>
-void WindowReportOf<Shape>::modalLoop()
+template <class Frame>
+void WindowReportOf<Frame>::modalLoop()
  {
-  DragWindowOf<Shape> main_win(desktop,drag_cfg);
+  Frame main_frame(desktop,report_cfg);
 
-  ExceptionWindow sub_win(main_win,cfg,*this);
+  ExceptionWindow sub_win(main_frame,cfg,*this);
 
-  main_win.bindClient(sub_win);
+  main_frame.bindClient(sub_win);
 
-  Point max_size=main_win.getDesktop()->getScreenSize();
-
-  main_win.createMain(CmdDisplay_Normal,max_size,getTitle());
+  main_frame.createMain(CmdDisplay_Normal,getTitle());
 
   DeferCallQueue::Loop();
  }
 
 /* type WindowReport */
 
-using WindowReport = WindowReportOf<DragShape> ;
+using WindowReport = WindowReportOf<DragFrame> ;
 
 /* class ExceptionClient */
 

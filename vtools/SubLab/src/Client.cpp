@@ -384,9 +384,44 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
     {
       unsigned count = 0 ;
 
+      unsigned tick_count = 0 ;
+
+      DeferInput<KnobWindow_Asterisk> input;
+
+      DeferTick defer_tick;
+
+     private:
+
+      void tick()
+       {
+        if( tick_count )
+          {
+           tick_count--;
+
+           unsigned period=5_sectick;
+
+           if( (tick_count%period)==0 )
+             {
+              Printf(NoException,"Tick");
+              Printf(Exception,"Tick exception #;",count++);
+             }
+          }
+        else
+          {
+           defer_tick.stop();
+          }
+       }
+
       void testException()
        {
-        Printf(Exception,"Test exception #;",count);
+        if( tick_count==0 )
+          {
+           tick_count=60_sectick;
+
+           defer_tick.start();
+          }
+
+        Printf(Exception,"Test exception #;",count++);
        }
 
       SignalConnector<KnobWindow_Asterisk> connector_pressed;
@@ -395,8 +430,11 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
       KnobWindow_Asterisk(SubWindowHost &host,const ConfigType &cfg)
        : KnobWindow(host,cfg,KnobShape::FaceAsterisk),
+         input(this),
+
          connector_pressed(this,&KnobWindow_Asterisk::testException,pressed)
        {
+        defer_tick=input.create(&KnobWindow_Asterisk::tick);
        }
     };
 

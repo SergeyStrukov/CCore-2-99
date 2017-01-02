@@ -1121,7 +1121,7 @@ void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 const char *const FileWindow::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
 
 FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param)
- : DragWindow(desktop,cfg.frame_cfg),
+ : DragFrame(desktop,cfg.frame_cfg),
    sub_win(*this,cfg.file_cfg,param)
  {
   bindClient(sub_win);

@@ -258,13 +258,13 @@ class Progress : public IncrementalProgress
 
 class FontSelectorWindow : NoCopy
  {
-   DragWindow frame;
+   DragFrame frame;
 
    FontSelector win;
 
   public:
 
-   FontSelectorWindow(Desktop *desktop,const DragWindow::ConfigType &drag_cfg,const FontSelector::Config &cfg);
+   FontSelectorWindow(Desktop *desktop,const DragFrame::ConfigType &drag_cfg,const FontSelector::Config &cfg);
 
    ~FontSelectorWindow();
 

@@ -66,11 +66,10 @@ FigureLib.h          ++
 ShapeLib.h           ++            
 WindowLib.h          ++
           
-DragWindow.h         .             
 FixedWindow.h        .
 ToolWindow.h         .
 
-WindowReport.h       .       
+WindowReport.h       +  ExceptionWindow       
 
 MessageWindow.h      ++           
 Menu.h               .

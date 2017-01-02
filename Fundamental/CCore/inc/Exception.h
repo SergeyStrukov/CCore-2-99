@@ -76,7 +76,7 @@ class ReportException : NoCopy
 
   public:
 
-   ReportException();
+   ReportException() noexcept;
 
    ~ReportException();
 

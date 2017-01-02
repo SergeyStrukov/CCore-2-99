@@ -5,7 +5,7 @@
 //
 //  Tag: VideoLabs
 //
-//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
@@ -16,7 +16,7 @@
 #ifndef Application_h
 #define Application_h
 
-#include <CCore/inc/video/DragWindow.h>
+#include <CCore/inc/video/WindowLib.h>
 
 namespace App {
 

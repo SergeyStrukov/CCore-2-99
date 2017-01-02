@@ -18,7 +18,6 @@
 
 #include <CCore/inc/video/ConfigStore.h>
 
-#include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/ToolWindow.h>
 #include <CCore/inc/video/MessageWindow.h>
@@ -306,7 +305,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // main windows
 
-   DragWindow::ConfigType cfg_DragWindow;
    FixedWindow::ConfigType cfg_FixedWindow;
    ToolWindow::ConfigType cfg_ToolWindow;
    MessageSubWindow::ConfigType cfg_MessageSubWindow;
@@ -317,6 +315,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
 
    DragFrame::ConfigType cfg_DragFrame;
+
+   WindowReportConfig cfg_WindowReport;
 
    // sub windows
 
@@ -374,8 +374,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // main windows
 
-   const DragWindow::ConfigType & getDragWindowConfig() const { return cfg_DragWindow; }
-
    const FixedWindow::ConfigType & getFixedWindowConfig() const { return cfg_FixedWindow; }
 
    const ToolWindow::ConfigType & getToolWindowConfig() const { return cfg_ToolWindow; }
@@ -393,6 +391,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    //const SimpleCascadeMenu::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenu; }
 
    const DragFrame::ConfigType & getDragFrameConfig() const { return cfg_DragFrame; }
+
+   const WindowReportConfig & getWindowReportConfig() const { return cfg_WindowReport; }
 
    // sub windows
 
@@ -468,8 +468,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       // main windows
 
-      operator const auto & () const { return obj->cfg_DragWindow; }
-
       operator const auto & () const { return obj->cfg_FixedWindow; }
 
       operator const auto & () const { return obj->cfg_ToolWindow; }
@@ -483,6 +481,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_SimpleCascadeMenu; }
 
       operator const auto & () const { return obj->cfg_DragFrame; }
+
+      operator const auto & () const { return obj->cfg_WindowReport; }
 
       // sub windows
 
@@ -548,6 +548,10 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
     };
 
    Proxy getSmartConfig() const { return this; }
+
+   // signals
+
+   Signal<> updated;
  };
 
 } // namespace Video

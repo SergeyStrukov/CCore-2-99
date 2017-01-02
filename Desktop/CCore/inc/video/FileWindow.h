@@ -16,7 +16,6 @@
 #ifndef CCore_inc_video_FileWindow_h
 #define CCore_inc_video_FileWindow_h
 
-#include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/FileBoss.h>
@@ -515,13 +514,13 @@ class FileSubWindow : public ComboWindow
 
 /* class FileWindow */
 
-class FileWindow : public DragWindow
+class FileWindow : public DragFrame
  {
   public:
 
    struct Config
     {
-     CtorRefVal<DragWindow::ConfigType> frame_cfg;
+     CtorRefVal<DragFrame::ConfigType> frame_cfg;
      CtorRefVal<FileSubWindow::ConfigType> file_cfg;
 
      Config() noexcept {}
@@ -561,7 +560,7 @@ class FileWindow : public DragWindow
 
    Pane getPane(StrLen title,Point base) const;
 
-   using DragWindow::create;
+   using DragFrame::create;
 
    void create(Point base,const DefString &title)
     {

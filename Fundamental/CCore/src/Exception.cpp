@@ -116,7 +116,7 @@ void ReportException::end()
   print("\n\n");
  }
 
-ReportException::ReportException()
+ReportException::ReportException() noexcept
  : nok(false)
  {
   SetTop( Algo::InsTop(Top(),this) );

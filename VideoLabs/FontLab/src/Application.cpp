@@ -37,7 +37,8 @@ struct Param
   Desktop *desktop = DefaultDesktop ;
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
 
-  DragWindow::ConfigType drag_cfg;
+  DragFrame::ConfigType drag_cfg;
+  WindowReportConfig report_cfg;
   ExceptionWindow::Config exception_cfg;
 
   FontSelector::Config selector_cfg;
@@ -54,7 +55,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragWindow main_win;
+   DragFrame main_win;
 
    FontSelectorWindow selector;
 

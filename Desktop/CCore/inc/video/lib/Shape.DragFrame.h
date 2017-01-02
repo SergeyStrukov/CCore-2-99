@@ -81,7 +81,6 @@ class DragFrameShape
      RefVal<unsigned> time   = 3_sectick ;
      RefVal<unsigned> period =    3_tick ;
 
-     //RefVal<DefString> text_Fatal_error = "Fatal error"_def ;
      RefVal<DefString> text_No_hint = "<No hint available>"_def ;
 
      RefVal<DefString> hint_ResizeTopLeft     = "Resize top-left"_def ;
@@ -146,7 +145,6 @@ class DragFrameShape
        time.bind(bag.blink_time);
        period.bind(bag.blink_period);
 
-       //text_Fatal_error.bind(bag.text_Fatal_error);
        text_No_hint.bind(bag.text_No_hint);
 
        hint_ResizeTopLeft.bind(bag.hint_ResizeTopLeft);

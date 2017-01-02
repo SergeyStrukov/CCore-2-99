@@ -304,7 +304,7 @@ ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowRe
    yscroll(wlist,cfg.scroll_cfg),
    xscroll(wlist,cfg.scroll_cfg),
 
-   connector_updateReport(this,&ExceptionWindow::updateReport,report.update),
+   connector_updateReport(this,&ExceptionWindow::updateReport,report.updated),
    connector_yposChanged(this,&ExceptionWindow::yposChanged,yscroll.changed),
    connector_xposChanged(this,&ExceptionWindow::xposChanged,xscroll.changed)
  {
@@ -329,6 +329,8 @@ void ExceptionWindow::reposition() noexcept
                     } );
 
   yscroll.setPos(off);
+
+  try { redraw(); } catch(...) {}
  }
 
 void ExceptionWindow::layout()
@@ -583,7 +585,7 @@ void WindowReportBase::end()
 
      non_cleared=true;
 
-     update.assert();
+     updated.assert();
     }
  }
 
@@ -684,8 +686,19 @@ WindowReportBase::~WindowReportBase()
  {
  }
 
+void WindowReportBase::clear() noexcept
+ {
+  ReportException::clear();
+
+  non_cleared=false;
+
+  divide();
+ }
+
 void WindowReportBase::show() noexcept
  {
+  if( !enable ) return;
+
   enable=false;
 
   ReportException::clear();

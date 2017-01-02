@@ -19,7 +19,6 @@
 #include <CCore/inc/TaskMemStack.h>
 
 #include <CCore/inc/video/ApplicationBase.h>
-#include <CCore/inc/video/DragWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/CommonDrawArt.h>
@@ -75,7 +74,7 @@ struct ClientApplication
 
      String title;
 
-     DragWindow main_win;
+     DragFrame main_win;
 
      ExceptionClient exception_client;
 
@@ -132,7 +131,7 @@ struct ClientApplication
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
-        main_win(param.desktop,param.drag_cfg),
+        main_win(param.desktop,param.report_cfg),
         exception_client(main_win,param.exception_cfg,report),
         client(main_win,param.client_cfg, std::forward<TT>(tt)... )
       {
@@ -145,7 +144,7 @@ struct ClientApplication
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
-        main_win(param.desktop,param.drag_cfg,update),
+        main_win(param.desktop,param.report_cfg,update),
         exception_client(main_win,param.exception_cfg,report),
         client(main_win,update, std::forward<TT>(tt)... )
       {
@@ -209,7 +208,7 @@ struct ClientApplication
        Signal<> main_win_update;
        WindowReport report(param);
 
-       Application app(param,report,cmd_display,title,main_win_update,param.drag_cfg);
+       Application app(param,report,cmd_display,title,main_win_update,param.report_cfg);
 
        return app.run();
       }
