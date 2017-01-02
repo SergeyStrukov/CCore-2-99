@@ -231,6 +231,11 @@ class DragFrameShape
 
   public:
 
+   static const bool EnableAlert = true ;
+   static const bool EnableMinimize = true ;
+   static const bool EnableMaximize = true ;
+   static const bool EnableFixed = false ;
+
    static VKey Filter(VKey vkey,KeyMod kmod)
     {
      Used(kmod);

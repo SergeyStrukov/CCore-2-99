@@ -578,7 +578,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      client_ac=client_.getAliveControl();
     }
 
-   void bindAlertClient(SubWindow &alert_client_)
+   void bindAlertClient(SubWindow &alert_client_) requires ( Shape::EnableAlert )
     {
      guardDead();
 
@@ -591,12 +591,12 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      connector_update.connect(signal);
     }
 
-   void connectAlert(Signal<> &signal)
+   void connectAlert(Signal<> &signal) requires ( Shape::EnableAlert )
     {
      connector_alert.connect(signal);
     }
 
-   void createMain(CmdDisplay cmd_display,Point max_size,const DefString &title)
+   void createMain(CmdDisplay cmd_display,Point max_size,const DefString &title) requires ( !Shape::EnableFixed )
     {
      guardClient();
      guardDead();
@@ -608,7 +608,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      host->display(cmd_display);
     }
 
-   void createMain(CmdDisplay cmd_display,Pane pane,Point max_size,const DefString &title)
+   void createMain(CmdDisplay cmd_display,Pane pane,Point max_size,const DefString &title) requires ( !Shape::EnableFixed )
     {
      guardClient();
      guardDead();
@@ -620,21 +620,21 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      host->display(cmd_display);
     }
 
-   void createMain(CmdDisplay cmd_display,const DefString &title)
+   void createMain(CmdDisplay cmd_display,const DefString &title) requires ( !Shape::EnableFixed )
     {
      Point max_size=getDesktop()->getScreenSize();
 
      createMain(cmd_display,max_size,title);
     }
 
-   void createMain(CmdDisplay cmd_display,Pane pane,const DefString &title)
+   void createMain(CmdDisplay cmd_display,Pane pane,const DefString &title) requires ( !Shape::EnableFixed )
     {
      Point max_size=getDesktop()->getScreenSize();
 
      createMain(cmd_display,pane,max_size,title);
     }
 
-   void create(Pane pane,Point max_size,const DefString &title)
+   void create(Pane pane,Point max_size,const DefString &title) requires ( !Shape::EnableFixed )
     {
      guardClient();
      guardDead();
@@ -645,7 +645,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      host->show();
     }
 
-   void create(FrameWindow *parent,Pane pane,Point max_size,const DefString &title)
+   void create(FrameWindow *parent,Pane pane,Point max_size,const DefString &title) requires ( !Shape::EnableFixed )
     {
      guardClient();
      guardDead();
@@ -656,26 +656,60 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      host->show();
     }
 
-   void create(Pane pane,const DefString &title)
+   void create(Pane pane,const DefString &title) requires ( !Shape::EnableFixed )
     {
      Point max_size=getDesktop()->getScreenSize();
 
      create(pane,max_size,title);
     }
 
-   void create(FrameWindow *parent,Pane pane,const DefString &title)
+   void create(FrameWindow *parent,Pane pane,const DefString &title) requires ( !Shape::EnableFixed )
     {
      Point max_size=getDesktop()->getScreenSize();
 
      create(parent,pane,max_size,title);
     }
 
-   void minimize()
+   void createMain(Pane pane,const DefString &title) requires ( Shape::EnableFixed )
+    {
+     guardClient();
+     guardDead();
+
+     shape.reset(title,true);
+
+     host->createMain(pane,pane.getSize());
+     host->setTitle(title.str());
+     host->display(CmdDisplay_Normal);
+    }
+
+   void create(Pane pane,const DefString &title) requires ( Shape::EnableFixed )
+    {
+     guardClient();
+     guardDead();
+
+     shape.reset(title,false);
+
+     host->create(pane,pane.getSize());
+     host->show();
+    }
+
+   void create(FrameWindow *parent,Pane pane,const DefString &title) requires ( Shape::EnableFixed )
+    {
+     guardClient();
+     guardDead();
+
+     shape.reset(title,false);
+
+     host->create(parent->getHost(),pane,pane.getSize());
+     host->show();
+    }
+
+   void minimize() requires ( Shape::EnableMinimize )
     {
      if( shape.is_main ) host->display(CmdDisplay_Minimized);
     }
 
-   void maximize()
+   void maximize() requires ( Shape::EnableMaximize )
     {
      if( shape.max_button )
        {
