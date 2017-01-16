@@ -303,7 +303,7 @@ void TestWindow::layout()
 
 void TestWindow::draw(DrawBuf buf,bool drag_active) const
  {
-  VColor ground=pref.get().ground;
+  VColor ground=pref.get().back;
 
   buf.erase(ground);
 
@@ -312,7 +312,7 @@ void TestWindow::draw(DrawBuf buf,bool drag_active) const
 
 void TestWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  VColor ground=pref.get().ground;
+  VColor ground=pref.get().back;
 
   buf.erase(pane,ground);
 

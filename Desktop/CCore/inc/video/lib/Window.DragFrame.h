@@ -19,6 +19,7 @@
 #include <CCore/inc/video/SubWindow.h>
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
+#include <CCore/inc/video/lib/Shape.FixedFrame.h>
 
 namespace CCore {
 namespace Video {
@@ -219,6 +220,24 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
        }
     }
 
+   void forward_minimize() requires ( !Shape::EnableMinimize )
+    {
+    }
+
+   void forward_maximize() requires ( !Shape::EnableMaximize )
+    {
+    }
+
+   void forward_minimize() requires ( Shape::EnableMinimize )
+    {
+     minimize();
+    }
+
+   void forward_maximize() requires ( Shape::EnableMaximize )
+    {
+     maximize();
+    }
+
    bool forwardKey(VKey vkey,KeyMod kmod,unsigned repeat=1)
     {
      if( kmod&KeyMod_Alt )
@@ -233,9 +252,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
            case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
 
-           case VKey_F2    : minimize(); return true;
+           case VKey_F2    : forward_minimize(); return true;
 
-           case VKey_F3    : maximize(); return true;
+           case VKey_F3    : forward_maximize(); return true;
 
            case VKey_F4    : askClose(); return true;
 
@@ -1131,6 +1150,10 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 /* type DragFrame */
 
 using DragFrame = DragFrameOf<DragFrameShape> ;
+
+/* type FixedFrame */
+
+using FixedFrame = DragFrameOf<FixedFrameShape> ;
 
 } // namespace Video
 } // namespace CCore

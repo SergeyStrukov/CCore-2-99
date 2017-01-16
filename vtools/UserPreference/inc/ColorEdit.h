@@ -53,8 +53,8 @@ class ColorEditWindow : public SubWindow
      explicit Config(const UserPreference &pref)
       {
        space_dxy.bind(pref.get().space_dxy);
-       top.bind(pref.get().bottom);
-       bottom.bind(pref.get().top);
+       top.bind(pref.get().gray);
+       bottom.bind(pref.get().snow);
        focus.bind(pref.get().focus);
        font.bind(pref.get().label_font.font);
       }

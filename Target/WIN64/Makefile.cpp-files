@@ -292,6 +292,7 @@
 ../../Desktop/CCore/src/video/lib/Shape.Check.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Contour.cpp
 ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
+../../Desktop/CCore/src/video/lib/Shape.FixedFrame.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Label.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Light.cpp

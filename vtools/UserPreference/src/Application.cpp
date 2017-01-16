@@ -15,7 +15,7 @@
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
-#include <CCore/inc/video/FreeTypeFont.h>
+//#include <CCore/inc/video/FreeTypeFont.h>
 #include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
@@ -38,14 +38,14 @@ struct Param
   Preference pref;
 
   const DragFrame::ConfigType &frame_cfg;
-  const DragWindow::ConfigType &drag_cfg;
+  const WindowReportConfig &report_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
 
   DesignerWindow::ConfigType designer_cfg;
 
   Param()
    : frame_cfg(pref.getDragFrameConfig()),
-     drag_cfg(pref.getDragWindowConfig()),
+     report_cfg(pref.getWindowReportConfig()),
      exception_cfg(pref.getExceptionWindowConfig()),
      designer_cfg(pref)
    {
