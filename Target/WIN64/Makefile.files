@@ -283,6 +283,7 @@ obj/Shape.Check.o \
 obj/Shape.Contour.o \
 obj/Shape.DragFrame.o \
 obj/Shape.FixedFrame.o \
+obj/Shape.FrameBase.o \
 obj/Shape.Info.o \
 obj/Shape.Label.o \
 obj/Shape.Light.o \
@@ -680,6 +681,7 @@ obj/Shape.Check.s \
 obj/Shape.Contour.s \
 obj/Shape.DragFrame.s \
 obj/Shape.FixedFrame.s \
+obj/Shape.FrameBase.s \
 obj/Shape.Info.s \
 obj/Shape.Label.s \
 obj/Shape.Light.s \
@@ -1077,6 +1079,7 @@ obj/Shape.Check.dep \
 obj/Shape.Contour.dep \
 obj/Shape.DragFrame.dep \
 obj/Shape.FixedFrame.dep \
+obj/Shape.FrameBase.dep \
 obj/Shape.Info.dep \
 obj/Shape.Label.dep \
 obj/Shape.Light.dep \
@@ -2052,6 +2055,9 @@ obj/Shape.DragFrame.o : ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Shape.FixedFrame.o : ../../Desktop/CCore/src/video/lib/Shape.FixedFrame.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Shape.FrameBase.o : ../../Desktop/CCore/src/video/lib/Shape.FrameBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Shape.Info.o : ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
@@ -3238,6 +3244,9 @@ obj/Shape.DragFrame.s : ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
 obj/Shape.FixedFrame.s : ../../Desktop/CCore/src/video/lib/Shape.FixedFrame.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.FrameBase.s : ../../Desktop/CCore/src/video/lib/Shape.FrameBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Shape.Info.s : ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4421,6 +4430,9 @@ obj/Shape.DragFrame.dep : ../../Desktop/CCore/src/video/lib/Shape.DragFrame.cpp
 
 obj/Shape.FixedFrame.dep : ../../Desktop/CCore/src/video/lib/Shape.FixedFrame.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.FixedFrame.o $< -MF $@
+
+obj/Shape.FrameBase.dep : ../../Desktop/CCore/src/video/lib/Shape.FrameBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.FrameBase.o $< -MF $@
 
 obj/Shape.Info.dep : ../../Desktop/CCore/src/video/lib/Shape.Info.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Info.o $< -MF $@
