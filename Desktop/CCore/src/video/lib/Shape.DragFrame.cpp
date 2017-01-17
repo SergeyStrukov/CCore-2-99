@@ -506,6 +506,7 @@ void DragFrameShape::layout(Point size_)
 
      dragBar=SplitY(tdy,pane);
      dragBottom=SplitY(pane,dxy);
+
      client=pane;
 
      Coord yb=(tdy-bdy)/2;
@@ -555,9 +556,11 @@ void DragFrameShape::layout(Point size_)
 
      dragBar=Empty;
      dragBottom=Empty;
+
      client=Empty;
 
      btnAlert=Empty;
+     btnHelp=Empty;
      btnMin=Empty;
      btnMax=Empty;
      btnClose=Empty;
@@ -590,7 +593,11 @@ Coord DragFrameShape::getMinDx(bool is_main,StrLen title) const
 
   Coordinate dx=ts.full_dx;
 
-  dx+=2*dxy+btn_len+bdx/2+2*RoundUpLen(ex);
+  dx+=2*RoundUpLen(ex);
+
+  Replace_max(dx,Max(tdy,dxy));
+
+  dx+=2*dxy+btn_len+bdx/2;
 
   return +dx;
  }

@@ -199,9 +199,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void hilightFrame(Point point)
     {
-     DragType drag_type=shape.dragTest(point);
-
-     if( drag_type==DragType_Bar ) drag_type=DragType_None;
+     DragType drag_type=shape.hilightTest(point);
 
      if( drag_type!=shape.hilight )
        {

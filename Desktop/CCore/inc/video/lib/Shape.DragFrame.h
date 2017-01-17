@@ -293,6 +293,15 @@ class DragFrameShape
 
    DragType dragTest(Point point) const;
 
+   DragType hilightTest(Point point) const
+    {
+     DragType ret=dragTest(point);
+
+     if( ret==DragType_Bar ) return DragType_None;
+
+     return ret;
+    }
+
    Pane getPane(DragType drag_type) const;
 
    Hint getHint(Point point) const;
