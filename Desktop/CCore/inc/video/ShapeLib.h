@@ -34,6 +34,7 @@
 #include <CCore/inc/video/lib/Shape.ScrollList.h>
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
+#include <CCore/inc/video/lib/Shape.FixedFrame.h>
 
 namespace CCore {
 namespace Video {

@@ -18,7 +18,6 @@
 
 #include <CCore/inc/video/ConfigStore.h>
 
-#include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/ToolWindow.h>
 #include <CCore/inc/video/MessageWindow.h>
 #include <CCore/inc/video/WindowReport.h>
@@ -290,7 +289,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // main windows
 
-   FixedWindow::ConfigType cfg_FixedWindow;
    ToolWindow::ConfigType cfg_ToolWindow;
    MessageSubWindow::ConfigType cfg_MessageSubWindow;
    MessageWindow::ConfigType cfg_MessageWindow;
@@ -300,6 +298,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
 
    DragFrame::ConfigType cfg_DragFrame;
+   FixedFrame::ConfigType cfg_FixedFrame;
 
    WindowReportConfig cfg_WindowReport;
 
@@ -359,8 +358,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // main windows
 
-   const FixedWindow::ConfigType & getFixedWindowConfig() const { return cfg_FixedWindow; }
-
    const ToolWindow::ConfigType & getToolWindowConfig() const { return cfg_ToolWindow; }
 
    const MessageSubWindow::ConfigType & getMessageSubWindowConfig() const { return cfg_MessageSubWindow; }
@@ -376,6 +373,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    //const SimpleCascadeMenu::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenu; }
 
    const DragFrame::ConfigType & getDragFrameConfig() const { return cfg_DragFrame; }
+
+   const FixedFrame::ConfigType & getFixedFrameConfig() const { return cfg_FixedFrame; }
 
    const WindowReportConfig & getWindowReportConfig() const { return cfg_WindowReport; }
 
@@ -453,8 +452,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       // main windows
 
-      operator const auto & () const { return obj->cfg_FixedWindow; }
-
       operator const auto & () const { return obj->cfg_ToolWindow; }
 
       operator const auto & () const { return obj->cfg_MessageSubWindow; }
@@ -466,6 +463,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
       operator const auto & () const { return obj->cfg_SimpleCascadeMenu; }
 
       operator const auto & () const { return obj->cfg_DragFrame; }
+
+      operator const auto & () const { return obj->cfg_FixedFrame; }
 
       operator const auto & () const { return obj->cfg_WindowReport; }
 

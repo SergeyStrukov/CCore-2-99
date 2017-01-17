@@ -413,28 +413,8 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_AlertMessageSubWindow=cfg_MessageSubWindow;
   cfg_AlertMessageSubWindow.back.bind(alert);
 
-  cfg_AlertMessageWindow.frame_cfg.bind(cfg_FixedWindow);
+  cfg_AlertMessageWindow.frame_cfg.bind(cfg_FixedFrame);
   cfg_AlertMessageWindow.msg_cfg.bind(cfg_AlertMessageSubWindow);
-
-  cfg_FixedWindow.width.bind(width);
-  cfg_FixedWindow.frame_dxy.bind(frame_dxy);
-  cfg_FixedWindow.title_dy.bind(title_dy);
-  cfg_FixedWindow.btn_dx.bind(btn_dx);
-  cfg_FixedWindow.btn_dy.bind(btn_dy);
-  cfg_FixedWindow.top.bind(gray);
-  cfg_FixedWindow.bottom.bind(snow);
-  cfg_FixedWindow.frame.bind(frame);
-  cfg_FixedWindow.frameHilight.bind(frameHilight);
-  cfg_FixedWindow.frameDrag.bind(frameDrag);
-  cfg_FixedWindow.active.bind(active_frame);
-  cfg_FixedWindow.inactive.bind(inactive_frame);
-  cfg_FixedWindow.title.bind(title);
-  cfg_FixedWindow.btnFace.bind(btnFace);
-  cfg_FixedWindow.btnFaceHilight.bind(btnFaceHilight);
-  cfg_FixedWindow.btnPictClose.bind(btnPictClose);
-  cfg_FixedWindow.shade_color.bind(shade_color);
-  cfg_FixedWindow.shade_alpha.bind(shade_alpha);
-  cfg_FixedWindow.title_font.bind(title_font.font);
 
   cfg_ToolWindow.shade_color.bind(shade_color);
   cfg_ToolWindow.shade_alpha.bind(shade_alpha);
@@ -443,6 +423,7 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_SimpleCascadeMenu.menu_cfg.bind(cfg_SimpleCascadeMenuWindow);
 
   cfg_DragFrame.bind(get());
+  cfg_FixedFrame.bind(get());
 
   cfg_WindowReport.bind(get());
 

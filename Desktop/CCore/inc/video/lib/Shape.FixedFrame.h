@@ -38,18 +38,17 @@ class FixedFrameShape
 
    struct Config
     {
-     RefVal<MCoord> width = Fraction(6,2) ; // +
+     RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<VColor> gray              =      Gray ; // +
-     RefVal<VColor> snow              =      Snow ; // +
+     RefVal<VColor> gray              =      Gray ;
+     RefVal<VColor> snow              =      Snow ;
      RefVal<VColor> frame             =      Snow ;
+     RefVal<VColor> frameHilight      = PaleGreen ;
+     RefVal<VColor> frameDrag         =      Pink ;
      RefVal<VColor> active            = RoyalBlue ;
      RefVal<VColor> inactive          =    Silver ;
      RefVal<VColor> title             =     Black ;
 
-     RefVal<VColor> drag              =    Silver ;
-     RefVal<VColor> dragHilight       =     Green ;
-     RefVal<VColor> dragActive        =       Red ;
      RefVal<VColor> dragSmall         =     Wheat ;
 
      RefVal<VColor> btnFace           = SteelBlue ;
@@ -60,33 +59,33 @@ class FixedFrameShape
      RefVal<VColor> btnPictNoAlert    =      Gray ;
      RefVal<VColor> btnPictCloseAlert =    Orange ;
 
-     RefVal<MCoord> hintWidth = Fraction(3) ; // +
+     RefVal<MCoord> hintWidth = Fraction(3) ;
 
-     RefVal<VColor> hintBack = Wheat ;   // +
-     RefVal<VColor> hintText = Blue ;    // +
-     RefVal<VColor> hintBorder = Green ; // +
+     RefVal<VColor> hintBack = Wheat ;
+     RefVal<VColor> hintText = Blue ;
+     RefVal<VColor> hintBorder = Green ;
 
-     RefVal<VColor> shade_color        =    Violet ; // +
-     RefVal<Clr>    shade_alpha        =        64 ; // +
+     RefVal<VColor> shade_color        =    Violet ;
+     RefVal<Clr>    shade_alpha        =        64 ;
 
-     RefVal<Coord> frame_dxy = 12 ; // +
-     RefVal<Coord> title_dy  = 32 ; // +
+     RefVal<Coord> frame_dxy = 12 ;
+     RefVal<Coord> title_dy  = 32 ;
 
-     RefVal<Coord> btn_dx    = 26 ; // +
-     RefVal<Coord> btn_dy    = 24 ; // +
+     RefVal<Coord> btn_dx    = 26 ;
+     RefVal<Coord> btn_dy    = 24 ;
 
-     RefVal<Font> font; // +
-     RefVal<Font> fontHint; // +
+     RefVal<Font> font;
+     RefVal<Font> fontHint;
 
-     RefVal<unsigned> time   = 3_sectick ; // +
-     RefVal<unsigned> period =    3_tick ; // +
+     RefVal<unsigned> time   = 3_sectick ;
+     RefVal<unsigned> period =    3_tick ;
 
-     RefVal<DefString> text_No_hint = "<No hint available>"_def ;    // +
+     RefVal<DefString> text_No_hint = "<No hint available>"_def ;
 
-     RefVal<DefString> hint_Alert    = "Open/close alert view"_def ; // +
-     RefVal<DefString> hint_Help     = "Help on/off"_def ;           // +
-     RefVal<DefString> hint_Minimize = "Minimize"_def ;              // +
-     RefVal<DefString> hint_Close    = "Close"_def ;                 // +
+     RefVal<DefString> hint_Alert    = "Open/close alert view"_def ;
+     RefVal<DefString> hint_Help     = "Help on/off"_def ;
+     RefVal<DefString> hint_Minimize = "Minimize"_def ;
+     RefVal<DefString> hint_Close    = "Close"_def ;
 
      Config() noexcept {}
 
@@ -98,13 +97,12 @@ class FixedFrameShape
        snow.bind(bag.snow);
 
        frame.bind(bag.frame);
+       frameHilight.bind(bag.frameHilight);
+       frameDrag.bind(bag.frameDrag);
        active.bind(bag.active_frame);
        inactive.bind(bag.inactive_frame);
        title.bind(bag.title);
 
-       drag.bind(bag.drag);
-       dragHilight.bind(bag.dragHilight);
-       dragActive.bind(bag.dragActive);
        dragSmall.bind(bag.dragSmall);
 
        btnFace.bind(bag.btnFace);
@@ -163,8 +161,6 @@ class FixedFrameShape
 
    class DrawArt;
 
-   VColor dragColor(DragType zone) const;
-
    void draw_Frame(DrawArt &art,Pane part) const;
 
    void draw_Frame(DrawArt &art) const { draw_Frame(art,Pane(Null,size)); }
@@ -222,7 +218,6 @@ class FixedFrameShape
    // state
 
    bool has_focus = false ;
-   bool max_button = true ;
    bool is_main = true ;
 
    DragType drag_type = DragType_None ;
@@ -241,7 +236,7 @@ class FixedFrameShape
 
    explicit FixedFrameShape(const Config &cfg_) : cfg(cfg_) {}
 
-   void reset(const DefString &title,bool is_main,bool max_button);
+   void reset(const DefString &title,bool is_main);
 
    void layout(Point size);
 

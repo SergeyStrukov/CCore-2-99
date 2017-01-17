@@ -16,7 +16,6 @@
 #ifndef CCore_inc_video_MessageWindow_h
 #define CCore_inc_video_MessageWindow_h
 
-#include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/ButtonId.h>
 
@@ -159,13 +158,13 @@ class MessageSubWindow : public ComboWindow
 
 /* class MessageWindow */
 
-class MessageWindow : public FixedWindow
+class MessageWindow : public FixedFrame
  {
   public:
 
    struct Config
     {
-     CtorRefVal<FixedWindow::ConfigType> frame_cfg;
+     CtorRefVal<FixedFrame::ConfigType> frame_cfg;
      CtorRefVal<MessageSubWindow::ConfigType> msg_cfg;
 
      RefVal<Ratio> pos_ry = Div(5,12) ;
@@ -222,16 +221,16 @@ class MessageWindow : public FixedWindow
 
    // create
 
-   Pane getPane(StrLen title) const;
+   Pane getPane(bool is_main,StrLen title) const;
 
-   using FixedWindow::createMain;
-   using FixedWindow::create;
+   using FixedFrame::createMain;
+   using FixedFrame::create;
 
-   void createMain(const DefString &title) { createMain(getPane(title.str()),title); }
+   void createMain(const DefString &title) { createMain(getPane(true,title.str()),title); }
 
-   void create(const DefString &title) { create(getPane(title.str()),title); }
+   void create(const DefString &title) { create(getPane(false,title.str()),title); }
 
-   void create(FrameWindow *parent,const DefString &title) { create(parent,getPane(title.str()),title); }
+   void create(FrameWindow *parent,const DefString &title) { create(parent,getPane(false,title.str()),title); }
  };
 
 } // namespace Video

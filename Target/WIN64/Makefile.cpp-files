@@ -274,7 +274,6 @@
 ../../Desktop/CCore/src/video/FileBoss.cpp
 ../../Desktop/CCore/src/video/FileNameCmp.cpp
 ../../Desktop/CCore/src/video/FileWindow.cpp
-../../Desktop/CCore/src/video/FixedWindow.cpp
 ../../Desktop/CCore/src/video/Font.cpp
 ../../Desktop/CCore/src/video/FontDatabase.cpp
 ../../Desktop/CCore/src/video/FontParam.cpp

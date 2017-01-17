@@ -208,7 +208,7 @@ void MessageWindow::finish(int btn_id_)
  }
 
 MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg_)
- : FixedWindow(desktop,cfg_.frame_cfg),
+ : FixedFrame(desktop,cfg_.frame_cfg),
    cfg(cfg_),
    sub_win(*this,cfg.msg_cfg),
 
@@ -229,14 +229,14 @@ MessageWindow::~MessageWindow()
 
 void MessageWindow::alive()
  {
-  FixedWindow::alive();
+  FixedFrame::alive();
 
   btn_id=Button_Cancel;
  }
 
-Pane MessageWindow::getPane(StrLen title) const
+Pane MessageWindow::getPane(bool is_main,StrLen title) const
  {
-  return GetWindowPlace(desktop,+cfg.pos_ry,getMinSize(title,sub_win.getMinSize()));
+  return GetWindowPlace(desktop,+cfg.pos_ry,getMinSize(is_main,title,sub_win.getMinSize()));
  }
 
 } // namespace Video

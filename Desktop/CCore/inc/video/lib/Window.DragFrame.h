@@ -80,6 +80,15 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      if( from!=to ) moved.assert(to-from);
     }
 
+   void setMaxButton() requires ( Shape::EnableMaximize )
+    {
+     if( Change(shape.max_button,true) ) redrawFrame(DragType_Max);
+    }
+
+   void setMaxButton() requires ( !Shape::EnableMaximize )
+    {
+    }
+
    void replace(Pane place,Point delta,DragType drag_type)
     {
      Point base=place.getBase();
@@ -94,12 +103,7 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
         if( +Inf(place,screen) )
           {
-           if( !shape.max_button )
-             {
-              shape.max_button=true;
-
-              redrawFrame(DragType_Max);
-             }
+           setMaxButton();
 
            host->setPlace(place);
 
@@ -178,9 +182,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
            case DragType_Help  : help(); break;
 
-           case DragType_Min   : minimize(); break;
+           case DragType_Min   : try_minimize(); break;
 
-           case DragType_Max   : maximize(); break;
+           case DragType_Max   : try_maximize(); break;
 
            case DragType_Close : askClose(); break;
           }
@@ -218,20 +222,20 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
        }
     }
 
-   void forward_minimize() requires ( !Shape::EnableMinimize )
+   void try_minimize() requires ( !Shape::EnableMinimize )
     {
     }
 
-   void forward_maximize() requires ( !Shape::EnableMaximize )
+   void try_maximize() requires ( !Shape::EnableMaximize )
     {
     }
 
-   void forward_minimize() requires ( Shape::EnableMinimize )
+   void try_minimize() requires ( Shape::EnableMinimize )
     {
      minimize();
     }
 
-   void forward_maximize() requires ( Shape::EnableMaximize )
+   void try_maximize() requires ( Shape::EnableMaximize )
     {
      maximize();
     }
@@ -250,9 +254,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
            case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
 
-           case VKey_F2    : forward_minimize(); return true;
+           case VKey_F2    : try_minimize(); return true;
 
-           case VKey_F3    : forward_maximize(); return true;
+           case VKey_F3    : try_maximize(); return true;
 
            case VKey_F4    : askClose(); return true;
 

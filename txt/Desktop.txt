@@ -66,10 +66,9 @@ FigureLib.h          ++
 ShapeLib.h           ++            
 WindowLib.h          ++
           
-FixedWindow.h        .
-ToolWindow.h         .
-
 WindowReport.h       ++       
+
+ToolWindow.h         .
 
 MessageWindow.h      .           
 Menu.h               .

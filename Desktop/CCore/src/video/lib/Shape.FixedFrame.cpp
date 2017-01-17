@@ -29,10 +29,299 @@ class FixedFrameShape::DrawArt : public SmoothDrawArt
    DrawArt(const DrawBuf &buf) : SmoothDrawArt(buf) {}
  };
 
-void FixedFrameShape::reset(const DefString &title_,bool is_main_,bool max_button_)
+void FixedFrameShape::draw_Frame(DrawArt &art,Pane part) const
+ {
+  VColor gray=+cfg.gray;
+  VColor frame=+cfg.frame;
+  VColor small=+cfg.dragSmall;
+  VColor frameSmall = has_good_size? frame : small ;
+
+  if( hilight==DragType_Bar ) frameSmall=frame=+cfg.frameHilight;
+
+  if( drag_type==DragType_Bar ) frameSmall=frame=+cfg.frameDrag;
+
+  if( !client )
+    {
+     art.block(Pane(Null,size),frame);
+
+     return;
+    }
+
+  Pane all(Null,size);
+
+  PaneSub sub(all,client);
+
+  MPane outer(all);
+  MPane inner(client);
+
+  // top
+
+  Pane top=Inf(sub.top,part);
+
+  if( +top )
+    {
+     MCoord y0=outer.y;
+     MCoord y1=inner.y;
+
+     FigureBox fig{MPane(top)};
+
+     fig.solid(art,YField(y0,frame,y1,gray));
+    }
+
+  // bottom
+
+  Pane bottom=Inf(sub.bottom,part);
+
+  if( +bottom )
+    {
+     MCoord y0=inner.ey;
+     MCoord y1=outer.ey;
+
+     FigureBox fig{MPane(bottom)};
+
+     fig.solid(art,YField(y0,frameSmall,y1,gray));
+    }
+
+  // left
+
+  Pane left=Inf(sub.left,part);
+
+  if( +left )
+    {
+     MCoord x0=outer.x;
+     MCoord x1=inner.x;
+
+     FigureBox fig{MPane(left)};
+
+     fig.solid(art,XField(x0,frame,x1,gray));
+    }
+
+  {
+   MCoord x0=outer.x;
+   MCoord x1=inner.x;
+
+   MCoord y0=outer.y;
+   MCoord y1=inner.y;
+   MCoord y2=inner.ey;
+   MCoord y3=outer.ey;
+
+   FigureBottomLeftArrow fig1(x0,x1,y0,y1);
+   FigureTopLeftArrow fig2(x0,x1,y2,y3);
+
+   XField field(x0,frame,x1,gray);
+
+   fig1.solid(art,field);
+   fig2.solid(art,field);
+  }
+
+  // right
+
+  Pane right=Inf(sub.right,part);
+
+  if( +right )
+    {
+     MCoord x0=inner.ex;
+     MCoord x1=outer.ex;
+
+     FigureBox fig{MPane(right)};
+
+     fig.solid(art,XField(x0,frameSmall,x1,gray));
+    }
+
+  {
+   MCoord x0=inner.ex;
+   MCoord x1=outer.ex;
+
+   MCoord y0=outer.y;
+   MCoord y1=inner.y;
+   MCoord y2=inner.ey;
+   MCoord y3=outer.ey;
+
+   FigureBottomRightArrow fig1(x0,x1,y0,y1);
+   FigureTopRightArrow fig2(x0,x1,y2,y3);
+
+   XField field(x0,frameSmall,x1,gray);
+
+   fig1.solid(art,field);
+   fig2.solid(art,field);
+  }
+ }
+
+void FixedFrameShape::draw_Frame(const DrawBuf &buf,DragType drag_type) const
+ {
+  Pane part=getPane(drag_type);
+
+  DrawArt art(buf.cut(part));
+
+  draw_Frame(art,part);
+ }
+
+void FixedFrameShape::draw_Bar(DrawArt &art) const
+ {
+  if( +titleBar )
+    {
+     MPane p(titleBar);
+
+     MCoord width=+cfg.width;
+
+     MCoord ex=p.dy/4;
+
+     VColor gray=+cfg.gray;
+     VColor snow=+cfg.snow;
+
+     FigureButton fig(p,ex);
+
+     fig.curveSolid(art, has_focus? +cfg.active : +cfg.inactive );
+
+     fig.getTop().curvePath(art,HalfPos,width,gray);
+     fig.getBottom().curvePath(art,HalfPos,width,snow);
+
+     Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
+
+     cfg.font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),title.str(),+cfg.title);
+    }
+ }
+
+auto FixedFrameShape::draw_Btn(DrawArt &art,Pane btn,DragType zone) const
+ {
+  MPane p(btn);
+
+  MCoord width=+cfg.width;
+
+  MCoord ex=p.dx/8;
+
+  FigureButton fig(p,ex);
+
+  MPane ret=p.shrink(p.dx/5,p.dy/5);
+
+  VColor gray=+cfg.gray;
+
+  if( btn_type==zone )
+    {
+     fig.curveSolid(art,gray);
+
+     ret+=MPoint::Diag(width);
+    }
+  else
+    {
+     VColor face = (hilight==zone)? +cfg.btnFaceHilight : +cfg.btnFace ;
+
+     VColor snow=+cfg.snow;
+
+     fig.curveSolid(art,face);
+
+     fig.getTop().curvePath(art,HalfPos,width,gray);
+     fig.getBottom().curvePath(art,HalfPos,width,snow);
+    }
+
+  return ret;
+ }
+
+void FixedFrameShape::draw_Alert(DrawArt &art) const
+ {
+  if( +btnAlert )
+    {
+     MPane p(btnAlert);
+
+     MCoord width=+cfg.width;
+
+     MCoord ex=p.dx/8;
+
+     FigureButton fig(p,ex);
+
+     MPane q=p.shrink(p.dx/5,p.dy/5);
+
+     VColor gray=+cfg.gray;
+
+     VColor alert;
+
+     if( alert_type==AlertType_No )
+       {
+        fig.curveLoop(art,HalfPos,width,gray);
+
+        alert=+cfg.btnPictNoAlert;
+       }
+     else
+       {
+        if( btn_type==DragType_Alert )
+          {
+           fig.curveSolid(art,gray);
+
+           q+=MPoint::Diag(width);
+          }
+        else
+          {
+           VColor face = (hilight==DragType_Alert)? +cfg.btnFaceHilight : +cfg.btnFace ;
+
+           VColor snow=+cfg.snow;
+
+           fig.curveSolid(art,face);
+
+           fig.getTop().curvePath(art,HalfPos,width,gray);
+           fig.getBottom().curvePath(art,HalfPos,width,snow);
+          }
+
+        alert = (alert_type==AlertType_Closed)? +cfg.btnPictAlert : +cfg.btnPictCloseAlert ;
+       }
+
+     if( !alert_blink )
+       {
+        PolyFigureExclamation fig(q.x+q.dx/2,q.y,q.dy);
+
+        fig.solid(art,alert);
+       }
+    }
+ }
+
+void FixedFrameShape::draw_Help(DrawArt &art) const
+ {
+  if( +btnHelp )
+    {
+     MPane p=draw_Btn(art,btnHelp,DragType_Help);
+
+     PolyFigureQuestion fig(p.x+p.dx/2,p.y,p.dy);
+
+     if( help )
+       {
+        fig.solid(art,+cfg.btnPictAlert);
+       }
+     else
+       {
+        fig.solid(art,+cfg.btnPict);
+       }
+    }
+ }
+
+void FixedFrameShape::draw_Min(DrawArt &art) const
+ {
+  if( +btnMin )
+    {
+     MPane p=draw_Btn(art,btnMin,DragType_Min);
+
+     FigureBox fig_pict(p.x,p.ex,p.ey-p.dy/4,p.ey);
+
+     fig_pict.solid(art,+cfg.btnPict);
+    }
+ }
+
+void FixedFrameShape::draw_Close(DrawArt &art) const
+ {
+  if( +btnClose )
+    {
+     MPane p=draw_Btn(art,btnClose,DragType_Close);
+
+     MCoord w=p.dx/6;
+
+     VColor pict=+cfg.btnPictClose;
+
+     art.path(w,pict,p.getTopLeft(),p.getBottomRight());
+     art.path(w,pict,p.getTopRight(),p.getBottomLeft());
+    }
+ }
+
+void FixedFrameShape::reset(const DefString &title_,bool is_main_)
  {
   has_focus=false;
-  max_button=max_button_;
   is_main=is_main_;
 
   drag_type=DragType_None;
@@ -166,6 +455,8 @@ Pane FixedFrameShape::getPane(DragType drag_type) const
  {
   switch( drag_type )
     {
+     case DragType_Bar : return Pane(Null,size);
+
      case DragType_Alert       : return btnAlert;
      case DragType_Help        : return btnHelp;
      case DragType_Min         : return btnMin;
