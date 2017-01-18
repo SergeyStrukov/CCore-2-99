@@ -77,7 +77,7 @@ class TestWindow : public ComboWindow
 
    ButtonWindow shade_btn;
 
-   MessageWindow enable_window;
+   MessageFrame enable_window;
 
   private:
 

@@ -142,7 +142,7 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    progress(wlist,pref.getProgressConfig()),
    shade_btn(wlist,pref.getButtonConfig(),"Shade"_def),
 
-   enable_window(host.getFrame()->getDesktop(),pref.getMessageWindowConfig()),
+   enable_window(host.getFrame()->getDesktop(),pref.getSmartConfig()),
 
    connector_group_changed(this,&TestWindow::changeColor,group.changed),
    connector_check_changed(this,&TestWindow::lightOnOff,check.changed),

@@ -20,33 +20,33 @@
 namespace CCore {
 namespace Video {
 
-/* class MessageSubWindow::Btn */
+/* class MessageWindow::Btn */
 
-void MessageSubWindow::Btn::finish()
+void MessageWindow::Btn::assertOwner()
  {
-  owner->finish.assert(btn_id);
+  owner->pressed.assert(btn_id);
  }
 
-MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonWindow::ConfigType &cfg,const DefString &name,int btn_id_,MessageSubWindow *owner_)
+MessageWindow::Btn::Btn(SubWindowHost &host,const ButtonWindow::ConfigType &cfg,const DefString &name,int btn_id_,MessageWindow *owner_)
  : ButtonWindow(host,cfg,name),
    btn_id(btn_id_),
    owner(owner_),
-   connector_pressed(this,&Btn::finish,pressed)
+   connector_pressed(this,&Btn::assertOwner,pressed)
  {
  }
 
-MessageSubWindow::Btn::~Btn()
+MessageWindow::Btn::~Btn()
  {
  }
 
-/* class MessageSubWindow */
+/* class MessageWindow */
 
-void MessageSubWindow::knob_pressed()
+void MessageWindow::knob_pressed()
  {
-  finish.assert(Button_Ok);
+  pressed.assert(Button_Ok);
  }
 
-MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
+MessageWindow::MessageWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
    btn_cfg(cfg.btn_cfg),
@@ -55,17 +55,17 @@ MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
    dline(wlist,cfg.dline_cfg),
    knob(wlist,cfg.knob_cfg,KnobShape::FaceOk),
 
-   connector_knob_pressed(this,&MessageSubWindow::knob_pressed,knob.pressed)
+   connector_knob_pressed(this,&MessageWindow::knob_pressed,knob.pressed)
  {
  }
 
-MessageSubWindow::~MessageSubWindow()
+MessageWindow::~MessageWindow()
  {
  }
 
  // methods
 
-Point MessageSubWindow::getMinSize() const
+Point MessageWindow::getMinSize() const
  {
   Coordinate space_dxy=+cfg.space_dxy;
 
@@ -100,14 +100,14 @@ Point MessageSubWindow::getMinSize() const
   return Point( Max(bottom.x,top.x) , bottom.y+line_dy+top.y );
  }
 
-MessageSubWindow & MessageSubWindow::setInfo(const Info &info_)
+MessageWindow & MessageWindow::setInfo(const Info &info_)
  {
   info.setInfo(info_);
 
   return *this;
  }
 
-MessageSubWindow & MessageSubWindow::add(const DefString &name,int btn_id)
+MessageWindow & MessageWindow::add(const DefString &name,int btn_id)
  {
   btn_list.append_fill(OwnPtr<Btn>( new Btn(wlist,btn_cfg,name,btn_id,this) ));
 
@@ -116,12 +116,12 @@ MessageSubWindow & MessageSubWindow::add(const DefString &name,int btn_id)
 
  // drawing
 
-bool MessageSubWindow::isGoodSize(Point size) const
+bool MessageWindow::isGoodSize(Point size) const
  {
   return size>=getMinSize();
  }
 
-void MessageSubWindow::layout()
+void MessageWindow::layout()
  {
   Coord space_dxy=+cfg.space_dxy;
 
@@ -158,14 +158,14 @@ void MessageSubWindow::layout()
   info.setPlace( top.shrink(space_dxy) );
  }
 
-void MessageSubWindow::draw(DrawBuf buf,bool drag_active) const
+void MessageWindow::draw(DrawBuf buf,bool drag_active) const
  {
   buf.erase(+cfg.back);
 
   wlist.draw(buf,drag_active);
  }
 
-void MessageSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
+void MessageWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
   buf.erase(pane,+cfg.back);
 
@@ -174,7 +174,7 @@ void MessageSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
  // base
 
-void MessageSubWindow::open()
+void MessageWindow::open()
  {
   wlist.delAll();
 
@@ -198,43 +198,44 @@ void MessageSubWindow::open()
   wlist.focusTop();
  }
 
-/* class MessageWindow */
+/* class MessageFrame */
 
-void MessageWindow::finish(int btn_id_)
+void MessageFrame::pressed(int btn_id_)
  {
   btn_id=btn_id_;
 
   destroy();
  }
 
-MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg_)
+MessageFrame::MessageFrame(Desktop *desktop,const Config &cfg_)
  : FixedFrame(desktop,cfg_.frame_cfg),
    cfg(cfg_),
+
    sub_win(*this,cfg.msg_cfg),
 
-   connector_finish(this,&MessageWindow::finish,sub_win.finish)
+   connector_pressed(this,&MessageFrame::pressed,sub_win.pressed)
  {
   bindClient(sub_win);
  }
 
-MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg,Signal<> &update)
- : MessageWindow(desktop,cfg)
+MessageFrame::MessageFrame(Desktop *desktop,const Config &cfg,Signal<> &signal)
+ : MessageFrame(desktop,cfg)
  {
-  connectUpdate(update);
+  connectUpdate(signal);
  }
 
-MessageWindow::~MessageWindow()
+MessageFrame::~MessageFrame()
  {
  }
 
-void MessageWindow::alive()
+void MessageFrame::alive()
  {
   FixedFrame::alive();
 
   btn_id=Button_Cancel;
  }
 
-Pane MessageWindow::getPane(bool is_main,StrLen title) const
+Pane MessageFrame::getPane(bool is_main,StrLen title) const
  {
   return GetWindowPlace(desktop,+cfg.pos_ry,getMinSize(is_main,title,sub_win.getMinSize()));
  }

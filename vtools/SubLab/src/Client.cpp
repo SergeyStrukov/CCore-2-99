@@ -626,40 +626,40 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
-   class MessageSubWindow_knob : public MessageSubWindow
+   class MessageWindow_knob : public MessageWindow
     {
       static constexpr const char *Message="Knob message window";
 
      public:
 
-      MessageSubWindow_knob(SubWindowHost &host,const ConfigType &cfg)
-       : MessageSubWindow(host,cfg)
+      MessageWindow_knob(SubWindowHost &host,const ConfigType &cfg)
+       : MessageWindow(host,cfg)
        {
         setInfo(Message);
        }
     };
 
-   class MessageSubWindow_ok : public MessageSubWindow
+   class MessageWindow_ok : public MessageWindow
     {
       static constexpr const char *Message="Ok message window";
 
      public:
 
-      MessageSubWindow_ok(SubWindowHost &host,const ConfigType &cfg)
-       : MessageSubWindow(host,cfg)
+      MessageWindow_ok(SubWindowHost &host,const ConfigType &cfg)
+       : MessageWindow(host,cfg)
        {
         add("Ok"_def,Button_Ok).setInfo(Message);
        }
     };
 
-   class MessageSubWindow_yes_no : public MessageSubWindow
+   class MessageWindow_yes_no : public MessageWindow
     {
       static constexpr const char *Message="Yes/No message window";
 
      public:
 
-      MessageSubWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
-       : MessageSubWindow(host,cfg)
+      MessageWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
+       : MessageWindow(host,cfg)
        {
         add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(Message);
        }
@@ -1002,9 +1002,9 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
      add("Pane"_def);
 
        add("Info"_def,Create<InfoWindow_SampleInfo>);
-       add("Message knob"_def,Create<MessageSubWindow_knob>);
-       add("Message ok"_def,Create<MessageSubWindow_ok>);
-       add("Message yes/no"_def,Create<MessageSubWindow_yes_no>);
+       add("Message knob"_def,Create<MessageWindow_knob>);
+       add("Message ok"_def,Create<MessageWindow_ok>);
+       add("Message yes/no"_def,Create<MessageWindow_yes_no>);
        add("SimpleTextList"_def,Create<SimpleTextListWindow_SampleList>);
 
        //add(""_def,Create<>);

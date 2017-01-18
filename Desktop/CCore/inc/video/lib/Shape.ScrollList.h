@@ -70,7 +70,6 @@ class ScrollListShape
        gray.bind(bag.gray);
        snow.bind(bag.snow);
        inactive.bind(bag.inactive);
-
        select.bind(bag.text_select);
 
        text.bind(bag.list_text);

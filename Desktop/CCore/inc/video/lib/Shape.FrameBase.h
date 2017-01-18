@@ -42,9 +42,9 @@ class FrameShapeBase
 
      RefVal<VColor> gray              =      Gray ;
      RefVal<VColor> snow              =      Snow ;
+     RefVal<VColor> title             =     Black ;
      RefVal<VColor> active            = RoyalBlue ;
      RefVal<VColor> inactive          =    Silver ;
-     RefVal<VColor> title             =     Black ;
 
      RefVal<VColor> btnFace           = SteelBlue ;
      RefVal<VColor> btnFaceHilight    =     Green ;
@@ -56,12 +56,12 @@ class FrameShapeBase
 
      RefVal<MCoord> hintWidth = Fraction(3) ;
 
-     RefVal<VColor> hintBack = Wheat ;
-     RefVal<VColor> hintText = Blue ;
+     RefVal<VColor> hintBack   = Wheat ;
+     RefVal<VColor> hintText   =  Blue ;
      RefVal<VColor> hintBorder = Green ;
 
-     RefVal<VColor> shade_color        =    Violet ;
-     RefVal<Clr>    shade_alpha        =        64 ;
+     RefVal<VColor> shadeColor = Violet ;
+     RefVal<Clr>    shadeAlpha =     64 ;
 
      RefVal<Font> font;
      RefVal<Font> fontHint;
@@ -80,9 +80,9 @@ class FrameShapeBase
 
        gray.bind(bag.gray);
        snow.bind(bag.snow);
-       active.bind(bag.active_frame);
-       inactive.bind(bag.inactive_frame);
        title.bind(bag.title);
+       active.bind(bag.titleActive);
+       inactive.bind(bag.titleInactive);
 
        btnFace.bind(bag.btnFace);
        btnFaceHilight.bind(bag.btnFaceHilight);
@@ -98,14 +98,14 @@ class FrameShapeBase
        hintText.bind(bag.hintText);
        hintBorder.bind(bag.hintBorder);
 
-       shade_color.bind(bag.shade_color);
-       shade_alpha.bind(bag.shade_alpha);
+       shadeColor.bind(bag.shadeColor);
+       shadeAlpha.bind(bag.shadeAlpha);
 
        font.bind(bag.title_font.font);
        fontHint.bind(bag.hint_font.font);
 
-       time.bind(bag.blink_time);
-       period.bind(bag.blink_period);
+       time.bind(bag.blinkTime);
+       period.bind(bag.blinkPeriod);
 
        text_No_hint.bind(bag.text_No_hint);
       }
@@ -178,12 +178,12 @@ class FrameShapeBase
 
    void shade(FrameBuf<DesktopColor> &buf) const
     {
-     buf.erase(+cfg.shade_color,+cfg.shade_alpha);
+     buf.erase(+cfg.shadeColor,+cfg.shadeAlpha);
     }
 
    void shade(FrameBuf<DesktopColor> &buf,Pane pane) const
     {
-     buf.block_safe(pane,+cfg.shade_color,+cfg.shade_alpha);
+     buf.block_safe(pane,+cfg.shadeColor,+cfg.shadeAlpha);
     }
 
    bool resetTime()

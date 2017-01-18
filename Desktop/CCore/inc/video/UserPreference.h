@@ -54,8 +54,9 @@ struct UserPreferenceBag
  {
   // common
 
-  Coord space_dxy      = 10 ;
-  Coord text_cursor_dx =  3 ;
+  MCoord width = Fraction(6,2) ;
+
+  Coord space_dxy = 10 ;
 
   Coord check_dxy   = 20 ;
   Coord knob_dxy    = 30 ;
@@ -65,12 +66,10 @@ struct UserPreferenceBag
   Coord scroll_dxy  = 20 ;
   Coord progress_dy = 24 ;
 
-  MCoord width = Fraction(6,2) ;
-
-  VColor gray    =      Gray ;
-  VColor grayUp  =     Green ;
-  VColor snow    =      Snow ;
-  VColor snowUp  = PaleGreen ;
+  VColor gray    =       Gray ;
+  VColor grayUp  =      Green ;
+  VColor snow    =       Snow ;
+  VColor snowUp  =  PaleGreen ;
 
   VColor back     =    Silver ;
   VColor line     =      Gray ;
@@ -84,22 +83,24 @@ struct UserPreferenceBag
   VColor mark     =     Black ;
   VColor alert    =      Pink ;
 
-  DefString text_Ok = "Ok"_def ;
+  DefString text_Ok     = "Ok"_def ;
   DefString text_Cancel = "Cancel"_def ;
 
   // text
 
-  VColor text_select    =    Yellow ;
-  VColor text_cursor    =      Blue ;
+  Coord text_cursor_dx = 3 ;
 
-  VColor label_text     =     Black ;
-  VColor contour_text   =     Black ;
+  VColor text_select    = Yellow ;
+  VColor text_cursor    =   Blue ;
 
-  VColor button_text    =     Black ;
-  VColor message_text   =     Black ;
-  VColor info_text      =     Black ;
-  VColor line_edit_text =     Black ;
-  VColor list_text      =     Black ;
+  VColor label_text     =  Black ;
+  VColor contour_text   =  Black ;
+
+  VColor button_text    =  Black ;
+  VColor message_text   =  Black ;
+  VColor info_text      =  Black ;
+  VColor line_edit_text =  Black ;
+  VColor list_text      =  Black ;
 
   Point button_space    = Point(6,4) ;
   Point message_space   = Point(6,4) ;
@@ -118,6 +119,38 @@ struct UserPreferenceBag
   FontCouple list_font;
   FontCouple menu_font;
 
+  // switch
+
+  VColor switch_on  = Green ;
+  VColor switch_off =   Red ;
+
+  // progress
+
+  unsigned progress_time   = 3_sectick ;
+  unsigned progress_period =    2_tick ;
+
+  VColor progress_border   =     Black ;
+  VColor progress_grayUp   = DarkGreen ;
+  VColor progress_snowUp   =     Green ;
+  VColor progress_grayPing =     Black ;
+  VColor progress_snowPing =      Snow ;
+
+  // scroll
+
+  unsigned scroll_speedUpPeriod = 12_tick ;
+
+  // line_edit
+
+  unsigned line_edit_period = 10_tick ;
+
+  Coord line_edit_ex = 3 ;
+
+  // scroll_list
+
+  VColor scroll_list_title       = Navy ;
+  VColor scroll_list_titleTop    = Aqua ;
+  VColor scroll_list_titleBottom = Gray ;
+
   // menu
 
   VColor menu_back      =    Silver ;
@@ -128,37 +161,51 @@ struct UserPreferenceBag
 
   bool use_hotcolor = true ;
 
-  // scroll list
+  // Frames
 
-  VColor scroll_list_title        = Navy ;
-  VColor scroll_list_titleTop    = Aqua ;
-  VColor scroll_list_titleBottom = Gray ;
+  unsigned blinkTime   = 3_sectick ;
+  unsigned blinkPeriod =    3_tick ;
 
-  // other
+  Coord frame_dxy = 12 ;
+  Coord title_dy  = 32 ;
+  Coord btn_dx    = 26 ;
+  Coord btn_dy    = 24 ;
 
-  unsigned line_edit_period     =   10_tick ;
-  unsigned scroll_speedUpPeriod =   12_tick ;
-  unsigned progress_time        = 3_sectick ;
-  unsigned progress_period      =    2_tick ;
+  VColor frame             =      Snow ;
+  VColor frameHilight      = PaleGreen ;
+  VColor frameDrag         =      Pink ;
 
-  Coord line_edit_ex        = 3 ;
+  VColor title             =     Black ;
+  VColor titleActive       = RoyalBlue ;
+  VColor titleInactive     =    Silver ;
 
-  VColor switch_on        =  Green ;
-  VColor switch_off       =    Red ;
+  VColor drag              =    Silver ;
+  VColor dragHilight       =     Green ;
+  VColor dragActive        =       Red ;
+  VColor dragSmall         =     Wheat ;
 
-  VColor progress_border   =     Black ;
-  VColor progress_grayUp   = DarkGreen ;
-  VColor progress_snowUp   =     Green ;
-  VColor progress_grayPing =     Black ;
-  VColor progress_snowPing =      Snow ;
+  VColor btnFace           = SteelBlue ;
+  VColor btnFaceHilight    =     Green ;
+  VColor btnPict           =     White ;
+  VColor btnPictClose      =       Red ;
+  VColor btnPictAlert      =       Red ;
+  VColor btnPictNoAlert    =      Gray ;
+  VColor btnPictCloseAlert =    Orange ;
 
-  // TopWindow
+  VColor hintBack   = Wheat ;
+  VColor hintText   =  Blue ;
+  VColor hintBorder = Green ;
 
-  unsigned blink_time   = 3_sectick ;
-  unsigned blink_period =    3_tick ;
+  MCoord hintWidth = Fraction(3) ;
+
+  FontCouple title_font;
+  FontCouple hint_font;
+
+  VColor shadeColor = Violet ;
+  Clr    shadeAlpha =     64 ;
 
   DefString text_Fatal_error = "Fatal error"_def ;
-  DefString text_No_hint = "<No hint available>"_def ;
+  DefString text_No_hint     = "<No hint available>"_def ;
 
   DefString hint_ResizeTopLeft     = "Resize top-left"_def ;
   DefString hint_ResizeLeft        = "Resize left"_def ;
@@ -174,43 +221,6 @@ struct UserPreferenceBag
   DefString hint_Maximize = "Maximize"_def ;
   DefString hint_Restore  = "Restore"_def ;
   DefString hint_Close    = "Close"_def ;
-
-  Coord frame_dxy = 12 ;
-  Coord title_dy  = 32 ;
-  Coord btn_dx    = 26 ;
-  Coord btn_dy    = 24 ;
-
-  VColor frame             =      Snow ;
-  VColor active_frame      = RoyalBlue ;
-  VColor inactive_frame    =    Silver ;
-  VColor frameHilight      = PaleGreen ;
-  VColor frameDrag         =      Pink ;
-  VColor title             =     Black ;
-
-  VColor drag              =    Silver ;
-  VColor dragHilight       =     Green ;
-  VColor dragActive        =       Red ;
-  VColor dragSmall         =     Wheat ;
-
-  VColor btnFace           = SteelBlue ;
-  VColor btnFaceHilight    =     Green ;
-  VColor btnPict           =     White ;
-  VColor btnPictClose      =       Red ;
-  VColor btnPictAlert      =       Red ;
-  VColor btnPictNoAlert    =      Gray ;
-  VColor btnPictCloseAlert =    Orange ;
-
-  VColor hintBack = Wheat ;
-  VColor hintText = Blue ;
-  VColor hintBorder = Green ;
-
-  MCoord hintWidth = Fraction(3) ;
-
-  FontCouple title_font;
-  FontCouple hint_font;
-
-  VColor shade_color = Violet ;
-  Clr    shade_alpha =     64 ;
 
   // ExceptionWindow
 
@@ -290,10 +300,10 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    // main windows
 
    ToolWindow::ConfigType cfg_ToolWindow;
-   MessageSubWindow::ConfigType cfg_MessageSubWindow;
-   MessageWindow::ConfigType cfg_MessageWindow;
-   MessageSubWindow::ConfigType cfg_AlertMessageSubWindow;
-   MessageWindow::ConfigType cfg_AlertMessageWindow;
+   MessageWindow::ConfigType cfg_MessageSubWindow;
+   MessageFrame::ConfigType cfg_MessageFrame;
+   MessageWindow::ConfigType cfg_AlertMessageSubWindow;
+   MessageFrame::ConfigType cfg_AlertMessageFrame;
    ExceptionWindow::ConfigType cfg_ExceptionWindow;
    SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
 
@@ -360,13 +370,13 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const ToolWindow::ConfigType & getToolWindowConfig() const { return cfg_ToolWindow; }
 
-   const MessageSubWindow::ConfigType & getMessageSubWindowConfig() const { return cfg_MessageSubWindow; }
+   //const MessageWindow::ConfigType & getMessageSubWindowConfig() const { return cfg_MessageSubWindow; }
 
-   const MessageWindow::ConfigType & getMessageWindowConfig() const { return cfg_MessageWindow; }
+   //const MessageFrame::ConfigType & getMessageWindowConfig() const { return cfg_MessageFrame; }
 
-   const MessageSubWindow::ConfigType & getAlertMessageSubWindowConfig() const { return cfg_AlertMessageSubWindow; }
+   //const MessageWindow::ConfigType & getAlertMessageSubWindowConfig() const { return cfg_AlertMessageSubWindow; }
 
-   const MessageWindow::ConfigType & getAlertMessageWindowConfig() const { return cfg_AlertMessageWindow; }
+   const MessageFrame::ConfigType & getAlertMessageFrameConfig() const { return cfg_AlertMessageFrame; }
 
    const ExceptionWindow::ConfigType & getExceptionWindowConfig() const { return cfg_ExceptionWindow; }
 
@@ -456,7 +466,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       operator const auto & () const { return obj->cfg_MessageSubWindow; }
 
-      operator const auto & () const { return obj->cfg_MessageWindow; }
+      operator const auto & () const { return obj->cfg_MessageFrame; }
 
       operator const auto & () const { return obj->cfg_ExceptionWindow; }
 

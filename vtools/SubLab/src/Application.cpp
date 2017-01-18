@@ -37,9 +37,7 @@ struct Param
   UserPreference pref;
 
   const WindowReportConfig &report_cfg;
-
   const ExceptionWindow::ConfigType &exception_cfg;
-
   const DragFrame::ConfigType &frame_cfg;
 
   ClientWindow::ConfigType client_cfg;
@@ -62,7 +60,6 @@ class Application : public ApplicationBase
    DragFrame main_frame;
 
    ExceptionClient exception_client;
-
    ClientWindow client;
 
   private:
@@ -84,7 +81,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     main_frame.createMain(cmd_display,desktop->getScreenSize(),"SubLab"_def);
+     main_frame.createMain(cmd_display,"SubLab"_def);
     }
 
    virtual void beforeLoop() noexcept

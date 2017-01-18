@@ -33,11 +33,11 @@ class FixedFrameShape : public FrameShapeBase
 
    struct Config : ConfigBase
     {
-     RefVal<VColor> frame             =      Snow ;
-     RefVal<VColor> frameHilight      = PaleGreen ;
-     RefVal<VColor> frameDrag         =      Pink ;
+     RefVal<VColor> frame        =      Snow ;
+     RefVal<VColor> frameHilight = PaleGreen ;
+     RefVal<VColor> frameDrag    =      Pink ;
 
-     RefVal<VColor> dragSmall         =     Wheat ;
+     RefVal<VColor> dragSmall    =     Wheat ;
 
      RefVal<Coord> frame_dxy = 12 ;
      RefVal<Coord> title_dy  = 32 ;

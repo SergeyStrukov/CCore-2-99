@@ -98,8 +98,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("progress_grayPing",ptr->progress_grayPing);
   func("progress_snowPing",ptr->progress_snowPing);
 
-  func("blink_time",ptr->blink_time);
-  func("blink_period",ptr->blink_period);
+  func("blinkTime",ptr->blinkTime);
+  func("blinkPeriod",ptr->blinkPeriod);
 
   func("text_Fatal_error",ptr->text_Fatal_error);
   func("text_No_hint",ptr->text_No_hint);
@@ -124,8 +124,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("btn_dx",ptr->btn_dx);
   func("btn_dy",ptr->btn_dy);
   func("frame",ptr->frame);
-  func("active_frame",ptr->active_frame);
-  func("inactive_frame",ptr->inactive_frame);
+  func("titleActive",ptr->titleActive);
+  func("titleInactive",ptr->titleInactive);
   func("frameHilight",ptr->frameHilight);
   func("frameDrag",ptr->frameDrag);
   func("title",ptr->title);
@@ -148,8 +148,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hintBorder",ptr->hintBorder);
   func("hintWidth",ptr->hintWidth);
 
-  func("shade_color",ptr->shade_color);
-  func("shade_alpha",ptr->shade_alpha);
+  func("shadeColor",ptr->shadeColor);
+  func("shadeAlpha",ptr->shadeAlpha);
 
   func("exception_back",ptr->exception_back);
   func("exception_text",ptr->exception_text);
@@ -295,8 +295,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
 
   binder.group("Frame window");
 
-   binder.item("alert blink time",blink_time);
-   binder.item("alert blink period",blink_period);
+   binder.item("alert blink time",blinkTime);
+   binder.item("alert blink period",blinkPeriod);
    binder.space();
    binder.item("'Fatal error'",text_Fatal_error);
    binder.item("'<No hint available>'",text_No_hint);
@@ -322,11 +322,11 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("frame button height",btn_dy);
    binder.space();
    binder.item("frame",frame);
-   binder.item("active title",active_frame);
-   binder.item("inactive title",inactive_frame);
    binder.item("hilight frame",frameHilight);
    binder.item("drag frame",frameDrag);
    binder.item("title",title);
+   binder.item("active title",titleActive);
+   binder.item("inactive title",titleInactive);
    binder.space();
    binder.item("drag",drag);
    binder.item("hilight drag",dragHilight);
@@ -349,8 +349,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("title font",title_font);
    binder.item("hint font",hint_font);
    binder.space();
-   binder.item("shade color",shade_color);
-   binder.item("shade alpha",shade_alpha);
+   binder.item("shade color",shadeColor);
+   binder.item("shade alpha",shadeAlpha);
 
   binder.group("Exception window");
 
@@ -408,16 +408,16 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_MessageSubWindow.bind(get(),getSmartConfig());
 
-  cfg_MessageWindow.bind(get(),getSmartConfig());
+  cfg_MessageFrame.bind(get(),getSmartConfig());
 
   cfg_AlertMessageSubWindow=cfg_MessageSubWindow;
   cfg_AlertMessageSubWindow.back.bind(alert);
 
-  cfg_AlertMessageWindow.frame_cfg.bind(cfg_FixedFrame);
-  cfg_AlertMessageWindow.msg_cfg.bind(cfg_AlertMessageSubWindow);
+  cfg_AlertMessageFrame.frame_cfg.bind(cfg_FixedFrame);
+  cfg_AlertMessageFrame.msg_cfg.bind(cfg_AlertMessageSubWindow);
 
-  cfg_ToolWindow.shade_color.bind(shade_color);
-  cfg_ToolWindow.shade_alpha.bind(shade_alpha);
+  cfg_ToolWindow.shade_color.bind(shadeColor);
+  cfg_ToolWindow.shade_alpha.bind(shadeAlpha);
 
   cfg_SimpleCascadeMenu.frame_cfg.bind(cfg_ToolWindow);
   cfg_SimpleCascadeMenu.menu_cfg.bind(cfg_SimpleCascadeMenuWindow);

@@ -692,7 +692,7 @@ class DisplayWindow : public ComboWindow
 
      RefVal<VColor> back = Silver ;
 
-     CtorRefVal<MessageWindow::ConfigType> msg_cfg;
+     CtorRefVal<MessageFrame::ConfigType> msg_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
      CtorRefVal<TextLineWindow::ConfigType> textline_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
@@ -702,7 +702,7 @@ class DisplayWindow : public ComboWindow
      Config() noexcept {}
 
      explicit Config(const UserPreference &pref)
-      : msg_cfg(pref.getAlertMessageWindowConfig()),
+      : msg_cfg(pref.getAlertMessageFrameConfig()),
         label_cfg(SmartBind,pref),
         textline_cfg(SmartBind,pref),
         dline_cfg(SmartBind,pref),
@@ -735,7 +735,7 @@ class DisplayWindow : public ComboWindow
 
    // msg
 
-   MessageWindow msg;
+   MessageFrame msg;
 
   private:
 

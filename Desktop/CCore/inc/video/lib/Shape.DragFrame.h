@@ -33,12 +33,12 @@ class DragFrameShape : public FrameShapeBase
 
    struct Config : ConfigBase
     {
-     RefVal<VColor> frame             =      Snow ;
+     RefVal<VColor> frame       =   Snow ;
 
-     RefVal<VColor> drag              =    Silver ;
-     RefVal<VColor> dragHilight       =     Green ;
-     RefVal<VColor> dragActive        =       Red ;
-     RefVal<VColor> dragSmall         =     Wheat ;
+     RefVal<VColor> drag        = Silver ;
+     RefVal<VColor> dragHilight =  Green ;
+     RefVal<VColor> dragActive  =    Red ;
+     RefVal<VColor> dragSmall   =  Wheat ;
 
      RefVal<Coord> frame_dxy = 12 ;
      RefVal<Coord> title_dy  = 32 ;

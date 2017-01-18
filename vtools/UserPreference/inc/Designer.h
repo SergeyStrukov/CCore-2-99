@@ -25,26 +25,9 @@ namespace App {
 
 /* classes */
 
-class Preference;
-
 class PlaceFrame;
 
 class DesignerWindow;
-
-/* class Preference */
-
-class Preference : public UserPreference
- {
-  public:
-
-   Preference() noexcept;
-
-   ~Preference();
-
-   // signals
-
-   Signal<> update;
- };
 
 /* class PlaceFrame */
 
@@ -121,10 +104,9 @@ class DesignerWindow : public ComboWindow
 
    const Config &cfg;
 
-   Preference &self_pref;
+   UserPreference &self_pref;
 
    UserPreference pref;
-   Signal<> update;
 
    TestFrame test_frame;
 
@@ -476,7 +458,7 @@ class DesignerWindow : public ComboWindow
 
   public:
 
-   DesignerWindow(SubWindowHost &host,const Config &cfg,Preference &self_pref);
+   DesignerWindow(SubWindowHost &host,const Config &cfg,UserPreference &self_pref);
 
    virtual ~DesignerWindow();
 

@@ -17,16 +17,6 @@
 
 namespace App {
 
-/* class Preference */
-
-Preference::Preference() noexcept
- {
- }
-
-Preference::~Preference()
- {
- }
-
 /* class DesignerWindow::PrefInfo::Base */
 
 class DesignerWindow::PrefInfo::Base : public ComboInfoBase
@@ -648,7 +638,7 @@ void DesignerWindow::backPref()
        {
         btn_Save.enable();
 
-        update.assert();
+        pref.updated.assert();
        }
     }
 
@@ -671,7 +661,7 @@ void DesignerWindow::selfPref()
 
   self_pref.take()=pref.get();
 
-  self_pref.update.assert();
+  self_pref.updated.assert();
  }
 
  // select
@@ -767,7 +757,7 @@ void DesignerWindow::changed()
   btn_Back.enable();
   btn_Save.enable();
 
-  update.assert();
+  pref.updated.assert();
  }
 
 void DesignerWindow::string_edit_changed()
@@ -817,11 +807,11 @@ void DesignerWindow::bool_edit_changed(bool value)
 
  // constructors
 
-DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,Preference &self_pref_)
+DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,UserPreference &self_pref_)
  : ComboWindow(host),
    cfg(cfg_),
    self_pref(self_pref_),
-   test_frame(getFrameDesktop(),pref,update),
+   test_frame(getFrameDesktop(),pref,pref.updated),
 
    item_list(wlist,cfg.list_cfg),
 

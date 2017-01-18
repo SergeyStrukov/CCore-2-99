@@ -27,13 +27,13 @@ namespace Video {
 
 /* classes */
 
-class MessageSubWindow;
-
 class MessageWindow;
 
-/* class MessageSubWindow */
+class MessageFrame;
 
-class MessageSubWindow : public ComboWindow
+/* class MessageWindow */
+
+class MessageWindow : public ComboWindow
  {
   public:
 
@@ -76,17 +76,17 @@ class MessageSubWindow : public ComboWindow
     {
       int btn_id;
 
-      MessageSubWindow *owner;
+      MessageWindow *owner;
 
      private:
 
-      void finish();
+      void assertOwner();
 
       SignalConnector<Btn> connector_pressed;
 
      public:
 
-      Btn(SubWindowHost &host,const ButtonWindow::ConfigType &cfg,const DefString &name,int btn_id,MessageSubWindow *owner);
+      Btn(SubWindowHost &host,const ButtonWindow::ConfigType &cfg,const DefString &name,int btn_id,MessageWindow *owner);
 
       virtual ~Btn();
     };
@@ -119,23 +119,23 @@ class MessageSubWindow : public ComboWindow
 
    void knob_pressed();
 
-   SignalConnector<MessageSubWindow> connector_knob_pressed;
+   SignalConnector<MessageWindow> connector_knob_pressed;
 
   public:
 
-   MessageSubWindow(SubWindowHost &host,const Config &cfg);
+   MessageWindow(SubWindowHost &host,const Config &cfg);
 
-   virtual ~MessageSubWindow();
+   virtual ~MessageWindow();
 
    // methods
 
    Point getMinSize() const;
 
-   MessageSubWindow & setInfo(const Info &info);
+   MessageWindow & setInfo(const Info &info);
 
-   MessageSubWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
+   MessageWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
 
-   MessageSubWindow & add(const DefString &name,int btn_id);
+   MessageWindow & add(const DefString &name,int btn_id);
 
    // drawing
 
@@ -153,19 +153,19 @@ class MessageSubWindow : public ComboWindow
 
    // signals
 
-   Signal<int> finish; // btn_id
+   Signal<int> pressed; // btn_id
  };
 
-/* class MessageWindow */
+/* class MessageFrame */
 
-class MessageWindow : public FixedFrame
+class MessageFrame : public FixedFrame
  {
   public:
 
    struct Config
     {
      CtorRefVal<FixedFrame::ConfigType> frame_cfg;
-     CtorRefVal<MessageSubWindow::ConfigType> msg_cfg;
+     CtorRefVal<MessageWindow::ConfigType> msg_cfg;
 
      RefVal<Ratio> pos_ry = Div(5,12) ;
 
@@ -187,31 +187,31 @@ class MessageWindow : public FixedFrame
 
    const Config &cfg;
 
-   MessageSubWindow sub_win;
+   MessageWindow sub_win;
 
    int btn_id = Button_Cancel ;
 
-   SignalConnector<MessageWindow,int> connector_finish;
-
   private:
 
-   void finish(int btn_id);
+   void pressed(int btn_id);
+
+   SignalConnector<MessageFrame,int> connector_pressed;
 
   public:
 
-   MessageWindow(Desktop *desktop,const Config &cfg);
+   MessageFrame(Desktop *desktop,const Config &cfg);
 
-   MessageWindow(Desktop *desktop,const Config &cfg,Signal<> &update);
+   MessageFrame(Desktop *desktop,const Config &cfg,Signal<> &signal);
 
-   virtual ~MessageWindow();
+   virtual ~MessageFrame();
 
    // methods
 
-   MessageWindow & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
+   MessageFrame & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
 
-   MessageWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
+   MessageFrame & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
 
-   MessageWindow & add(const DefString &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
+   MessageFrame & add(const DefString &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
 
    int getButtonId() const { return btn_id; } // available after the signal "destroyed"
 
