@@ -1,4 +1,4 @@
-/* MessageWindow.h */
+/* MessageFrame.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,8 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_MessageWindow_h
-#define CCore_inc_video_MessageWindow_h
+#ifndef CCore_inc_video_MessageFrame_h
+#define CCore_inc_video_MessageFrame_h
 
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/ButtonId.h>

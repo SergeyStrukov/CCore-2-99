@@ -1,4 +1,4 @@
-/* MessageWindow.cpp */
+/* MessageFrame.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/MessageFrame.h>
 
 #include <CCore/inc/video/Layout.h>
 

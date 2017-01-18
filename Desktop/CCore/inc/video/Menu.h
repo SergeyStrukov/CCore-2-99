@@ -16,10 +16,12 @@
 #ifndef CCore_inc_video_Menu_h
 #define CCore_inc_video_Menu_h
 
-#include <CCore/inc/video/SubWindow.h>
+#include <CCore/inc/video/MinSizeType.h>
+#include <CCore/inc/video/Color.h>
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/RefVal.h>
-#include <CCore/inc/video/ToolWindow.h>
+
+#include <CCore/inc/video/ToolFrame.h>
 #include <CCore/inc/video/Layout.h>
 
 namespace CCore {
@@ -80,7 +82,7 @@ struct MenuPoint
 
   // constructors
 
-  MenuPoint() noexcept : type(MenuHidden),text("<not defined>"),hotindex(0),hotkey(0),id(-1) {}
+  MenuPoint() noexcept : type(MenuHidden),text("<not defined>"_def),hotindex(0),hotkey(0),id(-1) {}
 
   MenuPoint(DefString text_,int id_) noexcept : type(MenuText),text(text_),id(id_) { pickhot(); }
 
@@ -103,7 +105,7 @@ struct MenuData : NoCopy
  {
   DynArray<MenuPoint> list;
 
-  Signal<> update;
+  Signal<> updated;
 
   // constructors
 
@@ -135,54 +137,20 @@ struct MenuData : NoCopy
   FindResult findDown(ulen index) const;
 
   FindResult findUp(ulen index) const;
+
+  FindResult findFirst() const;
+
+  bool isGood(ulen index) const
+   {
+    return index<list.getLen() && list[index].type==MenuText ;
+   }
  };
 
 /* class SimpleTopMenuShape */
 
 class SimpleTopMenuShape
  {
-  public:
-
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(4,4) ;
-
-     RefVal<bool> use_hotcolor = true ;
-
-     RefVal<VColor> back     =    Silver ;
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> hilight  =      Blue ;
-     RefVal<VColor> select   = OrangeRed ;
-     RefVal<VColor> hot      =       Red ;
-     RefVal<VColor> left     =      Snow ;
-     RefVal<VColor> right    =      Gray ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
-   // parameters
-
-   const Config &cfg;
-   MenuData &data;
-   Pane pane;
-
-   // state
-
-   bool focus = false ;
-   unsigned state = MenuNone ;
-   ulen hilight_index = 0 ;
-   ulen select_index = 0 ;
-   Coord off = 0 ;
-   Coord max_off = 0 ;
-
-  private:
-
-   static Coord GetDX(const MenuPoint &point,Font font,Coord space,Coord dy);
+   static Coordinate GetDX(const MenuPoint &point,Font font,Coordinate space,Coordinate dy);
 
    struct PlaceFunc : Funchor
     {
@@ -211,19 +179,78 @@ class SimpleTopMenuShape
      CharFunction function_hot() { return FunctionOf(this,&HotFunc::hot); }
     };
 
-   static void Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot=false);
+   void draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,bool showhot=false) const;
 
-   static void Draw(const DrawBuf &buf,Pane pane,const Config &cfg);
+   void draw(const DrawBuf &buf,Pane pane) const;
 
   public:
 
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<VColor> gray     =      Gray ;
+     RefVal<VColor> snow     =      Snow ;
+     RefVal<VColor> back     =    Silver ;
+     RefVal<VColor> text     =     Black ;
+     RefVal<VColor> inactive =      Gray ;
+     RefVal<VColor> hilight  =      Blue ;
+     RefVal<VColor> select   = OrangeRed ;
+     RefVal<VColor> hot      =       Red ;
+
+     RefVal<Point> space = Point(4,4) ;
+
+     RefVal<bool> hotcolor = true ;
+
+     RefVal<Font> font;
+
+     Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       width.bind(bag.width);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       inactive.bind(bag.inactive);
+
+       back.bind(bag.menu_back);
+       text.bind(bag.menu_text);
+       hilight.bind(bag.menu_hilight);
+       select.bind(bag.menu_select);
+       hot.bind(bag.menu_hot);
+       space.bind(bag.menu_space);
+       hotcolor.bind(bag.menu_hotcolor);
+       font.bind(bag.menu_font.font);
+      }
+    };
+
+   // parameters
+
+   const Config &cfg;
+   MenuData &data;
+   Pane pane;
+
+   // state
+
+   bool focus = false ;
+   unsigned state = MenuNone ;
+   ulen hilight_index = 0 ;
+   ulen select_index = 0 ;
+   Coord xoff = 0 ;
+
+   Coord xoffMax = 0 ;
+   Coord dxoff = 0 ;
+
+   // methods
+
    SimpleTopMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
 
+   SizeY getMinSize() const;
+
+   bool isGoodSize(Point size) const;
+
    void layout();
-
-   Point getMinSize() const;
-
-   bool isGoodSize(Point size) const { return size>=getMinSize(); }
 
    void draw(const DrawBuf &buf) const;
  };
@@ -237,16 +264,28 @@ class SimpleTopMenuWindowOf : public SubWindow
 
   private:
 
+   void setXOff(Coord xoff)
+    {
+     if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
+    }
+
+   void addXOff(Coordinate delta)
+    {
+     Coordinate dx=shape.xoff+delta*shape.dxoff;
+
+     setXOff(+dx);
+    }
+
    void assert()
     {
      const MenuPoint &point=shape.data.list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(point.place.addDY()-Point(shape.off,0)));
+     selected.assert(point.id,toScreen(point.place.addDY()-Point(shape.xoff,0)));
     }
 
    void select(ulen index)
     {
-     if( index>=shape.data.list.getLen() ) return;
+     if( !shape.data.isGood(index) ) return;
 
      if( BitTest(shape.state,MenuSelect) )
        {
@@ -271,7 +310,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void hilight(ulen index)
     {
-     if( index>=shape.data.list.getLen() ) return;
+     if( !shape.data.isGood(index) ) return;
 
      if( BitTest(shape.state,MenuHilight) )
        {
@@ -300,13 +339,48 @@ class SimpleTopMenuWindowOf : public SubWindow
        }
     }
 
-   void changeOff(Coord delta)
+   void getUp()
     {
-     delta*=shape.pane.dy/2;
+     if( BitTest(shape.state,MenuSelect) )
+       {
+        auto result=shape.data.findDown(shape.select_index);
 
-     Coord new_off=Cap<Coord>(0,shape.off+delta,shape.max_off);
+        if( result.found )
+          {
+           select(result.index);
+          }
+       }
+     else if( BitTest(shape.state,MenuHilight) )
+       {
+        auto result=shape.data.findDown(shape.hilight_index);
 
-     if( Change(shape.off,new_off) ) redraw();
+        if( result.found )
+          {
+           hilight(result.index);
+          }
+       }
+    }
+
+   void getDown()
+    {
+     if( BitTest(shape.state,MenuSelect) )
+       {
+        auto result=shape.data.findUp(shape.select_index);
+
+        if( result.found )
+          {
+           select(result.index);
+          }
+       }
+     else if( BitTest(shape.state,MenuHilight) )
+       {
+        auto result=shape.data.findUp(shape.hilight_index);
+
+        if( result.found )
+          {
+           hilight(result.index);
+          }
+       }
     }
 
   public:
@@ -325,9 +399,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    unsigned getState() const { return shape.state; }
 
@@ -336,7 +408,7 @@ class SimpleTopMenuWindowOf : public SubWindow
      if( Change<unsigned>(shape.state,MenuNone) ) redraw();
     }
 
-   bool forward(char ch)
+   bool forwardChar(char ch)
     {
      auto result=shape.data.find(ch);
 
@@ -354,6 +426,11 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    // drawing
 
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
+
    virtual void layout()
     {
      shape.pane=Pane(Null,getSize());
@@ -363,7 +440,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    virtual void draw(DrawBuf buf,bool) const
     {
-     try { shape.draw(buf); } catch(CatchType) {}
+     shape.draw(buf);
     }
 
    // base
@@ -372,8 +449,8 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      shape.focus=false;
      shape.state=MenuNone;
-     shape.off=0;
-     shape.max_off=0;
+     shape.xoff=0;
+     shape.xoffMax=0;
     }
 
    // keyboard
@@ -382,11 +459,16 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      if( Change(shape.focus,true) )
        {
-        if( !BitTest(shape.state,MenuHilight) && shape.data.list.getLen() )
+        if( !BitTest(shape.state,MenuHilight) )
           {
-           BitSet(shape.state,MenuHilight);
+           auto result=shape.data.findFirst();
 
-           shape.hilight_index=0;
+           if( result.found )
+             {
+              BitSet(shape.state,MenuHilight);
+
+              shape.hilight_index=result.index;
+             }
           }
 
         redraw();
@@ -424,28 +506,11 @@ class SimpleTopMenuWindowOf : public SubWindow
          {
           if( kmod&KeyMod_Shift )
             {
-             changeOff(-1);
+             addXOff(-1);
             }
           else
             {
-             if( BitTest(shape.state,MenuSelect) )
-               {
-                auto result=shape.data.findDown(shape.select_index);
-
-                if( result.found )
-                  {
-                   select(result.index);
-                  }
-               }
-             else if( BitTest(shape.state,MenuHilight) )
-               {
-                auto result=shape.data.findDown(shape.hilight_index);
-
-                if( result.found )
-                  {
-                   hilight(result.index);
-                  }
-               }
+             getUp();
             }
          }
         break;
@@ -454,28 +519,11 @@ class SimpleTopMenuWindowOf : public SubWindow
          {
           if( kmod&KeyMod_Shift )
             {
-             changeOff(+1);
+             addXOff(+1);
             }
           else
             {
-             if( BitTest(shape.state,MenuSelect) )
-               {
-                auto result=shape.data.findUp(shape.select_index);
-
-                if( result.found )
-                  {
-                   select(result.index);
-                  }
-               }
-             else if( BitTest(shape.state,MenuHilight) )
-               {
-                auto result=shape.data.findUp(shape.hilight_index);
-
-                if( result.found )
-                  {
-                   hilight(result.index);
-                  }
-               }
+             getDown();
             }
          }
         break;
@@ -494,7 +542,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_LeftClick(Point point,MouseKey)
     {
-     auto result=shape.data.find(point+Point(shape.off,0));
+     auto result=shape.data.find(point+Point(shape.xoff,0));
 
      if( result.found )
        {
@@ -509,7 +557,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_Move(Point point,MouseKey)
     {
-     auto result=shape.data.find(point+Point(shape.off,0));
+     auto result=shape.data.find(point+Point(shape.xoff,0));
 
      if( result.found )
        {
@@ -532,7 +580,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
      getFrameHost()->setFocus();
 
-     changeOff(delta);
+     addXOff(delta);
     }
 
    // signals
@@ -584,11 +632,14 @@ class SimpleCascadeMenuShape
    unsigned state = MenuNone ;
    ulen hilight_index = 0 ;
    ulen select_index = 0 ;
-   Coord off = 0 ;
-   Coord max_off = 0 ;
-   Coord cell_dy = 0 ;
+   Coord xoff = 0 ;
+
+   Coord xoffMax = 0 ;
+   Coord dxoff = 0 ;
 
   private:
+
+   Coord cell_dy = 0 ;
 
    static Coord GetDX(const MenuPoint &point,Font font,Coord space);
 
@@ -649,16 +700,28 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
   private:
 
+   void setXOff(Coord xoff)
+    {
+     if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
+    }
+
+   void addXOff(Coordinate delta)
+    {
+     Coordinate dx=shape.xoff+delta*shape.dxoff;
+
+     setXOff(+dx);
+    }
+
    void assert()
     {
      const MenuPoint &point=shape.data->list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(point.place.addDX()-Point(0,shape.off)));
+     selected.assert(point.id,toScreen(point.place.addDX()-Point(0,shape.xoff)));
     }
 
    void select(ulen index)
     {
-     if( !shape.data || index>=shape.data->list.getLen() ) return;
+     if( !shape.data || !shape.data->isGood(index) ) return;
 
      if( BitTest(shape.state,MenuSelect) )
        {
@@ -683,7 +746,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void del(ulen index)
     {
-     if( !shape.data || index>=shape.data->list.getLen() ) return;
+     if( !shape.data || !shape.data->isGood(index) ) return;
 
      const MenuPoint &point=shape.data->list[index];
 
@@ -692,7 +755,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    void hilight(ulen index)
     {
-     if( !shape.data || index>=shape.data->list.getLen() ) return;
+     if( !shape.data || !shape.data->isGood(index) ) return;
 
      if( BitTest(shape.state,MenuHilight) )
        {
@@ -721,13 +784,52 @@ class SimpleCascadeMenuWindowOf : public SubWindow
        }
     }
 
-   void changeOff(Coord delta)
+   void getUp()
     {
-     delta*=shape.cell_dy/2;
+     if( !shape.data ) return;
 
-     Coord new_off=Cap<Coord>(0,shape.off+delta,shape.max_off);
+     if( BitTest(shape.state,MenuSelect) )
+       {
+        auto result=shape.data->findDown(shape.select_index);
 
-     if( Change(shape.off,new_off) ) redraw();
+        if( result.found )
+          {
+           select(result.index);
+          }
+       }
+     else if( BitTest(shape.state,MenuHilight) )
+       {
+        auto result=shape.data->findDown(shape.hilight_index);
+
+        if( result.found )
+          {
+           hilight(result.index);
+          }
+       }
+    }
+
+   void getDown()
+    {
+     if( !shape.data ) return;
+
+     if( BitTest(shape.state,MenuSelect)  )
+       {
+        auto result=shape.data->findUp(shape.select_index);
+
+        if( result.found )
+          {
+           select(result.index);
+          }
+       }
+     else if( BitTest(shape.state,MenuHilight) )
+       {
+        auto result=shape.data->findUp(shape.hilight_index);
+
+        if( result.found )
+          {
+           hilight(result.index);
+          }
+       }
     }
 
   public:
@@ -746,9 +848,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return shape.getMinSize(); }
-
-   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   auto getMinSize() const { return shape.getMinSize(); }
 
    unsigned getState() const { return shape.state; }
 
@@ -759,7 +859,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
      if( Change<unsigned>(shape.state,MenuNone) ) redraw();
     }
 
-   bool forward(char ch)
+   bool forwardChar(char ch)
     {
      if( !shape.data ) return false;
 
@@ -779,6 +879,11 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    // drawing
 
+   virtual bool isGoodSize(Point size) const
+    {
+     return shape.isGoodSize(size);
+    }
+
    virtual void layout()
     {
      shape.pane=Pane(Null,getSize());
@@ -788,7 +893,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
    virtual void draw(DrawBuf buf,bool) const
     {
-     try { shape.draw(buf); } catch(CatchType) {}
+     shape.draw(buf);
     }
 
    // base
@@ -797,8 +902,8 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      shape.focus=false;
      shape.state=MenuNone;
-     shape.off=0;
-     shape.max_off=0;
+     shape.xoff=0;
+     shape.xoffMax=0;
     }
 
    // keyboard
@@ -807,11 +912,16 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( Change(shape.focus,true) )
        {
-        if( !BitTest(shape.state,MenuHilight) && shape.data && shape.data->list.getLen() )
+        if( !BitTest(shape.state,MenuHilight) && shape.data )
           {
-           BitSet(shape.state,MenuHilight);
+           auto result=shape.data->findFirst();
 
-           shape.hilight_index=0;
+           if( result.found )
+             {
+              BitSet(shape.state,MenuHilight);
+
+              shape.hilight_index=result.index;
+             }
           }
 
         redraw();
@@ -860,73 +970,40 @@ class SimpleCascadeMenuWindowOf : public SubWindow
         break;
 
         case VKey_Left :
+         {
+          if( kmod&KeyMod_Shift )
+            {
+             addXOff(-1);
+            }
+          else
+            {
+             pressed.assert(vkey,kmod);
+            }
+         }
+        break;
+
         case VKey_Right :
          {
-          pressed.assert(vkey,kmod);
+          if( kmod&KeyMod_Shift )
+            {
+             addXOff(+1);
+            }
+          else
+            {
+             pressed.assert(vkey,kmod);
+            }
          }
         break;
 
         case VKey_Up :
          {
-          if( kmod&KeyMod_Shift )
-            {
-             changeOff(-1);
-            }
-          else
-            {
-             if( !shape.data ) break;
-
-             if( BitTest(shape.state,MenuSelect) )
-               {
-                auto result=shape.data->findDown(shape.select_index);
-
-                if( result.found )
-                  {
-                   select(result.index);
-                  }
-               }
-             else if( BitTest(shape.state,MenuHilight) )
-               {
-                auto result=shape.data->findDown(shape.hilight_index);
-
-                if( result.found )
-                  {
-                   hilight(result.index);
-                  }
-               }
-            }
+          getUp();
          }
         break;
 
         case VKey_Down :
          {
-          if( kmod&KeyMod_Shift )
-            {
-             changeOff(+1);
-            }
-          else
-            {
-             if( !shape.data ) break;
-
-             if( BitTest(shape.state,MenuSelect)  )
-               {
-                auto result=shape.data->findUp(shape.select_index);
-
-                if( result.found )
-                  {
-                   select(result.index);
-                  }
-               }
-             else if( BitTest(shape.state,MenuHilight) )
-               {
-                auto result=shape.data->findUp(shape.hilight_index);
-
-                if( result.found )
-                  {
-                   hilight(result.index);
-                  }
-               }
-            }
+          getDown();
          }
         break;
        }
@@ -948,7 +1025,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( !shape.data ) return;
 
-     auto result=shape.data->find(point+Point(0,shape.off));
+     auto result=shape.data->find(point+Point(0,shape.xoff));
 
      if( result.found )
        {
@@ -970,7 +1047,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( !shape.data ) return;
 
-     auto result=shape.data->find(point+Point(0,shape.off));
+     auto result=shape.data->find(point+Point(0,shape.xoff));
 
      if( result.found )
        {
@@ -993,7 +1070,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
      getFrameHost()->setFocus();
 
-     changeOff(delta);
+     addXOff(delta);
     }
 
    // signals
@@ -1018,10 +1095,17 @@ class SimpleCascadeMenuOf
 
    struct Config
     {
-     CtorRefVal<ToolWindow::ConfigType> frame_cfg;
+     CtorRefVal<ToolFrame::ConfigType> frame_cfg;
      CtorRefVal<typename Shape::Config> menu_cfg;
 
      Config() noexcept {}
+
+     template <class Proxy>
+     void bind(Proxy proxy)
+      {
+       frame_cfg.bind(proxy);
+       menu_cfg.bind(proxy);
+      }
     };
 
    using ConfigType = Config ;
@@ -1030,13 +1114,13 @@ class SimpleCascadeMenuOf
 
    const Config &cfg;
 
-   ToolWindow frame;
+   ToolFrame frame;
    SimpleCascadeMenuWindowOf<Shape> client;
    Point screen_size;
 
   private:
 
-   void moved(Point delta)
+   void move(Point delta)
     {
      if( frame.isAlive() )
        {
@@ -1046,7 +1130,7 @@ class SimpleCascadeMenuOf
 
    SignalConnector<SimpleCascadeMenuOf<Shape>,Point> connector_moved;
 
-   SignalConnector<SimpleCascadeMenuOf<Shape> > connector_update;
+   SignalConnector<SimpleCascadeMenuOf<Shape> > connector_updated;
 
   public:
 
@@ -1056,8 +1140,8 @@ class SimpleCascadeMenuOf
       frame(desktop,cfg.frame_cfg),
       client(frame,cfg.menu_cfg, std::forward<TT>(tt)... ),
 
-      connector_moved(this,&SimpleCascadeMenuOf<Shape>::moved),
-      connector_update(this,&SimpleCascadeMenuOf<Shape>::update)
+      connector_moved(this,&SimpleCascadeMenuOf<Shape>::move),
+      connector_updated(this,&SimpleCascadeMenuOf<Shape>::update)
     {
      frame.bindClient(client);
     }
@@ -1076,17 +1160,17 @@ class SimpleCascadeMenuOf
 
      Point size=client.getMinSize();
 
-     screen_size=frame.getDesktop()->getScreenSize();
+     screen_size=frame.getScreenSize();
 
      Pane pane=FitToScreen(base,size,screen_size);
 
      frame.create(parent,pane);
 
-     frame.getHost()->setFocus();
+     frame.grabFocus();
 
      connector_moved.connect(parent->moved);
 
-     connector_update.connect(data.update);
+     connector_updated.connect(data.updated);
     }
 
    void update()
@@ -1097,12 +1181,12 @@ class SimpleCascadeMenuOf
 
         if( size<=screen_size )
           {
-           frame.getHost()->setMaxSize(size);
+           frame.setMaxSize(size);
 
            frame.resize(size);
-
-           frame.redrawAll(true);
           }
+
+        frame.input.redrawAll(true);
        }
     }
 

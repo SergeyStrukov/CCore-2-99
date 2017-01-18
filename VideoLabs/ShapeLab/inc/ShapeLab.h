@@ -22,7 +22,7 @@
 #include <CCore/inc/video/WindowLib2.h>
 #include <CCore/inc/video/FontDatabase.h>
 
-#include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/MessageFrame.h>
 
 namespace App {
 
@@ -302,7 +302,7 @@ class ShapeLab2 : public SubWindow
 
      FixedFrame::ConfigType dialog_cfg;
 
-     MessageWindow::Config msg_cfg;
+     MessageFrame::Config msg_cfg;
      TestDialog::Config test_cfg;
 
      TextShape::Config text_cfg;
@@ -353,7 +353,7 @@ class ShapeLab2 : public SubWindow
 
    // message
 
-   MessageWindow msg_window;
+   MessageFrame msg_window;
 
    // connectors
 

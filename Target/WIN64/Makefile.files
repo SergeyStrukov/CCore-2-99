@@ -98,12 +98,12 @@ obj/FastMutex.o \
 obj/Fifo.o \
 obj/FigureLib.o \
 obj/FileBoss.o \
+obj/FileFrame.o \
 obj/FileName.o \
 obj/FileNameCmp.o \
 obj/FileNameMatch.o \
 obj/FileSystem.o \
 obj/FileToMem.o \
-obj/FileWindow.o \
 obj/Font.o \
 obj/FontDatabase.o \
 obj/FontParam.o \
@@ -166,7 +166,7 @@ obj/MemSpaceHeap.o \
 obj/Menu.o \
 obj/MergeSort.o \
 obj/MersenneTwister.o \
-obj/MessageWindow.o \
+obj/MessageFrame.o \
 obj/Meta.o \
 obj/MetaList.o \
 obj/MinSizeType.o \
@@ -355,7 +355,7 @@ obj/Timer.o \
 obj/TlsSlot.o \
 obj/ToMemBase.o \
 obj/ToMoveCtor.o \
-obj/ToolWindow.o \
+obj/ToolFrame.o \
 obj/Tree.o \
 obj/TreeBase.o \
 obj/TreeLink.o \
@@ -496,12 +496,12 @@ obj/FastMutex.s \
 obj/Fifo.s \
 obj/FigureLib.s \
 obj/FileBoss.s \
+obj/FileFrame.s \
 obj/FileName.s \
 obj/FileNameCmp.s \
 obj/FileNameMatch.s \
 obj/FileSystem.s \
 obj/FileToMem.s \
-obj/FileWindow.s \
 obj/Font.s \
 obj/FontDatabase.s \
 obj/FontParam.s \
@@ -564,7 +564,7 @@ obj/MemSpaceHeap.s \
 obj/Menu.s \
 obj/MergeSort.s \
 obj/MersenneTwister.s \
-obj/MessageWindow.s \
+obj/MessageFrame.s \
 obj/Meta.s \
 obj/MetaList.s \
 obj/MinSizeType.s \
@@ -753,7 +753,7 @@ obj/Timer.s \
 obj/TlsSlot.s \
 obj/ToMemBase.s \
 obj/ToMoveCtor.s \
-obj/ToolWindow.s \
+obj/ToolFrame.s \
 obj/Tree.s \
 obj/TreeBase.s \
 obj/TreeLink.s \
@@ -894,12 +894,12 @@ obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FigureLib.dep \
 obj/FileBoss.dep \
+obj/FileFrame.dep \
 obj/FileName.dep \
 obj/FileNameCmp.dep \
 obj/FileNameMatch.dep \
 obj/FileSystem.dep \
 obj/FileToMem.dep \
-obj/FileWindow.dep \
 obj/Font.dep \
 obj/FontDatabase.dep \
 obj/FontParam.dep \
@@ -962,7 +962,7 @@ obj/MemSpaceHeap.dep \
 obj/Menu.dep \
 obj/MergeSort.dep \
 obj/MersenneTwister.dep \
-obj/MessageWindow.dep \
+obj/MessageFrame.dep \
 obj/Meta.dep \
 obj/MetaList.dep \
 obj/MinSizeType.dep \
@@ -1151,7 +1151,7 @@ obj/Timer.dep \
 obj/TlsSlot.dep \
 obj/ToMemBase.dep \
 obj/ToMoveCtor.dep \
-obj/ToolWindow.dep \
+obj/ToolFrame.dep \
 obj/Tree.dep \
 obj/TreeBase.dep \
 obj/TreeLink.dep \
@@ -1502,6 +1502,9 @@ obj/FigureLib.o : ../../Desktop/CCore/src/video/FigureLib.cpp
 obj/FileBoss.o : ../../Desktop/CCore/src/video/FileBoss.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/FileFrame.o : ../../Desktop/CCore/src/video/FileFrame.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1515,9 +1518,6 @@ obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileToMem.o : ../../HCore/CCore/src/FileToMem.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/FileWindow.o : ../../Desktop/CCore/src/video/FileWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Font.o : ../../Desktop/CCore/src/video/Font.cpp
@@ -1706,7 +1706,7 @@ obj/MergeSort.o : ../../Fundamental/CCore/src/sort/MergeSort.cpp
 obj/MersenneTwister.o : ../../Fundamental/CCore/src/MersenneTwister.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/MessageWindow.o : ../../Desktop/CCore/src/video/MessageWindow.cpp
+obj/MessageFrame.o : ../../Desktop/CCore/src/video/MessageFrame.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Meta.o : ../../Simple/CCore/src/gadget/Meta.cpp
@@ -2273,7 +2273,7 @@ obj/ToMemBase.o : ../../Applied/CCore/src/ToMemBase.cpp
 obj/ToMoveCtor.o : ../../Simple/CCore/src/ToMoveCtor.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ToolWindow.o : ../../Desktop/CCore/src/video/ToolWindow.cpp
+obj/ToolFrame.o : ../../Desktop/CCore/src/video/ToolFrame.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tree.o : ../../Fundamental/CCore/src/Tree.cpp
@@ -2689,6 +2689,9 @@ obj/FigureLib.s : ../../Desktop/CCore/src/video/FigureLib.cpp
 obj/FileBoss.s : ../../Desktop/CCore/src/video/FileBoss.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileFrame.s : ../../Desktop/CCore/src/video/FileFrame.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2702,9 +2705,6 @@ obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/FileToMem.s : ../../HCore/CCore/src/FileToMem.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/FileWindow.s : ../../Desktop/CCore/src/video/FileWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Font.s : ../../Desktop/CCore/src/video/Font.cpp
@@ -2893,7 +2893,7 @@ obj/MergeSort.s : ../../Fundamental/CCore/src/sort/MergeSort.cpp
 obj/MersenneTwister.s : ../../Fundamental/CCore/src/MersenneTwister.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/MessageWindow.s : ../../Desktop/CCore/src/video/MessageWindow.cpp
+obj/MessageFrame.s : ../../Desktop/CCore/src/video/MessageFrame.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Meta.s : ../../Simple/CCore/src/gadget/Meta.cpp
@@ -3460,7 +3460,7 @@ obj/ToMemBase.s : ../../Applied/CCore/src/ToMemBase.cpp
 obj/ToMoveCtor.s : ../../Simple/CCore/src/ToMoveCtor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ToolWindow.s : ../../Desktop/CCore/src/video/ToolWindow.cpp
+obj/ToolFrame.s : ../../Desktop/CCore/src/video/ToolFrame.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Tree.s : ../../Fundamental/CCore/src/Tree.cpp
@@ -3876,6 +3876,9 @@ obj/FigureLib.dep : ../../Desktop/CCore/src/video/FigureLib.cpp
 obj/FileBoss.dep : ../../Desktop/CCore/src/video/FileBoss.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileBoss.o $< -MF $@
 
+obj/FileFrame.dep : ../../Desktop/CCore/src/video/FileFrame.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileFrame.o $< -MF $@
+
 obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
 
@@ -3890,9 +3893,6 @@ obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
 
 obj/FileToMem.dep : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileToMem.o $< -MF $@
-
-obj/FileWindow.dep : ../../Desktop/CCore/src/video/FileWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileWindow.o $< -MF $@
 
 obj/Font.dep : ../../Desktop/CCore/src/video/Font.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Font.o $< -MF $@
@@ -4080,8 +4080,8 @@ obj/MergeSort.dep : ../../Fundamental/CCore/src/sort/MergeSort.cpp
 obj/MersenneTwister.dep : ../../Fundamental/CCore/src/MersenneTwister.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MersenneTwister.o $< -MF $@
 
-obj/MessageWindow.dep : ../../Desktop/CCore/src/video/MessageWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MessageWindow.o $< -MF $@
+obj/MessageFrame.dep : ../../Desktop/CCore/src/video/MessageFrame.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MessageFrame.o $< -MF $@
 
 obj/Meta.dep : ../../Simple/CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Meta.o $< -MF $@
@@ -4647,8 +4647,8 @@ obj/ToMemBase.dep : ../../Applied/CCore/src/ToMemBase.cpp
 obj/ToMoveCtor.dep : ../../Simple/CCore/src/ToMoveCtor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToMoveCtor.o $< -MF $@
 
-obj/ToolWindow.dep : ../../Desktop/CCore/src/video/ToolWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToolWindow.o $< -MF $@
+obj/ToolFrame.dep : ../../Desktop/CCore/src/video/ToolFrame.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToolFrame.o $< -MF $@
 
 obj/Tree.dep : ../../Fundamental/CCore/src/Tree.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tree.o $< -MF $@

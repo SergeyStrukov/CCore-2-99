@@ -78,7 +78,7 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("menu_hilight",ptr->menu_hilight);
   func("menu_select",ptr->menu_select);
   func("menu_hot",ptr->menu_hot);
-  func("use_hotcolor",ptr->use_hotcolor);
+  func("menu_hotcolor",ptr->menu_hotcolor);
 
   func("scroll_list_title",ptr->scroll_list_title);
   func("scroll_list_titleTop",ptr->scroll_list_titleTop);
@@ -267,7 +267,7 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("menu select",menu_select);
    binder.item("menu hot",menu_hot);
    binder.space();
-   binder.item("use hotcolor",use_hotcolor);
+   binder.item("menu hotcolor",menu_hotcolor);
 
   binder.group("Scroll List");
 
@@ -416,11 +416,9 @@ UserPreference::UserPreference() noexcept // Update here
   cfg_AlertMessageFrame.frame_cfg.bind(cfg_FixedFrame);
   cfg_AlertMessageFrame.msg_cfg.bind(cfg_AlertMessageSubWindow);
 
-  cfg_ToolWindow.shade_color.bind(shadeColor);
-  cfg_ToolWindow.shade_alpha.bind(shadeAlpha);
+  cfg_ToolFrame.bind(get());
 
-  cfg_SimpleCascadeMenu.frame_cfg.bind(cfg_ToolWindow);
-  cfg_SimpleCascadeMenu.menu_cfg.bind(cfg_SimpleCascadeMenuWindow);
+  cfg_SimpleCascadeMenu.bind(getSmartConfig());
 
   cfg_DragFrame.bind(get());
   cfg_FixedFrame.bind(get());
@@ -473,22 +471,11 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_ScrollListWindow.bind(get(),getSmartConfig());
 
-  cfg_SimpleTopMenuWindow.width.bind(width);
-  cfg_SimpleTopMenuWindow.space.bind(menu_space);
-  cfg_SimpleTopMenuWindow.use_hotcolor.bind(use_hotcolor);
-  cfg_SimpleTopMenuWindow.back.bind(menu_back);
-  cfg_SimpleTopMenuWindow.text.bind(menu_text);
-  cfg_SimpleTopMenuWindow.inactive.bind(inactive);
-  cfg_SimpleTopMenuWindow.hilight.bind(menu_hilight);
-  cfg_SimpleTopMenuWindow.select.bind(menu_select);
-  cfg_SimpleTopMenuWindow.hot.bind(menu_hot);
-  cfg_SimpleTopMenuWindow.left.bind(snow);
-  cfg_SimpleTopMenuWindow.right.bind(gray);
-  cfg_SimpleTopMenuWindow.font.bind(menu_font.font);
+  cfg_SimpleTopMenuWindow.bind(get());
 
   cfg_SimpleCascadeMenuWindow.width.bind(width);
   cfg_SimpleCascadeMenuWindow.space.bind(menu_space);
-  cfg_SimpleCascadeMenuWindow.use_hotcolor.bind(use_hotcolor);
+  cfg_SimpleCascadeMenuWindow.use_hotcolor.bind(menu_hotcolor);
   cfg_SimpleCascadeMenuWindow.back.bind(menu_back);
   cfg_SimpleCascadeMenuWindow.text.bind(menu_text);
   cfg_SimpleCascadeMenuWindow.inactive.bind(inactive);

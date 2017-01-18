@@ -17,8 +17,8 @@
 #include <inc/Application.h>
 
 #include <CCore/inc/video/UserPreference.h>
-#include <CCore/inc/video/MessageWindow.h>
-#include <CCore/inc/video/FileWindow.h>
+#include <CCore/inc/video/MessageFrame.h>
+#include <CCore/inc/video/FileFrame.h>
 #include <CCore/inc/video/Menu.h>
 
 namespace App {

@@ -13,7 +13,7 @@
 
 #include <inc/Client.h>
 
-#include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/MessageFrame.h>
 
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/FigureLib.h>

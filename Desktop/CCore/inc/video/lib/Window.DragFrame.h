@@ -73,6 +73,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      client_capture=false;
      delay_draw=false;
      enable_react=true;
+
+     redraw_set.pop();
+     cur_hint=Nothing;
     }
 
    void assert_moved(Point from,Point to)
@@ -324,16 +327,29 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      if( !enable_react ) shape.shade(buf,pane);
     }
 
-   void shadeOuter(FrameBuf<DesktopColor> &buf,Pane pane)
+   void shadeOuter(FrameBuf<DesktopColor> &buf,Pane client)
     {
      if( !enable_react )
        {
-        PaneSub sub(buf.getPane(),pane);
+        PaneSub sub(buf.getPane(),client);
 
         shape.shade(buf,sub.top);
         shape.shade(buf,sub.bottom);
         shape.shade(buf,sub.left);
         shape.shade(buf,sub.right);
+       }
+    }
+
+   void shadeOuter(FrameBuf<DesktopColor> &buf,Pane client,Pane pane)
+    {
+     if( !enable_react )
+       {
+        PaneSub sub(buf.getPane(),client);
+
+        shape.shade(buf,Inf(sub.top,pane));
+        shape.shade(buf,Inf(sub.bottom,pane));
+        shape.shade(buf,Inf(sub.left,pane));
+        shape.shade(buf,Inf(sub.right,pane));
        }
     }
 
@@ -375,9 +391,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
                        {
                         try { shape.draw(buf); } catch(...) {}
 
-                        Pane pane=shape.getClient();
+                        Pane client=shape.getClient();
 
-                        shadeOuter(buf,pane);
+                        shadeOuter(buf,client);
 
                         host->invalidate(1);
 
@@ -394,7 +410,9 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
                                       {
                                        try { shape.draw(buf,drag_type); } catch(...) {}
 
-                                       shade(buf,pane);
+                                       Pane client=shape.getClient();
+
+                                       shadeOuter(buf,client,pane);
 
                                        host->invalidate(pane,1);
 
@@ -431,23 +449,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
                                 host->invalidate(1);
 
                                } );
-    }
-
-   void redrawClient()
-    {
-     redraw_set.pop();
-
-     redrawBuf( [this] (FrameBuf<DesktopColor> &buf)
-                       {
-                        getClient().forward_draw(buf,shape.drag_type);
-
-                        Pane pane=shape.getClient();
-
-                        shade(buf,pane);
-
-                        host->invalidate(pane,1);
-
-                       } );
     }
 
    void redrawSet()
@@ -643,14 +644,14 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void createMain(CmdDisplay cmd_display,const DefString &title) requires ( !Shape::EnableFixed )
     {
-     Point max_size=getDesktop()->getScreenSize();
+     Point max_size=getScreenSize();
 
      createMain(cmd_display,max_size,title);
     }
 
    void createMain(CmdDisplay cmd_display,Pane pane,const DefString &title) requires ( !Shape::EnableFixed )
     {
-     Point max_size=getDesktop()->getScreenSize();
+     Point max_size=getScreenSize();
 
      createMain(cmd_display,pane,max_size,title);
     }
@@ -679,14 +680,14 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void create(Pane pane,const DefString &title) requires ( !Shape::EnableFixed )
     {
-     Point max_size=getDesktop()->getScreenSize();
+     Point max_size=getScreenSize();
 
      create(pane,max_size,title);
     }
 
    void create(FrameWindow *parent,Pane pane,const DefString &title) requires ( !Shape::EnableFixed )
     {
-     Point max_size=getDesktop()->getScreenSize();
+     Point max_size=getScreenSize();
 
      create(parent,pane,max_size,title);
     }
@@ -934,16 +935,12 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    virtual void disableReact()
     {
-     enable_react=false;
-
-     redrawAll();
+     if( Change(enable_react,false) ) redrawAll();
     }
 
    virtual void enableReact()
     {
-     enable_react=true;
-
-     redrawAll();
+     if( Change(enable_react,true) ) redrawAll();
     }
 
    virtual void react(UserAction action)

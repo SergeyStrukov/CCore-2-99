@@ -233,7 +233,18 @@ class FrameWindow : public NoCopyBase<MemBase,UserInput>
 
    bool isDead() const { return host->isDead(); }
 
+   Point getScreenSize() const { return desktop->getScreenSize(); }
+
+   // focus
+
+   void grabFocus() { host->setFocus(); }
+
    // move/resize
+
+   void setMaxSize(Point size)
+    {
+     host->setMaxSize(size);
+    }
 
    void move(Point delta)
     {

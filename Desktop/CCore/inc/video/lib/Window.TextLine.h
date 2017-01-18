@@ -41,9 +41,9 @@ class TextLineWindowOf : public SubWindow
      if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
     }
 
-   void shiftX(Coordinate count)
+   void addXOff(Coordinate count)
     {
-     Coordinate dx=shape.xoff-count*shape.dxoff;
+     Coordinate dx=shape.xoff+count*shape.dxoff;
 
      setXOff(+dx);
     }
@@ -206,13 +206,13 @@ class TextLineWindowOf : public SubWindow
        {
         case VKey_Left :
          {
-          shiftX(CountToCoordinate(repeat));
+          addXOff(-CountToCoordinate(repeat));
          }
         break;
 
         case VKey_Right :
          {
-          shiftX(-CountToCoordinate(repeat));
+          addXOff(CountToCoordinate(repeat));
          }
         break;
        }
@@ -252,7 +252,7 @@ class TextLineWindowOf : public SubWindow
 
    void react_Wheel(Point,MouseKey,Coord delta)
     {
-     shiftX(-Coordinate(delta));
+     addXOff(delta);
     }
  };
 

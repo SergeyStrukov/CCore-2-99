@@ -1,4 +1,4 @@
-/* ToolWindow.h */
+/* ToolFrame.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,8 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_ToolWindow_h
-#define CCore_inc_video_ToolWindow_h
+#ifndef CCore_inc_video_ToolFrame_h
+#define CCore_inc_video_ToolFrame_h
 
 #include <CCore/inc/video/SubWindow.h>
 #include <CCore/inc/video/FrameBase.h>
@@ -27,20 +27,27 @@ namespace Video {
 
 /* classes */
 
-class ToolWindow;
+class ToolFrame;
 
-/* class ToolWindow */
+/* class ToolFrame */
 
-class ToolWindow : public FrameWindow , public SubWindowHost
+class ToolFrame : public FrameWindow , public SubWindowHost
  {
   public:
 
    struct Config
     {
-     RefVal<VColor> shade_color = Violet ;
-     RefVal<Clr>    shade_alpha =     64 ;
+     RefVal<VColor> shadeColor = Violet ;
+     RefVal<Clr>    shadeAlpha =     64 ;
 
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       shadeColor.bind(bag.shadeColor);
+       shadeAlpha.bind(bag.shadeAlpha);
+      }
     };
 
    using ConfigType = Config ;
@@ -51,6 +58,8 @@ class ToolWindow : public FrameWindow , public SubWindowHost
 
    SubWindow *client = 0 ;
 
+   AliveControl *client_ac = &AliveControl::Default ;
+
    Point size;
 
    bool has_focus = false ;
@@ -58,6 +67,8 @@ class ToolWindow : public FrameWindow , public SubWindowHost
    bool client_capture = false ;
    bool delay_draw = false ;
    bool enable_react = true ;
+
+   RedrawSet redraw_set;
 
   private:
 
@@ -71,31 +82,33 @@ class ToolWindow : public FrameWindow , public SubWindowHost
 
    void shade(FrameBuf<DesktopColor> &buf);
 
-   void redraw(FuncArgType<FrameBuf<DesktopColor> &> func);
+   void shade(FrameBuf<DesktopColor> &buf,Pane pane);
+
+   void redrawBuf(FuncArgType<FrameBuf<DesktopColor> &> func);
+
+   void redrawAll(bool do_layout=false);
+
+   void redrawSet();
 
   public:
 
-   ToolWindow(Desktop *desktop,const Config &cfg);
+   ToolFrame(Desktop *desktop,const Config &cfg);
 
-   virtual ~ToolWindow();
+   ToolFrame(Desktop *desktop,const Config &cfg,Signal<> &signal);
+
+   virtual ~ToolFrame();
 
    // methods
 
-   void bindClient(SubWindow &client_);
+   void bindClient(SubWindow &client);
+
+   void connectUpdate(Signal<> &signal);
 
    void createMain(Pane pane,const DefString &title);
 
    void create(Pane pane);
 
    void create(FrameWindow *parent,Pane pane);
-
-   void redrawAll(bool do_layout=false);
-
-   void redrawClient();
-
-   void redrawClient(Pane pane);
-
-   unsigned getToken() { return host->getToken(); }
 
    // SubWindowHost
 
@@ -151,26 +164,30 @@ class ToolWindow : public FrameWindow , public SubWindowHost
 
    // DeferInput
 
-   class Input : DeferInput<ToolWindow>
+   class Input : DeferInput<ToolFrame>
     {
-      friend class ToolWindow;
+      friend class ToolFrame;
 
-      explicit Input(ToolWindow *window) : DeferInput<ToolWindow>(window) {}
+      explicit Input(ToolFrame *window) : DeferInput<ToolFrame>(window) {}
 
       ~Input() {}
 
-      using DeferInput<ToolWindow>::try_post;
+      using DeferInput<ToolFrame>::try_post;
 
      public:
 
-      void redrawAll(bool do_layout=false) { try_post(&ToolWindow::redrawAll,do_layout); }
+      void redrawAll(bool do_layout=false) { try_post(&ToolFrame::redrawAll,do_layout); }
 
-      void redrawClient() { try_post(&ToolWindow::redrawClient); }
-
-      void redrawClient(Pane pane) { try_post(&ToolWindow::redrawClient,pane); }
+      void redrawSet() { try_post(&ToolFrame::redrawSet); }
     };
 
    Input input;
+
+  private:
+
+   void update();
+
+   SignalConnector<ToolFrame> connector_update;
  };
 
 } // namespace Video

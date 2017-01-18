@@ -456,7 +456,7 @@ void TestClient::open()
 
 void TestClient::layout()
  {
-  Coord dy=menu.getMinSize().y;
+  Coord dy=menu.getMinSize().dy;
 
   Pane pane(Null,getSize());
 

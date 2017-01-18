@@ -68,11 +68,11 @@ WindowLib.h          ++
           
 WindowReport.h       ++       
 
-ToolWindow.h         .
-
-MessageWindow.h      ++           
+ToolFrame.h          +   hint?
 Menu.h               .
-FileWindow.h         .
+
+MessageFrame.h       ++           
+FileFrame.h          .
         
 UserPreference.h     .
 

@@ -92,9 +92,18 @@ auto MenuData::findUp(ulen index) const -> FindResult
   return {0,false};
  }
 
+auto MenuData::findFirst() const -> FindResult
+ {
+  auto r=Range(list);
+
+  for(ulen index=0; index<r.len ;index++) if( r[index].type==MenuText ) return {index,true};
+
+  return {0,false};
+ }
+
 /* class SimpleTopMenuShape */
 
-Coord SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coord space,Coord dy)
+Coordinate SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coordinate space,Coordinate dy)
  {
   switch( point.type )
     {
@@ -110,21 +119,13 @@ Coord SimpleTopMenuShape::GetDX(const MenuPoint &point,Font font,Coord space,Coo
 
           TextSize ts=font->text(str1,str2);
 
-          Coordinate dx(ts.full_dx);
-
-          dx+=2*space;
-
-          return +dx;
+          return ts.full_dx+2*space;
          }
        else
          {
           TextSize ts=font->text(str);
 
-          Coordinate dx(ts.full_dx);
-
-          dx+=2*space;
-
-          return +dx;
+          return ts.full_dx+2*space;
          }
       }
      break;
@@ -159,7 +160,7 @@ VColor SimpleTopMenuShape::HotFunc::hot(ulen index_,char,Point,Point)
   return vc;
  }
 
-void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot)
+void SimpleTopMenuShape::draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,bool showhot) const
  {
   StrLen str=point.text.str();
 
@@ -170,7 +171,7 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane pan
 
      if( showhot )
        {
-        if( +cfg.use_hotcolor )
+        if( +cfg.hotcolor )
           {
            HotFunc func(vc,str1.len,+cfg.hot);
 
@@ -183,6 +184,7 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane pan
            font->text(buf,pane,{AlignX_Center,AlignY_Center},str1,str2,func.function_place());
 
            Point base=pane.getBase()+func.base;
+
            MCoord width=+cfg.width;
 
            base=base.addY(RoundUpLen(width));
@@ -203,14 +205,42 @@ void SimpleTopMenuShape::Draw(const DrawBuf &buf,const MenuPoint &point,Pane pan
     }
  }
 
-void SimpleTopMenuShape::Draw(const DrawBuf &buf,Pane pane,const Config &cfg)
+void SimpleTopMenuShape::draw(const DrawBuf &buf,Pane pane) const
  {
   SmoothDrawArt art(buf);
 
   MPane p(pane);
-  TwoField field(p.getTopLeft(),+cfg.left,p.getTopRight(),+cfg.right);
+  TwoField field(p.getTopLeft(),+cfg.snow,p.getTopRight(),+cfg.gray);
 
   FigureBox(p).solid(art,field);
+ }
+
+SizeY SimpleTopMenuShape::getMinSize() const
+ {
+  Font font=+cfg.font;
+  FontSize fs=font->getSize();
+  Point space=+cfg.space;
+
+  return fs.dy+2*Coordinate(space.y);
+ }
+
+bool SimpleTopMenuShape::isGoodSize(Point size) const
+ {
+  Font font=+cfg.font;
+  FontSize fs=font->getSize();
+  Point space=+cfg.space;
+
+  Coordinate dy=fs.dy+2*Coordinate(space.y);
+  Coordinate dx=0;
+
+  for(const MenuPoint &point : data.list )
+    {
+     dx+=GetDX(point,font,space.x,dy);
+    }
+
+  Point min_size(dx,dy);
+
+  return size>=min_size;
  }
 
 void SimpleTopMenuShape::layout()
@@ -219,44 +249,36 @@ void SimpleTopMenuShape::layout()
   FontSize fs=font->getSize();
   Point space=+cfg.space;
 
-  Coord dy=fs.dy+2*space.y;
+  Coordinate dy=fs.dy+2*Coordinate(space.y);
   Coordinate x=0;
 
   for(MenuPoint &point : data.list )
     {
-     Coord dx=GetDX(point,font,space.x,dy);
+     Coordinate dx=GetDX(point,font,space.x,dy);
 
-     point.place=Pane(+x,0,dx,dy)+pane.getBase();
+     point.place=Pane(x,0,dx,dy)+pane.getBase();
 
      x+=dx;
     }
 
-  max_off=+x;
+  xoffMax=+x;
 
-  if( max_off>pane.dx ) max_off-=pane.dx; else max_off=0;
+  if( xoffMax>pane.dx ) xoffMax-=pane.dx; else xoffMax=0;
 
-  Replace_min(off,max_off);
- }
+  Replace_min(xoff,xoffMax);
 
-Point SimpleTopMenuShape::getMinSize() const
- {
-  Font font=+cfg.font;
-  FontSize fs=font->getSize();
-  Point space=+cfg.space;
-
-  Coord dy=fs.dy+2*space.y;
-  Coordinate x=0;
-
-  for(const MenuPoint &point : data.list )
-    {
-     x+=GetDX(point,font,space.x,dy);
-    }
-
-  return {+x,dy};
+  dxoff=fs.medDX();
  }
 
 void SimpleTopMenuShape::draw(const DrawBuf &buf) const
  {
+  MCoord width=+cfg.width;
+
+  VColor text=+cfg.text;
+  VColor inactive=+cfg.inactive;
+  VColor hilight=+cfg.hilight;
+  VColor select=+cfg.select;
+
   Font font=+cfg.font;
 
   SmoothDrawArt art(buf);
@@ -266,7 +288,7 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
 
    MPane p(pane);
 
-   art.path(HalfPos,+cfg.width,+cfg.right,p.getBottomLeft(),p.getBottomRight());
+   art.path(HalfPos,width,+cfg.gray,p.getBottomLeft(),p.getBottomRight());
   }
 
   auto r=Range(data.list);
@@ -275,7 +297,7 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
     {
      const MenuPoint &point=r[i];
 
-     Pane pane=point.place-Point(off,0);
+     Pane pane=point.place-Point(xoff,0);
 
      switch( point.type )
        {
@@ -283,28 +305,28 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
          {
           if( BitTest(state,MenuSelect) && select_index==i )
             {
-             FigureBox(pane).loop(art,HalfPos,+cfg.width,+cfg.select);
+             FigureBox(pane).loop(art,HalfPos,width,select);
 
-             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
+             draw(buf,point,pane,font,hilight,focus);
             }
           else if( BitTest(state,MenuHilight) && hilight_index==i )
             {
              MPane p(pane);
 
-             art.path(HalfPos,+cfg.width,+cfg.hilight,p.getBottomLeft(),p.getBottomRight());
+             art.path(HalfPos,width,hilight,p.getBottomLeft(),p.getBottomRight());
 
-             Draw(buf,point,pane,font,+cfg.hilight,cfg,focus);
+             draw(buf,point,pane,font,hilight,focus);
             }
           else
             {
-             Draw(buf,point,pane,font,+cfg.text,cfg,focus);
+             draw(buf,point,pane,font,text,focus);
             }
          }
         break;
 
         case MenuDisabled :
          {
-          Draw(buf,point,pane,font,+cfg.inactive,cfg);
+          draw(buf,point,pane,font,inactive);
          }
         break;
 
@@ -316,27 +338,27 @@ void SimpleTopMenuShape::draw(const DrawBuf &buf) const
 
         case MenuSeparator :
          {
-          Draw(buf,pane,cfg);
+          draw(buf,pane);
          }
        }
     }
 
-  if( off>0 )
+  if( xoff>0 )
     {
      Coord len=pane.dy/3;
 
      Pane p(pane.x,pane.y+pane.dy-len,len,len);
 
-     FigureLeftArrow(p).curveSolid(art,+cfg.hilight);
+     FigureLeftArrow(p).curveSolid(art,hilight);
     }
 
-  if( off<max_off )
+  if( xoff<xoffMax )
     {
      Coord len=pane.dy/3;
 
      Pane p(pane.x+pane.dx-len,pane.y+pane.dy-len,len,len);
 
-     FigureRightArrow(p).curveSolid(art,+cfg.hilight);
+     FigureRightArrow(p).curveSolid(art,hilight);
     }
  }
 
@@ -485,7 +507,7 @@ void SimpleCascadeMenuShape::draw_Menu(const DrawBuf &buf) const
     {
      const MenuPoint &point=r[i];
 
-     Pane pane=point.place-Point(0,off);
+     Pane pane=point.place-Point(0,xoff);
 
      switch( point.type )
        {
@@ -531,7 +553,7 @@ void SimpleCascadeMenuShape::draw_Menu(const DrawBuf &buf) const
        }
     }
 
-  if( off>0 )
+  if( xoff>0 )
     {
      Coord len=cell_dy/3;
 
@@ -540,7 +562,7 @@ void SimpleCascadeMenuShape::draw_Menu(const DrawBuf &buf) const
      FigureUpArrow(p).curveSolid(art,+cfg.hilight);
     }
 
-  if( off<max_off )
+  if( xoff<xoffMax )
     {
      Coord len=cell_dy/3;
 
@@ -563,8 +585,8 @@ void SimpleCascadeMenuShape::layout()
 
   if( !data )
     {
-     off=0;
-     max_off=0;
+     xoff=0;
+     xoffMax=0;
 
      return;
     }
@@ -604,11 +626,13 @@ void SimpleCascadeMenuShape::layout()
        break;
       }
 
-  max_off=+y;
+  xoffMax=+y;
 
-  if( max_off>inner.dy ) max_off-=inner.dy; else max_off=0;
+  if( xoffMax>inner.dy ) xoffMax-=inner.dy; else xoffMax=0;
 
-  Replace_min(off,max_off);
+  Replace_min(xoff,xoffMax);
+
+  dxoff=fs.medDX();
  }
 
 Point SimpleCascadeMenuShape::getMinSize() const

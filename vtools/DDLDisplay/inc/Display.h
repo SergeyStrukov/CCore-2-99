@@ -13,7 +13,7 @@
 
 #include <inc/Application.h>
 
-#include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/MessageFrame.h>
 
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>

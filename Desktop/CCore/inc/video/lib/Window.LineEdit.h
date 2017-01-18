@@ -59,9 +59,9 @@ class LineEditWindowOf : public SubWindow
      if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
     }
 
-   void shiftX(Coordinate count)
+   void addXOff(Coordinate count)
     {
-     Coordinate dx=shape.xoff-count*shape.dxoff;
+     Coordinate dx=shape.xoff+count*shape.dxoff;
 
      setXOff(+dx);
     }
@@ -638,7 +638,7 @@ class LineEditWindowOf : public SubWindow
             {
              if( kmod&KeyMod_Ctrl )
                {
-                shiftX(1);
+                addXOff(-1);
                }
              else
                {
@@ -651,7 +651,7 @@ class LineEditWindowOf : public SubWindow
             {
              if( kmod&KeyMod_Ctrl )
                {
-                shiftX(-1);
+                addXOff(+1);
                }
              else
                {
@@ -712,13 +712,13 @@ class LineEditWindowOf : public SubWindow
           {
            case VKey_Left :
             {
-             if( kmod&KeyMod_Ctrl ) shiftX(1);
+             if( kmod&KeyMod_Ctrl ) addXOff(-1);
             }
            break;
 
            case VKey_Right :
             {
-             if( kmod&KeyMod_Ctrl ) shiftX(-1);
+             if( kmod&KeyMod_Ctrl ) addXOff(+1);
             }
            break;
           }
@@ -735,7 +735,7 @@ class LineEditWindowOf : public SubWindow
             {
              if( kmod&KeyMod_Ctrl )
                {
-                shiftX(CountToCoordinate(repeat));
+                addXOff(-CountToCoordinate(repeat));
                }
              else
                {
@@ -748,7 +748,7 @@ class LineEditWindowOf : public SubWindow
             {
              if( kmod&KeyMod_Ctrl )
                {
-                shiftX(-CountToCoordinate(repeat));
+                addXOff(CountToCoordinate(repeat));
                }
              else
                {
@@ -811,13 +811,13 @@ class LineEditWindowOf : public SubWindow
           {
            case VKey_Left :
             {
-             if( kmod&KeyMod_Ctrl ) shiftX(CountToCoordinate(repeat));
+             if( kmod&KeyMod_Ctrl ) addXOff(-CountToCoordinate(repeat));
             }
            break;
 
            case VKey_Right :
             {
-             if( kmod&KeyMod_Ctrl ) shiftX(-CountToCoordinate(repeat));
+             if( kmod&KeyMod_Ctrl ) addXOff(CountToCoordinate(repeat));
             }
            break;
           }
@@ -899,7 +899,7 @@ class LineEditWindowOf : public SubWindow
     {
      if( mkey&MouseKey_Ctrl )
        {
-        shiftX(-Coordinate(delta));
+        addXOff(delta);
        }
      else if( shape.enable )
        {

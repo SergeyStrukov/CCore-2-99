@@ -1,4 +1,4 @@
-/* FileWindow.cpp */
+/* FileFrame.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/video/FileWindow.h>
+#include <CCore/inc/video/FileFrame.h>
 
 #include <CCore/inc/video/DesktopKey.h>
 #include <CCore/inc/video/Desktop.h>
@@ -301,7 +301,7 @@ void DirHitList::prepare(MenuData &data)
      data(MenuTextNoHot,last_list[i].dir,(int)(MaxLen+i));
     }
 
-  data.update.assert();
+  data.updated.assert();
  }
 
 /* class DirEditShape */
@@ -932,7 +932,7 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    btn_Ok(wlist,cfg.btn_cfg,cfg.text_Ok),
    btn_Cancel(wlist,cfg.btn_cfg,cfg.text_Cancel),
 
-   hit_menu(host.getFrame()->getDesktop(),cfg.hit_menu_cfg),
+   hit_menu(host.getFrameDesktop(),cfg.hit_menu_cfg),
 
    alt_new_file(wlist,cfg.alt_cfg,true),
    label_new_file(wlist,cfg.label_cfg,cfg.text_New_file),
@@ -1143,7 +1143,7 @@ Pane FileWindow::getPane(StrLen title,Point base) const
  {
   Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir));
 
-  Point screen_size=getDesktop()->getScreenSize();
+  Point screen_size=getScreenSize();
 
   return FitToScreen(base,size,screen_size);
  }

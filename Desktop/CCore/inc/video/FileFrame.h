@@ -1,4 +1,4 @@
-/* FileWindow.h */
+/* FileFrame.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,8 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_FileWindow_h
-#define CCore_inc_video_FileWindow_h
+#ifndef CCore_inc_video_FileFrame_h
+#define CCore_inc_video_FileFrame_h
 
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>

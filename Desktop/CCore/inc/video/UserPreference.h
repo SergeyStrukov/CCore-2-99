@@ -18,12 +18,12 @@
 
 #include <CCore/inc/video/ConfigStore.h>
 
-#include <CCore/inc/video/ToolWindow.h>
-#include <CCore/inc/video/MessageWindow.h>
+#include <CCore/inc/video/ToolFrame.h>
+#include <CCore/inc/video/MessageFrame.h>
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Menu.h>
-#include <CCore/inc/video/FileWindow.h>
+#include <CCore/inc/video/FileFrame.h>
 
 namespace CCore {
 namespace Video {
@@ -159,7 +159,7 @@ struct UserPreferenceBag
   VColor menu_select    = OrangeRed ;
   VColor menu_hot       =       Red ;
 
-  bool use_hotcolor = true ;
+  bool menu_hotcolor = true ;
 
   // Frames
 
@@ -299,7 +299,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // main windows
 
-   ToolWindow::ConfigType cfg_ToolWindow;
+   ToolFrame::ConfigType cfg_ToolFrame;
    MessageWindow::ConfigType cfg_MessageSubWindow;
    MessageFrame::ConfigType cfg_MessageFrame;
    MessageWindow::ConfigType cfg_AlertMessageSubWindow;
@@ -368,7 +368,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // main windows
 
-   const ToolWindow::ConfigType & getToolWindowConfig() const { return cfg_ToolWindow; }
+   const ToolFrame::ConfigType & getToolWindowConfig() const { return cfg_ToolFrame; }
 
    //const MessageWindow::ConfigType & getMessageSubWindowConfig() const { return cfg_MessageSubWindow; }
 
@@ -462,7 +462,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       // main windows
 
-      operator const auto & () const { return obj->cfg_ToolWindow; }
+      operator const auto & () const { return obj->cfg_ToolFrame; }
 
       operator const auto & () const { return obj->cfg_MessageSubWindow; }
 

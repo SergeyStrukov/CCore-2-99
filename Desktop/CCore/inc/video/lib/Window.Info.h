@@ -41,9 +41,9 @@ class InfoWindowOf : public SubWindow
      if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
     }
 
-   void shiftX(Coordinate count)
+   void addXOff(Coordinate count)
     {
-     Coordinate dx=shape.xoff-count*shape.dxoff;
+     Coordinate dx=shape.xoff+count*shape.dxoff;
 
      setXOff(+dx);
     }
@@ -211,13 +211,13 @@ class InfoWindowOf : public SubWindow
        {
         case VKey_Left :
          {
-          shiftX(CountToCoordinate(repeat));
+          addXOff(-CountToCoordinate(repeat));
          }
         break;
 
         case VKey_Right :
          {
-          shiftX(-CountToCoordinate(repeat));
+          addXOff(CountToCoordinate(repeat));
          }
         break;
 

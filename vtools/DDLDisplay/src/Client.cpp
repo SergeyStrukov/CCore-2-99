@@ -162,7 +162,7 @@ void ClientWindow::open()
 
 void ClientWindow::layout()
  {
-  Coord dy=menu.getMinSize().y;
+  Coord dy=menu.getMinSize().dy;
 
   Pane pane(Null,getSize());
 
