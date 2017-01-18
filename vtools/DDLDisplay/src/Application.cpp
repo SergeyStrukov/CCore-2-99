@@ -31,29 +31,6 @@ struct Param;
 
 class Application;
 
-/* class Preference */
-
-class Preference : public UserPreference
- {
-  public:
-
-   Preference() noexcept;
-
-   ~Preference();
-
-   // signals
-
-   Signal<> update;
- };
-
-Preference::Preference() noexcept
- {
- }
-
-Preference::~Preference()
- {
- }
-
 /* struct Param */
 
 struct Param
@@ -61,16 +38,18 @@ struct Param
   Desktop *desktop = DefaultDesktop ;
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
 
-  Preference pref;
+  UserPreference pref;
 
-  const DragWindow::ConfigType &drag_cfg;
+  const WindowReportConfig &report_cfg;
+  const DragFrame::ConfigType &frame_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
 
   ClientWindow::ConfigType client_cfg;
 
   Param()
-   : drag_cfg(pref.getDragWindowConfig()),
-     exception_cfg(pref.getExceptionWindowConfig()),
+   : report_cfg(pref.getSmartConfig()),
+     frame_cfg(pref.getSmartConfig()),
+     exception_cfg(pref.getSmartConfig()),
      client_cfg(pref)
    {
    }
@@ -82,7 +61,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragWindow main_win;
+   DragFrame main_frame;
 
    ExceptionClient exception_client;
 
@@ -107,7 +86,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     main_win.createMain(cmd_display,desktop->getScreenSize(),"DDLDisplay"_def);
+     main_frame.createMain(cmd_display,"DDLDisplay"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -131,7 +110,7 @@ class Application : public ApplicationBase
     {
      client.updateCfg();
 
-     main_win.redrawAll(true);
+     main_frame.input.redrawAll(true);
     }
 
    SignalConnector<Application> connector_pref_update;
@@ -143,11 +122,11 @@ class Application : public ApplicationBase
         SplitPath path(file_name);
         SplitName name(path.path);
 
-        main_win.setTitle(String("DDL file: ")+name.name);
+        main_frame.setTitle(String("DDL file: ")+name.name);
        }
      else
        {
-        main_win.setTitle("DDLDisplay"_def);
+        main_frame.setTitle("DDLDisplay"_def);
        }
     }
 
@@ -158,14 +137,14 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.drag_cfg),
-      exception_client(main_win,param.exception_cfg,report),
-      client(main_win,param.client_cfg),
-      connector_pref_update(this,&Application::pref_update,param.pref.update),
+      main_frame(param.desktop,param.frame_cfg),
+      exception_client(main_frame,param.exception_cfg,report),
+      client(main_frame,param.client_cfg),
+      connector_pref_update(this,&Application::pref_update,param.pref.updated),
       connector_client_opened(this,&Application::client_opened,client.getOpened())
     {
-     main_win.bindAlertClient(exception_client);
-     main_win.bindClient(client);
+     main_frame.bindAlertClient(exception_client);
+     main_frame.bindClient(client);
     }
 
    ~Application()
@@ -194,8 +173,6 @@ int Main(CmdDisplay cmd_display)
     }
   catch(CatchType)
     {
-     ErrorMsgBox("Cannot start application: no memory","Fatal error");
-
      return 1;
     }
  }

@@ -23,7 +23,6 @@
 #include <CCore/inc/PlatformRandom.h>
 #include <CCore/inc/Cmp.h>
 
-#include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/FontDatabase.h>
@@ -170,14 +169,14 @@ class Progress : public IncrementalProgress
        }
     };
 
-   class Frame : public FixedWindow
+   class Frame : public FixedFrame
     {
       Client sub_win;
 
      public:
 
-      Frame(Desktop *desktop,const FixedWindow::ConfigType &cfg)
-       : FixedWindow(desktop,cfg),
+      Frame(Desktop *desktop,const FixedFrame::ConfigType &cfg)
+       : FixedFrame(desktop,cfg),
          sub_win(*this)
        {
         bindClient(sub_win);
@@ -203,15 +202,15 @@ class Progress : public IncrementalProgress
 
         Point client_size(300,60);
 
-        Point size=getMinSize(Range(title),client_size);
+        Point size=getMinSize(false,Range(title),client_size);
 
-        FixedWindow::create(parent,FreeCenter({Null,screen_size},size),title);
+        FixedFrame::create(parent,FreeCenter({Null,screen_size},size),title);
        }
     };
 
    FrameWindow *parent;
 
-   FixedWindow::ConfigType cfg;
+   FixedFrame::ConfigType cfg;
 
    Frame frame;
 

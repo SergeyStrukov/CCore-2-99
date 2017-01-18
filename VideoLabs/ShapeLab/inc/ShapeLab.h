@@ -20,7 +20,6 @@
 
 #include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/WindowLib2.h>
-#include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/FontDatabase.h>
 
 #include <CCore/inc/video/MessageWindow.h>
@@ -301,7 +300,7 @@ class ShapeLab2 : public SubWindow
 
      InfoShape::Config info_cfg;
 
-     FixedShape::Config dialog_cfg;
+     FixedFrame::ConfigType dialog_cfg;
 
      MessageWindow::Config msg_cfg;
      TestDialog::Config test_cfg;
@@ -349,7 +348,7 @@ class ShapeLab2 : public SubWindow
 
    // test dialog
 
-   FixedWindow dialog;
+   FixedFrame dialog;
    TestDialog test;
 
    // message

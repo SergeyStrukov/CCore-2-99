@@ -146,27 +146,21 @@ Point FixedFrameShape::getDeltaSize() const
   return Point(dxy,tdy)+Point(dxy,dxy);
  }
 
-Coord FixedFrameShape::getMinDx(bool is_main,StrLen title) const
+Coord FixedFrameShape::getMinDX(bool is_main,StrLen title) const
  {
   Coord width=RoundUpLen(+cfg.width);
   Coord tdy=+cfg.title_dy;
 
-  MCoord ex=Fraction(tdy-2*width)/4;
-
   Coord dxy=+cfg.frame_dxy;
   Coord bdx=+cfg.btn_dx;
 
-  TextSize ts=cfg.font->text_guarded(title);
-
   Coord btn_len = is_main? 5*bdx : 3*bdx ;
 
-  Coordinate dx=ts.full_dx;
-
-  dx+=2*RoundUpLen(ex);
+  Coordinate dx=getMinTitleDX(title,tdy-2*width);
 
   Replace_max(dx,Max(tdy,dxy));
 
-  dx+=2*dxy+btn_len+bdx/2;
+  dx += 2*dxy+btn_len+bdx/2 ;
 
   return +dx;
  }

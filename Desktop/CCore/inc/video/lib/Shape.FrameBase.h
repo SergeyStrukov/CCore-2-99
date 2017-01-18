@@ -149,6 +149,8 @@ class FrameShapeBase
 
    void drawHint(const DrawBuf &buf,Pane title,Hint hint) const;
 
+   Coord getMinTitleDX(StrLen title,Coord dy) const;
+
   public:
 
    // state

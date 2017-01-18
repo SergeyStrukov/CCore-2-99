@@ -610,6 +610,19 @@ void FrameShapeBase::drawHint(const DrawBuf &buf,Pane title,Hint hint) const
     }
  }
 
+Coord FrameShapeBase::getMinTitleDX(StrLen title,Coord dy) const
+ {
+  MCoord ex=Fraction(Max_cast(dy,0))/4;
+
+  TextSize ts=cfg.font->text_guarded(title);
+
+  Coordinate dx=ts.full_dx;
+
+  dx+=2*RoundUpLen(ex);
+
+  return +dx;
+ }
+
 void FrameShapeBase::reset(const DefString &title_,bool is_main_)
  {
   has_focus=false;

@@ -153,13 +153,13 @@ class FixedFrameShape : public FrameShapeBase
 
    Point getDeltaSize() const;
 
-   Coord getMinDx(bool is_main,StrLen title) const;
+   Coord getMinDX(bool is_main,StrLen title) const;
 
    Point getMinSize(bool is_main,StrLen title,Point size) const
     {
      size+=getDeltaSize();
 
-     return Point( Max(size.x,getMinDx(is_main,title)) , size.y );
+     return Point( Max(size.x,getMinDX(is_main,title)) , size.y );
     }
 
    Point getMinSize(Point size=Point(10,10)) const
