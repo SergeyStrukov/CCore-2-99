@@ -22,6 +22,7 @@ obj/AtomicRefArray.o \
 obj/AttachmentHost.o \
 obj/AutoGlobal.o \
 obj/BaseRangeAlgo.o \
+obj/BestSearch.o \
 obj/BinaryFile.o \
 obj/BinarySearch.o \
 obj/BlockCipher.o \
@@ -420,6 +421,7 @@ obj/AtomicRefArray.s \
 obj/AttachmentHost.s \
 obj/AutoGlobal.s \
 obj/BaseRangeAlgo.s \
+obj/BestSearch.s \
 obj/BinaryFile.s \
 obj/BinarySearch.s \
 obj/BlockCipher.s \
@@ -818,6 +820,7 @@ obj/AtomicRefArray.dep \
 obj/AttachmentHost.dep \
 obj/AutoGlobal.dep \
 obj/BaseRangeAlgo.dep \
+obj/BestSearch.dep \
 obj/BinaryFile.dep \
 obj/BinarySearch.dep \
 obj/BlockCipher.dep \
@@ -1272,6 +1275,9 @@ obj/AutoGlobal.o : ../../Fundamental/CCore/src/AutoGlobal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BaseRangeAlgo.o : ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/BestSearch.o : ../../Fundamental/CCore/src/algon/BestSearch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BinaryFile.o : ../../HCore/CCore/src/BinaryFile.cpp
@@ -2461,6 +2467,9 @@ obj/AutoGlobal.s : ../../Fundamental/CCore/src/AutoGlobal.cpp
 obj/BaseRangeAlgo.s : ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/BestSearch.s : ../../Fundamental/CCore/src/algon/BestSearch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/BinaryFile.s : ../../HCore/CCore/src/BinaryFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3647,6 +3656,9 @@ obj/AutoGlobal.dep : ../../Fundamental/CCore/src/AutoGlobal.cpp
 
 obj/BaseRangeAlgo.dep : ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BaseRangeAlgo.o $< -MF $@
+
+obj/BestSearch.dep : ../../Fundamental/CCore/src/algon/BestSearch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BestSearch.o $< -MF $@
 
 obj/BinaryFile.dep : ../../HCore/CCore/src/BinaryFile.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BinaryFile.o $< -MF $@

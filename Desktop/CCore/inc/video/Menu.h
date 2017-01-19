@@ -286,6 +286,8 @@ class SimpleTopMenuWindowOf : public SubWindow
 
   private:
 
+   Point shift() const { return Point(shape.xoff,0); }
+
    void setXOff(Coord xoff)
     {
      if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
@@ -302,7 +304,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      const MenuPoint &point=shape.data.list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(point.place.addDY()-Point(shape.xoff,0)));
+     selected.assert(point.id,toScreen(point.place.addDY()-shift()));
     }
 
    void select(ulen index)
@@ -358,6 +360,21 @@ class SimpleTopMenuWindowOf : public SubWindow
         BitClear(shape.state,MenuHilight);
 
         redraw();
+       }
+    }
+
+   void hilightFirst()
+    {
+     if( !BitTest(shape.state,MenuHilight) )
+       {
+        auto result=shape.data.findFirst();
+
+        if( result.found )
+          {
+           BitSet(shape.state,MenuHilight);
+
+           shape.hilight_index=result.index;
+          }
        }
     }
 
@@ -481,17 +498,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      if( Change(shape.focus,true) )
        {
-        if( !BitTest(shape.state,MenuHilight) )
-          {
-           auto result=shape.data.findFirst();
-
-           if( result.found )
-             {
-              BitSet(shape.state,MenuHilight);
-
-              shape.hilight_index=result.index;
-             }
-          }
+        hilightFirst();
 
         redraw();
        }
@@ -564,7 +571,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_LeftClick(Point point,MouseKey)
     {
-     auto result=shape.data.find(point+Point(shape.xoff,0));
+     auto result=shape.data.find(point+shift());
 
      if( result.found )
        {
@@ -579,7 +586,7 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void react_Move(Point point,MouseKey)
     {
-     auto result=shape.data.find(point+Point(shape.xoff,0));
+     auto result=shape.data.find(point+shift());
 
      if( result.found )
        {
@@ -600,7 +607,7 @@ class SimpleTopMenuWindowOf : public SubWindow
     {
      setFocus();
 
-     getFrameHost()->setFocus();
+     getFrame()->grabFocus();
 
      addXOff(delta);
     }
@@ -664,6 +671,8 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
   private:
 
+   Point shift() const { return Point(0,shape.yoff); }
+
    void setYOff(Coord yoff)
     {
      if( Change(shape.yoff,Cap<Coord>(0,yoff,shape.yoffMax)) ) redraw();
@@ -680,7 +689,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      const MenuPoint &point=shape.data->list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(point.place.addDX()-Point(0,shape.yoff)));
+     selected.assert(point.id,toScreen(point.place.addDX()-shift()));
     }
 
    void select(ulen index)
@@ -745,6 +754,21 @@ class SimpleCascadeMenuWindowOf : public SubWindow
         BitClear(shape.state,MenuHilight);
 
         redraw();
+       }
+    }
+
+   void hilightFirst()
+    {
+     if( !BitTest(shape.state,MenuHilight) && shape.data )
+       {
+        auto result=shape.data->findFirst();
+
+        if( result.found )
+          {
+           BitSet(shape.state,MenuHilight);
+
+           shape.hilight_index=result.index;
+          }
        }
     }
 
@@ -876,17 +900,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( Change(shape.focus,true) )
        {
-        if( !BitTest(shape.state,MenuHilight) && shape.data )
-          {
-           auto result=shape.data->findFirst();
-
-           if( result.found )
-             {
-              BitSet(shape.state,MenuHilight);
-
-              shape.hilight_index=result.index;
-             }
-          }
+        hilightFirst();
 
         redraw();
        }
@@ -989,7 +1003,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( !shape.data ) return;
 
-     auto result=shape.data->find(point+Point(0,shape.yoff));
+     auto result=shape.data->find(point+shift());
 
      if( result.found )
        {
@@ -1011,7 +1025,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( !shape.data ) return;
 
-     auto result=shape.data->find(point+Point(0,shape.yoff));
+     auto result=shape.data->find(point+shift());
 
      if( result.found )
        {
@@ -1146,14 +1160,16 @@ class SimpleCascadeMenuOf
     {
      if( frame.isAlive() )
        {
+        Point base=frame.getScreenOrigin();
         Point size=client.getMinSize();
 
-        if( size<=screen_size )
-          {
-           frame.setMaxSize(size);
+        Pane pane=FitToScreen(base,size,screen_size);
 
-           frame.resize(size);
-          }
+        Point new_size=pane.getSize();
+
+        frame.setMaxSize(new_size);
+
+        frame.resize(new_size);
 
         frame.input.redrawAll(true);
        }

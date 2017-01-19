@@ -157,12 +157,12 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
 
   func("message_knob_dxy",ptr->message_knob_dxy);
 
-  func("filew_alt_dy",ptr->filew_alt_dy);
-  func("filew_accent",ptr->filew_accent);
-  func("filew_filter_text",ptr->filew_filter_text);
+  func("file_alt_dxy",ptr->file_alt_dxy);
+  func("file_accent",ptr->file_accent);
+  func("file_filter_text",ptr->file_filter_text);
 
-  func("filew_right",ptr->filew_right);
-  func("filew_down",ptr->filew_down);
+  func("file_faceRight",ptr->file_faceRight);
+  func("file_faceDown",ptr->file_faceDown);
 
   func("text_New_file",ptr->text_New_file);
 
@@ -176,7 +176,7 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("menu_font",ptr->menu_font.param);
   func("title_font",ptr->title_font.param);
   func("hint_font",ptr->hint_font.param);
-  func("filew_filter_font",ptr->filew_filter_font.param);
+  func("file_filter_font",ptr->file_filter_font.param);
  }
 
 void UserPreferenceBag::sync(ConfigMap &map)
@@ -364,16 +364,16 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
 
   binder.group("File window");
 
-   binder.item("alt height",filew_alt_dy);
+   binder.item("alt box",file_alt_dxy);
    binder.space();
-   binder.item("dir accent",filew_accent);
-   binder.item("filter text",filew_filter_text);
+   binder.item("dir accent",file_accent);
+   binder.item("filter text",file_filter_text);
    binder.space();
-   binder.item("alt right",filew_right);
-   binder.item("alt down",filew_down);
+   binder.item("alt right",file_faceRight);
+   binder.item("alt down",file_faceDown);
    binder.space();
-   binder.item("filter text",filew_filter_text);
-   binder.item("filter font",filew_filter_font);
+   binder.item("filter text",file_filter_text);
+   binder.item("filter font",file_filter_font);
    binder.space();
    binder.item("'New file'",text_New_file);
  }
@@ -393,7 +393,7 @@ void UserPreferenceBag::createFonts() // Update fonts here
   title_font.create();
   hint_font.create();
 
-  filew_filter_font.create();
+  file_filter_font.create();
  }
 
 /* class UserPreference */
@@ -477,52 +477,11 @@ UserPreference::UserPreference() noexcept // Update here
 
   // FileWindow
 
-  cfg_DirEditWindow.width.bind(width);
-  cfg_DirEditWindow.space.bind(line_edit_space);
-  cfg_DirEditWindow.ex.bind(line_edit_ex);
-  cfg_DirEditWindow.cursor_dx.bind(text_cursor_dx);
-  cfg_DirEditWindow.back.bind(back);
-  cfg_DirEditWindow.snow.bind(snow);
-  cfg_DirEditWindow.gray.bind(gray);
-  cfg_DirEditWindow.focus.bind(focus);
-  cfg_DirEditWindow.inactive.bind(inactive);
-  cfg_DirEditWindow.text.bind(line_edit_text);
-  cfg_DirEditWindow.select.bind(text_select);
-  cfg_DirEditWindow.alert.bind(alert);
-  cfg_DirEditWindow.cursor.bind(text_cursor);
-  cfg_DirEditWindow.font.bind(line_edit_font.font);
-  cfg_DirEditWindow.period.bind(line_edit_period);
-  cfg_DirEditWindow.accent.bind(filew_accent);
+  cfg_DirEditWindow.bind(get());
 
-  cfg_FilterEditWindow.width.bind(width);
-  cfg_FilterEditWindow.space.bind(line_edit_space);
-  cfg_FilterEditWindow.ex.bind(line_edit_ex);
-  cfg_FilterEditWindow.cursor_dx.bind(text_cursor_dx);
-  cfg_FilterEditWindow.back.bind(back);
-  cfg_FilterEditWindow.snow.bind(snow);
-  cfg_FilterEditWindow.gray.bind(gray);
-  cfg_FilterEditWindow.focus.bind(focus);
-  cfg_FilterEditWindow.inactive.bind(inactive);
-  cfg_FilterEditWindow.text.bind(filew_filter_text);
-  cfg_FilterEditWindow.select.bind(text_select);
-  cfg_FilterEditWindow.alert.bind(alert);
-  cfg_FilterEditWindow.cursor.bind(text_cursor);
-  cfg_FilterEditWindow.font.bind(filew_filter_font.font);
-  cfg_FilterEditWindow.period.bind(line_edit_period);
+  cfg_FileFilterWindow.bind(get(),getSmartConfig());
 
-  cfg_FileFilterWindow.check_cfg.bind(cfg_CheckWindow);
-  cfg_FileFilterWindow.edit_cfg.bind(cfg_FilterEditWindow);
-  cfg_FileFilterWindow.knob_cfg.bind(cfg_KnobWindow);
-
-  cfg_FileCheckShape.width.bind(width);
-  cfg_FileCheckShape.dxy.bind(filew_alt_dy);
-  cfg_FileCheckShape.border.bind(border);
-  cfg_FileCheckShape.focus.bind(focus);
-  cfg_FileCheckShape.gray.bind(gray);
-  cfg_FileCheckShape.snowUp.bind(snowUp);
-  cfg_FileCheckShape.snow.bind(snow);
-  cfg_FileCheckShape.faceRight.bind(filew_right);
-  cfg_FileCheckShape.faceDown.bind(filew_down);
+  cfg_FileCheckShape.bind(get());
 
   cfg_FileSubWindow.space_dxy.bind(space_dxy);
   cfg_FileSubWindow.back.bind(back);

@@ -142,6 +142,7 @@ class TestClient : public ComboWindow
    MenuData menu_edit_data;
    MenuData menu_options_data;
    MenuData menu_window_data;
+   MenuData menu_long_data;
 
    SimpleTopMenuWindow menu;
    SimpleCascadeMenu cascade_menu;

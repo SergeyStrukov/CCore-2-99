@@ -23,21 +23,6 @@
 namespace CCore {
 namespace Algon {
 
-/* concept ToOpNotEqualFuncType<Func,T> */
-
-template <class Func,class T>
-concept bool ToOpNotEqualFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { func(a)!=func(b) } -> bool ; } ;
-
-/* concept ToOpLessFuncType<Func,T> */
-
-template <class Func,class T>
-concept bool ToOpLessFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { func(a)<func(b) } -> bool ; } ;
-
-/* concept RanToOpLessFuncType<Func,Ran> */
-
-template <class Func,class Ran>
-concept bool RanToOpLessFuncType = ToOpLessFuncType<Func,Meta::PtrObjType<Ran> > ;
-
 /* classes */
 
 template <RangeType R,class Algo=BaseRangeAlgo<R> > struct ApplyUniqueAlgo;
@@ -151,7 +136,7 @@ struct ApplyUniqueAlgo : Algo
 
 /* ...SortBy() */
 
-template <RanType Ran,ULenType Len,RanToOpLessFuncType<Ran> Func>
+template <RanType Ran,ULenType Len,PtrToOpLessFuncType<Ran> Func>
 void IncrSortBy(Ran ptr,Len len,Func by)
  {
   using T = Meta::PtrObjType<Ran> ;
@@ -159,7 +144,7 @@ void IncrSortBy(Ran ptr,Len len,Func by)
   IncrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
  }
 
-template <RanType Ran,ULenType Len,RanToOpLessFuncType<Ran> Func>
+template <RanType Ran,ULenType Len,PtrToOpLessFuncType<Ran> Func>
 void DecrSortBy(Ran ptr,Len len,Func by)
  {
   using T = Meta::PtrObjType<Ran> ;

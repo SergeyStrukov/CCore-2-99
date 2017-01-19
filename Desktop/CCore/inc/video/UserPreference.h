@@ -236,15 +236,15 @@ struct UserPreferenceBag
 
   // FileWindow
 
-  Coord filew_alt_dy = 40 ;
+  Coord file_alt_dxy = 40 ;
 
-  VColor filew_accent      = Black ;
-  VColor filew_filter_text = Black ;
+  VColor file_accent      = Black ;
+  VColor file_filter_text = Black ;
 
-  VColor filew_right = Green ;
-  VColor filew_down  =   Red ;
+  VColor file_faceRight = Green ;
+  VColor file_faceDown  =   Red ;
 
-  FontCouple filew_filter_font;
+  FontCouple file_filter_font;
 
   DefString text_New_file = "New file"_def ;
 
@@ -342,7 +342,6 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    // FileWindow
 
    DirEditWindow::ConfigType cfg_DirEditWindow;
-   LineEditWindow::ConfigType cfg_FilterEditWindow;
    FileFilterWindow::ConfigType cfg_FileFilterWindow;
    FileCheckShape::Config cfg_FileCheckShape;
    FileSubWindow::ConfigType cfg_FileSubWindow;

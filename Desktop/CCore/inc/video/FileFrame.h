@@ -121,6 +121,14 @@ class DirEditShape : public LineEditShape
      RefVal<VColor> accent = Black ;
 
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       LineEditShape::Config::bind(bag);
+
+       accent.bind(bag.file_accent);
+      }
     };
 
    DirEditShape(PtrLen<char> text_buf,const Config &cfg) : LineEditShape(text_buf,cfg) {}
@@ -141,6 +149,19 @@ class FileFilterWindow : public ComboWindow
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
 
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       check_cfg.bind(proxy);
+       knob_cfg.bind(proxy);
+
+       auto &cfg=edit_cfg.takeVal();
+
+       cfg.bind(bag);
+       cfg.text.bind(bag.file_filter_text);
+       cfg.font.bind(bag.file_filter_font.font);
+      }
     };
 
    using ConfigType = Config ;
@@ -227,7 +248,17 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
 
    DynArray<OwnPtr<FileFilterWindow> > filter_list;
 
+   ulen filter_count = 0 ;
+
    KnobWindow knob;
+
+  private:
+
+   void purge();
+
+   auto getList() { return Range(filter_list.getPtr(),filter_count); }
+
+   auto getList() const { return Range(filter_list.getPtr(),filter_count); }
 
   private:
 
@@ -258,7 +289,7 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
     {
      FunctorTypeOf<FuncInit> func(func_init);
 
-     for(auto &obj : filter_list ) if( obj->isChecked() ) func(obj->getFilterText(),obj->getFilter());
+     for(auto &obj : getList() ) if( obj->isChecked() ) func(obj->getFilterText(),obj->getFilter());
     }
 
    // drawing
@@ -268,6 +299,10 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
    virtual void draw(DrawBuf buf,bool drag_active) const;
 
    virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+
+   // user input
+
+   virtual void react(UserAction action);
 
    // signals
 
@@ -284,19 +319,34 @@ class FileCheckShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
+     RefVal<VColor> border    =      Blue ;
+     RefVal<VColor> focus     = OrangeRed ;
+
+     RefVal<VColor> gray      =      Gray ;
+     RefVal<VColor> snow      =      Snow ;
+     RefVal<VColor> snowUp    = PaleGreen ;
+
+     RefVal<VColor> faceRight =     Green ;
+     RefVal<VColor> faceDown  =       Red ;
+
      RefVal<Coord> dxy = 40 ;
 
-     RefVal<VColor> border =      Blue ;
-     RefVal<VColor> focus  = OrangeRed ;
-
-     RefVal<VColor> gray    =      Gray ;
-     RefVal<VColor> snowUp  = PaleGreen ;
-     RefVal<VColor> snow    =      Snow ;
-
-     RefVal<VColor> faceRight =  Green ;
-     RefVal<VColor> faceDown  =    Red ;
-
      Config() noexcept {}
+
+     template <class Bag>
+     void bind(Bag &bag)
+      {
+       width.bind(bag.width);
+       border.bind(bag.border);
+       focus.bind(bag.focus);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       snowUp.bind(bag.snowUp);
+
+       faceRight.bind(bag.file_faceRight);
+       faceDown.bind(bag.file_faceDown);
+       dxy.bind(bag.file_alt_dxy);
+      }
     };
 
    const Config &cfg;

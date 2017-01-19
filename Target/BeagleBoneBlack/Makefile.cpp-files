@@ -72,6 +72,7 @@
 ../../Fundamental/CCore/src/algon/ApplyToList.cpp
 ../../Fundamental/CCore/src/algon/ApplyToRange.cpp
 ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
+../../Fundamental/CCore/src/algon/BestSearch.cpp
 ../../Fundamental/CCore/src/algon/BinarySearch.cpp
 ../../Fundamental/CCore/src/algon/CommonIntAlgo.cpp
 ../../Fundamental/CCore/src/algon/EuclidRotate.cpp

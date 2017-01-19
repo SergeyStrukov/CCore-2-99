@@ -32,6 +32,8 @@
 #include <CCore/inc/PrintStem.h>
 
 #include <CCore/inc/algon/SortUnique.h>
+#include <CCore/inc/algon/BestSearch.h>
+#include <CCore/inc/algon/SimpleRotate.h>
 
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
@@ -232,7 +234,9 @@ void DirHitList::add(StrLen dir_name)
 
 void DirHitList::last(StrLen dir_name)
  {
-  for(ulen i=0; i<last_len ;i++) if( last_list[i].test_and_inc(dir_name) ) return;
+  for(ulen i=0; i<last_len ;i++)
+    if( last_list[i].test_and_inc(dir_name) )
+      return;
 
   if( last_len<MaxLen )
     {
@@ -241,12 +245,9 @@ void DirHitList::last(StrLen dir_name)
      return;
     }
 
-  ulen best_ind=0;
-  unsigned best_count=last_list[best_ind].count;
+  auto r=Algon::BestSearchLessBy(Range(last_list,last_len), [] (const Rec &a) { return a.count; } );
 
-  for(ulen i=1; i<last_len ;i++) if( last_list[i].count<best_count ) best_ind=i;
-
-  last_list[best_ind].init(dir_name);
+  r->init(dir_name);
  }
 
 StrLen DirHitList::operator () (int id) const
@@ -402,26 +403,36 @@ void FileFilterWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 /* class FileFilterListWindow */
 
+void FileFilterListWindow::purge()
+ {
+  ulen len=filter_list.getLen();
+
+  if( filter_count<len ) filter_list.shrink(len-filter_count);
+ }
+
 void FileFilterListWindow::knob_add_pressed()
  {
-  add(StrLen("*",1),false);
+  add(CStr("*"),false);
  }
 
 void FileFilterListWindow::check_changed(ulen index,bool check)
  {
-  Used(index);
   Used(check);
 
-  changed.assert();
+  if( index<filter_count ) changed.assert();
  }
 
 void FileFilterListWindow::knob_del_pressed(ulen index)
  {
-  if( RangeSwapDel(Range(filter_list),index) )
-    {
-     filter_list.shrink_one();
+  auto list=getList();
 
-     for(ulen i=index,count=filter_list.getLen(); i<count ;i++) filter_list[i]->setIndex(i);
+  if( RangeSwapDel(list,index) )
+    {
+     filter_count--;
+
+     for(ulen i=index; i<list.len ;i++) list[i]->setIndex(i);
+
+     wlist.del(list[list.len-1].getPtr());
 
      layout();
 
@@ -450,7 +461,7 @@ FileFilterListWindow::~FileFilterListWindow()
 
 Point FileFilterListWindow::getMinSize() const
  {
-  if( ulen count=filter_list.getLen() )
+  if( ulen count=filter_count )
     {
      Coord knob_dxy=knob.getMinSize().dxy;
 
@@ -468,13 +479,15 @@ Point FileFilterListWindow::getMinSize() const
 
 void FileFilterListWindow::add(StrLen filter,bool check)
  {
-  ulen index=filter_list.getLen();
+  ulen index=filter_count;
 
-  OwnPtr<FileFilterWindow> obj(new FileFilterWindow(wlist,cfg,index,this,filter,check));
+  auto *obj=filter_list.append_fill(OwnPtr<FileFilterWindow>(new FileFilterWindow(wlist,cfg,index,this,filter,check)));
 
-  wlist.insBottom(obj.getPtr());
+  wlist.insBottom(obj->getPtr());
 
-  filter_list.append_fill(std::move(obj));
+  Algon::RangeRotateRight(Range(filter_list).part(index));
+
+  filter_count++;
 
   if( getFrame()->isAlive() )
     {
@@ -490,13 +503,13 @@ void FileFilterListWindow::layout()
  {
   Point size=getSize();
 
-  if( filter_list.getLen() )
+  if( filter_count )
     {
      Coord dy=filter_list[0]->getMinSize().y;
 
      PaneCut pane(size,BoxSpace(dy));
 
-     for(auto &ptr : filter_list ) pane.place_cutTop(*ptr);
+     for(auto &ptr : getList() ) pane.place_cutTop(*ptr);
 
      pane.place_cutTopLeft(knob);
     }
@@ -518,6 +531,15 @@ void FileFilterListWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
   wlist.draw(buf,pane,drag_active);
  }
 
+ // user input
+
+void FileFilterListWindow::react(UserAction action)
+ {
+  wlist.react(action);
+
+  purge();
+ }
+
 /* class FileCheckShape */
 
 SizeBox FileCheckShape::getMinSize() const
@@ -533,8 +555,8 @@ void FileCheckShape::draw(const DrawBuf &buf) const
   temp_cfg.border=cfg.border;
   temp_cfg.focus=cfg.focus;
   temp_cfg.gray=cfg.gray;
-  temp_cfg.snowUp=cfg.snowUp;
   temp_cfg.snow=cfg.snow;
+  temp_cfg.snowUp=cfg.snowUp;
   temp_cfg.face=check?cfg.faceRight:cfg.faceDown;
 
   KnobShape temp(temp_cfg,check?KnobShape::FaceRight:KnobShape::FaceDown);

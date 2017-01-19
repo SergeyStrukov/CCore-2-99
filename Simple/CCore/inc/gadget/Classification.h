@@ -278,6 +278,27 @@ concept bool RanType = NothrowDefaultCtorType<Ran> && OpCmpType<Ran> && requires
   ptr[len];
  } ;
 
+/* concept ToOpNotEqualFuncType<Func,T> */
+
+template <class Func,class T>
+concept bool ToOpNotEqualFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b)
+ {
+  { func(a)!=func(b) } -> bool ;
+ } ;
+
+/* concept ToOpLessFuncType<Func,T> */
+
+template <class Func,class T>
+concept bool ToOpLessFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b)
+ {
+  { func(a)<func(b) } -> bool ;
+ } ;
+
+/* concept PtrToOpLessFuncType<Func,Ptr> */
+
+template <class Func,class Ptr>
+concept bool PtrToOpLessFuncType = ToOpLessFuncType<Func,Meta::PtrObjType<Ptr> > ;
+
 /* concept PrinterType<P> */
 
 template <class P>

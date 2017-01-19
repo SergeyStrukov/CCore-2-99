@@ -357,6 +357,12 @@ void TestClient::menu_selected(int id,Point point)
        cascade_menu.create(getFrame(),menu_window_data,point);
       }
      break;
+
+     case 6 :
+      {
+       cascade_menu.create(getFrame(),menu_long_data,point);
+      }
+     break;
     }
  }
 
@@ -408,7 +414,8 @@ TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &
            (MenuSeparator)
            ("@Options",3)
            (MenuDisabled,"@Modules",4)
-           ("@Window",5);
+           ("@Window",5)
+           ("@Long menu",6);
 
   menu_file_data("@New",101)
                 ("@Open",102)
@@ -433,6 +440,11 @@ TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &
   menu_window_data("@Split",501)
                   ("@Close all",502)
                   ("S@tack",503);
+
+  for(int i=1; i<100 ;i++)
+    {
+     menu_long_data(Stringf("menu item #;",i),600+i);
+    }
 
   file_window.addFilter("*.h");
   file_window.addFilter("*.cpp");
