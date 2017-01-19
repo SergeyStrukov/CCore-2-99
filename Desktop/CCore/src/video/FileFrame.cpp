@@ -950,9 +950,9 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    connector_knob_hit_pressed(this,&FileSubWindow::knob_hit_pressed,knob_hit.pressed),
    connector_knob_add_pressed(this,&FileSubWindow::knob_add_pressed,knob_add.pressed),
    connector_knob_back_pressed(this,&FileSubWindow::knob_back_pressed,knob_back.pressed),
-   connector_hit_menu_destroyed(this,&FileSubWindow::hit_menu_destroyed,hit_menu.takeDestroyed()),
-   connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.takeSelected()),
-   connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.takeDeleted()),
+   connector_hit_menu_destroyed(this,&FileSubWindow::hit_menu_destroyed,hit_menu.destroyed),
+   connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.selected),
+   connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.deleted),
    connector_check_new_file_changed(this,&FileSubWindow::check_new_file_changed,alt_new_file.changed),
    connector_edit_new_file_changed(this,&FileSubWindow::edit_new_file_changed,edit_new_file.changed),
    connector_edit_new_file_entered(this,&FileSubWindow::edit_new_file_entered,edit_new_file.entered)

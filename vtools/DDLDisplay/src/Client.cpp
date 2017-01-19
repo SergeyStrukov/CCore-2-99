@@ -121,8 +121,8 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    open_pretext(host.getFrame()->getDesktop(),cfg.file_cfg,{false}),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
-   connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.takeSelected()),
-   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.takePressed()),
+   connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.selected),
+   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed),
 
    connector_open_file_destroyed(this,&ClientWindow::open_file_destroyed,open_file.destroyed),
    connector_open_pretext_destroyed(this,&ClientWindow::open_pretext_destroyed,open_pretext.destroyed)

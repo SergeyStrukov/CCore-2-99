@@ -473,18 +473,7 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_SimpleTopMenuWindow.bind(get());
 
-  cfg_SimpleCascadeMenuWindow.width.bind(width);
-  cfg_SimpleCascadeMenuWindow.space.bind(menu_space);
-  cfg_SimpleCascadeMenuWindow.use_hotcolor.bind(menu_hotcolor);
-  cfg_SimpleCascadeMenuWindow.back.bind(menu_back);
-  cfg_SimpleCascadeMenuWindow.text.bind(menu_text);
-  cfg_SimpleCascadeMenuWindow.inactive.bind(inactive);
-  cfg_SimpleCascadeMenuWindow.hilight.bind(menu_hilight);
-  cfg_SimpleCascadeMenuWindow.select.bind(menu_select);
-  cfg_SimpleCascadeMenuWindow.hot.bind(menu_hot);
-  cfg_SimpleCascadeMenuWindow.top.bind(snow);
-  cfg_SimpleCascadeMenuWindow.bottom.bind(gray);
-  cfg_SimpleCascadeMenuWindow.font.bind(menu_font.font);
+  cfg_SimpleCascadeMenuWindow.bind(get());
 
   // FileWindow
 

@@ -65,9 +65,9 @@ class ScrollListInnerWindowOf : public SubWindow
 
    void addXOff(Coordinate count)
     {
-     Coordinate dx=shape.xoff+count*shape.dxoff;
+     Coordinate xoff=shape.xoff+count*shape.dxoff;
 
-     setXOff(+dx);
+     setXOff(+xoff);
     }
 
    void setYOff(ulen yoff)

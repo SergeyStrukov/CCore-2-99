@@ -69,7 +69,7 @@ WindowLib.h          ++
 WindowReport.h       ++       
 
 ToolFrame.h          +   hint?
-Menu.h               .
+Menu.h               +
 
 MessageFrame.h       ++           
 FileFrame.h          .

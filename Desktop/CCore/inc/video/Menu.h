@@ -52,6 +52,8 @@ struct MenuPoint;
 
 struct MenuData;
 
+class MenuShapeBase;
+
 class SimpleTopMenuShape;
 
 template <class Shape> class SimpleTopMenuWindowOf;
@@ -146,10 +148,14 @@ struct MenuData : NoCopy
    }
  };
 
-/* class SimpleTopMenuShape */
+/* class MenuShapeBase */
 
-class SimpleTopMenuShape
+class MenuShapeBase
  {
+  protected:
+
+   static Coordinate GetDX(const MenuPoint &point,Font font,Coordinate space);
+
    static Coordinate GetDX(const MenuPoint &point,Font font,Coordinate space,Coordinate dy);
 
    struct PlaceFunc : Funchor
@@ -179,9 +185,11 @@ class SimpleTopMenuShape
      CharFunction function_hot() { return FunctionOf(this,&HotFunc::hot); }
     };
 
-   void draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,bool showhot=false) const;
+   void drawText(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,AlignX align_x,VColor vc,bool showhot=false) const;
 
-   void draw(const DrawBuf &buf,Pane pane) const;
+   void drawX(const DrawBuf &buf,Pane pane) const;
+
+   void drawY(const DrawBuf &buf,Pane pane) const;
 
   public:
 
@@ -228,6 +236,20 @@ class SimpleTopMenuShape
    // parameters
 
    const Config &cfg;
+
+   // methods
+
+   explicit MenuShapeBase(const Config &cfg_) : cfg(cfg_) {}
+ };
+
+/* class SimpleTopMenuShape */
+
+class SimpleTopMenuShape : public MenuShapeBase
+ {
+  public:
+
+   // parameters
+
    MenuData &data;
    Pane pane;
 
@@ -244,7 +266,7 @@ class SimpleTopMenuShape
 
    // methods
 
-   SimpleTopMenuShape(const Config &cfg_,MenuData &data_) : cfg(cfg_),data(data_) {}
+   SimpleTopMenuShape(const Config &cfg,MenuData &data_) : MenuShapeBase(cfg),data(data_) {}
 
    SizeY getMinSize() const;
 
@@ -271,9 +293,9 @@ class SimpleTopMenuWindowOf : public SubWindow
 
    void addXOff(Coordinate delta)
     {
-     Coordinate dx=shape.xoff+delta*shape.dxoff;
+     Coordinate xoff=shape.xoff+delta*shape.dxoff;
 
-     setXOff(+dx);
+     setXOff(+xoff);
     }
 
    void assert()
@@ -594,35 +616,12 @@ using SimpleTopMenuWindow = SimpleTopMenuWindowOf<SimpleTopMenuShape> ;
 
 /* class SimpleCascadeMenuShape */
 
-class SimpleCascadeMenuShape
+class SimpleCascadeMenuShape : public MenuShapeBase
  {
   public:
 
-   struct Config
-    {
-     RefVal<MCoord> width = Fraction(6,2) ;
-
-     RefVal<Point> space = Point(4,4) ;
-
-     RefVal<bool> use_hotcolor = true ;
-
-     RefVal<VColor> back     =    Silver ;
-     RefVal<VColor> text     =     Black ;
-     RefVal<VColor> inactive =      Gray ;
-     RefVal<VColor> hilight  =      Blue ;
-     RefVal<VColor> select   = OrangeRed ;
-     RefVal<VColor> hot      =       Red ;
-     RefVal<VColor> top      =      Snow ;
-     RefVal<VColor> bottom   =      Gray ;
-
-     RefVal<Font> font;
-
-     Config() noexcept {}
-    };
-
    // parameters
 
-   const Config &cfg;
    MenuData *data = 0 ;
    Pane pane;
 
@@ -632,61 +631,26 @@ class SimpleCascadeMenuShape
    unsigned state = MenuNone ;
    ulen hilight_index = 0 ;
    ulen select_index = 0 ;
-   Coord xoff = 0 ;
+   Coord yoff = 0 ;
 
-   Coord xoffMax = 0 ;
-   Coord dxoff = 0 ;
+   Coord yoffMax = 0 ;
+   Coord cell_dy = 0 ;
 
   private:
 
-   Coord cell_dy = 0 ;
+   void drawFrame(const DrawBuf &buf) const;
 
-   static Coord GetDX(const MenuPoint &point,Font font,Coord space);
-
-   struct PlaceFunc : Funchor
-    {
-     VColor vc;
-     ulen index;
-     Point base;
-     Point delta;
-
-     PlaceFunc(VColor vc_,ulen index_) : vc(vc_),index(index_) {}
-
-     VColor place(ulen index,char ch,Point base,Point delta);
-
-     CharFunction function_place() { return FunctionOf(this,&PlaceFunc::place); }
-    };
-
-   struct HotFunc : Funchor
-    {
-     VColor vc;
-     ulen index;
-     VColor hotc;
-
-     HotFunc(VColor vc_,ulen index_,VColor hotc_) : vc(vc_),index(index_),hotc(hotc_) {}
-
-     VColor hot(ulen index,char ch,Point base,Point delta);
-
-     CharFunction function_hot() { return FunctionOf(this,&HotFunc::hot); }
-    };
-
-   static void Draw(const DrawBuf &buf,const MenuPoint &point,Pane pane,Font font,VColor vc,const Config &cfg,bool showhot=false);
-
-   static void Draw(const DrawBuf &buf,Pane pane,const Config &cfg);
-
-   void draw_Frame(const DrawBuf &buf) const;
-
-   void draw_Menu(const DrawBuf &buf) const;
+   void drawMenu(const DrawBuf &buf) const;
 
   public:
 
-   explicit SimpleCascadeMenuShape(const Config &cfg_) : cfg(cfg_) {}
-
-   void layout();
+   explicit SimpleCascadeMenuShape(const Config &cfg) : MenuShapeBase(cfg) {}
 
    Point getMinSize() const;
 
    bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   void layout();
 
    void draw(const DrawBuf &buf) const;
  };
@@ -700,23 +664,23 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
   private:
 
-   void setXOff(Coord xoff)
+   void setYOff(Coord yoff)
     {
-     if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) ) redraw();
+     if( Change(shape.yoff,Cap<Coord>(0,yoff,shape.yoffMax)) ) redraw();
     }
 
-   void addXOff(Coordinate delta)
+   void addYOff(Coordinate delta)
     {
-     Coordinate dx=shape.xoff+delta*shape.dxoff;
+     Coordinate yoff=shape.yoff+delta*shape.cell_dy;
 
-     setXOff(+dx);
+     setYOff(+yoff);
     }
 
    void assert()
     {
      const MenuPoint &point=shape.data->list.at(shape.select_index);
 
-     selected.assert(point.id,toScreen(point.place.addDX()-Point(0,shape.xoff)));
+     selected.assert(point.id,toScreen(point.place.addDX()-Point(0,shape.yoff)));
     }
 
    void select(ulen index)
@@ -902,8 +866,8 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      shape.focus=false;
      shape.state=MenuNone;
-     shape.xoff=0;
-     shape.xoffMax=0;
+     shape.yoff=0;
+     shape.yoffMax=0;
     }
 
    // keyboard
@@ -971,39 +935,39 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
         case VKey_Left :
          {
-          if( kmod&KeyMod_Shift )
-            {
-             addXOff(-1);
-            }
-          else
-            {
-             pressed.assert(vkey,kmod);
-            }
+          pressed.assert(vkey,kmod);
          }
         break;
 
         case VKey_Right :
          {
-          if( kmod&KeyMod_Shift )
-            {
-             addXOff(+1);
-            }
-          else
-            {
-             pressed.assert(vkey,kmod);
-            }
+          pressed.assert(vkey,kmod);
          }
         break;
 
         case VKey_Up :
          {
-          getUp();
+          if( kmod&KeyMod_Shift )
+            {
+             addYOff(-1);
+            }
+          else
+            {
+             getUp();
+            }
          }
         break;
 
         case VKey_Down :
          {
-          getDown();
+          if( kmod&KeyMod_Shift )
+            {
+             addYOff(+1);
+            }
+          else
+            {
+             getDown();
+            }
          }
         break;
        }
@@ -1025,7 +989,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( !shape.data ) return;
 
-     auto result=shape.data->find(point+Point(0,shape.xoff));
+     auto result=shape.data->find(point+Point(0,shape.yoff));
 
      if( result.found )
        {
@@ -1047,7 +1011,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
     {
      if( !shape.data ) return;
 
-     auto result=shape.data->find(point+Point(0,shape.xoff));
+     auto result=shape.data->find(point+Point(0,shape.yoff));
 
      if( result.found )
        {
@@ -1070,7 +1034,7 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
      getFrameHost()->setFocus();
 
-     addXOff(delta);
+     addYOff(delta);
     }
 
    // signals
@@ -1141,7 +1105,12 @@ class SimpleCascadeMenuOf
       client(frame,cfg.menu_cfg, std::forward<TT>(tt)... ),
 
       connector_moved(this,&SimpleCascadeMenuOf<Shape>::move),
-      connector_updated(this,&SimpleCascadeMenuOf<Shape>::update)
+      connector_updated(this,&SimpleCascadeMenuOf<Shape>::update),
+
+      destroyed(frame.destroyed),
+      selected(client.selected),
+      deleted(client.deleted),
+      pressed(client.pressed)
     {
      frame.bindClient(client);
     }
@@ -1196,13 +1165,13 @@ class SimpleCascadeMenuOf
 
    // signals
 
-   Signal<> & takeDestroyed() { return frame.destroyed; }
+   Signal<> &destroyed;
 
-   Signal<int,Point> & takeSelected() { return client.selected; } // id , cascade menu point
+   Signal<int,Point> &selected; // id , cascade menu point
 
-   Signal<int> & takeDeleted() { return client.deleted; } // id
+   Signal<int> &deleted; // id
 
-   Signal<VKey,KeyMod> & takePressed() { return client.pressed; } // for Left and Right keys
+   Signal<VKey,KeyMod> &pressed; // for Left and Right keys
  };
 
 /* type SimpleCascadeMenu */

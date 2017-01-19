@@ -395,8 +395,8 @@ TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &
    test(wlist,pref),
    file_window(host.getFrame()->getDesktop(),pref.getSmartConfig(),{true},update),
    connector_menu_selected(this,&TestClient::menu_selected,menu.selected),
-   connector_cascade_menu_selected(this,&TestClient::cascade_menu_selected,cascade_menu.takeSelected()),
-   connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.takePressed()),
+   connector_cascade_menu_selected(this,&TestClient::cascade_menu_selected,cascade_menu.selected),
+   connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.pressed),
    connector_update(this,&TestClient::update,update)
  {
   wlist.insTop(menu,test);
