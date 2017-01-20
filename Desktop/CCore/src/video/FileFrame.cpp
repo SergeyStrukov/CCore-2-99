@@ -570,9 +570,9 @@ void FileCheckShape::draw(const DrawBuf &buf) const
   temp.draw(buf);
  }
 
-/* class FileSubWindow::Distributor */
+/* class FileWindow::Distributor */
 
-class FileSubWindow::Distributor : NoCopy
+class FileWindow::Distributor : NoCopy
  {
    struct Basket : NoCopy
     {
@@ -639,9 +639,9 @@ class FileSubWindow::Distributor : NoCopy
     }
  };
 
-/* class FileSubWindow */
+/* class FileWindow */
 
-void FileSubWindow::applyFilters()
+void FileWindow::applyFilters()
  {
   try
     {
@@ -663,7 +663,7 @@ void FileSubWindow::applyFilters()
     }
  }
 
-void FileSubWindow::fillLists()
+void FileWindow::fillLists()
  {
   try
     {
@@ -716,7 +716,7 @@ void FileSubWindow::fillLists()
   applyFilters();
  }
 
-void FileSubWindow::setDir(StrLen dir_name)
+void FileWindow::setDir(StrLen dir_name)
  {
   char temp[MaxPathLen+1];
 
@@ -733,18 +733,18 @@ void FileSubWindow::setDir(StrLen dir_name)
      list_dir.disable();
      list_file.disable();
 
-     Printf(Exception,"CCore::Video::FileSubWindow::setDir(#.q;) : #.q; is not a directory",dir_name,path);
+     Printf(Exception,"CCore::Video::FileWindow::setDir(#.q;) : #.q; is not a directory",dir_name,path);
     }
  }
 
-void FileSubWindow::setDir(StrLen dir_name,StrLen sub_dir)
+void FileWindow::setDir(StrLen dir_name,StrLen sub_dir)
  {
   MakeFileName temp(dir_name,sub_dir);
 
   setDir(temp.get());
  }
 
-void FileSubWindow::buildFilePath()
+void FileWindow::buildFilePath()
  {
   if( param.new_file && alt_new_file.isChecked() )
     {
@@ -767,7 +767,7 @@ void FileSubWindow::buildFilePath()
     }
  }
 
-bool FileSubWindow::isGoodFileName(StrLen file_name)
+bool FileWindow::isGoodFileName(StrLen file_name)
  {
   if( !file_name ) return false;
 
@@ -776,19 +776,19 @@ bool FileSubWindow::isGoodFileName(StrLen file_name)
   return param.file_boss->getFileType(temp.get())==FileType_none;
  }
 
-void FileSubWindow::file_list_entered()
+void FileWindow::file_list_entered()
  {
   buildFilePath();
 
   askFrameClose();
  }
 
-void FileSubWindow::filter_list_changed()
+void FileWindow::filter_list_changed()
  {
   applyFilters();
  }
 
-void FileSubWindow::dir_list_entered()
+void FileWindow::dir_list_entered()
  {
   const ComboInfo &info=list_dir.getInfo();
   ulen index=list_dir.getSelect();
@@ -804,20 +804,20 @@ void FileSubWindow::dir_list_entered()
     }
  }
 
-void FileSubWindow::dir_entered()
+void FileWindow::dir_entered()
  {
   StrLen dir_name=edit_dir.getText();
 
   setDir(dir_name);
  }
 
-void FileSubWindow::dir_changed()
+void FileWindow::dir_changed()
  {
   list_dir.disable();
   list_file.disable();
  }
 
-void FileSubWindow::btn_Ok_pressed()
+void FileWindow::btn_Ok_pressed()
  {
   hit_list.last(edit_dir.getText());
 
@@ -826,12 +826,12 @@ void FileSubWindow::btn_Ok_pressed()
   askFrameClose();
  }
 
-void FileSubWindow::btn_Cancel_pressed()
+void FileWindow::btn_Cancel_pressed()
  {
   askFrameClose();
  }
 
-void FileSubWindow::knob_hit_pressed()
+void FileWindow::knob_hit_pressed()
  {
   if( hit_menu.isDead() )
     {
@@ -845,14 +845,14 @@ void FileSubWindow::knob_hit_pressed()
     }
  }
 
-void FileSubWindow::knob_add_pressed()
+void FileWindow::knob_add_pressed()
  {
   hit_list.add(edit_dir.getText());
 
   hit_list.prepare(hit_data);
  }
 
-void FileSubWindow::knob_back_pressed()
+void FileWindow::knob_back_pressed()
  {
   StrLen dir_name=edit_dir.getText();
 
@@ -881,26 +881,26 @@ void FileSubWindow::knob_back_pressed()
     }
  }
 
-void FileSubWindow::hit_menu_destroyed()
+void FileWindow::hit_menu_destroyed()
  {
   knob_hit.setFace(KnobShape::FaceDown);
  }
 
-void FileSubWindow::hit_menu_selected(int id,Point)
+void FileWindow::hit_menu_selected(int id,Point)
  {
   setDir(hit_list(id));
 
   hit_menu.destroy();
  }
 
-void FileSubWindow::hit_menu_deleted(int id)
+void FileWindow::hit_menu_deleted(int id)
  {
   hit_list.del(id);
 
   hit_list.prepare(hit_data);
  }
 
-void FileSubWindow::check_new_file_changed(bool check)
+void FileWindow::check_new_file_changed(bool check)
  {
   edit_new_file.enable(check);
 
@@ -916,7 +916,7 @@ void FileSubWindow::check_new_file_changed(bool check)
     }
  }
 
-void FileSubWindow::edit_new_file_changed()
+void FileWindow::edit_new_file_changed()
  {
   if( isGoodFileName(edit_new_file.getText()) )
     {
@@ -932,12 +932,12 @@ void FileSubWindow::edit_new_file_changed()
     }
  }
 
-void FileSubWindow::edit_new_file_entered()
+void FileWindow::edit_new_file_entered()
  {
   btn_Ok_pressed();
  }
 
-FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWindowParam &param_)
+FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowParam &param_)
  : ComboWindow(host),
    cfg(cfg_),
    param(param_),
@@ -960,24 +960,24 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
    label_new_file(wlist,cfg.label_cfg,cfg.text_New_file),
    edit_new_file(wlist,cfg.edit_cfg),
 
-   connector_file_list_entered(this,&FileSubWindow::file_list_entered,list_file.entered),
-   connector_file_list_dclicked(this,&FileSubWindow::file_list_entered,list_file.dclicked),
-   connector_filter_list_changed(this,&FileSubWindow::filter_list_changed,filter_list.changed),
-   connector_dir_list_entered(this,&FileSubWindow::dir_list_entered,list_dir.entered),
-   connector_dir_list_dclicked(this,&FileSubWindow::dir_list_entered,list_dir.dclicked),
-   connector_dir_entered(this,&FileSubWindow::dir_entered,edit_dir.entered),
-   connector_dir_changed(this,&FileSubWindow::dir_changed,edit_dir.changed),
-   connector_btn_Ok_pressed(this,&FileSubWindow::btn_Ok_pressed,btn_Ok.pressed),
-   connector_btn_Cancel_pressed(this,&FileSubWindow::btn_Cancel_pressed,btn_Cancel.pressed),
-   connector_knob_hit_pressed(this,&FileSubWindow::knob_hit_pressed,knob_hit.pressed),
-   connector_knob_add_pressed(this,&FileSubWindow::knob_add_pressed,knob_add.pressed),
-   connector_knob_back_pressed(this,&FileSubWindow::knob_back_pressed,knob_back.pressed),
-   connector_hit_menu_destroyed(this,&FileSubWindow::hit_menu_destroyed,hit_menu.destroyed),
-   connector_hit_menu_selected(this,&FileSubWindow::hit_menu_selected,hit_menu.selected),
-   connector_hit_menu_deleted(this,&FileSubWindow::hit_menu_deleted,hit_menu.deleted),
-   connector_check_new_file_changed(this,&FileSubWindow::check_new_file_changed,alt_new_file.changed),
-   connector_edit_new_file_changed(this,&FileSubWindow::edit_new_file_changed,edit_new_file.changed),
-   connector_edit_new_file_entered(this,&FileSubWindow::edit_new_file_entered,edit_new_file.entered)
+   connector_file_list_entered(this,&FileWindow::file_list_entered,list_file.entered),
+   connector_file_list_dclicked(this,&FileWindow::file_list_entered,list_file.dclicked),
+   connector_filter_list_changed(this,&FileWindow::filter_list_changed,filter_list.changed),
+   connector_dir_list_entered(this,&FileWindow::dir_list_entered,list_dir.entered),
+   connector_dir_list_dclicked(this,&FileWindow::dir_list_entered,list_dir.dclicked),
+   connector_dir_entered(this,&FileWindow::dir_entered,edit_dir.entered),
+   connector_dir_changed(this,&FileWindow::dir_changed,edit_dir.changed),
+   connector_btn_Ok_pressed(this,&FileWindow::btn_Ok_pressed,btn_Ok.pressed),
+   connector_btn_Cancel_pressed(this,&FileWindow::btn_Cancel_pressed,btn_Cancel.pressed),
+   connector_knob_hit_pressed(this,&FileWindow::knob_hit_pressed,knob_hit.pressed),
+   connector_knob_add_pressed(this,&FileWindow::knob_add_pressed,knob_add.pressed),
+   connector_knob_back_pressed(this,&FileWindow::knob_back_pressed,knob_back.pressed),
+   connector_hit_menu_destroyed(this,&FileWindow::hit_menu_destroyed,hit_menu.destroyed),
+   connector_hit_menu_selected(this,&FileWindow::hit_menu_selected,hit_menu.selected),
+   connector_hit_menu_deleted(this,&FileWindow::hit_menu_deleted,hit_menu.deleted),
+   connector_check_new_file_changed(this,&FileWindow::check_new_file_changed,alt_new_file.changed),
+   connector_edit_new_file_changed(this,&FileWindow::edit_new_file_changed,edit_new_file.changed),
+   connector_edit_new_file_entered(this,&FileWindow::edit_new_file_entered,edit_new_file.entered)
  {
   wlist.insTop(edit_dir,knob_hit,knob_add,knob_back,line1,list_dir,list_file,filter_list,line2,btn_Ok,btn_Cancel);
 
@@ -993,13 +993,13 @@ FileSubWindow::FileSubWindow(SubWindowHost &host,const Config &cfg_,const FileWi
   edit_dir.hideInactiveCursor();
  }
 
-FileSubWindow::~FileSubWindow()
+FileWindow::~FileWindow()
  {
  }
 
  // methods
 
-Point FileSubWindow::getMinSize(StrLen sample_text) const
+Point FileWindow::getMinSize(StrLen sample_text) const
  {
   Coordinate space=+cfg.space_dxy;
 
@@ -1015,9 +1015,9 @@ Point FileSubWindow::getMinSize(StrLen sample_text) const
   Coordinate btn_dx=btn_size.x;
   Coordinate btn_dy=btn_size.y;
 
-  auto dx = Sup( dir_dx + 3*knob_ext + 2*space , 2*btn_dx + 3*space ) ;
+  Coordinate dx = Sup( dir_dx + 3*knob_ext + 2*space , 2*btn_dx + 3*space ) ;
 
-  auto dy = 7*space + 20*dir_dy + btn_dy ;
+  Coordinate dy = 7*space + 20*dir_dy + btn_dy ;
 
   if( param.new_file ) dy += dir_dy + 2*space ;
 
@@ -1026,7 +1026,7 @@ Point FileSubWindow::getMinSize(StrLen sample_text) const
 
  // base
 
-void FileSubWindow::open()
+void FileWindow::open()
  {
   ComboWindow::open();
 
@@ -1039,21 +1039,21 @@ void FileSubWindow::open()
      check_new_file_changed(true);
     }
 
-  if( Change(first_open,false) ) setDir(".");
+  if( Change(first_open,false) ) setDir(CStr("."));
 
   hit_list.load(param.file_boss->getHitDirFile());
 
   hit_list.prepare(hit_data);
  }
 
-void FileSubWindow::close()
+void FileWindow::close()
  {
   hit_list.save(param.file_boss->getHitDirFile());
  }
 
  // drawing
 
-void FileSubWindow::layout()
+void FileWindow::layout()
  {
   PaneCut pane(getSize(),+cfg.space_dxy);
 
@@ -1124,44 +1124,44 @@ void FileSubWindow::layout()
   }
  }
 
-void FileSubWindow::draw(DrawBuf buf,bool drag_active) const
+void FileWindow::draw(DrawBuf buf,bool drag_active) const
  {
   buf.erase(+cfg.back);
 
   wlist.draw(buf,drag_active);
  }
 
-void FileSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
+void FileWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
   buf.erase(pane,+cfg.back);
 
   wlist.draw(buf,pane,drag_active);
  }
 
-/* class FileWindow */
+/* class FileFrame */
 
-const char *const FileWindow::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
+const char *const FileFrame::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
 
-FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param)
+FileFrame::FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param)
  : DragFrame(desktop,cfg.frame_cfg),
    sub_win(*this,cfg.file_cfg,param)
  {
   bindClient(sub_win);
  }
 
-FileWindow::FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update)
- : FileWindow(desktop,cfg,param)
+FileFrame::FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &signal)
+ : FileFrame(desktop,cfg,param)
  {
-  connectUpdate(update);
+  connectUpdate(signal);
  }
 
-FileWindow::~FileWindow()
+FileFrame::~FileFrame()
  {
  }
 
  // create
 
-Pane FileWindow::getPane(StrLen title,Point base) const
+Pane FileFrame::getPane(StrLen title,Point base) const
  {
   Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir));
 

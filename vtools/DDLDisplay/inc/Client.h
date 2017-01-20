@@ -33,7 +33,7 @@ class ClientWindow : public ComboWindow
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
      CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
      CtorRefVal<DisplayWindow::ConfigType> display_cfg;
-     CtorRefVal<FileWindow::ConfigType> file_cfg;
+     CtorRefVal<FileFrame::ConfigType> file_cfg;
 
      Config() noexcept {}
 
@@ -74,8 +74,8 @@ class ClientWindow : public ComboWindow
 
    DisplayWindow display;
 
-   FileWindow open_file;
-   FileWindow open_pretext;
+   FileFrame open_file;
+   FileFrame open_pretext;
 
   private:
 

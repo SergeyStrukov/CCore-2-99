@@ -1078,9 +1078,11 @@ class SimpleCascadeMenuOf
 
      Config() noexcept {}
 
-     template <class Proxy>
-     void bind(Proxy proxy)
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
       {
+       Used(bag);
+
        frame_cfg.bind(proxy);
        menu_cfg.bind(proxy);
       }

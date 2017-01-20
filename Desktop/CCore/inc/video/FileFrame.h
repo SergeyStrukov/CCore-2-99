@@ -41,9 +41,9 @@ class FileCheckShape;
 
 struct FileWindowParam;
 
-class FileSubWindow;
-
 class FileWindow;
+
+class FileFrame;
 
 /* class DirHitList */
 
@@ -378,9 +378,9 @@ struct FileWindowParam
   FileBoss file_boss;
  };
 
-/* class FileSubWindow */
+/* class FileWindow */
 
-class FileSubWindow : public ComboWindow
+class FileWindow : public ComboWindow
  {
    using AltWindow = CheckWindowOf<FileCheckShape> ;
 
@@ -411,6 +411,28 @@ class FileSubWindow : public ComboWindow
      CtorRefVal<XDoubleLineWindow::ConfigType> line_cfg;
 
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       space_dxy.bind(bag.space_dxy);
+       back.bind(bag.back);
+       text_Ok.bind(bag.text_Ok);
+       text_Cancel.bind(bag.text_Cancel);
+       text_New_file.bind(bag.text_New_file);
+
+       edit_cfg.bind(proxy);
+       list_cfg.bind(proxy);
+       filter_list_cfg.bind(proxy);
+       btn_cfg.bind(proxy);
+       knob_cfg.bind(proxy);
+       hit_menu_cfg.bind(proxy);
+
+       check_cfg.bind(proxy);
+       label_cfg.bind(proxy);
+       alt_cfg.bind(proxy);
+       line_cfg.bind(proxy);
+      }
     };
 
    using ConfigType = Config ;
@@ -477,31 +499,31 @@ class FileSubWindow : public ComboWindow
 
    void file_list_entered();
 
-   SignalConnector<FileSubWindow> connector_file_list_entered;
-   SignalConnector<FileSubWindow> connector_file_list_dclicked;
+   SignalConnector<FileWindow> connector_file_list_entered;
+   SignalConnector<FileWindow> connector_file_list_dclicked;
 
    void filter_list_changed();
 
-   SignalConnector<FileSubWindow> connector_filter_list_changed;
+   SignalConnector<FileWindow> connector_filter_list_changed;
 
    void dir_list_entered();
 
-   SignalConnector<FileSubWindow> connector_dir_list_entered;
-   SignalConnector<FileSubWindow> connector_dir_list_dclicked;
+   SignalConnector<FileWindow> connector_dir_list_entered;
+   SignalConnector<FileWindow> connector_dir_list_dclicked;
 
    void dir_entered();
 
    void dir_changed();
 
-   SignalConnector<FileSubWindow> connector_dir_entered;
-   SignalConnector<FileSubWindow> connector_dir_changed;
+   SignalConnector<FileWindow> connector_dir_entered;
+   SignalConnector<FileWindow> connector_dir_changed;
 
    void btn_Ok_pressed();
 
    void btn_Cancel_pressed();
 
-   SignalConnector<FileSubWindow> connector_btn_Ok_pressed;
-   SignalConnector<FileSubWindow> connector_btn_Cancel_pressed;
+   SignalConnector<FileWindow> connector_btn_Ok_pressed;
+   SignalConnector<FileWindow> connector_btn_Cancel_pressed;
 
    void knob_hit_pressed();
 
@@ -509,9 +531,9 @@ class FileSubWindow : public ComboWindow
 
    void knob_back_pressed();
 
-   SignalConnector<FileSubWindow> connector_knob_hit_pressed;
-   SignalConnector<FileSubWindow> connector_knob_add_pressed;
-   SignalConnector<FileSubWindow> connector_knob_back_pressed;
+   SignalConnector<FileWindow> connector_knob_hit_pressed;
+   SignalConnector<FileWindow> connector_knob_add_pressed;
+   SignalConnector<FileWindow> connector_knob_back_pressed;
 
    void hit_menu_destroyed();
 
@@ -519,9 +541,9 @@ class FileSubWindow : public ComboWindow
 
    void hit_menu_deleted(int id);
 
-   SignalConnector<FileSubWindow> connector_hit_menu_destroyed;
-   SignalConnector<FileSubWindow,int,Point> connector_hit_menu_selected;
-   SignalConnector<FileSubWindow,int> connector_hit_menu_deleted;
+   SignalConnector<FileWindow> connector_hit_menu_destroyed;
+   SignalConnector<FileWindow,int,Point> connector_hit_menu_selected;
+   SignalConnector<FileWindow,int> connector_hit_menu_deleted;
 
    void check_new_file_changed(bool check);
 
@@ -529,15 +551,15 @@ class FileSubWindow : public ComboWindow
 
    void edit_new_file_entered();
 
-   SignalConnector<FileSubWindow,bool> connector_check_new_file_changed;
-   SignalConnector<FileSubWindow> connector_edit_new_file_changed;
-   SignalConnector<FileSubWindow> connector_edit_new_file_entered;
+   SignalConnector<FileWindow,bool> connector_check_new_file_changed;
+   SignalConnector<FileWindow> connector_edit_new_file_changed;
+   SignalConnector<FileWindow> connector_edit_new_file_entered;
 
  public:
 
-   FileSubWindow(SubWindowHost &host,const Config &cfg,const FileWindowParam &param);
+   FileWindow(SubWindowHost &host,const Config &cfg,const FileWindowParam &param);
 
-   virtual ~FileSubWindow();
+   virtual ~FileWindow();
 
    // methods
 
@@ -562,35 +584,44 @@ class FileSubWindow : public ComboWindow
    virtual void close();
  };
 
-/* class FileWindow */
+/* class FileFrame */
 
-class FileWindow : public DragFrame
+class FileFrame : public DragFrame
  {
   public:
 
    struct Config
     {
      CtorRefVal<DragFrame::ConfigType> frame_cfg;
-     CtorRefVal<FileSubWindow::ConfigType> file_cfg;
+     CtorRefVal<FileWindow::ConfigType> file_cfg;
 
      Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       Used(bag);
+
+       frame_cfg.bind(proxy);
+       file_cfg.bind(proxy);
+      }
     };
 
    using ConfigType = Config ;
 
   private:
 
-   FileSubWindow sub_win;
+   FileWindow sub_win;
 
    static const char *const SampleDir;
 
   public:
 
-   FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param);
+   FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param);
 
-   FileWindow(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update);
+   FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &signal);
 
-   virtual ~FileWindow();
+   virtual ~FileFrame();
 
    // methods
 

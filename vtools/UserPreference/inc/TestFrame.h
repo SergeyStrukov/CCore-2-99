@@ -149,7 +149,7 @@ class TestClient : public ComboWindow
 
    TestWindow test;
 
-   FileWindow file_window;
+   FileFrame file_window;
 
   private:
 

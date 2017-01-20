@@ -367,7 +367,6 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("alt box",file_alt_dxy);
    binder.space();
    binder.item("dir accent",file_accent);
-   binder.item("filter text",file_filter_text);
    binder.space();
    binder.item("alt right",file_faceRight);
    binder.item("alt down",file_faceDown);
@@ -406,19 +405,19 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_ExceptionWindow.bind(get(),getSmartConfig());
 
-  cfg_MessageSubWindow.bind(get(),getSmartConfig());
+  cfg_MessageWindow.bind(get(),getSmartConfig());
 
   cfg_MessageFrame.bind(get(),getSmartConfig());
 
-  cfg_AlertMessageSubWindow=cfg_MessageSubWindow;
-  cfg_AlertMessageSubWindow.back.bind(alert);
+  cfg_AlertMessageWindow=cfg_MessageWindow;
+  cfg_AlertMessageWindow.back.bind(alert);
 
   cfg_AlertMessageFrame.frame_cfg.bind(cfg_FixedFrame);
-  cfg_AlertMessageFrame.msg_cfg.bind(cfg_AlertMessageSubWindow);
+  cfg_AlertMessageFrame.msg_cfg.bind(cfg_AlertMessageWindow);
 
   cfg_ToolFrame.bind(get());
 
-  cfg_SimpleCascadeMenu.bind(getSmartConfig());
+  cfg_SimpleCascadeMenu.bind(get(),getSmartConfig());
 
   cfg_DragFrame.bind(get());
   cfg_FixedFrame.bind(get());
@@ -483,24 +482,9 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_FileCheckShape.bind(get());
 
-  cfg_FileSubWindow.space_dxy.bind(space_dxy);
-  cfg_FileSubWindow.back.bind(back);
-  cfg_FileSubWindow.text_Ok.bind(text_Ok);
-  cfg_FileSubWindow.text_Cancel.bind(text_Cancel);
-  cfg_FileSubWindow.text_New_file.bind(text_New_file);
-  cfg_FileSubWindow.edit_cfg.bind(cfg_DirEditWindow);
-  cfg_FileSubWindow.list_cfg.bind(cfg_ScrollListWindow);
-  cfg_FileSubWindow.filter_list_cfg.bind(cfg_FileFilterWindow);
-  cfg_FileSubWindow.btn_cfg.bind(cfg_ButtonWindow);
-  cfg_FileSubWindow.knob_cfg.bind(cfg_KnobWindow);
-  cfg_FileSubWindow.hit_menu_cfg.bind(cfg_SimpleCascadeMenu);
-  cfg_FileSubWindow.check_cfg.bind(cfg_CheckWindow);
-  cfg_FileSubWindow.label_cfg.bind(cfg_LabelWindow);
-  cfg_FileSubWindow.alt_cfg.bind(cfg_FileCheckShape);
-  cfg_FileSubWindow.line_cfg.bind(cfg_XDoubleLineWindow);
+  cfg_FileWindow.bind(get(),getSmartConfig());
 
-  cfg_FileWindow.frame_cfg.bind(cfg_DragFrame);
-  cfg_FileWindow.file_cfg.bind(cfg_FileSubWindow);
+  cfg_FileFrame.bind(get(),getSmartConfig());
  }
 
 UserPreference::~UserPreference()

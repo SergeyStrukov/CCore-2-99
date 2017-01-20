@@ -18,10 +18,10 @@
 
 #include <CCore/inc/video/ConfigStore.h>
 
-#include <CCore/inc/video/ToolFrame.h>
-#include <CCore/inc/video/MessageFrame.h>
-#include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/ToolFrame.h>
+#include <CCore/inc/video/WindowReport.h>
+#include <CCore/inc/video/MessageFrame.h>
 #include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/FileFrame.h>
 
@@ -300,9 +300,9 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    // main windows
 
    ToolFrame::ConfigType cfg_ToolFrame;
-   MessageWindow::ConfigType cfg_MessageSubWindow;
+   MessageWindow::ConfigType cfg_MessageWindow;
    MessageFrame::ConfigType cfg_MessageFrame;
-   MessageWindow::ConfigType cfg_AlertMessageSubWindow;
+   MessageWindow::ConfigType cfg_AlertMessageWindow;
    MessageFrame::ConfigType cfg_AlertMessageFrame;
    ExceptionWindow::ConfigType cfg_ExceptionWindow;
    SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
@@ -344,8 +344,8 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    DirEditWindow::ConfigType cfg_DirEditWindow;
    FileFilterWindow::ConfigType cfg_FileFilterWindow;
    FileCheckShape::Config cfg_FileCheckShape;
-   FileSubWindow::ConfigType cfg_FileSubWindow;
    FileWindow::ConfigType cfg_FileWindow;
+   FileFrame::ConfigType cfg_FileFrame;
 
   public:
 
@@ -369,11 +369,11 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const ToolFrame::ConfigType & getToolWindowConfig() const { return cfg_ToolFrame; }
 
-   //const MessageWindow::ConfigType & getMessageSubWindowConfig() const { return cfg_MessageSubWindow; }
+   const MessageWindow::ConfigType & getMessageWindowConfig() const { return cfg_MessageWindow; }
 
-   //const MessageFrame::ConfigType & getMessageWindowConfig() const { return cfg_MessageFrame; }
+   const MessageFrame::ConfigType & getMessageFrameConfig() const { return cfg_MessageFrame; }
 
-   //const MessageWindow::ConfigType & getAlertMessageSubWindowConfig() const { return cfg_AlertMessageSubWindow; }
+   const MessageWindow::ConfigType & getAlertMessageWindowConfig() const { return cfg_AlertMessageWindow; }
 
    const MessageFrame::ConfigType & getAlertMessageFrameConfig() const { return cfg_AlertMessageFrame; }
 
@@ -445,9 +445,9 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const FileCheckShape::Config & getFileAltConfig() const { return cfg_FileCheckShape; }
 
-   const FileSubWindow::ConfigType & getFileSubConfig() const { return cfg_FileSubWindow; }
+   const FileWindow::ConfigType & getFileSubConfig() const { return cfg_FileWindow; }
 
-   const FileWindow::ConfigType & getFileWindowConfig() const { return cfg_FileWindow; }
+   const FileFrame::ConfigType & getFileFrameConfig() const { return cfg_FileFrame; }
 
    // getSmartConfig()
 
@@ -463,7 +463,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       operator const auto & () const { return obj->cfg_ToolFrame; }
 
-      operator const auto & () const { return obj->cfg_MessageSubWindow; }
+      operator const auto & () const { return obj->cfg_MessageWindow; }
 
       operator const auto & () const { return obj->cfg_MessageFrame; }
 
@@ -527,7 +527,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       operator const auto & () const { return obj->cfg_ScrollListWindow; }
 
-      // FileWindow
+      // FileFrame
 
       operator const auto & () const { return obj->cfg_DirEditWindow; }
 
@@ -535,9 +535,9 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       operator const auto & () const { return obj->cfg_FileCheckShape; }
 
-      operator const auto & () const { return obj->cfg_FileSubWindow; }
-
       operator const auto & () const { return obj->cfg_FileWindow; }
+
+      operator const auto & () const { return obj->cfg_FileFrame; }
     };
 
    Proxy getSmartConfig() const { return this; }
