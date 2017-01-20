@@ -152,7 +152,7 @@ Coord ExceptionWindow::TotalDX(Font font,ulen index,StrLen text)
  {
   Coord ret=0;
 
-  if( !text ) text=CStr("<empty>");
+  if( !text ) text="<empty>"_c;
 
   for(bool first=true; +text ;first=false)
     {
@@ -240,7 +240,7 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane,Coord xoff) const
                     {
                      if( ind>=off+page ) return;
 
-                     if( !text ) text=CStr("<empty>");
+                     if( !text ) text="<empty>"_c;
 
                      for(bool first=true; +text ;first=false)
                        {

@@ -918,7 +918,7 @@ StrLen FreeTypeFont::getFamily() const
  {
   if( Base *base=getBase() ) return base->getFamily();
 
-  return CStr("Unknown");
+  return "Unknown"_c;
  }
 
 StrLen FreeTypeFont::getStyle() const

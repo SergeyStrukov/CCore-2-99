@@ -207,10 +207,9 @@ struct StrLen : PtrLen<const char>
   StrLen(const char *str,ulen len) : PtrLen<const char>(str,len) {}
  };
 
-/* CStr()  */
+/* StrLen literal */
 
-template <ulen Len>
-StrLen CStr(const char (&str)[Len]) { return StrLen(str,Len-1); }
+inline StrLen operator "" _c (const char *str,ulen len) { return StrLen(str,len); }
 
 /* Range...() */
 

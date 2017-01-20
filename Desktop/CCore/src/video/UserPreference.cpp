@@ -166,6 +166,18 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
 
   func("text_New_file",ptr->text_New_file);
 
+  func("hint_FileHitList",ptr->hint_FileHitList);
+  func("hint_FileAddHit",ptr->hint_FileAddHit);
+  func("hint_FileUpdir",ptr->hint_FileUpdir);
+  func("hint_FileCurdir",ptr->hint_FileCurdir);
+  func("hint_FileDirList",ptr->hint_FileDirList);
+  func("hint_FileList",ptr->hint_FileList);
+  func("hint_FileAlt",ptr->hint_FileAlt);
+  func("hint_FileEnableFilter",ptr->hint_FileEnableFilter);
+  func("hint_FileDelFilter",ptr->hint_FileDelFilter);
+  func("hint_FileFilter",ptr->hint_FileFilter);
+  func("hint_FileAddFilter",ptr->hint_FileAddFilter);
+
   func("label_font",ptr->label_font.param);
   func("contour_font",ptr->contour_font.param);
   func("message_font",ptr->message_font.param);
@@ -375,6 +387,17 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("filter font",file_filter_font);
    binder.space();
    binder.item("'New file'",text_New_file);
+   binder.item("'Hit list'",hint_FileHitList);
+   binder.item("'Make hit'",hint_FileAddHit);
+   binder.item("'Goto the parent'",hint_FileUpdir);
+   binder.item("'Current directory'",hint_FileCurdir);
+   binder.item("'Subdirectory list'",hint_FileDirList);
+   binder.item("'File list'",hint_FileList);
+   binder.item("'New file'",hint_FileAlt);
+   binder.item("'Enable this filter'",hint_FileEnableFilter);
+   binder.item("'Delete this filter'",hint_FileDelFilter);
+   binder.item("'Filename filter'",hint_FileFilter);
+   binder.item("'Add a filter'",hint_FileAddFilter);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here

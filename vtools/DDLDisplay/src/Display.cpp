@@ -463,7 +463,7 @@ void DDLView::setPtr(PtrDesc *desc,DDL::Value value)
 
   if( !node || ptr.null )
     {
-     desc->name=CStr("null");
+     desc->name="null"_c;
      desc->index=Empty;
      desc->target={};
     }
@@ -731,16 +731,16 @@ void DDLView::setPtrTarget(PtrDesc *desc)
 
    auto index=desc->index;
 
-   Putobj(out,CStr("-> "),consts[index->index].name.str);
+   Putobj(out,"-> "_c,consts[index->index].name.str);
 
    for(++index; +index ;++index)
      {
       auto field=index->field;
 
       if( !field )
-        Putobj(out,CStr("["),index->index,CStr("]"));
+        Putobj(out,"["_c,index->index,"]"_c);
       else
-        Putobj(out,CStr("."),field);
+        Putobj(out,"."_c,field);
      }
 
    desc->name=toString(out.close());

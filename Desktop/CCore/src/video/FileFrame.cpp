@@ -418,7 +418,7 @@ void FileFilterListWindow::purge()
 
 void FileFilterListWindow::knob_add_pressed()
  {
-  add(CStr("*"),false);
+  add("*"_c,false);
  }
 
 void FileFilterListWindow::check_changed(ulen index,bool check)
@@ -1072,7 +1072,7 @@ void FileWindow::open()
      check_new_file_changed(true);
     }
 
-  if( Change(first_open,false) ) setDir(CStr("."));
+  if( Change(first_open,false) ) setDir("."_c);
 
   hit_list.load(param.file_boss->getHitDirFile());
 
