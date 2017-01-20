@@ -144,6 +144,10 @@ class FileFilterWindow : public ComboWindow
 
    struct Config
     {
+     RefVal<DefString> hint_FileEnableFilter = "Enable/disable this filter"_def ;
+     RefVal<DefString> hint_FileDelFilter = "Delete this filter"_def ;
+     RefVal<DefString> hint_FileFilter = "Filename filter, use * or ?"_def ;
+
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
@@ -153,6 +157,10 @@ class FileFilterWindow : public ComboWindow
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
+       hint_FileEnableFilter.bind(bag.hint_FileEnableFilter);
+       hint_FileDelFilter.bind(bag.hint_FileDelFilter);
+       hint_FileFilter.bind(bag.hint_FileFilter);
+
        check_cfg.bind(proxy);
        knob_cfg.bind(proxy);
 
@@ -240,7 +248,22 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
  {
   public:
 
-   using ConfigType = FileFilterWindow::ConfigType ;
+   struct Config : FileFilterWindow::ConfigType
+    {
+     RefVal<DefString> hint_FileAddFilter = "Add a filter"_def ;
+
+     Config() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       FileFilterWindow::ConfigType::bind(bag,proxy);
+
+       hint_FileAddFilter.bind(bag.hint_FileAddFilter);
+      }
+    };
+
+   using ConfigType = Config ;
 
   private:
 
@@ -392,9 +415,17 @@ class FileWindow : public ComboWindow
 
      RefVal<VColor> back = Silver ;
 
-     RefVal<DefString> text_Ok = "Ok"_def ;
-     RefVal<DefString> text_Cancel = "Cancel"_def ;
+     RefVal<DefString> text_Ok       = "Ok"_def ;
+     RefVal<DefString> text_Cancel   = "Cancel"_def ;
      RefVal<DefString> text_New_file = "New file"_def ;
+
+     RefVal<DefString> hint_FileHitList = "Open/close the hit directory list"_def ;
+     RefVal<DefString> hint_FileAddHit  = "Add the current directory to the hit list"_def ;
+     RefVal<DefString> hint_FileUpdir   = "Goto the parent directory"_def ;
+     RefVal<DefString> hint_FileCurdir  = "Current directory"_def ;
+     RefVal<DefString> hint_FileDirList = "Subdirectory list"_def ;
+     RefVal<DefString> hint_FileList    = "File list"_def ;
+     RefVal<DefString> hint_FileAlt     = "Choose between a new file or an existing file"_def ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
@@ -420,6 +451,14 @@ class FileWindow : public ComboWindow
        text_Ok.bind(bag.text_Ok);
        text_Cancel.bind(bag.text_Cancel);
        text_New_file.bind(bag.text_New_file);
+
+       hint_FileHitList.bind(bag.hint_FileHitList);
+       hint_FileAddHit.bind(bag.hint_FileAddHit);
+       hint_FileUpdir.bind(bag.hint_FileUpdir);
+       hint_FileCurdir.bind(bag.hint_FileCurdir);
+       hint_FileDirList.bind(bag.hint_FileDirList);
+       hint_FileList.bind(bag.hint_FileList);
+       hint_FileAlt.bind(bag.hint_FileAlt);
 
        edit_cfg.bind(proxy);
        list_cfg.bind(proxy);
@@ -485,6 +524,8 @@ class FileWindow : public ComboWindow
 
    void applyFilters();
 
+   void eraseLists();
+
    void fillLists();
 
    void setDir(StrLen dir_name);
@@ -494,6 +535,8 @@ class FileWindow : public ComboWindow
    void buildFilePath();
 
    bool isGoodFileName(StrLen file_name);
+
+   static ulen PrevDir(StrLen dir_name);
 
   private:
 
@@ -555,7 +598,7 @@ class FileWindow : public ComboWindow
    SignalConnector<FileWindow> connector_edit_new_file_changed;
    SignalConnector<FileWindow> connector_edit_new_file_entered;
 
- public:
+  public:
 
    FileWindow(SubWindowHost &host,const Config &cfg,const FileWindowParam &param);
 

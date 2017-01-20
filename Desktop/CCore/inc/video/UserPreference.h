@@ -248,6 +248,20 @@ struct UserPreferenceBag
 
   DefString text_New_file = "New file"_def ;
 
+  DefString hint_FileHitList = "Open/close the hit directory list"_def ;
+  DefString hint_FileAddHit  = "Add the current directory to the hit list"_def ;
+  DefString hint_FileUpdir   = "Goto the parent directory"_def ;
+  DefString hint_FileCurdir  = "Current directory"_def ;
+  DefString hint_FileDirList = "Subdirectory list"_def ;
+  DefString hint_FileList    = "File list"_def ;
+  DefString hint_FileAlt     = "Choose between a new file or an existing file"_def ;
+
+  DefString hint_FileEnableFilter = "Enable/disable this filter"_def ;
+  DefString hint_FileDelFilter    = "Delete this filter"_def ;
+  DefString hint_FileFilter       = "Filename filter, use * or ?"_def ;
+
+  DefString hint_FileAddFilter = "Add a filter"_def ;
+
   // constructors
 
   UserPreferenceBag() noexcept {}
@@ -342,7 +356,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
    // FileWindow
 
    DirEditWindow::ConfigType cfg_DirEditWindow;
-   FileFilterWindow::ConfigType cfg_FileFilterWindow;
+   FileFilterListWindow::ConfigType cfg_FileFilterListWindow;
    FileCheckShape::Config cfg_FileCheckShape;
    FileWindow::ConfigType cfg_FileWindow;
    FileFrame::ConfigType cfg_FileFrame;
@@ -441,7 +455,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    const DirEditWindow::ConfigType & getDirEditConfig() const { return cfg_DirEditWindow; }
 
-   const FileFilterWindow::ConfigType & getFileFilterConfig() const { return cfg_FileFilterWindow; }
+   const FileFilterListWindow::ConfigType & getFileFilterListConfig() const { return cfg_FileFilterListWindow; }
 
    const FileCheckShape::Config & getFileAltConfig() const { return cfg_FileCheckShape; }
 
@@ -531,7 +545,7 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
       operator const auto & () const { return obj->cfg_DirEditWindow; }
 
-      operator const auto & () const { return obj->cfg_FileFilterWindow; }
+      operator const auto & () const { return obj->cfg_FileFilterListWindow; }
 
       operator const auto & () const { return obj->cfg_FileCheckShape; }
 

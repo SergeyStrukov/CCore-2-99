@@ -362,6 +362,12 @@ FileFilterWindow::FileFilterWindow(SubWindowHost &host,const Config &cfg_,ulen i
 
   edit.setText(filter);
   edit.hideInactiveCursor();
+
+  // set hints
+
+  check.setHintText(+cfg.hint_FileEnableFilter);
+  edit.setHintText(+cfg.hint_FileFilter);
+  knob.setHintText(+cfg.hint_FileDelFilter);
  }
 
 FileFilterWindow::~FileFilterWindow()
@@ -451,6 +457,10 @@ FileFilterListWindow::FileFilterListWindow(SubWindowHost &host,const ConfigType 
    connector_knob_add_pressed(this,&FileFilterListWindow::knob_add_pressed,knob.pressed)
  {
   wlist.insTop(knob);
+
+  // set hints
+
+  knob.setHintText(+cfg.hint_FileAddFilter);
  }
 
 FileFilterListWindow::~FileFilterListWindow()
@@ -658,18 +668,22 @@ void FileWindow::applyFilters()
   catch(...)
     {
      list_file.setInfo(ComboInfo());
-
-     throw;
     }
+ }
+
+void FileWindow::eraseLists()
+ {
+  list_dir.setInfo(ComboInfo());
+
+  file_info=Info();
+
+  list_file.setInfo(ComboInfo());
  }
 
 void FileWindow::fillLists()
  {
   try
     {
-     list_dir.enable();
-     list_file.enable( !param.new_file || !alt_new_file.isChecked() );
-
      ComboInfoBuilder dir_builder;
      InfoBuilder file_builder;
 
@@ -704,16 +718,13 @@ void FileWindow::fillLists()
      list_dir.setInfo(dir_builder.complete());
 
      file_info=file_builder.complete();
+
+     applyFilters();
     }
   catch(...)
     {
-     list_dir.setInfo(ComboInfo());
-     list_file.setInfo(ComboInfo());
-
-     throw;
+     eraseLists();
     }
-
-  applyFilters();
  }
 
 void FileWindow::setDir(StrLen dir_name)
@@ -724,7 +735,11 @@ void FileWindow::setDir(StrLen dir_name)
 
   if( param.file_boss->getFileType(path)==FileType_dir )
     {
+     list_dir.enable();
+     list_file.enable( !param.new_file || !alt_new_file.isChecked() );
+
      edit_dir.setText(path);
+     edit_dir.alert(false);
 
      fillLists();
     }
@@ -733,7 +748,11 @@ void FileWindow::setDir(StrLen dir_name)
      list_dir.disable();
      list_file.disable();
 
-     Printf(Exception,"CCore::Video::FileWindow::setDir(#.q;) : #.q; is not a directory",dir_name,path);
+     edit_dir.alert(true);
+
+     eraseLists();
+
+     Printf(NoException,"CCore::Video::FileWindow::setDir(#.q;) : #.q; is not a directory",dir_name,path);
     }
  }
 
@@ -776,6 +795,26 @@ bool FileWindow::isGoodFileName(StrLen file_name)
   return param.file_boss->getFileType(temp.get())==FileType_none;
  }
 
+ulen FileWindow::PrevDir(StrLen dir_name)
+ {
+  SplitPath split1(dir_name);
+
+  SplitName split2(split1.path);
+
+  if( !split2 )
+    {
+     return split2.name.len;
+    }
+  else
+    {
+     ulen delta=split2.name.len+1;
+
+     if( delta==split1.path.len ) delta--;
+
+     return delta;
+    }
+ }
+
 void FileWindow::file_list_entered()
  {
   buildFilePath();
@@ -806,9 +845,7 @@ void FileWindow::dir_list_entered()
 
 void FileWindow::dir_entered()
  {
-  StrLen dir_name=edit_dir.getText();
-
-  setDir(dir_name);
+  setDir(edit_dir.getText());
  }
 
 void FileWindow::dir_changed()
@@ -856,26 +893,11 @@ void FileWindow::knob_back_pressed()
  {
   StrLen dir_name=edit_dir.getText();
 
-  SplitPath split1(dir_name);
-
-  SplitName split2(split1.path);
-
-  if( !split2 )
+  if( ulen delta=PrevDir(dir_name) )
     {
-     if( ulen delta=split2.name.len )
-       {
-        dir_name.len-=delta;
-
-        setDir(dir_name);
-       }
-    }
-  else
-    {
-     ulen delta=split2.name.len+1;
-
-     if( delta==split1.path.len ) delta--;
-
      dir_name.len-=delta;
+
+     edit_dir.setTextLen(dir_name.len);
 
      setDir(dir_name);
     }
@@ -904,7 +926,7 @@ void FileWindow::check_new_file_changed(bool check)
  {
   edit_new_file.enable(check);
 
-  list_file.enable(!check);
+  list_file.enable( !check && list_dir.isEnabled() );
 
   if( check )
     {
@@ -918,7 +940,7 @@ void FileWindow::check_new_file_changed(bool check)
 
 void FileWindow::edit_new_file_changed()
  {
-  if( isGoodFileName(edit_new_file.getText()) )
+  if( list_dir.isEnabled() && isGoodFileName(edit_new_file.getText()) )
     {
      edit_new_file.alert(false);
 
@@ -934,7 +956,7 @@ void FileWindow::edit_new_file_changed()
 
 void FileWindow::edit_new_file_entered()
  {
-  btn_Ok_pressed();
+  if( btn_Ok.isEnabled() ) btn_Ok_pressed();
  }
 
 FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowParam &param_)
@@ -991,6 +1013,17 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
     }
 
   edit_dir.hideInactiveCursor();
+  edit_new_file.hideInactiveCursor();
+
+  // set hints
+
+  edit_dir.setHintText(+cfg.hint_FileCurdir);
+  knob_hit.setHintText(+cfg.hint_FileHitList);
+  knob_add.setHintText(+cfg.hint_FileAddHit);
+  knob_back.setHintText(+cfg.hint_FileUpdir);
+  list_dir.setHintText(+cfg.hint_FileDirList);
+  list_file.setHintText(+cfg.hint_FileList);
+  alt_new_file.setHintText(+cfg.hint_FileAlt);
  }
 
 FileWindow::~FileWindow()

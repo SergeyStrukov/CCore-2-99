@@ -478,7 +478,7 @@ UserPreference::UserPreference() noexcept // Update here
 
   cfg_DirEditWindow.bind(get());
 
-  cfg_FileFilterWindow.bind(get(),getSmartConfig());
+  cfg_FileFilterListWindow.bind(get(),getSmartConfig());
 
   cfg_FileCheckShape.bind(get());
 
