@@ -214,7 +214,7 @@ void Gen<P>::warp(PtrLen<const uint8> data)
     {
      UIntSplit<UnitType,uint8> split;
 
-     auto buf=split.take();
+     auto buf=split.ref();
 
      if( data.len<buf.len ) break;
 

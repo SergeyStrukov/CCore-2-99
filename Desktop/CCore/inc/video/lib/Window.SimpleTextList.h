@@ -86,9 +86,9 @@ class SimpleTextListWindowOf : public SubWindow
        {
         shape.showSelect();
 
-        if( signal ) selected.assert(shape.select);
-
         redraw();
+
+        if( signal ) selected.assert(shape.select);
        }
     }
 

@@ -32,6 +32,8 @@ namespace Video {
 
 struct FontCouple;
 
+template <class Bag,class ... TT> class ConfigBinder;
+
 struct UserPreferenceBag;
 
 class UserPreference;
@@ -46,6 +48,83 @@ struct FontCouple
   FontCouple() noexcept {}
 
   void create() { font=param.create(); }
+ };
+
+/* class ConfigBinder<Bag,TT> */
+
+template <class Bag,class ... TT>
+class ConfigBinder : NoCopyBase<Bag>
+ {
+   template <class T>
+   struct Item
+    {
+     T obj;
+    };
+
+   struct Pack : Item<TT>...
+    {
+    };
+
+   Pack pack;
+
+  private:
+
+   template <class T>
+   auto bind(T &obj) -> decltype( obj.bind(0) )
+    {
+     return obj.bind(get());
+    }
+
+   template <class T>
+   auto bind(T &obj) -> decltype( obj.bind(0,0) )
+    {
+     return obj.bind(get(),getSmartConfig());
+    }
+
+   template <class T>
+   void bind()
+    {
+     bind( static_cast<Item<T> &>(pack).obj );
+    }
+
+  public:
+
+   // constructors
+
+   ConfigBinder() noexcept
+    {
+     ( bind<TT>() , ... );
+    }
+
+   ~ConfigBinder() {}
+
+   // methods
+
+   const Bag & get() const { return *this; }
+
+   Bag & ref() { return *this; }
+
+   template <OneOfTypes<TT...> T>
+   const T & getConfig() const
+    {
+     return static_cast<const Item<T> &>(pack).obj;
+    }
+
+   // getSmartConfig()
+
+   class Proxy
+    {
+      const ConfigBinder *obj;
+
+     public:
+
+      Proxy(const ConfigBinder *obj_) : obj(obj_) {}
+
+      template <OneOfTypes<TT...> T>
+      operator const T & () const { return obj->template getConfig<T>(); }
+    };
+
+   Proxy getSmartConfig() const { return this; }
  };
 
 /* struct UserPreferenceBag */
@@ -161,7 +240,7 @@ struct UserPreferenceBag
 
   bool menu_hotcolor = true ;
 
-  // Frames
+  // Frame
 
   unsigned blinkTime   = 3_sectick ;
   unsigned blinkPeriod =    3_tick ;
@@ -222,19 +301,19 @@ struct UserPreferenceBag
   DefString hint_Restore  = "Restore"_def ;
   DefString hint_Close    = "Close"_def ;
 
-  // ExceptionWindow
+  // Exception
 
   VColor exception_back    = Black ;
   VColor exception_text    = Green ;
   VColor exception_divider =   Red ;
 
-  // MessageWindow
+  // Message
 
   Coord message_knob_dxy = 50 ;
 
   Ratio message_pos_ry = Div(5,12) ; // +
 
-  // FileWindow
+  // File
 
   Coord file_alt_dxy = 40 ;
 
@@ -307,59 +386,52 @@ struct UserPreferenceBag
 
 /* class UserPreference */
 
-class UserPreference : NoCopyBase<UserPreferenceBag>
+class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
+
+                                           ButtonWindow::ConfigType,
+                                           KnobWindow::ConfigType,
+                                           CheckWindow::ConfigType,
+                                           ContourWindow::ConfigType,
+                                           TextContourWindow::ConfigType,
+                                           InfoWindow::ConfigType,
+                                           LabelWindow::ConfigType,
+                                           LightWindow::ConfigType,
+                                           XSingleLineWindow::ConfigType,
+                                           XDoubleLineWindow::ConfigType,
+                                           LineEditWindow::ConfigType,
+                                           ProgressWindow::ConfigType,
+                                           RadioWindow::ConfigType,
+                                           XScrollWindow::ConfigType,
+                                           SimpleTextListWindow::ConfigType,
+                                           SwitchWindow::ConfigType,
+                                           TextWindow::ConfigType,
+                                           TextLineWindow::ConfigType,
+                                           ScrollListWindow::ConfigType,
+
+                                           DragFrame::ConfigType,
+                                           FixedFrame::ConfigType,
+                                           ToolFrame::ConfigType,
+
+                                           WindowReportConfig,
+                                           ExceptionWindow::ConfigType,
+
+                                           MessageWindow::ConfigType,
+                                           MessageFrame::ConfigType,
+
+                                           SimpleTopMenuWindow::ConfigType,
+                                           SimpleCascadeMenu::ConfigType,
+
+                                           DirEditWindow::ConfigType,
+                                           FileFilterListWindow::ConfigType,
+                                           FileCheckShape::Config,
+                                           FileWindow::ConfigType,
+                                           FileFrame::ConfigType
+                                          >
  {
    static const char *const PrefFile;
 
-   // main windows
-
-   ToolFrame::ConfigType cfg_ToolFrame;
-   MessageWindow::ConfigType cfg_MessageWindow;
-   MessageFrame::ConfigType cfg_MessageFrame;
    MessageWindow::ConfigType cfg_AlertMessageWindow;
    MessageFrame::ConfigType cfg_AlertMessageFrame;
-   ExceptionWindow::ConfigType cfg_ExceptionWindow;
-   SimpleCascadeMenu::ConfigType cfg_SimpleCascadeMenu;
-
-   DragFrame::ConfigType cfg_DragFrame;
-   FixedFrame::ConfigType cfg_FixedFrame;
-
-   WindowReportConfig cfg_WindowReport;
-
-   // sub windows
-
-   ButtonWindow::ConfigType cfg_ButtonWindow;
-   KnobWindow::ConfigType cfg_KnobWindow;
-   CheckWindow::ConfigType cfg_CheckWindow;
-   SwitchWindow::ConfigType cfg_SwitchWindow;
-   RadioWindow::ConfigType cfg_RadioWindow;
-   TextWindow::ConfigType cfg_TextWindow;
-   LabelWindow::ConfigType cfg_LabelWindow;
-   XSingleLineWindow::ConfigType cfg_XSingleLineWindow;
-   YSingleLineWindow::ConfigType cfg_YSingleLineWindow;
-   XDoubleLineWindow::ConfigType cfg_XDoubleLineWindow;
-   YDoubleLineWindow::ConfigType cfg_YDoubleLineWindow;
-   ContourWindow::ConfigType cfg_ContourWindow;
-   TextContourWindow::ConfigType cfg_TextContourWindow;
-   LightWindow::ConfigType cfg_LightWindow;
-   TextLineWindow::ConfigType cfg_TextLineWindow;
-   XScrollWindow::ConfigType cfg_XScrollWindow;
-   YScrollWindow::ConfigType cfg_YScrollWindow;
-   ProgressWindow::ConfigType cfg_ProgressWindow;
-   InfoWindow::ConfigType cfg_InfoWindow;
-   LineEditWindow::ConfigType cfg_LineEditWindow;
-   SimpleTextListWindow::ConfigType cfg_SimpleTextListWindow;
-   SimpleTopMenuWindow::ConfigType cfg_SimpleTopMenuWindow;
-   SimpleCascadeMenuWindow::ConfigType cfg_SimpleCascadeMenuWindow;
-   ScrollListWindow::ConfigType cfg_ScrollListWindow;
-
-   // FileWindow
-
-   DirEditWindow::ConfigType cfg_DirEditWindow;
-   FileFilterListWindow::ConfigType cfg_FileFilterListWindow;
-   FileCheckShape::Config cfg_FileCheckShape;
-   FileWindow::ConfigType cfg_FileWindow;
-   FileFrame::ConfigType cfg_FileFrame;
 
   public:
 
@@ -371,190 +443,15 @@ class UserPreference : NoCopyBase<UserPreferenceBag>
 
    // methods
 
-   const UserPreferenceBag & get() const { return *this; }
-
-   UserPreferenceBag & take() { return *this; }
-
    void sync() noexcept;
 
    void update() noexcept;
 
-   // main windows
-
-   const ToolFrame::ConfigType & getToolWindowConfig() const { return cfg_ToolFrame; }
-
-   const MessageWindow::ConfigType & getMessageWindowConfig() const { return cfg_MessageWindow; }
-
-   const MessageFrame::ConfigType & getMessageFrameConfig() const { return cfg_MessageFrame; }
+   // extra
 
    const MessageWindow::ConfigType & getAlertMessageWindowConfig() const { return cfg_AlertMessageWindow; }
 
    const MessageFrame::ConfigType & getAlertMessageFrameConfig() const { return cfg_AlertMessageFrame; }
-
-   const ExceptionWindow::ConfigType & getExceptionWindowConfig() const { return cfg_ExceptionWindow; }
-
-   //const SimpleCascadeMenu::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenu; }
-
-   const DragFrame::ConfigType & getDragFrameConfig() const { return cfg_DragFrame; }
-
-   const FixedFrame::ConfigType & getFixedFrameConfig() const { return cfg_FixedFrame; }
-
-   const WindowReportConfig & getWindowReportConfig() const { return cfg_WindowReport; }
-
-   // sub windows
-
-   const ButtonWindow::ConfigType & getButtonConfig() const { return cfg_ButtonWindow; }
-
-   const KnobWindow::ConfigType & getKnobConfig() const { return cfg_KnobWindow; }
-
-   const CheckWindow::ConfigType & getCheckConfig() const { return cfg_CheckWindow; }
-
-   const SwitchWindow::ConfigType & getSwitchConfig() const { return cfg_SwitchWindow; }
-
-   const RadioWindow::ConfigType & getRadioConfig() const { return cfg_RadioWindow; }
-
-   const TextWindow::ConfigType & getTextConfig() const { return cfg_TextWindow; }
-
-   const LabelWindow::ConfigType & getLabelConfig() const { return cfg_LabelWindow; }
-
-   const XSingleLineWindow::ConfigType & getXSingleLineConfig() const { return cfg_XSingleLineWindow; }
-
-   const YSingleLineWindow::ConfigType & getYSingleLineConfig() const { return cfg_YSingleLineWindow; }
-
-   const XDoubleLineWindow::ConfigType & getXDoubleLineConfig() const { return cfg_XDoubleLineWindow; }
-
-   const YDoubleLineWindow::ConfigType & getYDoubleLineConfig() const { return cfg_YDoubleLineWindow; }
-
-   const ContourWindow::ConfigType & getContourConfig() const { return cfg_ContourWindow; }
-
-   const TextContourWindow::ConfigType & getTextContourConfig() const { return cfg_TextContourWindow; }
-
-   const LightWindow::ConfigType & getLightConfig() const { return cfg_LightWindow; }
-
-   const TextLineWindow::ConfigType & getTextLineConfig() const { return cfg_TextLineWindow; }
-
-   const XScrollWindow::ConfigType & getXScrollConfig() const { return cfg_XScrollWindow; }
-
-   const YScrollWindow::ConfigType & getYScrollConfig() const { return cfg_YScrollWindow; }
-
-   const ProgressWindow::ConfigType & getProgressConfig() const { return cfg_ProgressWindow; }
-
-   const InfoWindow::ConfigType & getInfoConfig() const { return cfg_InfoWindow; }
-
-   const LineEditWindow::ConfigType & getLineEditConfig() const { return cfg_LineEditWindow; }
-
-   const SimpleTextListWindow::ConfigType & getSimpleTextListConfig() const { return cfg_SimpleTextListWindow; }
-
-   const SimpleTopMenuWindow::ConfigType & getSimpleTopMenuConfig() const { return cfg_SimpleTopMenuWindow; }
-
-   const SimpleCascadeMenuWindow::ConfigType & getSimpleCascadeMenuConfig() const { return cfg_SimpleCascadeMenuWindow; }
-
-   const ScrollListWindow::ConfigType & getScrollListConfig() const { return cfg_ScrollListWindow; }
-
-   // FileWindow
-
-   const DirEditWindow::ConfigType & getDirEditConfig() const { return cfg_DirEditWindow; }
-
-   const FileFilterListWindow::ConfigType & getFileFilterListConfig() const { return cfg_FileFilterListWindow; }
-
-   const FileCheckShape::Config & getFileAltConfig() const { return cfg_FileCheckShape; }
-
-   const FileWindow::ConfigType & getFileSubConfig() const { return cfg_FileWindow; }
-
-   const FileFrame::ConfigType & getFileFrameConfig() const { return cfg_FileFrame; }
-
-   // getSmartConfig()
-
-   class Proxy
-    {
-      const UserPreference *obj;
-
-     public:
-
-      Proxy(const UserPreference *obj_) : obj(obj_) {}
-
-      // main windows
-
-      operator const auto & () const { return obj->cfg_ToolFrame; }
-
-      operator const auto & () const { return obj->cfg_MessageWindow; }
-
-      operator const auto & () const { return obj->cfg_MessageFrame; }
-
-      operator const auto & () const { return obj->cfg_ExceptionWindow; }
-
-      operator const auto & () const { return obj->cfg_SimpleCascadeMenu; }
-
-      operator const auto & () const { return obj->cfg_DragFrame; }
-
-      operator const auto & () const { return obj->cfg_FixedFrame; }
-
-      operator const auto & () const { return obj->cfg_WindowReport; }
-
-      // sub windows
-
-      operator const auto & () const { return obj->cfg_ButtonWindow; }
-
-      operator const auto & () const { return obj->cfg_KnobWindow; }
-
-      operator const auto & () const { return obj->cfg_CheckWindow; }
-
-      operator const auto & () const { return obj->cfg_SwitchWindow; }
-
-      operator const auto & () const { return obj->cfg_RadioWindow; }
-
-      operator const auto & () const { return obj->cfg_TextWindow; }
-
-      operator const auto & () const { return obj->cfg_LabelWindow; }
-
-      operator const auto & () const { return obj->cfg_XSingleLineWindow; }
-
-      operator const auto & () const { return obj->cfg_YSingleLineWindow; }
-
-      operator const auto & () const { return obj->cfg_XDoubleLineWindow; }
-
-      operator const auto & () const { return obj->cfg_YDoubleLineWindow; }
-
-      operator const auto & () const { return obj->cfg_ContourWindow; }
-
-      operator const auto & () const { return obj->cfg_TextContourWindow; }
-
-      operator const auto & () const { return obj->cfg_LightWindow; }
-
-      operator const auto & () const { return obj->cfg_TextLineWindow; }
-
-      operator const auto & () const { return obj->cfg_XScrollWindow; }
-
-      operator const auto & () const { return obj->cfg_YScrollWindow; }
-
-      operator const auto & () const { return obj->cfg_ProgressWindow; }
-
-      operator const auto & () const { return obj->cfg_InfoWindow; }
-
-      operator const auto & () const { return obj->cfg_LineEditWindow; }
-
-      operator const auto & () const { return obj->cfg_SimpleTextListWindow; }
-
-      operator const auto & () const { return obj->cfg_SimpleTopMenuWindow; }
-
-      operator const auto & () const { return obj->cfg_SimpleCascadeMenuWindow; }
-
-      operator const auto & () const { return obj->cfg_ScrollListWindow; }
-
-      // FileFrame
-
-      operator const auto & () const { return obj->cfg_DirEditWindow; }
-
-      operator const auto & () const { return obj->cfg_FileFilterListWindow; }
-
-      operator const auto & () const { return obj->cfg_FileCheckShape; }
-
-      operator const auto & () const { return obj->cfg_FileWindow; }
-
-      operator const auto & () const { return obj->cfg_FileFrame; }
-    };
-
-   Proxy getSmartConfig() const { return this; }
 
    // signals
 

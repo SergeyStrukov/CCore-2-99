@@ -164,7 +164,7 @@ class FileFilterWindow : public ComboWindow
        check_cfg.bind(proxy);
        knob_cfg.bind(proxy);
 
-       auto &cfg=edit_cfg.takeVal();
+       auto &cfg=edit_cfg.refVal();
 
        cfg.bind(bag);
        cfg.text.bind(bag.file_filter_text);
@@ -357,7 +357,7 @@ class FileCheckShape
      Config() noexcept {}
 
      template <class Bag>
-     void bind(Bag &bag)
+     void bind(const Bag &bag)
       {
        width.bind(bag.width);
        border.bind(bag.border);

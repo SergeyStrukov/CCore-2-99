@@ -422,92 +422,13 @@ void UserPreferenceBag::createFonts() // Update fonts here
 
 const char *const UserPreference::PrefFile="/UserPreference.ddl";
 
-UserPreference::UserPreference() noexcept // Update here
+UserPreference::UserPreference() noexcept
  {
-  // main windows
-
-  cfg_ExceptionWindow.bind(get(),getSmartConfig());
-
-  cfg_MessageWindow.bind(get(),getSmartConfig());
-
-  cfg_MessageFrame.bind(get(),getSmartConfig());
-
-  cfg_AlertMessageWindow=cfg_MessageWindow;
+  cfg_AlertMessageWindow=getSmartConfig();
   cfg_AlertMessageWindow.back.bind(alert);
 
-  cfg_AlertMessageFrame.frame_cfg.bind(cfg_FixedFrame);
+  cfg_AlertMessageFrame.frame_cfg.bind(getSmartConfig());
   cfg_AlertMessageFrame.msg_cfg.bind(cfg_AlertMessageWindow);
-
-  cfg_ToolFrame.bind(get());
-
-  cfg_SimpleCascadeMenu.bind(get(),getSmartConfig());
-
-  cfg_DragFrame.bind(get());
-  cfg_FixedFrame.bind(get());
-
-  cfg_WindowReport.bind(get());
-
-  // sub windows
-
-  cfg_ButtonWindow.bind(get());
-
-  cfg_KnobWindow.bind(get());
-
-  cfg_CheckWindow.bind(get());
-
-  cfg_SwitchWindow.bind(get());
-
-  cfg_RadioWindow.bind(get());
-
-  cfg_LightWindow.bind(get());
-
-  cfg_LabelWindow.bind(get());
-
-  cfg_TextWindow.bind(get());
-
-  cfg_TextLineWindow.bind(get());
-
-  cfg_XSingleLineWindow.bind(get());
-
-  cfg_YSingleLineWindow.bind(get());
-
-  cfg_XDoubleLineWindow.bind(get());
-
-  cfg_YDoubleLineWindow.bind(get());
-
-  cfg_ContourWindow.bind(get());
-
-  cfg_TextContourWindow.bind(get());
-
-  cfg_ProgressWindow.bind(get());
-
-  cfg_InfoWindow.bind(get());
-
-  cfg_SimpleTextListWindow.bind(get());
-
-  cfg_LineEditWindow.bind(get());
-
-  cfg_XScrollWindow.bind(get());
-
-  cfg_YScrollWindow.bind(get());
-
-  cfg_ScrollListWindow.bind(get(),getSmartConfig());
-
-  cfg_SimpleTopMenuWindow.bind(get());
-
-  cfg_SimpleCascadeMenuWindow.bind(get());
-
-  // FileWindow
-
-  cfg_DirEditWindow.bind(get());
-
-  cfg_FileFilterListWindow.bind(get(),getSmartConfig());
-
-  cfg_FileCheckShape.bind(get());
-
-  cfg_FileWindow.bind(get(),getSmartConfig());
-
-  cfg_FileFrame.bind(get(),getSmartConfig());
  }
 
 UserPreference::~UserPreference()
@@ -539,7 +460,7 @@ void UserPreference::sync() noexcept
 
      map.loadDDL_safe(file_name);
 
-     UserPreferenceBag::sync(map);
+     ref().sync(map);
 
      if( map.isModified() )
        {
@@ -580,7 +501,7 @@ void UserPreference::update() noexcept
 
      map.loadDDL_safe(file_name);
 
-     UserPreferenceBag::update(map);
+     ref().update(map);
 
      FileSystem fs;
 

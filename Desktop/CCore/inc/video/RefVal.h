@@ -137,7 +137,7 @@ class RefVal
 
    // set
 
-   T & takeVal() { return val; }
+   T & refVal() { return val; }
 
    void bind(const T &obj) { ptr=&obj; }
  };
@@ -177,7 +177,7 @@ class CtorRefVal
 
    // set
 
-   T & takeVal() { return val; }
+   T & refVal() { return val; }
 
    void bind(const T &obj) { if( lock ) GuardCtorRefValLock(); ptr=&obj; }
  };

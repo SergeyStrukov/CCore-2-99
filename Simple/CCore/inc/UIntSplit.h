@@ -54,7 +54,7 @@ class UIntSplit
 
    UIntSmall & operator [] (unsigned index) { return buf[index]; }
 
-   PtrLen<UIntSmall> take() { return Range(buf); }
+   PtrLen<UIntSmall> ref() { return Range(buf); }
 
    // get
 

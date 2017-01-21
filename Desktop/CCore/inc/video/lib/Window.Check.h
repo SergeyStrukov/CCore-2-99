@@ -53,9 +53,9 @@ class CheckWindowOf : public SubWindow
     {
      shape.check=!shape.check;
 
-     changed.assert(shape.check);
-
      redraw();
+
+     changed.assert(shape.check);
     }
 
   public:
@@ -248,18 +248,18 @@ class AltWindowOf : public SubWindow
     {
      shape.check=Shape::Next(shape.check);
 
-     changed.assert(shape.check);
-
      redraw();
+
+     changed.assert(shape.check);
     }
 
    void change(CheckType zone)
     {
      if( Change(shape.check,zone) )
        {
-        changed.assert(shape.check);
-
         redraw();
+
+        changed.assert(shape.check);
        }
     }
 

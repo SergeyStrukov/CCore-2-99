@@ -57,9 +57,9 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      if( Change(shape.xoff,Cap<Coord>(0,xoff,shape.xoffMax)) )
        {
-        scroll_x.assert((ulen)shape.xoff);
-
         redraw();
+
+        scroll_x.assert((ulen)shape.xoff);
        }
     }
 
@@ -74,9 +74,9 @@ class ScrollListInnerWindowOf : public SubWindow
     {
      if( Change(shape.yoff,Min(yoff,shape.yoffMax)) )
        {
-        scroll_y.assert(shape.yoff);
-
         redraw();
+
+        scroll_y.assert(shape.yoff);
        }
     }
 
@@ -101,9 +101,9 @@ class ScrollListInnerWindowOf : public SubWindow
        {
         showSelect();
 
-        outer->selected.assert(shape.select);
-
         redraw();
+
+        outer->selected.assert(shape.select);
        }
     }
 
@@ -115,9 +115,9 @@ class ScrollListInnerWindowOf : public SubWindow
        {
         showSelect();
 
-        outer->selected.assert(shape.select);
-
         redraw();
+
+        outer->selected.assert(shape.select);
        }
     }
 
@@ -131,9 +131,9 @@ class ScrollListInnerWindowOf : public SubWindow
           {
            showSelect();
 
-           outer->selected.assert(shape.select);
-
            redraw();
+
+           outer->selected.assert(shape.select);
           }
         else
           {
@@ -150,9 +150,9 @@ class ScrollListInnerWindowOf : public SubWindow
        {
         showSelect();
 
-        outer->selected.assert(shape.select);
-
         redraw();
+
+        outer->selected.assert(shape.select);
        }
      else
        {
@@ -168,9 +168,9 @@ class ScrollListInnerWindowOf : public SubWindow
           {
            showSelect();
 
-           if( signal ) outer->selected.assert(shape.select);
-
            redraw();
+
+           if( signal ) outer->selected.assert(shape.select);
           }
        }
     }

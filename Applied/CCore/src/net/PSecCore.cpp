@@ -146,7 +146,7 @@ void RandomEngine::addTimeStamp()
 
   split.set(ClockTimer::Get());
 
-  hash->add(split.take());
+  hash->add(split.ref());
  }
 
 RandomEngine::RandomEngine(const MasterKey &master_key)
@@ -712,7 +712,7 @@ ulen ProcessorCore::selectIndex(ulen len)
  {
   UIntSplit<uint64,uint8> split;
 
-  random(split.take());
+  random(split.ref());
 
   return ulen( split.get()%len );
  }

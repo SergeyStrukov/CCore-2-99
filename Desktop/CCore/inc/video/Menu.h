@@ -315,9 +315,9 @@ class SimpleTopMenuWindowOf : public SubWindow
        {
         if( Change(shape.select_index,index) )
           {
-           assert();
-
            redraw();
+
+           assert();
           }
        }
      else
@@ -326,9 +326,9 @@ class SimpleTopMenuWindowOf : public SubWindow
 
         shape.select_index=index;
 
-        assert();
-
         redraw();
+
+        assert();
        }
     }
 
@@ -700,9 +700,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
        {
         if( Change(shape.select_index,index) )
           {
-           assert();
-
            redraw();
+
+           assert();
           }
        }
      else
@@ -711,9 +711,9 @@ class SimpleCascadeMenuWindowOf : public SubWindow
 
         shape.select_index=index;
 
-        assert();
-
         redraw();
+
+        assert();
        }
     }
 

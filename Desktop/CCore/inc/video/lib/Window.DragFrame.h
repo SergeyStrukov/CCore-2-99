@@ -1011,6 +1011,8 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
    void react_LeftUp(Point point,MouseKey mkey)
     {
+     hilightFrame(point);
+
      if( shape.drag_type )
        {
         endDrag(point);
@@ -1023,8 +1025,6 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
        {
         getClient().forward().put_LeftUp(point,mkey);
        }
-
-     hilightFrame(point);
     }
 
    void react_Move(Point point,MouseKey mkey)

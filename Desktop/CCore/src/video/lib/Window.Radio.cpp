@@ -39,9 +39,9 @@ void RadioItem::setCheck(bool signal)
 
         group->cur=this;
 
-        if( signal ) group->changed.assert(radio_id,prev_id);
-
         if( prev ) prev->uncheck();
+
+        if( signal ) group->changed.assert(radio_id,prev_id);
        }
     }
  }

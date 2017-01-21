@@ -659,7 +659,7 @@ void DesignerWindow::selfPref()
  {
   setPref();
 
-  self_pref.take()=pref.get();
+  self_pref.ref()=pref.get();
 
   self_pref.updated.assert();
  }
@@ -918,7 +918,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,UserPrefer
 
   auto binder=info.getBinder();
 
-  pref.take().bind(binder);
+  pref.ref().bind(binder);
 
   newList();
  }

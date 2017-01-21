@@ -42,6 +42,19 @@ class ScrollWindowOf : public SubWindow
 
   private:
 
+   void pressOn()
+    {
+     shape.change_count=0;
+
+     shape.posChange();
+
+     defer_tick.start();
+
+     redraw();
+
+     changed.assert(shape.pos);
+    }
+
    void pressOn(ScrollType type,Point point)
     {
      shape.press_type=type;
@@ -50,6 +63,8 @@ class ScrollWindowOf : public SubWindow
        {
         shape.drag_base=point;
         shape.drag_pos=shape.pos;
+
+        redraw();
        }
      else
        {
@@ -64,24 +79,13 @@ class ScrollWindowOf : public SubWindow
      pressOn();
     }
 
-   void pressOn()
-    {
-     shape.change_count=0;
-
-     shape.posChange();
-
-     changed.assert(shape.pos);
-
-     defer_tick.start();
-    }
-
    void drag(Point point)
     {
      shape.drag(point);
 
-     changed.assert(shape.pos);
-
      redraw();
+
+     changed.assert(shape.pos);
     }
 
    void pressOff(Point point)
@@ -90,17 +94,23 @@ class ScrollWindowOf : public SubWindow
        {
         shape.drag(point);
 
+        redraw();
+
         changed.assert(shape.pos);
        }
      else
        {
         defer_tick.stop();
+
+        redraw();
        }
     }
 
    void pressOff()
     {
      if( shape.press_type!=ScrollType_Drag ) defer_tick.stop();
+
+     redraw();
     }
 
    void inside(ScrollType type)
@@ -114,8 +124,6 @@ class ScrollWindowOf : public SubWindow
            releaseMouse();
 
            pressOff();
-
-           redraw();
           }
        }
      else
@@ -134,8 +142,6 @@ class ScrollWindowOf : public SubWindow
         releaseMouse();
 
         pressOff();
-
-        redraw();
        }
      else
        {
@@ -147,9 +153,9 @@ class ScrollWindowOf : public SubWindow
     {
      if( shape.posChange() )
        {
-        changed.assert(shape.pos);
-
         redraw();
+
+        changed.assert(shape.pos);
        }
     }
 
@@ -167,8 +173,6 @@ class ScrollWindowOf : public SubWindow
           }
 
         pressOff();
-
-        redraw();
        }
     }
 
@@ -296,8 +300,6 @@ class ScrollWindowOf : public SubWindow
         shape.focus=false;
 
         pressOff();
-
-        redraw();
        }
      else
        {
@@ -315,8 +317,6 @@ class ScrollWindowOf : public SubWindow
         shape.mover=ScrollType_None;
 
         pressOff();
-
-        redraw();
        }
     }
 
@@ -344,9 +344,9 @@ class ScrollWindowOf : public SubWindow
             {
              shape.posMin();
 
-             changed.assert(shape.pos);
-
              redraw();
+
+             changed.assert(shape.pos);
             }
          }
         break;
@@ -357,9 +357,9 @@ class ScrollWindowOf : public SubWindow
             {
              shape.posMax();
 
-             changed.assert(shape.pos);
-
              redraw();
+
+             changed.assert(shape.pos);
             }
          }
         break;
@@ -372,8 +372,6 @@ class ScrollWindowOf : public SubWindow
              shape.mouse=false;
 
              pressOn(ScrollType_Down);
-
-             redraw();
             }
          }
         break;
@@ -386,8 +384,6 @@ class ScrollWindowOf : public SubWindow
              shape.mouse=false;
 
              pressOn(ScrollType_Up);
-
-             redraw();
             }
          }
         break;
@@ -400,8 +396,6 @@ class ScrollWindowOf : public SubWindow
              shape.mouse=false;
 
              pressOn(ScrollType_DownPage);
-
-             redraw();
             }
          }
         break;
@@ -414,8 +408,6 @@ class ScrollWindowOf : public SubWindow
              shape.mouse=false;
 
              pressOn(ScrollType_UpPage);
-
-             redraw();
             }
          }
         break;
@@ -439,8 +431,6 @@ class ScrollWindowOf : public SubWindow
              shape.down=ScrollType_None;
 
              pressOff();
-
-             redraw();
             }
          }
         break;
@@ -452,8 +442,6 @@ class ScrollWindowOf : public SubWindow
              shape.down=ScrollType_None;
 
              pressOff();
-
-             redraw();
             }
          }
         break;
@@ -465,8 +453,6 @@ class ScrollWindowOf : public SubWindow
              shape.down=ScrollType_None;
 
              pressOff();
-
-             redraw();
             }
          }
         break;
@@ -478,8 +464,6 @@ class ScrollWindowOf : public SubWindow
              shape.down=ScrollType_None;
 
              pressOff();
-
-             redraw();
             }
          }
         break;
@@ -499,8 +483,6 @@ class ScrollWindowOf : public SubWindow
            captureMouse();
 
            pressOn(type,point);
-
-           redraw();
           }
        }
     }
@@ -515,8 +497,6 @@ class ScrollWindowOf : public SubWindow
         releaseMouse();
 
         pressOff(point);
-
-        redraw();
        }
     }
 
@@ -583,9 +563,9 @@ class ScrollWindowOf : public SubWindow
              shape.posUp(delta);
           }
 
-        changed.assert(shape.pos);
-
         redraw();
+
+        changed.assert(shape.pos);
        }
     }
 

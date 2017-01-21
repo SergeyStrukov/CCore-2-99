@@ -298,9 +298,9 @@ class LineEditWindowOf : public SubWindow
 
      shape.showCursor();
 
-     changed.assert();
-
      redraw();
+
+     changed.assert();
     }
 
    void delChar(unsigned repeat=1)

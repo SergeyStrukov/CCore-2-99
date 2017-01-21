@@ -210,9 +210,9 @@ class ButtonWindowOf : public SubWindow
             {
              shape.down=false;
 
-             pressed.assert();
-
              redraw();
+
+             pressed.assert();
             }
          }
         break;
@@ -240,9 +240,9 @@ class ButtonWindowOf : public SubWindow
 
         releaseMouse();
 
-        if( shape.pane.contains(point) ) pressed.assert();
-
         redraw();
+
+        if( shape.pane.contains(point) ) pressed.assert();
        }
     }
 

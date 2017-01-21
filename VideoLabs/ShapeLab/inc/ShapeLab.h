@@ -317,7 +317,7 @@ class ShapeLab2 : public SubWindow
 
        edit_cfg.font=fb.build_or_default("Times New Roman"|Italic,25); //
 
-       msg_cfg.msg_cfg.takeVal().info_cfg.takeVal().font=fb.build_or_default("Times New Roman",25);
+       msg_cfg.msg_cfg.refVal().info_cfg.refVal().font=fb.build_or_default("Times New Roman",25);
 
        test_cfg.font=fb.build_or_default("Times New Roman"|Italic,30);
       }
