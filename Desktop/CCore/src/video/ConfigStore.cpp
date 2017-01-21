@@ -101,6 +101,9 @@ auto ConfigItem::DDLTypeNameCtx::call<FontParam>() -> RetType { return "Font"; }
 template <>
 auto ConfigItem::DDLTypeNameCtx::call<bool>() -> RetType { return "Bool"; }
 
+template <>
+auto ConfigItem::DDLTypeNameCtx::call<Ratio>() -> RetType { return "Ratio"; }
+
 StrLen ConfigItem::getDDLTypeName() const
  {
   return Meta::TypeSwitch<ConfigTypeList>::Switch(id,DDLTypeNameCtx{});
@@ -135,6 +138,11 @@ const char *const ConfigMap::Pretext=
 "  Coord x;\r\n"
 "  Coord y;\r\n"
 " };\r\n"
+"\r\n"
+"struct Ratio\r\n"
+" {\r\n"
+"  sint32 ratio;\r\n"
+" }; \r\n"
 "\r\n"
 "struct Font\r\n"
 " {\r\n"
@@ -250,6 +258,10 @@ struct ConfigMap::TypeFilter
              {
               func.do_Point();
              }
+           else if( name.equal("Ratio"_c) )
+             {
+              func.do_Ratio();
+             }
           }
        }
      };
@@ -344,6 +356,13 @@ struct ConfigMap::AddItem
 
   uint8 get_Bool() const { return value.get<DDL::imp_uint8>().value; }
 
+  Ratio get_Ratio() const
+   {
+    auto r=value.get<DDL::Block>().data;
+
+    return Ratio(r[0].get<DDL::imp_sint32>().value);
+   }
+
   // do...()
 
   void do_uint() { obj->add_uint(name,get_uint()); }
@@ -363,6 +382,8 @@ struct ConfigMap::AddItem
   void do_Font() { obj->add_Font(name,get_Font()); }
 
   void do_Bool() { obj->add_Bool(name,get_Bool()); }
+
+  void do_Ratio() { obj->add_Ratio(name,get_Ratio()); }
  };
 
 void ConfigMap::add(StrLen name,const ConfigType &value)
@@ -397,6 +418,8 @@ void ConfigMap::add_Bool(StrLen name,uint8 value)
  {
   if( !name.equal("True"_c) && !name.equal("False"_c) ) add(name,bool(value));
  }
+
+void ConfigMap::add_Ratio(StrLen name,Ratio value) { add(name,value); }
 
 ConfigMap::ConfigMap() noexcept
  {

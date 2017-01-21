@@ -55,13 +55,14 @@ using ConfigTypeList = Meta::CaseList<
                                        Meta::Case<int,6,Point> ,
                                        Meta::Case<int,7,DefString> ,
                                        Meta::Case<int,8,FontParam> ,
-                                       Meta::Case<int,9,bool>
+                                       Meta::Case<int,9,bool> ,
+                                       Meta::Case<int,10,Ratio>
                                      > ;
 
 /* concept ConfigType<T> */
 
 template <class T>
-concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Clr,Point,DefString,FontParam,bool> ;
+concept bool ConfigType = OneOfTypes<T,unsigned,Coord,MCoord,VColor,Clr,Point,DefString,FontParam,bool,Ratio> ;
 
 /* class ConfigItem */
 
@@ -127,6 +128,11 @@ class ConfigItem : NoCopy
      void print(bool obj)
       {
        Printf(out,"#;",DDLBool(obj));
+      }
+
+     void print(Ratio obj)
+      {
+       Printf(out,"{ #; }",obj.value);
       }
 
      template <class T>
@@ -259,6 +265,8 @@ class ConfigMap : NoCopy
    void add_Font(StrLen name,const FontParam &value);
 
    void add_Bool(StrLen name,uint8 value);
+
+   void add_Ratio(StrLen name,Ratio value);
 
   public:
 

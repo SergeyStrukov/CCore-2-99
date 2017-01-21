@@ -188,7 +188,7 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
 
   func("message_knob_dxy",ptr->message_knob_dxy);
 
-  //func("message_pos_ry",ptr->message_pos_ry);
+  func("message_pos_ry",ptr->message_pos_ry);
 
   func("file_alt_dxy",ptr->file_alt_dxy);
 

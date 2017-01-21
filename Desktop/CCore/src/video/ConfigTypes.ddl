@@ -32,6 +32,11 @@ struct Point
   Coord x;
   Coord y;
  };
+ 
+struct Ratio
+ {
+  sint32 ratio;
+ }; 
 
 struct Font
  {

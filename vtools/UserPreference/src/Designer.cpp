@@ -451,6 +451,8 @@ class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
    virtual void item(DefString name,FontCouple &var) { base->add(name,var); }
 
    virtual void item(DefString name,bool &var) { base->add(name,var); }
+
+   virtual void item(DefString name,Ratio &var) {} // TODO
  };
 
 /* class DesignerWindow::PrefInfo */
