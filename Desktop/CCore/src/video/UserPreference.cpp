@@ -31,8 +31,10 @@ namespace Video {
 template <class Ptr,class Func>
 void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
  {
+  func("width",ptr->width);
+
   func("space_dxy",ptr->space_dxy);
-  func("text_cursor_dx",ptr->text_cursor_dx);
+
   func("check_dxy",ptr->check_dxy);
   func("knob_dxy",ptr->knob_dxy);
   func("radio_dxy",ptr->radio_dxy);
@@ -40,57 +42,63 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("light_dxy",ptr->light_dxy);
   func("scroll_dxy",ptr->scroll_dxy);
   func("progress_dy",ptr->progress_dy);
-  func("width",ptr->width);
-  func("back",ptr->back);
-  func("line",ptr->line);
-  func("inactive",ptr->inactive);
 
   func("gray",ptr->gray);
   func("grayUp",ptr->grayUp);
   func("snow",ptr->snow);
   func("snowUp",ptr->snowUp);
 
+  func("back",ptr->back);
+  func("line",ptr->line);
+  func("inactive",ptr->inactive);
+
   func("border",ptr->border);
   func("focus",ptr->focus);
+
   func("face",ptr->face);
   func("faceUp",ptr->faceUp);
   func("mark",ptr->mark);
   func("alert",ptr->alert);
+
   func("text_Ok",ptr->text_Ok);
   func("text_Cancel",ptr->text_Cancel);
+
+  func("text_cursor_dx",ptr->text_cursor_dx);
+
   func("text_select",ptr->text_select);
   func("text_cursor",ptr->text_cursor);
+
   func("label_text",ptr->label_text);
   func("contour_text",ptr->contour_text);
+
   func("button_text",ptr->button_text);
   func("message_text",ptr->message_text);
   func("info_text",ptr->info_text);
   func("line_edit_text",ptr->line_edit_text);
   func("list_text",ptr->list_text);
+
   func("button_space",ptr->button_space);
   func("message_space",ptr->message_space);
   func("line_edit_space",ptr->line_edit_space);
   func("info_space",ptr->info_space);
   func("list_space",ptr->list_space);
   func("menu_space",ptr->menu_space);
-  func("menu_back",ptr->menu_back);
-  func("menu_text",ptr->menu_text);
-  func("menu_hilight",ptr->menu_hilight);
-  func("menu_select",ptr->menu_select);
-  func("menu_hot",ptr->menu_hot);
-  func("menu_hotcolor",ptr->menu_hotcolor);
 
-  func("scroll_list_title",ptr->scroll_list_title);
-  func("scroll_list_titleTop",ptr->scroll_list_titleTop);
-  func("scroll_list_titleBottom",ptr->scroll_list_titleBottom);
+  func("label_font",ptr->label_font.param);
+  func("contour_font",ptr->contour_font.param);
 
-  func("line_edit_period",ptr->line_edit_period);
-  func("scroll_speedUpPeriod",ptr->scroll_speedUpPeriod);
-  func("progress_time",ptr->progress_time);
-  func("progress_period",ptr->progress_period);
-  func("line_edit_ex",ptr->line_edit_ex);
+  func("button_font",ptr->button_font.param);
+  func("message_font",ptr->message_font.param);
+  func("info_font",ptr->info_font.param);
+  func("line_edit_font",ptr->line_edit_font.param);
+  func("list_font",ptr->list_font.param);
+  func("menu_font",ptr->menu_font.param);
+
   func("switch_on",ptr->switch_on);
   func("switch_off",ptr->switch_off);
+
+  func("progress_time",ptr->progress_time);
+  func("progress_period",ptr->progress_period);
 
   func("progress_border",ptr->progress_border);
   func("progress_grayUp",ptr->progress_grayUp);
@@ -98,8 +106,63 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("progress_grayPing",ptr->progress_grayPing);
   func("progress_snowPing",ptr->progress_snowPing);
 
+  func("scroll_speedUpPeriod",ptr->scroll_speedUpPeriod);
+
+  func("line_edit_period",ptr->line_edit_period);
+
+  func("line_edit_ex",ptr->line_edit_ex);
+
+  func("scroll_list_title",ptr->scroll_list_title);
+  func("scroll_list_titleTop",ptr->scroll_list_titleTop);
+  func("scroll_list_titleBottom",ptr->scroll_list_titleBottom);
+
+  func("menu_back",ptr->menu_back);
+  func("menu_text",ptr->menu_text);
+  func("menu_hilight",ptr->menu_hilight);
+  func("menu_select",ptr->menu_select);
+  func("menu_hot",ptr->menu_hot);
+  func("menu_hotcolor",ptr->menu_hotcolor);
+
   func("blinkTime",ptr->blinkTime);
   func("blinkPeriod",ptr->blinkPeriod);
+
+  func("frame_dxy",ptr->frame_dxy);
+  func("title_dy",ptr->title_dy);
+  func("btn_dx",ptr->btn_dx);
+  func("btn_dy",ptr->btn_dy);
+
+  func("frame",ptr->frame);
+  func("frameHilight",ptr->frameHilight);
+  func("frameDrag",ptr->frameDrag);
+
+  func("title",ptr->title);
+  func("titleActive",ptr->titleActive);
+  func("titleInactive",ptr->titleInactive);
+
+  func("drag",ptr->drag);
+  func("dragHilight",ptr->dragHilight);
+  func("dragActive",ptr->dragActive);
+  func("dragSmall",ptr->dragSmall);
+
+  func("btnFace",ptr->btnFace);
+  func("btnFaceHilight",ptr->btnFaceHilight);
+  func("btnPict",ptr->btnPict);
+  func("btnPictClose",ptr->btnPictClose);
+  func("btnPictAlert",ptr->btnPictAlert);
+  func("btnPictNoAlert",ptr->btnPictNoAlert);
+  func("btnPictCloseAlert",ptr->btnPictCloseAlert);
+
+  func("hintBack",ptr->hintBack);
+  func("hintText",ptr->hintText);
+  func("hintBorder",ptr->hintBorder);
+
+  func("hintWidth",ptr->hintWidth);
+
+  func("title_font",ptr->title_font.param);
+  func("hint_font",ptr->hint_font.param);
+
+  func("shadeColor",ptr->shadeColor);
+  func("shadeAlpha",ptr->shadeAlpha);
 
   func("text_Fatal_error",ptr->text_Fatal_error);
   func("text_No_hint",ptr->text_No_hint);
@@ -119,50 +182,23 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_Restore",ptr->hint_Restore);
   func("hint_Close",ptr->hint_Close);
 
-  func("frame_dxy",ptr->frame_dxy);
-  func("title_dy",ptr->title_dy);
-  func("btn_dx",ptr->btn_dx);
-  func("btn_dy",ptr->btn_dy);
-  func("frame",ptr->frame);
-  func("titleActive",ptr->titleActive);
-  func("titleInactive",ptr->titleInactive);
-  func("frameHilight",ptr->frameHilight);
-  func("frameDrag",ptr->frameDrag);
-  func("title",ptr->title);
-
-  func("drag",ptr->drag);
-  func("dragHilight",ptr->dragHilight);
-  func("dragActive",ptr->dragActive);
-  func("dragSmall",ptr->dragSmall);
-
-  func("btnFace",ptr->btnFace);
-  func("btnFaceHilight",ptr->btnFaceHilight);
-  func("btnPict",ptr->btnPict);
-  func("btnPictClose",ptr->btnPictClose);
-  func("btnPictAlert",ptr->btnPictAlert);
-  func("btnPictNoAlert",ptr->btnPictNoAlert);
-  func("btnPictCloseAlert",ptr->btnPictCloseAlert);
-
-  func("hintBack",ptr->hintBack);
-  func("hintText",ptr->hintText);
-  func("hintBorder",ptr->hintBorder);
-  func("hintWidth",ptr->hintWidth);
-
-  func("shadeColor",ptr->shadeColor);
-  func("shadeAlpha",ptr->shadeAlpha);
-
   func("exception_back",ptr->exception_back);
   func("exception_text",ptr->exception_text);
   func("exception_divider",ptr->exception_divider);
 
   func("message_knob_dxy",ptr->message_knob_dxy);
 
+  //func("message_pos_ry",ptr->message_pos_ry);
+
   func("file_alt_dxy",ptr->file_alt_dxy);
+
   func("file_accent",ptr->file_accent);
   func("file_filter_text",ptr->file_filter_text);
 
   func("file_faceRight",ptr->file_faceRight);
   func("file_faceDown",ptr->file_faceDown);
+
+  func("file_filter_font",ptr->file_filter_font.param);
 
   func("text_New_file",ptr->text_New_file);
 
@@ -173,22 +209,12 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_FileDirList",ptr->hint_FileDirList);
   func("hint_FileList",ptr->hint_FileList);
   func("hint_FileAlt",ptr->hint_FileAlt);
+
   func("hint_FileEnableFilter",ptr->hint_FileEnableFilter);
   func("hint_FileDelFilter",ptr->hint_FileDelFilter);
   func("hint_FileFilter",ptr->hint_FileFilter);
-  func("hint_FileAddFilter",ptr->hint_FileAddFilter);
 
-  func("label_font",ptr->label_font.param);
-  func("contour_font",ptr->contour_font.param);
-  func("message_font",ptr->message_font.param);
-  func("info_font",ptr->info_font.param);
-  func("line_edit_font",ptr->line_edit_font.param);
-  func("list_font",ptr->list_font.param);
-  func("button_font",ptr->button_font.param);
-  func("menu_font",ptr->menu_font.param);
-  func("title_font",ptr->title_font.param);
-  func("hint_font",ptr->hint_font.param);
-  func("file_filter_font",ptr->file_filter_font.param);
+  func("hint_FileAddFilter",ptr->hint_FileAddFilter);
  }
 
 void UserPreferenceBag::sync(ConfigMap &map)
@@ -207,8 +233,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
  {
   binder.group("Common");
 
+   binder.item("line width",width);
    binder.item("space",space_dxy);
-   binder.item("text cursor width",text_cursor_dx);
    binder.space();
    binder.item("check box",check_dxy);
    binder.item("knob box",knob_dxy);
@@ -217,8 +243,6 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("light box",light_dxy);
    binder.item("scroll width",scroll_dxy);
    binder.item("progress height",progress_dy);
-   binder.space();
-   binder.item("line width",width);
    binder.space();
    binder.item("gray",gray);
    binder.item("grayUp",grayUp);
@@ -242,8 +266,10 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
 
   binder.group("Text");
 
-   binder.item("text select",text_select);
-   binder.item("text cursor",text_cursor);
+   binder.item("cursor width",text_cursor_dx);
+   binder.space();
+   binder.item("select",text_select);
+   binder.item("cursor",text_cursor);
    binder.space();
    binder.item("label text",label_text);
    binder.item("contour text",contour_text);
@@ -271,41 +297,49 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("list font",list_font);
    binder.item("menu font",menu_font);
 
-  binder.group("Menu");
+  binder.group("Switch");
 
-   binder.item("menu back",menu_back);
-   binder.item("menu text",menu_text);
-   binder.item("menu hilight",menu_hilight);
-   binder.item("menu select",menu_select);
-   binder.item("menu hot",menu_hot);
+   binder.item("on",switch_on);
+   binder.item("off",switch_off);
+
+  binder.group("Progress");
+
+   binder.item("ping time",progress_time);
+   binder.item("ping period",progress_period);
    binder.space();
-   binder.item("menu hotcolor",menu_hotcolor);
+   binder.item("border",progress_border);
+   binder.item("grayUp",progress_grayUp);
+   binder.item("snowUp",progress_snowUp);
+   binder.item("grayPing",progress_grayPing);
+   binder.item("snowPing",progress_snowPing);
 
-  binder.group("Scroll List");
+  binder.group("Scroll");
+
+   binder.item("speedUp period",scroll_speedUpPeriod);
+
+  binder.group("Line editor");
+
+   binder.item("cursor blink period",line_edit_period);
+   binder.space();
+   binder.item("round ext",line_edit_ex);
+
+  binder.group("Scroll list");
 
    binder.item("title",scroll_list_title);
    binder.item("title top",scroll_list_titleTop);
    binder.item("title bottom",scroll_list_titleBottom);
 
-  binder.group("Other");
+  binder.group("Menu");
 
-   binder.item("cursor blink period",line_edit_period);
-   binder.item("scroll speedUp period",scroll_speedUpPeriod);
-   binder.item("progress ping time",progress_time);
-   binder.item("progress ping period",progress_period);
+   binder.item("back",menu_back);
+   binder.item("text",menu_text);
+   binder.item("hilight",menu_hilight);
+   binder.item("select",menu_select);
+   binder.item("hot",menu_hot);
    binder.space();
-   binder.item("editor round ext",line_edit_ex);
-   binder.space();
-   binder.item("switch on",switch_on);
-   binder.item("switch off",switch_off);
-   binder.space();
-   binder.item("progress border",progress_border);
-   binder.item("progress grayUp",progress_grayUp);
-   binder.item("progress snowUp",progress_snowUp);
-   binder.item("progress grayPing",progress_grayPing);
-   binder.item("progress snowPing",progress_snowPing);
+   binder.item("use hotcolor",menu_hotcolor);
 
-  binder.group("Frame window");
+  binder.group("Frames");
 
    binder.item("alert blink time",blinkTime);
    binder.item("alert blink period",blinkPeriod);
@@ -313,20 +347,20 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("'Fatal error'",text_Fatal_error);
    binder.item("'<No hint available>'",text_No_hint);
    binder.space();
-   binder.item("'Resize top-left'",hint_ResizeTopLeft);
-   binder.item("'Resize left'",hint_ResizeLeft);
-   binder.item("'Resize bottom-left'",hint_ResizeBottomLeft);
-   binder.item("'Resize bottom'",hint_ResizeBottom);
-   binder.item("'Resize bottom-right'",hint_ResizeBottomRight);
-   binder.item("'Resize right'",hint_ResizeRight);
-   binder.item("'Resize top-right'",hint_ResizeTopRight);
+   binder.item("?'Resize top-left'",hint_ResizeTopLeft);
+   binder.item("?'Resize left'",hint_ResizeLeft);
+   binder.item("?'Resize bottom-left'",hint_ResizeBottomLeft);
+   binder.item("?'Resize bottom'",hint_ResizeBottom);
+   binder.item("?'Resize bottom-right'",hint_ResizeBottomRight);
+   binder.item("?'Resize right'",hint_ResizeRight);
+   binder.item("?'Resize top-right'",hint_ResizeTopRight);
    binder.space();
-   binder.item("'Open/close alert view'",hint_Alert);
-   binder.item("'Help on/off'",hint_Help);
-   binder.item("'Minimize'",hint_Minimize);
-   binder.item("'Maximize'",hint_Maximize);
-   binder.item("'Restore'",hint_Restore);
-   binder.item("'Close'",hint_Close);
+   binder.item("?'Open/close alert view'",hint_Alert);
+   binder.item("?'Help on/off'",hint_Help);
+   binder.item("?'Minimize'",hint_Minimize);
+   binder.item("?'Maximize'",hint_Maximize);
+   binder.item("?'Restore'",hint_Restore);
+   binder.item("?'Close'",hint_Close);
    binder.space();
    binder.item("frame width",frame_dxy);
    binder.item("title height",title_dy);
@@ -373,12 +407,13 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
   binder.group("Message window");
 
    binder.item("knob box",message_knob_dxy);
+   binder.item("Y-position ratio",message_pos_ry);
 
   binder.group("File window");
 
    binder.item("alt box",file_alt_dxy);
    binder.space();
-   binder.item("dir accent",file_accent);
+   binder.item("slash accent",file_accent);
    binder.space();
    binder.item("alt right",file_faceRight);
    binder.item("alt down",file_faceDown);
@@ -387,24 +422,24 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("filter font",file_filter_font);
    binder.space();
    binder.item("'New file'",text_New_file);
-   binder.item("'Hit list'",hint_FileHitList);
-   binder.item("'Make hit'",hint_FileAddHit);
-   binder.item("'Goto the parent'",hint_FileUpdir);
-   binder.item("'Current directory'",hint_FileCurdir);
-   binder.item("'Subdirectory list'",hint_FileDirList);
-   binder.item("'File list'",hint_FileList);
-   binder.item("'New file'",hint_FileAlt);
-   binder.item("'Enable this filter'",hint_FileEnableFilter);
-   binder.item("'Delete this filter'",hint_FileDelFilter);
-   binder.item("'Filename filter'",hint_FileFilter);
-   binder.item("'Add a filter'",hint_FileAddFilter);
+   binder.space();
+   binder.item("?'Hit list'",hint_FileHitList);
+   binder.item("?'Add hit'",hint_FileAddHit);
+   binder.item("?'Goto the parent'",hint_FileUpdir);
+   binder.item("?'Current directory'",hint_FileCurdir);
+   binder.item("?'Subdirectory list'",hint_FileDirList);
+   binder.item("?'File list'",hint_FileList);
+   binder.item("?'Alt new/existing file'",hint_FileAlt);
+   binder.item("?'Enable filter'",hint_FileEnableFilter);
+   binder.item("?'Delete filter'",hint_FileDelFilter);
+   binder.item("?'Filename filter'",hint_FileFilter);
+   binder.item("?'Add filter'",hint_FileAddFilter);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here
  {
   label_font.create();
   contour_font.create();
-
   button_font.create();
   message_font.create();
   info_font.create();

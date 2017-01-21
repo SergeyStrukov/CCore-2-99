@@ -377,6 +377,8 @@ struct UserPreferenceBag
     virtual void item(DefString name,FontCouple &var)=0;
 
     virtual void item(DefString name,bool &var)=0;
+
+    virtual void item(DefString name,Ratio &var)=0;
    };
 
   void bind(Bind &binder);
