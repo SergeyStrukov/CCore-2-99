@@ -60,6 +60,7 @@ class Application : public ApplicationBase
    DragFrame main_frame;
 
    ExceptionClient exception_client;
+
    ClientWindow client;
 
   private:

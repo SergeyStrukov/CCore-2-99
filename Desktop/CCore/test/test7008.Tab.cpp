@@ -24,10 +24,8 @@ namespace Private_7008 {
 
 /* class Sub2 */
 
-class Sub2 : public SubWindow
+class Sub2 : public ComboWindow
  {
-   WindowList wlist;
-
    ContourWindow::ConfigType contour_cfg;
 
    ContourWindow contour;
@@ -41,17 +39,14 @@ class Sub2 : public SubWindow
   public:
 
    explicit Sub2(SubWindowHost &host)
-    : SubWindow(host),
-      wlist(*this),
+    : ComboWindow(host),
+
       contour(wlist,contour_cfg),
       win1(wlist,knob_cfg,KnobShape::FaceOk),
       win2(wlist,knob_cfg,KnobShape::FacePlus),
       win3(wlist,knob_cfg,KnobShape::FaceMinus)
     {
      wlist.insTop(win1,win2,win3,contour);
-
-     wlist.enableTabFocus();
-     wlist.enableClickFocus();
     }
 
    virtual ~Sub2()
@@ -81,91 +76,12 @@ class Sub2 : public SubWindow
 
      win3.setPlace(*row);
     }
-
-   virtual void draw(DrawBuf buf,bool drag_active) const
-    {
-     wlist.draw(buf,drag_active);
-    }
-
-   // base
-
-   virtual void open()
-    {
-     wlist.open();
-
-     wlist.focusTop();
-    }
-
-   virtual void close()
-    {
-     wlist.close();
-    }
-
-   // keyboard
-
-   virtual FocusType askFocus() const
-    {
-     return FocusTab;
-    }
-
-   virtual void gainFocus()
-    {
-     wlist.gainFocus();
-    }
-
-   virtual void looseFocus()
-    {
-     wlist.looseFocus();
-    }
-
-   // tab focus
-
-   virtual void topTabFocus()
-    {
-     wlist.topTabFocus();
-    }
-
-   virtual bool nextTabFocus()
-    {
-     return wlist.nextTabFocus();
-    }
-
-   virtual void bottomTabFocus()
-    {
-     wlist.bottomTabFocus();
-    }
-
-   virtual bool prevTabFocus()
-    {
-     return wlist.prevTabFocus();
-    }
-
-   // mouse
-
-   virtual void looseCapture()
-    {
-     wlist.looseCapture();
-    }
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const
-    {
-     return wlist.getMouseShape(point,kmod,Mouse_Arrow);
-    }
-
-   // user input
-
-   virtual void react(UserAction action)
-    {
-     wlist.react(action);
-    }
  };
 
 /* class Sub1 */
 
-class Sub1 : public SubWindow
+class Sub1 : public ComboWindow
  {
-   WindowList wlist;
-
    ContourWindow::ConfigType contour_cfg;
 
    ContourWindow contour;
@@ -177,17 +93,14 @@ class Sub1 : public SubWindow
   public:
 
    explicit Sub1(SubWindowHost &host)
-    : SubWindow(host),
-      wlist(*this),
+    : ComboWindow(host),
+
       contour(wlist,contour_cfg),
       win1(wlist),
       win2(wlist),
       win3(wlist)
     {
      wlist.insTop(win1,win2,win3,contour);
-
-     wlist.enableTabFocus();
-     wlist.enableClickFocus();
     }
 
    virtual ~Sub1()
@@ -217,88 +130,11 @@ class Sub1 : public SubWindow
 
      win3.setPlace(*col);
     }
-
-   virtual void draw(DrawBuf buf,bool drag_active) const
-    {
-     wlist.draw(buf,drag_active);
-    }
-
-   // base
-
-   virtual void open()
-    {
-     wlist.open();
-
-     wlist.focusTop();
-    }
-
-   virtual void close()
-    {
-     wlist.close();
-    }
-
-   // keyboard
-
-   virtual FocusType askFocus() const
-    {
-     return FocusTab;
-    }
-
-   virtual void gainFocus()
-    {
-     wlist.gainFocus();
-    }
-
-   virtual void looseFocus()
-    {
-     wlist.looseFocus();
-    }
-
-   // tab focus
-
-   virtual void topTabFocus()
-    {
-     wlist.topTabFocus();
-    }
-
-   virtual bool nextTabFocus()
-    {
-     return wlist.nextTabFocus();
-    }
-
-   virtual void bottomTabFocus()
-    {
-     wlist.bottomTabFocus();
-    }
-
-   virtual bool prevTabFocus()
-    {
-     return wlist.prevTabFocus();
-    }
-
-   // mouse
-
-   virtual void looseCapture()
-    {
-     wlist.looseCapture();
-    }
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const
-    {
-     return wlist.getMouseShape(point,kmod,Mouse_Arrow);
-    }
-
-   // user input
-
-   virtual void react(UserAction action)
-    {
-     wlist.react(action);
-    }
  };
 
 /* class ClientSubWindow */
 
-class ClientSubWindow : public SubWindow
+class ClientSubWindow : public ComboWindow
  {
   public:
 
@@ -313,24 +149,19 @@ class ClientSubWindow : public SubWindow
 
    const ConfigType &cfg;
 
-   WindowList wlist;
-
    Sub1 win1;
    Sub1 win2;
 
   public:
 
    ClientSubWindow(SubWindowHost &host,const ConfigType &cfg_)
-    : SubWindow(host),
+    : ComboWindow(host),
       cfg(cfg_),
-      wlist(*this),
+
       win1(wlist),
       win2(wlist)
     {
      wlist.insTop(win1,win2);
-
-     wlist.enableTabFocus();
-     wlist.enableClickFocus();
     }
 
    virtual ~ClientSubWindow()
@@ -361,51 +192,6 @@ class ClientSubWindow : public SubWindow
 
      wlist.draw(buf,drag_active);
     }
-
-   // base
-
-   virtual void open()
-    {
-     wlist.open();
-
-     wlist.focusTop();
-    }
-
-   virtual void close()
-    {
-     wlist.close();
-    }
-
-   // keyboard
-
-   virtual void gainFocus()
-    {
-     wlist.gainFocus();
-    }
-
-   virtual void looseFocus()
-    {
-     wlist.looseFocus();
-    }
-
-   // mouse
-
-   virtual void looseCapture()
-    {
-     wlist.looseCapture();
-    }
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const
-    {
-     return wlist.getMouseShape(point,kmod,Mouse_Arrow);
-    }
-
-   // user input
-
-   virtual void react(UserAction action)
-    {
-     wlist.react(action);
-    }
  };
 
 } // namespace Private_7008
@@ -417,7 +203,7 @@ using namespace Private_7008;
 template <>
 int TestMain<7008>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7008");
+  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7008"_def);
  }
 
 } // namespace App

@@ -178,7 +178,7 @@ using namespace Private_7002;
 template <>
 int TestMain<7002>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ResultWindow>::MainExtra<TestResultBuilder>(cmd_display,"Test7002");
+  return ClientApplication<ResultWindow>::MainExtra<TestResultBuilder>(cmd_display,"Test7002"_def);
  }
 
 } // namespace App

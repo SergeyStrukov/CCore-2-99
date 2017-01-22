@@ -32,7 +32,7 @@ class ClientSubWindow : public SubWindow
      RefVal<VColor> field =  White ;
      RefVal<VColor> text  =  Black ;
 
-     RefVal<Font> font; // = GetFont() ;
+     RefVal<Font> font = GetFont() ;
 
      ConfigType() {}
 
@@ -108,31 +108,25 @@ class ClientSubWindow : public SubWindow
     {
      Used(drag_active);
 
-     try
-       {
-        CommonDrawArt art(buf);
+     CommonDrawArt art(buf);
 
-        art.erase(+cfg.back);
+     art.erase(+cfg.back);
 
-        AlignX align_x[4]={AlignX_Left,AlignX_Center,AlignX_Right,AlignX_Given};
-        AlignY align_y[4]={AlignY_Top,AlignY_Center,AlignY_Bottom,AlignY_Given};
+     AlignX align_x[4]={AlignX_Left,AlignX_Center,AlignX_Right,AlignX_Given};
+     AlignY align_y[4]={AlignY_Top,AlignY_Center,AlignY_Bottom,AlignY_Given};
 
-        for(int i=0; i<4 ;i++)
-          for(int j=0; j<4 ;j++)
-            {
-             art.block(pane[i][j],+cfg.field);
+     for(int i=0; i<4 ;i++)
+       for(int j=0; j<4 ;j++)
+         {
+          art.block(pane[i][j],+cfg.field);
 
-             TextPlace place(align_x[i],align_y[j]);
+          TextPlace place(align_x[i],align_y[j]);
 
-             place.x=base.x;
-             place.y=base.y;
+          place.x=base.x;
+          place.y=base.y;
 
-             cfg.font.get()->text(buf,pane[i][j],place,StrLen(text,len),+cfg.text);
-            }
-       }
-     catch(CatchType)
-       {
-       }
+          cfg.font->text(buf,pane[i][j],place,StrLen(text,len),+cfg.text);
+         }
     }
 
    // user input
@@ -183,7 +177,7 @@ using namespace Private_7004;
 template <>
 int TestMain<7004>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7004");
+  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7004"_def);
  }
 
 } // namespace App

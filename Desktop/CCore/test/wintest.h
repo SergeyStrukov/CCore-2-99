@@ -16,19 +16,18 @@
 #ifndef CCore_test_wintest_h
 #define CCore_test_wintest_h
 
-#include <CCore/inc/TaskMemStack.h>
-
 #include <CCore/inc/video/ApplicationBase.h>
-#include <CCore/inc/video/WindowLib.h>
 #include <CCore/inc/video/WindowReport.h>
-#include <CCore/inc/video/CommonDrawArt.h>
+#include <CCore/inc/video/Picture.h>
+
+#include <CCore/inc/TaskMemStack.h>
 
 namespace App {
 
 /* using */
 
 using namespace CCore;
-using namespace Video;
+using namespace CCore::Video;
 
 /* functions */
 
@@ -38,19 +37,27 @@ int TestMain(CmdDisplay display);
 /* Ping() */
 
 template <class T>
-void Ping(T &,int)
+concept bool Has_objPing = requires(T &obj)
  {
- }
+  obj.ping();
+ } ;
 
 template <class T>
-auto Ping(T &obj,NothingType) -> decltype( obj.ping() )
+concept bool No_objPing = !Has_objPing<T> ;
+
+void Ping(Has_objPing &obj)
  {
   obj.ping();
  }
 
+void Ping(No_objPing &)
+ {
+  // do nothing
+ }
+
 /* classes */
 
-template <class SubWindow> struct ClientApplication;
+template <class Window> struct ClientApplication;
 
 class BufReport;
 
@@ -58,27 +65,27 @@ class ResultBuilder;
 
 class ResultWindow;
 
-/* struct ClientApplication<SubWindow> */
+/* struct ClientApplication<Window> */
 
-template <class SubWindow>
+template <class Window>
 struct ClientApplication
  {
   struct Param : WindowReportParam
    {
-    typename SubWindow::ConfigType client_cfg;
+    typename Window::ConfigType client_cfg;
    };
 
   class Application : public ApplicationBase
    {
      const CmdDisplay cmd_display;
 
-     String title;
+     DefString title;
 
      DragFrame main_win;
 
      ExceptionClient exception_client;
 
-     SubWindow client;
+     Window client;
 
     private:
 
@@ -99,9 +106,7 @@ struct ClientApplication
 
      virtual void prepare()
       {
-       Point max_size=desktop->getScreenSize();
-
-       main_win.createMain(cmd_display,max_size,title);
+       main_win.createMain(cmd_display,title);
       }
 
      virtual void beforeLoop() noexcept
@@ -121,13 +126,13 @@ struct ClientApplication
 
      virtual void afterWait()
       {
-       Ping(client,Nothing);
+       Ping(client);
       }
 
     public:
 
      template <class ... TT>
-     Application(Param &param,WindowReportBase &report,CmdDisplay cmd_display_,const char *title_,TT && ... tt)
+     Application(Param &param,WindowReportBase &report,CmdDisplay cmd_display_,const DefString &title_,TT && ... tt)
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
@@ -140,13 +145,13 @@ struct ClientApplication
       }
 
      template <class P,class ... TT>
-     Application(P &param,WindowReportBase &report,CmdDisplay cmd_display_,const char *title_,Signal<> &update,TT && ... tt)
+     Application(P &param,WindowReportBase &report,CmdDisplay cmd_display_,const DefString &title_,Signal<> &signal,TT && ... tt)
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
-        main_win(param.desktop,param.report_cfg,update),
+        main_win(param.desktop,param.report_cfg,signal),
         exception_client(main_win,param.exception_cfg,report),
-        client(main_win,update, std::forward<TT>(tt)... )
+        client(main_win,signal, std::forward<TT>(tt)... )
       {
        main_win.bindAlertClient(exception_client);
        main_win.bindClient(client);
@@ -157,7 +162,7 @@ struct ClientApplication
       }
    };
 
-  static int Main(CmdDisplay cmd_display,const char *title)
+  static int Main(CmdDisplay cmd_display,const DefString &title)
    {
     try
       {
@@ -165,6 +170,8 @@ struct ClientApplication
 
        Param param;
        WindowReport report(param);
+
+       SetAppIcon(DefaultAppIcon());
 
        Application app(param,report,cmd_display,title);
 
@@ -177,7 +184,7 @@ struct ClientApplication
    }
 
   template <class T>
-  static int MainExtra(CmdDisplay cmd_display,const char *title)
+  static int MainExtra(CmdDisplay cmd_display,const DefString &title)
    {
     try
       {
@@ -185,6 +192,8 @@ struct ClientApplication
 
        Param param;
        WindowReport report(param);
+
+       SetAppIcon(DefaultAppIcon());
 
        T extra(InterruptFunction(param.desktop));
 
@@ -198,17 +207,19 @@ struct ClientApplication
       }
    }
 
-  static int MainFrame(CmdDisplay cmd_display,const char *title)
+  static int MainFrame(CmdDisplay cmd_display,const DefString &title)
    {
     try
       {
        TaskMemStack tms(64_KByte);
 
        WindowReportParam param;
-       Signal<> main_win_update;
+       Signal<> updated;
        WindowReport report(param);
 
-       Application app(param,report,cmd_display,title,main_win_update,param.report_cfg);
+       SetAppIcon(DefaultAppIcon());
+
+       Application app(param,report,cmd_display,title,updated,param.report_cfg);
 
        return app.run();
       }
@@ -264,7 +275,7 @@ class ResultBuilder : Task
 
    unsigned total;
    unsigned current = 0 ;
-   bool done = 0 ;
+   bool done = false ;
    Info result;
 
   private:
@@ -306,7 +317,7 @@ class ResultBuilder : Task
 
 /* class ResultWindow */
 
-class ResultWindow : public SubWindow
+class ResultWindow : public ComboWindow
  {
   public:
 
@@ -330,8 +341,6 @@ class ResultWindow : public SubWindow
 
    ResultBuilder &builder;
 
-   WindowList wlist;
-
    ProgressWindow progress;
    InfoWindow info;
 
@@ -340,6 +349,8 @@ class ResultWindow : public SubWindow
    ResultWindow(SubWindowHost &host,const ConfigType &cfg,ResultBuilder &builder);
 
    ~ResultWindow();
+
+   // methods
 
    void ping();
 
@@ -354,20 +365,6 @@ class ResultWindow : public SubWindow
    // base
 
    virtual void open();
-
-   virtual void close();
-
-   // keyboard
-
-   virtual void gainFocus();
-
-   virtual void looseFocus();
-
-   // mouse
-
-   virtual void looseCapture();
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const;
 
    // user input
 

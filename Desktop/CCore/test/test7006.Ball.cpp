@@ -84,49 +84,43 @@ class ClientSubWindow : public SubWindow
     {
      Used(drag_active);
 
-     try
+     if( magnify )
        {
-        if( magnify )
-          {
-           SpecialDrawArt art(buf,getSize());
+        SpecialDrawArt art(buf,getSize());
 
-           art.grid(magnify_factor,+cfg.field,+cfg.grid);
+        art.grid(magnify_factor,+cfg.field,+cfg.grid);
 
-           art.circle_micro(center,radius,+cfg.ball,focus,magnify_factor);
-          }
-        else
-          {
-           CommonDrawArt art(buf);
-
-           art.erase(+cfg.back);
-
-           CommonDrawArt field_art(buf.cut(field));
-
-           field_art.erase(+cfg.field);
-
-           if( ball )
-             {
-              field_art.ball(center,radius,+cfg.ball);
-             }
-
-           if( circle )
-             {
-              field_art.circle(center,radius,+cfg.ball);
-             }
-
-           if( spline )
-             {
-              field_art.circleSpline(center,radius,+cfg.spline);
-             }
-
-           if( spline_smooth )
-             {
-              field_art.circleSpline_smooth(center,radius,+cfg.spline);
-             }
-          }
+        art.circle_micro(center,radius,+cfg.ball,focus,magnify_factor);
        }
-     catch(CatchType)
+     else
        {
+        CommonDrawArt art(buf);
+
+        art.erase(+cfg.back);
+
+        CommonDrawArt field_art(buf.cut(field));
+
+        field_art.erase(+cfg.field);
+
+        if( ball )
+          {
+           field_art.ball(center,radius,+cfg.ball);
+          }
+
+        if( circle )
+          {
+           field_art.circle(center,radius,+cfg.ball);
+          }
+
+        if( spline )
+          {
+           field_art.circleSpline(center,radius,+cfg.spline);
+          }
+
+        if( spline_smooth )
+          {
+           field_art.circleSpline_smooth(center,radius,+cfg.spline);
+          }
        }
     }
 
@@ -141,7 +135,7 @@ class ClientSubWindow : public SubWindow
     {
      switch( vkey )
        {
-        case VKey_F1 :
+        case VKey_F2 :
          {
           ball=!ball;
 
@@ -149,7 +143,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F2 :
+        case VKey_F3 :
          {
           circle=!circle;
 
@@ -157,7 +151,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F3 :
+        case VKey_F4 :
          {
           spline=!spline;
 
@@ -165,7 +159,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F4 :
+        case VKey_F5 :
          {
           spline_smooth=!spline_smooth;
 
@@ -252,7 +246,7 @@ using namespace Private_7006;
 template <>
 int TestMain<7006>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7006");
+  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7006"_def);
  }
 
 } // namespace App

@@ -24,7 +24,7 @@ namespace Private_7005 {
 class ClientSubWindow : public SubWindow
  {
    DragFrameShape::Config &cfg;
-   Signal<> &update;
+   Signal<> &updated;
 
    enum Param
     {
@@ -41,10 +41,10 @@ class ClientSubWindow : public SubWindow
 
   public:
 
-   ClientSubWindow(SubWindowHost &host,Signal<> &update_,DragFrameShape::Config &cfg_)
+   ClientSubWindow(SubWindowHost &host,Signal<> &updated_,DragFrameShape::Config &cfg_)
     : SubWindow(host),
       cfg(cfg_),
-      update(update_)
+      updated(updated_)
     {
     }
 
@@ -78,11 +78,11 @@ class ClientSubWindow : public SubWindow
     {
      switch( vkey )
        {
-        case VKey_F1 : param=Frame; break;
-        case VKey_F2 : param=Title; break;
-        case VKey_F3 : param=BtnDx; break;
-        case VKey_F4 : param=BtnDy; break;
-        case VKey_F5 : param=Width; break;
+        case VKey_F2 : param=Frame; break;
+        case VKey_F3 : param=Title; break;
+        case VKey_F4 : param=BtnDx; break;
+        case VKey_F5 : param=BtnDy; break;
+        case VKey_F6 : param=Width; break;
        }
     }
 
@@ -101,7 +101,7 @@ class ClientSubWindow : public SubWindow
        case Width : cfg.width=Cap<MCoord>(Fraction(1,2),+cfg.width+Fraction(delta,2),Fraction(100,2)); break;
       }
 
-     update.assert();
+     updated.assert();
     }
  };
 
@@ -114,7 +114,7 @@ using namespace Private_7005;
 template <>
 int TestMain<7005>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::MainFrame(cmd_display,"Test7005");
+  return ClientApplication<ClientSubWindow>::MainFrame(cmd_display,"Test7005"_def);
  }
 
 } // namespace App

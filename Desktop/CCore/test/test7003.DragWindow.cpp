@@ -93,24 +93,18 @@ class ClientSubWindow : public SubWindow
     {
      Used(drag_active);
 
-     try
-       {
-        CommonDrawArt art(buf);
+     CommonDrawArt art(buf);
 
-        art.erase(+cfg.back);
+     art.erase(+cfg.back);
 
-        art.block(field,+cfg.field);
+     art.block(field,+cfg.field);
 
-        if( select_a )
-          cross(art,a,+cfg.begin);
-        else
-          cross(art,b,+cfg.end);
+     if( select_a )
+       cross(art,a,+cfg.begin);
+     else
+       cross(art,b,+cfg.end);
 
-        CommonDrawArt(buf.cut(field)).path(+cfg.line,a,b);
-       }
-     catch(CatchType)
-       {
-       }
+     CommonDrawArt(buf.cut(field)).path(+cfg.line,a,b);
     }
 
    // user input
@@ -153,7 +147,7 @@ using namespace Private_7003;
 template <>
 int TestMain<7003>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7003");
+  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7003"_def);
  }
 
 } // namespace App

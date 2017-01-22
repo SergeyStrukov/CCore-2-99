@@ -16,6 +16,7 @@
 #include <CCore/test/wintest.h>
 #include <CCore/test/SpecialDrawArt.h>
 
+#include <CCore/inc/RangeDel.h>
 #include <CCore/inc/Print.h>
 
 namespace App {
@@ -27,14 +28,7 @@ namespace Private_7007 {
 template <class A>
 void Remove(A &obj,ulen ind)
  {
-  if( ind<obj.getLen() )
-    {
-     auto r=Range(obj).part(ind);
-
-     for(; r.len>1 ;++r) r[0]=r[1];
-
-     obj.shrink_one();
-    }
+  if( RangeCopyDel(Range(obj),ind) ) obj.shrink_one();
  }
 
 template <class A,class T>
@@ -181,69 +175,63 @@ class ClientSubWindow : public SubWindow
     {
      Used(drag_active);
 
-     try
+     if( magnify )
        {
-        if( magnify )
+        SpecialDrawArt art(buf,getSize());
+
+        art.grid(magnify_factor,+cfg.back,+cfg.grid);
+
+        switch( draw_type )
           {
-           SpecialDrawArt art(buf,getSize());
+           case DrawCurvePath       : art.curvePath_micro(Range_const(dots),+cfg.path,focus,magnify_factor); break;
 
-           art.grid(magnify_factor,+cfg.back,+cfg.grid);
+           case DrawPathSmooth      : art.path_smooth_micro(Range_const(dots),+cfg.path,focus,magnify_factor); break;
 
-           switch( draw_type )
-             {
-              case DrawCurvePath       : art.curvePath_micro(Range_const(dots),+cfg.path,focus,magnify_factor); break;
-
-              case DrawPathSmooth      : art.path_smooth_micro(Range_const(dots),+cfg.path,focus,magnify_factor); break;
-
-              case DrawCurvePathSmooth : art.curvePath_smooth_micro(Range_const(dots),+cfg.path,focus,magnify_factor); break;
-             }
-          }
-        else
-          {
-           CommonDrawArt art(buf);
-
-           art.erase(+cfg.back);
-
-           art.block(field,+cfg.field);
-
-           if( draw_type<DrawSolid )
-             {
-              for(auto p : dots ) art.knob(p,+cfg.knob_len,+cfg.knob);
-
-              if( selected<dots.getLen() ) cross(art,dots[selected],+cfg.cross);
-             }
-
-           CommonDrawArt field_art(buf.cut(field));
-
-           ClockTimer timer;
-
-           switch( draw_type )
-             {
-              case DrawPath            : field_art.path(Range_const(dots),+cfg.path); break;
-              case DrawLoop            : field_art.loop(Range_const(dots),+cfg.path); break;
-              case DrawCurvePath       : field_art.curvePath(Range_const(dots),+cfg.path); break;
-              case DrawCurveLoop       : field_art.curveLoop(Range_const(dots),+cfg.path); break;
-              case DrawPathSmooth      : field_art.path_smooth(Range_const(dots),+cfg.path); break;
-              case DrawLoopSmooth      : field_art.loop_smooth(Range_const(dots),+cfg.path); break;
-              case DrawCurvePathSmooth : field_art.curvePath_smooth(Range_const(dots),+cfg.path); break;
-              case DrawCurveLoopSmooth : field_art.curveLoop_smooth(Range_const(dots),+cfg.path); break;
-
-              case DrawSolid           : field_art.solid(Range_const(dots),solid_flag,+cfg.solid); break;
-              case DrawCurveSolid      : field_art.curveSolid(Range_const(dots),solid_flag,+cfg.solid); break;
-             }
-
-           auto time=timer.get();
-
-           Printf(out,"#;[#;] #;\n",GetTextDesc(draw_type),dots.getLen(),time);
-
-           if( draw_type>=DrawSolid )
-             {
-              if( selected<dots.getLen() ) cross(art,dots[selected],+cfg.cross);
-             }
+           case DrawCurvePathSmooth : art.curvePath_smooth_micro(Range_const(dots),+cfg.path,focus,magnify_factor); break;
           }
        }
-     catch(CatchType)
+     else
        {
+        CommonDrawArt art(buf);
+
+        art.erase(+cfg.back);
+
+        art.block(field,+cfg.field);
+
+        if( draw_type<DrawSolid )
+          {
+           for(auto p : dots ) art.knob(p,+cfg.knob_len,+cfg.knob);
+
+           if( selected<dots.getLen() ) cross(art,dots[selected],+cfg.cross);
+          }
+
+        CommonDrawArt field_art(buf.cut(field));
+
+        ClockTimer timer;
+
+        switch( draw_type )
+          {
+           case DrawPath            : field_art.path(Range_const(dots),+cfg.path); break;
+           case DrawLoop            : field_art.loop(Range_const(dots),+cfg.path); break;
+           case DrawCurvePath       : field_art.curvePath(Range_const(dots),+cfg.path); break;
+           case DrawCurveLoop       : field_art.curveLoop(Range_const(dots),+cfg.path); break;
+           case DrawPathSmooth      : field_art.path_smooth(Range_const(dots),+cfg.path); break;
+           case DrawLoopSmooth      : field_art.loop_smooth(Range_const(dots),+cfg.path); break;
+           case DrawCurvePathSmooth : field_art.curvePath_smooth(Range_const(dots),+cfg.path); break;
+           case DrawCurveLoopSmooth : field_art.curveLoop_smooth(Range_const(dots),+cfg.path); break;
+
+           case DrawSolid           : field_art.solid(Range_const(dots),solid_flag,+cfg.solid); break;
+           case DrawCurveSolid      : field_art.curveSolid(Range_const(dots),solid_flag,+cfg.solid); break;
+          }
+
+        auto time=timer.get();
+
+        Printf(out,"#;[#;] #;\n",GetTextDesc(draw_type),dots.getLen(),time);
+
+        if( draw_type>=DrawSolid )
+          {
+           if( selected<dots.getLen() ) cross(art,dots[selected],+cfg.cross);
+          }
        }
     }
 
@@ -258,7 +246,7 @@ class ClientSubWindow : public SubWindow
     {
      switch( vkey )
        {
-        case VKey_F1 :
+        case VKey_F2 :
          {
           draw_type=DrawPath;
 
@@ -266,7 +254,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F2 :
+        case VKey_F3 :
          {
           draw_type=DrawLoop;
 
@@ -274,7 +262,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F3 :
+        case VKey_F4 :
          {
           draw_type=DrawCurvePath;
 
@@ -282,7 +270,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F4 :
+        case VKey_F5 :
          {
           draw_type=DrawCurveLoop;
 
@@ -290,7 +278,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F5 :
+        case VKey_F6 :
          {
           draw_type=DrawPathSmooth;
 
@@ -298,7 +286,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F6 :
+        case VKey_F7 :
          {
           draw_type=DrawLoopSmooth;
 
@@ -306,7 +294,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F7 :
+        case VKey_F8 :
          {
           draw_type=DrawCurvePathSmooth;
 
@@ -314,7 +302,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F8 :
+        case VKey_F9 :
          {
           draw_type=DrawCurveLoopSmooth;
 
@@ -322,7 +310,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F9 :
+        case VKey_F10 :
          {
           draw_type=DrawSolid;
 
@@ -330,7 +318,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F10 :
+        case VKey_F11 :
          {
           draw_type=DrawCurveSolid;
 
@@ -338,7 +326,7 @@ class ClientSubWindow : public SubWindow
          }
         break;
 
-        case VKey_F11 :
+        case VKey_F12 :
          {
           solid_flag=(solid_flag?SolidOdd:SolidAll);
 
@@ -450,7 +438,7 @@ class ClientSubWindow : public SubWindow
        {
         if( mkey&MouseKey_Left )
           {
-           if( getFrame()->getHost()->getToken() ) return;
+           if( getFrameHost()->getToken() ) return;
 
            select(point);
           }
@@ -487,7 +475,7 @@ using namespace Private_7007;
 template <>
 int TestMain<7007>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7007");
+  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7007"_def);
  }
 
 } // namespace App4

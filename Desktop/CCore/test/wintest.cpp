@@ -121,10 +121,10 @@ Info ResultBuilder::getResult() const
 /* class ResultWindow */
 
 ResultWindow::ResultWindow(SubWindowHost &host,const ConfigType &cfg_,ResultBuilder &builder_)
- : SubWindow(host),
+ : ComboWindow(host),
    cfg(cfg_),
    builder(builder_),
-   wlist(*this),
+
    progress(wlist,cfg.progress_cfg.get()),
    info(wlist,cfg.info_cfg.get())
  {
@@ -179,14 +179,14 @@ void ResultWindow::layout()
 
 void ResultWindow::draw(DrawBuf buf,bool drag_active) const
  {
-  CommonDrawArt(buf).erase(+cfg.back);
+  buf.erase(+cfg.back);
 
   wlist.draw(buf,drag_active);
  }
 
 void ResultWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  CommonDrawArt(buf).block(pane,+cfg.back);
+  buf.erase(pane,+cfg.back);
 
   wlist.draw(buf,pane,drag_active);
  }
@@ -195,38 +195,9 @@ void ResultWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 void ResultWindow::open()
  {
-  wlist.open();
+  ComboWindow::open();
 
   builder.start();
- }
-
-void ResultWindow::close()
- {
-  wlist.close();
- }
-
- // keyboard
-
-void ResultWindow::gainFocus()
- {
-  wlist.gainFocus();
- }
-
-void ResultWindow::looseFocus()
- {
-  wlist.looseFocus();
- }
-
- // mouse
-
-void ResultWindow::looseCapture()
- {
-  wlist.looseCapture();
- }
-
-MouseShape ResultWindow::getMouseShape(Point point,KeyMod kmod) const
- {
-  return wlist.getMouseShape(point,kmod,Mouse_Arrow);
  }
 
  // user input
