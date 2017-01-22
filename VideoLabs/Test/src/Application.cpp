@@ -48,7 +48,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragFrame main_win;
+   DragFrame main_frame;
 
    ExceptionClient exception_client;
 
@@ -73,7 +73,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     main_win.createMain(cmd_display,"Test"_def);
+     main_frame.createMain(cmd_display,"Test"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -96,12 +96,12 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.report_cfg),
-      exception_client(main_win,param.exception_cfg,report),
-      client(main_win,param.test_cfg)
+      main_frame(param.desktop,param.report_cfg),
+      exception_client(main_frame,param.exception_cfg,report),
+      client(main_frame,param.test_cfg)
     {
-     main_win.bindAlertClient(exception_client);
-     main_win.bindClient(client);
+     main_frame.bindAlertClient(exception_client);
+     main_frame.bindClient(client);
     }
 
    ~Application()

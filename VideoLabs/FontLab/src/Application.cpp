@@ -17,6 +17,7 @@
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
+#include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
 
@@ -55,11 +56,12 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragFrame main_win;
+   DragFrame main_frame;
+
+   ExceptionClient exception_client;
 
    FontSelectorWindow selector;
 
-   ExceptionClient exception_client;
    FontLab client;
 
   private:
@@ -81,9 +83,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     Point max_size=desktop->getScreenSize();
-
-     main_win.createMain(cmd_display,max_size,String("FontLab"));
+     main_frame.createMain(cmd_display,"FontLab"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -106,13 +106,13 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.drag_cfg),
+      main_frame(param.desktop,param.drag_cfg),
+      exception_client(main_frame,param.exception_cfg,report),
       selector(param.desktop,param.drag_cfg,param.selector_cfg),
-      exception_client(main_win,param.exception_cfg,report),
-      client(main_win,param.lab_cfg,selector)
+      client(main_frame,param.lab_cfg,selector)
     {
-     main_win.bindAlertClient(exception_client);
-     main_win.bindClient(client);
+     main_frame.bindAlertClient(exception_client);
+     main_frame.bindClient(client);
     }
 
    ~Application()
@@ -130,6 +130,8 @@ int Main(CmdDisplay cmd_display)
 
      Param param;
      WindowReport report(param);
+
+     SetAppIcon(DefaultAppIcon());
 
      Application app(report,param,cmd_display);
 

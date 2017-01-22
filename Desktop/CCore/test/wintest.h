@@ -81,7 +81,7 @@ struct ClientApplication
 
      DefString title;
 
-     DragFrame main_win;
+     DragFrame main_frame;
 
      ExceptionClient exception_client;
 
@@ -106,7 +106,7 @@ struct ClientApplication
 
      virtual void prepare()
       {
-       main_win.createMain(cmd_display,title);
+       main_frame.createMain(cmd_display,title);
       }
 
      virtual void beforeLoop() noexcept
@@ -136,12 +136,12 @@ struct ClientApplication
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
-        main_win(param.desktop,param.report_cfg),
-        exception_client(main_win,param.exception_cfg,report),
-        client(main_win,param.client_cfg, std::forward<TT>(tt)... )
+        main_frame(param.desktop,param.report_cfg),
+        exception_client(main_frame,param.exception_cfg,report),
+        client(main_frame,param.client_cfg, std::forward<TT>(tt)... )
       {
-       main_win.bindAlertClient(exception_client);
-       main_win.bindClient(client);
+       main_frame.bindAlertClient(exception_client);
+       main_frame.bindClient(client);
       }
 
      template <class P,class ... TT>
@@ -149,12 +149,12 @@ struct ClientApplication
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
-        main_win(param.desktop,param.report_cfg,signal),
-        exception_client(main_win,param.exception_cfg,report),
-        client(main_win,signal, std::forward<TT>(tt)... )
+        main_frame(param.desktop,param.report_cfg,signal),
+        exception_client(main_frame,param.exception_cfg,report),
+        client(main_frame,signal, std::forward<TT>(tt)... )
       {
-       main_win.bindAlertClient(exception_client);
-       main_win.bindClient(client);
+       main_frame.bindAlertClient(exception_client);
+       main_frame.bindClient(client);
       }
 
      ~Application()
