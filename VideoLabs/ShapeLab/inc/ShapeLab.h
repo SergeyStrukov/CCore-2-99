@@ -113,8 +113,6 @@ class ShapeLab1 : public ComboWindow
 
    void setSize(Point point);
 
-   void drawBack(DrawBuf buf) const;
-
   private:
 
    void sw_changed(bool on);
@@ -143,9 +141,7 @@ class ShapeLab1 : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
 
    // user input
 
@@ -218,8 +214,6 @@ class TestDialog : public ComboWindow
 
    void setTextGiven(Point point);
 
-   void drawBack(DrawBuf buf) const;
-
   private:
 
    void align_x_changed(int new_id,int prev_id);
@@ -239,9 +233,7 @@ class TestDialog : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
 
    // user input
 
@@ -359,9 +351,7 @@ class ShapeLab2 : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
 
    // user input
 

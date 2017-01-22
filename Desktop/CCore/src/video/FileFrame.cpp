@@ -1137,18 +1137,9 @@ void FileWindow::layout()
   }
  }
 
-void FileWindow::draw(DrawBuf buf,bool drag_active) const
+void FileWindow::drawBack(DrawBuf buf,bool) const
  {
   buf.erase(+cfg.back);
-
-  wlist.draw(buf,drag_active);
- }
-
-void FileWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  buf.erase(pane,+cfg.back);
-
-  wlist.draw(buf,pane,drag_active);
  }
 
 /* class FileFrame */

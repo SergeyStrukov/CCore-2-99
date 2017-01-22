@@ -461,13 +461,15 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
 
      if( !r ) return;
 
-     redrawBuf( [this,r,&client] (FrameBuf<DesktopColor> &buf)
+     redrawBuf( [this,r,&client] (FrameBuf<DesktopColor> &buf_)
                                  {
+                                  DrawBuf buf(buf_);
+
                                   for(Pane pane : r )
                                     {
-                                     client.forward_draw(buf,pane,shape.drag_type);
+                                     client.forward_draw(buf.cut(pane),pane,shape.drag_type);
 
-                                     shade(buf,pane);
+                                     shade(buf_,pane);
 
                                      host->invalidate(pane,1);
                                     }

@@ -44,17 +44,6 @@ void ShapeLab1::setSize(Point point)
   setSize(knob,point);
  }
 
-void ShapeLab1::drawBack(DrawBuf buf) const
- {
-  SmoothDrawArt art(buf);
-
-  art.erase(cfg.back);
-
-  MCoord len=cfg.len;
-
-  art.path(cfg.width,Black,size_base+MPoint(len,0),size_base,size_base+MPoint(0,len));
- }
-
 void ShapeLab1::sw_changed(bool on)
  {
   light.turn(on);
@@ -180,18 +169,15 @@ void ShapeLab1::layout()
   size_base=Point(20,100);
  }
 
-void ShapeLab1::draw(DrawBuf buf,bool drag_active) const
+void ShapeLab1::drawBack(DrawBuf buf,bool) const
  {
-  drawBack(buf);
+  SmoothDrawArt art(buf);
 
-  wlist.draw(buf,drag_active);
- }
+  art.erase(cfg.back);
 
-void ShapeLab1::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  drawBack(buf.cut(pane));
+  MCoord len=cfg.len;
 
-  wlist.draw(buf,pane,drag_active);
+  art.path(cfg.width,Black,size_base+MPoint(len,0),size_base,size_base+MPoint(0,len));
  }
 
  // user input
@@ -228,29 +214,6 @@ void TestDialog::setTextGiven(Point point)
   tgiven=point-tbase;
 
   redraw();
- }
-
-void TestDialog::drawBack(DrawBuf buf) const
- {
-  SmoothDrawArt art(buf);
-
-  art.erase(cfg.back);
-
-  Pane pane=PaneBaseLim(tbase,tlim);
-
-  MPane p(pane);
-
-  art.loop(HalfNeg,Fraction(2),Red,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
-  art.loop(HalfPos,Fraction(2),Black,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
-
-  Font font=cfg.font;
-
-  TextPlace place(align_x,align_y);
-
-  place.x=tgiven.x;
-  place.y=tgiven.y;
-
-  font->text(buf,pane,place,"This"," is a text line",Blue);
  }
 
 void TestDialog::align_x_changed(int new_id,int)
@@ -342,18 +305,27 @@ void TestDialog::layout()
   label_y_Given.setPlace(Pane(45+d,110,100,20));
  }
 
-void TestDialog::draw(DrawBuf buf,bool drag_active) const
+void TestDialog::drawBack(DrawBuf buf,bool) const
  {
-  drawBack(buf);
+  SmoothDrawArt art(buf);
 
-  wlist.draw(buf,drag_active);
- }
+  art.erase(cfg.back);
 
-void TestDialog::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  drawBack(buf.cut(pane));
+  Pane pane=PaneBaseLim(tbase,tlim);
 
-  wlist.draw(buf,pane,drag_active);
+  MPane p(pane);
+
+  art.loop(HalfNeg,Fraction(2),Red,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+  art.loop(HalfPos,Fraction(2),Black,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+
+  Font font=cfg.font;
+
+  TextPlace place(align_x,align_y);
+
+  place.x=tgiven.x;
+  place.y=tgiven.y;
+
+  font->text(buf,pane,place,"This"," is a text line",Blue);
  }
 
  // user input
@@ -530,18 +502,9 @@ void ShapeLab2::layout()
   check.setPlace(Pane({Coord(es.x+30),360},20));
  }
 
-void ShapeLab2::draw(DrawBuf buf,bool drag_active) const
+void ShapeLab2::drawBack(DrawBuf buf,bool) const
  {
   buf.erase(cfg.back);
-
-  wlist.draw(buf,drag_active);
- }
-
-void ShapeLab2::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  buf.erase(pane,cfg.back);
-
-  wlist.draw(buf,pane,drag_active);
  }
 
  // user input

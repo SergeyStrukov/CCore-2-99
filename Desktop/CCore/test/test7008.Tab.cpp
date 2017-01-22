@@ -186,18 +186,9 @@ class ClientSubWindow : public ComboWindow
      win2.setPlace(*row);
     }
 
-   virtual void draw(DrawBuf buf,bool drag_active) const
+   virtual void drawBack(DrawBuf buf,bool) const
     {
      buf.erase(+cfg.back);
-
-     wlist.draw(buf,drag_active);
-    }
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const
-    {
-     buf.erase(pane,+cfg.back);
-
-     wlist.draw(buf,pane,drag_active);
     }
  };
 

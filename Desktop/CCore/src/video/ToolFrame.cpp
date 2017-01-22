@@ -111,13 +111,15 @@ void ToolFrame::redrawSet()
 
   auto &client=getClient();
 
-  redrawBuf( [this,r,&client] (FrameBuf<DesktopColor> &buf)
+  redrawBuf( [this,r,&client] (FrameBuf<DesktopColor> &buf_)
                               {
+                               DrawBuf buf(buf_);
+
                                for(Pane pane : r )
                                  {
-                                  client.forward_draw(buf,pane,false);
+                                  client.forward_draw(buf.cut(pane),pane,false);
 
-                                  shade(buf,pane);
+                                  shade(buf_,pane);
 
                                   host->invalidate(pane,1);
                                  }
