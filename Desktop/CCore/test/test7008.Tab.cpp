@@ -192,6 +192,13 @@ class ClientSubWindow : public ComboWindow
 
      wlist.draw(buf,drag_active);
     }
+
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const
+    {
+     buf.erase(pane,+cfg.back);
+
+     wlist.draw(buf,pane,drag_active);
+    }
  };
 
 } // namespace Private_7008

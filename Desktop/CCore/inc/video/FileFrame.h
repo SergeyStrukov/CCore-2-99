@@ -236,10 +236,6 @@ class FileFilterWindow : public ComboWindow
    // drawing
 
    virtual void layout();
-
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
  };
 
 /* class FileFilterListWindow */
@@ -318,10 +314,6 @@ class FileFilterListWindow : public ComboWindow , FileFilterWindow::SignalPad
    // drawing
 
    virtual void layout();
-
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
 
    // user input
 

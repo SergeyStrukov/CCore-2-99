@@ -397,16 +397,6 @@ void FileFilterWindow::layout()
       .place(edit);
  }
 
-void FileFilterWindow::draw(DrawBuf buf,bool drag_active) const
- {
-  wlist.draw(buf,drag_active);
- }
-
-void FileFilterWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  wlist.draw(buf,pane,drag_active);
- }
-
 /* class FileFilterListWindow */
 
 void FileFilterListWindow::purge()
@@ -529,16 +519,6 @@ void FileFilterListWindow::layout()
 
      pane.place_cutTopLeft(knob);
     }
- }
-
-void FileFilterListWindow::draw(DrawBuf buf,bool drag_active) const
- {
-  wlist.draw(buf,drag_active);
- }
-
-void FileFilterListWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  wlist.draw(buf,pane,drag_active);
  }
 
  // user input

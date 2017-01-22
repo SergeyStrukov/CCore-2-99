@@ -17,6 +17,7 @@
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
+#include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
 
@@ -34,17 +35,18 @@ class Application;
 
 /* class Client */
 
-class Client : ShapeLab::Config , public ShapeLab , public AliveControl
+class Client : public ShapeLab , public AliveControl
  {
   public:
 
-   Client(SubWindowHost &host,FontBuilder &fb)
-    : ShapeLab::Config(fb),
-      ShapeLab(host,*this)
+   Client(SubWindowHost &host,ShapeLab::Config &cfg)
+    : ShapeLab(host,cfg)
     {
     }
 
-   ~Client() {}
+   ~Client()
+    {
+    }
 
    // AliveControl
 
@@ -70,6 +72,8 @@ class Client : ShapeLab::Config , public ShapeLab , public AliveControl
 
 struct Param : WindowReportParam
  {
+  ShapeLab::Config client_cfg;
+
   Param()
    {
    }
@@ -81,11 +85,10 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   FontBuilder fb;
-
    DragFrame main_win;
 
    ExceptionClient exception_client;
+
    Client client;
 
   private:
@@ -107,9 +110,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     Point max_size=desktop->getScreenSize();
-
-     main_win.createMain(cmd_display,max_size,String("ShapeLab"));
+     main_win.createMain(cmd_display,"ShapeLab"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -134,7 +135,7 @@ class Application : public ApplicationBase
       cmd_display(cmd_display_),
       main_win(param.desktop,param.report_cfg),
       exception_client(main_win,param.exception_cfg,report),
-      client(main_win,fb)
+      client(main_win,param.client_cfg)
     {
      main_win.bindAlertClient(exception_client);
      main_win.bindClient(client);
@@ -155,6 +156,11 @@ int Main(CmdDisplay cmd_display)
 
      Param param;
      WindowReport report(param);
+     FontBuilder fb;
+
+     param.client_cfg.prepare(fb);
+
+     SetAppIcon(DefaultAppIcon());
 
      Application app(report,param,cmd_display);
 

@@ -30,6 +30,8 @@ namespace App {
 
 class ShapeLab1;
 
+class TestDialog;
+
 class ShapeLab2;
 
 /* type ShapeLab */
@@ -38,7 +40,7 @@ using ShapeLab = ShapeLab2 ;
 
 /* class ShapeLab1 */
 
-class ShapeLab1 : public SubWindow
+class ShapeLab1 : public ComboWindow
  {
   public:
 
@@ -61,7 +63,9 @@ class ShapeLab1 : public SubWindow
      ContourShape::Config contour_cfg;
      TextContourShape::Config text_contour_cfg;
 
-     explicit Config(FontBuilder &fb)
+     Config() noexcept {}
+
+     void prepare(FontBuilder &fb)
       {
        fb.prepare();
 
@@ -75,9 +79,6 @@ class ShapeLab1 : public SubWindow
   private:
 
    const Config &cfg;
-
-   WindowList wlist;
-   WindowList dlist;
 
    SwitchWindow sw;
 
@@ -98,35 +99,39 @@ class ShapeLab1 : public SubWindow
 
    ButtonWindow btn;
    TextWindow text;
-   KnobWindow kbtn;
+   KnobWindow knob;
    CheckWindow check;
    XScrollWindow xscroll;
    YScrollWindow yscroll;
 
    Point size_base;
 
-   SignalConnector<ShapeLab1,bool> connector_change_sw;
-   SignalConnector<ShapeLab1,int,int> connector_change_color;
-   SignalConnector<ShapeLab1,bool> connector_change_check;
-   SignalConnector<ShapeLab1> connector_btn_pressed;
-   SignalConnector<ShapeLab1,ulen> connector_scroll_changed;
-
   private:
-
-   void change_sw(bool on);
-
-   void change_color(int id,int prev_id);
-
-   void change_check(bool on);
-
-   void btn_pressed();
-
-   void scroll_changed(ulen pos);
 
    template <class T>
    void setSize(T &obj,Point point);
 
    void setSize(Point point);
+
+   void drawBack(DrawBuf buf) const;
+
+  private:
+
+   void sw_changed(bool on);
+
+   void group_changed(int id,int prev_id);
+
+   void check_changed(bool on);
+
+   void btn_pressed();
+
+   void scroll_changed(ulen pos);
+
+   SignalConnector<ShapeLab1,bool> connector_sw_changed;
+   SignalConnector<ShapeLab1,int,int> connector_group_changed;
+   SignalConnector<ShapeLab1,bool> connector_check_changed;
+   SignalConnector<ShapeLab1> connector_btn_pressed;
+   SignalConnector<ShapeLab1,ulen> connector_scroll_changed;
 
   public:
 
@@ -140,23 +145,7 @@ class ShapeLab1 : public SubWindow
 
    virtual void draw(DrawBuf buf,bool drag_active) const;
 
-   // base
-
-   virtual void open();
-
-   virtual void close();
-
-   // keyboard
-
-   virtual void gainFocus();
-
-   virtual void looseFocus();
-
-   // mouse
-
-   virtual void looseCapture();
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const;
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
 
    // user input
 
@@ -169,7 +158,7 @@ class ShapeLab1 : public SubWindow
 
 /* class TestDialog */
 
-class TestDialog : public SubWindow
+class TestDialog : public ComboWindow
  {
   public:
 
@@ -183,17 +172,12 @@ class TestDialog : public SubWindow
      RadioShape::Config radio_cfg;
      LabelShape::Config label_cfg;
 
-     Config()
-      {
-      }
+     Config() noexcept {}
     };
 
   private:
 
    const Config &cfg;
-
-   WindowList wlist;
-   WindowList dlist;
 
    TextContourWindow contour_x;
    TextContourWindow contour_y;
@@ -228,8 +212,13 @@ class TestDialog : public SubWindow
    AlignX align_x = AlignX_Left ;
    AlignY align_y = AlignY_Top ;
 
-   SignalConnector<TestDialog,int,int> connector_align_x;
-   SignalConnector<TestDialog,int,int> connector_align_y;
+  private:
+
+   void setTextLim(Point point);
+
+   void setTextGiven(Point point);
+
+   void drawBack(DrawBuf buf) const;
 
   private:
 
@@ -237,9 +226,8 @@ class TestDialog : public SubWindow
 
    void align_y_changed(int new_id,int prev_id);
 
-   void setTextLim(Point point);
-
-   void setTextGiven(Point point);
+   SignalConnector<TestDialog,int,int> connector_align_x;
+   SignalConnector<TestDialog,int,int> connector_align_y;
 
   public:
 
@@ -253,23 +241,7 @@ class TestDialog : public SubWindow
 
    virtual void draw(DrawBuf buf,bool drag_active) const;
 
-   // base
-
-   virtual void open();
-
-   virtual void close();
-
-   // keyboard
-
-   virtual void gainFocus();
-
-   virtual void looseFocus();
-
-   // mouse
-
-   virtual void looseCapture();
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const;
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
 
    // user input
 
@@ -284,7 +256,7 @@ class TestDialog : public SubWindow
 
 /* class ShapeLab2 */
 
-class ShapeLab2 : public SubWindow
+class ShapeLab2 : public ComboWindow
  {
   public:
 
@@ -311,11 +283,13 @@ class ShapeLab2 : public SubWindow
 
      CheckShape::Config check_cfg;
 
-     explicit Config(FontBuilder &fb)
+     explicit Config() noexcept {}
+
+     void prepare(FontBuilder &fb)
       {
        fb.prepare();
 
-       edit_cfg.font=fb.build_or_default("Times New Roman"|Italic,25); //
+       edit_cfg.font=fb.build_or_default("Times New Roman"|Italic,25);
 
        msg_cfg.msg_cfg.refVal().info_cfg.refVal().font=fb.build_or_default("Times New Roman",25);
 
@@ -326,9 +300,6 @@ class ShapeLab2 : public SubWindow
   private:
 
    const Config &cfg;
-
-   WindowList wlist;
-   WindowList dlist;
 
    ProgressWindow progress;
    KnobWindow btn1;
@@ -353,18 +324,7 @@ class ShapeLab2 : public SubWindow
 
    // message
 
-   MessageFrame msg_window;
-
-   // connectors
-
-   SignalConnector<ShapeLab2> connector_btn1_pressed;
-   SignalConnector<ShapeLab2> connector_btn2_pressed;
-
-   SignalConnector<ShapeLab2> connector_dialog_destroyed;
-   SignalConnector<ShapeLab2> connector_msg_destroyed;
-
-   SignalConnector<ShapeLab2> connector_edit_entered;
-   SignalConnector<ShapeLab2,bool> connector_check_changed;
+   MessageFrame msg;
 
   private:
 
@@ -380,6 +340,15 @@ class ShapeLab2 : public SubWindow
 
    void check_changed(bool check);
 
+   SignalConnector<ShapeLab2> connector_btn1_pressed;
+   SignalConnector<ShapeLab2> connector_btn2_pressed;
+
+   SignalConnector<ShapeLab2> connector_dialog_destroyed;
+   SignalConnector<ShapeLab2> connector_msg_destroyed;
+
+   SignalConnector<ShapeLab2> connector_edit_entered;
+   SignalConnector<ShapeLab2,bool> connector_check_changed;
+
   public:
 
    ShapeLab2(SubWindowHost &host,const Config &cfg);
@@ -392,23 +361,7 @@ class ShapeLab2 : public SubWindow
 
    virtual void draw(DrawBuf buf,bool drag_active) const;
 
-   // base
-
-   virtual void open();
-
-   virtual void close();
-
-   // keyboard
-
-   virtual void gainFocus();
-
-   virtual void looseFocus();
-
-   // mouse
-
-   virtual void looseCapture();
-
-   virtual MouseShape getMouseShape(Point point,KeyMod kmod) const;
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
 
    // user input
 

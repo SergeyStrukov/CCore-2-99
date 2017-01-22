@@ -17,6 +17,7 @@
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
+#include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
 
@@ -50,6 +51,7 @@ class Application : public ApplicationBase
    DragFrame main_win;
 
    ExceptionClient exception_client;
+
    Test client;
 
   private:
@@ -71,9 +73,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     Point max_size=desktop->getScreenSize();
-
-     main_win.createMain(cmd_display,max_size,String("Test"));
+     main_win.createMain(cmd_display,"Test"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -119,6 +119,8 @@ int Main(CmdDisplay cmd_display)
 
      Param param;
      WindowReport report(param);
+
+     SetAppIcon(DefaultAppIcon());
 
      Application app(report,param,cmd_display);
 

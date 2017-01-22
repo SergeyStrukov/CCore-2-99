@@ -15,8 +15,8 @@
 
 #include <inc/ShapeLab.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
+#include <CCore/inc/video/Layout.h>
 
 #include <CCore/inc/Exception.h>
 
@@ -24,12 +24,43 @@ namespace App {
 
 /* class ShapeLab */
 
-void ShapeLab1::change_sw(bool on)
+template <class T>
+void ShapeLab1::setSize(T &obj,Point point)
+ {
+  Point p=point-size_base;
+
+  if( p>=GetMinSize(obj) )
+    {
+     obj.setPlace(Pane(obj.getPlace().getBase(),p));
+
+     redraw();
+    }
+ }
+
+void ShapeLab1::setSize(Point point)
+ {
+  Used(point);
+
+  setSize(knob,point);
+ }
+
+void ShapeLab1::drawBack(DrawBuf buf) const
+ {
+  SmoothDrawArt art(buf);
+
+  art.erase(cfg.back);
+
+  MCoord len=cfg.len;
+
+  art.path(cfg.width,Black,size_base+MPoint(len,0),size_base,size_base+MPoint(0,len));
+ }
+
+void ShapeLab1::sw_changed(bool on)
  {
   light.turn(on);
  }
 
-void ShapeLab1::change_color(int id,int)
+void ShapeLab1::group_changed(int id,int)
  {
   switch( id )
     {
@@ -53,21 +84,21 @@ void ShapeLab1::change_color(int id,int)
     }
  }
 
-void ShapeLab1::change_check(bool on)
+void ShapeLab1::check_changed(bool on)
  {
   xscroll.enable(on);
  }
 
 void ShapeLab1::btn_pressed()
  {
-  auto face=kbtn.getFace();
+  auto face=knob.getFace();
 
-  if( face<KnobShape::FaceLeftLeft )
+  if( face<KnobShape::FaceLim-1 )
     face=KnobShape::FaceType(face+1);
   else
     face=KnobShape::FaceOk;
 
-  kbtn.setFace(face);
+  knob.setFace(face);
  }
 
 void ShapeLab1::scroll_changed(ulen pos)
@@ -75,33 +106,9 @@ void ShapeLab1::scroll_changed(ulen pos)
   text.printf("#;",pos);
  }
 
-template <class T>
-void ShapeLab1::setSize(T &obj,Point point)
- {
-  Point p=point-size_base;
-
-  if( p>=obj.getMinSize() )
-    {
-     obj.setPlace(Extent(obj.getPlace().getBase(),p));
-
-     redraw();
-    }
- }
-
-void ShapeLab1::setSize(Point point)
- {
-  Used(point);
-
-  //setSize(kbtn,point);
- }
-
 ShapeLab1::ShapeLab1(SubWindowHost &host,const Config &cfg_)
- : SubWindow(host),
-
+ : ComboWindow(host),
    cfg(cfg_),
-
-   wlist(*this),
-   dlist(*this),
 
    sw(wlist,cfg.switch_cfg),
 
@@ -109,36 +116,31 @@ ShapeLab1::ShapeLab1(SubWindowHost &host,const Config &cfg_)
    radio2(wlist,2,cfg.radio_cfg),
    radio3(wlist,3,cfg.radio_cfg),
 
-   label1(dlist,cfg.label_cfg,String("Green"),AlignX_Left),
-   label2(dlist,cfg.label_cfg,String("Red"),AlignX_Left),
-   label3(dlist,cfg.label_cfg,String("Blue"),AlignX_Left),
+   label1(wlist,cfg.label_cfg,"Green"_def,AlignX_Left),
+   label2(wlist,cfg.label_cfg,"Red"_def,AlignX_Left),
+   label3(wlist,cfg.label_cfg,"Blue"_def,AlignX_Left),
 
-   light(dlist,cfg.light_cfg,Green),
+   light(wlist,cfg.light_cfg,Green),
 
-   contour(dlist,cfg.contour_cfg),
-   text_contour(dlist,cfg.text_contour_cfg,String("Title"),AlignX_Center),
+   contour(wlist,cfg.contour_cfg),
+   text_contour(wlist,cfg.text_contour_cfg,"Title"_def,AlignX_Center),
 
-   btn(wlist,cfg.btn_cfg,String("Next face")),
-   text(dlist,cfg.text_cfg,String("Text"),AlignX_Left),
-   kbtn(wlist,cfg.knob_cfg,KnobShape::FaceOk),
+   btn(wlist,cfg.btn_cfg,"Next face"_def),
+   text(wlist,cfg.text_cfg,"Text"_def,AlignX_Left),
+   knob(wlist,cfg.knob_cfg,KnobShape::FaceOk),
    check(wlist,cfg.check_cfg,true),
    xscroll(wlist,cfg.scroll_cfg),
    yscroll(wlist,cfg.scroll_cfg),
 
-   connector_change_sw(this,&ShapeLab1::change_sw,sw.changed),
-   connector_change_color(this,&ShapeLab1::change_color,group.changed),
-   connector_change_check(this,&ShapeLab1::change_check,check.changed),
+   connector_sw_changed(this,&ShapeLab1::sw_changed,sw.changed),
+   connector_group_changed(this,&ShapeLab1::group_changed,group.changed),
+   connector_check_changed(this,&ShapeLab1::check_changed,check.changed),
    connector_btn_pressed(this,&ShapeLab1::btn_pressed,btn.pressed),
    connector_scroll_changed(this,&ShapeLab1::scroll_changed,yscroll.changed)
  {
-  wlist.insTop(sw,radio1,radio2,radio3,btn,kbtn,check,xscroll,yscroll);
+  wlist.insTop(sw,radio1,radio2,radio3,btn,knob,check,xscroll,yscroll,label1,label2,label3,light,contour,text_contour,text);
 
   group.add(radio1,radio2,radio3);
-
-  wlist.enableTabFocus();
-  wlist.enableClickFocus();
-
-  dlist.insTop(label1,label2,label3,light,contour,text_contour,text);
 
   xscroll.setRange(1000,100,20);
   yscroll.setRange(100,10,2);
@@ -169,7 +171,7 @@ void ShapeLab1::layout()
 
   btn.setPlace(Pane(20,220,150,30));
   text.setPlace(Pane(20,260,300,30));
-  kbtn.setPlace(Pane({20,300},100));
+  knob.setPlace(Pane({20,300},100));
 
   check.setPlace(Pane({20,450},16));
   xscroll.setPlace(Pane(20,480,500,20));
@@ -180,56 +182,16 @@ void ShapeLab1::layout()
 
 void ShapeLab1::draw(DrawBuf buf,bool drag_active) const
  {
-  Smooth::DrawArt art(buf);
+  drawBack(buf);
 
-  art.erase(cfg.back);
-
-  {
-   MCoord len=cfg.len;
-
-   art.path(cfg.width,Black,size_base+MPoint(len,0),size_base,size_base+MPoint(0,len));
-  }
-
-  dlist.draw(buf,drag_active);
   wlist.draw(buf,drag_active);
  }
 
- // base
-
-void ShapeLab1::open()
+void ShapeLab1::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  wlist.open();
+  drawBack(buf.cut(pane));
 
-  wlist.focusTop();
- }
-
-void ShapeLab1::close()
- {
-  wlist.close();
- }
-
- // keyboard
-
-void ShapeLab1::gainFocus()
- {
-  wlist.gainFocus();
- }
-
-void ShapeLab1::looseFocus()
- {
-  wlist.looseFocus();
- }
-
- // mouse
-
-void ShapeLab1::looseCapture()
- {
-  wlist.looseCapture();
- }
-
-MouseShape ShapeLab1::getMouseShape(Point point,KeyMod kmod) const
- {
-  return wlist.getMouseShape(point,kmod);
+  wlist.draw(buf,pane,drag_active);
  }
 
  // user input
@@ -254,20 +216,6 @@ void ShapeLab1::react_Move(Point point,MouseKey mkey)
 
 /* class TestDialog */
 
-void TestDialog::align_x_changed(int new_id,int)
- {
-  align_x=AlignX(new_id);
-
-  redraw();
- }
-
-void TestDialog::align_y_changed(int new_id,int)
- {
-  align_y=AlignY(new_id);
-
-  redraw();
- }
-
 void TestDialog::setTextLim(Point point)
  {
   tlim=point;
@@ -282,47 +230,79 @@ void TestDialog::setTextGiven(Point point)
   redraw();
  }
 
-TestDialog::TestDialog(SubWindowHost &host,const Config &cfg_)
- : SubWindow(host),
-   cfg(cfg_),
-   wlist(*this),
-   dlist(*this),
+void TestDialog::drawBack(DrawBuf buf) const
+ {
+  SmoothDrawArt art(buf);
 
-   contour_x(dlist,cfg.contour_cfg,String("Align X")),
-   contour_y(dlist,cfg.contour_cfg,String("Align Y")),
+  art.erase(cfg.back);
+
+  Pane pane=PaneBaseLim(tbase,tlim);
+
+  MPane p(pane);
+
+  art.loop(HalfNeg,Fraction(2),Red,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+  art.loop(HalfPos,Fraction(2),Black,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+
+  Font font=cfg.font;
+
+  TextPlace place(align_x,align_y);
+
+  place.x=tgiven.x;
+  place.y=tgiven.y;
+
+  font->text(buf,pane,place,"This"," is a text line",Blue);
+ }
+
+void TestDialog::align_x_changed(int new_id,int)
+ {
+  align_x=AlignX(new_id);
+
+  redraw();
+ }
+
+void TestDialog::align_y_changed(int new_id,int)
+ {
+  align_y=AlignY(new_id);
+
+  redraw();
+ }
+
+TestDialog::TestDialog(SubWindowHost &host,const Config &cfg_)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   contour_x(wlist,cfg.contour_cfg,"Align X"_def),
+   contour_y(wlist,cfg.contour_cfg,"Align Y"_def),
 
    radio_x_Left(wlist,AlignX_Left,cfg.radio_cfg),
    radio_x_Center(wlist,AlignX_Center,cfg.radio_cfg),
    radio_x_Right(wlist,AlignX_Right,cfg.radio_cfg),
    radio_x_Given(wlist,AlignX_Given,cfg.radio_cfg),
 
-   label_x_Left(dlist,cfg.label_cfg,String("Left"),AlignX_Left),
-   label_x_Center(dlist,cfg.label_cfg,String("Center"),AlignX_Left),
-   label_x_Right(dlist,cfg.label_cfg,String("Right"),AlignX_Left),
-   label_x_Given(dlist,cfg.label_cfg,String("Given"),AlignX_Left),
+   label_x_Left(wlist,cfg.label_cfg,"Left"_def,AlignX_Left),
+   label_x_Center(wlist,cfg.label_cfg,"Center"_def,AlignX_Left),
+   label_x_Right(wlist,cfg.label_cfg,"Right"_def,AlignX_Left),
+   label_x_Given(wlist,cfg.label_cfg,"Given"_def,AlignX_Left),
 
    radio_y_Top(wlist,AlignY_Top,cfg.radio_cfg),
    radio_y_Center(wlist,AlignY_Center,cfg.radio_cfg),
    radio_y_Bottom(wlist,AlignY_Bottom,cfg.radio_cfg),
    radio_y_Given(wlist,AlignY_Given,cfg.radio_cfg),
 
-   label_y_Top(dlist,cfg.label_cfg,String("Top"),AlignX_Left),
-   label_y_Center(dlist,cfg.label_cfg,String("Center"),AlignX_Left),
-   label_y_Bottom(dlist,cfg.label_cfg,String("Bottom"),AlignX_Left),
-   label_y_Given(dlist,cfg.label_cfg,String("Given"),AlignX_Left),
+   label_y_Top(wlist,cfg.label_cfg,"Top"_def,AlignX_Left),
+   label_y_Center(wlist,cfg.label_cfg,"Center"_def,AlignX_Left),
+   label_y_Bottom(wlist,cfg.label_cfg,"Bottom"_def,AlignX_Left),
+   label_y_Given(wlist,cfg.label_cfg,"Given"_def,AlignX_Left),
 
    connector_align_x(this,&TestDialog::align_x_changed,group_x.changed),
    connector_align_y(this,&TestDialog::align_y_changed,group_y.changed)
  {
-  wlist.insTop(radio_x_Left,radio_x_Center,radio_x_Right,radio_x_Given,radio_y_Top,radio_y_Center,radio_y_Bottom,radio_y_Given);
+  wlist.insTop(radio_x_Left,radio_x_Center,radio_x_Right,radio_x_Given,radio_y_Top,radio_y_Center,radio_y_Bottom,radio_y_Given,
+               contour_x,contour_y,label_x_Left,label_x_Center,label_x_Right,
+               label_x_Given,label_y_Top,label_y_Center,label_y_Bottom,label_y_Given);
 
   group_x.add(radio_x_Left,radio_x_Center,radio_x_Right,radio_x_Given);
   group_y.add(radio_y_Top,radio_y_Center,radio_y_Bottom,radio_y_Given);
-
-  wlist.enableTabFocus();
-  wlist.enableClickFocus();
-
-  dlist.insTop(contour_x,contour_y,label_x_Left,label_x_Center,label_x_Right,label_x_Given,label_y_Top,label_y_Center,label_y_Bottom,label_y_Given);
 
   tbase={50,180};
   tlim={300,210};
@@ -364,73 +344,16 @@ void TestDialog::layout()
 
 void TestDialog::draw(DrawBuf buf,bool drag_active) const
  {
-  Smooth::DrawArt art(buf);
+  drawBack(buf);
 
-  art.erase(cfg.back);
-
-  Pane pane=PaneBaseLim(tbase,tlim);
-
-  MPane p(pane);
-
-  art.loop(HalfNeg,Fraction(2),Red,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
-  art.loop(HalfPos,Fraction(2),Black,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
-
-  Font font=cfg.font;
-
-  TextPlace place(align_x,align_y);
-
-  place.x=tgiven.x;
-  place.y=tgiven.y;
-
-  font->text(buf,pane,place,"This"," is a text line",Blue);
-
-  // draw lists
-
-  dlist.draw(buf,drag_active);
   wlist.draw(buf,drag_active);
  }
 
- // base
-
-void TestDialog::open()
+void TestDialog::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  wlist.open();
-  dlist.open();
+  drawBack(buf.cut(pane));
 
-  wlist.focusTop();
- }
-
-void TestDialog::close()
- {
-  wlist.close();
-  dlist.close();
- }
-
- // keyboard
-
-void TestDialog::gainFocus()
- {
-  wlist.gainFocus();
-  dlist.gainFocus();
- }
-
-void TestDialog::looseFocus()
- {
-  wlist.looseFocus();
-  dlist.looseFocus();
- }
-
- // mouse
-
-void TestDialog::looseCapture()
- {
-  wlist.looseCapture();
-  dlist.looseCapture();
- }
-
-MouseShape TestDialog::getMouseShape(Point point,KeyMod kmod) const
- {
-  return wlist.getMouseShape(point,kmod);
+  wlist.draw(buf,pane,drag_active);
  }
 
  // user input
@@ -475,13 +398,13 @@ void ShapeLab2::btn2_pressed()
  {
 #if 1
 
-  if( msg_window.isDead() )
+  if( msg.isDead() )
     {
      const char *str="This is a test information.\nThe second line.\nThe end of information.";
 
-     msg_window.setInfo(InfoFromString(str));
+     msg.setInfo(str);
 
-     msg_window.create(String("Test message"));
+     msg.create("Test message"_def);
 
      disableFrameReact();
     }
@@ -492,13 +415,13 @@ void ShapeLab2::btn2_pressed()
     {
      Pane pane(50,50,1000,800);
 
-     dialog.create(getFrame(),pane,String("Test dialog"));
+     dialog.create(getFrame(),pane,"Test dialog"_def);
 
      //btn2.disable();
 
      disableFrameReact();
 
-     //getFrame()->getHost()->enableUserInput(false);
+     //getFrameHost()->enableUserInput(false);
     }
 
 #endif
@@ -510,14 +433,14 @@ void ShapeLab2::dialog_destroyed()
 
   enableFrameReact();
 
-  //getFrame()->getHost()->enableUserInput(true);
+  //getFrameHost()->enableUserInput(true);
  }
 
 void ShapeLab2::msg_destroyed()
  {
   enableFrameReact();
 
-  text.printf("button #;",msg_window.getButtonId());
+  text.printf("button #;",msg.getButtonId());
  }
 
 void ShapeLab2::edit_entered()
@@ -534,45 +457,37 @@ void ShapeLab2::check_changed(bool check)
 static const char * TestStr="This is a test string\rthe second line of the test\nthe third line\r\nand the last line.";
 
 ShapeLab2::ShapeLab2(SubWindowHost &host,const Config &cfg_)
- : SubWindow(host),
-
+ : ComboWindow(host),
    cfg(cfg_),
 
-   wlist(*this),
-   dlist(*this),
-
-   progress(dlist,cfg.progress_cfg),
+   progress(wlist,cfg.progress_cfg),
    btn1(wlist,cfg.knob_cfg,KnobShape::FacePlus),
-   btn2(wlist,cfg.btn_cfg,String("Test dialog")),
+   btn2(wlist,cfg.btn_cfg,"Test dialog"_def),
 
    info(TestStr),
 
-   infoframe(dlist,cfg.contour_cfg),
+   infoframe(wlist,cfg.contour_cfg),
    infow(wlist,cfg.info_cfg,info),
 
-   text(dlist,cfg.text_cfg,AlignX_Left),
+   text(wlist,cfg.text_cfg,AlignX_Left),
 
    edit(wlist,ulen(50),cfg.edit_cfg),
 
    check(wlist,cfg.check_cfg,true),
 
-   dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
+   dialog(host.getFrameDesktop(),cfg.dialog_cfg),
    test(dialog,cfg.test_cfg),
 
-   msg_window(host.getFrame()->getDesktop(),cfg.msg_cfg),
+   msg(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_btn1_pressed(this,&ShapeLab2::btn1_pressed,btn1.pressed),
    connector_btn2_pressed(this,&ShapeLab2::btn2_pressed,btn2.pressed),
    connector_dialog_destroyed(this,&ShapeLab2::dialog_destroyed,dialog.destroyed),
-   connector_msg_destroyed(this,&ShapeLab2::msg_destroyed,msg_window.destroyed),
+   connector_msg_destroyed(this,&ShapeLab2::msg_destroyed,msg.destroyed),
    connector_edit_entered(this,&ShapeLab2::edit_entered,edit.entered),
    connector_check_changed(this,&ShapeLab2::check_changed,check.changed)
  {
-  wlist.insTop(btn1,btn2,infow,edit,check);
-  dlist.insTop(progress,infoframe,text);
-
-  wlist.enableTabFocus();
-  wlist.enableClickFocus();
+  wlist.insTop(btn1,btn2,infow,edit,check,progress,infoframe,text);
 
   progress.setTotal(100);
 
@@ -582,9 +497,9 @@ ShapeLab2::ShapeLab2(SubWindowHost &host,const Config &cfg_)
 
 #if 1
 
-  msg_window.add(String("Yes"),Button_Yes)
-            .add(String("No"),Button_No)
-            .add(String("Cancel"),Button_Cancel);
+  msg.add("Yes"_def,Button_Yes)
+     .add("No"_def,Button_No)
+     .add("Cancel"_def,Button_Cancel);
 
 #endif
  }
@@ -617,50 +532,16 @@ void ShapeLab2::layout()
 
 void ShapeLab2::draw(DrawBuf buf,bool drag_active) const
  {
-  Smooth::DrawArt art(buf);
+  buf.erase(cfg.back);
 
-  art.erase(cfg.back);
-
-  dlist.draw(buf,drag_active);
   wlist.draw(buf,drag_active);
  }
 
- // base
-
-void ShapeLab2::open()
+void ShapeLab2::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
-  wlist.open();
+  buf.erase(pane,cfg.back);
 
-  wlist.focusTop();
- }
-
-void ShapeLab2::close()
- {
-  wlist.close();
- }
-
- // keyboard
-
-void ShapeLab2::gainFocus()
- {
-  wlist.gainFocus();
- }
-
-void ShapeLab2::looseFocus()
- {
-  wlist.looseFocus();
- }
-
- // mouse
-
-void ShapeLab2::looseCapture()
- {
-  wlist.looseCapture();
- }
-
-MouseShape ShapeLab2::getMouseShape(Point point,KeyMod kmod) const
- {
-  return wlist.getMouseShape(point,kmod);
+  wlist.draw(buf,pane,drag_active);
  }
 
  // user input
