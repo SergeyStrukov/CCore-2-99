@@ -22,7 +22,9 @@ namespace App {
 
 namespace Private_7004 {
 
-class ClientSubWindow : public SubWindow
+/* class ClientWindow */
+
+class ClientWindow : public SubWindow
  {
   public:
 
@@ -61,13 +63,13 @@ class ClientSubWindow : public SubWindow
 
   public:
 
-   ClientSubWindow(SubWindowHost &host,const ConfigType &cfg_)
+   ClientWindow(SubWindowHost &host,const ConfigType &cfg_)
     : SubWindow(host),
       cfg(cfg_)
     {
     }
 
-   virtual ~ClientSubWindow()
+   virtual ~ClientWindow()
     {
     }
 
@@ -177,7 +179,7 @@ using namespace Private_7004;
 template <>
 int TestMain<7004>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7004"_def);
+  return ClientApplication<ClientWindow>::Main(cmd_display,"Test7004"_def);
  }
 
 } // namespace App

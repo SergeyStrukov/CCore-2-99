@@ -21,7 +21,9 @@ namespace App {
 
 namespace Private_7005 {
 
-class ClientSubWindow : public SubWindow
+/* class ClientWindow */
+
+class ClientWindow : public SubWindow
  {
    DragFrameShape::Config &cfg;
    Signal<> &updated;
@@ -41,14 +43,14 @@ class ClientSubWindow : public SubWindow
 
   public:
 
-   ClientSubWindow(SubWindowHost &host,Signal<> &updated_,DragFrameShape::Config &cfg_)
+   ClientWindow(SubWindowHost &host,Signal<> &updated_,DragFrameShape::Config &cfg_)
     : SubWindow(host),
       cfg(cfg_),
       updated(updated_)
     {
     }
 
-   virtual ~ClientSubWindow()
+   virtual ~ClientWindow()
     {
     }
 
@@ -114,7 +116,7 @@ using namespace Private_7005;
 template <>
 int TestMain<7005>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::MainFrame(cmd_display,"Test7005"_def);
+  return ClientApplication<ClientWindow>::MainFrame(cmd_display,"Test7005"_def);
  }
 
 } // namespace App

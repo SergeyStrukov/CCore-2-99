@@ -19,25 +19,17 @@
 #include <inc/Application.h>
 
 #include <CCore/inc/Array.h>
-#include <CCore/inc/Printf.h>
-#include <CCore/inc/PlatformRandom.h>
 #include <CCore/inc/Cmp.h>
 
-#include <CCore/inc/video/WindowLib.h>
-#include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/FontDatabase.h>
 
 namespace App {
-
-/* type unicode */
-
-using unicode = uint32 ;
 
 /* classes */
 
 class FontSelector;
 
-class FontSelectorWindow;
+class FontSelectorFrame;
 
 class Progress;
 
@@ -45,105 +37,121 @@ class FontLab;
 
 /* class FontSelector */
 
-class FontSelector : public SubWindow
+class FontSelector : public ScrollListWindow
+ {
+   class ExtInfo : public ComboInfo
+    {
+      class Base;
+
+     public:
+
+      ExtInfo() noexcept;
+
+      explicit ExtInfo(const FontDatabase &fdb);
+
+      ~ExtInfo();
+
+      String getPath(ulen index) const;
+    };
+
+   ExtInfo info;
+
+  private:
+
+   void setFont(ulen index);
+
+   SignalConnector<FontSelector,ulen> connector_selected;
+
+  public:
+
+   FontSelector(SubWindowHost &host,const ConfigType &cfg);
+
+   virtual ~FontSelector();
+
+   // methods
+
+   void createList(const FontDatabase &fdb);
+
+   // signals
+
+   Signal<String> font_selected;
+ };
+
+/* class FontSelectorFrame */
+
+class FontSelectorFrame : NoCopy
  {
   public:
 
    struct Config
     {
-     RefVal<VColor> text   =  Black ;
-     RefVal<VColor> select = Yellow ;
-     RefVal<VColor> back   = Silver ;
+     CtorRefVal<DragFrame::ConfigType> drag_cfg;
+     CtorRefVal<FontSelector::ConfigType> selector_cfg;
 
-     RefVal<Font> font;
+     RefVal<DefString> title = "Select Font"_def ;
 
-     Config() {}
+     Config() noexcept {}
     };
 
+   using ConfigType = Config ;
+
   private:
+
+   FrameWindow *parent;
 
    const Config &cfg;
 
-   struct Rec : CmpComparable<Rec>
-    {
-     String path;
-     String name;
-     String ext;
+   DragFrame frame;
 
-     Rec(const String &path,StrLen name,StrLen ext);
-    };
-
-   DynArray<Rec> list;
-   ulen first = 0 ;
-   ulen count = 0 ;
-   ulen select = 0 ;
-
-   Coord begX = 0 ;
-   Coord dX = 0 ;
-   Coord dY = 0 ;
-   Coord bY = 0 ;
-   ulen max_count = 0 ;
-
-  private:
-
-   void setSelect(ulen select);
-
-   void listMove();
-
-   void listUp(ulen delta);
-
-   void listDown(ulen delta);
+   FontSelector client;
 
   public:
 
-   FontSelector(SubWindowHost &host,const Config &cfg);
+   FontSelectorFrame(FrameWindow *parent,const Config &cfg);
 
-   virtual ~FontSelector();
+   ~FontSelectorFrame();
 
-   void createList(const FontDatabase &fdb);
+   void create(const FontDatabase &fdb);
 
-   // drawing
-
-   virtual void layout();
-
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   // user input
-
-   virtual void react(UserAction action);
-
-   void react_Key(VKey vkey,KeyMod kmod);
-
-   // signals
-
-   Signal<String> select_font;
+   Signal<String> &selected;
  };
 
 /* class Progress */
 
 class Progress : public IncrementalProgress
  {
-   class Client : public SubWindow
+  public:
+
+   struct Config
     {
-      ProgressWindow::ConfigType cfg;
+     RefVal<Coord> space_dxy = 20 ;
 
-      VColor back = Silver ;
+     RefVal<VColor> back = Silver ;
 
-      Coord space_dxy = 20 ;
+     RefVal<DefString> title = "Building font cache"_def ;
+
+     CtorRefVal<ProgressWindow::ConfigType> progress_cfg;
+
+     CtorRefVal<FixedFrame::ConfigType> fixed_cfg;
+
+     Config() noexcept {}
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   class Client : public ComboWindow
+    {
+      const Config &cfg;
 
       ProgressWindow progress;
 
      public:
 
-      explicit Client(SubWindowHost &host)
-       : SubWindow(host),
-         progress(host,cfg)
-       {
-       }
+      Client(SubWindowHost &host,const Config &cfg);
 
-      virtual ~Client()
-       {
-       }
+      virtual ~Client();
 
       // progress
 
@@ -153,123 +161,36 @@ class Progress : public IncrementalProgress
 
       // drawing
 
-      virtual void layout()
-       {
-        Point size=getSize();
-        Pane pane(Null,size);
+      virtual void layout();
 
-        progress.setPlace(pane.shrink(space_dxy));
-       }
-
-      virtual void draw(DrawBuf buf,bool drag_active) const
-       {
-        buf.erase(back);
-
-        progress.forward_draw(buf,drag_active);
-       }
-    };
-
-   class Frame : public FixedFrame
-    {
-      Client sub_win;
-
-     public:
-
-      Frame(Desktop *desktop,const FixedFrame::ConfigType &cfg)
-       : FixedFrame(desktop,cfg),
-         sub_win(*this)
-       {
-        bindClient(sub_win);
-       }
-
-      virtual ~Frame()
-       {
-       }
-
-      // progress
-
-      void setTotal(unsigned total) { sub_win.setTotal(total); }
-
-      bool setPos(unsigned pos) { sub_win.setPos(pos); return isAlive(); }
-
-      // create
-
-      void create(FrameWindow *parent)
-       {
-        Point screen_size=getDesktop()->getScreenSize();
-
-        String title("Building font cache");
-
-        Point client_size(300,60);
-
-        Point size=getMinSize(false,Range(title),client_size);
-
-        FixedFrame::create(parent,FreeCenter({Null,screen_size},size),title);
-       }
+      virtual void drawBack(DrawBuf buf,bool drag_active) const;
     };
 
    FrameWindow *parent;
 
-   FixedFrame::ConfigType cfg;
+   const Config &cfg;
 
-   Frame frame;
+   FixedFrame frame;
+
+   Client client;
 
   private:
 
    // IncrementalProgress
 
-   virtual void start()
-    {
-     frame.create(parent);
-    }
+   virtual void start();
 
-   virtual void setTotal(unsigned total)
-    {
-     frame.setTotal(total);
-    }
+   virtual void setTotal(unsigned total);
 
-   virtual bool setPos(unsigned pos)
-    {
-     return frame.setPos(pos);
-    }
+   virtual bool setPos(unsigned pos);
 
-   virtual void stop() noexcept
-    {
-     try { frame.destroy(); } catch(...) {}
-    }
+   virtual void stop() noexcept;
 
   public:
 
-   Progress(Desktop *desktop,FrameWindow *parent_)
-    : parent(parent_),
-      frame(desktop,cfg)
-    {
-    }
+   Progress(FrameWindow *parent,const Config &cfg);
 
-   Progress(SubWindow *sub_win) : Progress(sub_win->getFrameDesktop(),sub_win->getFrame()) {}
-
-   ~Progress()
-    {
-    }
- };
-
-/* class FontSelectorWindow */
-
-class FontSelectorWindow : NoCopy
- {
-   DragFrame frame;
-
-   FontSelector win;
-
-  public:
-
-   FontSelectorWindow(Desktop *desktop,const DragFrame::ConfigType &drag_cfg,const FontSelector::Config &cfg);
-
-   ~FontSelectorWindow();
-
-   void create(FrameWindow *parent,const FontDatabase &fdb,const DefString &title);
-
-   Signal<String> & takeSignal() { return win.select_font; }
+   ~Progress();
  };
 
 /* class FontLab */
@@ -280,6 +201,8 @@ class FontLab : public SubWindow
 
    struct Config
     {
+     RefVal<Coord> space  = 10 ;
+
      RefVal<VColor> back =    Silver ;
      RefVal<VColor> text =     Black ;
 
@@ -291,12 +214,15 @@ class FontLab : public SubWindow
      RefVal<VColor> base =       Red ;
      RefVal<VColor> clip =       Red ;
 
-     RefVal<DefString> select_title = "Select Font"_def ;
-
      RefVal<Font> font;
+
+     CtorRefVal<Progress::ConfigType> progress_cfg;
+     CtorRefVal<FontSelectorFrame::ConfigType> selector_cfg;
 
      Config() {}
     };
+
+   using ConfigType = Config ;
 
   private:
 
@@ -324,7 +250,7 @@ class FontLab : public SubWindow
    bool clip = false ;
    bool alt = false ;
 
-   FontSelectorWindow &selector;
+   FontSelectorFrame selector_frame;
 
   private:
 
@@ -355,18 +281,18 @@ class FontLab : public SubWindow
 
    void drawSampleText(DrawBuf buf) const;
 
-   void setFont(String file_name);
+  private:
 
    void complete_fb(bool ok);
 
-  private:
+   void setFont(String file_name);
 
-   SignalConnector<FontLab,bool> connector_fbinc;
-   SignalConnector<FontLab,String> connector_font;
+   SignalConnector<FontLab,bool> connector_fbinc_completed;
+   SignalConnector<FontLab,String> connector_selector_selected;
 
   public:
 
-   FontLab(SubWindowHost &host,const Config &cfg,FontSelectorWindow &selector);
+   FontLab(SubWindowHost &host,const Config &cfg);
 
    virtual ~FontLab();
 

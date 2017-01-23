@@ -566,7 +566,7 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
    test_contour(wlist,cfg.contour_cfg),
 
-   connector_fdb_complete(this,&FontEditWindow::fdbComplete,fdb_inc.complete),
+   connector_fdb_complete(this,&FontEditWindow::fdbComplete,fdb_inc.completed),
    connector_text_list_selected(this,&FontEditWindow::selectFont,text_list.selected),
    connector_fdx_check_changed(this,&FontEditWindow::fdxEnable,fdx_check.changed),
    connector_fdy_spin_changed(this,&FontEditWindow::fdxyChanged,fdy_spin.changed),

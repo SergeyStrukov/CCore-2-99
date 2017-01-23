@@ -514,17 +514,18 @@ FontDatabase::Step::~Step()
  {
  }
 
-StepResult FontDatabase::Step::start(FontDatabase &obj)
+StepResult FontDatabase::Step::start(FontDatabase &obj,bool use_cache)
  {
-  try
-    {
-     obj.tryCache();
+  if( use_cache )
+    try
+      {
+       obj.tryCache();
 
-     return StepFinalOk;
-    }
-  catch(CatchType)
-    {
-    }
+       return StepFinalOk;
+      }
+    catch(CatchType)
+      {
+      }
 
   stage=&Step::stepDir;
 
@@ -633,9 +634,9 @@ FontBuilder::Step::~Step()
  {
  }
 
-StepResult FontBuilder::Step::start(FontBuilder &obj)
+StepResult FontBuilder::Step::start(FontBuilder &obj,bool use_cache)
  {
-  return finish(step.start(obj.fdb),obj);
+  return finish(step.start(obj.fdb,use_cache),obj);
  }
 
 StepResult FontBuilder::Step::operator () (IncrementalProgress &progress,FontBuilder &obj)

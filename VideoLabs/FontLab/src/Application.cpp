@@ -40,10 +40,9 @@ struct Param
 
   DragFrame::ConfigType drag_cfg;
   WindowReportConfig report_cfg;
-  ExceptionWindow::Config exception_cfg;
+  ExceptionWindow::ConfigType exception_cfg;
 
-  FontSelector::Config selector_cfg;
-  FontLab::Config lab_cfg;
+  FontLab::ConfigType lab_cfg;
 
   Param()
    {
@@ -59,8 +58,6 @@ class Application : public ApplicationBase
    DragFrame main_frame;
 
    ExceptionClient exception_client;
-
-   FontSelectorWindow selector;
 
    FontLab client;
 
@@ -108,8 +105,7 @@ class Application : public ApplicationBase
       cmd_display(cmd_display_),
       main_frame(param.desktop,param.drag_cfg),
       exception_client(main_frame,param.exception_cfg,report),
-      selector(param.desktop,param.drag_cfg,param.selector_cfg),
-      client(main_frame,param.lab_cfg,selector)
+      client(main_frame,param.lab_cfg)
     {
      main_frame.bindAlertClient(exception_client);
      main_frame.bindClient(client);

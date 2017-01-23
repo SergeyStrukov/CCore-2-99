@@ -132,9 +132,9 @@ class Sub1 : public ComboWindow
     }
  };
 
-/* class ClientSubWindow */
+/* class ClientWindow */
 
-class ClientSubWindow : public ComboWindow
+class ClientWindow : public ComboWindow
  {
   public:
 
@@ -154,7 +154,7 @@ class ClientSubWindow : public ComboWindow
 
   public:
 
-   ClientSubWindow(SubWindowHost &host,const ConfigType &cfg_)
+   ClientWindow(SubWindowHost &host,const ConfigType &cfg_)
     : ComboWindow(host),
       cfg(cfg_),
 
@@ -164,7 +164,7 @@ class ClientSubWindow : public ComboWindow
      wlist.insTop(win1,win2);
     }
 
-   virtual ~ClientSubWindow()
+   virtual ~ClientWindow()
     {
     }
 
@@ -201,7 +201,7 @@ using namespace Private_7008;
 template <>
 int TestMain<7008>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7008"_def);
+  return ClientApplication<ClientWindow>::Main(cmd_display,"Test7008"_def);
  }
 
 } // namespace App

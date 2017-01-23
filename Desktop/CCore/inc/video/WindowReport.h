@@ -248,7 +248,7 @@ class WindowReportBase : public ExceptionStore , public ReportException
 
    Desktop *desktop;
    MSec tick_period;
-   const ExceptionWindow::Config &cfg;
+   const ExceptionWindow::ConfigType &cfg;
 
   private:
 
@@ -272,7 +272,7 @@ class WindowReportBase : public ExceptionStore , public ReportException
 
   public:
 
-   WindowReportBase(Desktop *desktop,MSec tick_period,const ExceptionWindow::Config &cfg);
+   WindowReportBase(Desktop *desktop,MSec tick_period,const ExceptionWindow::ConfigType &cfg);
 
    ~WindowReportBase();
 
@@ -314,7 +314,7 @@ struct WindowReportParamOf
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
 
   WindowReportConfigOf<Frame> report_cfg;
-  ExceptionWindow::Config exception_cfg;
+  ExceptionWindow::ConfigType exception_cfg;
 
   WindowReportParamOf() {}
  };
@@ -386,7 +386,7 @@ class ExceptionClient : public ExceptionWindow , public AliveControl
   public:
 
    template <class W>
-   ExceptionClient(W &parent,const ExceptionWindow::Config &cfg,WindowReportBase &report)
+   ExceptionClient(W &parent,const ExceptionWindow::ConfigType &cfg,WindowReportBase &report)
     : ExceptionWindow(parent,cfg,report)
     {
      parent.connectAlert(alert);

@@ -82,6 +82,7 @@
 ../../Fundamental/CCore/src/algon/SortUnique.cpp
 ../../Fundamental/CCore/src/array/ArrayAlgo.cpp
 ../../Fundamental/CCore/src/array/ArrayBase.cpp
+../../Fundamental/CCore/src/array/ArrayInsDel.cpp
 ../../Fundamental/CCore/src/array/AtomicRefArray.cpp
 ../../Fundamental/CCore/src/array/Collector.cpp
 ../../Fundamental/CCore/src/array/Creator.cpp

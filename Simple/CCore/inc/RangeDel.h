@@ -50,6 +50,30 @@ bool RangeSwapDel(PtrLen<AnyType> range,ulen ind)
   return RangeSwapDel(range.ptr,range.len,ind);
  }
 
+void RangeCopyDel_guarded(NothrowCopyableType list[],ulen len,ulen ind)
+ {
+  GuardIndex(ind,len);
+
+  for(len--; ind<len ;ind++) list[ind]=list[ind+1];
+ }
+
+void RangeCopyDel_guarded(PtrLen<NothrowCopyableType> range,ulen ind)
+ {
+  RangeCopyDel_guarded(range.ptr,range.len,ind);
+ }
+
+void RangeSwapDel_guarded(AnyType list[],ulen len,ulen ind)
+ {
+  GuardIndex(ind,len);
+
+  for(len--; ind<len ;ind++) Swap(list[ind],list[ind+1]);
+ }
+
+void RangeSwapDel_guarded(PtrLen<AnyType> range,ulen ind)
+ {
+  RangeSwapDel_guarded(range.ptr,range.len,ind);
+ }
+
 } // namespace CCore
 
 #endif

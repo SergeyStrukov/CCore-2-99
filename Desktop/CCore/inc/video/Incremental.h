@@ -166,15 +166,16 @@ class IncrementalBuilder : IncrementalNode
 
    ~IncrementalBuilder();
 
-   void start(T &obj);
+   template <class ... SS>
+   void start(T &obj,SS && ... ss);
 
-   void step(TimeScope time_scope);
+   virtual void step(TimeScope time_scope);
 
-   void cancel() noexcept;
+   virtual void cancel() noexcept;
 
    // signals
 
-   Signal<bool> complete; // ok
+   Signal<bool> completed; // ok
  };
 
 template <class T,StepBuilderType<T> Step>
@@ -190,11 +191,12 @@ IncrementalBuilder<T,Step>::~IncrementalBuilder()
  }
 
 template <class T,StepBuilderType<T> Step>
-void IncrementalBuilder<T,Step>::start(T &obj_)
+template <class ... SS>
+void IncrementalBuilder<T,Step>::start(T &obj_,SS && ... ss)
  {
   if( obj )
     {
-     complete.assert(false);
+     completed.assert(false);
 
      GuardIncrementalInProgress();
     }
@@ -203,13 +205,13 @@ void IncrementalBuilder<T,Step>::start(T &obj_)
 
   try
     {
-     result=builder.start(obj_);
+     result=builder.start(obj_, std::forward<SS>(ss)... );
     }
   catch(...)
     {
      builder.erase();
 
-     complete.assert(false);
+     completed.assert(false);
 
      throw;
     }
@@ -218,7 +220,7 @@ void IncrementalBuilder<T,Step>::start(T &obj_)
     {
      builder.erase();
 
-     complete.assert(result==StepFinalOk);
+     completed.assert(result==StepFinalOk);
 
      return;
     }
@@ -233,7 +235,7 @@ void IncrementalBuilder<T,Step>::start(T &obj_)
     {
      builder.erase();
 
-     complete.assert(false);
+     completed.assert(false);
 
      throw;
     }
@@ -268,7 +270,7 @@ void IncrementalBuilder<T,Step>::step(TimeScope time_scope)
 
      deactivate();
 
-     complete.assert(false);
+     completed.assert(false);
 
      throw;
     }
@@ -283,14 +285,19 @@ void IncrementalBuilder<T,Step>::step(TimeScope time_scope)
 
      deactivate();
 
-     complete.assert(result==StepFinalOk);
+     completed.assert(result==StepFinalOk);
     }
  }
 
 template <class T,StepBuilderType<T> Step>
 void IncrementalBuilder<T,Step>::cancel() noexcept
  {
-  if( !obj ) return;
+  if( !obj )
+    {
+     deactivate();
+
+     return;
+    }
 
   obj=0;
 
@@ -300,7 +307,7 @@ void IncrementalBuilder<T,Step>::cancel() noexcept
 
   deactivate();
 
-  complete.assert(false);
+  completed.assert(false);
  }
 
 } // namespace Video

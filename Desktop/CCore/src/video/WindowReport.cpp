@@ -688,7 +688,7 @@ void WindowReportBase::lastShow()
     }
  }
 
-WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,const ExceptionWindow::Config &cfg_)
+WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,const ExceptionWindow::ConfigType &cfg_)
  : desktop(desktop_),
    tick_period(tick_period_),
    cfg(cfg_)

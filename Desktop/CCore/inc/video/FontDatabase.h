@@ -182,7 +182,7 @@ class FontDatabase : NoCopy
 
       ~Step();
 
-      StepResult start(FontDatabase &obj);
+      StepResult start(FontDatabase &obj,bool use_cache=true);
 
       StepResult operator () (IncrementalProgress &progress,FontDatabase &obj)
        {
@@ -294,7 +294,7 @@ class FontBuilder : NoCopy
 
       ~Step();
 
-      StepResult start(FontBuilder &obj);
+      StepResult start(FontBuilder &obj,bool use_cache=true);
 
       StepResult operator () (IncrementalProgress &progress,FontBuilder &obj);
 
@@ -303,7 +303,7 @@ class FontBuilder : NoCopy
 
    using Incremental = IncrementalBuilder<FontBuilder,Step> ;
 
-   void prepare(Incremental &incfb) { incfb.start(*this); }
+   void prepare(Incremental &incfb,bool use_cache=true) { incfb.start(*this,use_cache); }
 
    // methods
 

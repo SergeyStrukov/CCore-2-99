@@ -15,7 +15,9 @@
 
 #include <inc/FontLab.h>
 
+#include <CCore/inc/video/UserPreference.h>
 #include <CCore/inc/video/CommonDrawArt.h>
+#include <CCore/inc/video/Layout.h>
 
 #include <CCore/inc/CharProp.h>
 #include <CCore/inc/Exception.h>
@@ -23,106 +25,171 @@
 #include <CCore/inc/Sort.h>
 #include <CCore/inc/Cmp.h>
 #include <CCore/inc/Print.h>
-#include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/algon/BinarySearch.h>
 
 namespace App {
 
-/* testPref() */
+/* class FontSelector::ExtInfo::Base */
 
-static void testPref()
+class FontSelector::ExtInfo::Base : public ComboInfoBase
  {
-  UserPreference pref;
+   struct NameExt
+    {
+     StrLen name;
+     StrLen ext;
+     bool no_ext;
 
-  pref.update();
+     explicit NameExt(const String &path)
+      {
+       SplitPath split1(Range(path));
+
+       SplitName split2(split1.path);
+
+       SplitExt split3(split2.name);
+
+       name=split3.name;
+       ext=split3.ext;
+       no_ext=!split3;
+      }
+    };
+
+   struct Rec
+    {
+     ComboInfoType type;
+     String path;
+     String name;
+     String ext;
+
+     Rec(const String &path_,NameExt name_ext)
+      : type(ComboInfoText),
+        path(path_),
+        name(name_ext.name),
+        ext(name_ext.ext)
+      {
+      }
+
+     explicit Rec(StrLen ext_)
+      : type(ComboInfoTitle),
+        ext(ext_)
+      {
+      }
+
+     operator ComboInfoItem() const
+      {
+       if( type==ComboInfoText ) return ComboInfoItem(type,Range(name));
+
+       return ComboInfoItem(ComboInfoTitle,Range(ext));
+      }
+    };
+
+   DynArray<Rec> list;
+
+  private:
+
+  public:
+
+   explicit Base(const FontDatabase &fdb)
+    {
+     FontIndex index;
+
+     index.build(fdb, [] (const FontInfo &obj) { return obj.scalable && !NameExt(obj.file_name).no_ext ; } ,
+                      [] (const FontInfo &a,const FontInfo &b) { return AlphaCmp(b.monospace,a.monospace,
+                                                                                 CmpAsStr(NameExt(a.file_name).ext),CmpAsStr(NameExt(b.file_name).ext),
+                                                                                 CmpAsStr(a.family),CmpAsStr(b.family),
+                                                                                 a.italic,b.italic,
+                                                                                 a.bold,b.bold); } );
+     bool first=true;
+     bool monospace=true;
+     StrLen ext;
+
+     for(const FontInfo *obj : index.getList() )
+       {
+        String path=obj->file_name;
+        NameExt name_ext(path);
+
+        if( Change(first,false) )
+          {
+           monospace=obj->monospace;
+          }
+
+        if( obj->monospace==monospace )
+          {
+           if( monospace )
+             list.append_fill("Monospace"_c);
+           else
+             list.append_fill("Proportional"_c);
+
+           monospace=!monospace;
+           ext=Null;
+          }
+
+        if( StrCmp(name_ext.ext,ext) )
+          {
+           ext=name_ext.ext;
+
+           list.append_fill(ext);
+          }
+
+        list.append_fill(path,name_ext);
+       }
+    }
+
+   ~Base()
+    {
+    }
+
+   String getPath(ulen index) const
+    {
+     return list.at(index).path;
+    }
+
+   // AbstractComboInfo
+
+   virtual ulen getLineCount() const
+    {
+     return list.getLen();
+    }
+
+   virtual ComboInfoItem getLine(ulen index) const
+    {
+     return list.at(index);
+    }
+ };
+
+/* class FontSelector::FontInfo */
+
+FontSelector::ExtInfo::ExtInfo() noexcept
+ {
+ }
+
+FontSelector::ExtInfo::ExtInfo(const FontDatabase &fdb)
+ : ComboInfo(new Base(fdb))
+ {
+ }
+
+FontSelector::ExtInfo::~ExtInfo()
+ {
+ }
+
+String FontSelector::ExtInfo::getPath(ulen index) const
+ {
+  if( Base *base=castPtr<Base>() ) return base->getPath(index);
+
+  return Null;
  }
 
 /* class FontSelector */
 
-FontSelector::Rec::Rec(const String &path_,StrLen name_,StrLen ext_)
- : path(path_),
-   name(name_),
-   ext(ext_)
+void FontSelector::setFont(ulen index)
  {
+  font_selected.assert(info.getPath(index));
  }
 
-void FontSelector::setSelect(ulen select_)
- {
-  if( Change(select,select_) )
-    {
-     if( select<list.getLen() )
-       {
-        Rec &rec=list[select];
+FontSelector::FontSelector(SubWindowHost &host,const ConfigType &cfg)
+ : ScrollListWindow(host,cfg),
 
-        select_font.assert(rec.path);
-       }
-    }
- }
-
-void FontSelector::listMove()
- {
-  ulen len=list.getLen();
-
-  count=Min<ulen>(len-first,max_count);
-
-  if( select<first )
-    {
-     setSelect(first);
-    }
-  else
-    {
-     ulen lim=first+count;
-
-     if( select>=lim )
-       {
-        if( count )
-          setSelect(lim-1);
-        else
-          setSelect(first);
-       }
-    }
-
-  redraw();
- }
-
-void FontSelector::listUp(ulen delta)
- {
-  if( !delta ) return;
-
-  if( first>delta )
-    {
-     first-=delta;
-
-     listMove();
-    }
-  else if( first )
-    {
-     first=0;
-
-     listMove();
-    }
- }
-
-void FontSelector::listDown(ulen delta)
- {
-  if( !delta ) return;
-
-  ulen len=list.getLen();
-  ulen cap=(len>max_count)?len-max_count:0;
-
-  if( first>=cap ) return;
-
-  Replace_min<ulen>(delta,cap-first);
-
-  first+=delta;
-
-  listMove();
- }
-
-FontSelector::FontSelector(SubWindowHost &host,const Config &cfg_)
- : SubWindow(host),
-   cfg(cfg_)
+   connector_selected(this,&FontSelector::setFont,selected)
  {
  }
 
@@ -132,172 +199,116 @@ FontSelector::~FontSelector()
 
 void FontSelector::createList(const FontDatabase &fdb)
  {
-  list.erase();
+  info=ExtInfo(fdb);
 
-  FontIndex index;
+  setInfo(info);
+ }
 
-  index.build(fdb, [] (const FontInfo &obj) { return obj.scalable; } ,
-                   [] (const FontInfo &a,const FontInfo &b) { return AlphaCmp(b.monospace,a.monospace,
-                                                                              CmpAsStr(a.family),CmpAsStr(b.family),
-                                                                              a.italic,b.italic,
-                                                                              a.bold,b.bold); } );
+/* class FontSelectorFrame */
 
-  for(const FontInfo *obj : index.getList() )
+FontSelectorFrame::FontSelectorFrame(FrameWindow *parent_,const Config &cfg_)
+ : parent(parent_),
+   cfg(cfg_),
+   frame(parent_->getDesktop(),cfg.drag_cfg),
+   client(frame,cfg.selector_cfg),
+
+   selected(client.font_selected)
+ {
+  frame.bindClient(client);
+ }
+
+FontSelectorFrame::~FontSelectorFrame()
+ {
+ }
+
+void FontSelectorFrame::create(const FontDatabase &fdb)
+ {
+  if( frame.isDead() )
     {
-     String path=obj->file_name;
+     client.createList(fdb);
 
-     SplitPath split1(Range(path));
+     Point screen_size=frame.getScreenSize();
 
-     SplitName split2(split1.path);
+     Point size(screen_size.x/2,screen_size.y/2);
 
-     SplitExt split3(split2.name);
-
-     if( !split3.no_ext )
-       {
-        list.append_fill(path,split3.name,split3.ext);
-       }
+     frame.create(parent,FreeCenter(screen_size,size),+cfg.title);
     }
+ }
 
-  first=0;
-  count=0;
-  select=0;
+/* class Progress::Client */
+
+Progress::Client::Client(SubWindowHost &host,const Config &cfg_)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   progress(wlist,cfg.progress_cfg)
+ {
+  wlist.insTop(progress);
+ }
+
+Progress::Client::~Client()
+ {
  }
 
  // drawing
 
-void FontSelector::layout()
+void Progress::Client::layout()
  {
   Point size=getSize();
+  Pane pane(Null,size);
 
-  FontSize fs=cfg.font.get()->getSize();
-
-  begX=10;
-  dX=size.x-20;
-  dY=fs.dy;
-  bY=fs.by;
-
-  if( dY<=0 ) dY=1;
-
-  max_count=size.y/dY;
-
-  count=Min<ulen>(list.getLen()-first,max_count);
+  progress.setPlace(pane.shrink(+cfg.space_dxy));
  }
 
-void FontSelector::draw(DrawBuf buf,bool drag_active) const
+void Progress::Client::drawBack(DrawBuf buf,bool) const
  {
-  Used(drag_active);
-
   buf.erase(+cfg.back);
-
-  VColor text=+cfg.text;
-
-  Pane pane(begX,0,dX,dY);
-
-  for(ulen ind=first,cnt=count; cnt ;cnt--,ind++,pane.y+=dY)
-    {
-     const Rec &rec=list[ind];
-
-     if( ind==select )
-       {
-        CommonDrawArt art(buf);
-
-        art.block(pane,+cfg.select);
-       }
-
-     cfg.font.get()->text(buf,pane,TextPlace(AlignX_Left,bY),Range(rec.name),text);
-     cfg.font.get()->text(buf,pane,TextPlace(AlignX_Right,bY),Range(rec.ext),text);
-    }
  }
 
- // user input
+/* class Progress */
 
-void FontSelector::react(UserAction action)
+void Progress::start()
  {
-  action.dispatch(*this);
+  Point screen_size=frame.getScreenSize();
+
+  DefString title=+cfg.title;
+  Coord space=+cfg.space_dxy;
+
+  Point client_size(15*space,3*space);
+
+  Point size=frame.getMinSize(false,title.str(),client_size);
+
+  frame.create(parent,FreeCenter(screen_size,size),title);
  }
 
-void FontSelector::react_Key(VKey vkey,KeyMod kmod)
+void Progress::setTotal(unsigned total)
  {
-  switch( vkey )
-    {
-     case VKey_Up :
-      {
-       if( kmod&KeyMod_Shift )
-         {
-          listUp(1);
-         }
-       else
-         {
-          if( select )
-            {
-             setSelect(select-1);
-
-             if( select<first ) listUp(1); else redraw();
-            }
-         }
-      }
-     break;
-
-     case VKey_Down :
-      {
-       if( kmod&KeyMod_Shift )
-         {
-          listDown(1);
-         }
-       else
-         {
-          ulen len=list.getLen();
-          ulen cap=len?len-1:0;
-
-          if( select<cap )
-            {
-             setSelect(select+1);
-
-             if( select>=first+count ) listDown(1); else redraw();
-            }
-         }
-      }
-     break;
-
-     case VKey_PageUp :
-      {
-       listUp(max_count);
-      }
-     break;
-
-     case VKey_PageDown :
-      {
-       listDown(max_count);
-      }
-     break;
-    }
+  client.setTotal(total);
  }
 
-/* class FontSelectorWindow */
-
-FontSelectorWindow::FontSelectorWindow(Desktop *desktop,const DragFrame::ConfigType &drag_cfg,const FontSelector::Config &cfg)
- : frame(desktop,drag_cfg),
-   win(frame,cfg)
+bool Progress::setPos(unsigned pos)
  {
-  frame.bindClient(win);
+  client.setPos(pos);
+
+  return frame.isAlive();
  }
 
-FontSelectorWindow::~FontSelectorWindow()
+void Progress::stop() noexcept
  {
+  try { frame.destroy(); } catch(...) {}
  }
 
-void FontSelectorWindow::create(FrameWindow *parent,const FontDatabase &fdb,const DefString &title)
+Progress::Progress(FrameWindow *parent_,const Config &cfg_)
+ : parent(parent_),
+   cfg(cfg_),
+   frame(parent_->getDesktop(),cfg.fixed_cfg),
+   client(frame,cfg)
  {
-  if( frame.isDead() )
-    {
-     win.createList(fdb);
+  frame.bindClient(client);
+ }
 
-     Point max_size=frame.getDesktop()->getScreenSize();
-
-     Pane pane(max_size/4,max_size/2);
-
-     frame.create(parent,pane,max_size,title);
-    }
+Progress::~Progress()
+ {
  }
 
 /* class FontLab */
@@ -384,7 +395,7 @@ void FontLab::set(int choice)
 
 void FontLab::show(DrawBuf buf,StrLen text) const
  {
-  cfg.font.get()->text(buf,info_pane,TextPlace(AlignX_Left,AlignY_Top),text,+cfg.info);
+  cfg.font->text(buf,info_pane,TextPlace(AlignX_Left,AlignY_Top),text,+cfg.info);
  }
 
 void FontLab::drawTable(DrawBuf buf) const
@@ -431,7 +442,7 @@ void FontLab::drawTable(DrawBuf buf) const
   {
    Point a=base;
    unsigned char ch=0;
-   VColor vc=alt?+cfg.text_alt:+cfg.text;
+   VColor vc = alt? +cfg.text_alt : +cfg.text ;
 
    for(auto cnt=Rows; cnt ;cnt--)
      {
@@ -485,7 +496,7 @@ void FontLab::drawSampleText(DrawBuf buf) const
 
   Coord dy=fs.dy;
 
-  VColor vc=alt?+cfg.text_alt:+cfg.text;
+  VColor vc = alt? +cfg.text_alt : +cfg.text ;
 
   for(StrLen text=SampleText; +text ;)
     {
@@ -493,13 +504,8 @@ void FontLab::drawSampleText(DrawBuf buf) const
 
      a=a.addY(dy);
 
-     font->text(buf,all_pane,TextPlace(a.x,a.y),line,vc);
+     font->text(buf,all_pane,TextPlace(a),line,vc);
     }
- }
-
-void FontLab::setFont(String file_name)
- {
-  if( set(Range(file_name)) ) redraw();
  }
 
 void FontLab::complete_fb(bool ok)
@@ -516,18 +522,25 @@ void FontLab::complete_fb(bool ok)
     }
   else
     {
-     getFrame()->askClose();
+     askFrameClose();
     }
  }
 
-FontLab::FontLab(SubWindowHost &host,const Config &cfg_,FontSelectorWindow &selector_)
+void FontLab::setFont(String file_name)
+ {
+  if( set(Range(file_name)) ) redraw();
+ }
+
+FontLab::FontLab(SubWindowHost &host,const Config &cfg_)
  : SubWindow(host),
    cfg(cfg_),
-   progress(this),
+
+   progress(host.getFrame(),cfg.progress_cfg),
    fbinc(progress),
-   selector(selector_),
-   connector_fbinc(this,&FontLab::complete_fb,fbinc.complete),
-   connector_font(this,&FontLab::setFont,selector.takeSignal())
+   selector_frame(host.getFrame(),cfg.selector_cfg),
+
+   connector_fbinc_completed(this,&FontLab::complete_fb,fbinc.completed),
+   connector_selector_selected(this,&FontLab::setFont,selector_frame.selected)
  {
  }
 
@@ -544,28 +557,27 @@ void FontLab::layout()
 
   all_pane=Pane(Null,size);
 
-  FontSize font_size=cfg.font.get()->getSize();
+  FontSize fs=cfg.font.get()->getSize();
 
-  Coord delta=10;
+  Coord delta=+cfg.space;
 
-  info_pane={delta,delta,Coord(size.x-2*delta),Coord(font_size.dy+delta)};
+  info_pane=Pane(delta,delta,size.x-2*delta,fs.dy+delta);
 
-  base={delta,Coord(font_size.dy+2*delta)};
+  base=Point(delta,fs.dy+2*delta);
 
   clip_pane=Pane(base+Point(10,10),{50,30});
  }
 
-void FontLab::draw(DrawBuf buf,bool drag_active) const
+void FontLab::draw(DrawBuf buf,bool) const
  {
-  Used(drag_active);
-
-  buf.erase(alt?+cfg.back_alt:+cfg.back);
+  buf.erase( alt? +cfg.back_alt : +cfg.back );
 
   FontSize fs=font->getSize();
 
   show(buf,"#; #; #; : #; #; dy = #; by = #; gamma = #;/10",font.getFamily(),font.getStyle(),font_size,
                                                             font_config.fht,font_config.fsm,
-                                                            fs.dy,fs.by,int(10*font_config.gamma_order));
+                                                            fs.dy,fs.by,
+                                                            int(10*font_config.gamma_order));
 
   if( clip )
     {
@@ -610,17 +622,19 @@ void FontLab::react_Key(VKey vkey,KeyMod kmod)
     {
      case VKey_F10 :
       {
-       selector.create(getFrame(),fb.getDatabase(),cfg.select_title.get());
+       selector_frame.create(fb.getDatabase());
       }
      return;
 
      case VKey_F11 :
       {
-       testPref();
+       UserPreference pref;
+
+       pref.update();
       }
      return;
 
-     case VKey_F1 :
+     case VKey_F2 :
       {
        font_config.fsm=Next(font_config.fsm);
 
@@ -628,7 +642,7 @@ void FontLab::react_Key(VKey vkey,KeyMod kmod)
       }
      break;
 
-     case VKey_F2 :
+     case VKey_F3 :
       {
        font_config.fht=Next(font_config.fht);
 
@@ -636,13 +650,13 @@ void FontLab::react_Key(VKey vkey,KeyMod kmod)
       }
      break;
 
-     case VKey_F3 : sample=!sample; break;
+     case VKey_F4 : sample=!sample; break;
 
-     case VKey_F4 : clip=!clip; break;
+     case VKey_F5 : clip=!clip; break;
 
-     case VKey_F5 : alt=!alt; break;
+     case VKey_F6 : alt=!alt; break;
 
-     case VKey_F6 :
+     case VKey_F7 :
       {
        font_config.strength=20-font_config.strength;
 
@@ -650,7 +664,7 @@ void FontLab::react_Key(VKey vkey,KeyMod kmod)
       }
      break;
 
-     case VKey_F7 :
+     case VKey_F8 :
       {
        font_config.use_kerning=!font_config.use_kerning;
 

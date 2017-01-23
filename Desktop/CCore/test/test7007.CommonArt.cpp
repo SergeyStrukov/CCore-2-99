@@ -50,13 +50,9 @@ void Insert(A &obj,ulen ind,T item)
     }
  }
 
-/* classes */
+/* class ClientWindow */
 
-class ClientSubWindow;
-
-/* class ClientSubWindow */
-
-class ClientSubWindow : public SubWindow
+class ClientWindow : public SubWindow
  {
   public:
 
@@ -151,14 +147,14 @@ class ClientSubWindow : public SubWindow
 
   public:
 
-   ClientSubWindow(SubWindowHost &host,const ConfigType &cfg_)
+   ClientWindow(SubWindowHost &host,const ConfigType &cfg_)
     : SubWindow(host),
       cfg(cfg_),
       out("time.txt")
     {
     }
 
-   virtual ~ClientSubWindow()
+   virtual ~ClientWindow()
     {
     }
 
@@ -475,7 +471,7 @@ using namespace Private_7007;
 template <>
 int TestMain<7007>(CmdDisplay cmd_display)
  {
-  return ClientApplication<ClientSubWindow>::Main(cmd_display,"Test7007"_def);
+  return ClientApplication<ClientWindow>::Main(cmd_display,"Test7007"_def);
  }
 
 } // namespace App4
