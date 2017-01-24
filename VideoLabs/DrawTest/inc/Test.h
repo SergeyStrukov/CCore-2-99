@@ -128,7 +128,7 @@ class Test : public SubWindow
 
    String info;
 
-   Shape2 shape;
+   Shape4 shape;
 
    ShapeParam param;
 

@@ -27,7 +27,7 @@ namespace App {
 
 void Shape1::draw(DrawBuf buf) const
  {
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MCoord radius=Fraction(256);
 
@@ -70,13 +70,13 @@ ShapeParam Shape1::getParam(VKey vkey)
  {
   switch( vkey )
     {
-     case VKey_F1 : return {y1,"y1"};
+     case VKey_F2 : return {y1,"y1"};
 
-     case VKey_F2 : return {r1,"r1"};
+     case VKey_F3 : return {r1,"r1"};
 
-     case VKey_F3 : return {r2,"r2"};
+     case VKey_F4 : return {r2,"r2"};
 
-     case VKey_F4 : return {y2,"y2"};
+     case VKey_F5 : return {y2,"y2"};
 
      default: return {};
     }
@@ -86,7 +86,7 @@ ShapeParam Shape1::getParam(VKey vkey)
 
 void Shape2::draw(DrawBuf buf) const
  {
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MCoord x=Fraction(10);
   MCoord y=Fraction(10);
@@ -111,11 +111,11 @@ ShapeParam Shape2::getParam(VKey vkey)
  {
   switch( vkey )
     {
-     case VKey_F1 : return {dx,"dx"};
+     case VKey_F2 : return {dx,"dx"};
 
-     case VKey_F2 : return {dy,"dy"};
+     case VKey_F3 : return {dy,"dy"};
 
-     case VKey_F3 : return {radius,"radius"};
+     case VKey_F4 : return {radius,"radius"};
 
      default: return {};
     }
@@ -125,7 +125,7 @@ ShapeParam Shape2::getParam(VKey vkey)
 
 void Shape3::draw(DrawBuf buf) const
  {
-  Smooth::DrawArt art(buf);
+  SmoothDrawArt art(buf);
 
   MCoord x=Fraction(10);
   MCoord y=Fraction(10);
@@ -150,9 +150,9 @@ ShapeParam Shape3::getParam(VKey vkey)
  {
   switch( vkey )
     {
-     case VKey_F1 : return {dx,"dx"};
+     case VKey_F2 : return {dx,"dx"};
 
-     case VKey_F2 : return {dy,"dy"};
+     case VKey_F3 : return {dy,"dy"};
 
      default: return {};
     }
@@ -178,9 +178,9 @@ ShapeParam Shape4::getParam(VKey vkey)
  {
   switch( vkey )
     {
-     case VKey_F1 : return {dx,"dx"};
+     case VKey_F2 : return {dx,"dx"};
 
-     case VKey_F2 : return {dy,"dy"};
+     case VKey_F3 : return {dy,"dy"};
 
      default: return {};
     }
@@ -214,17 +214,11 @@ void Test::layout()
 
 void Test::draw(DrawBuf buf,bool) const
  {
-  try
-    {
-     buf.erase(cfg.back);
+  buf.erase(cfg.back);
 
-     shape.draw(buf);
+  shape.draw(buf);
 
-     cfg.font->text(buf,Pane(10,512,1024,30),{AlignX_Left,AlignY_Bottom},Range(info),cfg.text);
-    }
-  catch(CatchType)
-    {
-    }
+  cfg.font->text(buf,Pane(10,512,1024,30),{AlignX_Left,AlignY_Bottom},Range(info),cfg.text);
  }
 
   // user input
