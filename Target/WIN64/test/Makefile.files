@@ -88,6 +88,7 @@ OBJ_LIST = \
 ../test-obj/test2052.ObjectDomain.o \
 ../test-obj/test2053.StepEval.o \
 ../test-obj/test2054.ApplyToRange.o \
+../test-obj/test2055.ArrayInsDel.o \
 ../test-obj/test2500.PrintFile.o \
 ../test-obj/test2999.Blank.o \
 ../test-obj/test3001.Atomic.o \
@@ -263,6 +264,7 @@ ASM_LIST = \
 ../test-obj/test2052.ObjectDomain.s \
 ../test-obj/test2053.StepEval.s \
 ../test-obj/test2054.ApplyToRange.s \
+../test-obj/test2055.ArrayInsDel.s \
 ../test-obj/test2500.PrintFile.s \
 ../test-obj/test2999.Blank.s \
 ../test-obj/test3001.Atomic.s \
@@ -438,6 +440,7 @@ DEP_LIST = \
 ../test-obj/test2052.ObjectDomain.dep \
 ../test-obj/test2053.StepEval.dep \
 ../test-obj/test2054.ApplyToRange.dep \
+../test-obj/test2055.ArrayInsDel.dep \
 ../test-obj/test2500.PrintFile.dep \
 ../test-obj/test2999.Blank.dep \
 ../test-obj/test3001.Atomic.dep \
@@ -794,6 +797,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test2054.ApplyToRange.o : ../../../Fundamental/CCore/test/test2054.ApplyToRange.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test2055.ArrayInsDel.o : ../../../Fundamental/CCore/test/test2055.ArrayInsDel.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test2500.PrintFile.o : ../../../Fundamental/CCore/test/test2500.PrintFile.cpp
@@ -1314,6 +1320,9 @@ include $(RULES_FILE)
 ../test-obj/test2054.ApplyToRange.s : ../../../Fundamental/CCore/test/test2054.ApplyToRange.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test2055.ArrayInsDel.s : ../../../Fundamental/CCore/test/test2055.ArrayInsDel.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test2500.PrintFile.s : ../../../Fundamental/CCore/test/test2500.PrintFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1831,6 +1840,9 @@ include $(RULES_FILE)
 
 ../test-obj/test2054.ApplyToRange.dep : ../../../Fundamental/CCore/test/test2054.ApplyToRange.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test2054.ApplyToRange.o $< -MF $@
+
+../test-obj/test2055.ArrayInsDel.dep : ../../../Fundamental/CCore/test/test2055.ArrayInsDel.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test2055.ArrayInsDel.o $< -MF $@
 
 ../test-obj/test2500.PrintFile.dep : ../../../Fundamental/CCore/test/test2500.PrintFile.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test2500.PrintFile.o $< -MF $@

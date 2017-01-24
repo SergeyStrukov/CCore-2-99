@@ -87,6 +87,7 @@
 ../../../Fundamental/CCore/test/test2052.ObjectDomain.cpp
 ../../../Fundamental/CCore/test/test2053.StepEval.cpp
 ../../../Fundamental/CCore/test/test2054.ApplyToRange.cpp
+../../../Fundamental/CCore/test/test2055.ArrayInsDel.cpp
 ../../../Fundamental/CCore/test/test2500.PrintFile.cpp
 ../../../Fundamental/CCore/test/test2999.Blank.cpp
 ../../../Fundamental/CCore/test/testArray.cpp

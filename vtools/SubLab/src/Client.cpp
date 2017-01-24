@@ -126,10 +126,8 @@ void AltShape::draw(const DrawBuf &buf) const
 
 void SpaceWindow::startDrag(Point point)
  {
-  if( !drag )
+  if( Change(drag,true) )
     {
-     drag=true;
-
      drag_base=point;
      space_base=space;
 
@@ -253,9 +251,9 @@ void SpaceWindow::react_LeftClick(Point point,MouseKey mkey)
     {
      space=point;
 
-     changed.assert();
-
      redraw();
+
+     changed.assert();
     }
   else
     {
@@ -460,6 +458,7 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
       KnobWindow_auto(SubWindowHost &host,const ConfigType &cfg)
        : KnobWindow(host,cfg,KnobShape::FaceOk),
+
          connector_pressed(this,&KnobWindow_auto::nextFace,pressed)
        {
        }
@@ -1093,7 +1092,7 @@ void ClientWindow::space_changed()
     {
      cur->setPlace(space.getInner());
 
-     cur->redraw();
+     space.redraw();
     }
  }
 
@@ -1179,18 +1178,9 @@ void ClientWindow::layout()
     }
  }
 
-void ClientWindow::draw(DrawBuf buf,bool drag_active) const
+void ClientWindow::drawBack(DrawBuf buf,bool) const
  {
   buf.erase(getBack());
-
-  wlist.draw(buf,drag_active);
- }
-
-void ClientWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  buf.erase(pane,getBack());
-
-  wlist.draw(buf,pane,drag_active);
  }
 
  // base
