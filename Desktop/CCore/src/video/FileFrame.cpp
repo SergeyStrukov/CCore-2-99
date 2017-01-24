@@ -1153,10 +1153,10 @@ FileFrame::FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &p
   bindClient(sub_win);
  }
 
-FileFrame::FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &signal)
+FileFrame::FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update)
  : FileFrame(desktop,cfg,param)
  {
-  connectUpdate(signal);
+  connectUpdate(update);
  }
 
 FileFrame::~FileFrame()

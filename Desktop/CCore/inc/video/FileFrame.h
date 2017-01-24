@@ -652,7 +652,7 @@ class FileFrame : public DragFrame
 
    FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param);
 
-   FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &signal);
+   FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update);
 
    virtual ~FileFrame();
 

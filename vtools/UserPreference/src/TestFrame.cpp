@@ -102,7 +102,7 @@ void TestWindow::shade()
  {
   disableFrameReact();
 
-  if( enable_window.isDead() ) enable_window.create(getFrame(),"TestFrame enable"_def);
+  if( enable_frame.isDead() ) enable_frame.create(getFrame(),"TestFrame enable"_def);
  }
 
 void TestWindow::unshade()
@@ -140,9 +140,9 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    text_contour(wlist,pref.getSmartConfig(),"Select color"_def),
    light(wlist,pref.getSmartConfig(),Red),
    progress(wlist,pref.getSmartConfig()),
-   shade_btn(wlist,pref.getSmartConfig(),"Shade"_def),
+   btn_shade(wlist,pref.getSmartConfig(),"Shade"_def),
 
-   enable_window(host.getFrame()->getDesktop(),pref.getSmartConfig()),
+   enable_frame(host.getFrameDesktop(),pref.getSmartConfig(),pref.updated),
 
    connector_group_changed(this,&TestWindow::changeColor,group.changed),
    connector_check_changed(this,&TestWindow::lightOnOff,check.changed),
@@ -150,12 +150,12 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
    connector_swtch_changed(this,&TestWindow::enableAll,swtch.changed),
    connector_xscroll_changed(this,&TestWindow::setFace,xscroll.changed),
    connector_btn_pressed(this,&TestWindow::push,btn.pressed),
-   connector_shade_btn_pressed(this,&TestWindow::shade,shade_btn.pressed),
-   connector_enable_window_destoyed(this,&TestWindow::unshade,enable_window.destroyed)
+   connector_btn_shade_pressed(this,&TestWindow::shade,btn_shade.pressed),
+   connector_enable_frame_destoyed(this,&TestWindow::unshade,enable_frame.destroyed)
  {
   wlist.insTop(swtch,btn,alt,rad1,rad2,rad3,check,edit,knob,xscroll,info,text_list,
                label1,label2,label3,label,text,xsingle,ysingle,xdouble,ydouble,
-               contour,text_contour,light,progress,shade_btn);
+               contour,text_contour,light,progress,btn_shade);
 
   group.add(rad1,rad2,rad3);
 
@@ -163,9 +163,7 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
 
   edit.setText("To find our long-forgotten gold.");
 
-  enable_window.setInfo(InfoFromString("Press Ok to enable"));
-
-  enable_window.add("Ok"_def,Button_Ok);
+  enable_frame.add("Ok"_def,Button_Ok).setInfo(InfoFromString("Press Ok to enable"));
  }
 
 TestWindow::~TestWindow()
@@ -298,30 +296,19 @@ void TestWindow::layout()
 
   // shade_btn
 
-  pane.place_cutTopLeft(shade_btn);
+  pane.place_cutTopLeft(btn_shade);
  }
 
-void TestWindow::draw(DrawBuf buf,bool drag_active) const
+void TestWindow::drawBack(DrawBuf buf,bool) const
  {
-  VColor ground=pref.get().back;
+  VColor back=pref.get().back;
 
-  buf.erase(ground);
-
-  wlist.draw(buf,drag_active);
- }
-
-void TestWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  VColor ground=pref.get().back;
-
-  buf.erase(pane,ground);
-
-  wlist.draw(buf,pane,drag_active);
+  buf.erase(back);
  }
 
 /* class TestClient */
 
-void TestClient::menu_off()
+void TestClient::menuOff()
  {
   if( cascade_menu.isAlive() ) cascade_menu.destroy();
 
@@ -396,14 +383,16 @@ void TestClient::update()
 
 TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &update)
  : ComboWindow(host),
+
    menu(wlist,pref.getSmartConfig(),menu_data),
-   cascade_menu(host.getFrame()->getDesktop(),pref.getSmartConfig()),
+   cascade_menu(host.getFrameDesktop(),pref.getSmartConfig()),
    test(wlist,pref),
-   file_window(host.getFrame()->getDesktop(),pref.getSmartConfig(),{true},update),
+   file_window(host.getFrameDesktop(),pref.getSmartConfig(),{true},update),
+
    connector_menu_selected(this,&TestClient::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&TestClient::cascade_menu_selected,cascade_menu.selected),
    connector_cascade_menu_pressed(this,&TestClient::cascade_menu_pressed,cascade_menu.pressed),
-   connector_update(this,&TestClient::update,update)
+   connector_updated(this,&TestClient::update,update)
  {
   wlist.insTop(menu,test);
 
@@ -503,14 +492,14 @@ void TestClient::react_Key(VKey vkey,KeyMod kmod)
 
 void TestClient::react_LeftClick(Point point,MouseKey mkey)
  {
-  menu_off();
+  menuOff();
 
   wlist.put_LeftClick(point,mkey);
  }
 
 void TestClient::react_RightClick(Point point,MouseKey mkey)
  {
-  menu_off();
+  menuOff();
 
   wlist.put_RightClick(point,mkey);
  }

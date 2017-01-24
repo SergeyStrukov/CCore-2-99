@@ -578,10 +578,10 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      defer_tick=input.create(&DragFrameOf<Shape>::tick);
     }
 
-   DragFrameOf(Desktop *desktop,const ConfigType &cfg,Signal<> &signal)
+   DragFrameOf(Desktop *desktop,const ConfigType &cfg,Signal<> &update)
     : DragFrameOf(desktop,cfg)
     {
-     connector_update.connect(signal);
+     connector_update.connect(update);
     }
 
    virtual ~DragFrameOf()
@@ -610,14 +610,14 @@ class DragFrameOf : public FrameWindow , public SubWindowHost
      alert_client_ac=alert_client_.getAliveControl();
     }
 
-   void connectUpdate(Signal<> &signal)
+   void connectUpdate(Signal<> &update)
     {
-     connector_update.connect(signal);
+     connector_update.connect(update);
     }
 
-   void connectAlert(Signal<> &signal) requires ( Shape::EnableAlert )
+   void connectAlert(Signal<> &update) requires ( Shape::EnableAlert )
     {
-     connector_alert.connect(signal);
+     connector_alert.connect(update);
     }
 
    void createMain(CmdDisplay cmd_display,Point max_size,const DefString &title) requires ( !Shape::EnableFixed )

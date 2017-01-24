@@ -94,7 +94,7 @@ class ToolFrame : public FrameWindow , public SubWindowHost
 
    ToolFrame(Desktop *desktop,const Config &cfg);
 
-   ToolFrame(Desktop *desktop,const Config &cfg,Signal<> &signal);
+   ToolFrame(Desktop *desktop,const Config &cfg,Signal<> &update);
 
    virtual ~ToolFrame();
 
@@ -102,7 +102,7 @@ class ToolFrame : public FrameWindow , public SubWindowHost
 
    void bindClient(SubWindow &client);
 
-   void connectUpdate(Signal<> &signal);
+   void connectUpdate(Signal<> &update);
 
    void createMain(Pane pane,const DefString &title);
 

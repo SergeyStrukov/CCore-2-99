@@ -75,9 +75,9 @@ class TestWindow : public ComboWindow
    LightWindow light;
    ProgressWindow progress;
 
-   ButtonWindow shade_btn;
+   ButtonWindow btn_shade;
 
-   MessageFrame enable_window;
+   MessageFrame enable_frame;
 
   private:
 
@@ -111,11 +111,11 @@ class TestWindow : public ComboWindow
 
    void shade();
 
-   SignalConnector<TestWindow> connector_shade_btn_pressed;
+   SignalConnector<TestWindow> connector_btn_shade_pressed;
 
    void unshade();
 
-   SignalConnector<TestWindow> connector_enable_window_destoyed;
+   SignalConnector<TestWindow> connector_enable_frame_destoyed;
 
   public:
 
@@ -127,9 +127,7 @@ class TestWindow : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
  };
 
 /* class TestClient */
@@ -153,7 +151,7 @@ class TestClient : public ComboWindow
 
   private:
 
-   void menu_off();
+   void menuOff();
 
   private:
 
@@ -169,7 +167,7 @@ class TestClient : public ComboWindow
 
    void update();
 
-   SignalConnector<TestClient> connector_update;
+   SignalConnector<TestClient> connector_updated;
 
   public:
 

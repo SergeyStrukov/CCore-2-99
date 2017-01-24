@@ -209,10 +209,10 @@ MessageFrame::MessageFrame(Desktop *desktop,const Config &cfg_)
   bindClient(sub_win);
  }
 
-MessageFrame::MessageFrame(Desktop *desktop,const Config &cfg,Signal<> &signal)
+MessageFrame::MessageFrame(Desktop *desktop,const Config &cfg,Signal<> &update)
  : MessageFrame(desktop,cfg)
  {
-  connectUpdate(signal);
+  connectUpdate(update);
  }
 
 MessageFrame::~MessageFrame()

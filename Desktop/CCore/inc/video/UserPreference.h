@@ -457,7 +457,7 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
 
    // signals
 
-   Signal<> updated;
+   mutable Signal<> updated;
  };
 
 } // namespace Video

@@ -199,7 +199,7 @@ class MessageFrame : public FixedFrame
 
    MessageFrame(Desktop *desktop,const Config &cfg);
 
-   MessageFrame(Desktop *desktop,const Config &cfg,Signal<> &signal);
+   MessageFrame(Desktop *desktop,const Config &cfg,Signal<> &update);
 
    virtual ~MessageFrame();
 

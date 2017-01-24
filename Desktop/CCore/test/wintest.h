@@ -145,13 +145,13 @@ struct ClientApplication
       }
 
      template <class P,class ... TT>
-     Application(P &param,WindowReportBase &report,CmdDisplay cmd_display_,const DefString &title_,Signal<> &signal,TT && ... tt)
+     Application(P &param,WindowReportBase &report,CmdDisplay cmd_display_,const DefString &title_,Signal<> &update,TT && ... tt)
       : ApplicationBase(param.desktop,param.tick_period),
         cmd_display(cmd_display_),
         title(title_),
-        main_frame(param.desktop,param.report_cfg,signal),
+        main_frame(param.desktop,param.report_cfg,update),
         exception_client(main_frame,param.exception_cfg,report),
-        client(main_frame,signal, std::forward<TT>(tt)... )
+        client(main_frame,update, std::forward<TT>(tt)... )
       {
        main_frame.bindAlertClient(exception_client);
        main_frame.bindClient(client);

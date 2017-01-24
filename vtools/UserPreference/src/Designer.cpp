@@ -551,6 +551,8 @@ void DesignerWindow::switchTo(SubWindow *editor,BackSet *backset)
      if( !focus ) focus=editor;
 
      if( focus ) focus->setFocus();
+
+     redraw();
     }
  }
 
@@ -1034,18 +1036,9 @@ void DesignerWindow::layout()
   pane.placeMin(bool_edit);
  }
 
-void DesignerWindow::draw(DrawBuf buf,bool drag_active) const
+void DesignerWindow::drawBack(DrawBuf buf,bool) const
  {
   buf.erase(+cfg.back);
-
-  wlist.draw(buf,drag_active);
- }
-
-void DesignerWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  buf.erase(pane,+cfg.back);
-
-  wlist.draw(buf,pane,drag_active);
  }
 
  // base

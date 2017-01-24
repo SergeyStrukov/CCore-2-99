@@ -136,10 +136,10 @@ ToolFrame::ToolFrame(Desktop *desktop,const Config &cfg_)
  {
  }
 
-ToolFrame::ToolFrame(Desktop *desktop,const Config &cfg,Signal<> &signal)
+ToolFrame::ToolFrame(Desktop *desktop,const Config &cfg,Signal<> &update)
  : ToolFrame(desktop,cfg)
  {
-  connector_update.connect(signal);
+  connector_update.connect(update);
  }
 
 ToolFrame::~ToolFrame()
@@ -156,9 +156,9 @@ void ToolFrame::bindClient(SubWindow &client_)
   client_ac=client_.getAliveControl();
  }
 
-void ToolFrame::connectUpdate(Signal<> &signal)
+void ToolFrame::connectUpdate(Signal<> &update)
  {
-  connector_update.connect(signal);
+  connector_update.connect(update);
  }
 
 void ToolFrame::createMain(Pane pane,const DefString &title)
