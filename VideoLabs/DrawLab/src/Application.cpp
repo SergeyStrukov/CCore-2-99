@@ -17,6 +17,7 @@
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
+#include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
 
@@ -45,9 +46,10 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
 
-   DragFrame main_win;
+   DragFrame main_frame;
 
    ExceptionClient exception_client;
+
    DrawLab client;
 
   private:
@@ -69,9 +71,7 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     Point max_size=desktop->getScreenSize();
-
-     main_win.createMain(cmd_display,max_size,String("DrawLab"));
+     main_frame.createMain(cmd_display,"DrawLab"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -94,12 +94,12 @@ class Application : public ApplicationBase
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
-      main_win(param.desktop,param.report_cfg),
-      exception_client(main_win,param.exception_cfg,report),
-      client(main_win)
+      main_frame(param.desktop,param.report_cfg),
+      exception_client(main_frame,param.exception_cfg,report),
+      client(main_frame)
     {
-     main_win.bindAlertClient(exception_client);
-     main_win.bindClient(client);
+     main_frame.bindAlertClient(exception_client);
+     main_frame.bindClient(client);
     }
 
    ~Application()
@@ -117,6 +117,8 @@ int Main(CmdDisplay cmd_display)
 
      Param param;
      WindowReport report(param);
+
+     SetAppIcon(DefaultAppIcon());
 
      Application app(report,param,cmd_display);
 

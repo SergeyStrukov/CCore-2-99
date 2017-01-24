@@ -122,7 +122,7 @@ class DrawLab : public SubWindow
 
    // shape
 
-   DynArray<Smooth::Dot> dots;
+   DynArray<SmoothDot> dots;
    ulen pick_ind = 0 ;
    ulen near_ind = 0 ;
 
@@ -226,14 +226,14 @@ class DrawLab : public SubWindow
 
    // draw
 
-   void drawMark(Smooth::DrawArt &art,Point point,Smooth::DotType dot_type) const;
+   void drawMark(SmoothDrawArt &art,Point point,Smooth::DotType dot_type) const;
 
-   void drawPickMark(Smooth::DrawArt &art,Point point) const;
+   void drawPickMark(SmoothDrawArt &art,Point point) const;
 
-   void drawNearMark(Smooth::DrawArt &art,Point point) const;
+   void drawNearMark(SmoothDrawArt &art,Point point) const;
 
    template <class Map>
-   void drawPath(Smooth::DrawArt art,Map map,bool do_loop) const;
+   void drawPath(SmoothDrawArt art,Map map,bool do_loop) const;
 
    void drawMarks(DrawBuf buf) const;
 
