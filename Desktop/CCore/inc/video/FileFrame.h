@@ -602,6 +602,8 @@ class FileWindow : public ComboWindow
 
    StrLen getFilePath() const { return file_path; }
 
+   void setNewFile(bool on);
+
    void addFilter(StrLen filter,bool check) { filter_list.add(filter,check); }
 
    // drawing
@@ -650,7 +652,7 @@ class FileFrame : public DragFrame
 
   public:
 
-   FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param);
+   FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param={false});
 
    FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param,Signal<> &update);
 
@@ -658,7 +660,11 @@ class FileFrame : public DragFrame
 
    // methods
 
+   void setNewFile(bool on) { sub_win.setNewFile(on); }
+
    void addFilter(StrLen filter,bool check=true) { sub_win.addFilter(filter,check); }
+
+   void addFilters(StrLen filter) { addFilter(filter); }
 
    template <class ... TT>
    void addFilters(StrLen filter,TT ... filters)

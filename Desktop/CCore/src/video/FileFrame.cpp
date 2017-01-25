@@ -1037,6 +1037,36 @@ Point FileWindow::getMinSize(StrLen sample_text) const
   return Point(dx,dy);
  }
 
+void FileWindow::setNewFile(bool on)
+ {
+  if( Change(param.new_file,on) )
+    {
+     if( param.new_file )
+       {
+        wlist.insBottom(alt_new_file,label_new_file,edit_new_file);
+
+        alt_new_file.check(true);
+
+        edit_new_file.enable();
+
+        list_file.disable();
+
+        edit_new_file_changed();
+       }
+     else
+       {
+        wlist.del(alt_new_file,label_new_file,edit_new_file);
+
+        list_file.enable(list_dir.isEnabled());
+        btn_Ok.enable();
+       }
+
+     layout();
+
+     redraw();
+    }
+ }
+
  // base
 
 void FileWindow::open()

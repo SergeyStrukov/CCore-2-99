@@ -418,6 +418,24 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
      insBottom(tt...);
     }
 
+   // multiple delete
+
+   template <class ... TT>
+   void del(SubWindow *sub_win,TT * ... tt)
+    {
+     del(sub_win);
+
+     del(tt...);
+    }
+
+   template <class ... TT>
+   void del(SubWindow &sub_win,TT & ... tt)
+    {
+     del(sub_win);
+
+     del(tt...);
+    }
+
    // focus
 
    SubWindow * getFocus() const { return has_focus?focus:0; }
