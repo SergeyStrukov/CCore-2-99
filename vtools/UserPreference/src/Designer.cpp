@@ -558,7 +558,7 @@ void DesignerWindow::switchTo(SubWindow *editor,BackSet *backset)
 
 void DesignerWindow::testDestroyed()
  {
-  getFrame()->askClose();
+  askFrameClose();
  }
 
 void DesignerWindow::newList()
@@ -815,6 +815,7 @@ DesignerWindow::DesignerWindow(SubWindowHost &host,const Config &cfg_,UserPrefer
  : ComboWindow(host),
    cfg(cfg_),
    self_pref(self_pref_),
+
    test_frame(getFrameDesktop(),pref,pref.updated),
 
    item_list(wlist,cfg.list_cfg),
@@ -1055,9 +1056,7 @@ void DesignerWindow::open()
                        "Test Frame"_def);
     }
 
-  wlist.open();
-
-  if( !wlist.getFocus() ) wlist.focusTop();
+  ComboWindow::open();
  }
 
 } // namespace App
