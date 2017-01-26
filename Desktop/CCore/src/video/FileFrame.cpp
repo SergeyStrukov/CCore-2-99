@@ -736,9 +736,9 @@ void FileWindow::setDir(StrLen dir_name)
     }
  }
 
-void FileWindow::setDir(StrLen dir_name,StrLen sub_dir)
+void FileWindow::setSubDir(StrLen sub_dir)
  {
-  MakeFileName temp(dir_name,sub_dir);
+  MakeFileName temp(edit_dir.getText(),sub_dir);
 
   setDir(temp.get());
  }
@@ -795,6 +795,38 @@ ulen FileWindow::PrevDir(StrLen dir_name)
     }
  }
 
+void FileWindow::handleDir(FuncArgType<StrLen> func)
+ {
+  const ComboInfo &info=list_dir.getInfo();
+  ulen index=list_dir.getSelect();
+
+  if( index<info->getLineCount() )
+    {
+     ComboInfoItem item=info->getLine(index);
+
+     if( item.type==ComboInfoText )
+       {
+        func(item.text);
+       }
+    }
+ }
+
+void FileWindow::mkdir(StrLen dir_name)
+ {
+  param.file_boss->createDir(dir_name);
+
+  setDir(dir_name);
+ }
+
+void FileWindow::rmdir(StrLen sub_dir)
+ {
+  MakeFileName temp(edit_dir.getText(),sub_dir);
+
+  param.file_boss->deleteDir(temp.get());
+
+  fillLists();
+ }
+
 void FileWindow::file_list_entered()
  {
   buildFilePath();
@@ -809,18 +841,7 @@ void FileWindow::filter_list_changed()
 
 void FileWindow::dir_list_entered()
  {
-  const ComboInfo &info=list_dir.getInfo();
-  ulen index=list_dir.getSelect();
-
-  if( index<info->getLineCount() )
-    {
-     ComboInfoItem item=info->getLine(index);
-
-     if( item.type==ComboInfoText )
-       {
-        setDir(edit_dir.getText(),item.text);
-       }
-    }
+  handleDir( [this] (StrLen dir_name) { setSubDir(dir_name); } );
  }
 
 void FileWindow::dir_entered()
@@ -881,6 +902,16 @@ void FileWindow::knob_back_pressed()
 
      setDir(dir_name);
     }
+ }
+
+void FileWindow::knob_mkdir_pressed()
+ {
+  if( !list_dir.isEnabled() ) mkdir(edit_dir.getText());
+ }
+
+void FileWindow::knob_rmdir_pressed()
+ {
+  handleDir( [this] (StrLen dir_name) { rmdir(dir_name); } );
  }
 
 void FileWindow::hit_menu_destroyed()
@@ -952,6 +983,8 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
    list_dir(wlist,cfg.list_cfg),
    list_file(wlist,cfg.list_cfg),
    filter_list(wlist,cfg.filter_list_cfg),
+   knob_mkdir(wlist,cfg.knob_cfg,KnobShape::FacePlus),
+   knob_rmdir(wlist,cfg.knob_cfg,KnobShape::FaceMinus),
    line2(wlist,cfg.line_cfg),
    btn_Ok(wlist,cfg.btn_cfg,cfg.text_Ok),
    btn_Cancel(wlist,cfg.btn_cfg,cfg.text_Cancel),
@@ -974,6 +1007,8 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
    connector_knob_hit_pressed(this,&FileWindow::knob_hit_pressed,knob_hit.pressed),
    connector_knob_add_pressed(this,&FileWindow::knob_add_pressed,knob_add.pressed),
    connector_knob_back_pressed(this,&FileWindow::knob_back_pressed,knob_back.pressed),
+   connector_knob_mkdir_pressed(this,&FileWindow::knob_mkdir_pressed,knob_mkdir.pressed),
+   connector_knob_rmdir_pressed(this,&FileWindow::knob_rmdir_pressed,knob_rmdir.pressed),
    connector_hit_menu_destroyed(this,&FileWindow::hit_menu_destroyed,hit_menu.destroyed),
    connector_hit_menu_selected(this,&FileWindow::hit_menu_selected,hit_menu.selected),
    connector_hit_menu_deleted(this,&FileWindow::hit_menu_deleted,hit_menu.deleted),
@@ -985,7 +1020,7 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
 
   if( param.new_file )
     {
-     wlist.insBottom(alt_new_file,label_new_file,edit_new_file);
+     wlist.insBottom(alt_new_file,label_new_file,edit_new_file,knob_mkdir,knob_rmdir);
 
      list_file.disable();
 
@@ -1003,6 +1038,8 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
   knob_back.setHintText(+cfg.hint_FileUpdir);
   list_dir.setHintText(+cfg.hint_FileDirList);
   list_file.setHintText(+cfg.hint_FileList);
+  knob_mkdir.setHintText(+cfg.hint_FileMakeDir);
+  knob_rmdir.setHintText(+cfg.hint_FileRemoveDir);
   alt_new_file.setHintText(+cfg.hint_FileAlt);
  }
 
@@ -1043,7 +1080,7 @@ void FileWindow::setNewFile(bool on)
     {
      if( param.new_file )
        {
-        wlist.insBottom(alt_new_file,label_new_file,edit_new_file);
+        wlist.insBottom(alt_new_file,label_new_file,edit_new_file,knob_mkdir,knob_rmdir);
 
         alt_new_file.check(true);
 
@@ -1055,7 +1092,7 @@ void FileWindow::setNewFile(bool on)
        }
      else
        {
-        wlist.del(alt_new_file,label_new_file,edit_new_file);
+        wlist.del(alt_new_file,label_new_file,edit_new_file,knob_mkdir,knob_rmdir);
 
         list_file.enable( list_dir.isEnabled() );
         btn_Ok.enable();
@@ -1127,7 +1164,21 @@ void FileWindow::layout()
   // list_dir
 
   {
-   pane.place_cutTop(list_dir,Div(1,3));
+   if( param.new_file )
+     {
+      PaneCut p=pane.cutTop(Div(1,3));
+
+      auto knob__mkdir=CutBox(knob_mkdir);
+
+      p.cutRight(knob__mkdir.getMinSize())
+       .place_cutTop(CutPoint(knob_mkdir)).place_cutTop(CutPoint(knob_rmdir));
+
+      p.place(list_dir);
+     }
+   else
+     {
+      pane.place_cutTop(list_dir,Div(1,3));
+     }
   }
 
   // check_new , label_new_file , new_file

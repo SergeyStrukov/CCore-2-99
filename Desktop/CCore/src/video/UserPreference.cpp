@@ -217,6 +217,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_FileCurdir",ptr->hint_FileCurdir);
   func("hint_FileDirList",ptr->hint_FileDirList);
   func("hint_FileList",ptr->hint_FileList);
+  func("hint_FileMakeDir",ptr->hint_FileMakeDir);
+  func("hint_FileRemoveDir",ptr->hint_FileRemoveDir);
   func("hint_FileAlt",ptr->hint_FileAlt);
 
   func("hint_FileEnableFilter",ptr->hint_FileEnableFilter);
@@ -444,6 +446,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("?'Current directory'",hint_FileCurdir);
    binder.item("?'Subdirectory list'",hint_FileDirList);
    binder.item("?'File list'",hint_FileList);
+   binder.item("?'Make directory'",hint_FileMakeDir);
+   binder.item("?'Remove directory'",hint_FileRemoveDir);
    binder.item("?'Alt new/existing file'",hint_FileAlt);
    binder.item("?'Enable filter'",hint_FileEnableFilter);
    binder.item("?'Delete filter'",hint_FileDelFilter);

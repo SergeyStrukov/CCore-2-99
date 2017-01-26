@@ -17,6 +17,7 @@
 #define CCore_inc_Path_h
 
 #include <CCore/inc/GenFile.h>
+#include <CCore/inc/FunctorType.h>
 
 namespace CCore {
 
@@ -323,6 +324,42 @@ struct SplitPathName : PathBase
 
   NameType getNameType() const { return GetNameType(name); }
  };
+
+/* WalkPath() */
+
+template <FuncInitArgType<StrLen> FuncInit>
+void WalkPath(StrLen path,FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+
+  SplitPath split1(path);
+
+  ulen off=split1.dev.len;
+
+  for(;;)
+    {
+     StrLen next=path.part(off);
+
+     if( !next ) return;
+
+     SplitDirName split(next);
+
+     if( !split )
+       {
+        func(path);
+
+        return;
+       }
+     else
+       {
+        off+=split.dir_name.len;
+
+        if( split.dir_name.len ) func(path.prefix(off));
+
+        off++;
+       }
+    }
+ }
 
 /* class Path */
 

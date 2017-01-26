@@ -79,6 +79,7 @@ obj/DefaultTimeout.o \
 obj/DeferCall.o \
 obj/Desktop.o \
 obj/DesktopKey.o \
+obj/DestroyGuard.o \
 obj/DetectProxy.o \
 obj/DirTreeRun.o \
 obj/DrawAlgo.o \
@@ -475,6 +476,7 @@ obj/DefaultTimeout.s \
 obj/DeferCall.s \
 obj/Desktop.s \
 obj/DesktopKey.s \
+obj/DestroyGuard.s \
 obj/DetectProxy.s \
 obj/DirTreeRun.s \
 obj/DrawAlgo.s \
@@ -871,6 +873,7 @@ obj/DefaultTimeout.dep \
 obj/DeferCall.dep \
 obj/Desktop.dep \
 obj/DesktopKey.dep \
+obj/DestroyGuard.dep \
 obj/DetectProxy.dep \
 obj/DirTreeRun.dep \
 obj/DrawAlgo.dep \
@@ -1434,6 +1437,9 @@ obj/Desktop.o : ../../Target/WIN32/CCore/src/video/Desktop.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DesktopKey.o : ../../Desktop/CCore/src/video/DesktopKey.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DestroyGuard.o : ../../Simple/CCore/src/DestroyGuard.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DetectProxy.o : ../../Fundamental/CCore/src/DetectProxy.cpp
@@ -2617,6 +2623,9 @@ obj/Desktop.s : ../../Target/WIN32/CCore/src/video/Desktop.cpp
 obj/DesktopKey.s : ../../Desktop/CCore/src/video/DesktopKey.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DestroyGuard.s : ../../Simple/CCore/src/DestroyGuard.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DetectProxy.s : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3797,6 +3806,9 @@ obj/Desktop.dep : ../../Target/WIN32/CCore/src/video/Desktop.cpp
 
 obj/DesktopKey.dep : ../../Desktop/CCore/src/video/DesktopKey.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DesktopKey.o $< -MF $@
+
+obj/DestroyGuard.dep : ../../Simple/CCore/src/DestroyGuard.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DestroyGuard.o $< -MF $@
 
 obj/DetectProxy.dep : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DetectProxy.o $< -MF $@

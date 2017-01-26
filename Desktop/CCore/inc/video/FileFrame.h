@@ -411,13 +411,15 @@ class FileWindow : public ComboWindow
      RefVal<DefString> text_Cancel   = "Cancel"_def ;
      RefVal<DefString> text_New_file = "New file"_def ;
 
-     RefVal<DefString> hint_FileHitList = "Open/close the hit directory list"_def ;
-     RefVal<DefString> hint_FileAddHit  = "Add the current directory to the hit list"_def ;
-     RefVal<DefString> hint_FileUpdir   = "Goto the parent directory"_def ;
-     RefVal<DefString> hint_FileCurdir  = "Current directory"_def ;
-     RefVal<DefString> hint_FileDirList = "Subdirectory list"_def ;
-     RefVal<DefString> hint_FileList    = "File list"_def ;
-     RefVal<DefString> hint_FileAlt     = "Choose between a new file or an existing file"_def ;
+     RefVal<DefString> hint_FileHitList   = "Open/close the hit directory list"_def ;
+     RefVal<DefString> hint_FileAddHit    = "Add the current directory to the hit list"_def ;
+     RefVal<DefString> hint_FileUpdir     = "Goto the parent directory"_def ;
+     RefVal<DefString> hint_FileCurdir    = "Current directory"_def ;
+     RefVal<DefString> hint_FileDirList   = "Subdirectory list"_def ;
+     RefVal<DefString> hint_FileList      = "File list"_def ;
+     RefVal<DefString> hint_FileMakeDir   = "Create a new directory"_def ;
+     RefVal<DefString> hint_FileRemoveDir = "Delete the selected directory"_def ;
+     RefVal<DefString> hint_FileAlt       = "Choose between a new file or an existing file"_def ;
 
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
@@ -450,6 +452,8 @@ class FileWindow : public ComboWindow
        hint_FileCurdir.bind(bag.hint_FileCurdir);
        hint_FileDirList.bind(bag.hint_FileDirList);
        hint_FileList.bind(bag.hint_FileList);
+       hint_FileMakeDir.bind(bag.hint_FileMakeDir);
+       hint_FileRemoveDir.bind(bag.hint_FileRemoveDir);
        hint_FileAlt.bind(bag.hint_FileAlt);
 
        edit_cfg.bind(proxy);
@@ -488,6 +492,9 @@ class FileWindow : public ComboWindow
 
    FileFilterListWindow filter_list;
 
+   KnobWindow knob_mkdir;
+   KnobWindow knob_rmdir;
+
    XDoubleLineWindow line2;
 
    RefButtonWindow btn_Ok;
@@ -522,13 +529,19 @@ class FileWindow : public ComboWindow
 
    void setDir(StrLen dir_name);
 
-   void setDir(StrLen dir_name,StrLen sub_dir);
+   void setSubDir(StrLen sub_dir);
 
    void buildFilePath();
 
    bool isGoodFileName(StrLen file_name);
 
    static ulen PrevDir(StrLen dir_name);
+
+   void handleDir(FuncArgType<StrLen> func);
+
+   void mkdir(StrLen dir_name);
+
+   void rmdir(StrLen sub_dir);
 
   private:
 
@@ -569,6 +582,13 @@ class FileWindow : public ComboWindow
    SignalConnector<FileWindow> connector_knob_hit_pressed;
    SignalConnector<FileWindow> connector_knob_add_pressed;
    SignalConnector<FileWindow> connector_knob_back_pressed;
+
+   void knob_mkdir_pressed();
+
+   void knob_rmdir_pressed();
+
+   SignalConnector<FileWindow> connector_knob_mkdir_pressed;
+   SignalConnector<FileWindow> connector_knob_rmdir_pressed;
 
    void hit_menu_destroyed();
 

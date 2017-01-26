@@ -38,6 +38,10 @@ struct AbstractFileBoss
 
   virtual void enumDir(StrLen dir_name,Function<void (StrLen name,FileType type)> func)=0;
 
+  virtual void createDir(StrLen dir_name)=0;
+
+  virtual void deleteDir(StrLen dir_name)=0;
+
   virtual StrLen getHitDirFile() const =0;
  };
 

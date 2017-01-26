@@ -15,56 +15,6 @@
 
 namespace App {
 
-/* class EditorWindow */
-
-EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
- : ComboWindow(host),
-   cfg(cfg_)
-
-
- {
- }
-
-EditorWindow::~EditorWindow()
- {
- }
-
- // methods
-
-void EditorWindow::load() // TODO
- {
- }
-
-void EditorWindow::load(StrLen file_name)  // TODO
- {
-  Used(file_name);
- }
-
-bool EditorWindow::save() // TODO
- {
-  modified=false;
-
-  return true;
- }
-
-void EditorWindow::save(StrLen file_name) // TODO
- {
-  Used(file_name);
-
-  modified=false;
- }
-
- // drawing
-
-void EditorWindow::layout()
- {
- }
-
-void EditorWindow::drawBack(DrawBuf buf,bool) const
- {
-  buf.erase(+cfg.back);
- }
-
 /* class ClientWindow */
 
 void ClientWindow::menuOff()

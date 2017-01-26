@@ -320,7 +320,7 @@ struct UserPreferenceBag
 
   Coord message_knob_dxy = 50 ;
 
-  Ratio message_pos_ry = Div(5,12) ; // +
+  Ratio message_pos_ry = Div(5,12) ;
 
   // File
 
@@ -336,13 +336,15 @@ struct UserPreferenceBag
 
   DefString text_New_file = "New file"_def ;
 
-  DefString hint_FileHitList = "Open/close the hit directory list"_def ;
-  DefString hint_FileAddHit  = "Add the current directory to the hit list"_def ;
-  DefString hint_FileUpdir   = "Goto the parent directory"_def ;
-  DefString hint_FileCurdir  = "Current directory"_def ;
-  DefString hint_FileDirList = "Subdirectory list"_def ;
-  DefString hint_FileList    = "File list"_def ;
-  DefString hint_FileAlt     = "Choose between a new file or an existing file"_def ;
+  DefString hint_FileHitList   = "Open/close the hit directory list"_def ;
+  DefString hint_FileAddHit    = "Add the current directory to the hit list"_def ;
+  DefString hint_FileUpdir     = "Goto the parent directory"_def ;
+  DefString hint_FileCurdir    = "Current directory"_def ;
+  DefString hint_FileDirList   = "Subdirectory list"_def ;
+  DefString hint_FileList      = "File list"_def ;
+  DefString hint_FileMakeDir   = "Create a new directory"_def ;
+  DefString hint_FileRemoveDir = "Delete the selected directory"_def ;
+  DefString hint_FileAlt       = "Choose between a new file or an existing file"_def ;
 
   DefString hint_FileEnableFilter = "Enable/disable this filter"_def ;
   DefString hint_FileDelFilter    = "Delete this filter"_def ;

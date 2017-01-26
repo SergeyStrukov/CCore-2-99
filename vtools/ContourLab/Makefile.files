@@ -1,18 +1,21 @@
 OBJ_LIST = \
 obj/Application.o \
 obj/Client.o \
+obj/Editor.o \
 obj/main.o \
 
 
 ASM_LIST = \
 obj/Application.s \
 obj/Client.s \
+obj/Editor.s \
 obj/main.s \
 
 
 DEP_LIST = \
 obj/Application.dep \
 obj/Client.dep \
+obj/Editor.dep \
 obj/main.dep \
 
 
@@ -28,6 +31,9 @@ obj/Application.o : ./src/Application.cpp
 obj/Client.o : ./src/Client.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Editor.o : ./src/Editor.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -37,6 +43,9 @@ obj/Application.s : ./src/Application.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Client.s : ./src/Client.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Editor.s : ./src/Editor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -49,6 +58,9 @@ obj/Application.dep : ./src/Application.cpp
 
 obj/Client.dep : ./src/Client.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Client.o $< -MF $@
+
+obj/Editor.dep : ./src/Editor.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Editor.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

@@ -80,6 +80,7 @@ obj/DHExp.o \
 obj/DebugCon.o \
 obj/DefaultTimeout.o \
 obj/DeferCall.o \
+obj/DestroyGuard.o \
 obj/DetectProxy.o \
 obj/DevBit.o \
 obj/DevControlMutex.o \
@@ -425,6 +426,7 @@ obj/DHExp.s \
 obj/DebugCon.s \
 obj/DefaultTimeout.s \
 obj/DeferCall.s \
+obj/DestroyGuard.s \
 obj/DetectProxy.s \
 obj/DevBit.s \
 obj/DevControlMutex.s \
@@ -770,6 +772,7 @@ obj/DHExp.dep \
 obj/DebugCon.dep \
 obj/DefaultTimeout.dep \
 obj/DeferCall.dep \
+obj/DestroyGuard.dep \
 obj/DetectProxy.dep \
 obj/DevBit.dep \
 obj/DevControlMutex.dep \
@@ -1290,6 +1293,9 @@ obj/DefaultTimeout.o : ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DeferCall.o : ../../Fundamental/CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DestroyGuard.o : ../../Simple/CCore/src/DestroyGuard.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DetectProxy.o : ../../Fundamental/CCore/src/DetectProxy.cpp
@@ -2320,6 +2326,9 @@ obj/DefaultTimeout.s : ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 obj/DeferCall.s : ../../Fundamental/CCore/src/DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DestroyGuard.s : ../../Simple/CCore/src/DestroyGuard.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DetectProxy.s : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3347,6 +3356,9 @@ obj/DefaultTimeout.dep : ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 
 obj/DeferCall.dep : ../../Fundamental/CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
+
+obj/DestroyGuard.dep : ../../Simple/CCore/src/DestroyGuard.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DestroyGuard.o $< -MF $@
 
 obj/DetectProxy.dep : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DetectProxy.o $< -MF $@

@@ -1,3 +1,4 @@
 ./src/Application.cpp
 ./src/Client.cpp
+./src/Editor.cpp
 ./src/main.cpp

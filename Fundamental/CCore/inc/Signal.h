@@ -18,6 +18,7 @@
 
 #include <CCore/inc/List.h>
 #include <CCore/inc/FunctorType.h>
+#include <CCore/inc/DestroyGuard.h>
 
 namespace CCore {
 
@@ -36,6 +37,8 @@ template <class I> class SignalInterfaceConnector;
 template <class ... TT>
 class Signal : NoCopy
  {
+   DestroyGuard dg;
+
    struct Node : NoCopy
     {
      DLink<Node> link;
@@ -139,12 +142,16 @@ class Signal : NoCopy
 template <class ... TT>
 Signal<TT...>::~Signal()
  {
+  dg.guard("Signal"_c);
+
   for(auto cur=list.start(); +cur ;++cur) cur->signal=0;
  }
 
 template <class ... TT>
 void Signal<TT...>::assert(TT ... tt)
  {
+  DestroyGuard::Lock lock(dg);
+
   cur=list.start();
 
   while( +cur )
@@ -201,6 +208,8 @@ class SignalConnector : public Signal<TT...>::ConnectorBase
 template <class I>
 class SignalInterface : NoCopy
  {
+   DestroyGuard dg;
+
    struct Node : NoCopy
     {
      DLink<Node> link;
@@ -304,6 +313,8 @@ class SignalInterface : NoCopy
 template <class I>
 SignalInterface<I>::~SignalInterface()
  {
+  dg.guard("SignalInterface"_c);
+
   for(auto cur=list.start(); +cur ;++cur) cur->signal=0;
  }
 
@@ -311,6 +322,8 @@ template <class I>
 template <FuncInitArgType<I &> FuncInit>
 void SignalInterface<I>::assert(FuncInit func_init)
  {
+  DestroyGuard::Lock lock(dg);
+
   FunctorTypeOf<FuncInit> func(func_init);
 
   cur=list.start();

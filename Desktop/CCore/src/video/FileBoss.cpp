@@ -16,6 +16,7 @@
 #include <CCore/inc/video/FileBoss.h>
 
 #include <CCore/inc/FileSystem.h>
+#include <CCore/inc/Path.h>
 
 namespace CCore {
 namespace Video {
@@ -45,7 +46,31 @@ class DefBoss : public FileBossBase
      cur.apply( [func] (StrLen name,FileType type) { func(name,type); } );
     }
 
-   virtual StrLen getHitDirFile() const { return "HitDirs.ddl"; }
+   virtual void createDir(StrLen dir_name)
+    {
+     char buf[MaxPathLen+1];
+
+     StrLen path=fs.pathOf(dir_name,buf);
+
+     WalkPath(path, [this] (StrLen dir)
+                           {
+                            if( fs.getFileType(dir)==FileType_none )
+                              {
+                               fs.createDir(dir);
+                              }
+
+                           } );
+    }
+
+   virtual void deleteDir(StrLen dir_name)
+    {
+     fs.deleteDir(dir_name,false);
+    }
+
+   virtual StrLen getHitDirFile() const
+    {
+     return "HitDirs.ddl";
+    }
  };
 
 DefBoss Object CCORE_INITPRI_3 ;

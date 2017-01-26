@@ -95,6 +95,15 @@ void testSplitPathName(StrLen path)
     Printf(Con,"#; #;\n",split.path,split.name);
  }
 
+void testWalk(StrLen path)
+ {
+  Printf(Con,"#; --->\n",path);
+
+  WalkPath(path, [] (StrLen str) { Printf(Con,"#;\n",str); } );
+
+  Printf(Con,"\n");
+ }
+
 void testPath()
  {
   Path path("host");
@@ -215,6 +224,15 @@ bool Testit<2011>::Main()
   testPath();
 
   Putobj(Con,"-----\n");
+
+  testWalk("dir1");
+  testWalk("dir1/dir2/dir3");
+  testWalk("/dir1");
+  testWalk("/dir1/dir2/dir3");
+  testWalk("C:D:dir1");
+  testWalk("C:D:dir1/dir2/dir3");
+  testWalk("C:D:/dir1");
+  testWalk("C:D:/dir1/dir2/dir3");
 
   return true;
  }

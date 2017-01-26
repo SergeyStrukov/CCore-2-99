@@ -6,6 +6,7 @@
 ../../Simple/CCore/src/Cmp.cpp
 ../../Simple/CCore/src/Counters.cpp
 ../../Simple/CCore/src/Crc.cpp
+../../Simple/CCore/src/DestroyGuard.cpp
 ../../Simple/CCore/src/DynObject.cpp
 ../../Simple/CCore/src/Fifo.cpp
 ../../Simple/CCore/src/FunctorType.cpp
