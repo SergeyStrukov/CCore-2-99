@@ -1959,9 +1959,9 @@ void DDLWindow::layout()
 
 void DisplayWindow::error(StrLen str)
  {
-  msg.setInfo(str);
+  msg_frame.setInfo(str);
 
-  if( msg.isDead() ) msg.create(getFrame(),"Error"_def);
+  if( msg_frame.isDead() ) msg_frame.create(getFrame(),"Error"_def);
  }
 
 void DisplayWindow::setPretextFileName(StrLen file_name)
@@ -1985,7 +1985,7 @@ DisplayWindow::DisplayWindow(SubWindowHost &host,const Config &cfg_)
    dline(wlist,cfg.dline_cfg),
    ddl(wlist,cfg.ddl_cfg,file),
 
-   msg(getFrame()->getDesktop(),cfg.msg_cfg)
+   msg_frame(getFrameDesktop(),cfg.msg_cfg)
  {
   wlist.insTop(label_pretext,label_file,text_pretext,text_file,dline,ddl);
  }

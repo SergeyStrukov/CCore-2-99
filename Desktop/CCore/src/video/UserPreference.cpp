@@ -60,8 +60,17 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("mark",ptr->mark);
   func("alert",ptr->alert);
 
+  func("text_Yes",ptr->text_Yes);
+  func("text_No",ptr->text_No);
+
   func("text_Ok",ptr->text_Ok);
   func("text_Cancel",ptr->text_Cancel);
+
+  func("text_LoadFile",ptr->text_LoadFile);
+  func("text_SaveFile",ptr->text_SaveFile);
+
+  func("text_Alert",ptr->text_Alert);
+  func("text_AskSave",ptr->text_AskSave);
 
   func("text_cursor_dx",ptr->text_cursor_dx);
 
@@ -261,8 +270,14 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("mark",mark);
    binder.item("alert",alert);
    binder.space();
+   binder.item("'Yes'",text_Yes);
+   binder.item("'No'",text_No);
    binder.item("'Ok'",text_Ok);
    binder.item("'Cancel'",text_Cancel);
+   binder.item("'LoadFile'",text_LoadFile);
+   binder.item("'SaveFile'",text_SaveFile);
+   binder.item("'Alert'",text_Alert);
+   binder.item("'AskSave'",text_AskSave);
 
   binder.group("Text");
 
@@ -459,11 +474,6 @@ const char *const UserPreference::PrefFile="/UserPreference.ddl";
 
 UserPreference::UserPreference() noexcept
  {
-  cfg_AlertMessageWindow=getSmartConfig();
-  cfg_AlertMessageWindow.back.bind(alert);
-
-  cfg_AlertMessageFrame.frame_cfg.bind(getSmartConfig());
-  cfg_AlertMessageFrame.msg_cfg.bind(cfg_AlertMessageWindow);
  }
 
 UserPreference::~UserPreference()

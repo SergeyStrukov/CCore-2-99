@@ -60,7 +60,7 @@ class EditorWindow : public ComboWindow
 
    const Config &cfg;
 
-   bool modified = false ;
+   bool modified = true ;
 
   public:
 
@@ -80,6 +80,8 @@ class EditorWindow : public ComboWindow
 
    void save(StrLen file_name);
 
+   void close() { load(); }
+
    // drawing
 
    virtual void layout();
@@ -95,12 +97,20 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    struct Config
     {
-     RefVal<DefString> load_file = "Select a file to load from"_def ;
-     RefVal<DefString> save_file = "Select a file to save to"_def ;
+     RefVal<DefString> text_LoadFile = "Select a file to load from"_def ;
+     RefVal<DefString> text_SaveFile = "Select a file to save to"_def ;
+
+     RefVal<DefString> text_Alert = "Alert"_def ;
+     RefVal<DefString> text_AskSave = "Save modifications?"_def ;
+
+     RefVal<DefString> text_Yes    = "Yes"_def ;
+     RefVal<DefString> text_No     = "No"_def ;
+     RefVal<DefString> text_Cancel = "Cancel"_def ;
 
      EditorWindow::ConfigType editor_cfg;
 
      CtorRefVal<FileFrame::ConfigType> file_cfg;
+     CtorRefVal<MessageFrame::AlertConfigType> msg_cfg;
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
      CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
 
@@ -115,9 +125,18 @@ class ClientWindow : public ComboWindow , public AliveControl
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
-       Used(bag);
+       text_LoadFile.bind(bag.text_LoadFile);
+       text_SaveFile.bind(bag.text_SaveFile);
+
+       text_Alert.bind(bag.text_Alert);
+       text_AskSave.bind(bag.text_AskSave);
+
+       text_Yes.bind(bag.text_Yes);
+       text_No.bind(bag.text_No);
+       text_Cancel.bind(bag.text_Cancel);
 
        file_cfg.bind(proxy);
+       msg_cfg.bind(proxy);
        menu_cfg.bind(proxy);
        cascade_menu_cfg.bind(proxy);
       }
@@ -143,9 +162,10 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    EditorWindow editor;
 
-   // file frame
+   // frames
 
    FileFrame file_frame;
+   MessageFrame msg_frame;
 
    // continuation
 
@@ -153,18 +173,31 @@ class ClientWindow : public ComboWindow , public AliveControl
     {
      ContinueNone = 0,
 
+     ContinueNew,
      ContinueOpen,
+     ContinueStartOpen,
      ContinueSave,
-     ContinueSaveAs
+     ContinueSaveAs,
+     ContinueClose,
+     ContinueExit
     };
 
    Continue cont = ContinueNone ;
+   Point file_point;
 
   private:
 
    void menuOff();
 
    void fileOff();
+
+   void msgOff();
+
+   void askSave(Continue cont);
+
+   void startOpen(Point point);
+
+   void startSave(Point point);
 
   private:
 
@@ -193,10 +226,13 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    void file_destroyed();
 
+   void msg_destroyed();
+
    SignalConnector<ClientWindow,int,Point> connector_menu_selected;
    SignalConnector<ClientWindow,int,Point> connector_cascade_menu_selected;
    SignalConnector<ClientWindow,VKey,KeyMod> connector_cascade_menu_pressed;
    SignalConnector<ClientWindow> connector_file_destroyed;
+   SignalConnector<ClientWindow> connector_msg_destroyed;
 
   public:
 

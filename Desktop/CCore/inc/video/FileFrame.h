@@ -630,21 +630,25 @@ class FileFrame : public DragFrame
      CtorRefVal<DragFrame::ConfigType> frame_cfg;
      CtorRefVal<FileWindow::ConfigType> file_cfg;
 
+     RefVal<Ratio> pos_ry = Div(5,12) ;
+
      Config() noexcept {}
 
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
-       Used(bag);
-
        frame_cfg.bind(proxy);
        file_cfg.bind(proxy);
+
+       pos_ry.bind(bag.message_pos_ry);
       }
     };
 
    using ConfigType = Config ;
 
   private:
+
+   const Config &cfg;
 
    FileWindow sub_win;
 
@@ -680,6 +684,8 @@ class FileFrame : public DragFrame
 
    Pane getPane(StrLen title,Point base) const;
 
+   Pane getPane(StrLen title) const;
+
    using DragFrame::create;
 
    void create(Point base,const DefString &title)
@@ -690,6 +696,16 @@ class FileFrame : public DragFrame
    void create(FrameWindow *parent,Point base,const DefString &title)
     {
      create(parent,getPane(title.str(),base),title);
+    }
+
+   void create(const DefString &title)
+    {
+     create(getPane(title.str()),title);
+    }
+
+   void create(FrameWindow *parent,const DefString &title)
+    {
+     create(parent,getPane(title.str()),title);
     }
  };
 

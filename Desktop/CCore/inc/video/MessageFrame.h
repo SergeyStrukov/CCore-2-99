@@ -70,6 +70,19 @@ class MessageWindow : public ComboWindow
 
    using ConfigType = Config ;
 
+   struct AlertConfigType : Config
+    {
+     AlertConfigType() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       Config::bind(bag,proxy);
+
+       back.bind(bag.alert);
+      }
+    };
+
   private:
 
    class Btn : public ButtonWindow
@@ -131,6 +144,8 @@ class MessageWindow : public ComboWindow
 
    Point getMinSize() const;
 
+   void erase(); // for dead windows!
+
    MessageWindow & setInfo(const Info &info);
 
    MessageWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
@@ -181,6 +196,20 @@ class MessageFrame : public FixedFrame
 
    using ConfigType = Config ;
 
+   struct AlertConfigType : Config
+    {
+     AlertConfigType() noexcept {}
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       frame_cfg.bind(proxy);
+       msg_cfg.bind((const MessageWindow::AlertConfigType &)proxy);
+
+       pos_ry.bind(bag.message_pos_ry);
+      }
+    };
+
   private:
 
    const Config &cfg;
@@ -204,6 +233,8 @@ class MessageFrame : public FixedFrame
    virtual ~MessageFrame();
 
    // methods
+
+   void erase(); // for dead windows!
 
    MessageFrame & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
 

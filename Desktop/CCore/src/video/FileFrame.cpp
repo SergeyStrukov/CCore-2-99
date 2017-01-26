@@ -910,7 +910,7 @@ void FileWindow::check_new_file_changed(bool check)
 
   if( check )
     {
-     btn_Ok.enable(!edit_new_file.isAlerted());
+     btn_Ok.enable( !edit_new_file.isAlerted() );
     }
   else
     {
@@ -1057,7 +1057,7 @@ void FileWindow::setNewFile(bool on)
        {
         wlist.del(alt_new_file,label_new_file,edit_new_file);
 
-        list_file.enable(list_dir.isEnabled());
+        list_file.enable( list_dir.isEnabled() );
         btn_Ok.enable();
        }
 
@@ -1176,9 +1176,10 @@ void FileWindow::drawBack(DrawBuf buf,bool) const
 
 const char *const FileFrame::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
 
-FileFrame::FileFrame(Desktop *desktop,const Config &cfg,const FileWindowParam &param)
- : DragFrame(desktop,cfg.frame_cfg),
-   sub_win(*this,cfg.file_cfg,param)
+FileFrame::FileFrame(Desktop *desktop,const Config &cfg_,const FileWindowParam &param)
+ : DragFrame(desktop,cfg_.frame_cfg),
+   cfg(cfg_),
+   sub_win(*this,cfg_.file_cfg,param)
  {
   bindClient(sub_win);
  }
@@ -1202,6 +1203,13 @@ Pane FileFrame::getPane(StrLen title,Point base) const
   Point screen_size=getScreenSize();
 
   return FitToScreen(base,size,screen_size);
+ }
+
+Pane FileFrame::getPane(StrLen title) const
+ {
+  Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir));
+
+  return GetWindowPlace(getDesktop(),+cfg.pos_ry,size);
  }
 
 } // namespace Video

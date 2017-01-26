@@ -162,8 +162,17 @@ struct UserPreferenceBag
   VColor mark     =     Black ;
   VColor alert    =      Pink ;
 
+  DefString text_Yes    = "Yes"_def ;
+  DefString text_No     = "No"_def ;
+
   DefString text_Ok     = "Ok"_def ;
   DefString text_Cancel = "Cancel"_def ;
+
+  DefString text_LoadFile = "Select a file to load from"_def ;
+  DefString text_SaveFile = "Select a file to save to"_def ;
+
+  DefString text_Alert   = "Alert"_def ;
+  DefString text_AskSave = "Save modifications?"_def ;
 
   // text
 
@@ -419,6 +428,8 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
 
                                            MessageWindow::ConfigType,
                                            MessageFrame::ConfigType,
+                                           MessageWindow::AlertConfigType,
+                                           MessageFrame::AlertConfigType,
 
                                            SimpleTopMenuWindow::ConfigType,
                                            SimpleCascadeMenu::ConfigType,
@@ -431,9 +442,6 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                           >
  {
    static const char *const PrefFile;
-
-   MessageWindow::ConfigType cfg_AlertMessageWindow;
-   MessageFrame::ConfigType cfg_AlertMessageFrame;
 
   public:
 
@@ -448,12 +456,6 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
    void sync() noexcept;
 
    void update() noexcept;
-
-   // extra
-
-   const MessageWindow::ConfigType & getAlertMessageWindowConfig() const { return cfg_AlertMessageWindow; }
-
-   const MessageFrame::ConfigType & getAlertMessageFrameConfig() const { return cfg_AlertMessageFrame; }
 
    // signals
 

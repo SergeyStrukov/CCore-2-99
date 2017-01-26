@@ -17,6 +17,8 @@
 
 #include <CCore/inc/video/Layout.h>
 
+#include <CCore/inc/Exception.h>
+
 namespace CCore {
 namespace Video {
 
@@ -98,6 +100,15 @@ Point MessageWindow::getMinSize() const
   Point bottom=btn.addXY(+space2);
 
   return Point( Max(bottom.x,top.x) , bottom.y+line_dy+top.y );
+ }
+
+void MessageWindow::erase()
+ {
+  btn_list.erase();
+
+  btn_count=0;
+
+  setInfo(Info());
  }
 
 MessageWindow & MessageWindow::setInfo(const Info &info_)
@@ -228,7 +239,21 @@ void MessageFrame::alive()
 
 Pane MessageFrame::getPane(bool is_main,StrLen title) const
  {
-  return GetWindowPlace(desktop,+cfg.pos_ry,getMinSize(is_main,title,sub_win.getMinSize()));
+  Point size=getMinSize(is_main,title,sub_win.getMinSize());
+
+  return GetWindowPlace(desktop,+cfg.pos_ry,size);
+ }
+
+ // methods
+
+void MessageFrame::erase()
+ {
+  if( isAlive() )
+    {
+     Printf(Exception,"CCore::Video::MessageFrame::erase() : is alive");
+    }
+
+  sub_win.erase();
  }
 
 } // namespace Video
