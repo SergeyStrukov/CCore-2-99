@@ -14,7 +14,7 @@
 #ifndef Contour_h
 #define Contour_h
 
-#include <inc/Application.h>
+#include <inc/Geometry.h>
 
 #include <CCore/inc/MemBase.h>
 #include <CCore/inc/RefPtr.h>
@@ -30,137 +30,30 @@ inline void GuardType(int t1,int t2) { if( t1!=t2 ) GuardTypeMismatch(); }
 
 /* classes */
 
-struct Geometry;
+template <class S> struct UnusedPad;
+
+struct Formula;
 
 class Contour;
 
-/* struct Geometry */
+/* struct UnusedPad<S> */
 
-struct Geometry
+template <class S>
+struct UnusedPad
  {
-  enum RealConst
-   {
-    Nul = 0,
-    One = 1
-   };
+  static S pad;
+ };
 
-  struct Real
-   {
-    double x;
+template <class S>
+S UnusedPad<S>::pad;
 
-    Real(RealConst c=Nul) : x(c) {}
+/* struct Formula */
 
-    Real operator - () const;
-
-    Real inv() const;
-
-    friend Real operator + (Real a,Real b);
-
-    friend Real operator - (Real a,Real b);
-
-    friend Real operator * (Real a,Real b);
-
-    friend Real operator / (Real a,Real b);
-   };
-
-  struct Ratio
-   {
-    Real tau;
-   };
-
-  static Ratio Inv(Ratio a);
-
-  static Ratio Neg(Ratio a);
-
-  static Ratio Add(Ratio a,Ratio b);
-
-  static Ratio Sub(Ratio a,Ratio b);
-
-  static Ratio Mul(Ratio a,Ratio b);
-
-  static Ratio Div(Ratio a,Ratio b);
-
-  struct Length
-   {
-    Real len;
-   };
-
-  static Length Add(Length a,Length b);
-
-  static Length Sub(Length a,Length b);
-
-  static Length Mul(Ratio mul,Length a);
-
-  static Length Div(Length a,Ratio div);
-
-  static Ratio Div(Length a,Length b);
-
-  struct Angle
-   {
-    Real alpha;
-   };
-
-  static Angle Pi();
-
-  static Angle Add(Angle a,Angle b);
-
-  static Angle Sub(Angle a,Angle b);
-
-  static Angle Mul(Ratio mul,Angle a);
-
-  static Angle Div(Angle a,Ratio div);
-
-  struct Point
-   {
-    Real x;
-    Real y;
-   };
-
-  struct Line
-   {
-    Point A;
-    Point B;
-   };
-
-  struct Circle
-   {
-    Point O;
-    Length r;
-   };
-
-  struct Couple
-   {
-    Point P;
-    Point Q;
-   };
-
-  static Length LengthOf(Point A,Point B);
-
-  static Angle AngleOf(Point A,Point B,Point C);
-
-  static Point MeetOf(Line a,Line b);
-
-  static Couple MeetOf(Line a,Circle C);
-
-  static Couple MeetOf(Circle C,Circle D);
-
-  static Point Rotate(Point O,Angle a,Point X);
-
-  static Point Move(Point P,Point Q,Point X);
-
-  static Point Move(Point P,Point Q,Length l,Point X);
-
-  static Point Mirror(Line a,Point X);
-
-  static Point Up(Length l,Point X);
-
-  static Point Down(Length l,Point X);
-
-  static Point Left(Length l,Point X);
-
-  static Point Right(Length l,Point X);
-
+struct Formula : Geometry
+ {
   // Object
+
+  static const int PadFlag = 1<<10 ;
 
   class Object
    {
@@ -181,17 +74,59 @@ struct Geometry
         void destroy() noexcept { delete this; }
       };
 
-     template <class T>
-     struct Node : Base
+     template <class S>
+     struct NodeInterface : Base
+      {
+       virtual S get() const =0;
+
+       virtual S & ref() const =0;
+      };
+
+     template <class T,class S=typename T::RetType>
+     struct Node : NodeInterface<S>
       {
        T obj;
 
        template <class ... SS>
        explicit Node(SS && ... ss) : obj( std::forward<SS>(ss)... ) {}
+
+       virtual S get() const { return obj(); }
+
+       virtual S & ref() const { return obj.pad; }
       };
 
      RefPtr<Base> ptr;
      int type_id;
+
+    private:
+
+     template <class Func>
+     struct CallFunc
+      {
+       Func &func;
+       const Object &arg;
+
+       CallFunc(Func &func_,const Object &arg_) : func(func_),arg(arg_) {}
+
+       template <class S>
+       auto doIt() { return func(arg.get<S>()); }
+
+       auto doOther() { return func(); }
+      };
+
+     template <class Func>
+     struct CallRefFunc
+      {
+       Func &func;
+       const Object &arg;
+
+       CallRefFunc(Func &func_,const Object &arg_) : func(func_),arg(arg_) {}
+
+       template <class S>
+       auto doIt() { return func(arg.ref<S>()); }
+
+       auto doOther() { return func(); }
+      };
 
     public:
 
@@ -202,34 +137,121 @@ struct Geometry
 
      ~Object() {}
 
-     int getTypeId() const { return type_id; }
+     int getTypeId() const { return type_id&(PadFlag-1); }
 
-     template <class T>
-     T & cast() const
+     int isPad() const { return type_id&PadFlag; }
+
+     StrLen getTypeName() const { return TypeName(getTypeId()); }
+
+     template <class S>
+     S get() const
       {
-       GuardType(type_id,T::TypeId);
+       GuardType(type_id,S::TypeId);
 
-       return static_cast<Node<T> *>(ptr.getPtr())->obj;
+       return static_cast<NodeInterface<S> *>(ptr.getPtr())->get();
+      }
+
+     template <class Func>
+     auto call(Func func)
+      {
+       return TypeSwitch(type_id,CallFunc<Func>(func,*this));
+      }
+
+     template <class S>
+     S & ref() const
+      {
+       GuardType(type_id,S::TypeId|PadFlag);
+
+       return static_cast<NodeInterface<S> *>(ptr.getPtr())->ref();
+      }
+
+     template <class Func>
+     auto callRef(Func func)
+      {
+       return TypeSwitch(type_id,CallRefFunc<Func>(func,*this));
       }
    };
 
   template <class T,class ... SS>
-  static Object Create(SS && ... ss) { return Object(Object::Tag<T>(), std::forward<SS>(ss)... ); }
+  static Object CreateObject(SS && ... ss) { return Object(Object::Tag<T>(), std::forward<SS>(ss)... ); }
 
-  // Common
+  // Function binder
 
-  template <int Id>
-  struct Common
+  template <class S>
+  using ToObject = Object ;
+
+  template <class S,class IList,class ... SS> struct BinderFactory;
+
+  template <class S,class ... SS,int ... IList>
+  struct BinderFactory<S,Meta::IndexListBox<IList...>,SS...>
    {
-    static const int TypeId = Id ;
+    template <S Func(SS...)>
+    struct Pack : UnusedPad<S>
+     {
+      static const int TypeId = S::TypeId ;
 
-    String name;
+      using RetType = S ;
+
+      Object args[sizeof ... (SS)];
+
+      explicit Pack(const ToObject<SS> & ... ss) : args{ss...} {}
+
+      S operator () () const { return Func( args[IList-1].get()... ); }
+     };
+
+    template <S Func(SS...)>
+    static Object Create(const ToObject<SS> & ... ss) { return CreateObject<Pack<Func> >(ss...); }
+   };
+
+  template <class S,class ... SS>
+  using BinderAlias = BinderFactory<S, Meta::IndexList<SS...> ,SS...> ;
+
+  template <class S,class ... SS>
+  struct Binder : BinderAlias<S,SS...>
+   {
+   };
+
+  template <class S>
+  struct Binder<S>
+   {
+    template <S Func()>
+    struct Pack : UnusedPad<S>
+     {
+      static const int TypeId = S::TypeId ;
+
+      using RetType = S ;
+
+      Pack() {}
+
+      S operator () () const { return Func(); }
+     };
+
+    template <S Func()>
+    static Object Create() { return CreateObject<Pack<Func> >(); }
+   };
+
+  // Pad
+
+  template <class S>
+  struct Pad
+   {
+    static const int TypeId = S::TypeId|PadFlag ;
+
+    using RetType = S ;
+
+    S pad;
+
+    explicit Pad(const S &obj) : pad(obj) {}
+
+    S operator () () const { return pad; }
+
+    static Object Create(const S &obj) { return CreateObject<Pad>(obj); }
    };
  };
 
 /* class Contour */
 
-class Contour : public Geometry
+class Contour : public Formula
  {
  };
 
