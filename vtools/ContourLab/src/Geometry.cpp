@@ -23,11 +23,9 @@ namespace App {
 
 static const double Cap = 1.e+100 ;
 
-static double Abs(double x) { return (x<0)?-x:x; }
-
 double Geometry::Real::Guard(double x)
  {
-  if( Abs(x)>Cap )
+  if( fabs(x)>Cap )
     {
      Printf(Exception,"App::Geometry::Real::Guard(...) : too big");
     }
@@ -37,7 +35,7 @@ double Geometry::Real::Guard(double x)
 
 void Geometry::Real::GuardDiv(double y)
  {
-  if( Abs(y)<1/Cap )
+  if( fabs(y)<1/Cap )
     {
      Printf(Exception,"App::Geometry::Real::GuardDiv(...) : too small");
     }
@@ -50,7 +48,7 @@ Geometry::Real Geometry::Real::Norm(Real x,Real y)
 
 Geometry::Real Geometry::Real::Arg(Real x,Real y)
  {
-  GuardDiv( Abs(x.val)+Abs(y.val) );
+  GuardDiv( fabs(x.val)+fabs(y.val) );
 
   return atan2(y.val,x.val);
  }
@@ -103,7 +101,7 @@ Geometry::Point Geometry::Proj(Line a,Point A)
 
 Geometry::Angle Geometry::TAngle(Length a,Length b,Length c)
  {
-  Real t=(Sq(a.val)+Sq(b.val)-Sq(c.val))/(2*a.val*b.val);
+  Real t=(Sq(a.val)+Sq(b.val)-Sq(c.val))/Real::Abs(2*a.val*b.val);
 
   return {Real::ArcCos(t)};
  }

@@ -62,6 +62,8 @@ struct Geometry
 
     static Real Pi() { return 3.1415926535897932384626433832; }
 
+    static Real Abs(Real x) { return (x<0)?-x:x; }
+
     static Real Norm(Real x,Real y);
 
     static Real Arg(Real x,Real y);
