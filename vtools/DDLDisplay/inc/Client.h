@@ -11,6 +11,9 @@
 //
 //----------------------------------------------------------------------------------------
 
+#ifndef Client_h
+#define Client_h
+
 #include <inc/Display.h>
 
 #include <CCore/inc/video/Menu.h>
@@ -141,4 +144,5 @@ class ClientWindow : public ComboWindow
 
 } // namespace App
 
+#endif
 

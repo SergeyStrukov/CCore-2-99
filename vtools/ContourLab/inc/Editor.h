@@ -11,11 +11,12 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <inc/Application.h>
+#ifndef Editor_h
+#define Editor_h
+
+#include <inc/Contour.h>
 
 #include <CCore/inc/video/WindowLib.h>
-
-#include <CCore/inc/Array.h>
 
 namespace App {
 
@@ -86,3 +87,4 @@ class EditorWindow : public ComboWindow
 
 } // namespace App
 
+#endif

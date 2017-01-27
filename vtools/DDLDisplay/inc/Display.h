@@ -11,6 +11,9 @@
 //
 //----------------------------------------------------------------------------------------
 
+#ifndef Display_h
+#define Display_h
+
 #include <inc/Application.h>
 
 #include <CCore/inc/video/MessageFrame.h>
@@ -779,3 +782,4 @@ class DisplayWindow : public ComboWindow
 
 } // namespace App
 
+#endif

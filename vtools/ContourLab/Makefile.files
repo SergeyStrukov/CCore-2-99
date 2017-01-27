@@ -1,6 +1,7 @@
 OBJ_LIST = \
 obj/Application.o \
 obj/Client.o \
+obj/Contour.o \
 obj/Editor.o \
 obj/main.o \
 
@@ -8,6 +9,7 @@ obj/main.o \
 ASM_LIST = \
 obj/Application.s \
 obj/Client.s \
+obj/Contour.s \
 obj/Editor.s \
 obj/main.s \
 
@@ -15,6 +17,7 @@ obj/main.s \
 DEP_LIST = \
 obj/Application.dep \
 obj/Client.dep \
+obj/Contour.dep \
 obj/Editor.dep \
 obj/main.dep \
 
@@ -31,6 +34,9 @@ obj/Application.o : ./src/Application.cpp
 obj/Client.o : ./src/Client.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Contour.o : ./src/Contour.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Editor.o : ./src/Editor.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -43,6 +49,9 @@ obj/Application.s : ./src/Application.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Client.s : ./src/Client.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Contour.s : ./src/Contour.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Editor.s : ./src/Editor.cpp
@@ -58,6 +67,9 @@ obj/Application.dep : ./src/Application.cpp
 
 obj/Client.dep : ./src/Client.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Client.o $< -MF $@
+
+obj/Contour.dep : ./src/Contour.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Contour.o $< -MF $@
 
 obj/Editor.dep : ./src/Editor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Editor.o $< -MF $@
