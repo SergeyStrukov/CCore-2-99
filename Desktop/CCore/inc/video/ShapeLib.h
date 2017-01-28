@@ -32,6 +32,7 @@
 #include <CCore/inc/video/lib/Shape.LineEdit.h>
 #include <CCore/inc/video/lib/Shape.Scroll.h>
 #include <CCore/inc/video/lib/Shape.ScrollList.h>
+#include <CCore/inc/video/lib/Shape.Split.h>
 
 #include <CCore/inc/video/lib/Shape.DragFrame.h>
 #include <CCore/inc/video/lib/Shape.FixedFrame.h>

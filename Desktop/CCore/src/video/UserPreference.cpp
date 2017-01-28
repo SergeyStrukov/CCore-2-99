@@ -103,6 +103,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("list_font",ptr->list_font.param);
   func("menu_font",ptr->menu_font.param);
 
+  func("code_font",ptr->code_font.param);
+
   func("switch_on",ptr->switch_on);
   func("switch_off",ptr->switch_off);
 
@@ -313,6 +315,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("editor font",line_edit_font);
    binder.item("list font",list_font);
    binder.item("menu font",menu_font);
+   binder.space();
+   binder.item("code font",code_font);
 
   binder.group("Switch");
 
@@ -465,6 +469,8 @@ void UserPreferenceBag::createFonts() // Update fonts here
   line_edit_font.create();
   list_font.create();
   menu_font.create();
+
+  code_font.create();
 
   title_font.create();
   hint_font.create();

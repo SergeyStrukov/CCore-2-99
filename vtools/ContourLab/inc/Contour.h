@@ -197,7 +197,21 @@ struct Formular : Geometry
 
       explicit Pack(const ToObject<SS> & ... ss) : args{ss...} {}
 
-      S operator () () const { return Func( args[IList-1].template get<SS>()... ); }
+      static S SafeCall(SS ... ss)
+       {
+        try
+          {
+           AssertValid(ss...);
+
+           return Func(ss...);
+          }
+        catch(RealException rex)
+          {
+           return S(rex);
+          }
+       }
+
+      S operator () () const { return SafeCall( args[IList-1].template get<SS>()... ); }
      };
 
     template <S Func(SS...)>
@@ -224,7 +238,19 @@ struct Formular : Geometry
 
       Pack() {}
 
-      S operator () () const { return Func(); }
+      static S SafeCall()
+       {
+        try
+          {
+           return Func();
+          }
+        catch(RealException rex)
+          {
+           return S(rex);
+          }
+       }
+
+      S operator () () const { return SafeCall(); }
      };
 
     template <S Func()>

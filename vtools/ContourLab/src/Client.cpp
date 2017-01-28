@@ -145,19 +145,6 @@ void ClientWindow::cascade_menu_selected(int id,Point point) // TODO
       }
      break;
 
-     case MenuFileClose :
-      {
-       if( editor.isModified() )
-         {
-          askSave(ContinueClose);
-         }
-       else
-         {
-          editor.close();
-         }
-      }
-     break;
-
      case MenuFileExit :
       {
        askFrameClose();
@@ -226,7 +213,11 @@ void ClientWindow::msg_destroyed()
       }
      break;
 
-     case Button_Cancel : return;
+     case Button_Cancel :
+      {
+       cont=ContinueNone;
+      }
+     return;
     }
 
   switch( Replace(cont,ContinueNone) )
@@ -243,15 +234,9 @@ void ClientWindow::msg_destroyed()
       }
      break;
 
-     case ContinueClose :
-      {
-       editor.close();
-      }
-     break;
-
      case ContinueExit :
       {
-       getFrame()->destroy();
+       destroyFrame();
       }
      break;
     }
@@ -290,8 +275,6 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
                 (MenuSeparator)
                 ("@Save",MenuFileSave)
                 ("Save @as",MenuFileSaveAs)
-                (MenuSeparator)
-                ("@Close",MenuFileClose)
                 (MenuSeparator)
                 ("E@xit",MenuFileExit);
 

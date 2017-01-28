@@ -168,6 +168,8 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    void askFrameClose() { getFrame()->askClose(); }
 
+   void destroyFrame() { getFrame()->destroy(); }
+
    // hint
 
    void setHintText(const DefString &str)

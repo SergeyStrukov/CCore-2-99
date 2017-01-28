@@ -31,6 +31,9 @@
 #include <CCore/inc/video/lib/Window.LineEdit.h>
 #include <CCore/inc/video/lib/Window.Scroll.h>
 #include <CCore/inc/video/lib/Window.ScrollList.h>
+#include <CCore/inc/video/lib/Window.Split.h>
+
+#include <CCore/inc/video/lib/Window.Blank.h>
 
 #include <CCore/inc/video/lib/Window.DragFrame.h>
 

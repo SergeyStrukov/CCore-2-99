@@ -115,7 +115,6 @@ class ClientWindow : public ComboWindow , public AliveControl
      ContinueStartOpen,
      ContinueSave,
      ContinueSaveAs,
-     ContinueClose,
      ContinueExit
     };
 
@@ -146,7 +145,6 @@ class ClientWindow : public ComboWindow , public AliveControl
      MenuFileOpen = 102,
      MenuFileSave = 103,
      MenuFileSaveAs = 104,
-     MenuFileClose = 105,
      MenuFileExit = 110,
 
      MenuOptions = 2,

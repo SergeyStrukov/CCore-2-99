@@ -34,6 +34,10 @@ class EditorWindow : public ComboWindow
     {
      RefVal<VColor> back;
 
+     RefVal<Coord> space_dxy;
+
+     CtorRefVal<XSplitWindow::ConfigType> split_cfg;
+
      Config() noexcept {}
 
      Config(const UserPreference &pref) noexcept
@@ -42,11 +46,12 @@ class EditorWindow : public ComboWindow
       }
 
      template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy)
+     void bind(const Bag &bag,Proxy proxy) // TODO
       {
        Used(proxy);
 
        back.bind(bag.back);
+       space_dxy.bind(bag.space_dxy);
       }
     };
 
@@ -57,6 +62,21 @@ class EditorWindow : public ComboWindow
    const Config &cfg;
 
    bool modified = false ;
+
+   BlankWindow left;
+   XSplitWindow split1;
+   BlankWindow right;
+
+   // layout
+
+   bool layout_first = true ;
+   Coord left_dx;
+
+  private:
+
+   void split1_dragged(Point point);
+
+   SignalConnector<EditorWindow,Point> connector_split1_dragged;
 
   public:
 
@@ -75,8 +95,6 @@ class EditorWindow : public ComboWindow
    bool save();
 
    void save(StrLen file_name);
-
-   void close() { load(); }
 
    // drawing
 

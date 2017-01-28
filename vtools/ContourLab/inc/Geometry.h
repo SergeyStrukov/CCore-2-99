@@ -28,6 +28,19 @@ struct Geometry
  {
   // Real
 
+  enum RealException
+   {
+    RealOk = 0,
+
+    RealBlank,
+
+    RealTooBig,
+    RealTooSmall,
+    RealOutOfDomain
+   };
+
+  friend const char * GetTextDesc(RealException rex);
+
   class Real
    {
      double val;
@@ -90,6 +103,20 @@ struct Geometry
       }
    };
 
+  // AssertValid
+
+  template <class S>
+  static void AssertValid(S s)
+   {
+    if( s.rex ) throw s.rex;
+   }
+
+  template <class ... SS>
+  static void AssertValid(SS ... ss)
+   {
+    ( ... , AssertValid(ss) );
+   }
+
   // Ratio
 
   struct Ratio
@@ -99,19 +126,31 @@ struct Geometry
     static StrLen TypeName() { return "Ratio"_c ; }
 
     Real val;
+    RealException rex;
+
+    Ratio(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Ratio(Real val_) : val(val_),rex(RealOk) {}
+
+    // print object
+
+    void print(PrinterType &out) const
+     {
+      Printf(out,"#;",val);
+     }
    };
 
-  static Ratio Inv(Ratio a) { return {1/a.val}; }
+  static Ratio Inv(Ratio a) { return 1/a.val; }
 
-  static Ratio Neg(Ratio a) { return {-a.val}; }
+  static Ratio Neg(Ratio a) { return -a.val; }
 
-  static Ratio Add(Ratio a,Ratio b) { return {a.val+b.val}; }
+  static Ratio Add(Ratio a,Ratio b) { return a.val+b.val; }
 
-  static Ratio Sub(Ratio a,Ratio b) { return {a.val-b.val}; }
+  static Ratio Sub(Ratio a,Ratio b) { return a.val-b.val; }
 
-  static Ratio Mul(Ratio a,Ratio b) { return {a.val*b.val}; }
+  static Ratio Mul(Ratio a,Ratio b) { return a.val*b.val; }
 
-  static Ratio Div(Ratio a,Ratio b) { return {a.val/b.val}; }
+  static Ratio Div(Ratio a,Ratio b) { return a.val/b.val; }
 
   // Length
 
@@ -122,17 +161,29 @@ struct Geometry
     static StrLen TypeName() { return "Length"_c ; }
 
     Real val;
+    RealException rex;
+
+    Length(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Length(Real val_) : val(val_),rex(RealOk) {}
+
+    // print object
+
+    void print(PrinterType &out) const
+     {
+      Printf(out,"#;",val);
+     }
    };
 
-  static Length Add(Length a,Length b) { return {a.val+b.val}; }
+  static Length Add(Length a,Length b) { return a.val+b.val; }
 
-  static Length Sub(Length a,Length b) { return {a.val-b.val}; }
+  static Length Sub(Length a,Length b) { return a.val-b.val; }
 
-  static Length Mul(Ratio mul,Length a) { return {mul.val*a.val}; }
+  static Length Mul(Ratio mul,Length a) { return mul.val*a.val; }
 
-  static Length Div(Length a,Ratio div) { return {a.val/div.val}; }
+  static Length Div(Length a,Ratio div) { return a.val/div.val; }
 
-  static Ratio Div(Length a,Length b) { return {a.val/b.val}; }
+  static Ratio Div(Length a,Length b) { return a.val/b.val; }
 
   // Angle
 
@@ -143,28 +194,50 @@ struct Geometry
     static StrLen TypeName() { return "Angle"_c ; }
 
     Real val;
+    RealException rex;
 
-    Angle operator - () const { return Pos( {-val} ); }
+    Angle(RealException rex_=RealBlank) : rex(rex_) {}
 
-    friend Angle operator + (Angle a,Angle b) { return Mod( {a.val+b.val} ); }
+    Angle(Real val_,Real Func(Real)=Mod) : val( Func(val_) ),rex(RealOk) {}
 
-    friend Angle operator - (Angle a,Angle b) { return Mod( {a.val-b.val} ); }
+    Angle operator - () const { return {-val,Pos}; }
 
-    friend Angle operator * (Ratio mul,Angle a) { return Mod( {mul.val*a.val} ); }
+    friend Angle operator + (Angle a,Angle b) { return a.val+b.val; }
 
-    friend Angle operator / (Angle a,Ratio div) { return Mod( {a.val/div.val} ); }
+    friend Angle operator - (Angle a,Angle b) { return a.val-b.val; }
 
-    static Angle Mod(Angle a) { return Pos( {Real::Mod( a.val , 2*Real::Pi() )} ); }
+    friend Angle operator * (Ratio mul,Angle a) { return mul.val*a.val; }
 
-    static Angle Pos(Angle a)
+    friend Angle operator / (Angle a,Ratio div) { return a.val/div.val; }
+
+    static Angle Pi() { return {Real::Pi(),Scoped}; }
+
+    static Angle ArcCos(Real t) { return {Real::ArcCos(t),Scoped}; }
+
+    static Angle Arg(Real x,Real y) { return {Real::Arg(x,y),Pos}; }
+
+    // mods
+
+    static Real Scoped(Real a) { return a; }
+
+    static Real Pos(Real a)
      {
-      if( a.val <= -Real::Pi() ) return {a.val+2*Real::Pi()};
+      if( a <= -Real::Pi() ) return a+2*Real::Pi();
 
       return a;
      }
+
+    static Real Mod(Real a) { return Pos( Real::Mod( a , 2*Real::Pi() ) ); }
+
+    // print object
+
+    void print(PrinterType &out) const
+     {
+      Printf(out,"#;",val*(180/Real::Pi()));
+     }
    };
 
-  static Angle Pi() { return {Real::Pi()}; }
+  static Angle Pi() { return Angle::Pi(); }
 
   static Angle Neg(Angle a) { return -a; }
 
@@ -186,6 +259,11 @@ struct Geometry
 
     Real x;
     Real y;
+    RealException rex;
+
+    Point(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Point(Real x_,Real y_) : x(x_),y(y_),rex(RealOk) {}
 
     friend Point operator + (Point a,Point b) { return {a.x+b.x,a.y+b.y}; }
 
@@ -201,7 +279,7 @@ struct Geometry
 
     static Real Prod(Point a,Point b) { return a.x*b.x+a.y*b.y; }
 
-    static Angle Arg(Point p) { return Angle::Pos( {Real::Arg(-p.x,p.y)} ); }
+    static Angle Arg(Point p) { return Angle::Arg(-p.x,p.y); }
 
     static Angle Arg(Point p,Length sign)
      {
@@ -232,7 +310,7 @@ struct Geometry
 
     void print(PrinterType &out) const
      {
-      Printf(out,"{#;,#;}",x,y);
+      Printf(out,"(#;,#;)",x,y);
      }
    };
 
@@ -246,6 +324,11 @@ struct Geometry
 
     Point p;
     Point ort;
+    RealException rex;
+
+    Line(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Line(Point p_,Point dir) : p(p_),ort(Point::Ort(dir)),rex(RealOk) {}
    };
 
   // Circle
@@ -258,6 +341,11 @@ struct Geometry
 
     Point center;
     Length radius;
+    RealException rex;
+
+    Circle(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Circle(Point center_,Length radius_) : center(center_),radius(radius_),rex(RealOk) {}
    };
 
   // Couple
@@ -270,6 +358,11 @@ struct Geometry
 
     Point a;
     Point b;
+    RealException rex;
+
+    Couple(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Couple(Point a_,Point b_) : a(a_),b(b_),rex(RealOk) {}
    };
 
   // type functions
@@ -312,11 +405,11 @@ struct Geometry
 
   // functions
 
-  static Length LengthOf(Point a,Point b) { return {Point::Norm(a-b)}; }
+  static Length LengthOf(Point a,Point b) { return Point::Norm(a-b); }
 
   static Angle AngleOf(Point a,Point b,Point c) { return Point::Arg(c-b)-Point::Arg(a-b); }
 
-  static Line LineOf(Point a,Point b) { return {a,Point::Ort(b-a)}; }
+  static Line LineOf(Point a,Point b) { return {a,b-a}; }
 
   static Circle CircleOf(Point center,Length radius) { return {center,radius}; }
 

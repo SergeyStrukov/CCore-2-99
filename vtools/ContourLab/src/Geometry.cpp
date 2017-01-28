@@ -13,32 +13,42 @@
 
 #include <inc/Geometry.h>
 
-#include <CCore/inc/Exception.h>
-
 #include <math.h>
 
 namespace App {
 
 /* struct Geometry::Real */
 
+const char * GetTextDesc(Geometry::RealException rex)
+ {
+  switch( rex )
+    {
+     case Geometry::RealOk : return "ok";
+
+     case Geometry::RealBlank : return "uninitialized";
+
+     case Geometry::RealTooBig : return "too big";
+
+     case Geometry::RealTooSmall : return "too small";
+
+     case Geometry::RealOutOfDomain : return "out of domain";
+
+     default: return "???";
+    }
+ }
+
 static const double Cap = 1.e+100 ;
 
 double Geometry::Real::Guard(double x)
  {
-  if( fabs(x)>Cap )
-    {
-     Printf(Exception,"App::Geometry::Real::Guard(...) : too big");
-    }
+  if( fabs(x)>Cap ) throw RealTooBig;
 
   return x;
  }
 
 void Geometry::Real::GuardDiv(double y)
  {
-  if( fabs(y)<1/Cap )
-    {
-     Printf(Exception,"App::Geometry::Real::GuardDiv(...) : too small");
-    }
+  if( fabs(y)<1/Cap ) throw RealTooSmall;
  }
 
 Geometry::Real Geometry::Real::Norm(Real x,Real y)
@@ -65,20 +75,14 @@ Geometry::Real Geometry::Real::Cos(Real x)
 
 Geometry::Real Geometry::Real::ArcCos(Real x)
  {
-  if( x<-1 || x>1 )
-    {
-     Printf(Exception,"App::Geometry::Real::ArcCos(...) : out of domain");
-    }
+  if( x<-1 || x>1 ) throw RealOutOfDomain;
 
   return acos(x.val);
  }
 
 Geometry::Real Geometry::Real::Sqrt(Real x)
  {
-  if( x<0 )
-    {
-     Printf(Exception,"App::Geometry::Real::Sqrt(...) : negative");
-    }
+  if( x<0 ) throw RealOutOfDomain;
 
   return sqrt(x.val);
  }
@@ -103,7 +107,7 @@ Geometry::Angle Geometry::AngleC(Length a,Length b,Length c)
  {
   Real t=(Sq(a.val)+Sq(b.val)-Sq(c.val))/Real::Abs(2*a.val*b.val);
 
-  return {Real::ArcCos(t)};
+  return Angle::ArcCos(t);
  }
 
 Geometry::Point Geometry::Meet(Line a,Line b)

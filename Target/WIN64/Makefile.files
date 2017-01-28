@@ -297,6 +297,7 @@ obj/Shape.Radio.o \
 obj/Shape.Scroll.o \
 obj/Shape.ScrollList.o \
 obj/Shape.SimpleTextList.o \
+obj/Shape.Split.o \
 obj/Shape.Switch.o \
 obj/Shape.Text.o \
 obj/Shape.TextLine.o \
@@ -380,6 +381,7 @@ obj/UtilFunc.o \
 obj/VideoConsole.o \
 obj/VideoDevice.o \
 obj/Win64.o \
+obj/Window.Blank.o \
 obj/Window.Button.o \
 obj/Window.Check.o \
 obj/Window.Decor.o \
@@ -392,6 +394,7 @@ obj/Window.Radio.o \
 obj/Window.Scroll.o \
 obj/Window.ScrollList.o \
 obj/Window.SimpleTextList.o \
+obj/Window.Split.o \
 obj/Window.Text.o \
 obj/Window.TextLine.o \
 obj/WindowLib.o \
@@ -698,6 +701,7 @@ obj/Shape.Radio.s \
 obj/Shape.Scroll.s \
 obj/Shape.ScrollList.s \
 obj/Shape.SimpleTextList.s \
+obj/Shape.Split.s \
 obj/Shape.Switch.s \
 obj/Shape.Text.s \
 obj/Shape.TextLine.s \
@@ -781,6 +785,7 @@ obj/UtilFunc.s \
 obj/VideoConsole.s \
 obj/VideoDevice.s \
 obj/Win64.s \
+obj/Window.Blank.s \
 obj/Window.Button.s \
 obj/Window.Check.s \
 obj/Window.Decor.s \
@@ -793,6 +798,7 @@ obj/Window.Radio.s \
 obj/Window.Scroll.s \
 obj/Window.ScrollList.s \
 obj/Window.SimpleTextList.s \
+obj/Window.Split.s \
 obj/Window.Text.s \
 obj/Window.TextLine.s \
 obj/WindowLib.s \
@@ -1099,6 +1105,7 @@ obj/Shape.Radio.dep \
 obj/Shape.Scroll.dep \
 obj/Shape.ScrollList.dep \
 obj/Shape.SimpleTextList.dep \
+obj/Shape.Split.dep \
 obj/Shape.Switch.dep \
 obj/Shape.Text.dep \
 obj/Shape.TextLine.dep \
@@ -1182,6 +1189,7 @@ obj/UtilFunc.dep \
 obj/VideoConsole.dep \
 obj/VideoDevice.dep \
 obj/Win64.dep \
+obj/Window.Blank.dep \
 obj/Window.Button.dep \
 obj/Window.Check.dep \
 obj/Window.Decor.dep \
@@ -1194,6 +1202,7 @@ obj/Window.Radio.dep \
 obj/Window.Scroll.dep \
 obj/Window.ScrollList.dep \
 obj/Window.SimpleTextList.dep \
+obj/Window.Split.dep \
 obj/Window.Text.dep \
 obj/Window.TextLine.dep \
 obj/WindowLib.dep \
@@ -2108,6 +2117,9 @@ obj/Shape.ScrollList.o : ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cpp
 obj/Shape.SimpleTextList.o : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Shape.Split.o : ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Shape.Switch.o : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2357,6 +2369,9 @@ obj/VideoDevice.o : ../../Applied/CCore/src/video/VideoDevice.cpp
 obj/Win64.o : ../../Target/WIN64/CCore/src/win64/Win64.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Window.Blank.o : ../../Desktop/CCore/src/video/lib/Window.Blank.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Window.Button.o : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2391,6 +2406,9 @@ obj/Window.ScrollList.o : ../../Desktop/CCore/src/video/lib/Window.ScrollList.cp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.SimpleTextList.o : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.Split.o : ../../Desktop/CCore/src/video/lib/Window.Split.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Text.o : ../../Desktop/CCore/src/video/lib/Window.Text.cpp
@@ -3304,6 +3322,9 @@ obj/Shape.ScrollList.s : ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cpp
 obj/Shape.SimpleTextList.s : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.Split.s : ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Shape.Switch.s : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3553,6 +3574,9 @@ obj/VideoDevice.s : ../../Applied/CCore/src/video/VideoDevice.cpp
 obj/Win64.s : ../../Target/WIN64/CCore/src/win64/Win64.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Window.Blank.s : ../../Desktop/CCore/src/video/lib/Window.Blank.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Window.Button.s : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3587,6 +3611,9 @@ obj/Window.ScrollList.s : ../../Desktop/CCore/src/video/lib/Window.ScrollList.cp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.SimpleTextList.s : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.Split.s : ../../Desktop/CCore/src/video/lib/Window.Split.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Text.s : ../../Desktop/CCore/src/video/lib/Window.Text.cpp
@@ -4500,6 +4527,9 @@ obj/Shape.ScrollList.dep : ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cp
 obj/Shape.SimpleTextList.dep : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.SimpleTextList.o $< -MF $@
 
+obj/Shape.Split.dep : ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Split.o $< -MF $@
+
 obj/Shape.Switch.dep : ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Switch.o $< -MF $@
 
@@ -4749,6 +4779,9 @@ obj/VideoDevice.dep : ../../Applied/CCore/src/video/VideoDevice.cpp
 obj/Win64.dep : ../../Target/WIN64/CCore/src/win64/Win64.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Win64.o $< -MF $@
 
+obj/Window.Blank.dep : ../../Desktop/CCore/src/video/lib/Window.Blank.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Blank.o $< -MF $@
+
 obj/Window.Button.dep : ../../Desktop/CCore/src/video/lib/Window.Button.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Button.o $< -MF $@
 
@@ -4784,6 +4817,9 @@ obj/Window.ScrollList.dep : ../../Desktop/CCore/src/video/lib/Window.ScrollList.
 
 obj/Window.SimpleTextList.dep : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.SimpleTextList.o $< -MF $@
+
+obj/Window.Split.dep : ../../Desktop/CCore/src/video/lib/Window.Split.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Split.o $< -MF $@
 
 obj/Window.Text.dep : ../../Desktop/CCore/src/video/lib/Window.Text.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Text.o $< -MF $@

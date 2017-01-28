@@ -207,6 +207,8 @@ struct UserPreferenceBag
   FontCouple list_font;
   FontCouple menu_font;
 
+  FontCouple code_font;
+
   // switch
 
   VColor switch_on  = Green ;
@@ -420,6 +422,7 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            TextWindow::ConfigType,
                                            TextLineWindow::ConfigType,
                                            ScrollListWindow::ConfigType,
+                                           XSplitWindow::ConfigType,
 
                                            DragFrame::ConfigType,
                                            FixedFrame::ConfigType,
