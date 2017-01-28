@@ -56,7 +56,7 @@ class EditorWindow : public ComboWindow
 
    const Config &cfg;
 
-   bool modified = true ;
+   bool modified = false ;
 
   public:
 

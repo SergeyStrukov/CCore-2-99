@@ -19,6 +19,7 @@
 #include <CCore/inc/MemBase.h>
 #include <CCore/inc/RefPtr.h>
 #include <CCore/inc/String.h>
+#include <CCore/inc/Array.h>
 
 namespace App {
 
@@ -45,11 +46,11 @@ struct UnusedPad
  };
 
 template <class S>
-S UnusedPad<S>::pad;
+S UnusedPad<S>::pad{};
 
 /* struct Formula */
 
-struct Formula : Geometry
+struct Formular : Geometry
  {
   // Object
 
@@ -79,7 +80,7 @@ struct Formula : Geometry
       {
        virtual S get() const =0;
 
-       virtual S & ref() const =0;
+       virtual S & ref() =0;
       };
 
      template <class T,class S=typename T::RetType>
@@ -92,7 +93,7 @@ struct Formula : Geometry
 
        virtual S get() const { return obj(); }
 
-       virtual S & ref() const { return obj.pad; }
+       virtual S & ref() { return obj.pad; }
       };
 
      RefPtr<Base> ptr;
@@ -146,7 +147,7 @@ struct Formula : Geometry
      template <class S>
      S get() const
       {
-       GuardType(type_id,S::TypeId);
+       GuardType(getTypeId(),S::TypeId);
 
        return static_cast<NodeInterface<S> *>(ptr.getPtr())->get();
       }
@@ -154,7 +155,7 @@ struct Formula : Geometry
      template <class Func>
      auto call(Func func)
       {
-       return TypeSwitch(type_id,CallFunc<Func>(func,*this));
+       return TypeSwitch(getTypeId(),CallFunc<Func>(func,*this));
       }
 
      template <class S>
@@ -168,7 +169,7 @@ struct Formula : Geometry
      template <class Func>
      auto callRef(Func func)
       {
-       return TypeSwitch(type_id,CallRefFunc<Func>(func,*this));
+       return TypeSwitch(getTypeId(),CallRefFunc<Func>(func,*this));
       }
    };
 
@@ -180,10 +181,10 @@ struct Formula : Geometry
   template <class S>
   using ToObject = Object ;
 
-  template <class S,class IList,class ... SS> struct BinderFactory;
+  template <class S,class IList,class ... SS> struct FormulaFactory;
 
   template <class S,class ... SS,int ... IList>
-  struct BinderFactory<S,Meta::IndexListBox<IList...>,SS...>
+  struct FormulaFactory<S,Meta::IndexListBox<IList...>,SS...>
    {
     template <S Func(SS...)>
     struct Pack : UnusedPad<S>
@@ -196,7 +197,7 @@ struct Formula : Geometry
 
       explicit Pack(const ToObject<SS> & ... ss) : args{ss...} {}
 
-      S operator () () const { return Func( args[IList-1].get()... ); }
+      S operator () () const { return Func( args[IList-1].template get<SS>()... ); }
      };
 
     template <S Func(SS...)>
@@ -204,15 +205,15 @@ struct Formula : Geometry
    };
 
   template <class S,class ... SS>
-  using BinderAlias = BinderFactory<S, Meta::IndexList<SS...> ,SS...> ;
+  using FormulaAlias = FormulaFactory<S, Meta::IndexList<SS...> ,SS...> ;
 
   template <class S,class ... SS>
-  struct Binder : BinderAlias<S,SS...>
+  struct Formula : FormulaAlias<S,SS...>
    {
    };
 
   template <class S>
-  struct Binder<S>
+  struct Formula<S>
    {
     template <S Func()>
     struct Pack : UnusedPad<S>
@@ -229,6 +230,17 @@ struct Formula : Geometry
     template <S Func()>
     static Object Create() { return CreateObject<Pack<Func> >(); }
    };
+
+  template <class Sig> struct FormulaTypeCtor;
+
+  template <class S,class ... SS>
+  struct FormulaTypeCtor<S (SS...)>
+   {
+    using RetType = Formula<S,SS...> ;
+   };
+
+  template <class Sig>
+  using FormulaType = typename FormulaTypeCtor<Sig>::RetType ;
 
   // Pad
 
@@ -251,8 +263,75 @@ struct Formula : Geometry
 
 /* class Contour */
 
-class Contour : public Formula
+class Contour : public Formular
  {
+   struct Item
+    {
+     String name;
+     Object obj;
+    };
+
+   DynArray<Item> pads;
+   DynArray<Item> formulas;
+
+  private:
+
+   template <class S>
+   void addPad(String name,S s)
+    {
+     pads.append_fill(Item{name,Pad<S>::Create(s)});
+    }
+
+   template <class ... OO>
+   void addFormula(String name,Object Create(const OO & ...),const OO & ... args)
+    {
+     formulas.append_fill(Item{name,Create(args...)});
+    }
+
+   template <class Func>
+   struct Bind
+    {
+     Func func;
+     String name;
+
+     void operator () (AnyType s) { func(name,s); }
+
+     void operator () () {}
+    };
+
+   template <class Func>
+   struct BindRef
+    {
+     Func func;
+     String name;
+
+     void operator () (AnyType &s) { func(name,s); }
+
+     void operator () () {}
+    };
+
+  public:
+
+   Contour();
+
+   ~Contour();
+
+   template <class Func>
+   void apply(Func func) const
+    {
+     auto temp = [=] (Item item) { item.obj.call( Bind<Func>{func,item.name} ); } ;
+
+     pads.apply(temp);
+     formulas.apply(temp);
+    }
+
+   template <class Func>
+   void applyRef(Func func) const
+    {
+     auto temp = [=] (Item item) { item.obj.callRef( BindRef<Func>{func,item.name} ); } ;
+
+     pads.apply(temp);
+    }
  };
 
 } // namespace App

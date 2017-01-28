@@ -28,55 +28,66 @@ struct Geometry
  {
   // Real
 
-  struct Real
+  class Real
    {
-    double val;
+     double val;
 
-    Real(double val_) : val(val_) {}
+    private:
 
-    Real operator - () const { return -val; }
+     static double Guard(double x);
 
-    friend Real operator + (Real a,Real b) { return Guard(a.val+b.val); }
+     static void GuardDiv(double y);
 
-    friend Real operator - (Real a,Real b) { return Guard(a.val-b.val); }
+    public:
 
-    friend Real operator * (Real a,Real b) { return Guard(a.val*b.val); }
+     Real(double val_=0) : val(val_) {}
 
-    friend Real operator / (Real a,Real b) { GuardDiv(b.val); return Guard(a.val/b.val); }
+     Real operator - () const { return -val; }
 
-    friend bool operator == (Real a,Real b) { return a.val==b.val; }
+     friend Real operator + (Real a,Real b) { return Guard(a.val+b.val); }
 
-    friend bool operator != (Real a,Real b) { return a.val!=b.val; }
+     friend Real operator - (Real a,Real b) { return Guard(a.val-b.val); }
 
-    friend bool operator < (Real a,Real b) { return a.val<b.val; }
+     friend Real operator * (Real a,Real b) { return Guard(a.val*b.val); }
 
-    friend bool operator <= (Real a,Real b) { return a.val<=b.val; }
+     friend Real operator / (Real a,Real b) { GuardDiv(b.val); return Guard(a.val/b.val); }
 
-    friend bool operator > (Real a,Real b) { return a.val>b.val; }
+     friend bool operator == (Real a,Real b) { return a.val==b.val; }
 
-    friend bool operator >= (Real a,Real b) { return a.val>=b.val; }
+     friend bool operator != (Real a,Real b) { return a.val!=b.val; }
 
-    static double Guard(double x);
+     friend bool operator < (Real a,Real b) { return a.val<b.val; }
 
-    static void GuardDiv(double y);
+     friend bool operator <= (Real a,Real b) { return a.val<=b.val; }
 
-    static Real Pi() { return 3.1415926535897932384626433832; }
+     friend bool operator > (Real a,Real b) { return a.val>b.val; }
 
-    static Real Abs(Real x) { return (x<0)?-x:x; }
+     friend bool operator >= (Real a,Real b) { return a.val>=b.val; }
 
-    static Real Norm(Real x,Real y);
+     static Real Pi() { return 3.1415926535897932384626433832; }
 
-    static Real Arg(Real x,Real y);
+     static Real Abs(Real x) { return (x<0)?-x:x; }
 
-    static Real Sin(Real x);
+     static Real Norm(Real x,Real y);
 
-    static Real Cos(Real x);
+     static Real Arg(Real x,Real y);
 
-    static Real ArcCos(Real x);
+     static Real Sin(Real x);
 
-    static Real Sqrt(Real x);
+     static Real Cos(Real x);
 
-    static Real Mod(Real x,Real y);
+     static Real ArcCos(Real x);
+
+     static Real Sqrt(Real x);
+
+     static Real Mod(Real x,Real y);
+
+     // print object
+
+     void print(PrinterType &out) const
+      {
+       Printf(out,"#;",int(val));
+      }
    };
 
   // Ratio
@@ -133,7 +144,7 @@ struct Geometry
 
     Real val;
 
-    Angle operator - () const { return Pos({-val}); }
+    Angle operator - () const { return Pos( {-val} ); }
 
     friend Angle operator + (Angle a,Angle b) { return Mod( {a.val+b.val} ); }
 
@@ -143,7 +154,7 @@ struct Geometry
 
     friend Angle operator / (Angle a,Ratio div) { return Mod( {a.val/div.val} ); }
 
-    static Angle Mod(Angle a) { return Pos( {Real::Mod(a.val,2*Real::Pi())} ); }
+    static Angle Mod(Angle a) { return Pos( {Real::Mod( a.val , 2*Real::Pi() )} ); }
 
     static Angle Pos(Angle a)
      {
@@ -176,45 +187,52 @@ struct Geometry
     Real x;
     Real y;
 
-    friend Point operator + (Point A,Point B) { return {A.x+B.x,A.y+B.y}; }
+    friend Point operator + (Point a,Point b) { return {a.x+b.x,a.y+b.y}; }
 
-    friend Point operator - (Point A,Point B) { return {A.x-B.x,A.y-B.y}; }
+    friend Point operator - (Point a,Point b) { return {a.x-b.x,a.y-b.y}; }
 
-    friend Point operator * (Real mul,Point A) { return {mul*A.x,mul*A.y}; }
+    friend Point operator * (Real mul,Point a) { return {mul*a.x,mul*a.y}; }
 
-    static Angle Arg(Point A) { return {Real::Arg(-A.x,A.y)}; }
+    static Real Norm(Point p) { return Real::Norm(p.x,p.y); }
 
-    static Angle Arg(Point A,Length sign)
+    static Point Ort(Point p) { return (1/Norm(p))*p; }
+
+    static Point Orthogonal(Point p) { return {p.y,-p.x}; }
+
+    static Real Prod(Point a,Point b) { return a.x*b.x+a.y*b.y; }
+
+    static Angle Arg(Point p) { return Angle::Pos( {Real::Arg(-p.x,p.y)} ); }
+
+    static Angle Arg(Point p,Length sign)
      {
-      Angle a=Arg(A);
+      Angle a=Arg(p);
 
       if( sign.val<0 ) return -a;
 
       return a;
      }
 
-    static Real Norm(Point A) { return Real::Norm(A.x,A.y); }
-
-    static Point Ort(Point A) { return (1/Norm(A))*A; }
-
-    static Point Orthogonal(Point A) { return {A.y,-A.x}; }
-
-    static Real Prod(Point A,Point B) { return A.x*B.x+A.y*B.y; }
-
-    static Point Rotate(Angle a,Point A)
+    static Point Rotate(Angle a,Point p)
      {
       Real Sin=Real::Sin(a.val);
       Real Cos=Real::Cos(a.val);
 
-      return {Cos*A.x+Sin*A.y,Cos*A.y-Sin*A.x};
+      return {Cos*p.x+Sin*p.y,Cos*p.y-Sin*p.x};
      }
 
-    static Point Polar(Length R,Angle a)
+    static Point Polar(Length r,Angle a)
      {
       Real Sin=Real::Sin(a.val);
       Real Cos=Real::Cos(a.val);
 
-      return {Cos*R.val,-Sin*R.val};
+      return {Cos*r.val,-Sin*r.val};
+     }
+
+    // print object
+
+    void print(PrinterType &out) const
+     {
+      Printf(out,"{#;,#;}",x,y);
      }
    };
 
@@ -226,8 +244,8 @@ struct Geometry
 
     static StrLen TypeName() { return "Line"_c ; }
 
-    Point A;
-    Point Ort;
+    Point p;
+    Point ort;
    };
 
   // Circle
@@ -238,7 +256,7 @@ struct Geometry
 
     static StrLen TypeName() { return "Circle"_c ; }
 
-    Point O;
+    Point center;
     Length radius;
    };
 
@@ -250,8 +268,8 @@ struct Geometry
 
     static StrLen TypeName() { return "Couple"_c ; }
 
-    Point P;
-    Point Q;
+    Point a;
+    Point b;
    };
 
   // type functions
@@ -294,48 +312,43 @@ struct Geometry
 
   // functions
 
-  static Length LengthOf(Point A,Point B) { return {Point::Norm(A-B)}; }
+  static Length LengthOf(Point a,Point b) { return {Point::Norm(a-b)}; }
 
-  static Angle AngleOf(Point A,Point B,Point C) { return Point::Arg(C-B)-Point::Arg(A-B); }
+  static Angle AngleOf(Point a,Point b,Point c) { return Point::Arg(c-b)-Point::Arg(a-b); }
 
-  static Line LineOf(Point A,Point B) { return {A,Point::Ort(B-A)}; }
+  static Line LineOf(Point a,Point b) { return {a,Point::Ort(b-a)}; }
 
-  static Circle CircleOf(Point O,Length radius) { return {O,radius}; }
+  static Circle CircleOf(Point center,Length radius) { return {center,radius}; }
 
-  static Point Proj(Line a,Point A);
+  static Point Proj(Line a,Point p);
 
-  static Angle TAngle(Length a,Length b,Length c); // against c
+  static Angle AngleC(Length a,Length b,Length c);
 
-  static Point MeetOf(Line a,Line b);
+  static Point Meet(Line a,Line b);
 
-  static Couple MeetOf(Line a,Circle C); // Couple in a direction
+  static Couple Meet(Line a,Circle C); // Couple in a direction
 
-  static Couple MeetOf(Circle C,Circle D); // Couple in C direction
+  static Couple Meet(Circle C,Circle D); // Couple in C direction
 
-  static Point Rotate(Point O,Angle a,Point X) { return O+Point::Rotate(a,X-O); }
+  static Point Rotate(Point o,Angle a,Point p) { return o+Point::Rotate(a,p-o); }
 
-  static Point Move(Point P,Point Q,Point X) { return (Q-P)+X; }
+  static Point Move(Point a,Point b,Point p) { return (b-a)+p; }
 
-  static Point Move(Line a,Length len,Point X) { return len.val*a.Ort+X; }
+  static Point Move(Line a,Length len,Point p) { return len.val*a.ort+p; }
 
-  static Point Mirror(Line a,Point X)
-   {
-    Point E=Point::Orthogonal(a.Ort);
+  static Point Mirror(Line a,Point p);
 
-    return X-2*Point::Prod(X-a.A,E)*E;
-   }
+  static Point First(Couple c) { return c.a; }
 
-  static Point First(Couple c) { return c.P; }
+  static Point Second(Couple c) { return c.b; }
 
-  static Point Second(Couple c) { return c.Q; }
+  static Point Up(Length len,Point p) { return {p.x,p.y-len.val}; }
 
-  static Point Up(Length len,Point X) { return {X.x,X.y-len.val}; }
+  static Point Down(Length len,Point p) { return {p.x,p.y+len.val}; }
 
-  static Point Down(Length len,Point X) { return {X.x,X.y+len.val}; }
+  static Point Left(Length len,Point p) { return {p.x-len.val,p.y}; }
 
-  static Point Left(Length len,Point X) { return {X.x-len.val,X.y}; }
-
-  static Point Right(Length len,Point X) { return {X.x+len.val,X.y}; }
+  static Point Right(Length len,Point p) { return {p.x+len.val,p.y}; }
  };
 
 } // namespace App

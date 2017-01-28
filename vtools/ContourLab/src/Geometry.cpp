@@ -65,7 +65,7 @@ Geometry::Real Geometry::Real::Cos(Real x)
 
 Geometry::Real Geometry::Real::ArcCos(Real x)
  {
-  if( x.val<-1 || x.val>1 )
+  if( x<-1 || x>1 )
     {
      Printf(Exception,"App::Geometry::Real::ArcCos(...) : out of domain");
     }
@@ -75,7 +75,7 @@ Geometry::Real Geometry::Real::ArcCos(Real x)
 
 Geometry::Real Geometry::Real::Sqrt(Real x)
  {
-  if( x.val<0 )
+  if( x<0 )
     {
      Printf(Exception,"App::Geometry::Real::Sqrt(...) : negative");
     }
@@ -92,49 +92,56 @@ Geometry::Real Geometry::Real::Mod(Real x,Real y)
 
 /* struct Geometry */
 
-Geometry::Point Geometry::Proj(Line a,Point A)
+Geometry::Point Geometry::Proj(Line a,Point p)
  {
-  Real t=Point::Prod(A-a.A,a.Ort);
+  Real t=Point::Prod(p-a.p,a.ort);
 
-  return a.A+t*a.Ort;
+  return a.p+t*a.ort;
  }
 
-Geometry::Angle Geometry::TAngle(Length a,Length b,Length c)
+Geometry::Angle Geometry::AngleC(Length a,Length b,Length c)
  {
   Real t=(Sq(a.val)+Sq(b.val)-Sq(c.val))/Real::Abs(2*a.val*b.val);
 
   return {Real::ArcCos(t)};
  }
 
-Geometry::Point Geometry::MeetOf(Line a,Line b)
+Geometry::Point Geometry::Meet(Line a,Line b)
  {
-  Point E=Point::Orthogonal(b.Ort);
+  Point e=Point::Orthogonal(b.ort);
 
-  Real t=Point::Prod(a.A-b.A,E)/Point::Prod(a.Ort,E);
+  Real t=Point::Prod(a.p-b.p,e)/Point::Prod(a.ort,e);
 
-  return a.A-t*a.Ort;
+  return a.p-t*a.ort;
  }
 
-Geometry::Couple Geometry::MeetOf(Line a,Circle C)
+Geometry::Couple Geometry::Meet(Line a,Circle C)
  {
-  Point P=Proj(a,C.O);
+  Point p=Proj(a,C.center);
 
-  Real x=Point::Norm(P-C.O);
+  Real x=Point::Norm(p-C.center);
 
   Real t=Real::Sqrt( Sq(C.radius.val)-Sq(x) );
 
-  Point delta=t*a.Ort;
+  Point delta=t*a.ort;
 
-  return {P-delta,P+delta};
+  return {p-delta,p+delta};
  }
 
-Geometry::Couple Geometry::MeetOf(Circle C,Circle D)
+Geometry::Couple Geometry::Meet(Circle C,Circle D)
  {
-  Angle a=TAngle(C.radius,LengthOf(C.O,D.O),D.radius);
+  Angle a=AngleC(C.radius,LengthOf(C.center,D.center),D.radius);
 
-  Angle d=Point::Arg(D.O-C.O,C.radius);
+  Angle d=Point::Arg(D.center-C.center,C.radius);
 
-  return {C.O+Point::Polar(C.radius,d-a),C.O+Point::Polar(C.radius,d+a)};
+  return {C.center+Point::Polar(C.radius,d-a),C.center+Point::Polar(C.radius,d+a)};
+ }
+
+Geometry::Point Geometry::Mirror(Line a,Point p)
+ {
+  Point e=Point::Orthogonal(a.ort);
+
+  return p-2*Point::Prod(p-a.p,e)*e;
  }
 
 } // namespace App

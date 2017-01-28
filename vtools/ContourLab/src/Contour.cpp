@@ -24,5 +24,20 @@ void GuardTypeMismatch()
   Printf(Exception,"App::GuardType(...) : type mismatch");
  }
 
+/* class Contour */
+
+Contour::Contour()
+ {
+  addPad("A"_c,Point{10,10});
+
+  addPad("B"_c,Point{20,30});
+
+  addFormula("(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[1].obj);
+ }
+
+Contour::~Contour()
+ {
+ }
+
 } // namespace App
 
