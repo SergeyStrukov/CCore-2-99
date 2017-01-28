@@ -46,12 +46,12 @@ class EditorWindow : public ComboWindow
       }
 
      template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy) // TODO
+     void bind(const Bag &bag,Proxy proxy)
       {
-       Used(proxy);
-
        back.bind(bag.back);
        space_dxy.bind(bag.space_dxy);
+
+       split_cfg.bind(proxy);
       }
     };
 
@@ -63,20 +63,40 @@ class EditorWindow : public ComboWindow
 
    bool modified = false ;
 
-   BlankWindow left;
+   BlankWindow top;
+   YSplitWindow split2;
+   BlankWindow bottom;
    XSplitWindow split1;
    BlankWindow right;
 
    // layout
 
    bool layout_first = true ;
-   Coord left_dx;
+   Coord left_dx = 0 ;
+   Coord top_dy = 0 ;
+
+  private:
+
+   static const Coord MinDXY = 10 ;
+
+   Coord getMaxLeftDX() const;
+
+   Coord getMaxTopDY() const;
+
+   bool adjustSplitX(Coord dx);
+
+   bool adjustSplitY(Coord dy);
+
+   void adjustSplit(Point point);
 
   private:
 
    void split1_dragged(Point point);
 
+   void split2_dragged(Point point);
+
    SignalConnector<EditorWindow,Point> connector_split1_dragged;
+   SignalConnector<EditorWindow,Point> connector_split2_dragged;
 
   public:
 

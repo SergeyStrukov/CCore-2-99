@@ -320,6 +320,8 @@ class PaneCut
 
    operator Pane() const { return pane; }
 
+   Point getSize() const { return pane.getSize(); }
+
    void shrink();
 
    // cut

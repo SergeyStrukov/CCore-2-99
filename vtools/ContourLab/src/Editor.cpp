@@ -19,19 +19,43 @@ namespace App {
 
 /* class EditorWindow */
 
-void EditorWindow::split1_dragged(Point point)
+Coord EditorWindow::getMaxLeftDX() const
  {
-  Point size=getSize();
-  Point s1=split1.getSize();
+  Coord space=+cfg.space_dxy;
 
-  Coord min_dx=10;
-  Coord max_dx=size.x-s1.x-10;
+  Coord total_dx=getSize().x;
+  Coord sx=split1.getMinSize().dx;
 
-  if( min_dx>max_dx ) return;
+  return Max_cast(MinDXY,total_dx-2*space-MinDXY-sx);
+ }
 
-  Coord dx=Cap<Coord>(min_dx,left_dx+point.x,max_dx);
+Coord EditorWindow::getMaxTopDY() const
+ {
+  Coord space=+cfg.space_dxy;
 
-  if( Change(left_dx,dx) )
+  Coord total_dy=getSize().y;
+  Coord sy=split2.getMinSize().dy;
+
+  return Max_cast(MinDXY,total_dy-2*space-MinDXY-sy);
+ }
+
+bool EditorWindow::adjustSplitX(Coord dx)
+ {
+  Coord max_dx=getMaxLeftDX();
+
+  return Change(left_dx, Cap<Coord>(MinDXY,left_dx+dx,max_dx) );
+ }
+
+bool EditorWindow::adjustSplitY(Coord dy)
+ {
+  Coord max_dy=getMaxTopDY();
+
+  return Change(top_dy, Cap<Coord>(MinDXY,top_dy+dy,max_dy) );
+ }
+
+void EditorWindow::adjustSplit(Point point)
+ {
+  if( adjustSplitX(point.x) | adjustSplitY(point.y) )
     {
      layout();
 
@@ -39,17 +63,30 @@ void EditorWindow::split1_dragged(Point point)
     }
  }
 
+void EditorWindow::split1_dragged(Point point)
+ {
+  adjustSplit(point);
+ }
+
+void EditorWindow::split2_dragged(Point point)
+ {
+  adjustSplit(point);
+ }
+
 EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
 
-   left(wlist,Blue),
+   top(wlist,Blue),
+   split2(wlist,cfg.split_cfg),
+   bottom(wlist,Blue),
    split1(wlist,cfg.split_cfg),
    right(wlist,Blue),
 
-   connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged)
+   connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
+   connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged)
  {
-  wlist.insTop(left,split1,right);
+  wlist.insTop(top,split2,bottom,split1,right);
  }
 
 EditorWindow::~EditorWindow()
@@ -91,13 +128,27 @@ void EditorWindow::layout()
 
   if( Change(layout_first,false) )
     {
-     pane.place_cutLeft(left,Div(1,3),0).place_cutLeft(split1).place(right);
+     PaneCut p=pane.cutLeft(Div(1,3),0);
 
-     left_dx=left.getSize().x;
+     left_dx=p.getSize().x;
+
+     pane.place_cutLeft(split1).place(right);
+
+     p.place_cutTop(top,Div(1,2),0).place_cutTop(split2).place(bottom);
+
+     top_dy=top.getSize().y;
     }
   else
     {
-     pane.place_cutLeft(left,left_dx,0).place_cutLeft(split1).place(right);
+     left_dx=Cap(MinDXY,left_dx,getMaxLeftDX());
+
+     top_dy=Cap(MinDXY,top_dy,getMaxTopDY());
+
+     PaneCut p=pane.cutLeft(left_dx,0);
+
+     pane.place_cutLeft(split1).place(right);
+
+     p.place_cutTop(top,top_dy,0).place_cutTop(split2).place(bottom);
     }
  }
 
