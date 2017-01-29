@@ -95,6 +95,10 @@ struct Geometry
 
      static Real Mod(Real x,Real y);
 
+     // map
+
+     int map(int prec);
+
      // print object
 
      void print(PrinterType &out) const
@@ -279,7 +283,7 @@ struct Geometry
 
     static Real Prod(Point a,Point b) { return a.x*b.x+a.y*b.y; }
 
-    static Angle Arg(Point p) { return Angle::Arg(-p.x,p.y); }
+    static Angle Arg(Point p) { return Angle::Arg(p.x,-p.y); }
 
     static Angle Arg(Point p,Length sign)
      {
@@ -443,6 +447,16 @@ struct Geometry
 
   static Point Right(Length len,Point p) { return {p.x+len.val,p.y}; }
  };
+
+/* Map() */
+
+inline Geometry::Real GradToRadian(double val) { return (val/180)*Geometry::Real::Pi(); }
+
+inline MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }
+
+inline MPoint Map(Geometry::Point point) { return MPoint(Map(point.x),Map(point.y)); }
+
+inline Geometry::Point Map(Point point) { return Geometry::Point(point.x,point.y); }
 
 } // namespace App
 

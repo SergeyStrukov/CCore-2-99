@@ -352,7 +352,7 @@ class Contour : public Formular
     }
 
    template <class Func>
-   void applyRef(Func func) const
+   void applyRef(Func func)
     {
      auto temp = [=] (Item item) { item.obj.callRef( BindRef<Func>{func,item.name} ); } ;
 

@@ -16,10 +16,6 @@
 
 #include <inc/Editor.h>
 
-#include <CCore/inc/video/Menu.h>
-#include <CCore/inc/video/MessageFrame.h>
-#include <CCore/inc/video/FileFrame.h>
-
 namespace App {
 
 /* classes */

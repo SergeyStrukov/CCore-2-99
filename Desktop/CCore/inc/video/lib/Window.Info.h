@@ -247,11 +247,6 @@ class InfoWindowOf : public SubWindow
      if( shape.drag ) endDrag(point);
     }
 
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     react_LeftClick(point,mkey);
-    }
-
    void react_Move(Point point,MouseKey mkey)
     {
      if( shape.drag )

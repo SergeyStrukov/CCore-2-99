@@ -174,11 +174,6 @@ class CheckWindowOf : public SubWindow
      if( shape.enable && shape.pane.contains(point) ) change();
     }
 
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     react_LeftClick(point,mkey);
-    }
-
    void react_Move(Point point,MouseKey)
     {
      if( shape.pane.contains(point) )
@@ -380,11 +375,6 @@ class AltWindowOf : public SubWindow
    void react_LeftClick(Point point,MouseKey)
     {
      if( shape.enable && shape.pane.contains(point) ) change(shape.getZone(point));
-    }
-
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     react_LeftClick(point,mkey);
     }
 
    void react_Move(Point point,MouseKey)

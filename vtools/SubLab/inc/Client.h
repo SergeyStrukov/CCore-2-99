@@ -177,8 +177,6 @@ class SpaceWindow : public SubWindow
 
    void react_LeftUp(Point point,MouseKey);
 
-   void react_LeftDClick(Point point,MouseKey mkey);
-
    void react_Move(Point point,MouseKey mkey);
 
    // signals

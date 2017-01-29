@@ -870,11 +870,6 @@ class LineEditWindowOf : public SubWindow
        }
     }
 
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     react_LeftClick(point,mkey);
-    }
-
    void react_Move(Point point,MouseKey mkey)
     {
      if( shape.drag )

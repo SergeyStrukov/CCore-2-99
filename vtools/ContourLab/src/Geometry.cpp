@@ -94,6 +94,11 @@ Geometry::Real Geometry::Real::Mod(Real x,Real y)
   return remainder(x.val,y.val);
  }
 
+int Geometry::Real::map(int prec)
+ {
+  return (int)ldexp(val,prec);
+ }
+
 /* struct Geometry */
 
 Geometry::Point Geometry::Proj(Line a,Point p)

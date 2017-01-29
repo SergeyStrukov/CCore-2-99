@@ -2,6 +2,7 @@ OBJ_LIST = \
 obj/Application.o \
 obj/Client.o \
 obj/Contour.o \
+obj/EditAngleWindow.o \
 obj/Editor.o \
 obj/Geometry.o \
 obj/main.o \
@@ -11,6 +12,7 @@ ASM_LIST = \
 obj/Application.s \
 obj/Client.s \
 obj/Contour.s \
+obj/EditAngleWindow.s \
 obj/Editor.s \
 obj/Geometry.s \
 obj/main.s \
@@ -20,6 +22,7 @@ DEP_LIST = \
 obj/Application.dep \
 obj/Client.dep \
 obj/Contour.dep \
+obj/EditAngleWindow.dep \
 obj/Editor.dep \
 obj/Geometry.dep \
 obj/main.dep \
@@ -38,6 +41,9 @@ obj/Client.o : ./src/Client.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Contour.o : ./src/Contour.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EditAngleWindow.o : ./src/EditAngleWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Editor.o : ./src/Editor.cpp
@@ -60,6 +66,9 @@ obj/Client.s : ./src/Client.cpp
 obj/Contour.s : ./src/Contour.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/EditAngleWindow.s : ./src/EditAngleWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Editor.s : ./src/Editor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -79,6 +88,9 @@ obj/Client.dep : ./src/Client.cpp
 
 obj/Contour.dep : ./src/Contour.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Contour.o $< -MF $@
+
+obj/EditAngleWindow.dep : ./src/EditAngleWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EditAngleWindow.o $< -MF $@
 
 obj/Editor.dep : ./src/Editor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Editor.o $< -MF $@

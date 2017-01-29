@@ -1,6 +1,7 @@
 ./src/Application.cpp
 ./src/Client.cpp
 ./src/Contour.cpp
+./src/EditAngleWindow.cpp
 ./src/Editor.cpp
 ./src/Geometry.cpp
 ./src/main.cpp

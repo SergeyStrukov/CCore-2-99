@@ -420,11 +420,9 @@ class ScrollListInnerWindowOf : public SubWindow
      setSelect(shape.getPosition(point));
     }
 
-   void react_LeftDClick(Point point,MouseKey mkey)
+   void react_LeftDClick(Point,MouseKey)
     {
      if( !shape.enable ) return;
-
-     react_LeftClick(point,mkey);
 
      outer->dclicked.assert();
     }

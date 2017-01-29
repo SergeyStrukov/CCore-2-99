@@ -266,11 +266,6 @@ void SpaceWindow::react_LeftUp(Point point,MouseKey)
   if( drag ) endDrag(point);
  }
 
-void SpaceWindow::react_LeftDClick(Point point,MouseKey mkey)
- {
-  react_LeftClick(point,mkey);
- }
-
 void SpaceWindow::react_Move(Point point,MouseKey mkey)
  {
   if( drag )

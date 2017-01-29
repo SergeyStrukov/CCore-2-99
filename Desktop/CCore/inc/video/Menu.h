@@ -579,11 +579,6 @@ class SimpleTopMenuWindowOf : public SubWindow
        }
     }
 
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     react_LeftClick(point,mkey);
-    }
-
    void react_Move(Point point,MouseKey)
     {
      auto result=shape.data.find(point+shift());
@@ -1009,11 +1004,6 @@ class SimpleCascadeMenuWindowOf : public SubWindow
        {
         select(result.index);
        }
-    }
-
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     react_LeftClick(point,mkey);
     }
 
    void react_RightClick(Point,MouseKey)
