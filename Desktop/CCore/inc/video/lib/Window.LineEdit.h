@@ -516,15 +516,23 @@ class LineEditWindowOf : public SubWindow
      redraw();
     }
 
-   void setText(StrLen text)
+   bool setText(StrLen text) // false on truncation
     {
+     bool ret=true;
+
      auto out=getBuf();
 
-     Replace_min(text.len,out.len);
+     if( text.len>out.len )
+       {
+        text.len=out.len;
+        ret=false;
+       }
 
      text.copyTo(out.ptr);
 
      setTextLen(text.len);
+
+     return ret;
     }
 
    template <class ... TT>

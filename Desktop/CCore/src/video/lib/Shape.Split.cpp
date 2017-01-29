@@ -24,7 +24,7 @@ namespace Video {
 
 SizeXSpace XSplitShape::getMinSize() const
  {
-  return +cfg.dxy;
+  return 2*(+cfg.dxy);
  }
 
 void XSplitShape::draw(const DrawBuf &buf) const
@@ -50,7 +50,7 @@ void XSplitShape::draw(const DrawBuf &buf) const
 
 SizeYSpace YSplitShape::getMinSize() const
  {
-  return +cfg.dxy;
+  return 2*(+cfg.dxy);
  }
 
 void YSplitShape::draw(const DrawBuf &buf) const

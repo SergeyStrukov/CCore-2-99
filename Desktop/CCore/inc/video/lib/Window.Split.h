@@ -206,7 +206,7 @@ class SplitWindowOf : public SubWindow
 
    // signals
 
-   Signal<Point> dragged;
+   Signal<Point> dragged; // delta
 };
 
 /* type XSplitWindow */

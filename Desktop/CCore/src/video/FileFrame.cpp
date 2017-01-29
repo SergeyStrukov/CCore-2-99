@@ -360,7 +360,11 @@ FileFilterWindow::FileFilterWindow(SubWindowHost &host,const Config &cfg_,ulen i
  {
   wlist.insTop(check,edit,knob);
 
-  edit.setText(filter);
+  if( !edit.setText(filter) )
+    {
+     Printf(Exception,"CCore::Video::FileFilterWindow::FileFilterWindow(...) : too long filter");
+    }
+
   edit.hideInactiveCursor();
 
   // set hints
@@ -827,6 +831,14 @@ void FileWindow::rmdir(StrLen sub_dir)
   fillLists();
  }
 
+Coord FileWindow::CapTop(Coord t,Coord total)
+ {
+  Coord a=total/4;
+  Coord b=3*a;
+
+  return Cap<Coord>(a,t,b);
+ }
+
 void FileWindow::file_list_entered()
  {
   buildFilePath();
@@ -970,17 +982,28 @@ void FileWindow::edit_new_file_entered()
   if( btn_Ok.isEnabled() ) btn_Ok_pressed();
  }
 
+void FileWindow::split_dragged(Point delta)
+ {
+  if( Change(top_dy, CapTop(top_dy+delta.y,total_dy) ) )
+    {
+     layout();
+
+     redraw();
+    }
+ }
+
 FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowParam &param_)
  : ComboWindow(host),
    cfg(cfg_),
    param(param_),
 
-   edit_dir(wlist,cfg.edit_cfg),
+   edit_dir(wlist,MaxPathLen,cfg.edit_cfg),
    knob_hit(wlist,cfg.knob_cfg,KnobShape::FaceDown),
    knob_add(wlist,cfg.knob_cfg,KnobShape::FacePlus),
    knob_back(wlist,cfg.knob_cfg,KnobShape::FaceLeft),
    line1(wlist,cfg.line_cfg),
    list_dir(wlist,cfg.list_cfg),
+   split(wlist,cfg.split_cfg),
    list_file(wlist,cfg.list_cfg),
    filter_list(wlist,cfg.filter_list_cfg),
    knob_mkdir(wlist,cfg.knob_cfg,KnobShape::FacePlus),
@@ -1014,9 +1037,10 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
    connector_hit_menu_deleted(this,&FileWindow::hit_menu_deleted,hit_menu.deleted),
    connector_check_new_file_changed(this,&FileWindow::check_new_file_changed,alt_new_file.changed),
    connector_edit_new_file_changed(this,&FileWindow::edit_new_file_changed,edit_new_file.changed),
-   connector_edit_new_file_entered(this,&FileWindow::edit_new_file_entered,edit_new_file.entered)
+   connector_edit_new_file_entered(this,&FileWindow::edit_new_file_entered,edit_new_file.entered),
+   connector_split_dragged(this,&FileWindow::split_dragged,split.dragged)
  {
-  wlist.insTop(edit_dir,knob_hit,knob_add,knob_back,line1,list_dir,list_file,filter_list,line2,btn_Ok,btn_Cancel);
+  wlist.insTop(edit_dir,knob_hit,knob_add,knob_back,line1,list_dir,split,list_file,filter_list,line2,btn_Ok,btn_Cancel);
 
   if( param.new_file )
     {
@@ -1164,21 +1188,49 @@ void FileWindow::layout()
   // list_dir
 
   {
+   Coord tdy=pane.getSize().y;
+
+   PaneCut p(0);
+
+   if( total_dy==tdy )
+     {
+      p=pane.cutTop(top_dy,0);
+     }
+   else
+     {
+      if( total_dy )
+        {
+         Coord t=Div(top_dy,total_dy)*tdy;
+
+         p=pane.cutTop(CapTop(t,tdy),0);
+
+         total_dy=tdy;
+         top_dy=p.getSize().y;
+        }
+      else
+        {
+         p=pane.cutTop(Div(1,3),0);
+
+         total_dy=tdy;
+         top_dy=p.getSize().y;
+        }
+     }
+
    if( param.new_file )
      {
-      PaneCut p=pane.cutTop(Div(1,3));
-
       auto knob__mkdir=CutBox(knob_mkdir);
 
       p.cutRight(knob__mkdir.getMinSize())
        .place_cutTop(CutPoint(knob_mkdir)).place_cutTop(CutPoint(knob_rmdir));
+     }
 
-      p.place(list_dir);
-     }
-   else
-     {
-      pane.place_cutTop(list_dir,Div(1,3));
-     }
+   p.place(list_dir);
+  }
+
+  // split
+
+  {
+   pane.place_cutTop(split);
   }
 
   // check_new , label_new_file , new_file

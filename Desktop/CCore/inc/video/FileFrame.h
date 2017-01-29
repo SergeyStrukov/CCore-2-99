@@ -434,6 +434,7 @@ class FileWindow : public ComboWindow
      CtorRefVal<AltWindow::ConfigType> alt_cfg;
 
      CtorRefVal<XDoubleLineWindow::ConfigType> line_cfg;
+     CtorRefVal<YSplitWindow::ConfigType> split_cfg;
 
      Config() noexcept {}
 
@@ -467,6 +468,7 @@ class FileWindow : public ComboWindow
        label_cfg.bind(proxy);
        alt_cfg.bind(proxy);
        line_cfg.bind(proxy);
+       split_cfg.bind(proxy);
       }
     };
 
@@ -488,6 +490,9 @@ class FileWindow : public ComboWindow
    XDoubleLineWindow line1;
 
    ScrollListWindow list_dir;
+
+   YSplitWindow split;
+
    ScrollListWindow list_file;
 
    FileFilterListWindow filter_list;
@@ -517,6 +522,11 @@ class FileWindow : public ComboWindow
    MakeFileName file_buf;
    StrLen file_path;
 
+   // layout
+
+   Coord top_dy = 0 ;
+   Coord total_dy = 0 ;
+
   private:
 
    class Distributor;
@@ -542,6 +552,8 @@ class FileWindow : public ComboWindow
    void mkdir(StrLen dir_name);
 
    void rmdir(StrLen sub_dir);
+
+   static Coord CapTop(Coord t,Coord total);
 
   private:
 
@@ -609,6 +621,10 @@ class FileWindow : public ComboWindow
    SignalConnector<FileWindow,bool> connector_check_new_file_changed;
    SignalConnector<FileWindow> connector_edit_new_file_changed;
    SignalConnector<FileWindow> connector_edit_new_file_entered;
+
+   void split_dragged(Point delta);
+
+   SignalConnector<FileWindow,Point> connector_split_dragged;
 
   public:
 
