@@ -36,6 +36,8 @@ class EditLengthWindow : public SubWindow
 
      // app
 
+     RefVal<MCoord> arrow_size = Fraction(5) ;
+
      RefVal<VColor> back    =     White ;
      RefVal<VColor> border  =     Black ;
      RefVal<VColor> face    =     Black ;
@@ -49,9 +51,11 @@ class EditLengthWindow : public SubWindow
 
      Config() noexcept {}
 
-     Config(const UserPreference &pref) noexcept
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
       {
        bind(pref.get());
+       bindApp(app_pref.get());
       }
 
      template <class Bag>
@@ -59,6 +63,22 @@ class EditLengthWindow : public SubWindow
       {
        width.bind(bag.width);
        font.bind(bag.line_edit_font.font);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       arrow_size.bind(bag.arrow_size);
+       back.bind(bag.back);
+       border.bind(bag.border);
+       face.bind(bag.face);
+       gray.bind(bag.gray);
+       text.bind(bag.text);
+       hilight.bind(bag.hilight);
+       focus.bind(bag.focus);
+
+       dx.bind(bag.edit_length_dx);
+       dy.bind(bag.edit_length_dy);
       }
     };
 

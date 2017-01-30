@@ -74,7 +74,7 @@ void EditLengthWindow::layout()
   text=Pane(0,base.y+size.y/12,size.x,size.y/3);
  }
 
-void EditLengthWindow::draw(DrawBuf buf,bool) const // TODO
+void EditLengthWindow::draw(DrawBuf buf,bool) const
  {
   if( pane.dx<10 || pane.dy<10 ) return;
 
@@ -86,25 +86,32 @@ void EditLengthWindow::draw(DrawBuf buf,bool) const // TODO
   SmoothDrawArt art(buf.cut(pane));
 
   MPane p(pane);
+  FigureBox fig(p);
 
   // body
 
   {
-   FigureBox fig(p);
-
    fig.solid(art,+cfg.back);
-
-   VColor vc = focus? +cfg.focus : ( hilight? +cfg.hilight : +cfg.border ) ;
-
-   fig.loop(art,HalfPos,w,vc);
   }
 
   // length
 
   {
+   MPoint line_x(Div(90,100)*Fraction(base.x),0);
+
+   MPoint end_x=base+line_x;
+
+   art.path(w/2,gray,base-line_x,end_x);
+
+   MCoord arrow_size=+cfg.arrow_size;
+
+   FigureRightArrow fig(MBox(end_x,arrow_size));
+
+   fig.curveSolid(art,gray);
+
    MPoint end=base;
 
-   end.x+=Map(value);
+   end.x+=Map(value,base.x+RoundUpLen(w));
 
    art.ball(base,2*w,face);
    art.ball(end,2*w,face);
@@ -121,6 +128,14 @@ void EditLengthWindow::draw(DrawBuf buf,bool) const // TODO
    Putobj(out,value);
 
    cfg.font->text(buf,text,TextPlace(AlignX_Center,AlignY_Top),out.close(),+cfg.text);
+  }
+
+  // border
+
+  {
+   VColor vc = focus? +cfg.focus : ( hilight? +cfg.hilight : +cfg.border ) ;
+
+   fig.loop(art,HalfPos,w,vc);
   }
  }
 
@@ -168,7 +183,7 @@ void EditLengthWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
   switch( vkey )
     {
      case VKey_Left :
-     case VKey_NumPlus :
+     case VKey_NumMinus :
       {
        if( kmod&KeyMod_Shift )
          shift(-10*Coord(repeat));
@@ -178,7 +193,7 @@ void EditLengthWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
      break;
 
      case VKey_Right :
-     case VKey_NumMinus :
+     case VKey_NumPlus :
       {
        if( kmod&KeyMod_Shift )
          shift(10*Coord(repeat));

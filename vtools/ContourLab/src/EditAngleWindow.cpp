@@ -94,17 +94,12 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
   SmoothDrawArt art(buf.cut(pane));
 
   MPane p(pane);
+  FigureBox fig(p);
 
   // body
 
   {
-   FigureBox fig(p);
-
    fig.solid(art,+cfg.back);
-
-   VColor vc = focus? +cfg.focus : ( hilight? +cfg.hilight : +cfg.border ) ;
-
-   fig.loop(art,HalfPos,w,vc);
   }
 
   // angle
@@ -118,8 +113,6 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
    MPoint line_y=Map(Geometry::Point(0,radius2));
 
    MPoint line=Map(Geometry::Point::Polar(radius,value));
-
-   art.ball(base,2*w,face);
 
    MPoint end_x=base+line_x;
    MPoint end_y=base-line_y;
@@ -146,6 +139,8 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
        }
 
    art.path(w,face,base,base+line);
+
+   art.ball(base,2*w,face);
   }
 
   // text
@@ -160,6 +155,14 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
      cfg.font->text(buf,text_plus,TextPlace(AlignX_Center,AlignY_Top),out.close(),+cfg.text);
    else
      cfg.font->text(buf,text_minus,TextPlace(AlignX_Center,AlignY_Bottom),out.close(),+cfg.text);
+  }
+
+  // border
+
+  {
+   VColor vc = focus? +cfg.focus : ( hilight? +cfg.hilight : +cfg.border ) ;
+
+   fig.loop(art,HalfPos,w,vc);
   }
  }
 

@@ -190,9 +190,10 @@ class EditorWindow : public ComboWindow
 
      Config() noexcept {}
 
-     Config(const UserPreference &pref) noexcept
-      : edit_angle_cfg(pref),
-        edit_length_cfg(pref)
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      : edit_angle_cfg(pref,app_pref),
+        edit_length_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
       }

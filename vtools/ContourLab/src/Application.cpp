@@ -23,9 +23,60 @@ namespace App {
 
 /* classes */
 
+struct AppPreferenceBag;
+
+class AppPreference;
+
 struct Param;
 
 class Application;
+
+/* struct AppPreferenceBag */
+
+struct AppPreferenceBag
+ {
+  // common
+
+  MCoord arrow_size = Fraction(5) ;
+
+  VColor back    =     White ;
+  VColor border  =     Black ;
+  VColor face    =     Black ;
+  VColor gray    =      Gray ;
+  VColor text    =      Blue ;
+  VColor hilight =     Green ;
+  VColor focus   = OrangeRed ;
+
+  // edit_angle
+
+  Coord edit_angle_dxy = 100 ;
+
+  // edit_length
+
+  Coord edit_length_dx = 500 ;
+  Coord edit_length_dy = 100 ;
+
+  // constructors
+
+  AppPreferenceBag() noexcept {}
+ };
+
+/* class AppPreference */
+
+class AppPreference : public ConfigBinder<AppPreferenceBag>
+ {
+  public:
+
+   // constructors
+
+   AppPreference() noexcept
+    {
+    }
+
+   ~AppPreference()
+    {
+    }
+ };
 
 /* struct Param */
 
@@ -35,6 +86,7 @@ struct Param
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
 
   UserPreference pref;
+  AppPreference app_pref;
 
   const WindowReportConfig &report_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
@@ -46,7 +98,7 @@ struct Param
    : report_cfg(pref.getSmartConfig()),
      exception_cfg(pref.getSmartConfig()),
      frame_cfg(pref.getSmartConfig()),
-     client_cfg(pref)
+     client_cfg(pref,app_pref)
    {
    }
  };

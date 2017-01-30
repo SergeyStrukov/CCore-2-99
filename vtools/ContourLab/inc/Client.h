@@ -51,8 +51,9 @@ class ClientWindow : public ComboWindow , public AliveControl
 
      Config() noexcept {}
 
-     Config(const UserPreference &pref) noexcept
-      : editor_cfg(pref)
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      : editor_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
       }
