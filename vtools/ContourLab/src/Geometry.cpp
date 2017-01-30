@@ -94,9 +94,109 @@ Geometry::Real Geometry::Real::Mod(Real x,Real y)
   return remainder(x.val,y.val);
  }
 
+ // map
+
 int Geometry::Real::map(int prec)
  {
   return (int)ldexp(val,prec);
+ }
+
+ // print object
+
+char Geometry::Real::ToStr::Digit(double d)
+ {
+  int ind=int(d);
+
+  if( ind<10 ) return "0123456789"[ind];
+
+  return '9';
+ }
+
+StrLen Geometry::Real::ToStr::Format(PtrLen<char> buf,double val)
+ {
+  PrintBuf out(buf);
+
+  Putobj(out,int(val));
+
+  return out.close();
+ }
+
+StrLen Geometry::Real::ToStr::Format(PtrLen<char> buf,double val,ulen prec)
+ {
+  Replace_min(prec,buf.len);
+
+  auto out=Range(buf.ptr,prec);
+
+  for(; +out ;++out)
+    {
+     double d;
+
+     val=modf(10*val,&d);
+
+     *out=Digit(d);
+    }
+
+  return Range(buf.ptr,prec);
+ }
+
+Geometry::Real::ToStr::ToStr(double val,ulen prec)
+ {
+  if( val<0 )
+    {
+     is_neg=true;
+     is_pos=false;
+
+     val=-val;
+    }
+  else
+    {
+     is_neg=false;
+
+     is_pos = val>0 ;
+    }
+
+  if( val>0 )
+    {
+     if( val<1'000'000'000 )
+       {
+        double ival;
+        double fval=modf(val,&ival);
+
+        int_part=Format(Range(int_buf),ival);
+
+        fract_part=Format(Range(fract_buf),fval,prec);
+       }
+     else
+       {
+        int_part="HUGE"_c;
+       }
+    }
+  else
+    {
+     int_part="0"_c;
+    }
+ }
+
+Geometry::Real::PrintOptType::PrintOptType(const char *ptr,const char *lim)
+ {
+  StrParse dev(ptr,lim);
+
+  Parse_empty(dev,show_sign);
+
+  ParseUInt_empty(dev,width,0u);
+
+  if( ParseChar_try(dev,'.') )
+    {
+     ParseUInt(dev,prec);
+    }
+  else
+    {
+     prec=DefaultPrec;
+    }
+
+  Parse_empty(dev,align);
+
+  if( !dev.finish() ) setDefault();
  }
 
 /* struct Geometry */

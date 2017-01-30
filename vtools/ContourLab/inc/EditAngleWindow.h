@@ -78,6 +78,8 @@ class EditAngleWindow : public SubWindow
    Coord len = 0 ;
    Pane pane;
    Point base;
+   Pane text_plus;
+   Pane text_minus;
 
   private:
 

@@ -101,9 +101,109 @@ struct Geometry
 
      // print object
 
-     void print(PrinterType &out) const
+     struct PrintOptType
       {
-       Printf(out,"#;",int(val));
+       ulen width;
+       ulen prec;
+       IntAlign align;
+       IntShowSign show_sign;
+
+       static const ulen DefaultPrec = 6 ;
+
+       void setDefault()
+        {
+         width=0;
+         prec=DefaultPrec;
+         align=IntAlignDefault;
+         show_sign=IntShowSignDefault;
+        }
+
+       PrintOptType() { setDefault(); }
+
+       PrintOptType(const char *ptr,const char *lim);
+
+       //
+       // [+][width=0][.prec=.6][l|L|r|R|i|I=R]
+       //
+      };
+
+     struct ToStr : NoCopy
+      {
+        char int_buf[10];
+        char fract_buf[10];
+
+        StrLen int_part;
+        StrLen fract_part;
+        bool is_neg;
+        bool is_pos;
+
+       private:
+
+        static char Digit(double d);
+
+        static StrLen Format(PtrLen<char> buf,double val);
+
+        static StrLen Format(PtrLen<char> buf,double val,ulen prec);
+
+       public:
+
+        ToStr(double val,ulen prec);
+
+        bool isNeg() const { return is_neg; }
+
+        bool isPos() const { return is_pos; }
+
+        StrLen intPart() const { return int_part; }
+
+        StrLen fractPart() const { return fract_part; }
+      };
+
+     void print(PrinterType &out,PrintOptType opt) const
+      {
+       ToStr temp(val,opt.prec);
+
+       ulen extra=0;
+
+       if( opt.width )
+         {
+          ulen len=0;
+
+          if( temp.isNeg() )
+            len++;
+          else if( temp.isPos() && opt.show_sign==IntShowPlus )
+            len++;
+
+          len+=temp.intPart().len;
+
+          if( +temp.fractPart() )
+            {
+             len++;
+
+             len+=temp.fractPart().len;
+            }
+
+          extra=PosSub(opt.width,len);
+         }
+
+       if( extra && opt.align==IntAlignLeft ) out.put(' ',extra);
+
+       if( temp.isNeg() )
+         out.put('-');
+       else if( temp.isPos() && opt.show_sign==IntShowPlus )
+         out.put('+');
+
+       if( extra && opt.align==IntAlignInternal ) out.put(' ',extra);
+
+       Putobj(out,temp.intPart());
+
+       if( +temp.fractPart() )
+         {
+          out.put('.');
+
+          Putobj(out,temp.fractPart());
+         }
+
+       if( extra && opt.align==IntAlignRight ) out.put(' ',extra);
       }
    };
 
@@ -140,7 +240,7 @@ struct Geometry
 
     void print(PrinterType &out) const
      {
-      Printf(out,"#;",val);
+      Printf(out,"#.3;",val);
      }
    };
 
@@ -175,7 +275,7 @@ struct Geometry
 
     void print(PrinterType &out) const
      {
-      Printf(out,"#;",val);
+      Printf(out,"#.3;",val);
      }
    };
 
@@ -237,7 +337,7 @@ struct Geometry
 
     void print(PrinterType &out) const
      {
-      Printf(out,"#;",val*(180/Real::Pi()));
+      Printf(out,"#+.2;",val*(180/Real::Pi()));
      }
    };
 
@@ -314,7 +414,7 @@ struct Geometry
 
     void print(PrinterType &out) const
      {
-      Printf(out,"(#;,#;)",x,y);
+      Printf(out,"(#.3;,#.3;)",x,y);
      }
    };
 
@@ -450,7 +550,7 @@ struct Geometry
 
 /* Map() */
 
-inline Geometry::Real GradToRadian(double val) { return (val/180)*Geometry::Real::Pi(); }
+inline Geometry::Angle GradToRadian(double val) { return Geometry::Angle( (val/180)*Geometry::Real::Pi() ); }
 
 inline MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }
 

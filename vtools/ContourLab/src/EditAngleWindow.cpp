@@ -38,7 +38,7 @@ void EditAngleWindow::pin(Point point)
 
 void EditAngleWindow::rotate(Coord delta)
  {
-  newValue( value+Geometry::Angle(GradToRadian(delta)) );
+  newValue( value+GradToRadian(delta) );
  }
 
 EditAngleWindow::EditAngleWindow(SubWindowHost &host,const Config &cfg_)
@@ -76,6 +76,10 @@ void EditAngleWindow::layout()
   pane=Pane(Null,len);
 
   base=Point::Diag(len/2);
+
+  text_plus=Pane(0,len/2+len/12,len,len/3);
+
+  text_minus=Pane(0,len/12,len,len/3);
  }
 
 void EditAngleWindow::draw(DrawBuf buf,bool) const
@@ -108,6 +112,7 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
   {
    Geometry::Real radius(len*0.4);
    Geometry::Real radius2(len*0.45);
+   Geometry::Real radius3(len*0.35);
 
    MPoint line_x=Map(Geometry::Point(radius2,0));
    MPoint line_y=Map(Geometry::Point(0,radius2));
@@ -119,12 +124,29 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
    art.path(w/2,gray,base-line_x,base+line_x);
    art.path(w/2,gray,base-line_y,base+line_y);
 
+   for(int y : {0,90,180,180+90} )
+     for(int x : {15,30,45,60,75} )
+       {
+        Geometry::Angle a=GradToRadian(x+y);
+
+        art.path(w/2,gray,base+Map(Geometry::Point::Polar(radius3,a)),base+Map(Geometry::Point::Polar(radius2,a)));
+       }
+
    art.path(w,face,base,base+line);
   }
 
   // text
 
   {
+   char temp[TextBufLen];
+   PrintBuf out(Range(temp));
+
+   Putobj(out,value);
+
+   if( value.val>=0 )
+     cfg.font->text(buf,text_plus,TextPlace(AlignX_Center,AlignY_Top),out.close(),+cfg.text);
+   else
+     cfg.font->text(buf,text_minus,TextPlace(AlignX_Center,AlignY_Bottom),out.close(),+cfg.text);
   }
  }
 
