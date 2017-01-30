@@ -318,7 +318,7 @@ class Contour : public Formular
    struct Bind
     {
      Func func;
-     String name;
+     const String &name;
 
      void operator () (AnyType s) { func(name,s); }
 
@@ -329,7 +329,7 @@ class Contour : public Formular
    struct BindRef
     {
      Func func;
-     String name;
+     const String &name;
 
      void operator () (AnyType &s) { func(name,s); }
 

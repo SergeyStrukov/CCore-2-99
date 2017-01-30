@@ -101,6 +101,8 @@ class GeometryWindow : public SubWindow
 
    void shift_y(Coord delta);
 
+   struct DrawItem;
+
   public:
 
    Contour contour;

@@ -95,7 +95,7 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged)
  {
-  wlist.insTop(split1,split2,geom,edit_length);
+  wlist.insTop(split1,split2,geom,edit_angle);
  }
 
 EditorWindow::~EditorWindow()

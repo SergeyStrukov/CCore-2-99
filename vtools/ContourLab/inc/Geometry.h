@@ -95,6 +95,8 @@ struct Geometry
 
      static Real Mod(Real x,Real y);
 
+     static Real BoundedDiv(Real x,Real y); // x/y in [0,1]
+
      // map
 
      int map(int prec);
@@ -375,6 +377,8 @@ struct Geometry
 
     friend Point operator * (Real mul,Point a) { return {mul*a.x,mul*a.y}; }
 
+    friend Point operator / (Point a,Real div) { return {a.x/div,a.y/div}; }
+
     static Real Norm(Point p) { return Real::Norm(p.x,p.y); }
 
     static Point Ort(Point p) { return (1/Norm(p))*p; }
@@ -515,7 +519,13 @@ struct Geometry
 
   static Line LineOf(Point a,Point b) { return {a,b-a}; }
 
+  static Point Middle(Point a,Point b);
+
+  static Line MidOrt(Point a,Point b);
+
   static Circle CircleOf(Point center,Length radius) { return {center,radius}; }
+
+  static Circle CircleOuter(Point a,Point b,Point c);
 
   static Point Proj(Line a,Point p);
 
@@ -523,15 +533,19 @@ struct Geometry
 
   static Point Meet(Line a,Line b);
 
-  static Couple Meet(Line a,Circle C); // Couple in a direction
+  static Point MeetIn(Line a,Point b,Point c);
 
-  static Couple Meet(Circle C,Circle D); // Couple in C direction
+  static Couple MeetCircle(Line a,Circle C); // Couple in a direction
+
+  static Couple MeetCircles(Circle C,Circle D); // Couple in C direction
 
   static Point Rotate(Point o,Angle a,Point p) { return o+Point::Rotate(a,p-o); }
 
+  static Point RotateOrt(Point o,Point p) { return o+Point::Orthogonal(p-o); }
+
   static Point Move(Point a,Point b,Point p) { return (b-a)+p; }
 
-  static Point Move(Line a,Length len,Point p) { return len.val*a.ort+p; }
+  static Point MoveLen(Line a,Length len,Point p) { return len.val*a.ort+p; }
 
   static Point Mirror(Line a,Point p);
 

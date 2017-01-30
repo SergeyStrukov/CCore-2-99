@@ -70,10 +70,13 @@ bool EditAngleWindow::isGoodSize(Point size) const
 void EditAngleWindow::layout()
  {
   Point size=getSize();
+  Coord s=+cfg.shade_dxy;
 
-  len=Min(size.x,size.y);
+  len=Min(size.x,size.y)-s;
 
   pane=Pane(Null,len);
+  shade1=Pane(s,len,len,s);
+  shade2=Pane(len,s,s,len-s);
 
   base=Point::Diag(len/2);
 
@@ -100,6 +103,9 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
 
   {
    fig.solid(art,+cfg.back);
+
+   buf.erase(shade1,gray);
+   buf.erase(shade2,gray);
   }
 
   // angle

@@ -94,6 +94,24 @@ Geometry::Real Geometry::Real::Mod(Real x,Real y)
   return remainder(x.val,y.val);
  }
 
+Geometry::Real Geometry::Real::BoundedDiv(Real x,Real y)
+ {
+  if( y<0 )
+    {
+     y=-y;
+     x=-x;
+    }
+
+  GuardDiv(y.val);
+
+  if( x<0 || x>y )
+    {
+     throw RealOutOfDomain;
+    }
+
+  return x/y;
+ }
+
  // map
 
 int Geometry::Real::map(int prec)
@@ -201,6 +219,31 @@ Geometry::Real::PrintOptType::PrintOptType(const char *ptr,const char *lim)
 
 /* struct Geometry */
 
+Geometry::Point Geometry::Middle(Point a,Point b)
+ {
+  return (a+b)/2;
+ }
+
+Geometry::Line Geometry::MidOrt(Point a,Point b)
+ {
+  Point c=Middle(a,b);
+
+  return LineOf(c,RotateOrt(c,b));
+ }
+
+Geometry::Circle Geometry::CircleOuter(Point a,Point b,Point c)
+ {
+  Line p=MidOrt(a,b);
+
+  Line q=MidOrt(a,c);
+
+  Point center=Meet(p,q);
+
+  Length radius=LengthOf(center,a);
+
+  return CircleOf(center,radius);
+ }
+
 Geometry::Point Geometry::Proj(Line a,Point p)
  {
   Real t=Point::Prod(p-a.p,a.ort);
@@ -224,7 +267,18 @@ Geometry::Point Geometry::Meet(Line a,Line b)
   return a.p-t*a.ort;
  }
 
-Geometry::Couple Geometry::Meet(Line a,Circle C)
+Geometry::Point Geometry::MeetIn(Line a,Point b,Point c)
+ {
+  Point dir=c-b;
+  Point e=Point::Orthogonal(a.ort);
+
+  Real s=Point::Prod(dir,e);
+  Real t=Point::Prod(a.p-b,e);
+
+  return b+Real::BoundedDiv(t,s)*dir;
+ }
+
+Geometry::Couple Geometry::MeetCircle(Line a,Circle C)
  {
   Point p=Proj(a,C.center);
 
@@ -237,7 +291,7 @@ Geometry::Couple Geometry::Meet(Line a,Circle C)
   return {p-delta,p+delta};
  }
 
-Geometry::Couple Geometry::Meet(Circle C,Circle D)
+Geometry::Couple Geometry::MeetCircles(Circle C,Circle D)
  {
   Angle a=AngleC(C.radius,LengthOf(C.center,D.center),D.radius);
 

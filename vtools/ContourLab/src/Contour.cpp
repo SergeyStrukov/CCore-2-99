@@ -28,11 +28,19 @@ void GuardTypeMismatch()
 
 Contour::Contour()
  {
-  addPad("A"_c,Point{10,10});
+  addPad("A"_c,Point{50,50});
 
-  addPad("B"_c,Point{20,30});
+  addPad("B"_c,Point{200,300});
+
+  addPad("C"_c,Point{400,200});
 
   addFormula("(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[1].obj);
+
+  addFormula("(AC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[2].obj);
+
+  addFormula("(BC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[1].obj,pads[2].obj);
+
+  addFormula("Outer"_c,FormulaType<decltype(CircleOuter)>::Create<CircleOuter>,pads[0].obj,pads[1].obj,pads[2].obj);
  }
 
 Contour::~Contour()

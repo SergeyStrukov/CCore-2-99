@@ -36,6 +36,8 @@ class EditAngleWindow : public SubWindow
 
      // app
 
+     RefVal<Coord> shade_dxy = 8 ;
+
      RefVal<MCoord> arrow_size = Fraction(5) ;
 
      RefVal<VColor> back    =     White ;
@@ -67,6 +69,7 @@ class EditAngleWindow : public SubWindow
      template <class Bag>
      void bindApp(const Bag &bag)
       {
+       shade_dxy.bind(bag.shade_dxy);
        arrow_size.bind(bag.arrow_size);
        back.bind(bag.back);
        border.bind(bag.border);
@@ -93,6 +96,8 @@ class EditAngleWindow : public SubWindow
 
    Coord len = 0 ;
    Pane pane;
+   Pane shade1;
+   Pane shade2;
    Point base;
    Pane text_plus;
    Pane text_minus;

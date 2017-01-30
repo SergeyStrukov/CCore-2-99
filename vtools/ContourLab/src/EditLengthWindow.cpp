@@ -66,9 +66,14 @@ bool EditLengthWindow::isGoodSize(Point size) const
 
 void EditLengthWindow::layout()
  {
-  Point size=getSize();
+  Coord s=+cfg.shade_dxy;
 
-  pane=Pane(Null,size);
+  Point size=getSize().subXY(s);
+
+  pane=Pane(Null,size.x,size.y);
+  shade1=Pane(s,size.y,size.x,s);
+  shade2=Pane(size.x,s,s,size.y-s);
+
   base=size/2;
 
   text=Pane(0,base.y+size.y/12,size.x,size.y/3);
@@ -92,6 +97,9 @@ void EditLengthWindow::draw(DrawBuf buf,bool) const
 
   {
    fig.solid(art,+cfg.back);
+
+   buf.erase(shade1,gray);
+   buf.erase(shade2,gray);
   }
 
   // length
