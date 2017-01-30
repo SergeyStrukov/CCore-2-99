@@ -17,6 +17,7 @@
 #include <inc/Contour.h>
 
 #include <inc/EditAngleWindow.h>
+#include <inc/EditLengthWindow.h>
 
 namespace App {
 
@@ -25,8 +26,6 @@ namespace App {
 class ItemListWindow;
 
 class GeometryWindow;
-
-class EditLengthWindow;
 
 class EditRatioWindow;
 
@@ -124,52 +123,6 @@ class GeometryWindow : public SubWindow // TODO
    virtual void draw(DrawBuf buf,bool drag_active) const;
  };
 
-/* class EditLengthWindow */
-
-class EditLengthWindow : public SubWindow // TODO
- {
-  public:
-
-   struct Config
-    {
-     Config() noexcept {}
-
-     Config(const UserPreference &pref) noexcept
-      {
-       bind(pref.get(),pref.getSmartConfig());
-      }
-
-     template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy)
-      {
-       Used(bag);
-       Used(proxy);
-      }
-    };
-
-   using ConfigType = Config ;
-
-  private:
-
-   const Config &cfg;
-
-  public:
-
-   EditLengthWindow(SubWindowHost &host,const Config &cfg);
-
-   virtual ~EditLengthWindow();
-
-   // methods
-
-   Point getMinSize() const { return Point(10,10); }
-
-   // drawing
-
-   virtual void layout();
-
-   virtual void draw(DrawBuf buf,bool drag_active) const;
- };
-
 /* class EditRatioWindow */
 
 class EditRatioWindow : public SubWindow // TODO
@@ -230,12 +183,16 @@ class EditorWindow : public ComboWindow
 
      CtorRefVal<XSplitWindow::ConfigType> split_cfg;
 
+     // app
+
      CtorRefVal<EditAngleWindow::ConfigType> edit_angle_cfg;
+     CtorRefVal<EditLengthWindow::ConfigType> edit_length_cfg;
 
      Config() noexcept {}
 
      Config(const UserPreference &pref) noexcept
-      : edit_angle_cfg(pref)
+      : edit_angle_cfg(pref),
+        edit_length_cfg(pref)
       {
        bind(pref.get(),pref.getSmartConfig());
       }
@@ -267,6 +224,7 @@ class EditorWindow : public ComboWindow
    XSplitWindow split1;
 
    EditAngleWindow edit_angle;
+   EditLengthWindow edit_length;
 
    // layout
 

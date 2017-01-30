@@ -1,4 +1,4 @@
-/* EditAngleWindow.h */
+/* EditLengthWindow.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: ContourLab 1.00
@@ -11,8 +11,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef EditAngleWindow_h
-#define EditAngleWindow_h
+#ifndef EditLengthWindow_h
+#define EditLengthWindow_h
 
 #include <inc/Geometry.h>
 
@@ -20,11 +20,11 @@ namespace App {
 
 /* classes */
 
-class EditAngleWindow;
+class EditLengthWindow;
 
-/* class EditAngleWindow */
+/* class EditLengthWindow */
 
-class EditAngleWindow : public SubWindow
+class EditLengthWindow : public SubWindow
  {
   public:
 
@@ -36,8 +36,6 @@ class EditAngleWindow : public SubWindow
 
      // app
 
-     RefVal<MCoord> arrow_size = Fraction(5) ;
-
      RefVal<VColor> back    =     White ;
      RefVal<VColor> border  =     Black ;
      RefVal<VColor> face    =     Black ;
@@ -46,7 +44,8 @@ class EditAngleWindow : public SubWindow
      RefVal<VColor> hilight =     Green ;
      RefVal<VColor> focus   = OrangeRed ;
 
-     RefVal<Coord> dxy = 100 ;
+     RefVal<Coord> dx = 500 ;
+     RefVal<Coord> dy = 100 ;
 
      Config() noexcept {}
 
@@ -69,38 +68,36 @@ class EditAngleWindow : public SubWindow
 
    const Config &cfg;
 
-   Geometry::Angle value;
+   Geometry::Length value;
 
    bool hilight = false ;
    bool focus = false ;
 
-   Coord len = 0 ;
    Pane pane;
    Point base;
-   Pane text_plus;
-   Pane text_minus;
+   Pane text;
 
   private:
 
-   void newValue(Geometry::Angle value);
+   void newValue(Geometry::Length value);
 
    void pin(Point point);
 
-   void rotate(Coord delta);
+   void shift(Coord delta);
 
   public:
 
-   EditAngleWindow(SubWindowHost &host,const Config &cfg);
+   EditLengthWindow(SubWindowHost &host,const Config &cfg);
 
-   virtual ~EditAngleWindow();
+   virtual ~EditLengthWindow();
 
    // methods
 
-   SizeBox getMinSize() const;
+   Point getMinSize() const;
 
-   Geometry::Angle getValue() const { return value; }
+   Geometry::Length getValue() const { return value; }
 
-   void setValue(Geometry::Angle value_)
+   void setValue(Geometry::Length value_)
     {
      value=value_;
 
@@ -147,11 +144,9 @@ class EditAngleWindow : public SubWindow
 
    // signals
 
-   Signal<Geometry::Angle> changed;
+   Signal<Geometry::Length> changed;
  };
 
 } // namespace App
 
 #endif
-
-

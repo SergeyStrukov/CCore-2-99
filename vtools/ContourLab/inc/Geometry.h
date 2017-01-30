@@ -554,6 +554,8 @@ inline Geometry::Angle GradToRadian(double val) { return Geometry::Angle( (val/1
 
 inline MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }
 
+inline MCoord Map(Geometry::Length x) { return Map(x.val); }
+
 inline MPoint Map(Geometry::Point point) { return MPoint(Map(point.x),Map(point.y)); }
 
 inline Geometry::Point Map(Point point) { return Geometry::Point(point.x,point.y); }

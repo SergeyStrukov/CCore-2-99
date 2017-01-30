@@ -40,12 +40,14 @@ class ClientWindow : public ComboWindow , public AliveControl
      RefVal<DefString> text_No     = "No"_def ;
      RefVal<DefString> text_Cancel = "Cancel"_def ;
 
-     EditorWindow::ConfigType editor_cfg;
-
      CtorRefVal<FileFrame::ConfigType> file_cfg;
      CtorRefVal<MessageFrame::AlertConfigType> msg_cfg;
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
      CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
+
+     // app
+
+     EditorWindow::ConfigType editor_cfg;
 
      Config() noexcept {}
 

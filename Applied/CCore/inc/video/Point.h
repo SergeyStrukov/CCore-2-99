@@ -586,6 +586,8 @@ struct Pane
 
 /* functions */
 
+inline Pane Square(Pane pane) { return Pane(pane.getBase(),Min(pane.dx,pane.dy)); }
+
 inline Pane PaneBaseLim(Point base,Point lim) // base <= lim OR empty
  {
   return Pane(base,lim-base);

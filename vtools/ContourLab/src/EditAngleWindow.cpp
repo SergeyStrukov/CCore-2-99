@@ -91,7 +91,7 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
   VColor face=+cfg.face;
   VColor gray=+cfg.gray;
 
-  SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf.cut(pane));
 
   MPane p(pane);
 
@@ -121,8 +121,21 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
 
    art.ball(base,2*w,face);
 
-   art.path(w/2,gray,base-line_x,base+line_x);
-   art.path(w/2,gray,base-line_y,base+line_y);
+   MPoint end_x=base+line_x;
+   MPoint end_y=base-line_y;
+
+   art.path(w/2,gray,base-line_x,end_x);
+   art.path(w/2,gray,end_y,base+line_y);
+
+   MCoord arrow_size=+cfg.arrow_size;
+
+   FigureRightArrow fig1(MBox(end_x,arrow_size));
+
+   fig1.curveSolid(art,gray);
+
+   FigureUpArrow fig2(MBox(end_y,arrow_size));
+
+   fig2.curveSolid(art,gray);
 
    for(int y : {0,90,180,180+90} )
      for(int x : {15,30,45,60,75} )
@@ -167,18 +180,12 @@ FocusType EditAngleWindow::askFocus() const
 
 void EditAngleWindow::gainFocus()
  {
-  if( Change(focus,true) )
-    {
-     redraw();
-    }
+  if( Change(focus,true) ) redraw();
  }
 
 void EditAngleWindow::looseFocus()
  {
-  if( Change(focus,false) )
-    {
-     redraw();
-    }
+  if( Change(focus,false) ) redraw();
  }
 
  // mouse

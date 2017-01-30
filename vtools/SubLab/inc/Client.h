@@ -42,7 +42,7 @@ class AltShape
      RefVal<VColor> snow   =      Snow ;
      RefVal<VColor> snowUp = PaleGreen ;
 
-     // special
+     // app
 
      RefVal<Coord> dy = 32 ;
 
@@ -105,6 +105,8 @@ class SpaceWindow : public SubWindow
 
    struct Config
     {
+     // app
+
      RefVal<Coord> space_dxy = 100 ;
      RefVal<Coord> border_dxy = 10 ;
 
@@ -200,7 +202,7 @@ class ClientWindow : public ComboWindow
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
 
-     // special
+     // app
 
      RefVal<VColor> backAlt = Wheat ;
 
@@ -209,18 +211,19 @@ class ClientWindow : public ComboWindow
      Config() noexcept {}
 
      Config(const UserPreference &pref) noexcept
-      : check_cfg(SmartBind,pref),
-        label_cfg(SmartBind,pref),
-        list_cfg(SmartBind,pref)
       {
-       bind(pref.get());
+       bind(pref.get(),pref.getSmartConfig());
       }
 
-     template <class Bag>
-     void bind(const Bag &bag)
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
       {
        back.bind(bag.back);
        space_dxy.bind(bag.space_dxy);
+
+       check_cfg.bind(proxy);
+       label_cfg.bind(proxy);
+       list_cfg.bind(proxy);
       }
     };
 

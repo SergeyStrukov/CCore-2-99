@@ -247,6 +247,13 @@ struct MPane
   MPane cutBottom(MCoord t) const { return MPane(x,ex,t,ey); }
  };
 
+/* MBox() */
+
+inline MPane MBox(MPoint p,MCoord len)
+ {
+  return MPane(p.x-len,p.x+len,p.y-len,p.y+len);
+ }
+
 /* struct FigureBase<T,ulen Len> */
 
 template <class T,ulen Len>

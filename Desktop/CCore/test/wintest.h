@@ -329,8 +329,8 @@ class ResultWindow : public ComboWindow
      RefVal<Coord> delta_dx = 20 ;
      RefVal<Coord> delta_dy = 10 ;
 
-     RefVal<ProgressShape::Config> progress_cfg;
-     RefVal<InfoShape::Config> info_cfg;
+     RefVal<ProgressWindow::ConfigType> progress_cfg;
+     RefVal<InfoWindow::ConfigType> info_cfg;
 
      ConfigType() {}
     };

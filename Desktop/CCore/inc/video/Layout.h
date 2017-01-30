@@ -427,6 +427,10 @@ class PaneCut
 
    void placeMin(PlaceType &&window) const { window.setPlace(Pane(pane.getBase(),GetMinSize(window))); }
 
+   void placeSmart(PlaceTypeOf<Point> &&window) const { window.setPlace(pane); }
+
+   void placeSmart(PlaceTypeOf<SizeBox> &&window) const { window.setPlace(Square(pane)); }
+
 
    PaneCut & place_cutLeft(PlaceType &&window,OneOfTypes<Coord,Ratio> dx) { window.setPlace(cutLeft(dx)); return *this; }
 

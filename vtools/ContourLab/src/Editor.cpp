@@ -91,11 +91,12 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    bottom(wlist,Blue),
    split1(wlist,cfg.split_cfg),
    edit_angle(wlist,cfg.edit_angle_cfg),
+   edit_length(wlist,cfg.edit_length_cfg),
 
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged)
  {
-  wlist.insTop(top,split2,bottom,split1,edit_angle);
+  wlist.insTop(top,split2,bottom,split1,edit_length);
  }
 
 EditorWindow::~EditorWindow()
@@ -141,7 +142,9 @@ void EditorWindow::layout()
 
      left_dx=p.getSize().x;
 
-     pane.place_cutLeft(split1).place(edit_angle);
+     pane.place_cutLeft(split1);
+     pane.placeSmart(edit_angle);
+     pane.placeSmart(edit_length);
 
      p.place_cutTop(top,Div(1,2),0).place_cutTop(split2).place(bottom);
 
@@ -157,7 +160,9 @@ void EditorWindow::layout()
 
      PaneCut p=pane.cutLeft(left_dx,0);
 
-     pane.place_cutLeft(split1).place(edit_angle);
+     pane.place_cutLeft(split1);
+     pane.placeSmart(edit_angle);
+     pane.placeSmart(edit_length);
 
      p.place_cutTop(top,top_dy,0).place_cutTop(split2).place(bottom);
     }
