@@ -18,14 +18,13 @@
 
 #include <inc/EditAngleWindow.h>
 #include <inc/EditLengthWindow.h>
+#include <inc/GeometryWindow.h>
 
 namespace App {
 
 /* classes */
 
 class ItemListWindow;
-
-class GeometryWindow;
 
 class EditRatioWindow;
 
@@ -75,52 +74,6 @@ class ItemListWindow : public ComboWindow // TODO
    virtual void layout();
 
    virtual void drawBack(DrawBuf buf,bool drag_active) const;
- };
-
-/* class GeometryWindow */
-
-class GeometryWindow : public SubWindow // TODO
- {
-  public:
-
-   struct Config
-    {
-     Config() noexcept {}
-
-     Config(const UserPreference &pref) noexcept
-      {
-       bind(pref.get(),pref.getSmartConfig());
-      }
-
-     template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy)
-      {
-       Used(bag);
-       Used(proxy);
-      }
-    };
-
-   using ConfigType = Config ;
-
-  private:
-
-   const Config &cfg;
-
-  public:
-
-   GeometryWindow(SubWindowHost &host,const Config &cfg,const Contour &contour);
-
-   virtual ~GeometryWindow();
-
-   // methods
-
-   Point getMinSize() const { return Point(10,10); }
-
-   // drawing
-
-   virtual void layout();
-
-   virtual void draw(DrawBuf buf,bool drag_active) const;
  };
 
 /* class EditRatioWindow */
@@ -187,13 +140,15 @@ class EditorWindow : public ComboWindow
 
      CtorRefVal<EditAngleWindow::ConfigType> edit_angle_cfg;
      CtorRefVal<EditLengthWindow::ConfigType> edit_length_cfg;
+     CtorRefVal<GeometryWindow::ConfigType> geom_cfg;
 
      Config() noexcept {}
 
      template <class AppPref>
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
       : edit_angle_cfg(pref,app_pref),
-        edit_length_cfg(pref,app_pref)
+        edit_length_cfg(pref,app_pref),
+        geom_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
       }
@@ -216,16 +171,15 @@ class EditorWindow : public ComboWindow
 
    bool modified = false ;
 
-   BlankWindow top;
+   XSplitWindow split1;
 
    YSplitWindow split2;
 
-   BlankWindow bottom;
-
-   XSplitWindow split1;
-
    EditAngleWindow edit_angle;
+
    EditLengthWindow edit_length;
+
+   GeometryWindow geom;
 
    // layout
 

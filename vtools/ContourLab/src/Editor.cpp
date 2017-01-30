@@ -86,17 +86,16 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
 
-   top(wlist,Blue),
-   split2(wlist,cfg.split_cfg),
-   bottom(wlist,Blue),
    split1(wlist,cfg.split_cfg),
+   split2(wlist,cfg.split_cfg),
    edit_angle(wlist,cfg.edit_angle_cfg),
    edit_length(wlist,cfg.edit_length_cfg),
+   geom(wlist,cfg.geom_cfg),
 
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged)
  {
-  wlist.insTop(top,split2,bottom,split1,edit_length);
+  wlist.insTop(split1,split2,geom,edit_length);
  }
 
 EditorWindow::~EditorWindow()
@@ -132,40 +131,71 @@ void EditorWindow::save(StrLen file_name) // TODO
 
 void EditorWindow::layout()
  {
-  PaneCut pane(getSize(),+cfg.space_dxy);
+  Coord space=+cfg.space_dxy;
 
-  pane.shrink();
+  PaneCut right(space);
+  PaneCut top(space);
+  PaneCut bottom(space);
 
-  if( Change(layout_first,false) )
-    {
-     PaneCut p=pane.cutLeft(Div(1,3),0);
+  // first split
 
-     left_dx=p.getSize().x;
+  {
+   PaneCut pane(getSize(),space);
 
-     pane.place_cutLeft(split1);
-     pane.placeSmart(edit_angle);
-     pane.placeSmart(edit_length);
+   pane.shrink();
 
-     p.place_cutTop(top,Div(1,2),0).place_cutTop(split2).place(bottom);
+   if( Change(layout_first,false) )
+     {
+      PaneCut p=pane.cutLeft(Div(1,3),0);
 
-     top_dy=top.getSize().y;
-    }
-  else
-    {
-     Coord min_dxy=getMinDXY();
+      left_dx=p.getSize().x;
 
-     left_dx=Cap(min_dxy,left_dx,getMaxLeftDX());
+      pane.place_cutLeft(split1);
 
-     top_dy=Cap(min_dxy,top_dy,getMaxTopDY());
+      right=pane;
 
-     PaneCut p=pane.cutLeft(left_dx,0);
+      p.place_cutTop(top,Div(1,2),0).place_cutTop(split2).place(bottom);
 
-     pane.place_cutLeft(split1);
-     pane.placeSmart(edit_angle);
-     pane.placeSmart(edit_length);
+      top_dy=top.getSize().y;
+     }
+   else
+     {
+      Coord min_dxy=getMinDXY();
 
-     p.place_cutTop(top,top_dy,0).place_cutTop(split2).place(bottom);
-    }
+      left_dx=Cap(min_dxy,left_dx,getMaxLeftDX());
+
+      top_dy=Cap(min_dxy,top_dy,getMaxTopDY());
+
+      PaneCut p=pane.cutLeft(left_dx,0);
+
+      pane.place_cutLeft(split1);
+
+      right=pane;
+
+      p.place_cutTop(top,top_dy,0).place_cutTop(split2).place(bottom);
+     }
+  }
+
+  // right
+
+  {
+   PaneCut pane(space);
+
+   right.place_cutBottom(pane,Div(20,100)).place(geom);
+
+   pane.placeSmart(edit_angle);
+   pane.placeSmart(edit_length);
+  }
+
+  // top
+
+  {
+  }
+
+  // bottom
+
+  {
+  }
  }
 
 void EditorWindow::drawBack(DrawBuf buf,bool) const

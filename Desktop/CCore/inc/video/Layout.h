@@ -318,9 +318,13 @@ class PaneCut
 
    // methods
 
+   Point getMinSize() const { return 3*Point::Diag(space); }
+
    operator Pane() const { return pane; }
 
    Point getSize() const { return pane.getSize(); }
+
+   void setPlace(Pane pane_) { pane=pane_; }
 
    void shrink();
 

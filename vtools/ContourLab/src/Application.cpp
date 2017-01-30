@@ -39,6 +39,8 @@ struct AppPreferenceBag
 
   MCoord arrow_size = Fraction(5) ;
 
+  Coord shade_dxy = 8 ;
+
   VColor back    =     White ;
   VColor border  =     Black ;
   VColor face    =     Black ;
@@ -55,6 +57,10 @@ struct AppPreferenceBag
 
   Coord edit_length_dx = 500 ;
   Coord edit_length_dy = 100 ;
+
+  // geometry
+
+  Coord geometry_dxy = 300 ;
 
   // constructors
 

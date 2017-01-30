@@ -6,6 +6,7 @@ obj/EditAngleWindow.o \
 obj/EditLengthWindow.o \
 obj/Editor.o \
 obj/Geometry.o \
+obj/GeometryWindow.o \
 obj/main.o \
 
 
@@ -17,6 +18,7 @@ obj/EditAngleWindow.s \
 obj/EditLengthWindow.s \
 obj/Editor.s \
 obj/Geometry.s \
+obj/GeometryWindow.s \
 obj/main.s \
 
 
@@ -28,6 +30,7 @@ obj/EditAngleWindow.dep \
 obj/EditLengthWindow.dep \
 obj/Editor.dep \
 obj/Geometry.dep \
+obj/GeometryWindow.dep \
 obj/main.dep \
 
 
@@ -58,6 +61,9 @@ obj/Editor.o : ./src/Editor.cpp
 obj/Geometry.o : ./src/Geometry.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/GeometryWindow.o : ./src/GeometryWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -82,6 +88,9 @@ obj/Editor.s : ./src/Editor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Geometry.s : ./src/Geometry.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/GeometryWindow.s : ./src/GeometryWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -109,6 +118,9 @@ obj/Editor.dep : ./src/Editor.cpp
 
 obj/Geometry.dep : ./src/Geometry.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Geometry.o $< -MF $@
+
+obj/GeometryWindow.dep : ./src/GeometryWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/GeometryWindow.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

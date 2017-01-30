@@ -235,7 +235,7 @@ void EditAngleWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
 
 void EditAngleWindow::react_LeftClick(Point point,MouseKey)
  {
-  pin(point);
+  if( pane.contains(point) ) pin(point);
  }
 
 void EditAngleWindow::react_Move(Point point,MouseKey mkey)
@@ -243,15 +243,12 @@ void EditAngleWindow::react_Move(Point point,MouseKey mkey)
   if( pane.contains(point) )
     {
      if( Change(hilight,true) ) redraw();
+
+     if( mkey&MouseKey_Left ) pin(point);
     }
   else
     {
      if( Change(hilight,false) ) redraw();
-    }
-
-  if( mkey&MouseKey_Left )
-    {
-     pin(point);
     }
  }
 

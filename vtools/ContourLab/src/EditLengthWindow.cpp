@@ -206,7 +206,7 @@ void EditLengthWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
 
 void EditLengthWindow::react_LeftClick(Point point,MouseKey)
  {
-  pin(point);
+  if( pane.contains(point) ) pin(point);
  }
 
 void EditLengthWindow::react_Move(Point point,MouseKey mkey)
@@ -214,15 +214,12 @@ void EditLengthWindow::react_Move(Point point,MouseKey mkey)
   if( pane.contains(point) )
     {
      if( Change(hilight,true) ) redraw();
+
+     if( mkey&MouseKey_Left ) pin(point);
     }
   else
     {
      if( Change(hilight,false) ) redraw();
-    }
-
-  if( mkey&MouseKey_Left )
-    {
-     pin(point);
     }
  }
 

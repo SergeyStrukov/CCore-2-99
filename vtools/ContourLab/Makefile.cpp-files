@@ -5,4 +5,5 @@
 ./src/EditLengthWindow.cpp
 ./src/Editor.cpp
 ./src/Geometry.cpp
+./src/GeometryWindow.cpp
 ./src/main.cpp
