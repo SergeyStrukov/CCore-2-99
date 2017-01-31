@@ -19,6 +19,82 @@ namespace App {
 
 /* class EditorWindow */
 
+void EditorWindow::activate(SubWindow &editor) // TODO
+ {
+  wlist.del(edit_angle,edit_length);
+
+  wlist.insTop(editor);
+
+  redraw();
+ }
+
+void EditorWindow::select(const Contour::Object &obj,Geometry::Angle &angle)
+ {
+  angle_pad.select(obj,angle);
+
+  edit_angle.setValue(angle);
+
+  activate(edit_angle);
+ }
+
+void EditorWindow::select(const Contour::Object &obj,Geometry::Length &length)
+ {
+  length_pad.select(obj,length);
+
+  edit_length.setValue(length);
+
+  activate(edit_length);
+ }
+
+void EditorWindow::select(const Contour::Object &obj,Geometry::Ratio &ratio) // TODO
+ {
+  ratio_pad.select(obj,ratio);
+
+  //
+
+  //
+ }
+
+void EditorWindow::select(const Contour::Object &obj,Geometry::Point &point)
+ {
+  geom.selectPoint(obj,point);
+ }
+
+struct EditorWindow::SelectPad
+ {
+  EditorWindow *ptr;
+
+  template <class T>
+  void operator () (const String &,const Contour::Object &,T &)
+   {
+   }
+
+  void operator () (const String &,const Contour::Object &obj,OneOfTypes<Geometry::Angle,Geometry::Length,Geometry::Ratio,Geometry::Point> &s)
+   {
+    ptr->select(obj,s);
+   }
+ };
+
+void EditorWindow::selectPad(ulen index)
+ {
+  geom.contour.pad(index,SelectPad{this});
+ }
+
+void EditorWindow::angle_changed(Geometry::Angle angle)
+ {
+  if( angle_pad.set(angle) ) geom.redraw();
+ }
+
+void EditorWindow::length_changed(Geometry::Length length)
+ {
+  if( length_pad.set(length) ) geom.redraw();
+ }
+
+void EditorWindow::ratio_changed(Geometry::Ratio ratio)
+ {
+  if( ratio_pad.set(ratio) ) geom.redraw();
+ }
+
 Coord EditorWindow::getMinDXY() const
  {
   return 2*(+cfg.space_dxy);
@@ -92,10 +168,16 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    edit_length(wlist,cfg.edit_length_cfg),
    geom(wlist,cfg.geom_cfg),
 
+   connector_angle_changed(this,&EditorWindow::angle_changed,edit_angle.changed),
+   connector_length_changed(this,&EditorWindow::length_changed,edit_length.changed),
+   connector_ratio_changed(this,&EditorWindow::ratio_changed), // TODO
+
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged)
  {
-  wlist.insTop(split1,split2,geom,edit_angle);
+  wlist.insTop(split1,split2,geom);
+
+  selectPad(0); // TODO
  }
 
 EditorWindow::~EditorWindow()

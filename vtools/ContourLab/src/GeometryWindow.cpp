@@ -19,19 +19,34 @@ namespace App {
 
 /* class GeometryWindow */
 
-void GeometryWindow::pin(Point point) // TODO
+void GeometryWindow::pin(Point point_)
  {
-  Used(point);
+  if( point )
+    {
+     *point=Map(point_);
+
+     redraw();
+    }
  }
 
-void GeometryWindow::shift_x(Coord delta) // TODO
+void GeometryWindow::shift_x(Coord delta)
  {
-  Used(delta);
+  if( point )
+    {
+     point->x=point->x+Geometry::Real(delta);
+
+     redraw();
+    }
  }
 
-void GeometryWindow::shift_y(Coord delta) // TODO
+void GeometryWindow::shift_y(Coord delta)
  {
-  Used(delta);
+  if( point )
+    {
+     point->y=point->y+Geometry::Real(delta);
+
+     redraw();
+    }
  }
 
 struct GeometryWindow::DrawItem
@@ -428,11 +443,11 @@ void GeometryWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
  {
   if( mkey&MouseKey_Shift )
     {
-     shift_y(delta);
+     shift_x(delta);
     }
   else
     {
-     shift_x(delta);
+     shift_y(-delta);
     }
  }
 

@@ -1,7 +1,7 @@
 # Makefile.lib.rules
 #----------------------------------------------------------------------------------------
 #
-#  Project: CCore 2.00
+#  Project: CCore 3.00
 #
 #  Tag: General
 #
@@ -9,7 +9,7 @@
 #
 #            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 #
-#  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+#  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 #
 #----------------------------------------------------------------------------------------
 
@@ -23,6 +23,9 @@ asm: $(ASM_LIST)
 
 clean:
 	$(RM) $(TARGET) $(OBJ_PATH)/*
+
+dep:
+	$(RM) $(DEP_FILE) $(DEP_LIST)
 
 $(OBJ_PATH)/empty :
 	@$(ECHO) MKDIR ; $(MKDIR) -p $(OBJ_PATH)

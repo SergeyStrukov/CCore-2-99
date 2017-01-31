@@ -86,6 +86,9 @@ class GeometryWindow : public SubWindow
 
    const Config &cfg;
 
+   Contour::Object obj;
+   Geometry::Point *point = 0 ;
+
    bool hilight = false ;
    bool focus = false ;
 
@@ -114,6 +117,12 @@ class GeometryWindow : public SubWindow
    // methods
 
    Point getMinSize() const;
+
+   void selectPoint(const Contour::Object &obj_,Geometry::Point &point_)
+    {
+     obj=obj_;
+     point=&point_;
+    }
 
    // drawing
 

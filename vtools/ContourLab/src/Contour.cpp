@@ -24,6 +24,10 @@ void GuardTypeMismatch()
   Printf(Exception,"App::GuardType(...) : type mismatch");
  }
 
+/* struct Formula */
+
+Formular::Object::Base Formular::Object::Base::Default;
+
 /* class Contour */
 
 Contour::Contour()

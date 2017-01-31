@@ -18,6 +18,7 @@
 
 #include <inc/EditAngleWindow.h>
 #include <inc/EditLengthWindow.h>
+#include <inc/EditRatioWindow.h>
 #include <inc/GeometryWindow.h>
 
 namespace App {
@@ -25,8 +26,6 @@ namespace App {
 /* classes */
 
 class ItemListWindow;
-
-class EditRatioWindow;
 
 class EditorWindow;
 
@@ -74,52 +73,6 @@ class ItemListWindow : public ComboWindow // TODO
    virtual void layout();
 
    virtual void drawBack(DrawBuf buf,bool drag_active) const;
- };
-
-/* class EditRatioWindow */
-
-class EditRatioWindow : public SubWindow // TODO
- {
-  public:
-
-   struct Config
-    {
-     Config() noexcept {}
-
-     Config(const UserPreference &pref) noexcept
-      {
-       bind(pref.get(),pref.getSmartConfig());
-      }
-
-     template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy)
-      {
-       Used(bag);
-       Used(proxy);
-      }
-    };
-
-   using ConfigType = Config ;
-
-  private:
-
-   const Config &cfg;
-
-  public:
-
-   EditRatioWindow(SubWindowHost &host,const Config &cfg);
-
-   virtual ~EditRatioWindow();
-
-   // methods
-
-   Point getMinSize() const { return Point(10,10); }
-
-   // drawing
-
-   virtual void layout();
-
-   virtual void draw(DrawBuf buf,bool drag_active) const;
  };
 
 /* class EditorWindow */
@@ -186,6 +139,61 @@ class EditorWindow : public ComboWindow
    bool layout_first = true ;
    Coord left_dx = 0 ;
    Coord top_dy = 0 ;
+
+  private:
+
+   void activate(SubWindow &editor);
+
+   template <class T>
+   struct EditorPad
+    {
+     Contour::Object obj;
+     T *ptr = 0 ;
+
+     void select(const Contour::Object &obj_,T &var)
+      {
+       obj=obj_;
+       ptr=&var;
+      }
+
+     bool set(T val)
+      {
+       if( ptr )
+         {
+          *ptr=val;
+
+          return true;
+         }
+
+       return false;
+      }
+    };
+
+   EditorPad<Geometry::Angle> angle_pad;
+   EditorPad<Geometry::Length> length_pad;
+   EditorPad<Geometry::Ratio> ratio_pad;
+
+   void select(const Contour::Object &obj,Geometry::Angle &angle);
+
+   void select(const Contour::Object &obj,Geometry::Length &length);
+
+   void select(const Contour::Object &obj,Geometry::Ratio &ratio);
+
+   void select(const Contour::Object &obj,Geometry::Point &point);
+
+   struct SelectPad;
+
+   void selectPad(ulen index);
+
+   void angle_changed(Geometry::Angle angle);
+
+   void length_changed(Geometry::Length length);
+
+   void ratio_changed(Geometry::Ratio ratio);
+
+   SignalConnector<EditorWindow,Geometry::Angle> connector_angle_changed;
+   SignalConnector<EditorWindow,Geometry::Length> connector_length_changed;
+   SignalConnector<EditorWindow,Geometry::Ratio> connector_ratio_changed;
 
   private:
 

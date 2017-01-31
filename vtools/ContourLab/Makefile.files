@@ -4,6 +4,7 @@ obj/Client.o \
 obj/Contour.o \
 obj/EditAngleWindow.o \
 obj/EditLengthWindow.o \
+obj/EditRatioWindow.o \
 obj/Editor.o \
 obj/Geometry.o \
 obj/GeometryWindow.o \
@@ -16,6 +17,7 @@ obj/Client.s \
 obj/Contour.s \
 obj/EditAngleWindow.s \
 obj/EditLengthWindow.s \
+obj/EditRatioWindow.s \
 obj/Editor.s \
 obj/Geometry.s \
 obj/GeometryWindow.s \
@@ -28,6 +30,7 @@ obj/Client.dep \
 obj/Contour.dep \
 obj/EditAngleWindow.dep \
 obj/EditLengthWindow.dep \
+obj/EditRatioWindow.dep \
 obj/Editor.dep \
 obj/Geometry.dep \
 obj/GeometryWindow.dep \
@@ -53,6 +56,9 @@ obj/EditAngleWindow.o : ./src/EditAngleWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/EditLengthWindow.o : ./src/EditLengthWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EditRatioWindow.o : ./src/EditRatioWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Editor.o : ./src/Editor.cpp
@@ -84,6 +90,9 @@ obj/EditAngleWindow.s : ./src/EditAngleWindow.cpp
 obj/EditLengthWindow.s : ./src/EditLengthWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/EditRatioWindow.s : ./src/EditRatioWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Editor.s : ./src/Editor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -112,6 +121,9 @@ obj/EditAngleWindow.dep : ./src/EditAngleWindow.cpp
 
 obj/EditLengthWindow.dep : ./src/EditLengthWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EditLengthWindow.o $< -MF $@
+
+obj/EditRatioWindow.dep : ./src/EditRatioWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EditRatioWindow.o $< -MF $@
 
 obj/Editor.dep : ./src/Editor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Editor.o $< -MF $@

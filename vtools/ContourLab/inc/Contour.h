@@ -73,6 +73,19 @@ struct Formular : Geometry
         bool decRef() { return !--ref_count; }
 
         void destroy() noexcept { delete this; }
+
+        // default object
+
+        static Base * GetDefault()
+         {
+          Base *ret=&Default;
+
+          ret->incRef();
+
+          return ret;
+         }
+
+        static Base Default;
       };
 
      template <class S>
@@ -133,6 +146,8 @@ struct Formular : Geometry
 
      template <class T> struct Tag {};
 
+     Object() noexcept : ptr(Base::GetDefault()),type_id(0) {}
+
      template <class T,class ... SS>
      Object(Tag<T>,SS && ... ss) : ptr(new Node<T>( std::forward<SS>(ss)... )),type_id(T::TypeId) {}
 
@@ -153,7 +168,7 @@ struct Formular : Geometry
       }
 
      template <class Func>
-     auto call(Func func)
+     auto call(Func func) const
       {
        return TypeSwitch(getTypeId(),CallFunc<Func>(func,*this));
       }
@@ -167,7 +182,7 @@ struct Formular : Geometry
       }
 
      template <class Func>
-     auto callRef(Func func)
+     auto callRef(Func func) const
       {
        return TypeSwitch(getTypeId(),CallRefFunc<Func>(func,*this));
       }
@@ -330,8 +345,9 @@ class Contour : public Formular
     {
      Func func;
      const String &name;
+     const Object &obj;
 
-     void operator () (AnyType &s) { func(name,s); }
+     void operator () (AnyType &s) { func(name,obj,s); }
 
      void operator () () {}
     };
@@ -343,9 +359,17 @@ class Contour : public Formular
    ~Contour();
 
    template <class Func>
+   void pad(ulen index,Func func)
+    {
+     Item &item=pads.at(index);
+
+     item.obj.callRef( BindRef<Func>{func,item.name,item.obj} );
+    }
+
+   template <class Func>
    void apply(Func func) const
     {
-     auto temp = [=] (Item item) { item.obj.call( Bind<Func>{func,item.name} ); } ;
+     auto temp = [=] (const Item &item) { item.obj.call( Bind<Func>{func,item.name} ); } ;
 
      pads.apply(temp);
      formulas.apply(temp);
@@ -354,7 +378,7 @@ class Contour : public Formular
    template <class Func>
    void applyRef(Func func)
     {
-     auto temp = [=] (Item item) { item.obj.callRef( BindRef<Func>{func,item.name} ); } ;
+     auto temp = [=] (Item &item) { item.obj.callRef( BindRef<Func>{func,item.name,item.obj} ); } ;
 
      pads.apply(temp);
     }
