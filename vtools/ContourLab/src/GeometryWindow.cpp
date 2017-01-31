@@ -62,7 +62,7 @@ struct GeometryWindow::DrawItem
     shift=RoundUpLen(6*width);
    }
 
-  static Geometry::Point SafeMeet(Geometry::Line a,Geometry::Point b,Geometry::Point c) // TODO
+  static Geometry::Point SafeMeet(Geometry::Line a,Geometry::Point b,Geometry::Point c)
    {
     try
       {

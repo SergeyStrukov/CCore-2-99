@@ -94,7 +94,7 @@ Geometry::Real Geometry::Real::Mod(Real x,Real y)
   return remainder(x.val,y.val);
  }
 
-Geometry::Real Geometry::Real::BoundedDiv(Real x,Real y)
+Geometry::RealException Geometry::Real::BoundedDiv(Real x,Real y)
  {
   if( y<0 )
     {
@@ -102,14 +102,11 @@ Geometry::Real Geometry::Real::BoundedDiv(Real x,Real y)
      x=-x;
     }
 
-  GuardDiv(y.val);
+  if( y<1/Cap ) return RealTooSmall;
 
-  if( x<0 || x>y )
-    {
-     throw RealOutOfDomain;
-    }
+  if( x<0 || x>y ) return RealOutOfDomain;
 
-  return x/y;
+  return RealOk;
  }
 
  // map
@@ -275,7 +272,9 @@ Geometry::Point Geometry::MeetIn(Line a,Point b,Point c)
   Real s=Point::Prod(dir,e);
   Real t=Point::Prod(a.p-b,e);
 
-  return b+Real::BoundedDiv(t,s)*dir;
+  if( RealException rex=Real::BoundedDiv(t,s) ) return rex;
+
+  return b+(t/s)*dir;
  }
 
 Geometry::Couple Geometry::MeetCircle(Line a,Circle C)

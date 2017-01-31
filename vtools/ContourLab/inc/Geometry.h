@@ -95,7 +95,7 @@ struct Geometry
 
      static Real Mod(Real x,Real y);
 
-     static Real BoundedDiv(Real x,Real y); // x/y in [0,1]
+     static RealException BoundedDiv(Real x,Real y); // x/y in [0,1]
 
      // map
 
@@ -520,6 +520,8 @@ struct Geometry
   static Line LineOf(Point a,Point b) { return {a,b-a}; }
 
   static Point Middle(Point a,Point b);
+
+  static Point Part(Point a,Point b,Ratio r) { return a+r.val*(b-a); }
 
   static Line MidOrt(Point a,Point b);
 
