@@ -124,7 +124,10 @@ class EditLengthWindow : public SubWindow
 
    void setValue(Geometry::Length value_)
     {
-     value=value_;
+     if( value_.rex )
+       value=Geometry::Length(0);
+     else
+       value=value_;
 
      redraw();
     }

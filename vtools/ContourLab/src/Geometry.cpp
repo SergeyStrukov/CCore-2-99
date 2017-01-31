@@ -299,6 +299,42 @@ Geometry::Couple Geometry::MeetCircles(Circle C,Circle D)
   return {C.center+Point::Polar(C.radius,d-a),C.center+Point::Polar(C.radius,d+a)};
  }
 
+Geometry::Couple Geometry::MeetCircleIn(Circle C,Point a,Point b)
+ {
+  Point dir=b-a;
+
+  Real len=Point::Norm(dir);
+  Point ort=dir/len;
+
+  Real s=Point::Prod(C.center-a,ort);
+
+  Point p=a+s*ort;
+
+  Real x=Point::Norm(p-C.center);
+
+  Real T=Sq(C.radius.val)-Sq(x);
+
+  if( T<0 ) return RealOutOfDomain;
+
+  Real t=Real::Sqrt(T);
+
+  if( s-t>len || s+t<0 ) return RealOutOfDomain;
+
+  if( s-t<0 )
+    {
+     if( s+t>len ) return RealOutOfDomain;
+
+     return { RealOutOfDomain , a+(s+t)*ort };
+    }
+
+  if( s+t>len )
+    {
+     return { a+(s-t)*ort , RealOutOfDomain };
+    }
+
+  return { a+(s-t)*ort , a+(s+t)*ort };
+ }
+
 Geometry::Point Geometry::Mirror(Line a,Point p)
  {
   Point e=Point::Orthogonal(a.ort);

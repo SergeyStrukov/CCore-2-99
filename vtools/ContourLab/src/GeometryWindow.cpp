@@ -49,221 +49,364 @@ void GeometryWindow::shift_y(Coord delta)
     }
  }
 
-struct GeometryWindow::DrawItem
+class GeometryWindow::DrawItem
  {
-  SmoothDrawArt art;
+   SmoothDrawArt art;
 
-  Coord dx;
-  Coord dy;
+   Coord dx;
+   Coord dy;
 
-  MCoord width;
+   MCoord width;
 
-  VColor face;
-  VColor text;
+   VColor face;
+   VColor gray;
+   VColor text;
 
-  Font font;
+   Font font;
 
-  Coord shift;
+   // work
 
-  DrawItem(const SmoothDrawArt &art_,Coord dx_,Coord dy_,const Config &cfg)
-   : art(art_),
-     dx(dx_),
-     dy(dy_),
-     width(+cfg.width),
-     face(+cfg.face),
-     text(+cfg.text),
-     font(+cfg.font)
-   {
-    shift=RoundUpLen(6*width);
-   }
+   Geometry::Real cap_radius;
 
-  static Geometry::Point SafeMeet(Geometry::Line a,Geometry::Point b,Geometry::Point c)
-   {
-    try
-      {
-       return Geometry::MeetIn(a,b,c);
-      }
-    catch(Geometry::RealException rex)
-      {
-       return rex;
-      }
-   }
+   Geometry::Point A,B,C,D;
 
-  void drawName(MPoint p,const String &name)
-   {
-    Point base=p.toPoint();
+   Geometry::Point P1,P2;
+   Geometry::Point P3,P4;
+   Geometry::Point Q1,Q2;
+   Geometry::Point Q3,Q4;
 
-    if( base.x<dx/2 )
-      {
-       if( base.y<dy/2 )
-         {
-          base.addXY(shift);
+  private:
 
-          Pane pane(base.x,base.y,dx-base.x,dy-base.y);
+   bool test(Geometry::Point p)
+    {
+     return p.x>=-dx && p.y>=-dy && p.x<=2*dx && p.y<=2*dy ;
+    }
 
-          font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Top),Range(name),text);
-         }
-       else
-         {
-          base.addXsubY(shift);
+   static Geometry::Point SafeMeet(Geometry::Line a,Geometry::Point b,Geometry::Point c)
+    {
+     try
+       {
+        return Geometry::MeetIn(a,b,c);
+       }
+     catch(Geometry::RealException rex)
+       {
+        return rex;
+       }
+    }
 
-          Pane pane(base.x,0,dx-base.x,base.y);
+   static Geometry::Couple SafeMeet(Geometry::Circle C,Geometry::Point a,Geometry::Point b)
+    {
+     try
+       {
+        return Geometry::MeetCircleIn(C,a,b);
+       }
+     catch(Geometry::RealException rex)
+       {
+        return rex;
+       }
+    }
 
-          font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Bottom),Range(name),text);
-         }
-      }
-    else
-      {
-       if( base.y<dy/2 )
-         {
-          base.subXaddY(shift);
+   void drawLine(Geometry::Point a,Geometry::Point b,bool selected,Label &label) // TODO
+    {
+     MPoint beg=Map(a);
+     MPoint end=Map(b);
 
-          Pane pane(0,base.y,base.x,dy-base.y);
+     if( label.gray && !selected )
+       art.path(width/2,gray,beg,end);
+     else
+       art.path(width,face,beg,end);
 
-          font->text(art.getBuf(),pane,TextPlace(AlignX_Right,AlignY_Top),Range(name),text);
-         }
-       else
-         {
-          base.subXY(shift);
+     label.setPos(end);
+    }
 
-          Pane pane(0,0,base.x,base.y);
+   static void SetPos(Label &label,Geometry::Couple C)
+    {
+     if( C.a.rex )
+       label.setPos(Map(C.b));
+     else
+       label.setPos(Map(C.a));
+    }
 
-          font->text(art.getBuf(),pane,TextPlace(AlignX_Right,AlignY_Bottom),Range(name),text);
-         }
-      }
-   }
+   void testPoint(Geometry::Point a)
+    {
+     if( a.rex ) return;
 
-  void drawLine(Geometry::Point a,Geometry::Point b,const String &name)
-   {
-    Used(name);
+     art.ball(Map(a),Fraction(5),Red);
+    }
 
-    MPoint beg=Map(a);
-    MPoint end=Map(b);
+   void testPoint(Geometry::Couple C)
+    {
+     if( C.rex ) return;
 
-    art.path(width,face,beg,end);
+     testPoint(C.a);
+     testPoint(C.b);
+    }
 
-    drawName(end,name);
-   }
+  public:
 
-  void operator () (const String &name,Geometry::Ratio s)
-   {
-    Used(name);
-    Used(s);
+   DrawItem(const SmoothDrawArt &art_,Coord dx_,Coord dy_,const Config &cfg)
+    : art(art_),
+      dx(dx_),
+      dy(dy_),
+      width(+cfg.width),
+      face(+cfg.face),
+      gray(+cfg.gray),
+      text(+cfg.text),
+      font(+cfg.font),
 
-    // do nothing
-   }
+      cap_radius( 3*Max(dx,dy) ),
 
-  void operator () (const String &name,Geometry::Length s)
-   {
-    Used(name);
-    Used(s);
+      A(0,0),
+      B(0,dy),
+      C(dx,dy),
+      D(dx,0),
 
-    // do nothing
-   }
+      P1(0,-dy),
+      P2(0,2*dy),
+      P3(dx,-dy),
+      P4(dx,2*dy),
 
-  void operator () (const String &name,Geometry::Angle s)
-   {
-    Used(name);
-    Used(s);
+      Q1(-dx,dy),
+      Q2(2*dx,dy),
+      Q3(-dx,0),
+      Q4(2*dx,0)
+    {
+    }
 
-    // do nothing
-   }
+   template <class S>
+   void operator () (Label &,bool,S)
+    {
+     // do nothing
+    }
 
-  void operator () (const String &name,Geometry::Point s)
-   {
-    if( s.x>=0 && s.y>=0 && s.x<=dx && s.y<=dy )
-      {
-       MPoint p=Map(s);
+   void operator () (Label &label,bool selected,Geometry::Point s)
+    {
+     if( !label.test() ) return;
 
-       art.ball(p,2*width,face);
+     if( test(s) )
+       {
+        MPoint p=Map(s);
 
-       drawName(p,name);
-      }
-   }
+        if( label.gray && !selected )
+          art.ball(p,width,gray);
+        else
+          art.ball(p,2*width,face);
 
-  void operator () (const String &name,Geometry::Line s)
-   {
-    Geometry::Point a(0,0),
-                    b(0,dy),
-                    c(dx,dy),
-                    d(dx,0);
+        label.setPos(p);
+       }
+    }
 
-    Geometry::Point p1=SafeMeet(s,a,b);
-    Geometry::Point q1=SafeMeet(s,b,c);
-    Geometry::Point p2=SafeMeet(s,c,d);
-    Geometry::Point q2=SafeMeet(s,d,a);
+   void operator () (Label &label,bool selected,Geometry::Line s)
+    {
+     if( !label.test() ) return;
 
-    if( p1.rex )
-      {
-       if( q1.rex )
-         {
-          if( !p2.rex && !q2.rex ) // p2 , q2
-            {
-             drawLine(p2,q2,name);
-            }
-         }
-       else // q1
-         {
-          if( q2.rex )
-            {
-             if( !p2.rex ) // p2 , q1
-               {
-                drawLine(p2,q1,name);
-               }
-            }
-          else // q1 , q2
-            {
-             drawLine(q1,q2,name);
-            }
-         }
-      }
-    else // p1
-      {
-       if( p2.rex )
-         {
-          if( q1.rex )
-            {
-             if( !q2.rex ) // p1 , q2
-               {
-                drawLine(p1,q2,name);
-               }
-            }
-          else // p1 , q1
-            {
-             if( q2.rex )
-               {
-                drawLine(p1,q1,name);
-               }
-             else // p1 , q1 , q2
-               {
-                drawLine(q1,q2,name);
-               }
-            }
-         }
-       else // p1 , p2
-         {
-          drawLine(p1,p2,name);
-         }
-      }
-   }
+     Geometry::Point p1=SafeMeet(s,P1,P2);
+     Geometry::Point q1=SafeMeet(s,Q1,Q2);
+     Geometry::Point p2=SafeMeet(s,P3,P4);
+     Geometry::Point q2=SafeMeet(s,Q3,Q4);
 
-  void operator () (const String &name,Geometry::Circle s) // TODO
-   {
-    Used(name);
+     if( p1.rex )
+       {
+        if( q1.rex )
+          {
+           if( !p2.rex && !q2.rex ) // p2 , q2
+             {
+              drawLine(p2,q2,selected,label);
+             }
+          }
+        else // q1
+          {
+           if( q2.rex )
+             {
+              if( !p2.rex ) // p2 , q1
+                {
+                 drawLine(p2,q1,selected,label);
+                }
+             }
+           else // q1 , q2
+             {
+              drawLine(q1,q2,selected,label);
+             }
+          }
+       }
+     else // p1
+       {
+        if( p2.rex )
+          {
+           if( q1.rex )
+             {
+              if( !q2.rex ) // p1 , q2
+                {
+                 drawLine(p1,q2,selected,label);
+                }
+             }
+           else // p1 , q1
+             {
+              if( q2.rex )
+                {
+                 drawLine(p1,q1,selected,label);
+                }
+              else // p1 , q1 , q2
+                {
+                 drawLine(q1,q2,selected,label);
+                }
+             }
+          }
+        else // p1 , p2
+          {
+           drawLine(p1,p2,selected,label);
+          }
+       }
+    }
 
-    MPoint p=Map(s.center);
-    MCoord r=Map(s.radius.val);
+   void operator () (Label &label,bool selected,Geometry::Circle s) // TODO
+    {
+     if( !label.test() ) return;
 
-    art.circle(p,r,width,face);
-   }
+     Geometry::Point c=s.center;
+     Geometry::Real r=Geometry::Real::Abs(s.radius.val);
 
-  void operator () (const String &name,Geometry::Couple s)
-   {
-    Used(name);
-    Used(s);
+     if( test(c) )
+       {
+        if( r<cap_radius )
+          {
+           if( label.gray && !selected )
+             art.circle(Map(c),Map(r),width/2,gray);
+           else
+             art.circle(Map(c),Map(r),width,face);
 
-    // do nothing
-   }
+           Geometry::Couple q1=SafeMeet(s,B,C);
+
+           if( q1.rex )
+             {
+              Geometry::Couple q2=SafeMeet(s,A,D);
+
+              if( q2.rex )
+                {
+                 Geometry::Couple p1=SafeMeet(s,A,B);
+
+                 if( p1.rex )
+                   {
+                    Geometry::Couple p2=SafeMeet(s,D,C);
+
+                    if( p2.rex )
+                      {
+                       label.setPos(Map(c+Geometry::Point(0,r)));
+                      }
+                    else
+                      {
+                       SetPos(label,p2);
+                      }
+                   }
+                 else
+                   {
+                    SetPos(label,p1);
+                   }
+                }
+              else
+                {
+                 SetPos(label,q2);
+                }
+             }
+           else
+             {
+              SetPos(label,q1);
+             }
+          }
+       }
+     else
+       {
+        // TODO
+       }
+    }
+ };
+
+class GeometryWindow::DrawName
+ {
+   SmoothDrawArt art;
+
+   Coord dx;
+   Coord dy;
+
+   MCoord width;
+
+   VColor text;
+
+   Font font;
+
+   // work
+
+   Coord shift;
+
+  private:
+
+   void drawName(MPoint p,const String &name)
+    {
+     Point base=p.toPoint();
+
+     if( base.x<dx/2 )
+       {
+        if( base.y<dy/2 )
+          {
+           base.addXY(shift);
+
+           Pane pane(base.x,base.y,dx-base.x,dy-base.y);
+
+           font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Top),Range(name),text);
+          }
+        else
+          {
+           base.addXsubY(shift);
+
+           Pane pane(base.x,0,dx-base.x,base.y);
+
+           font->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Bottom),Range(name),text);
+          }
+       }
+     else
+       {
+        if( base.y<dy/2 )
+          {
+           base.subXaddY(shift);
+
+           Pane pane(0,base.y,base.x,dy-base.y);
+
+           font->text(art.getBuf(),pane,TextPlace(AlignX_Right,AlignY_Top),Range(name),text);
+          }
+        else
+          {
+           base.subXY(shift);
+
+           Pane pane(0,0,base.x,base.y);
+
+           font->text(art.getBuf(),pane,TextPlace(AlignX_Right,AlignY_Bottom),Range(name),text);
+          }
+       }
+    }
+
+  public:
+
+   DrawName(const SmoothDrawArt &art_,Coord dx_,Coord dy_,const Config &cfg)
+    : art(art_),
+      dx(dx_),
+      dy(dy_),
+      width(+cfg.width),
+      text(+cfg.text),
+      font(+cfg.font)
+    {
+     shift=RoundUpLen(6*width);
+    }
+
+   template <class S>
+   void operator () (Label &,bool,S)
+    {
+     // do nothing
+    }
+
+   void operator () (Label &label,bool selected,OneOfTypes<Geometry::Point,Geometry::Line,Geometry::Circle>)
+    {
+     if( ( label.show_name || selected ) && label.pos_ok ) drawName(label.pos,label.name);
+    }
  };
 
 GeometryWindow::GeometryWindow(SubWindowHost &host,const Config &cfg_)
@@ -323,7 +466,9 @@ void GeometryWindow::draw(DrawBuf buf,bool) const
    buf.erase(shade2,gray);
   }
 
-  contour.apply(DrawItem(art,pane.dx,pane.dy,cfg));
+  contour.apply(pad_ind,formula_ind,DrawItem(art,pane.dx,pane.dy,cfg));
+
+  contour.apply(pad_ind,formula_ind,DrawName(art,pane.dx,pane.dy,cfg));
 
   // border
 

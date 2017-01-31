@@ -49,14 +49,19 @@ struct AppPreferenceBag
   VColor hilight =     Green ;
   VColor focus   = OrangeRed ;
 
-  // edit_angle
+  // edit angle
 
   Coord edit_angle_dxy = 100 ;
 
-  // edit_length
+  // edit length
 
   Coord edit_length_dx = 500 ;
   Coord edit_length_dy = 100 ;
+
+  // edit ratio
+
+  Coord edit_ratio_dx = 500 ;
+  Coord edit_ratio_dy = 100 ;
 
   // geometry
 

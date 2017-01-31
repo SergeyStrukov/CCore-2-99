@@ -19,11 +19,18 @@ namespace App {
 
 /* class EditorWindow */
 
-void EditorWindow::activate(SubWindow &editor) // TODO
+void EditorWindow::deactivate()
  {
-  wlist.del(edit_angle,edit_length);
+  wlist.del(edit_angle,edit_length,edit_ratio);
+ }
+
+void EditorWindow::activate(SubWindow &editor)
+ {
+  deactivate();
 
   wlist.insTop(editor);
+
+  geom.unselect();
 
   redraw();
  }
@@ -46,17 +53,19 @@ void EditorWindow::select(const Contour::Object &obj,Geometry::Length &length)
   activate(edit_length);
  }
 
-void EditorWindow::select(const Contour::Object &obj,Geometry::Ratio &ratio) // TODO
+void EditorWindow::select(const Contour::Object &obj,Geometry::Ratio &ratio)
  {
   ratio_pad.select(obj,ratio);
 
-  //
+  edit_ratio.setValue(ratio);
 
-  //
+  activate(edit_ratio);
  }
 
 void EditorWindow::select(const Contour::Object &obj,Geometry::Point &point)
  {
+  deactivate();
+
   geom.selectPoint(obj,point);
  }
 
@@ -65,11 +74,11 @@ struct EditorWindow::SelectPad
   EditorWindow *ptr;
 
   template <class T>
-  void operator () (const String &,const Contour::Object &,T &)
+  void operator () (const Label &,const Contour::Object &,T &)
    {
    }
 
-  void operator () (const String &,const Contour::Object &obj,OneOfTypes<Geometry::Angle,Geometry::Length,Geometry::Ratio,Geometry::Point> &s)
+  void operator () (const Label &,const Contour::Object &obj,OneOfTypes<Geometry::Angle,Geometry::Length,Geometry::Ratio,Geometry::Point> &s)
    {
     ptr->select(obj,s);
    }
@@ -78,6 +87,8 @@ struct EditorWindow::SelectPad
 void EditorWindow::selectPad(ulen index)
  {
   geom.contour.pad(index,SelectPad{this});
+
+  geom.setPadIndex(index);
  }
 
 void EditorWindow::angle_changed(Geometry::Angle angle)
@@ -158,7 +169,7 @@ void EditorWindow::split2_dragged(Point point)
   adjustSplit(point);
  }
 
-EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
+EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_) // TODO
  : ComboWindow(host),
    cfg(cfg_),
 
@@ -166,11 +177,12 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    split2(wlist,cfg.split_cfg),
    edit_angle(wlist,cfg.edit_angle_cfg),
    edit_length(wlist,cfg.edit_length_cfg),
+   edit_ratio(wlist,cfg.edit_ratio_cfg),
    geom(wlist,cfg.geom_cfg),
 
    connector_angle_changed(this,&EditorWindow::angle_changed,edit_angle.changed),
    connector_length_changed(this,&EditorWindow::length_changed,edit_length.changed),
-   connector_ratio_changed(this,&EditorWindow::ratio_changed), // TODO
+   connector_ratio_changed(this,&EditorWindow::ratio_changed,edit_ratio.changed),
 
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged)

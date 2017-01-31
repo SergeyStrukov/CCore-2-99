@@ -124,7 +124,10 @@ class EditAngleWindow : public SubWindow
 
    void setValue(Geometry::Angle value_)
     {
-     value=value_;
+     if( value_.rex )
+       value=Geometry::Angle(0);
+     else
+       value=value_;
 
      redraw();
     }

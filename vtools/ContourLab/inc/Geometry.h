@@ -381,7 +381,7 @@ struct Geometry
 
     static Real Norm(Point p) { return Real::Norm(p.x,p.y); }
 
-    static Point Ort(Point p) { return (1/Norm(p))*p; }
+    static Point Ort(Point p) { return p/Norm(p); }
 
     static Point Orthogonal(Point p) { return {p.y,-p.x}; }
 
@@ -540,6 +540,8 @@ struct Geometry
   static Couple MeetCircle(Line a,Circle C); // Couple in a direction
 
   static Couple MeetCircles(Circle C,Circle D); // Couple in C direction
+
+  static Couple MeetCircleIn(Circle C,Point a,Point b); // Couple in a -> b direction
 
   static Point Rotate(Point o,Angle a,Point p) { return o+Point::Rotate(a,p-o); }
 

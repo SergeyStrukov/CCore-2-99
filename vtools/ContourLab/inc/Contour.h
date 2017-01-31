@@ -35,6 +35,8 @@ template <class S> struct UnusedPad;
 
 struct Formula;
 
+struct Label;
+
 class Contour;
 
 /* struct UnusedPad<S> */
@@ -302,13 +304,48 @@ struct Formular : Geometry
    };
  };
 
+/* struct Label */
+
+struct Label
+ {
+  // property
+
+  String name;
+
+  bool show = true ;
+  bool gray = true ;
+  bool show_name = true ;
+
+  // work
+
+  MPoint pos;
+  bool pos_ok = false ;
+
+  Label() noexcept {}
+
+  explicit Label(const String &name_) noexcept : name(name_) {}
+
+  bool test()
+   {
+    pos_ok=false;
+
+    return show;
+   }
+
+  void setPos(MPoint pos_)
+   {
+    pos=pos_;
+    pos_ok=true;
+   }
+ };
+
 /* class Contour */
 
 class Contour : public Formular
  {
    struct Item
     {
-     String name;
+     mutable Label label;
      Object obj;
     };
 
@@ -318,24 +355,29 @@ class Contour : public Formular
   private:
 
    template <class S>
-   void addPad(String name,S s)
+   void addPad(const String &name,S s)
     {
-     pads.append_fill(Item{name,Pad<S>::Create(s)});
+     Label label(name);
+
+     pads.append_fill(Item{label,Pad<S>::Create(s)});
     }
 
    template <class ... OO>
-   void addFormula(String name,Object Create(const OO & ...),const OO & ... args)
+   void addFormula(const String &name,Object Create(const OO & ...),const OO & ... args)
     {
-     formulas.append_fill(Item{name,Create(args...)});
+     Label label(name);
+
+     formulas.append_fill(Item{label,Create(args...)});
     }
 
    template <class Func>
    struct Bind
     {
      Func func;
-     const String &name;
+     bool selected;
+     Label &label;
 
-     void operator () (AnyType s) { func(name,s); }
+     void operator () (AnyType s) { if( !s.rex ) func(label,selected,s); }
 
      void operator () () {}
     };
@@ -344,10 +386,10 @@ class Contour : public Formular
    struct BindRef
     {
      Func func;
-     const String &name;
+     Label &label;
      const Object &obj;
 
-     void operator () (AnyType &s) { func(name,obj,s); }
+     void operator () (AnyType &s) { func(label,obj,s); }
 
      void operator () () {}
     };
@@ -363,22 +405,31 @@ class Contour : public Formular
     {
      Item &item=pads.at(index);
 
-     item.obj.callRef( BindRef<Func>{func,item.name,item.obj} );
+     item.obj.callRef( BindRef<Func>{func,item.label,item.obj} );
     }
 
    template <class Func>
-   void apply(Func func) const
+   void apply(ulen pad_ind,ulen formula_ind,Func func) const
     {
-     auto temp = [=] (const Item &item) { item.obj.call( Bind<Func>{func,item.name} ); } ;
+     for(ulen i=0,len=pads.getLen(); i<len ;i++)
+       {
+        const Item &item=pads[i];
 
-     pads.apply(temp);
-     formulas.apply(temp);
+        item.obj.call( Bind<Func>{func,i==pad_ind,item.label} );
+       }
+
+     for(ulen i=0,len=formulas.getLen(); i<len ;i++)
+       {
+        const Item &item=formulas[i];
+
+        item.obj.call( Bind<Func>{func,i==formula_ind,item.label} );
+       }
     }
 
    template <class Func>
    void applyRef(Func func)
     {
-     auto temp = [=] (Item &item) { item.obj.callRef( BindRef<Func>{func,item.name,item.obj} ); } ;
+     auto temp = [=] (Item &item) { item.obj.callRef( BindRef<Func>{func,item.label,item.obj} ); } ;
 
      pads.apply(temp);
     }

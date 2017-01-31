@@ -93,6 +93,7 @@ class EditorWindow : public ComboWindow
 
      CtorRefVal<EditAngleWindow::ConfigType> edit_angle_cfg;
      CtorRefVal<EditLengthWindow::ConfigType> edit_length_cfg;
+     CtorRefVal<EditRatioWindow::ConfigType> edit_ratio_cfg;
      CtorRefVal<GeometryWindow::ConfigType> geom_cfg;
 
      Config() noexcept {}
@@ -101,6 +102,7 @@ class EditorWindow : public ComboWindow
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
       : edit_angle_cfg(pref,app_pref),
         edit_length_cfg(pref,app_pref),
+        edit_ratio_cfg(pref,app_pref),
         geom_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
@@ -132,6 +134,8 @@ class EditorWindow : public ComboWindow
 
    EditLengthWindow edit_length;
 
+   EditRatioWindow edit_ratio;
+
    GeometryWindow geom;
 
    // layout
@@ -141,6 +145,8 @@ class EditorWindow : public ComboWindow
    Coord top_dy = 0 ;
 
   private:
+
+   void deactivate();
 
    void activate(SubWindow &editor);
 

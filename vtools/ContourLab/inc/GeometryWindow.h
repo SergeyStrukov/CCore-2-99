@@ -86,6 +86,9 @@ class GeometryWindow : public SubWindow
 
    const Config &cfg;
 
+   ulen pad_ind = MaxULen ;
+   ulen formula_ind = MaxULen ;
+
    Contour::Object obj;
    Geometry::Point *point = 0 ;
 
@@ -104,7 +107,9 @@ class GeometryWindow : public SubWindow
 
    void shift_y(Coord delta);
 
-   struct DrawItem;
+   class DrawItem;
+
+   class DrawName;
 
   public:
 
@@ -122,6 +127,28 @@ class GeometryWindow : public SubWindow
     {
      obj=obj_;
      point=&point_;
+
+     if( point->rex ) *point=Geometry::Point(0,0);
+    }
+
+   void unselect()
+    {
+     obj={};
+     point=0;
+    }
+
+   void setPadIndex(ulen ind)
+    {
+     pad_ind=ind;
+
+     redraw();
+    }
+
+   void setFormulaIndex(ulen ind)
+    {
+     formula_ind=ind;
+
+     redraw();
     }
 
    // drawing
