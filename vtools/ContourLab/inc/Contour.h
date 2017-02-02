@@ -339,6 +339,29 @@ struct Label
    }
  };
 
+/* struct ErrorText */
+
+struct ErrorText : NoCopy
+ {
+  char buf[TextBufLen];
+  ulen len = 0 ;
+
+  // methods
+
+  bool operator + () const { return len==0; }
+
+  bool operator ! () const { return len!=0; }
+
+  StrLen getText() const { return Range(buf,len); }
+
+  void setText(StrLen str)
+   {
+    len=Min(DimOf(buf),str.len);
+
+    Range(buf,len).copy(str.ptr);
+   }
+ };
+
 /* class Contour */
 
 class Contour : public Formular
@@ -505,6 +528,14 @@ class Contour : public Formular
 
      pads.apply(temp);
     }
+
+   // save/load
+
+   void erase();
+
+   void save(StrLen file_name,ErrorText &etext) const;
+
+   void load(StrLen file_name,ErrorText &etext);
  };
 
 } // namespace App

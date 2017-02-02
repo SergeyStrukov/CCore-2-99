@@ -174,6 +174,9 @@ struct UserPreferenceBag
   DefString text_Alert   = "Alert"_def ;
   DefString text_AskSave = "Save modifications?"_def ;
 
+  DefString text_Error   = "Error"_def ;
+  DefString text_Warning = "Warning"_def ;
+
   // text
 
   Coord text_cursor_dx = 3 ;

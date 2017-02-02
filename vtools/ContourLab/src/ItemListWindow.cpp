@@ -63,7 +63,7 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
    connector_knob_del_pressed(this,&ItemListWindow::knob_del_pressed,knob_del.pressed),
    connector_knob_add_pressed(this,&ItemListWindow::knob_add_pressed,knob_add.pressed)
  {
-  wlist.insTop(list,edit,knob_down,knob_up,knob_del,knob_add);
+  wlist.insTop(knob_down,knob_up,knob_del,list,edit,knob_add);
  }
 
 ItemListWindow::~ItemListWindow()

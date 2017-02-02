@@ -145,5 +145,27 @@ bool Contour::formulaAdd(ulen index,StrLen text) // TODO
   return false;
  }
 
+ // save/load
+
+void Contour::erase()
+ {
+  pads.erase();
+  formulas.erase();
+ }
+
+void Contour::save(StrLen file_name,ErrorText &etext) const // TODO
+ {
+  Used(file_name);
+
+  etext.setText("Not implemented yet"_c);
+ }
+
+void Contour::load(StrLen file_name,ErrorText &etext) // TODO
+ {
+  Used(file_name);
+
+  etext.setText("Not implemented yet"_c);
+ }
+
 } // namespace App
 

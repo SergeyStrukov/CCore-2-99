@@ -38,7 +38,11 @@ class EditorWindow : public ComboWindow
 
      RefVal<Coord> space_dxy = 10 ;
 
+     RefVal<DefString> text_Error   = "Error"_def ;
+
+     CtorRefVal<TextLineWindow::ConfigType> text_cfg;
      CtorRefVal<XSplitWindow::ConfigType> split_cfg;
+     CtorRefVal<MessageFrame::AlertConfigType> msg_cfg;
 
      // app
 
@@ -66,8 +70,11 @@ class EditorWindow : public ComboWindow
       {
        back.bind(bag.back);
        space_dxy.bind(bag.space_dxy);
+       text_Error.bind(bag.text_Error);
 
+       text_cfg.bind(proxy);
        split_cfg.bind(proxy);
+       msg_cfg.bind(proxy);
       }
     };
 
@@ -77,7 +84,9 @@ class EditorWindow : public ComboWindow
 
    const Config &cfg;
 
-   bool modified = false ;
+   bool has_file = false ;
+
+   TextLineWindow text_file;
 
    XSplitWindow split1;
 
@@ -93,6 +102,8 @@ class EditorWindow : public ComboWindow
 
    ItemListWindow list_pad;
    ItemListWindow list_formula;
+
+   MessageFrame msg_frame;
 
    // layout
 
@@ -148,6 +159,12 @@ class EditorWindow : public ComboWindow
    void selectPad(ulen index);
 
    void unselectPad();
+
+   void selectFormula(ulen index);
+
+   void unselectFormula();
+
+  private:
 
    void angle_changed(Geometry::Angle angle);
 
@@ -218,6 +235,14 @@ class EditorWindow : public ComboWindow
    SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_add;
    SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_selected;
 
+  private:
+
+   void errorMsg(StrLen text);
+
+   void msg_destroyed();
+
+   SignalConnector<EditorWindow> connector_msg_destroyed;
+
   public:
 
    EditorWindow(SubWindowHost &host,const Config &cfg);
@@ -226,9 +251,9 @@ class EditorWindow : public ComboWindow
 
    // methods
 
-   Point getMinSize() const { return Point(10,10); }
+   Point getMinSize() const;
 
-   bool isModified() const { return modified; }
+   bool isModified() const { return text_file.isAlerted(); }
 
    void load();
 

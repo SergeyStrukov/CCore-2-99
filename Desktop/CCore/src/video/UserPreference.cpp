@@ -72,6 +72,9 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("text_Alert",ptr->text_Alert);
   func("text_AskSave",ptr->text_AskSave);
 
+  func("text_Error",ptr->text_Error);
+  func("text_Warning",ptr->text_Warning);
+
   func("text_cursor_dx",ptr->text_cursor_dx);
 
   func("text_select",ptr->text_select);
@@ -282,6 +285,8 @@ void UserPreferenceBag::bind(Bind &binder) // Update here
    binder.item("'SaveFile'",text_SaveFile);
    binder.item("'Alert'",text_Alert);
    binder.item("'AskSave'",text_AskSave);
+   binder.item("'Error'",text_Error);
+   binder.item("'Warning'",text_Warning);
 
   binder.group("Text");
 

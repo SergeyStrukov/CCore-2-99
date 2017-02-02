@@ -102,6 +102,16 @@ void EditorWindow::unselectPad()
   redraw();
  }
 
+void EditorWindow::selectFormula(ulen index)
+ {
+  geom.setFormulaIndex(index);
+ }
+
+void EditorWindow::unselectFormula()
+ {
+  geom.setFormulaIndex(MaxULen);
+ }
+
 void EditorWindow::angle_changed(Geometry::Angle angle)
  {
   if( angle_pad.set(angle) ) geom.redraw();
@@ -292,7 +302,7 @@ void EditorWindow::formula_del(ulen ind)
        {
         list_formula.updateList();
 
-        geom.setFormulaIndex(MaxULen);
+        unselectFormula();
        }
     }
  }
@@ -325,13 +335,28 @@ void EditorWindow::formula_add(ulen ind)
 
 void EditorWindow::formula_selected(ulen ind)
  {
-  geom.setFormulaIndex(ind);
+  selectFormula(ind);
+ }
+
+void EditorWindow::errorMsg(StrLen text)
+ {
+  msg_frame.setInfo(text);
+
+  msg_frame.create(getFrame(),+cfg.text_Error);
+
+  disableFrameReact();
+ }
+
+void EditorWindow::msg_destroyed()
+ {
+  enableFrameReact();
  }
 
 EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
 
+   text_file(wlist,cfg.text_cfg),
    split1(wlist,cfg.split_cfg),
    split2(wlist,cfg.split_cfg),
    edit_angle(wlist,cfg.edit_angle_cfg),
@@ -340,6 +365,7 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    geom(wlist,cfg.geom_cfg),
    list_pad(wlist,cfg.ilist_cfg),
    list_formula(wlist,cfg.ilist_cfg),
+   msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_angle_changed(this,&EditorWindow::angle_changed,edit_angle.changed),
    connector_length_changed(this,&EditorWindow::length_changed,edit_length.changed),
@@ -358,9 +384,11 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connectoir_list_formula_command_down(this,&EditorWindow::formula_down,list_formula.command_down),
    connectoir_list_formula_command_del(this,&EditorWindow::formula_del,list_formula.command_del),
    connectoir_list_formula_command_add(this,&EditorWindow::formula_add,list_formula.command_add),
-   connectoir_list_formula_command_selected(this,&EditorWindow::formula_selected,list_formula.selected)
+   connectoir_list_formula_command_selected(this,&EditorWindow::formula_selected,list_formula.selected),
+
+   connector_msg_destroyed(this,&EditorWindow::msg_destroyed,msg_frame.destroyed)
  {
-  wlist.insTop(split1,split2,geom,list_pad,list_formula);
+  wlist.insTop(split1,split2,text_file,list_pad,list_formula,geom);
 
   list_pad.setInfo(geom.contour.getPadInfo());
 
@@ -377,27 +405,95 @@ EditorWindow::~EditorWindow()
 
  // methods
 
-void EditorWindow::load() // TODO
+Point EditorWindow::getMinSize() const
  {
+  return Point(100,100);
  }
 
-void EditorWindow::load(StrLen file_name)  // TODO
+void EditorWindow::load()
  {
-  Used(file_name);
+  text_file.setText(""_def);
+  text_file.alert(false);
+  has_file=false;
+
+  geom.contour.erase();
+
+  list_pad.reselect();
+
+  list_pad.updateList();
+
+  unselectPad();
+
+  list_formula.reselect();
+
+  list_formula.updateList();
+
+  unselectFormula();
+
+  geom.redraw();
  }
 
-bool EditorWindow::save() // TODO
+void EditorWindow::load(StrLen file_name_)
  {
-  modified=false;
+  DefString file_name(file_name_);
+
+  text_file.setText(file_name);
+  text_file.alert(false);
+  has_file=true;
+
+  ErrorText etext;
+
+  geom.contour.load(text_file.getText().str(),etext);
+
+  if( !etext )
+    {
+     errorMsg(etext.getText());
+    }
+  else
+    {
+     text_file.alert(true);
+    }
+
+  if( list_pad.select(0) ) list_pad.ping(); else unselectPad();
+
+  list_pad.updateList();
+
+  if( list_formula.select(0) ) list_formula.ping(); else unselectFormula();
+
+  list_formula.updateList();
+
+  geom.redraw();
+ }
+
+bool EditorWindow::save()
+ {
+  if( !has_file ) return false;
+
+  ErrorText etext;
+
+  geom.contour.save(text_file.getText().str(),etext);
+
+  if( !etext )
+    {
+     errorMsg(etext.getText());
+
+     return true;
+    }
+
+  text_file.alert(false);
 
   return true;
  }
 
-void EditorWindow::save(StrLen file_name) // TODO
+void EditorWindow::save(StrLen file_name_)
  {
-  Used(file_name);
+  DefString file_name(file_name_);
 
-  modified=false;
+  text_file.setText(file_name);
+  text_file.alert(true);
+  has_file=true;
+
+  save();
  }
 
  // drawing
@@ -416,6 +512,8 @@ void EditorWindow::layout()
    PaneCut pane(getSize(),space);
 
    pane.shrink();
+
+   pane.place_cutTop(text_file);
 
    if( Change(layout_first,false) )
      {
