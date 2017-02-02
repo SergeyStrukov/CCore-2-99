@@ -28,7 +28,7 @@ void EditorWindow::activate(SubWindow &editor)
  {
   deactivate();
 
-  wlist.insTop(editor);
+  wlist.insBottom(editor);
 
   geom.unselect();
 
@@ -86,6 +86,8 @@ struct EditorWindow::SelectPad
 
 void EditorWindow::selectPad(ulen index)
  {
+  list_pad.setCheck( geom.contour.refPadLabel(index) );
+
   geom.contour.pad(index,SelectPad{this});
 
   geom.setPadIndex(index);
@@ -93,6 +95,8 @@ void EditorWindow::selectPad(ulen index)
 
 void EditorWindow::unselectPad()
  {
+  list_pad.noItem();
+
   deactivate();
 
   geom.unselect();
@@ -104,11 +108,15 @@ void EditorWindow::unselectPad()
 
 void EditorWindow::selectFormula(ulen index)
  {
+  list_formula.setCheck( geom.contour.refFormulaLabel(index) );
+
   geom.setFormulaIndex(index);
  }
 
 void EditorWindow::unselectFormula()
  {
+  list_formula.noItem();
+
   geom.setFormulaIndex(MaxULen);
  }
 
@@ -264,6 +272,27 @@ void EditorWindow::pad_selected(ulen ind)
   selectPad(ind);
  }
 
+void EditorWindow::pad_show_changed(ulen ind,bool check)
+ {
+  geom.contour.refPadLabel(ind).show=check;
+
+  geom.redraw();
+ }
+
+void EditorWindow::pad_gray_changed(ulen ind,bool check)
+ {
+  geom.contour.refPadLabel(ind).gray=check;
+
+  geom.redraw();
+ }
+
+void EditorWindow::pad_name_changed(ulen ind,bool check)
+ {
+  geom.contour.refPadLabel(ind).show_name=check;
+
+  geom.redraw();
+ }
+
 void EditorWindow::formula_up(ulen ind)
  {
   if( geom.contour.formulaUp(ind) )
@@ -338,6 +367,27 @@ void EditorWindow::formula_selected(ulen ind)
   selectFormula(ind);
  }
 
+void EditorWindow::formula_show_changed(ulen ind,bool check)
+ {
+  geom.contour.refFormulaLabel(ind).show=check;
+
+  geom.redraw();
+ }
+
+void EditorWindow::formula_gray_changed(ulen ind,bool check)
+ {
+  geom.contour.refFormulaLabel(ind).gray=check;
+
+  geom.redraw();
+ }
+
+void EditorWindow::formula_name_changed(ulen ind,bool check)
+ {
+  geom.contour.refFormulaLabel(ind).show_name=check;
+
+  geom.redraw();
+ }
+
 void EditorWindow::errorMsg(StrLen text)
  {
   msg_frame.setInfo(text);
@@ -374,17 +424,25 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged),
 
-   connectoir_list_pad_command_up(this,&EditorWindow::pad_up,list_pad.command_up),
-   connectoir_list_pad_command_down(this,&EditorWindow::pad_down,list_pad.command_down),
-   connectoir_list_pad_command_del(this,&EditorWindow::pad_del,list_pad.command_del),
-   connectoir_list_pad_command_add(this,&EditorWindow::pad_add,list_pad.command_add),
-   connectoir_list_pad_command_selected(this,&EditorWindow::pad_selected,list_pad.selected),
+   connector_list_pad_command_up(this,&EditorWindow::pad_up,list_pad.command_up),
+   connector_list_pad_command_down(this,&EditorWindow::pad_down,list_pad.command_down),
+   connector_list_pad_command_del(this,&EditorWindow::pad_del,list_pad.command_del),
+   connector_list_pad_command_add(this,&EditorWindow::pad_add,list_pad.command_add),
+   connector_list_pad_command_selected(this,&EditorWindow::pad_selected,list_pad.selected),
 
-   connectoir_list_formula_command_up(this,&EditorWindow::formula_up,list_formula.command_up),
-   connectoir_list_formula_command_down(this,&EditorWindow::formula_down,list_formula.command_down),
-   connectoir_list_formula_command_del(this,&EditorWindow::formula_del,list_formula.command_del),
-   connectoir_list_formula_command_add(this,&EditorWindow::formula_add,list_formula.command_add),
-   connectoir_list_formula_command_selected(this,&EditorWindow::formula_selected,list_formula.selected),
+   connector_list_pad_show_changed(this,&EditorWindow::pad_show_changed,list_pad.show_changed),
+   connector_list_pad_gray_changed(this,&EditorWindow::pad_gray_changed,list_pad.gray_changed),
+   connector_list_pad_name_changed(this,&EditorWindow::pad_name_changed,list_pad.name_changed),
+
+   connector_list_formula_command_up(this,&EditorWindow::formula_up,list_formula.command_up),
+   connector_list_formula_command_down(this,&EditorWindow::formula_down,list_formula.command_down),
+   connector_list_formula_command_del(this,&EditorWindow::formula_del,list_formula.command_del),
+   connector_list_formula_command_add(this,&EditorWindow::formula_add,list_formula.command_add),
+   connector_list_formula_command_selected(this,&EditorWindow::formula_selected,list_formula.selected),
+
+   connector_list_formula_show_changed(this,&EditorWindow::formula_show_changed,list_formula.show_changed),
+   connector_list_formula_gray_changed(this,&EditorWindow::formula_gray_changed,list_formula.gray_changed),
+   connector_list_formula_name_changed(this,&EditorWindow::formula_name_changed,list_formula.name_changed),
 
    connector_msg_destroyed(this,&EditorWindow::msg_destroyed,msg_frame.destroyed)
  {

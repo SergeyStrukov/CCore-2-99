@@ -36,6 +36,15 @@ class ItemListWindow : public ComboWindow
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
 
+     CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
+     CtorRefVal<CheckWindow::ConfigType> check_cfg;
+
+     // app
+
+     RefVal<DefString> text_show = "show"_def ;
+     RefVal<DefString> text_gray = "gray"_def ;
+     RefVal<DefString> text_name = "name"_def ;
+
      Config() noexcept {}
 
      template <class AppPref>
@@ -53,12 +62,17 @@ class ItemListWindow : public ComboWindow
        list_cfg.bind(proxy);
        edit_cfg.bind(proxy);
        knob_cfg.bind(proxy);
+
+       label_cfg.bind(proxy);
+       check_cfg.bind(proxy);
       }
 
      template <class Bag>
      void bindApp(const Bag &bag)
       {
-       Used(bag);
+       text_show.bind(bag.text_show);
+       text_gray.bind(bag.text_gray);
+       text_name.bind(bag.text_name);
       }
     };
 
@@ -76,6 +90,14 @@ class ItemListWindow : public ComboWindow
    KnobWindow knob_up;
    KnobWindow knob_del;
    KnobWindow knob_add;
+
+   RefLabelWindow label_show;
+   RefLabelWindow label_gray;
+   RefLabelWindow label_name;
+
+   CheckWindow check_show;
+   CheckWindow check_gray;
+   CheckWindow check_name;
 
   private:
 
@@ -97,6 +119,16 @@ class ItemListWindow : public ComboWindow
    SignalConnector<ItemListWindow> connector_knob_up_pressed;
    SignalConnector<ItemListWindow> connector_knob_del_pressed;
    SignalConnector<ItemListWindow> connector_knob_add_pressed;
+
+   void check_show_changed(bool check);
+
+   void check_gray_changed(bool check);
+
+   void check_name_changed(bool check);
+
+   SignalConnector<ItemListWindow,bool> connector_check_show_changed;
+   SignalConnector<ItemListWindow,bool> connector_check_gray_changed;
+   SignalConnector<ItemListWindow,bool> connector_check_name_changed;
 
   public:
 
@@ -123,6 +155,12 @@ class ItemListWindow : public ComboWindow
      list.redraw();
     }
 
+   void setCheck(bool show,bool gray,bool name);
+
+   void setCheck(const AnyType &label) { setCheck(label.show,label.gray,label.show_name); }
+
+   void noItem();
+
    StrLen getText() const { return edit.getText(); }
 
    // drawing
@@ -137,6 +175,10 @@ class ItemListWindow : public ComboWindow
    Signal<ulen> command_add;
 
    Signal<ulen> selected;
+
+   Signal<ulen,bool> show_changed;
+   Signal<ulen,bool> gray_changed;
+   Signal<ulen,bool> name_changed;
  };
 
 } // namespace App

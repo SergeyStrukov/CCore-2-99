@@ -85,7 +85,7 @@ bool WindowList::insTop(SubWindow *sub_win)
     {
      if( sub_win->list!=this )
        {
-        Printf(Exception,"CCore::Video::WindowList::insTop(...) : sub-window is already included in a list");
+        Printf(Exception,"CCore::Video::WindowList::insTop(...) : sub-window is already included in another list");
        }
 
      return false;
@@ -106,7 +106,7 @@ bool WindowList::insBottom(SubWindow *sub_win)
     {
      if( sub_win->list!=this )
        {
-        Printf(Exception,"CCore::Video::WindowList::insBottom(...) : sub-window is already included in a list");
+        Printf(Exception,"CCore::Video::WindowList::insBottom(...) : sub-window is already included in another list");
        }
 
      return false;
@@ -176,6 +176,60 @@ void WindowList::moveBottom(SubWindow *sub_win)
 
   list.del(sub_win);
   list.ins_last(sub_win);
+ }
+
+void WindowList::insAfter(SubWindow *that,SubWindow *sub_win)
+ {
+  if( that->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WindowList::insAfter(that,...) : that is not from this list");
+    }
+
+  if( sub_win->list )
+    {
+     if( sub_win->list!=this )
+       {
+        Printf(Exception,"CCore::Video::WindowList::insAfter(...) : sub-window is already included in another list");
+       }
+
+     list.del(sub_win);
+     list.ins_after(that,sub_win);
+    }
+  else
+    {
+     list.ins_after(that,sub_win);
+
+     sub_win->list=this;
+
+     if( is_opened ) sub_win->open();
+    }
+ }
+
+void WindowList::insBefore(SubWindow *that,SubWindow *sub_win)
+ {
+  if( that->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WindowList::insBefore(that,...) : that is not from this list");
+    }
+
+  if( sub_win->list )
+    {
+     if( sub_win->list!=this )
+       {
+        Printf(Exception,"CCore::Video::WindowList::insBefore(...) : sub-window is already included in another list");
+       }
+
+     list.del(sub_win);
+     list.ins_before(that,sub_win);
+    }
+  else
+    {
+     list.ins_before(that,sub_win);
+
+     sub_win->list=this;
+
+     if( is_opened ) sub_win->open();
+    }
  }
 
 void WindowList::delAll()

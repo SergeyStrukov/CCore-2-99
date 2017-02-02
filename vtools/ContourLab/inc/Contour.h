@@ -495,6 +495,10 @@ class Contour : public Formular
 
    // elements
 
+   Label & refPadLabel(ulen index) { return pads.at(index).label; }
+
+   Label & refFormulaLabel(ulen index) { return formulas.at(index).label; }
+
    template <class Func>
    void pad(ulen index,Func func)
     {

@@ -67,6 +67,10 @@ struct AppPreferenceBag
 
   Coord geometry_dxy = 300 ;
 
+  DefString text_show = "show"_def ;
+  DefString text_gray = "gray"_def ;
+  DefString text_name = "name"_def ;
+
   // constructors
 
   AppPreferenceBag() noexcept {}

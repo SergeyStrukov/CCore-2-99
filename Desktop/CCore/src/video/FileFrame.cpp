@@ -487,7 +487,7 @@ void FileFilterListWindow::add(StrLen filter,bool check)
 
   auto *obj=filter_list.append_fill(OwnPtr<FileFilterWindow>(new FileFilterWindow(wlist,cfg,index,this,filter,check)));
 
-  wlist.insBottom(obj->getPtr());
+  wlist.insBefore(knob,**obj);
 
   Algon::RangeRotateRight(Range(filter_list).part(index));
 
@@ -1040,11 +1040,11 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
    connector_edit_new_file_entered(this,&FileWindow::edit_new_file_entered,edit_new_file.entered),
    connector_split_dragged(this,&FileWindow::split_dragged,split.dragged)
  {
-  wlist.insTop(edit_dir,knob_hit,knob_add,knob_back,line1,list_dir,split,list_file,filter_list,line2,btn_Ok,btn_Cancel);
+  wlist.insTop(knob_add,knob_hit,edit_dir,knob_back,line1,list_dir,split,list_file,filter_list,line2,btn_Ok,btn_Cancel);
 
   if( param.new_file )
     {
-     wlist.insBottom(alt_new_file,label_new_file,edit_new_file,knob_mkdir,knob_rmdir);
+     wlist.insAfter(list_dir,knob_mkdir,knob_rmdir,alt_new_file,label_new_file,edit_new_file);
 
      list_file.disable();
 
@@ -1104,7 +1104,7 @@ void FileWindow::setNewFile(bool on)
     {
      if( param.new_file )
        {
-        wlist.insBottom(alt_new_file,label_new_file,edit_new_file,knob_mkdir,knob_rmdir);
+        wlist.insAfter(list_dir,knob_mkdir,knob_rmdir,alt_new_file,label_new_file,edit_new_file);
 
         alt_new_file.check(true);
 

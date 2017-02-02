@@ -373,6 +373,10 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
 
    void moveBottom(SubWindow *sub_win);
 
+   void insAfter(SubWindow *that,SubWindow *sub_win);
+
+   void insBefore(SubWindow *that,SubWindow *sub_win);
+
 
    bool insTop(SubWindow &sub_win) { return insTop(&sub_win); }
 
@@ -383,6 +387,11 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
    void moveTop(SubWindow &sub_win) { moveTop(&sub_win); }
 
    void moveBottom(SubWindow &sub_win) { moveBottom(&sub_win); }
+
+   void insAfter(SubWindow &that,SubWindow &sub_win) { insAfter(&that,&sub_win); }
+
+   void insBefore(SubWindow &that,SubWindow &sub_win) { insBefore(&that,&sub_win); }
+
 
    void delAll();
 
@@ -399,9 +408,7 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
    template <class ... TT>
    void insTop(SubWindow &sub_win,TT & ... tt)
     {
-     insTop(tt...);
-
-     insTop(sub_win);
+     insTop(&sub_win,&tt...);
     }
 
    template <class ... TT>
@@ -415,9 +422,35 @@ class WindowList : public NoCopyBase<SubWindowHost,UserInput>
    template <class ... TT>
    void insBottom(SubWindow &sub_win,TT & ... tt)
     {
-     insBottom(sub_win);
+     insBottom(&sub_win,&tt...);
+    }
 
-     insBottom(tt...);
+   template <class ... TT>
+   void insAfter(SubWindow *that,SubWindow *sub_win,TT * ... tt)
+    {
+     insAfter(that,sub_win);
+
+     insAfter(sub_win,tt...);
+    }
+
+   template <class ... TT>
+   void insAfter(SubWindow &that,TT & ... tt)
+    {
+     insAfter(&that,&tt...);
+    }
+
+   template <class ... TT>
+   void insBefore(SubWindow *that,SubWindow *sub_win1,SubWindow *sub_win2,TT * ... tt)
+    {
+     insBefore(that,sub_win2,tt...);
+
+     insBefore(sub_win2,sub_win1);
+    }
+
+   template <class ... TT>
+   void insBefore(SubWindow &that,TT & ... tt)
+    {
+     insBefore(&that,&tt...);
     }
 
    // multiple delete

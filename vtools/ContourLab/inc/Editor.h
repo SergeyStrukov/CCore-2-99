@@ -211,11 +211,21 @@ class EditorWindow : public ComboWindow
 
    void pad_selected(ulen ind);
 
-   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_up;
-   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_down;
-   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_del;
-   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_add;
-   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_selected;
+   void pad_show_changed(ulen ind,bool check);
+
+   void pad_gray_changed(ulen ind,bool check);
+
+   void pad_name_changed(ulen ind,bool check);
+
+   SignalConnector<EditorWindow,ulen> connector_list_pad_command_up;
+   SignalConnector<EditorWindow,ulen> connector_list_pad_command_down;
+   SignalConnector<EditorWindow,ulen> connector_list_pad_command_del;
+   SignalConnector<EditorWindow,ulen> connector_list_pad_command_add;
+   SignalConnector<EditorWindow,ulen> connector_list_pad_command_selected;
+
+   SignalConnector<EditorWindow,ulen,bool> connector_list_pad_show_changed;
+   SignalConnector<EditorWindow,ulen,bool> connector_list_pad_gray_changed;
+   SignalConnector<EditorWindow,ulen,bool> connector_list_pad_name_changed;
 
   private:
 
@@ -229,11 +239,21 @@ class EditorWindow : public ComboWindow
 
    void formula_selected(ulen ind);
 
-   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_up;
-   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_down;
-   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_del;
-   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_add;
-   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_selected;
+   void formula_show_changed(ulen ind,bool check);
+
+   void formula_gray_changed(ulen ind,bool check);
+
+   void formula_name_changed(ulen ind,bool check);
+
+   SignalConnector<EditorWindow,ulen> connector_list_formula_command_up;
+   SignalConnector<EditorWindow,ulen> connector_list_formula_command_down;
+   SignalConnector<EditorWindow,ulen> connector_list_formula_command_del;
+   SignalConnector<EditorWindow,ulen> connector_list_formula_command_add;
+   SignalConnector<EditorWindow,ulen> connector_list_formula_command_selected;
+
+   SignalConnector<EditorWindow,ulen,bool> connector_list_formula_show_changed;
+   SignalConnector<EditorWindow,ulen,bool> connector_list_formula_gray_changed;
+   SignalConnector<EditorWindow,ulen,bool> connector_list_formula_name_changed;
 
   private:
 
