@@ -160,17 +160,17 @@ class ScrollListInnerWindowOf : public SubWindow
        }
     }
 
-   void setSelect(ulen select,bool signal=true)
+   void setSelect(ulen index)
     {
      if( ulen count=shape.info->getLineCount() )
        {
-        if( shape.setSelectDown( Min_cast(select,count-1) ) )
+        if( shape.setSelectDown( Min_cast(index,count-1) ) )
           {
            showSelect();
 
            redraw();
 
-           if( signal ) outer->selected.assert(shape.select);
+           outer->selected.assert(shape.select);
           }
        }
     }
@@ -267,7 +267,46 @@ class ScrollListInnerWindowOf : public SubWindow
 
    ulen getSelect() const { return shape.select; } // valid OR MaxULen, if there is no positions
 
-   void select(ulen select) { setSelect(select,false); }
+   bool select(ulen index)
+    {
+     if( ulen count=shape.info->getLineCount() )
+       {
+        if( shape.setSelectDown( Min_cast(index,count-1) ) )
+          {
+           showSelect();
+
+           redraw();
+
+           return true;
+          }
+        else
+          {
+           if( shape.select<count && shape.info->getLine(shape.select).type==ComboInfoText )
+             {
+              return true;
+             }
+          }
+       }
+
+     shape.select=MaxULen;
+
+     return false;
+    }
+
+   bool reselect()
+    {
+     return select(shape.select);
+    }
+
+   void ping()
+    {
+     ulen count=shape.info->getLineCount();
+
+     if( shape.select<count && shape.info->getLine(shape.select).type==ComboInfoText )
+       {
+        outer->selected.assert(shape.select);
+       }
+    }
 
    // drawing
 
@@ -566,7 +605,11 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    ulen getSelect() const { return inner.getSelect(); }
 
-   void select(ulen select) { inner.setSelect(select); }
+   bool select(ulen index) { return inner.select(index); }
+
+   bool reselect() { return inner.reselect(); }
+
+   void ping() { inner.ping(); }
 
    // drawing
 

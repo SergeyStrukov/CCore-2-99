@@ -318,21 +318,24 @@ Geometry::Couple Geometry::MeetCircleIn(Circle C,Point a,Point b)
 
   Real t=Real::Sqrt(T);
 
-  if( s-t>len || s+t<0 ) return RealOutOfDomain;
+  Real s1=s-t;
+  Real s2=s+t;
 
-  if( s-t<0 )
+  if( s1>len || s2<0 ) return RealOutOfDomain;
+
+  if( s1<0 )
     {
-     if( s+t>len ) return RealOutOfDomain;
+     if( s2>len ) return RealOutOfDomain;
 
-     return { RealOutOfDomain , a+(s+t)*ort };
+     return { a+s2*ort , RealOutOfDomain };
     }
 
-  if( s+t>len )
+  if( s2>len )
     {
-     return { a+(s-t)*ort , RealOutOfDomain };
+     return { a+s1*ort , RealOutOfDomain };
     }
 
-  return { a+(s-t)*ort , a+(s+t)*ort };
+  return { a+s1*ort , a+s2*ort };
  }
 
 Geometry::Point Geometry::Mirror(Line a,Point p)

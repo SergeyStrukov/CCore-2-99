@@ -354,6 +354,52 @@ class Contour : public Formular
 
   private:
 
+   class ItemInfo : public ComboInfo
+    {
+      class Base;
+
+     public:
+
+      explicit ItemInfo(const DynArray<Item> &data);
+
+      ~ItemInfo();
+    };
+
+   static bool UpItem(DynArray<AnyType> &a,ulen index)
+    {
+     auto r=Range(a);
+
+     if( index>0 && index<r.len )
+       {
+        Swap(r[index],r[index-1]);
+
+        return true;
+       }
+
+     return false;
+    }
+
+   static bool DownItem(DynArray<AnyType> &a,ulen index)
+    {
+     auto r=Range(a);
+
+     if( r.len && index<r.len-1 )
+       {
+        Swap(r[index],r[index+1]);
+
+        return true;
+       }
+
+     return false;
+    }
+
+   static bool DelItem(DynArray<AnyType> &a,ulen index)
+    {
+     return ArrayCopyDel(a,index);
+    }
+
+  private:
+
    template <class S>
    void addPad(const String &name,S s)
     {
@@ -399,6 +445,32 @@ class Contour : public Formular
    Contour();
 
    ~Contour();
+
+   // pad list
+
+   ComboInfo getPadInfo();
+
+   bool padUp(ulen index);
+
+   bool padDown(ulen index);
+
+   bool padDel(ulen index);
+
+   bool padAdd(ulen index,StrLen text);
+
+   // formula list
+
+   ComboInfo getFormulaInfo();
+
+   bool formulaUp(ulen index);
+
+   bool formulaDown(ulen index);
+
+   bool formulaDel(ulen index);
+
+   bool formulaAdd(ulen index,StrLen text);
+
+   // elements
 
    template <class Func>
    void pad(ulen index,Func func)

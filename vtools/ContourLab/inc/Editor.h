@@ -14,66 +14,17 @@
 #ifndef Editor_h
 #define Editor_h
 
-#include <inc/Contour.h>
-
 #include <inc/EditAngleWindow.h>
 #include <inc/EditLengthWindow.h>
 #include <inc/EditRatioWindow.h>
 #include <inc/GeometryWindow.h>
+#include <inc/ItemListWindow.h>
 
 namespace App {
 
 /* classes */
 
-class ItemListWindow;
-
 class EditorWindow;
-
-/* class ItemListWindow */
-
-class ItemListWindow : public ComboWindow // TODO
- {
-  public:
-
-   struct Config
-    {
-     Config() noexcept {}
-
-     Config(const UserPreference &pref) noexcept
-      {
-       bind(pref.get(),pref.getSmartConfig());
-      }
-
-     template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy)
-      {
-       Used(bag);
-       Used(proxy);
-      }
-    };
-
-   using ConfigType = Config ;
-
-  private:
-
-   const Config &cfg;
-
-  public:
-
-   ItemListWindow(SubWindowHost &host,const Config &cfg);
-
-   virtual ~ItemListWindow();
-
-   // methods
-
-   Point getMinSize() const { return Point(10,10); }
-
-   // drawing
-
-   virtual void layout();
-
-   virtual void drawBack(DrawBuf buf,bool drag_active) const;
- };
 
 /* class EditorWindow */
 
@@ -83,9 +34,9 @@ class EditorWindow : public ComboWindow
 
    struct Config
     {
-     RefVal<VColor> back;
+     RefVal<VColor> back = Silver ;
 
-     RefVal<Coord> space_dxy;
+     RefVal<Coord> space_dxy = 10 ;
 
      CtorRefVal<XSplitWindow::ConfigType> split_cfg;
 
@@ -95,6 +46,7 @@ class EditorWindow : public ComboWindow
      CtorRefVal<EditLengthWindow::ConfigType> edit_length_cfg;
      CtorRefVal<EditRatioWindow::ConfigType> edit_ratio_cfg;
      CtorRefVal<GeometryWindow::ConfigType> geom_cfg;
+     CtorRefVal<ItemListWindow::ConfigType> ilist_cfg;
 
      Config() noexcept {}
 
@@ -103,7 +55,8 @@ class EditorWindow : public ComboWindow
       : edit_angle_cfg(pref,app_pref),
         edit_length_cfg(pref,app_pref),
         edit_ratio_cfg(pref,app_pref),
-        geom_cfg(pref,app_pref)
+        geom_cfg(pref,app_pref),
+        ilist_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
       }
@@ -137,6 +90,9 @@ class EditorWindow : public ComboWindow
    EditRatioWindow edit_ratio;
 
    GeometryWindow geom;
+
+   ItemListWindow list_pad;
+   ItemListWindow list_formula;
 
    // layout
 
@@ -191,6 +147,8 @@ class EditorWindow : public ComboWindow
 
    void selectPad(ulen index);
 
+   void unselectPad();
+
    void angle_changed(Geometry::Angle angle);
 
    void length_changed(Geometry::Length length);
@@ -223,6 +181,42 @@ class EditorWindow : public ComboWindow
 
    SignalConnector<EditorWindow,Point> connector_split1_dragged;
    SignalConnector<EditorWindow,Point> connector_split2_dragged;
+
+  private:
+
+   void pad_up(ulen ind);
+
+   void pad_down(ulen ind);
+
+   void pad_del(ulen ind);
+
+   void pad_add(ulen ind);
+
+   void pad_selected(ulen ind);
+
+   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_up;
+   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_down;
+   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_del;
+   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_add;
+   SignalConnector<EditorWindow,ulen> connectoir_list_pad_command_selected;
+
+  private:
+
+   void formula_up(ulen ind);
+
+   void formula_down(ulen ind);
+
+   void formula_del(ulen ind);
+
+   void formula_add(ulen ind);
+
+   void formula_selected(ulen ind);
+
+   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_up;
+   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_down;
+   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_del;
+   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_add;
+   SignalConnector<EditorWindow,ulen> connectoir_list_formula_command_selected;
 
   public:
 

@@ -28,6 +28,40 @@ void GuardTypeMismatch()
 
 Formular::Object::Base Formular::Object::Base::Default;
 
+/* class Contour::ItemInfo */
+
+class Contour::ItemInfo::Base : public ComboInfoBase
+ {
+   const DynArray<Item> &data;
+
+  public:
+
+   explicit Base(const DynArray<Item> &data_) : data(data_) {}
+
+   virtual ~Base() {}
+
+   // AbstractComboInfo
+
+   ulen getLineCount() const
+    {
+     return data.getLen();
+    }
+
+   ComboInfoItem getLine(ulen index) const
+    {
+     return {ComboInfoText,Range(data.at(index).label.name)};
+    }
+ };
+
+Contour::ItemInfo::ItemInfo(const DynArray<Item> &data)
+ : ComboInfo(new Base(data))
+ {
+ }
+
+Contour::ItemInfo::~ItemInfo()
+ {
+ }
+
 /* class Contour */
 
 Contour::Contour()
@@ -49,6 +83,66 @@ Contour::Contour()
 
 Contour::~Contour()
  {
+ }
+
+ // pad list
+
+ComboInfo Contour::getPadInfo()
+ {
+  return ItemInfo(pads);
+ }
+
+bool Contour::padUp(ulen index)
+ {
+  return UpItem(pads,index);
+ }
+
+bool Contour::padDown(ulen index)
+ {
+  return DownItem(pads,index);
+ }
+
+bool Contour::padDel(ulen index)
+ {
+  return DelItem(pads,index);
+ }
+
+bool Contour::padAdd(ulen index,StrLen text) // TODO
+ {
+  Used(index);
+  Used(text);
+
+  return false;
+ }
+
+ // formula list
+
+ComboInfo Contour::getFormulaInfo()
+ {
+  return ItemInfo(formulas);
+ }
+
+bool Contour::formulaUp(ulen index)
+ {
+  return UpItem(formulas,index);
+ }
+
+bool Contour::formulaDown(ulen index)
+ {
+  return DownItem(formulas,index);
+ }
+
+bool Contour::formulaDel(ulen index)
+ {
+  return DelItem(formulas,index);
+ }
+
+bool Contour::formulaAdd(ulen index,StrLen text) // TODO
+ {
+  Used(index);
+  Used(text);
+
+  return false;
  }
 
 } // namespace App

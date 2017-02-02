@@ -8,6 +8,7 @@ obj/EditRatioWindow.o \
 obj/Editor.o \
 obj/Geometry.o \
 obj/GeometryWindow.o \
+obj/ItemListWindow.o \
 obj/main.o \
 
 
@@ -21,6 +22,7 @@ obj/EditRatioWindow.s \
 obj/Editor.s \
 obj/Geometry.s \
 obj/GeometryWindow.s \
+obj/ItemListWindow.s \
 obj/main.s \
 
 
@@ -34,6 +36,7 @@ obj/EditRatioWindow.dep \
 obj/Editor.dep \
 obj/Geometry.dep \
 obj/GeometryWindow.dep \
+obj/ItemListWindow.dep \
 obj/main.dep \
 
 
@@ -70,6 +73,9 @@ obj/Geometry.o : ./src/Geometry.cpp
 obj/GeometryWindow.o : ./src/GeometryWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/ItemListWindow.o : ./src/ItemListWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -100,6 +106,9 @@ obj/Geometry.s : ./src/Geometry.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/GeometryWindow.s : ./src/GeometryWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ItemListWindow.s : ./src/ItemListWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -133,6 +142,9 @@ obj/Geometry.dep : ./src/Geometry.cpp
 
 obj/GeometryWindow.dep : ./src/GeometryWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/GeometryWindow.o $< -MF $@
+
+obj/ItemListWindow.dep : ./src/ItemListWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ItemListWindow.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

@@ -7,4 +7,5 @@
 ./src/EditRatioWindow.cpp
 ./src/Geometry.cpp
 ./src/GeometryWindow.cpp
+./src/ItemListWindow.cpp
 ./src/main.cpp
