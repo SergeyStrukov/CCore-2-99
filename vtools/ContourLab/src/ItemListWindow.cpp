@@ -100,11 +100,15 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
 
    connector_check_show_changed(this,&ItemListWindow::check_show_changed,check_show.changed),
    connector_check_gray_changed(this,&ItemListWindow::check_gray_changed,check_gray.changed),
-   connector_check_name_changed(this,&ItemListWindow::check_name_changed,check_name.changed)
+   connector_check_name_changed(this,&ItemListWindow::check_name_changed,check_name.changed),
+
+   text_changed(edit.changed)
  {
   wlist.insTop(knob_down,knob_up,knob_del,list,label_show,label_gray,label_name,check_show,check_gray,check_name,edit,knob_add);
 
   noItem();
+
+  enableAdd(false);
  }
 
 ItemListWindow::~ItemListWindow()

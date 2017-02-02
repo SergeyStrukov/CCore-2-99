@@ -479,6 +479,8 @@ class Contour : public Formular
 
    bool padDel(ulen index);
 
+   bool padAddTest(StrLen text);
+
    bool padAdd(ulen index,StrLen text);
 
    // formula list
@@ -490,6 +492,8 @@ class Contour : public Formular
    bool formulaDown(ulen index);
 
    bool formulaDel(ulen index);
+
+   bool formulaAddTest(StrLen text);
 
    bool formulaAdd(ulen index,StrLen text);
 

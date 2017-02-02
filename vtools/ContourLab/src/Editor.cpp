@@ -293,6 +293,13 @@ void EditorWindow::pad_name_changed(ulen ind,bool check)
   geom.redraw();
  }
 
+void EditorWindow::pad_text_changed()
+ {
+  bool ok=geom.contour.padAddTest(list_pad.getText());
+
+  list_pad.enableAdd(ok);
+ }
+
 void EditorWindow::formula_up(ulen ind)
  {
   if( geom.contour.formulaUp(ind) )
@@ -388,6 +395,13 @@ void EditorWindow::formula_name_changed(ulen ind,bool check)
   geom.redraw();
  }
 
+void EditorWindow::formula_text_changed()
+ {
+  bool ok=geom.contour.formulaAddTest(list_formula.getText());
+
+  list_formula.enableAdd(ok);
+ }
+
 void EditorWindow::errorMsg(StrLen text)
  {
   msg_frame.setInfo(text);
@@ -434,6 +448,8 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_list_pad_gray_changed(this,&EditorWindow::pad_gray_changed,list_pad.gray_changed),
    connector_list_pad_name_changed(this,&EditorWindow::pad_name_changed,list_pad.name_changed),
 
+   connector_list_pad_text_changed(this,&EditorWindow::pad_text_changed,list_pad.text_changed),
+
    connector_list_formula_command_up(this,&EditorWindow::formula_up,list_formula.command_up),
    connector_list_formula_command_down(this,&EditorWindow::formula_down,list_formula.command_down),
    connector_list_formula_command_del(this,&EditorWindow::formula_del,list_formula.command_del),
@@ -443,6 +459,8 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_list_formula_show_changed(this,&EditorWindow::formula_show_changed,list_formula.show_changed),
    connector_list_formula_gray_changed(this,&EditorWindow::formula_gray_changed,list_formula.gray_changed),
    connector_list_formula_name_changed(this,&EditorWindow::formula_name_changed,list_formula.name_changed),
+
+   connector_list_formula_text_changed(this,&EditorWindow::formula_text_changed,list_formula.text_changed),
 
    connector_msg_destroyed(this,&EditorWindow::msg_destroyed,msg_frame.destroyed)
  {

@@ -107,6 +107,13 @@ bool Contour::padDel(ulen index)
   return DelItem(pads,index);
  }
 
+bool Contour::padAddTest(StrLen text) // TODO
+ {
+  Used(text);
+
+  return false;
+ }
+
 bool Contour::padAdd(ulen index,StrLen text) // TODO
  {
   Used(index);
@@ -135,6 +142,13 @@ bool Contour::formulaDown(ulen index)
 bool Contour::formulaDel(ulen index)
  {
   return DelItem(formulas,index);
+ }
+
+bool Contour::formulaAddTest(StrLen text) // TODO
+ {
+  Used(text);
+
+  return false;
  }
 
 bool Contour::formulaAdd(ulen index,StrLen text) // TODO

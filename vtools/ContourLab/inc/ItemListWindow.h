@@ -163,6 +163,13 @@ class ItemListWindow : public ComboWindow
 
    StrLen getText() const { return edit.getText(); }
 
+   void enableAdd(bool ok)
+    {
+     edit.alert(!ok);
+
+     knob_add.enable(ok);
+    }
+
    // drawing
 
    virtual void layout();
@@ -179,6 +186,8 @@ class ItemListWindow : public ComboWindow
    Signal<ulen,bool> show_changed;
    Signal<ulen,bool> gray_changed;
    Signal<ulen,bool> name_changed;
+
+   Signal<> &text_changed;
  };
 
 } // namespace App

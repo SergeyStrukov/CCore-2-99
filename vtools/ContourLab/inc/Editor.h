@@ -217,6 +217,8 @@ class EditorWindow : public ComboWindow
 
    void pad_name_changed(ulen ind,bool check);
 
+   void pad_text_changed();
+
    SignalConnector<EditorWindow,ulen> connector_list_pad_command_up;
    SignalConnector<EditorWindow,ulen> connector_list_pad_command_down;
    SignalConnector<EditorWindow,ulen> connector_list_pad_command_del;
@@ -226,6 +228,8 @@ class EditorWindow : public ComboWindow
    SignalConnector<EditorWindow,ulen,bool> connector_list_pad_show_changed;
    SignalConnector<EditorWindow,ulen,bool> connector_list_pad_gray_changed;
    SignalConnector<EditorWindow,ulen,bool> connector_list_pad_name_changed;
+
+   SignalConnector<EditorWindow> connector_list_pad_text_changed;
 
   private:
 
@@ -245,6 +249,8 @@ class EditorWindow : public ComboWindow
 
    void formula_name_changed(ulen ind,bool check);
 
+   void formula_text_changed();
+
    SignalConnector<EditorWindow,ulen> connector_list_formula_command_up;
    SignalConnector<EditorWindow,ulen> connector_list_formula_command_down;
    SignalConnector<EditorWindow,ulen> connector_list_formula_command_del;
@@ -254,6 +260,8 @@ class EditorWindow : public ComboWindow
    SignalConnector<EditorWindow,ulen,bool> connector_list_formula_show_changed;
    SignalConnector<EditorWindow,ulen,bool> connector_list_formula_gray_changed;
    SignalConnector<EditorWindow,ulen,bool> connector_list_formula_name_changed;
+
+   SignalConnector<EditorWindow> connector_list_formula_text_changed;
 
   private:
 
