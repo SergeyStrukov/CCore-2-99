@@ -76,25 +76,25 @@ class SimpleTextListWindowOf : public SubWindow
        }
     }
 
-   void setSelect2(ulen select,ulen count,bool signal=true)
+   void setSelect2(ulen index,ulen count)
     {
      if( !count ) return;
 
-     Replace_min(select,count-1);
+     Replace_min(index,count-1);
 
-     if( Change(shape.select,select) )
+     if( Change(shape.select,index) )
        {
         shape.showSelect();
 
         redraw();
 
-        if( signal ) selected.assert(shape.select);
+        selected.assert(shape.select);
        }
     }
 
-   void setSelect(ulen select,bool signal=true)
+   void setSelect(ulen index)
     {
-     setSelect2(select,shape.info->getLineCount(),signal);
+     setSelect2(index,shape.info->getLineCount());
     }
 
    void addSelect(ulen delta)
@@ -156,7 +156,43 @@ class SimpleTextListWindowOf : public SubWindow
 
    ulen getSelect() const { return shape.select; } // valid OR MaxULen, if there is no positions
 
-   void select(ulen select) { setSelect(select,false); }
+   bool select(ulen index)
+    {
+     ulen count=shape.info->getLineCount();
+
+     if( !count )
+       {
+        shape.select=MaxULen;
+
+        return false;
+       }
+
+     Replace_min(index,count-1);
+
+     if( Change(shape.select,index) )
+       {
+        shape.showSelect();
+
+        redraw();
+       }
+
+     return true;
+    }
+
+   bool reselect()
+    {
+     return select(shape.select);
+    }
+
+   void ping()
+    {
+     ulen count=shape.info->getLineCount();
+
+     if( shape.select<count )
+       {
+        selected.assert(shape.select);
+       }
+    }
 
    // drawing
 
