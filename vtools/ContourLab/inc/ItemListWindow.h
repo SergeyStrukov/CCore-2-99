@@ -14,13 +14,92 @@
 #ifndef ItemListWindow_h
 #define ItemListWindow_h
 
-#include <inc/Application.h>
+#include <inc/Contour.h>
 
 namespace App {
 
 /* classes */
 
+class EditFormulaShape;
+
+class EditFormulaWindow;
+
 class ItemListWindow;
+
+/* class EditFormulaShape */
+
+class EditFormulaShape : public LineEditShape
+ {
+  public:
+
+   struct Config : LineEditShape::Config
+    {
+     // app
+
+     RefVal<VColor> text       = Black ;
+     RefVal<VColor> error_text =   Red ;
+
+     RefVal<unsigned> delay = 1_sectick ;
+
+     Config() noexcept {}
+
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      {
+       bind(pref.get());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       text.bind(bag.edit_text);
+       error_text.bind(bag.edit_error_text);
+       delay.bind(bag.edit_delay);
+      }
+    };
+
+   CharAccent *accent = 0 ;
+
+   const Config & getCfg() const { return static_cast<const Config &>(cfg); }
+
+   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
+
+   EditFormulaShape(PtrLen<char> text_buf,const Config &cfg) : LineEditShape(text_buf,cfg) {}
+ };
+
+/* class EditFormulaWindow */
+
+class EditFormulaWindow : public LineEditWindowOf<EditFormulaShape>
+ {
+   SimpleArray<CharAccent> storage;
+
+   DeferTick defer_tick;
+
+   unsigned time = 0 ;
+
+  private:
+
+   void tick();
+
+   void start();
+
+   SignalConnector<EditFormulaWindow> connector_changed;
+
+  public:
+
+   EditFormulaWindow(SubWindowHost &host,const ConfigType &cfg);
+
+   ~EditFormulaWindow();
+
+   // methods
+
+   CharAccent * getAccentBuf() { return shape.accent; }
+
+   // signals
+
+   Signal<> paused;
+ };
 
 /* class ItemListWindow */
 
@@ -33,13 +112,14 @@ class ItemListWindow : public ComboWindow
      RefVal<Coord> space_dxy = 10 ;
 
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
-     CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
 
      CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
 
      // app
+
+     CtorRefVal<EditFormulaWindow::ConfigType> edit_cfg;
 
      RefVal<DefString> text_show = "show"_def ;
      RefVal<DefString> text_gray = "gray"_def ;
@@ -49,6 +129,7 @@ class ItemListWindow : public ComboWindow
 
      template <class AppPref>
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      : edit_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
        bindApp(app_pref.get());
@@ -60,7 +141,6 @@ class ItemListWindow : public ComboWindow
        space_dxy.bind(bag.space_dxy);
 
        list_cfg.bind(proxy);
-       edit_cfg.bind(proxy);
        knob_cfg.bind(proxy);
 
        label_cfg.bind(proxy);
@@ -84,7 +164,7 @@ class ItemListWindow : public ComboWindow
 
    ScrollListWindow list;
 
-   LineEditWindow edit;
+   EditFormulaWindow edit;
 
    KnobWindow knob_down;
    KnobWindow knob_up;
@@ -157,11 +237,13 @@ class ItemListWindow : public ComboWindow
 
    void setCheck(bool show,bool gray,bool name);
 
-   void setCheck(const AnyType &label) { setCheck(label.show,label.gray,label.show_name); }
+   void setCheck(const Label &label) { setCheck(label.show,label.gray,label.show_name); }
 
    void noItem();
 
    StrLen getText() const { return edit.getText(); }
+
+   CharAccent * getAccentBuf() { return edit.getAccentBuf(); }
 
    void enableAdd(bool ok)
     {
@@ -188,6 +270,7 @@ class ItemListWindow : public ComboWindow
    Signal<ulen,bool> name_changed;
 
    Signal<> &text_changed;
+   Signal<> &text_paused;
  };
 
 } // namespace App

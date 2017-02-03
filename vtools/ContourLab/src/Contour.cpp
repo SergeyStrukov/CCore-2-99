@@ -107,9 +107,13 @@ bool Contour::padDel(ulen index)
   return DelItem(pads,index);
  }
 
-bool Contour::padAddTest(StrLen text) // TODO
+bool Contour::padAddTest(StrLen text,CharAccent *accent) // TODO
  {
-  Used(text);
+  ulen len=text.len;
+  ulen off=len/2;
+
+  Range(accent,off).set(CharNormal);
+  Range(accent+off,len-off).set(CharError);
 
   return false;
  }
@@ -144,9 +148,13 @@ bool Contour::formulaDel(ulen index)
   return DelItem(formulas,index);
  }
 
-bool Contour::formulaAddTest(StrLen text) // TODO
+bool Contour::formulaAddTest(StrLen text,CharAccent *accent) // TODO
  {
-  Used(text);
+  ulen len=text.len;
+  ulen off=len/2;
+
+  Range(accent,off).set(CharNormal);
+  Range(accent+off,len-off).set(CharError);
 
   return false;
  }

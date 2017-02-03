@@ -17,6 +17,74 @@
 
 namespace App {
 
+/* class EditFormulaShape */
+
+void EditFormulaShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor) const
+ {
+  const Config &cfg=getCfg();
+
+  VColor normal_text=+cfg.text;
+  VColor error_text=+cfg.error_text;
+
+  auto map = [=] (CharAccent accent) -> VColor
+                 {
+                  switch( accent )
+                    {
+                     case CharError : return error_text;
+
+                     default: return normal_text;
+                    }
+                 } ;
+
+  CharAccent *accent=this->accent;
+
+  auto func = [=] (ulen index,char,Point,Point) -> VColor { return map(accent[index]); } ;
+
+  auto proxy=ToFunction<VColor (ulen index,char ch,Point base,Point delta)>(func);
+
+  font->text(buf,pane,place,text,proxy.function());
+ }
+
+/* class EditFormulaWindow */
+
+void EditFormulaWindow::tick()
+ {
+  if( time )
+    {
+     time--;
+    }
+  else
+    {
+     defer_tick.stop();
+
+     paused.assert();
+    }
+ }
+
+void EditFormulaWindow::start()
+ {
+  const ConfigType &cfg=shape.getCfg();
+
+  time=+cfg.delay;
+
+  defer_tick.start();
+ }
+
+EditFormulaWindow::EditFormulaWindow(SubWindowHost &host,const ConfigType &cfg)
+ : LineEditWindowOf<EditFormulaShape>(host,cfg),
+   storage(DefBufLen),
+
+   connector_changed(this,&EditFormulaWindow::start,changed)
+ {
+  shape.accent=storage.getPtr();
+
+  defer_tick=input.create(static_cast<void (LineEditWindowOf<EditFormulaShape>::*)()>(&EditFormulaWindow::tick));
+ }
+
+EditFormulaWindow::~EditFormulaWindow()
+ {
+ }
+
 /* class ItemListWindow */
 
 void ItemListWindow::list_selected(ulen index)
@@ -102,7 +170,8 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
    connector_check_gray_changed(this,&ItemListWindow::check_gray_changed,check_gray.changed),
    connector_check_name_changed(this,&ItemListWindow::check_name_changed,check_name.changed),
 
-   text_changed(edit.changed)
+   text_changed(edit.changed),
+   text_paused(edit.paused)
  {
   wlist.insTop(knob_down,knob_up,knob_del,list,label_show,label_gray,label_name,check_show,check_gray,check_name,edit,knob_add);
 

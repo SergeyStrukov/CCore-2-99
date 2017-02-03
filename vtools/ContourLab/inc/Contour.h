@@ -23,6 +23,14 @@
 
 namespace App {
 
+/* enum CharAccent */
+
+enum CharAccent : char
+ {
+  CharNormal = 0,
+  CharError
+ };
+
 /* functions */
 
 void GuardTypeMismatch();
@@ -479,7 +487,7 @@ class Contour : public Formular
 
    bool padDel(ulen index);
 
-   bool padAddTest(StrLen text);
+   bool padAddTest(StrLen text,CharAccent *accent);
 
    bool padAdd(ulen index,StrLen text);
 
@@ -493,7 +501,7 @@ class Contour : public Formular
 
    bool formulaDel(ulen index);
 
-   bool formulaAddTest(StrLen text);
+   bool formulaAddTest(StrLen text,CharAccent *accent);
 
    bool formulaAdd(ulen index,StrLen text);
 

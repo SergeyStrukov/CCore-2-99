@@ -63,6 +63,13 @@ struct AppPreferenceBag
   Coord edit_ratio_dx = 500 ;
   Coord edit_ratio_dy = 100 ;
 
+  // edit formula
+
+  VColor edit_text       = Black ;
+  VColor edit_error_text =   Red ;
+
+  unsigned edit_delay = 1_sectick ;
+
   // geometry
 
   Coord geometry_dxy = 300 ;

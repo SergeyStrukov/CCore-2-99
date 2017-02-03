@@ -243,6 +243,8 @@ void EditorWindow::pad_del(ulen ind)
 
 void EditorWindow::pad_add(ulen ind)
  {
+  if( !pad_test() ) return;
+
   if( ind==MaxULen )
     {
      if( geom.contour.padAdd(0,list_pad.getText()) )
@@ -295,9 +297,21 @@ void EditorWindow::pad_name_changed(ulen ind,bool check)
 
 void EditorWindow::pad_text_changed()
  {
-  bool ok=geom.contour.padAddTest(list_pad.getText());
+  list_pad.enableAdd(true);
+ }
+
+bool EditorWindow::pad_test()
+ {
+  bool ok=geom.contour.padAddTest(list_pad.getText(),list_pad.getAccentBuf());
 
   list_pad.enableAdd(ok);
+
+  return ok;
+ }
+
+void EditorWindow::pad_text_paused()
+ {
+  pad_test();
  }
 
 void EditorWindow::formula_up(ulen ind)
@@ -345,6 +359,8 @@ void EditorWindow::formula_del(ulen ind)
 
 void EditorWindow::formula_add(ulen ind)
  {
+  if( !formula_test() ) return;
+
   if( ind==MaxULen )
     {
      if( geom.contour.formulaAdd(0,list_formula.getText()) )
@@ -397,9 +413,21 @@ void EditorWindow::formula_name_changed(ulen ind,bool check)
 
 void EditorWindow::formula_text_changed()
  {
-  bool ok=geom.contour.formulaAddTest(list_formula.getText());
+  list_formula.enableAdd(true);
+ }
+
+bool EditorWindow::formula_test()
+ {
+  bool ok=geom.contour.formulaAddTest(list_formula.getText(),list_formula.getAccentBuf());
 
   list_formula.enableAdd(ok);
+
+  return ok;
+ }
+
+void EditorWindow::formula_text_paused()
+ {
+  formula_test();
  }
 
 void EditorWindow::errorMsg(StrLen text)
@@ -449,6 +477,7 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_list_pad_name_changed(this,&EditorWindow::pad_name_changed,list_pad.name_changed),
 
    connector_list_pad_text_changed(this,&EditorWindow::pad_text_changed,list_pad.text_changed),
+   connector_list_pad_text_paused(this,&EditorWindow::pad_text_paused,list_pad.text_paused),
 
    connector_list_formula_command_up(this,&EditorWindow::formula_up,list_formula.command_up),
    connector_list_formula_command_down(this,&EditorWindow::formula_down,list_formula.command_down),
@@ -461,6 +490,7 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_list_formula_name_changed(this,&EditorWindow::formula_name_changed,list_formula.name_changed),
 
    connector_list_formula_text_changed(this,&EditorWindow::formula_text_changed,list_formula.text_changed),
+   connector_list_formula_text_paused(this,&EditorWindow::formula_text_paused,list_formula.text_paused),
 
    connector_msg_destroyed(this,&EditorWindow::msg_destroyed,msg_frame.destroyed)
  {

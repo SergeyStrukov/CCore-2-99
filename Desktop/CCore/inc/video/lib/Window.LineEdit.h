@@ -42,15 +42,15 @@ template <class Shape> class LineEditWindowOf;
 template <class Shape>
 class LineEditWindowOf : public SubWindow
  {
-   static const ulen DefBufLen = 1_KByte ;
+   SimpleArray<char> storage;
 
-   SimpleArray<char> text_buf;
+   DeferTick defer_tick;
+
+  protected:
 
    Shape shape;
 
    DeferInput<LineEditWindowOf<Shape> > input;
-
-   DeferTick defer_tick;
 
   private:
 
@@ -263,9 +263,9 @@ class LineEditWindowOf : public SubWindow
 
    void insChar(char ch)
     {
-     if( shape.len<text_buf.getLen() )
+     if( shape.len<shape.text_buf.len )
        {
-        InsChar(text_buf.getPtr(),shape.len,shape.pos,ch);
+        InsChar(shape.text_buf.ptr,shape.len,shape.pos,ch);
 
         shape.len++;
         shape.pos++;
@@ -274,7 +274,7 @@ class LineEditWindowOf : public SubWindow
 
    void delRange(ulen off,ulen len)
     {
-     shape.len-=DelCharRange(text_buf.getPtr(),shape.len,off,len);
+     shape.len-=DelCharRange(shape.text_buf.ptr,shape.len,off,len);
     }
 
    void delSelectedRange()
@@ -321,7 +321,7 @@ class LineEditWindowOf : public SubWindow
     {
      if( !shape.select_len ) return;
 
-     getFrameHost()->textToClipboard(Range(text_buf.getPtr()+shape.select_off,shape.select_len));
+     getFrameHost()->textToClipboard(Range(shape.text_buf.ptr+shape.select_off,shape.select_len));
     }
 
    void cut()
@@ -335,9 +335,9 @@ class LineEditWindowOf : public SubWindow
     {
      delSelectedRange();
 
-     char *base=text_buf.getPtr();
+     char *base=shape.text_buf.ptr;
 
-     CopyFunction func(base+shape.len,text_buf.getLen()-shape.len);
+     CopyFunction func(base+shape.len,shape.text_buf.len-shape.len);
 
      getFrameHost()->textFromClipboard(func.function_copy());
 
@@ -427,11 +427,13 @@ class LineEditWindowOf : public SubWindow
    using ShapeType = Shape ;
    using ConfigType = typename Shape::Config ;
 
+   static const ulen DefBufLen = 1_KByte ;
+
    template <class ... TT>
    LineEditWindowOf(SubWindowHost &host,TT && ... tt)
     : SubWindow(host),
-      text_buf(DefBufLen),
-      shape(Range(text_buf), std::forward<TT>(tt)... ),
+      storage(DefBufLen),
+      shape(Range(storage), std::forward<TT>(tt)... ),
       input(this)
     {
      defer_tick=input.create(&LineEditWindowOf<Shape>::tick);
@@ -440,8 +442,8 @@ class LineEditWindowOf : public SubWindow
    template <class ... TT>
    LineEditWindowOf(SubWindowHost &host,ulen buf_len,TT && ... tt)
     : SubWindow(host),
-      text_buf(buf_len),
-      shape(Range(text_buf), std::forward<TT>(tt)... ),
+      storage(buf_len),
+      shape(Range(storage), std::forward<TT>(tt)... ),
       input(this)
     {
      defer_tick=input.create(&LineEditWindowOf<Shape>::tick);
@@ -495,9 +497,9 @@ class LineEditWindowOf : public SubWindow
      if( Change(shape.alert,on) ) redraw();
     }
 
-   StrLen getText() const { return Range(text_buf.getPtr(),shape.len); }
+   StrLen getText() const { return Range(shape.text_buf.ptr,shape.len); }
 
-   PtrLen<char> getBuf() { return Range(text_buf); }
+   PtrLen<char> getBuf() { return shape.text_buf; }
 
    void setTextLen(ulen len)
     {
@@ -505,7 +507,7 @@ class LineEditWindowOf : public SubWindow
 
      if( shape.drag ) endDrag();
 
-     shape.len=Min(len,text_buf.getLen());
+     shape.len=Min(len,shape.text_buf.len);
      shape.xoff=0;
      shape.pos=0;
      shape.select_off=0;
