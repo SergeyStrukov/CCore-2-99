@@ -112,7 +112,7 @@ class DirEditShape : public LineEditShape
      CharFunction function_color() { return FunctionOf(this,&Func::color); }
     };
 
-   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
+   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,ulen off,VColor vc) const;
 
   public:
 

@@ -23,6 +23,21 @@ namespace App {
 using namespace CCore;
 using namespace CCore::Video;
 
+/* enum CharAccent */
+
+enum CharAccent : char
+ {
+  CharNormal = 0,
+
+  CharNumber,
+  CharLength,
+  CharAngle,
+  CharName,
+  CharPunct,
+
+  CharError
+ };
+
 /* Main() */
 
 int Main(CmdDisplay cmd_display);

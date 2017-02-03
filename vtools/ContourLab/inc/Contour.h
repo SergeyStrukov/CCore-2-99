@@ -23,14 +23,6 @@
 
 namespace App {
 
-/* enum CharAccent */
-
-enum CharAccent : char
- {
-  CharNormal = 0,
-  CharError
- };
-
 /* functions */
 
 void GuardTypeMismatch();

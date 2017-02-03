@@ -12,6 +12,7 @@
 //----------------------------------------------------------------------------------------
 
 #include <inc/Contour.h>
+#include <inc/Parser.h>
 
 #include <CCore/inc/Exception.h>
 
@@ -109,11 +110,9 @@ bool Contour::padDel(ulen index)
 
 bool Contour::padAddTest(StrLen text,CharAccent *accent) // TODO
  {
-  ulen len=text.len;
-  ulen off=len/2;
+  ParserBase parser(text,accent);
 
-  Range(accent,off).set(CharNormal);
-  Range(accent+off,len-off).set(CharError);
+  parser.run();
 
   return false;
  }

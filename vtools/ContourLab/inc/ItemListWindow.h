@@ -36,8 +36,13 @@ class EditFormulaShape : public LineEditShape
     {
      // app
 
-     RefVal<VColor> text       = Black ;
-     RefVal<VColor> error_text =   Red ;
+     RefVal<VColor> text        =     Black ;
+     RefVal<VColor> error_text  =       Red ;
+     RefVal<VColor> number_text = DarkGreen ;
+     RefVal<VColor> length_text = DarkGreen ;
+     RefVal<VColor> angle_text  = DarkGreen ;
+     RefVal<VColor> name_text   =      Blue ;
+     RefVal<VColor> punct_text  =     Black ;
 
      RefVal<unsigned> delay = 1_sectick ;
 
@@ -47,6 +52,9 @@ class EditFormulaShape : public LineEditShape
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
       {
        bind(pref.get());
+
+       font.bind(pref.get().code_font.font);
+
        bindApp(app_pref.get());
       }
 
@@ -55,6 +63,11 @@ class EditFormulaShape : public LineEditShape
       {
        text.bind(bag.edit_text);
        error_text.bind(bag.edit_error_text);
+       number_text.bind(bag.edit_number_text);
+       length_text.bind(bag.edit_length_text);
+       angle_text.bind(bag.edit_angle_text);
+       name_text.bind(bag.edit_name_text);
+       punct_text.bind(bag.edit_punct_text);
        delay.bind(bag.edit_delay);
       }
     };
@@ -63,7 +76,7 @@ class EditFormulaShape : public LineEditShape
 
    const Config & getCfg() const { return static_cast<const Config &>(cfg); }
 
-   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const;
+   virtual void drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,ulen off,VColor vc) const;
 
    EditFormulaShape(PtrLen<char> text_buf,const Config &cfg) : LineEditShape(text_buf,cfg) {}
  };
@@ -77,6 +90,8 @@ class EditFormulaWindow : public LineEditWindowOf<EditFormulaShape>
    DeferTick defer_tick;
 
    unsigned time = 0 ;
+
+   bool flag = false ;
 
   private:
 
@@ -95,6 +110,10 @@ class EditFormulaWindow : public LineEditWindowOf<EditFormulaShape>
    // methods
 
    CharAccent * getAccentBuf() { return shape.accent; }
+
+   void clearAccentFlag() { flag=false; }
+
+   void normalAccent();
 
    // signals
 
@@ -244,6 +263,10 @@ class ItemListWindow : public ComboWindow
    StrLen getText() const { return edit.getText(); }
 
    CharAccent * getAccentBuf() { return edit.getAccentBuf(); }
+
+   void clearAccentFlag() { edit.clearAccentFlag(); }
+
+   void normalAccent() { edit.normalAccent(); }
 
    void enableAdd(bool ok)
     {

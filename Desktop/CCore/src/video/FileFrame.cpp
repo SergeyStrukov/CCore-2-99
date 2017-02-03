@@ -314,7 +314,7 @@ VColor DirEditShape::Func::color(ulen,char ch,Point,Point)
   return vc;
  }
 
-void DirEditShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const
+void DirEditShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,ulen,VColor vc) const
  {
   auto &ecfg=static_cast<const Config &>(cfg);
 

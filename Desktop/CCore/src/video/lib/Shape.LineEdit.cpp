@@ -184,7 +184,7 @@ ulen LineEditShape::getPosition(Point point) const
   return len;
  }
 
-void LineEditShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor vc) const
+void LineEditShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,ulen,VColor vc) const
  {
   font->text(buf,pane,place,text,vc);
  }
@@ -342,9 +342,9 @@ void LineEditShape::draw(const DrawBuf &buf) const
       fig.solid(tart,+cfg.select);
      }
 
-   drawText(font,tbuf,inner,TextPlace(x1,ybase),text_buf.prefix(pos),text);
+   drawText(font,tbuf,inner,TextPlace(x1,ybase),text_buf.prefix(pos),0,text);
 
-   drawText(font,tbuf,inner,TextPlace(x3,ybase),text_buf.part(pos,len-pos),text);
+   drawText(font,tbuf,inner,TextPlace(x3,ybase),text_buf.part(pos,len-pos),pos,text);
 
    // cursor
 

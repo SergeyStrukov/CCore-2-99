@@ -9,6 +9,7 @@ obj/Editor.o \
 obj/Geometry.o \
 obj/GeometryWindow.o \
 obj/ItemListWindow.o \
+obj/Parser.o \
 obj/main.o \
 
 
@@ -23,6 +24,7 @@ obj/Editor.s \
 obj/Geometry.s \
 obj/GeometryWindow.s \
 obj/ItemListWindow.s \
+obj/Parser.s \
 obj/main.s \
 
 
@@ -37,6 +39,7 @@ obj/Editor.dep \
 obj/Geometry.dep \
 obj/GeometryWindow.dep \
 obj/ItemListWindow.dep \
+obj/Parser.dep \
 obj/main.dep \
 
 
@@ -76,6 +79,9 @@ obj/GeometryWindow.o : ./src/GeometryWindow.cpp
 obj/ItemListWindow.o : ./src/ItemListWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Parser.o : ./src/Parser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -109,6 +115,9 @@ obj/GeometryWindow.s : ./src/GeometryWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ItemListWindow.s : ./src/ItemListWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Parser.s : ./src/Parser.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -145,6 +154,9 @@ obj/GeometryWindow.dep : ./src/GeometryWindow.cpp
 
 obj/ItemListWindow.dep : ./src/ItemListWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ItemListWindow.o $< -MF $@
+
+obj/Parser.dep : ./src/Parser.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Parser.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

@@ -9,3 +9,4 @@
 ./src/GeometryWindow.cpp
 ./src/ItemListWindow.cpp
 ./src/main.cpp
+./src/Parser.cpp

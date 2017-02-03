@@ -281,6 +281,8 @@ struct Geometry
      }
    };
 
+  static Length Neg(Length a) { return -a.val; }
+
   static Length Add(Length a,Length b) { return a.val+b.val; }
 
   static Length Sub(Length a,Length b) { return a.val-b.val; }

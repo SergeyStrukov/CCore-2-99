@@ -65,8 +65,13 @@ struct AppPreferenceBag
 
   // edit formula
 
-  VColor edit_text       = Black ;
-  VColor edit_error_text =   Red ;
+  VColor edit_text        =     Black ;
+  VColor edit_error_text  =       Red ;
+  VColor edit_number_text = DarkGreen ;
+  VColor edit_length_text = DarkGreen ;
+  VColor edit_angle_text  = DarkGreen ;
+  VColor edit_name_text   =      Blue ;
+  VColor edit_punct_text  =     Black ;
 
   unsigned edit_delay = 1_sectick ;
 

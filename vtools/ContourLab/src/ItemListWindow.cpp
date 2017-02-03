@@ -19,26 +19,41 @@ namespace App {
 
 /* class EditFormulaShape */
 
-void EditFormulaShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,VColor) const
+void EditFormulaShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,ulen off,VColor) const
  {
   const Config &cfg=getCfg();
 
   VColor normal_text=+cfg.text;
   VColor error_text=+cfg.error_text;
+  VColor number_text=+cfg.number_text;
+  VColor length_text=+cfg.length_text;
+  VColor angle_text=+cfg.angle_text;
+  VColor name_text=+cfg.name_text;
+  VColor punct_text=+cfg.punct_text;
 
   auto map = [=] (CharAccent accent) -> VColor
                  {
                   switch( accent )
                     {
-                     case CharError : return error_text;
+                     case CharNormal : return normal_text;
 
-                     default: return normal_text;
+                     case CharNumber : return number_text;
+
+                     case CharLength : return length_text;
+
+                     case CharAngle : return angle_text;
+
+                     case CharName : return name_text;
+
+                     case CharPunct : return punct_text;
+
+                     default: return error_text;
                     }
                  } ;
 
   CharAccent *accent=this->accent;
 
-  auto func = [=] (ulen index,char,Point,Point) -> VColor { return map(accent[index]); } ;
+  auto func = [=] (ulen index,char,Point,Point) -> VColor { return map(accent[off+index]); } ;
 
   auto proxy=ToFunction<VColor (ulen index,char ch,Point base,Point delta)>(func);
 
@@ -83,6 +98,11 @@ EditFormulaWindow::EditFormulaWindow(SubWindowHost &host,const ConfigType &cfg)
 
 EditFormulaWindow::~EditFormulaWindow()
  {
+ }
+
+void EditFormulaWindow::normalAccent()
+ {
+  if( Change(flag,true) ) Range(shape.accent,shape.len).set(CharNormal);
  }
 
 /* class ItemListWindow */

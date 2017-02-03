@@ -297,12 +297,16 @@ void EditorWindow::pad_name_changed(ulen ind,bool check)
 
 void EditorWindow::pad_text_changed()
  {
+  list_pad.normalAccent();
+
   list_pad.enableAdd(true);
  }
 
 bool EditorWindow::pad_test()
  {
   bool ok=geom.contour.padAddTest(list_pad.getText(),list_pad.getAccentBuf());
+
+  list_pad.clearAccentFlag();
 
   list_pad.enableAdd(ok);
 
@@ -413,12 +417,16 @@ void EditorWindow::formula_name_changed(ulen ind,bool check)
 
 void EditorWindow::formula_text_changed()
  {
+  list_formula.normalAccent();
+
   list_formula.enableAdd(true);
  }
 
 bool EditorWindow::formula_test()
  {
   bool ok=geom.contour.formulaAddTest(list_formula.getText(),list_formula.getAccentBuf());
+
+  list_formula.clearAccentFlag();
 
   list_formula.enableAdd(ok);
 
