@@ -65,21 +65,28 @@ Contour::ItemInfo::~ItemInfo()
 
 /* class Contour */
 
+bool Contour::testName(StrLen name) const
+ {
+  StrKey k(name);
+
+  return !map.find(k);
+ }
+
 Contour::Contour()
  {
-  addPad("A"_c,Point{50,50});
+  addPad(0,"A"_c,Point{50,50});
 
-  addPad("B"_c,Point{200,300});
+  addPad(1,"B"_c,Point{200,300});
 
-  addPad("C"_c,Point{400,200});
+  addPad(2,"C"_c,Point{400,200});
 
-  addFormula("(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[1].obj);
+  addFormula(0,"(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[1].obj);
 
-  addFormula("(AC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[2].obj);
+  addFormula(1,"(AC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[2].obj);
 
-  addFormula("(BC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[1].obj,pads[2].obj);
+  addFormula(2,"(BC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[1].obj,pads[2].obj);
 
-  addFormula("Outer"_c,FormulaType<decltype(CircleOuter)>::Create<CircleOuter>,pads[0].obj,pads[1].obj,pads[2].obj);
+  addFormula(3,"Outer"_c,FormulaType<decltype(CircleOuter)>::Create<CircleOuter>,pads[0].obj,pads[1].obj,pads[2].obj);
  }
 
 Contour::~Contour()
@@ -108,21 +115,73 @@ bool Contour::padDel(ulen index)
   return DelItem(pads,index);
  }
 
-bool Contour::padAddTest(StrLen text,CharAccent *accent) // TODO
+class Contour::PadTestParser : public PadTextParser
  {
-  ParserBase parser(text,accent);
+   const Contour *obj;
+
+  private:
+
+   virtual bool point(StrLen name,StrLen,StrLen) { return obj->testName(name); }
+
+   virtual bool length(StrLen name,StrLen) { return obj->testName(name); }
+
+   virtual bool angle(StrLen name,StrLen) { return obj->testName(name); }
+
+   virtual bool ratio(StrLen name,StrLen) { return obj->testName(name); }
+
+  public:
+
+   PadTestParser(const Contour *obj_,StrLen text,CharAccent *accent) : PadTextParser(text,accent),obj(obj_) {}
+ };
+
+bool Contour::padAddTest(StrLen text,CharAccent *accent) const
+ {
+  PadTestParser parser(this,text,accent);
 
   parser.run();
 
-  return false;
+  return parser;
  }
 
-bool Contour::padAdd(ulen index,StrLen text) // TODO
+class Contour::PadAddParser : public PadTextParser
  {
-  Used(index);
-  Used(text);
+   Contour *obj;
+   ulen index;
 
-  return false;
+  private:
+
+   virtual bool point(StrLen name,StrLen x,StrLen y)
+    {
+     return obj->addPad<Geometry::Point>(index,name,{StrToReal(x),StrToReal(y)});
+    }
+
+   virtual bool length(StrLen name,StrLen x)
+    {
+     return obj->addPad<Geometry::Length>(index,name,StrToReal(x));
+    }
+
+   virtual bool angle(StrLen name,StrLen x)
+    {
+     return obj->addPad<Geometry::Angle>(index,name,GradToRadian(StrToReal(x)));
+    }
+
+   virtual bool ratio(StrLen name,StrLen x)
+    {
+     return obj->addPad<Geometry::Ratio>(index,name,StrToReal(x));
+    }
+
+  public:
+
+   PadAddParser(Contour *obj_,ulen index_,StrLen text) : PadTextParser(text),obj(obj_),index(index_) {}
+ };
+
+bool Contour::padAdd(ulen index,StrLen text)
+ {
+  PadAddParser parser(this,index,text);
+
+  parser.run();
+
+  return parser;
  }
 
  // formula list
@@ -147,7 +206,7 @@ bool Contour::formulaDel(ulen index)
   return DelItem(formulas,index);
  }
 
-bool Contour::formulaAddTest(StrLen text,CharAccent *accent) // TODO
+bool Contour::formulaAddTest(StrLen text,CharAccent *accent) const // TODO
  {
   ulen len=text.len;
   ulen off=len/2;

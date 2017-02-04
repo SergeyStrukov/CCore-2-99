@@ -109,6 +109,27 @@ Geometry::RealException Geometry::Real::BoundedDiv(Real x,Real y)
   return RealOk;
  }
 
+Geometry::Real Geometry::Real::Pow(Real x,ulen deg)
+ {
+  if( !deg ) return 1;
+
+  BitScanner<ulen> scanner(deg);
+
+  Real ret(x);
+
+  for(++scanner; +scanner ;++scanner)
+    if( *scanner )
+      {
+       ret=Sq(ret)*x;
+      }
+    else
+      {
+       ret=Sq(ret);
+      }
+
+  return ret;
+ }
+
  // map
 
 int Geometry::Real::map(int prec)
@@ -343,6 +364,31 @@ Geometry::Point Geometry::Mirror(Line a,Point p)
   Point e=Point::Orthogonal(a.ort);
 
   return p-2*Point::Prod(p-a.p,e)*e;
+ }
+
+/* functions */
+
+Geometry::Real StrToReal(StrLen str)
+ {
+  Geometry::Real ret(0);
+
+  ulen deg=0;
+
+  for(; +str ;++str)
+    {
+     int dig=CharDecValue(*str);
+
+     if( dig<0 )
+       {
+        deg=str.len-1;
+       }
+     else
+       {
+        ret=10*ret+dig;
+       }
+    }
+
+  return ret/Geometry::Real::Pow(10,deg);
  }
 
 } // namespace App

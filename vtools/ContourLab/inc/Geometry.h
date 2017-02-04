@@ -97,6 +97,8 @@ struct Geometry
 
      static RealException BoundedDiv(Real x,Real y); // x/y in [0,1]
 
+     static Real Pow(Real x,ulen deg);
+
      // map
 
      int map(int prec);
@@ -568,9 +570,9 @@ struct Geometry
   static Point Right(Length len,Point p) { return {p.x+len.val,p.y}; }
  };
 
-/* Map() */
+/* functions */
 
-inline Geometry::Angle GradToRadian(double val) { return Geometry::Angle( (val/180)*Geometry::Real::Pi() ); }
+inline Geometry::Angle GradToRadian(Geometry::Real val) { return Geometry::Angle( (val/180)*Geometry::Real::Pi() ); }
 
 inline MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }
 
@@ -579,6 +581,8 @@ inline MCoord Map(Geometry::Length x,Geometry::Real cap) { return Map(Cap(-cap,x
 inline MPoint Map(Geometry::Point point) { return MPoint(Map(point.x),Map(point.y)); }
 
 inline Geometry::Point Map(Point point) { return Geometry::Point(point.x,point.y); }
+
+Geometry::Real StrToReal(StrLen str);
 
 } // namespace App
 

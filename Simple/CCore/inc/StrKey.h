@@ -28,12 +28,22 @@ struct StrKey;
 
 struct StrKey : CmpComparable<StrKey>
  {
-  uint32 hash;
+  using HashType = uint32 ;
+
+  static HashType Hash(StrLen str);
+
+  // data
+
+  HashType hash;
   StrLen str;
+
+  // constructors
 
   StrKey() noexcept : hash(0) {}
 
-  explicit StrKey(StrLen str);
+  explicit StrKey(StrLen str_) : hash(Hash(str_)),str(str_) {}
+
+  // cmp objects
 
   CmpResult objCmp(const StrKey &obj) const
    {

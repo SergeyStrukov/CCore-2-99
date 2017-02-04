@@ -202,10 +202,11 @@ class CompactRBTreeMap : NoCopy
 
    struct Result
     {
+     const K *key;
      T *obj;
      bool new_flag;
 
-     Result(T *obj_,bool new_flag_) : obj(obj_),new_flag(new_flag_) {}
+     Result(const K *key_,T *obj_,bool new_flag_) : key(key_),obj(obj_),new_flag(new_flag_) {}
 
      operator T * () const { return obj; }
     };
@@ -280,13 +281,13 @@ auto CompactRBTreeMap<K,T,KRef>::find_or_add(KRef key,SS && ... ss) -> Result re
  {
   typename Algo::PrepareIns prepare(root,key);
 
-  if( Node *node=prepare.found ) return Result(&node->obj,false);
+  if( Node *node=prepare.found ) return Result(&GetKey(node),&node->obj,false);
 
   Node *node=allocator.alloc( key , std::forward<SS>(ss)... );
 
   prepare.complete(node);
 
-  return Result(&node->obj,true);
+  return Result(&GetKey(node),&node->obj,true);
  }
 
 template <NothrowDtorType K,NothrowDtorType T,class KRef> requires ( RBTreeMapKeyTypes<K,KRef> )

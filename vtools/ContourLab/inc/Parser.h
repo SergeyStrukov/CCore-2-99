@@ -34,6 +34,10 @@ class ParserBase;
 
 class PadTextParser;
 
+//enum AtomClass;
+
+class Atom;
+
 /* enum CharClass */
 
 enum CharClass
@@ -106,6 +110,22 @@ struct Token
   Token() : tc(Token_Other),pos(0) {}
 
   Token(TokenClass tc_,ulen pos_,StrLen str_) : tc(tc_),pos(pos_),str(str_) {}
+
+  StrLen getNumber() const;
+
+  bool isName() const
+   {
+    return tc==Token_Word && !is("angle"_c,"len"_c,"point"_c,"ratio"_c) ;
+   }
+
+  bool is(StrLen name) const { return str.equal(name); }
+
+  bool is(TokenClass tc_) const { return tc==tc_; }
+
+  bool is(char ch) const { return tc==Token_Punct && ch==str[0] ; }
+
+  template <class ... TT>
+  bool is(TT ... tt) const { return ( ... || is(tt) ); }
  };
 
 /* class Tokenizer */
@@ -167,8 +187,6 @@ class ParserBase : NoCopy
 
    void paint(Token token);
 
-   virtual void start();
-
    virtual void next(Token token);
 
    virtual void stop();
@@ -178,6 +196,78 @@ class ParserBase : NoCopy
    ParserBase(StrLen text,CharAccent *accent_) : tok(text),accent(accent_) {}
 
    void run();
+ };
+
+/* class PadTextParser */
+
+class PadTextParser : public ParserBase
+ {
+   int state = 0 ;
+
+   Token name;
+   Token value;
+   Token value2;
+
+  private:
+
+   void paintError(Token token)
+    {
+     state=-1;
+
+     paint(token,CharError);
+    }
+
+   virtual void next(Token token);
+
+   virtual void stop();
+
+  protected:
+
+   virtual bool point(StrLen name,StrLen x,StrLen y);
+
+   virtual bool length(StrLen name,StrLen x);
+
+   virtual bool angle(StrLen name,StrLen x);
+
+   virtual bool ratio(StrLen name,StrLen x);
+
+  public:
+
+   explicit PadTextParser(StrLen text,CharAccent *accent=0) : ParserBase(text,accent) {}
+
+   operator bool() const { return state!=-1; }
+ };
+
+/* enum AtomClass */
+
+enum AtomClass
+ {
+  Atom_Nothing = 0,
+
+  Atom_Name,
+  Atom_Number,
+  Atom_Angle,
+  Atom_Length,
+
+  Atom_obr,       // (
+  Atom_cbr,       // )
+  Atom_asterisk,  // *
+  Atom_div,       // /
+  Atom_plus,      // +
+  Atom_minus,     // -
+  Atom_comma,     // ,
+  Atom_assign     // =
+ };
+
+/* class Atom */
+
+class Atom : Token
+ {
+  AtomClass ac;
+
+  Atom() noexcept : ac(Atom_Nothing) {}
+
+  Atom(const Token &tok);
  };
 
 } // namespace App

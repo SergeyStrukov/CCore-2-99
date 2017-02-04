@@ -20,6 +20,8 @@
 #include <CCore/inc/RefPtr.h>
 #include <CCore/inc/String.h>
 #include <CCore/inc/Array.h>
+#include <CCore/inc/CompactMap.h>
+#include <CCore/inc/StrKey.h>
 
 namespace App {
 
@@ -372,8 +374,32 @@ class Contour : public Formular
      Object obj;
     };
 
+   struct Key : CmpComparable<Key>
+    {
+     StrKey::HashType hash;
+     String name;
+
+     explicit Key(StrKey k) : hash(k.hash),name(k.str) {}
+
+     CmpResult objCmp(const Key &obj) const
+      {
+       if( CmpResult ret=LessCmp(hash,obj.hash) ) return ret;
+
+       return StrCmp(Range(name),Range(obj.name));
+      }
+    };
+
+   friend CmpResult Cmp(StrKey a,const Key &b)
+    {
+     if( CmpResult ret=LessCmp(a.hash,b.hash) ) return ret;
+
+     return StrCmp(a.str,Range(b.name));
+    }
+
    DynArray<Item> pads;
    DynArray<Item> formulas;
+
+   CompactRBTreeMap<Key,Object,StrKey> map;
 
   private:
 
@@ -424,20 +450,54 @@ class Contour : public Formular
   private:
 
    template <class S>
-   void addPad(const String &name,S s)
+   bool addPad(ulen index,StrLen name,S s)
     {
-     Label label(name);
+     pads.reserve(1);
 
-     pads.append_fill(Item{label,Pad<S>::Create(s)});
+     StrKey k(name);
+
+     Object obj=Pad<S>::Create(s);
+
+     auto result=map.find_or_add(k,obj);
+
+     if( !result.new_flag ) return false;
+
+     Label label(result.key->name);
+
+     Item item{label,obj};
+
+     ArrayCopyIns(pads,index,item);
+
+     return true;
     }
 
    template <class ... OO>
-   void addFormula(const String &name,Object Create(const OO & ...),const OO & ... args)
+   bool addFormula(ulen index,StrLen name,Object Create(const OO & ...),const OO & ... args)
     {
-     Label label(name);
+     formulas.reserve(1);
 
-     formulas.append_fill(Item{label,Create(args...)});
+     StrKey k(name);
+
+     Object obj=Create(args...);
+
+     auto result=map.find_or_add(k,obj);
+
+     if( !result.new_flag ) return false;
+
+     Label label(result.key->name);
+
+     Item item{label,obj};
+
+     ArrayCopyIns(formulas,index,item);
+
+     return true;
     }
+
+   bool testName(StrLen name) const;
+
+   class PadTestParser;
+
+   class PadAddParser;
 
    template <class Func>
    struct Bind
@@ -479,7 +539,7 @@ class Contour : public Formular
 
    bool padDel(ulen index);
 
-   bool padAddTest(StrLen text,CharAccent *accent);
+   bool padAddTest(StrLen text,CharAccent *accent) const;
 
    bool padAdd(ulen index,StrLen text);
 
@@ -493,7 +553,7 @@ class Contour : public Formular
 
    bool formulaDel(ulen index);
 
-   bool formulaAddTest(StrLen text,CharAccent *accent);
+   bool formulaAddTest(StrLen text,CharAccent *accent) const;
 
    bool formulaAdd(ulen index,StrLen text);
 

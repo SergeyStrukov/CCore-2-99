@@ -216,10 +216,11 @@ class RBTreeMap : NoCopy
 
    struct Result
     {
+     const K *key;
      T *obj;
      bool new_flag;
 
-     Result(T *obj_,bool new_flag_) : obj(obj_),new_flag(new_flag_) {}
+     Result(const K *key_,T *obj_,bool new_flag_) : key(key_),obj(obj_),new_flag(new_flag_) {}
 
      operator T * () const { return obj; }
     };
@@ -291,13 +292,13 @@ auto RBTreeMap<K,T,KRef,Allocator>::find_or_add(KRef key,SS && ... ss) -> Result
  {
   typename Algo::PrepareIns prepare(root,key);
 
-  if( Node *node=prepare.found ) return Result(&node->obj,false);
+  if( Node *node=prepare.found ) return Result(&GetKey(node),&node->obj,false);
 
   Node *node=allocator.alloc( key , std::forward<SS>(ss)... );
 
   prepare.complete(node);
 
-  return Result(&node->obj,true);
+  return Result(&GetKey(node),&node->obj,true);
  }
 
 template <NothrowDtorType K,NothrowDtorType T,class KRef,template <class Node> class Allocator> requires ( RBTreeMapKeyTypes<K,KRef> )

@@ -23,44 +23,11 @@ namespace Math {
 
 /* classes */
 
-template <UIntType UInt> class BitScanner;
-
 template <class Integer> class IntegerBitScanner;
 
 template <class Integer> class UnitsPowInteger;
 
 template <class Integer> class ModEngine;
-
-/* class BitScanner<UInt> */
-
-template <UIntType UInt>
-class BitScanner : NoCopy
- {
-   UInt d;
-   UInt mask;
-
-  public:
-
-   explicit BitScanner(UInt d_)
-    : d(d_),
-      mask(UIntFunc<UInt>::MSBit)
-    {
-     if( d_ )
-       {
-        mask >>= UIntFunc<UInt>::CountZeroMSB(d_) ;
-       }
-     else
-       {
-        mask=0;
-       }
-    }
-
-   UInt operator + () const { return mask; }
-
-   UInt operator * () const { return d&mask; }
-
-   void operator ++ () { mask>>=1; }
- };
 
 /* class IntegerBitScanner<Integer> */
 

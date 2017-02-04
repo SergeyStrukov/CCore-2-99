@@ -67,6 +67,8 @@ void EditorWindow::select(const Contour::Object &obj,Geometry::Point &point)
   deactivate();
 
   geom.selectPoint(obj,point);
+
+  redraw();
  }
 
 struct EditorWindow::SelectPad
@@ -245,27 +247,17 @@ void EditorWindow::pad_add(ulen ind)
  {
   if( !pad_test() ) return;
 
-  if( ind==MaxULen )
+  ind++;
+
+  if( geom.contour.padAdd(ind,list_pad.getText()) )
     {
-     if( geom.contour.padAdd(0,list_pad.getText()) )
-       {
-        list_pad.select(0);
+     list_pad.select(ind);
 
-        list_pad.updateList();
+     list_pad.updateList();
 
-        list_pad.ping();
-       }
-    }
-  else
-    {
-     if( geom.contour.padAdd(ind,list_pad.getText()) )
-       {
-        list_pad.select(ind+1);
+     list_pad.ping();
 
-        list_pad.updateList();
-
-        list_pad.ping();
-       }
+     geom.redraw();
     }
  }
 
@@ -365,27 +357,17 @@ void EditorWindow::formula_add(ulen ind)
  {
   if( !formula_test() ) return;
 
-  if( ind==MaxULen )
+  ind++;
+
+  if( geom.contour.formulaAdd(ind,list_formula.getText()) )
     {
-     if( geom.contour.formulaAdd(0,list_formula.getText()) )
-       {
-        list_formula.select(0);
+     list_formula.select(ind);
 
-        list_formula.updateList();
+     list_formula.updateList();
 
-        list_formula.ping();
-       }
-    }
-  else
-    {
-     if( geom.contour.formulaAdd(ind,list_formula.getText()) )
-       {
-        list_formula.select(ind+1);
+     list_formula.ping();
 
-        list_formula.updateList();
-
-        list_formula.ping();
-       }
+     geom.redraw();
     }
  }
 
@@ -670,6 +652,7 @@ void EditorWindow::layout()
 
    pane.placeSmart(edit_angle);
    pane.placeSmart(edit_length);
+   pane.placeSmart(edit_ratio);
   }
 
   // top

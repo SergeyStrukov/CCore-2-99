@@ -22,26 +22,23 @@ namespace Video {
 
 Ratio Ratio::pow(unsigned deg) const
  {
-  switch( deg )
-    {
-     case 0 : return Ratio(1,0);
+  if( !deg ) return Ratio(1,0);
 
-     case 1 : return *this;
+  BitScanner<unsigned> scanner(deg);
 
-     default:
+  Ratio ret(*this);
+
+  for(++scanner; +scanner ;++scanner)
+    if( *scanner )
       {
-       Ratio a=pow(deg>>1);
-
-       if( deg&1u )
-         {
-          return a*a*(*this);
-         }
-       else
-         {
-          return a*a;
-         }
+       ret=Sq(ret)*(*this);
       }
-    }
+    else
+      {
+       ret=Sq(ret);
+      }
+
+  return ret;
  }
 
 /* struct PaneSub */

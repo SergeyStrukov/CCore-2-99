@@ -17,6 +17,7 @@
 #define CCore_inc_gadget_UIntFunc_h
 
 #include <CCore/inc/gadget/Classification.h>
+#include <CCore/inc/gadget/NoCopy.h>
 
 #include <CCore/inc/base/Quick.h>
 
@@ -43,6 +44,8 @@ template <UIntType UInt> struct UIntBitFunc_gen;
 template <UIntType UInt> struct UIntBitFunc;
 
 template <UIntType UInt> struct UIntFunc;
+
+template <UIntType UInt> class BitScanner;
 
 /* struct UIntMulFunc<UInt,ExtUInt> */
 
@@ -412,6 +415,37 @@ struct UIntFunc : UIntMulFunc<UInt> , UIntBitFunc<UInt>
 
     return SqRoot(S,x);
    }
+ };
+
+/* class BitScanner<UInt> */
+
+template <UIntType UInt>
+class BitScanner : NoCopy
+ {
+   UInt d;
+   UInt mask;
+
+  public:
+
+   explicit BitScanner(UInt d_)
+    : d(d_),
+      mask(UIntFunc<UInt>::MSBit)
+    {
+     if( d_ )
+       {
+        mask >>= UIntFunc<UInt>::CountZeroMSB(d_) ;
+       }
+     else
+       {
+        mask=0;
+       }
+    }
+
+   UInt operator + () const { return mask; }
+
+   UInt operator * () const { return d&mask; }
+
+   void operator ++ () { mask>>=1; }
  };
 
 /* functions */

@@ -21,14 +21,13 @@ namespace CCore {
 
 /* struct StrKey */
 
-StrKey::StrKey(StrLen str_)
- : str(str_)
+auto StrKey::Hash(StrLen str) -> HashType
  {
   Crc32 crc;
 
-  crc.addRange(str_);
+  crc.addRange(str);
 
-  hash=crc;
+  return crc;
  }
 
 } // namespace CCore
