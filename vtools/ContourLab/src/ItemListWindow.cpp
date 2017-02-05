@@ -298,6 +298,46 @@ void ItemListWindow::layout()
   }
  }
 
+ // user input
+
+void ItemListWindow::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+void ItemListWindow::react_Key(VKey vkey,KeyMod kmod)
+ {
+  switch( vkey )
+    {
+     case VKey_F8 :
+      {
+       knob_del_pressed();
+      }
+     break;
+
+     default: wlist.put_Key(vkey,kmod);
+    }
+ }
+
+void ItemListWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
+ {
+  switch( vkey )
+    {
+     case VKey_F8 :
+      {
+       knob_del_pressed();
+      }
+     break;
+
+     default: wlist.put_Key(vkey,kmod,repeat);
+    }
+ }
+
+void ItemListWindow::react_other(UserAction action)
+ {
+  wlist.react(action);
+ }
+
 } // namespace App
 
 

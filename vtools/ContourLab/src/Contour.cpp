@@ -72,6 +72,22 @@ bool Contour::testName(StrLen name) const
   return !map.find(k);
  }
 
+bool Contour::delItem(DynArray<Item> &a,ulen index)
+ {
+  if( index<a.getLen() )
+    {
+     StrKey key(Range(a[index].label.name));
+
+     map.del(key);
+
+     ArrayCopyDel(a,index);
+
+     return true;
+    }
+
+  return false;
+ }
+
 Contour::Contour()
  {
  }
@@ -99,7 +115,7 @@ bool Contour::padDown(ulen index)
 
 bool Contour::padDel(ulen index)
  {
-  return DelItem(pads,index);
+  return delItem(pads,index);
  }
 
 class Contour::PadTestParser : public PadTextParser
@@ -190,7 +206,7 @@ bool Contour::formulaDown(ulen index)
 
 bool Contour::formulaDel(ulen index)
  {
-  return DelItem(formulas,index);
+  return delItem(formulas,index);
  }
 
 class Contour::FormulaTestContext : NoCopy
@@ -386,12 +402,10 @@ class Contour::FormulaTestContext : NoCopy
      DEF(Proj,Proj)
      DEF(AngleC,AngleC)
      DEF(Meet,Meet)
-     DEF(MeetIn,MeetIn)
      DEF(MeetCircle,MeetCircle)
      DEF(MeetCircles,MeetCircles)
-     DEF(MeetCircleIn,MeetCircleIn)
-     DEF(Rotate,Rotate)
-     DEF(RotateOrt,RotateOrt)
+     DEF(Rot,Rotate)
+     DEF(RotOrt,RotateOrt)
      DEF(Move,Move)
      DEF(MoveLen,MoveLen)
      DEF(Mirror,Mirror)

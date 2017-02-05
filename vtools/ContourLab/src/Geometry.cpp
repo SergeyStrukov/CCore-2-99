@@ -271,7 +271,7 @@ Geometry::Point Geometry::Proj(Line a,Point p)
 
 Geometry::Angle Geometry::AngleC(Length a,Length b,Length c)
  {
-  Real t=(Sq(a.val)+Sq(b.val)-Sq(c.val))/Real::Abs(2*a.val*b.val);
+  Real t=(Sq(a.val)+Sq(b.val)-Sq(c.val))/(2*a.val*Real::Abs(b.val));
 
   return Angle::ArcCos(t);
  }
@@ -315,7 +315,7 @@ Geometry::Couple Geometry::MeetCircles(Circle C,Circle D)
  {
   Angle a=AngleC(C.radius,LengthOf(C.center,D.center),D.radius);
 
-  Angle d=Point::Arg(D.center-C.center,C.radius);
+  Angle d=Point::Arg(D.center-C.center);
 
   return {C.center+Point::Polar(C.radius,d-a),C.center+Point::Polar(C.radius,d+a)};
  }

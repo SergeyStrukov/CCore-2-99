@@ -458,11 +458,6 @@ class Contour : public Formular
      return false;
     }
 
-   static bool DelItem(DynArray<AnyType> &a,ulen index)
-    {
-     return ArrayCopyDel(a,index);
-    }
-
   private:
 
    template <class S>
@@ -508,6 +503,8 @@ class Contour : public Formular
     }
 
    bool testName(StrLen name) const;
+
+   bool delItem(DynArray<Item> &a,ulen index);
 
    class PadTestParser;
 

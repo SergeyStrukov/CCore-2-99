@@ -279,6 +279,16 @@ class ItemListWindow : public ComboWindow
 
    virtual void layout();
 
+   // user input
+
+   virtual void react(UserAction action);
+
+   void react_Key(VKey vkey,KeyMod kmod);
+
+   void react_Key(VKey vkey,KeyMod kmod,unsigned repeat);
+
+   void react_other(UserAction action);
+
    // signals
 
    Signal<ulen> command_up;

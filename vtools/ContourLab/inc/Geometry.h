@@ -393,15 +393,6 @@ struct Geometry
 
     static Angle Arg(Point p) { return Angle::Arg(p.x,-p.y); }
 
-    static Angle Arg(Point p,Length sign)
-     {
-      Angle a=Arg(p);
-
-      if( sign.val<0 ) return -a;
-
-      return a;
-     }
-
     static Point Rotate(Angle a,Point p)
      {
       Real Sin=Real::Sin(a.val);
