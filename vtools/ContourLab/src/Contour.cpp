@@ -74,19 +74,6 @@ bool Contour::testName(StrLen name) const
 
 Contour::Contour()
  {
-  addPad(0,"A"_c,Point{50,50});
-
-  addPad(1,"B"_c,Point{200,300});
-
-  addPad(2,"C"_c,Point{400,200});
-
-  addFormula(0,"(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>(pads[0].obj,pads[1].obj));
-
-  addFormula(1,"(AC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>(pads[0].obj,pads[2].obj));
-
-  addFormula(2,"(BC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>(pads[1].obj,pads[2].obj));
-
-  addFormula(3,"Outer"_c,FormulaType<decltype(CircleOuter)>::Create<CircleOuter>(pads[0].obj,pads[1].obj,pads[2].obj));
  }
 
 Contour::~Contour()
@@ -208,6 +195,139 @@ bool Contour::formulaDel(ulen index)
 
 class Contour::FormulaTestContext : NoCopy
  {
+   struct NegFunc
+    {
+     Object &ret;
+     Object a;
+
+     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+      {
+       return false;
+      }
+
+     template <OneOfTypes<Ratio,Length,Angle> S>
+     bool operator () (S)
+      {
+       ret=FormulaType<S (S)>::template Create<Neg>(a);
+
+       return true;
+      }
+
+     bool operator () () { return false; }
+    };
+
+   struct AddFunc
+    {
+     Object &ret;
+     Object a;
+     Object b;
+
+     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+      {
+       return false;
+      }
+
+     template <OneOfTypes<Ratio,Length,Angle> S>
+     bool operator () (S)
+      {
+       if( b.getTypeId()!=S::TypeId ) return false;
+
+       ret=FormulaType<S (S,S)>::template Create<Add>(a,b);
+
+       return true;
+      }
+
+     bool operator () () { return false; }
+    };
+
+   struct SubFunc
+    {
+     Object &ret;
+     Object a;
+     Object b;
+
+     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+      {
+       return false;
+      }
+
+     template <OneOfTypes<Ratio,Length,Angle> S>
+     bool operator () (S)
+      {
+       if( b.getTypeId()!=S::TypeId ) return false;
+
+       ret=FormulaType<S (S,S)>::template Create<Sub>(a,b);
+
+       return true;
+      }
+
+     bool operator () () { return false; }
+    };
+
+   struct MulFunc
+    {
+     Object &ret;
+     Object a;
+     Object b;
+
+     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+      {
+       return false;
+      }
+
+     template <OneOfTypes<Ratio,Length,Angle> S>
+     bool operator () (S)
+      {
+       if( a.getTypeId()!=Ratio::TypeId ) return false;
+
+       ret=FormulaType<S (Ratio,S)>::template Create<Mul>(a,b);
+
+       return true;
+      }
+
+     bool operator () () { return false; }
+    };
+
+   struct DivFunc
+    {
+     Object &ret;
+     Object a;
+     Object b;
+
+     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+      {
+       return false;
+      }
+
+     template <OneOfTypes<Ratio,Angle> S>
+     bool operator () (S)
+      {
+       if( b.getTypeId()!=Ratio::TypeId ) return false;
+
+       ret=FormulaType<S (S,Ratio)>::template Create<Div>(a,b);
+
+       return true;
+      }
+
+     bool operator () (Length)
+      {
+       switch( b.getTypeId() )
+         {
+          case Length::TypeId :
+            ret=FormulaType<Ratio (Length,Length)>::Create<Div>(a,b);
+          return true;
+
+          case Ratio::TypeId :
+            ret=FormulaType<Length (Length,Ratio)>::Create<Div>(a,b);
+          return true;
+         }
+
+       return false;
+      }
+
+     bool operator () () { return false; }
+    };
+
   protected:
 
    const Contour *obj;
@@ -225,56 +345,64 @@ class Contour::FormulaTestContext : NoCopy
 
    // functions
 
-   bool add(ExprType &ret,ExprType a,ExprType b) // TODO
+   bool add(ExprType &ret,ExprType a,ExprType b)
     {
-     Used(ret);
-     Used(a);
-     Used(b);
-
-     return false;
+     return a.call(AddFunc{ret,a,b});
     }
 
-   bool sub(ExprType &ret,ExprType a,ExprType b) // TODO
+   bool sub(ExprType &ret,ExprType a,ExprType b)
     {
-     Used(ret);
-     Used(a);
-     Used(b);
-
-     return false;
+     return a.call(SubFunc{ret,a,b});
     }
 
-   bool mul(ExprType &ret,ExprType a,ExprType b) // TODO
+   bool mul(ExprType &ret,ExprType a,ExprType b)
     {
-     Used(ret);
-     Used(a);
-     Used(b);
-
-     return false;
+     return b.call(MulFunc{ret,a,b});
     }
 
-   bool div(ExprType &ret,ExprType a,ExprType b) // TODO
+   bool div(ExprType &ret,ExprType a,ExprType b)
     {
-     Used(ret);
-     Used(a);
-     Used(b);
-
-     return false;
+     return a.call(DivFunc{ret,a,b});
     }
 
-   bool neg(ExprType &ret,ExprType a) // TODO
+   bool neg(ExprType &ret,ExprType a)
     {
-     Used(ret);
-     Used(a);
-
-     return false;
+     return a.call(NegFunc{ret,a});
     }
 
-   bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list) // TODO
+   bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list)
     {
-     if( name.equal("Line"_c) )
-       {
-        return FormulaType<decltype(LineOf)>::SafeCreate<LineOf>(ret,list);
-       }
+#define DEF(N,F) if( name.equal( #N ## _c ) ) return FormulaType<decltype(F)>::SafeCreate<F>(ret,list);
+
+     DEF(Len,LengthOf)
+     DEF(Angle,AngleOf)
+     DEF(Line,LineOf)
+     DEF(Cir,CircleOf)
+     DEF(OCir,CircleOuter)
+     DEF(Mid,Middle)
+
+     DEF(Part,Part)
+     DEF(MidOrt,MidOrt)
+     DEF(Proj,Proj)
+     DEF(AngleC,AngleC)
+     DEF(Meet,Meet)
+     DEF(MeetIn,MeetIn)
+     DEF(MeetCircle,MeetCircle)
+     DEF(MeetCircles,MeetCircles)
+     DEF(MeetCircleIn,MeetCircleIn)
+     DEF(Rotate,Rotate)
+     DEF(RotateOrt,RotateOrt)
+     DEF(Move,Move)
+     DEF(MoveLen,MoveLen)
+     DEF(Mirror,Mirror)
+     DEF(First,First)
+     DEF(Second,Second)
+     DEF(Up,Up)
+     DEF(Down,Down)
+     DEF(Left,Left)
+     DEF(Right,Right)
+
+#undef DEF
 
      return false;
     }
