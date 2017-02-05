@@ -17,6 +17,7 @@
 #include <inc/Application.h>
 
 #include <CCore/inc/TextTools.h>
+#include <CCore/inc/Array.h>
 
 namespace App {
 
@@ -36,7 +37,11 @@ class PadTextParser;
 
 //enum AtomClass;
 
-class Atom;
+struct Atom;
+
+struct FormulaParserData;
+
+template <class Context> class FormulaTextParser;
 
 /* enum CharClass */
 
@@ -259,15 +264,315 @@ enum AtomClass
   Atom_assign     // =
  };
 
-/* class Atom */
+/* struct Atom */
 
-class Atom : Token
+struct Atom : Token
  {
   AtomClass ac;
 
   Atom() noexcept : ac(Atom_Nothing) {}
 
-  Atom(const Token &tok);
+  Atom(const Token &token);
+ };
+
+/* struct FormulaParserData */
+
+struct FormulaParserData
+ {
+  static int Property(int state);
+
+  static int Rule(int prop,AtomClass ac); // -1 no rule , 0 <- OR STOP , ac = Atom_Nothing (End)
+
+  static int ElemRule(int rule); // production kind number
+
+  static int ElemAtom(AtomClass ac);
+
+  static int Transition(int state,int element);
+ };
+
+/* class FormulaTextParser<Context> */
+
+template <class Context>
+class FormulaTextParser : public ParserBase , FormulaParserData
+ {
+   struct Element : MemBase
+    {
+     virtual ~Element() {}
+    };
+
+   struct ElementAtom : Element
+    {
+     Atom atom;
+
+     explicit ElementAtom(const Atom &atom_) : atom(atom_) {}
+    };
+
+   struct Element_EXPR;
+
+   struct Element_FORMULA;
+
+   struct Element_EXPR_LIST;
+
+   struct Element_FORMULA : Element
+    {
+     bool set(Context &ctx,ElementAtom *name,ElementAtom *,Element_EXPR *expr)
+      {
+       return ctx.set(name->atom.str,expr->value);
+      }
+    };
+
+   struct Element_EXPR : Element
+    {
+     typename Context::ExprType value;
+
+     bool add(Context &ctx,Element_EXPR *a,ElementAtom *,Element_EXPR *b) { return ctx.add(value,a->value,b->value); }
+
+     bool sub(Context &ctx,Element_EXPR *a,ElementAtom *,Element_EXPR *b) { return ctx.sub(value,a->value,b->value); }
+
+     bool mul(Context &ctx,Element_EXPR *a,ElementAtom *,Element_EXPR *b) { return ctx.mul(value,a->value,b->value); }
+
+     bool div(Context &ctx,Element_EXPR *a,ElementAtom *,Element_EXPR *b) { return ctx.div(value,a->value,b->value); }
+
+     bool neg(Context &ctx,ElementAtom *,Element_EXPR *a) { return ctx.neg(value,a->value); }
+
+     bool brace(Context &,ElementAtom *,Element_EXPR *a,ElementAtom *) { value=a->value; return true; }
+
+     bool func(Context &ctx,ElementAtom *name,ElementAtom *,Element_EXPR_LIST *list,ElementAtom *)
+      {
+       return ctx.func(value,name->atom.str,Range(list->values));
+      }
+
+     bool arg(Context &ctx,ElementAtom *name) { return ctx.arg(value,name->atom.str); }
+
+     bool number(Context &ctx,ElementAtom *number) { return ctx.number(value,number->atom.getNumber()); }
+
+     bool angle(Context &ctx,ElementAtom *angle) { return ctx.angle(value,angle->atom.getNumber()); }
+
+     bool length(Context &ctx,ElementAtom *length) { return ctx.angle(value,length->atom.getNumber()); }
+
+     bool point(Context &ctx,ElementAtom *,ElementAtom *x,ElementAtom *,ElementAtom *y,ElementAtom *)
+      {
+       return ctx.point(value,x->atom.getNumber(),y->atom.getNumber());
+      }
+    };
+
+   struct Element_EXPR_LIST : Element
+    {
+     RefArray<typename Context::ExprType> values;
+
+     bool empty(Context &) { return true; }
+
+     bool one(Context &,Element_EXPR *expr) { values.reserve(10); values.append_copy(expr->value); return true; }
+
+     bool ext(Context &,Element_EXPR_LIST *list,ElementAtom *,Element_EXPR *expr)
+      {
+       values=list->values;
+
+       values.append_copy(expr->value);
+
+       return true;
+      }
+    };
+
+   struct State
+    {
+     int state = 0 ;
+     Element *element = 0 ;
+
+     State() noexcept {}
+
+     State(int state_,Element *element_) : state(state_),element(element_) {}
+
+     template <class E>
+     operator E * () const { return static_cast<E *>(element); }
+    };
+
+   Context &ctx;
+
+   DynArray<State> stack;
+   bool ok = true ;
+
+  private:
+
+   void paintError(Token token)
+    {
+     ok=false;
+
+     paint(token,CharError);
+    }
+
+   State & top()
+    {
+     ulen len=stack.getLen();
+
+     return stack[len-1];
+    }
+
+   void push(const Atom &atom)
+    {
+     stack.reserve(1);
+
+     int state=top().state;
+
+     stack.append_fill(Transition(state,ElemAtom(atom.ac)),new ElementAtom(atom));
+    }
+
+   void pop(ulen count)
+    {
+     for(State &state : Range(stack).suffix(count) ) delete state.element;
+
+     stack.shrink(count);
+    }
+
+   template <class T>
+   void paintAtom(T) {}
+
+   void paintAtom(ElementAtom *element) { paintError(element->atom); }
+
+   template <class ... TT>
+   void paintAtoms(TT ... tt)
+    {
+     ( ... , paintAtom(tt) );
+    }
+
+   template <class E,class ... TT,int ... II>
+   bool applyRule(bool (E::*method)(Context &,TT...),int elem,Meta::IndexListBox<II...>)
+    {
+     stack.reserve(1);
+
+     ulen len=stack.getLen();
+     State *base=stack.getPtr()+(len-sizeof ... (TT));
+
+     E *element=new E{};
+
+     bool ok=(element->*method)(ctx,base[II-1]...);
+
+     if( !ok )
+       {
+        paintAtoms<TT...>(base[II-1]...);
+
+        delete element;
+
+        return false;
+       }
+
+     pop(sizeof ... (TT));
+
+     int state=top().state;
+
+     stack.append_fill(Transition(state,elem),element);
+
+     return true;
+    }
+
+   template <class E,class ... TT>
+   bool applyRule(bool (E::*method)(Context &,TT...),int elem)
+    {
+     return applyRule(method,elem,Meta::IndexList<TT...>());
+    }
+
+   bool applyRule(int rule)
+    {
+     int elem=ElemRule(rule);
+
+     switch( rule )
+       {
+        case 1 : return applyRule(&Element_FORMULA::set,elem);
+
+        case 2 : return applyRule(&Element_EXPR::add,elem);
+
+        case 3 : return applyRule(&Element_EXPR::sub,elem);
+
+        case 4 : return applyRule(&Element_EXPR::mul,elem);
+
+        case 5 : return applyRule(&Element_EXPR::div,elem);
+
+        case 6 : return applyRule(&Element_EXPR::neg,elem);
+
+        case 7 : return applyRule(&Element_EXPR::brace,elem);
+
+        case 8 : return applyRule(&Element_EXPR::func,elem);
+
+        case 9 : return applyRule(&Element_EXPR::arg,elem);
+
+        case 10 : return applyRule(&Element_EXPR::number,elem);
+
+        case 11 : return applyRule(&Element_EXPR::angle,elem);
+
+        case 12 : return applyRule(&Element_EXPR::length,elem);
+
+        case 13 : return applyRule(&Element_EXPR::point,elem);
+
+        case 14 : return applyRule(&Element_EXPR_LIST::empty,elem);
+
+        case 15 : return applyRule(&Element_EXPR_LIST::one,elem);
+
+        case 16 : return applyRule(&Element_EXPR_LIST::ext,elem);
+
+        default: return false;
+       }
+    }
+
+   virtual void next(Token token)
+    {
+     paint(token);
+
+     if( !ok ) return;
+
+     if( token.is(Token_Space) ) return;
+
+     if( token.is(Token_Other) )
+       {
+        ok=false;
+
+        return;
+       }
+
+     Atom atom(token);
+
+     for(;;)
+       switch( int rule=Rule(Property(top().state),atom.ac) )
+         {
+          case -1 : paintError(token); return;
+
+          case 0 : push(atom); return;
+
+          default: if( !applyRule(rule) ) { ok=false; return; }
+         }
+    }
+
+   virtual void stop()
+    {
+     if( !ok ) return;
+
+     for(;;)
+       switch( int rule=Rule(Property(top().state),Atom_Nothing) )
+         {
+          case -1 : ok=false; return;
+
+          case 0 : return;
+
+          default: if( !applyRule(rule) ) { ok=false; return; }
+         }
+    }
+
+  public:
+
+   FormulaTextParser(Context &ctx_,StrLen text,CharAccent *accent=0)
+    : ParserBase(text,accent),
+      ctx(ctx_)
+    {
+     stack.append_default();
+    }
+
+   ~FormulaTextParser()
+    {
+     ulen len=stack.getLen();
+
+     pop(len-1);
+    }
+
+   operator bool() const { return ok; }
  };
 
 } // namespace App

@@ -235,6 +235,22 @@ struct Formular : Geometry
 
     template <S Func(SS...)>
     static Object Create(const ToObject<SS> & ... ss) { return CreateObject<Pack<Func> >(ss...); }
+
+    static bool TestType(const Object *list,const int *type,int ind) { return list[ind].getTypeId()!=type[ind]; }
+
+    template <S Func(SS...)>
+    static bool SafeCreate(Object &ret,PtrLen<const Object> list)
+     {
+      if( list.len!=sizeof ... (SS) ) return false;
+
+      int temp[]={ SS::TypeId ... };
+
+      if( ( TestType(list.ptr,temp,IList-1) || ... ) ) return false;
+
+      ret=CreateObject<Pack<Func> >( list[IList-1]... );
+
+      return true;
+     }
    };
 
   template <class S,class ... SS>
@@ -472,13 +488,11 @@ class Contour : public Formular
     }
 
    template <class ... OO>
-   bool addFormula(ulen index,StrLen name,Object Create(const OO & ...),const OO & ... args)
+   bool addFormula(ulen index,StrLen name,Object obj)
     {
      formulas.reserve(1);
 
      StrKey k(name);
-
-     Object obj=Create(args...);
 
      auto result=map.find_or_add(k,obj);
 
@@ -498,6 +512,10 @@ class Contour : public Formular
    class PadTestParser;
 
    class PadAddParser;
+
+   class FormulaTestContext;
+
+   class FormulaAddContext;
 
    template <class Func>
    struct Bind

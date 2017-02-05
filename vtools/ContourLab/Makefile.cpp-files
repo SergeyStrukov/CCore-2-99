@@ -10,3 +10,4 @@
 ./src/ItemListWindow.cpp
 ./src/main.cpp
 ./src/Parser.cpp
+./src/ParserData.cpp

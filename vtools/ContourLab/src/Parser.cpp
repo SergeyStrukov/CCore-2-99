@@ -472,8 +472,8 @@ bool PadTextParser::ratio(StrLen,StrLen) { return true; }
 
 /* class Atom */
 
-Atom::Atom(const Token &tok)
- : Token(tok),
+Atom::Atom(const Token &token)
+ : Token(token),
    ac(Atom_Nothing)
  {
   switch( tc )
@@ -510,6 +510,52 @@ Atom::Atom(const Token &tok)
      break;
     }
  }
+
+/* class FormulaTextParser<Context> */
+
+#if 0
+
+struct Context
+ {
+  using ExprType = int ;
+
+  bool set(StrLen name,ExprType value);
+
+  bool add(ExprType &ret,ExprType a,ExprType b);
+
+  bool sub(ExprType &ret,ExprType a,ExprType b);
+
+  bool mul(ExprType &ret,ExprType a,ExprType b);
+
+  bool div(ExprType &ret,ExprType a,ExprType b);
+
+  bool neg(ExprType &ret,ExprType a);
+
+  bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list);
+
+  bool arg(ExprType &ret,StrLen name);
+
+  bool number(ExprType &ret,StrLen number);
+
+  bool angle(ExprType &ret,StrLen number);
+
+  bool length(ExprType &ret,StrLen number);
+
+  bool point(ExprType &ret,StrLen number_x,StrLen number_y);
+ };
+
+bool inner_test()
+ {
+  Context ctx;
+
+  FormulaTextParser<Context> parser(ctx,""_c);
+
+  parser.run();
+
+  return parser;
+ }
+
+#endif
 
 } // namespace App
 

@@ -19,7 +19,7 @@ EXPR : A , M , U , P
 
   ( EXPR ) : brace = P
 
-  Name EXPR_LIST ) : func = P
+  Name ( EXPR_LIST ) : func = P
 
   Name : arg = P
 
@@ -34,9 +34,9 @@ EXPR : A , M , U , P
 
 EXPR_LIST : E , N
  {
-  ( : empty = E
+   : empty = E
 
-  ( EXPR : one = N
+  EXPR : one = N
 
   EXPR_LIST.a , EXPR : if( a>=N ) ext = N
  }

@@ -43,9 +43,17 @@ static bool RunGoodTest(const Lang &lang)
 
                            if( est.notGood() )
                              {
-                              Printf(NoException,"#; is #;\n",synt.getName(),est);
+                              if( !est )
+                                {
+                                 Printf(NoException,"#; is #;\n",synt.getName(),est);
 
-                              ret=false;
+                                 ret=false;
+                                }
+                              else
+                                {
+                                 Printf(Con,"Warning: #; is #;\n",synt.getName(),est);
+                                }
+
                              }
                           }
                     );

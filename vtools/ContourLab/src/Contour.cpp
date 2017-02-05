@@ -80,13 +80,13 @@ Contour::Contour()
 
   addPad(2,"C"_c,Point{400,200});
 
-  addFormula(0,"(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[1].obj);
+  addFormula(0,"(AB)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>(pads[0].obj,pads[1].obj));
 
-  addFormula(1,"(AC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[0].obj,pads[2].obj);
+  addFormula(1,"(AC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>(pads[0].obj,pads[2].obj));
 
-  addFormula(2,"(BC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>,pads[1].obj,pads[2].obj);
+  addFormula(2,"(BC)"_c,FormulaType<decltype(LineOf)>::Create<LineOf>(pads[1].obj,pads[2].obj));
 
-  addFormula(3,"Outer"_c,FormulaType<decltype(CircleOuter)>::Create<CircleOuter>,pads[0].obj,pads[1].obj,pads[2].obj);
+  addFormula(3,"Outer"_c,FormulaType<decltype(CircleOuter)>::Create<CircleOuter>(pads[0].obj,pads[1].obj,pads[2].obj));
  }
 
 Contour::~Contour()
@@ -206,23 +206,156 @@ bool Contour::formulaDel(ulen index)
   return DelItem(formulas,index);
  }
 
-bool Contour::formulaAddTest(StrLen text,CharAccent *accent) const // TODO
+class Contour::FormulaTestContext : NoCopy
  {
-  ulen len=text.len;
-  ulen off=len/2;
+  protected:
 
-  Range(accent,off).set(CharNormal);
-  Range(accent+off,len-off).set(CharError);
+   const Contour *obj;
 
-  return false;
+  public:
+
+   explicit FormulaTestContext(const Contour *obj_) : obj(obj_) {}
+
+   using ExprType = Object ;
+
+   bool set(StrLen name,ExprType)
+    {
+     return obj->testName(name);
+    }
+
+   // functions
+
+   bool add(ExprType &ret,ExprType a,ExprType b) // TODO
+    {
+     Used(ret);
+     Used(a);
+     Used(b);
+
+     return false;
+    }
+
+   bool sub(ExprType &ret,ExprType a,ExprType b) // TODO
+    {
+     Used(ret);
+     Used(a);
+     Used(b);
+
+     return false;
+    }
+
+   bool mul(ExprType &ret,ExprType a,ExprType b) // TODO
+    {
+     Used(ret);
+     Used(a);
+     Used(b);
+
+     return false;
+    }
+
+   bool div(ExprType &ret,ExprType a,ExprType b) // TODO
+    {
+     Used(ret);
+     Used(a);
+     Used(b);
+
+     return false;
+    }
+
+   bool neg(ExprType &ret,ExprType a) // TODO
+    {
+     Used(ret);
+     Used(a);
+
+     return false;
+    }
+
+   bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list) // TODO
+    {
+     if( name.equal("Line"_c) )
+       {
+        return FormulaType<decltype(LineOf)>::SafeCreate<LineOf>(ret,list);
+       }
+
+     return false;
+    }
+
+   // args
+
+   bool arg(ExprType &ret,StrLen name)
+    {
+     StrKey key(name);
+
+     if( const Object *res=obj->map.find(key) )
+       {
+        ret=*res;
+
+        return true;
+       }
+
+     return false;
+    }
+
+   bool number(ExprType &ret,StrLen number)
+    {
+     ret=CreateObject<Pad<Ratio> >(StrToReal(number));
+
+     return true;
+    }
+
+   bool angle(ExprType &ret,StrLen number)
+    {
+     ret=CreateObject<Pad<Angle> >(StrToReal(number));
+
+     return true;
+    }
+
+   bool length(ExprType &ret,StrLen number)
+    {
+     ret=CreateObject<Pad<Length> >(StrToReal(number));
+
+     return true;
+    }
+
+   bool point(ExprType &ret,StrLen number_x,StrLen number_y)
+    {
+     ret=CreateObject<Pad<Point> >(Point(StrToReal(number_x),StrToReal(number_y)));
+
+     return true;
+    }
+ };
+
+bool Contour::formulaAddTest(StrLen text,CharAccent *accent) const
+ {
+  FormulaTestContext ctx(this);
+  FormulaTextParser<FormulaTestContext> parser(ctx,text,accent);
+
+  parser.run();
+
+  return parser;
  }
 
-bool Contour::formulaAdd(ulen index,StrLen text) // TODO
+class Contour::FormulaAddContext : public FormulaTestContext
  {
-  Used(index);
-  Used(text);
+   ulen index;
 
-  return false;
+  public:
+
+   FormulaAddContext(Contour *obj,ulen index_) : FormulaTestContext(obj),index(index_) {}
+
+   bool set(StrLen name,ExprType value)
+    {
+     return const_cast<Contour *>(obj)->addFormula(index,name,value);
+    }
+ };
+
+bool Contour::formulaAdd(ulen index,StrLen text)
+ {
+  FormulaAddContext ctx(this,index);
+  FormulaTextParser<FormulaAddContext> parser(ctx,text);
+
+  parser.run();
+
+  return parser;
  }
 
  // save/load

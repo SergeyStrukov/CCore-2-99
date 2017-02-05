@@ -217,6 +217,7 @@ Lang lang=
     { 7 , "func" , lang.synts[1].kinds+3 ,
                                            {
                                             lang.atoms+10,
+                                            lang.atoms+0,
                                             lang.synts+2,
                                             lang.atoms+1
                                            }
@@ -252,12 +253,11 @@ Lang lang=
     },
     { 13 , "empty" , lang.synts[2].kinds+0 ,
                                              {
-                                              lang.atoms+0
+                                              
                                              }
     },
     { 14 , "one" , lang.synts[2].kinds+1 ,
                                            {
-                                            lang.atoms+0,
                                             lang.synts+1
                                            }
     },
@@ -587,6 +587,7 @@ Lang lang=
     { 45 , "func.E" , lang.rules+7 , lang.synts[1].kinds+3 ,
                                                              {
                                                               lang.atoms+10,
+                                                              lang.atoms+0,
                                                               lang.synts[2].kinds+0,
                                                               lang.atoms+1
                                                              }
@@ -594,6 +595,7 @@ Lang lang=
     { 46 , "func.N" , lang.rules+7 , lang.synts[1].kinds+3 ,
                                                              {
                                                               lang.atoms+10,
+                                                              lang.atoms+0,
                                                               lang.synts[2].kinds+1,
                                                               lang.atoms+1
                                                              }
@@ -629,30 +631,26 @@ Lang lang=
     },
     { 52 , "empty" , lang.rules+13 , lang.synts[2].kinds+0 ,
                                                              {
-                                                              lang.atoms+0
+                                                              
                                                              }
     },
     { 53 , "one.A" , lang.rules+14 , lang.synts[2].kinds+1 ,
                                                              {
-                                                              lang.atoms+0,
                                                               lang.synts[1].kinds+0
                                                              }
     },
     { 54 , "one.M" , lang.rules+14 , lang.synts[2].kinds+1 ,
                                                              {
-                                                              lang.atoms+0,
                                                               lang.synts[1].kinds+1
                                                              }
     },
     { 55 , "one.U" , lang.rules+14 , lang.synts[2].kinds+1 ,
                                                              {
-                                                              lang.atoms+0,
                                                               lang.synts[1].kinds+2
                                                              }
     },
     { 56 , "one.P" , lang.rules+14 , lang.synts[2].kinds+1 ,
                                                              {
-                                                              lang.atoms+0,
                                                               lang.synts[1].kinds+3
                                                              }
     },
@@ -688,129 +686,133 @@ Lang lang=
    {
     { 0 , lang.finals+37 ,
                            {
-                            { lang.elements+10 , lang.states+67 },
-                            { lang.elements+12 , lang.states+86 }
+                            { lang.elements+10 , lang.states+69 },
+                            { lang.elements+12 , lang.states+88 }
                            }
     },
     { 1 , lang.finals+1 ,
                           {
-                           { lang.elements+0 , lang.states+2 },
-                           { lang.elements+17 , lang.states+53 },
-                           { lang.elements+18 , lang.states+65 }
+                           { lang.elements+0 , lang.states+3 }
                           }
     },
     { 2 , lang.finals+2 ,
                           {
-                           { lang.elements+0 , lang.states+8 },
-                           { lang.elements+5 , lang.states+20 },
-                           { lang.elements+8 , lang.states+42 },
-                           { lang.elements+9 , lang.states+44 },
-                           { lang.elements+10 , lang.states+68 },
-                           { lang.elements+11 , lang.states+37 },
-                           { lang.elements+13 , lang.states+49 },
-                           { lang.elements+14 , lang.states+48 },
-                           { lang.elements+15 , lang.states+48 },
-                           { lang.elements+16 , lang.states+48 }
-                          }
-    },
-    { 3 , lang.finals+3 ,
-                          {
-                           { lang.elements+0 , lang.states+8 },
-                           { lang.elements+5 , lang.states+20 },
-                           { lang.elements+8 , lang.states+42 },
-                           { lang.elements+9 , lang.states+44 },
-                           { lang.elements+10 , lang.states+68 },
-                           { lang.elements+11 , lang.states+37 },
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
                            { lang.elements+13 , lang.states+51 },
                            { lang.elements+14 , lang.states+50 },
                            { lang.elements+15 , lang.states+50 },
-                           { lang.elements+16 , lang.states+50 }
+                           { lang.elements+16 , lang.states+50 },
+                           { lang.elements+17 , lang.states+54 },
+                           { lang.elements+18 , lang.states+66 }
                           }
     },
-    { 4 , lang.finals+3 ,
+    { 3 , lang.finals+2 ,
                           {
-                           { lang.elements+0 , lang.states+8 },
-                           { lang.elements+5 , lang.states+20 },
-                           { lang.elements+8 , lang.states+42 },
-                           { lang.elements+9 , lang.states+44 },
-                           { lang.elements+10 , lang.states+68 },
-                           { lang.elements+11 , lang.states+37 },
-                           { lang.elements+14 , lang.states+23 },
-                           { lang.elements+15 , lang.states+23 },
-                           { lang.elements+16 , lang.states+23 }
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
+                           { lang.elements+13 , lang.states+51 },
+                           { lang.elements+14 , lang.states+50 },
+                           { lang.elements+15 , lang.states+50 },
+                           { lang.elements+16 , lang.states+50 },
+                           { lang.elements+17 , lang.states+55 },
+                           { lang.elements+18 , lang.states+67 }
+                          }
+    },
+    { 4 , lang.finals+2 ,
+                          {
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
+                           { lang.elements+13 , lang.states+51 },
+                           { lang.elements+14 , lang.states+50 },
+                           { lang.elements+15 , lang.states+50 },
+                           { lang.elements+16 , lang.states+50 },
+                           { lang.elements+17 , lang.states+58 },
+                           { lang.elements+18 , lang.states+68 }
                           }
     },
     { 5 , lang.finals+3 ,
                           {
-                           { lang.elements+0 , lang.states+8 },
-                           { lang.elements+5 , lang.states+20 },
-                           { lang.elements+8 , lang.states+42 },
-                           { lang.elements+9 , lang.states+44 },
-                           { lang.elements+10 , lang.states+68 },
-                           { lang.elements+11 , lang.states+37 },
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
+                           { lang.elements+13 , lang.states+53 },
+                           { lang.elements+14 , lang.states+52 },
+                           { lang.elements+15 , lang.states+52 },
+                           { lang.elements+16 , lang.states+52 }
+                          }
+    },
+    { 6 , lang.finals+3 ,
+                          {
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
                            { lang.elements+14 , lang.states+25 },
                            { lang.elements+15 , lang.states+25 },
                            { lang.elements+16 , lang.states+25 }
                           }
     },
-    { 6 , lang.finals+3 ,
+    { 7 , lang.finals+3 ,
                           {
-                           { lang.elements+0 , lang.states+8 },
-                           { lang.elements+5 , lang.states+20 },
-                           { lang.elements+8 , lang.states+42 },
-                           { lang.elements+9 , lang.states+44 },
-                           { lang.elements+10 , lang.states+68 },
-                           { lang.elements+11 , lang.states+37 },
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
+                           { lang.elements+14 , lang.states+27 },
                            { lang.elements+15 , lang.states+27 },
                            { lang.elements+16 , lang.states+27 }
                           }
     },
-    { 7 , lang.finals+3 ,
+    { 8 , lang.finals+3 ,
                           {
-                           { lang.elements+0 , lang.states+8 },
-                           { lang.elements+5 , lang.states+20 },
-                           { lang.elements+8 , lang.states+42 },
-                           { lang.elements+9 , lang.states+44 },
-                           { lang.elements+10 , lang.states+68 },
-                           { lang.elements+11 , lang.states+37 },
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
+                           { lang.elements+11 , lang.states+39 },
                            { lang.elements+15 , lang.states+29 },
                            { lang.elements+16 , lang.states+29 }
                           }
     },
-    { 8 , lang.finals+3 ,
-                          {
-                           { lang.elements+0 , lang.states+9 },
-                           { lang.elements+5 , lang.states+21 },
-                           { lang.elements+8 , lang.states+43 },
-                           { lang.elements+9 , lang.states+45 },
-                           { lang.elements+10 , lang.states+1 },
-                           { lang.elements+11 , lang.states+38 },
-                           { lang.elements+13 , lang.states+61 },
-                           { lang.elements+14 , lang.states+58 },
-                           { lang.elements+15 , lang.states+58 },
-                           { lang.elements+16 , lang.states+58 }
-                          }
-    },
     { 9 , lang.finals+3 ,
                           {
-                           { lang.elements+0 , lang.states+9 },
-                           { lang.elements+5 , lang.states+21 },
-                           { lang.elements+8 , lang.states+43 },
-                           { lang.elements+9 , lang.states+45 },
-                           { lang.elements+10 , lang.states+1 },
+                           { lang.elements+0 , lang.states+10 },
+                           { lang.elements+5 , lang.states+22 },
+                           { lang.elements+8 , lang.states+44 },
+                           { lang.elements+9 , lang.states+46 },
+                           { lang.elements+10 , lang.states+70 },
                            { lang.elements+11 , lang.states+39 },
-                           { lang.elements+13 , lang.states+62 },
-                           { lang.elements+14 , lang.states+59 },
-                           { lang.elements+15 , lang.states+59 },
-                           { lang.elements+16 , lang.states+59 }
+                           { lang.elements+15 , lang.states+31 },
+                           { lang.elements+16 , lang.states+31 }
                           }
     },
     { 10 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+9 },
-                            { lang.elements+5 , lang.states+21 },
-                            { lang.elements+8 , lang.states+43 },
-                            { lang.elements+9 , lang.states+45 },
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
                             { lang.elements+10 , lang.states+1 },
                             { lang.elements+11 , lang.states+40 },
                             { lang.elements+13 , lang.states+63 },
@@ -821,235 +823,253 @@ Lang lang=
     },
     { 11 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+9 },
-                            { lang.elements+5 , lang.states+21 },
-                            { lang.elements+8 , lang.states+43 },
-                            { lang.elements+9 , lang.states+45 },
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
                             { lang.elements+10 , lang.states+1 },
                             { lang.elements+11 , lang.states+41 },
-                            { lang.elements+14 , lang.states+24 },
-                            { lang.elements+15 , lang.states+24 },
-                            { lang.elements+16 , lang.states+24 }
+                            { lang.elements+13 , lang.states+64 },
+                            { lang.elements+14 , lang.states+61 },
+                            { lang.elements+15 , lang.states+61 },
+                            { lang.elements+16 , lang.states+61 }
                            }
     },
     { 12 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+9 },
-                            { lang.elements+5 , lang.states+21 },
-                            { lang.elements+8 , lang.states+43 },
-                            { lang.elements+9 , lang.states+45 },
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
                             { lang.elements+10 , lang.states+1 },
-                            { lang.elements+11 , lang.states+41 },
+                            { lang.elements+11 , lang.states+42 },
+                            { lang.elements+13 , lang.states+65 },
+                            { lang.elements+14 , lang.states+62 },
+                            { lang.elements+15 , lang.states+62 },
+                            { lang.elements+16 , lang.states+62 }
+                           }
+    },
+    { 13 , lang.finals+3 ,
+                           {
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
+                            { lang.elements+10 , lang.states+1 },
+                            { lang.elements+11 , lang.states+43 },
                             { lang.elements+14 , lang.states+26 },
                             { lang.elements+15 , lang.states+26 },
                             { lang.elements+16 , lang.states+26 }
                            }
     },
-    { 13 , lang.finals+3 ,
+    { 14 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+9 },
-                            { lang.elements+5 , lang.states+21 },
-                            { lang.elements+8 , lang.states+43 },
-                            { lang.elements+9 , lang.states+45 },
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
                             { lang.elements+10 , lang.states+1 },
-                            { lang.elements+11 , lang.states+41 },
+                            { lang.elements+11 , lang.states+43 },
+                            { lang.elements+14 , lang.states+28 },
                             { lang.elements+15 , lang.states+28 },
                             { lang.elements+16 , lang.states+28 }
                            }
     },
-    { 14 , lang.finals+3 ,
+    { 15 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+9 },
-                            { lang.elements+5 , lang.states+21 },
-                            { lang.elements+8 , lang.states+43 },
-                            { lang.elements+9 , lang.states+45 },
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
                             { lang.elements+10 , lang.states+1 },
-                            { lang.elements+11 , lang.states+41 },
+                            { lang.elements+11 , lang.states+43 },
                             { lang.elements+15 , lang.states+30 },
                             { lang.elements+16 , lang.states+30 }
                            }
     },
-    { 15 , lang.finals+3 ,
-                           {
-                            { lang.elements+0 , lang.states+10 },
-                            { lang.elements+5 , lang.states+22 },
-                            { lang.elements+8 , lang.states+83 },
-                            { lang.elements+9 , lang.states+84 },
-                            { lang.elements+10 , lang.states+81 },
-                            { lang.elements+11 , lang.states+82 },
-                            { lang.elements+13 , lang.states+73 },
-                            { lang.elements+14 , lang.states+72 },
-                            { lang.elements+15 , lang.states+72 },
-                            { lang.elements+16 , lang.states+72 }
-                           }
-    },
     { 16 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+10 },
-                            { lang.elements+5 , lang.states+22 },
-                            { lang.elements+8 , lang.states+83 },
-                            { lang.elements+9 , lang.states+84 },
-                            { lang.elements+10 , lang.states+81 },
-                            { lang.elements+11 , lang.states+82 },
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+5 , lang.states+23 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
+                            { lang.elements+10 , lang.states+1 },
+                            { lang.elements+11 , lang.states+43 },
+                            { lang.elements+15 , lang.states+32 },
+                            { lang.elements+16 , lang.states+32 }
+                           }
+    },
+    { 17 , lang.finals+3 ,
+                           {
+                            { lang.elements+0 , lang.states+12 },
+                            { lang.elements+5 , lang.states+24 },
+                            { lang.elements+8 , lang.states+85 },
+                            { lang.elements+9 , lang.states+86 },
+                            { lang.elements+10 , lang.states+83 },
+                            { lang.elements+11 , lang.states+84 },
+                            { lang.elements+13 , lang.states+75 },
                             { lang.elements+14 , lang.states+74 },
                             { lang.elements+15 , lang.states+74 },
                             { lang.elements+16 , lang.states+74 }
                            }
     },
-    { 17 , lang.finals+3 ,
-                           {
-                            { lang.elements+0 , lang.states+10 },
-                            { lang.elements+5 , lang.states+22 },
-                            { lang.elements+8 , lang.states+83 },
-                            { lang.elements+9 , lang.states+84 },
-                            { lang.elements+10 , lang.states+81 },
-                            { lang.elements+11 , lang.states+82 },
-                            { lang.elements+14 , lang.states+75 },
-                            { lang.elements+15 , lang.states+75 },
-                            { lang.elements+16 , lang.states+75 }
-                           }
-    },
     { 18 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+10 },
-                            { lang.elements+5 , lang.states+22 },
-                            { lang.elements+8 , lang.states+83 },
-                            { lang.elements+9 , lang.states+84 },
-                            { lang.elements+10 , lang.states+81 },
-                            { lang.elements+11 , lang.states+82 },
+                            { lang.elements+0 , lang.states+12 },
+                            { lang.elements+5 , lang.states+24 },
+                            { lang.elements+8 , lang.states+85 },
+                            { lang.elements+9 , lang.states+86 },
+                            { lang.elements+10 , lang.states+83 },
+                            { lang.elements+11 , lang.states+84 },
+                            { lang.elements+14 , lang.states+76 },
                             { lang.elements+15 , lang.states+76 },
                             { lang.elements+16 , lang.states+76 }
                            }
     },
     { 19 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+10 },
-                            { lang.elements+5 , lang.states+22 },
-                            { lang.elements+8 , lang.states+83 },
-                            { lang.elements+9 , lang.states+84 },
-                            { lang.elements+10 , lang.states+81 },
-                            { lang.elements+11 , lang.states+82 },
+                            { lang.elements+0 , lang.states+12 },
+                            { lang.elements+5 , lang.states+24 },
+                            { lang.elements+8 , lang.states+85 },
+                            { lang.elements+9 , lang.states+86 },
+                            { lang.elements+10 , lang.states+83 },
+                            { lang.elements+11 , lang.states+84 },
+                            { lang.elements+14 , lang.states+77 },
                             { lang.elements+15 , lang.states+77 },
                             { lang.elements+16 , lang.states+77 }
                            }
     },
-    { 20 , lang.finals+4 ,
+    { 20 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+8 },
-                            { lang.elements+8 , lang.states+42 },
-                            { lang.elements+9 , lang.states+44 },
-                            { lang.elements+10 , lang.states+68 },
-                            { lang.elements+11 , lang.states+37 },
-                            { lang.elements+16 , lang.states+31 }
+                            { lang.elements+0 , lang.states+12 },
+                            { lang.elements+5 , lang.states+24 },
+                            { lang.elements+8 , lang.states+85 },
+                            { lang.elements+9 , lang.states+86 },
+                            { lang.elements+10 , lang.states+83 },
+                            { lang.elements+11 , lang.states+84 },
+                            { lang.elements+15 , lang.states+78 },
+                            { lang.elements+16 , lang.states+78 }
                            }
     },
-    { 21 , lang.finals+4 ,
+    { 21 , lang.finals+3 ,
                            {
-                            { lang.elements+0 , lang.states+9 },
-                            { lang.elements+8 , lang.states+43 },
-                            { lang.elements+9 , lang.states+45 },
-                            { lang.elements+10 , lang.states+1 },
-                            { lang.elements+11 , lang.states+41 },
-                            { lang.elements+16 , lang.states+32 }
+                            { lang.elements+0 , lang.states+12 },
+                            { lang.elements+5 , lang.states+24 },
+                            { lang.elements+8 , lang.states+85 },
+                            { lang.elements+9 , lang.states+86 },
+                            { lang.elements+10 , lang.states+83 },
+                            { lang.elements+11 , lang.states+84 },
+                            { lang.elements+15 , lang.states+79 },
+                            { lang.elements+16 , lang.states+79 }
                            }
     },
     { 22 , lang.finals+4 ,
                            {
                             { lang.elements+0 , lang.states+10 },
-                            { lang.elements+8 , lang.states+83 },
-                            { lang.elements+9 , lang.states+84 },
-                            { lang.elements+10 , lang.states+81 },
-                            { lang.elements+11 , lang.states+82 },
-                            { lang.elements+16 , lang.states+78 }
+                            { lang.elements+8 , lang.states+44 },
+                            { lang.elements+9 , lang.states+46 },
+                            { lang.elements+10 , lang.states+70 },
+                            { lang.elements+11 , lang.states+39 },
+                            { lang.elements+16 , lang.states+33 }
                            }
     },
-    { 23 , lang.finals+5 ,
+    { 23 , lang.finals+4 ,
                            {
-                            { lang.elements+2 , lang.states+6 },
-                            { lang.elements+6 , lang.states+7 }
+                            { lang.elements+0 , lang.states+11 },
+                            { lang.elements+8 , lang.states+45 },
+                            { lang.elements+9 , lang.states+47 },
+                            { lang.elements+10 , lang.states+1 },
+                            { lang.elements+11 , lang.states+43 },
+                            { lang.elements+16 , lang.states+34 }
                            }
     },
-    { 24 , lang.finals+6 ,
+    { 24 , lang.finals+4 ,
                            {
-                            { lang.elements+2 , lang.states+13 },
-                            { lang.elements+6 , lang.states+14 }
+                            { lang.elements+0 , lang.states+12 },
+                            { lang.elements+8 , lang.states+85 },
+                            { lang.elements+9 , lang.states+86 },
+                            { lang.elements+10 , lang.states+83 },
+                            { lang.elements+11 , lang.states+84 },
+                            { lang.elements+16 , lang.states+80 }
                            }
     },
-    { 25 , lang.finals+7 ,
+    { 25 , lang.finals+5 ,
                            {
-                            { lang.elements+2 , lang.states+6 },
-                            { lang.elements+6 , lang.states+7 }
+                            { lang.elements+2 , lang.states+8 },
+                            { lang.elements+6 , lang.states+9 }
                            }
     },
-    { 26 , lang.finals+8 ,
+    { 26 , lang.finals+6 ,
                            {
-                            { lang.elements+2 , lang.states+13 },
-                            { lang.elements+6 , lang.states+14 }
+                            { lang.elements+2 , lang.states+15 },
+                            { lang.elements+6 , lang.states+16 }
                            }
     },
-    { 27 , lang.finals+9 ,
+    { 27 , lang.finals+7 ,
+                           {
+                            { lang.elements+2 , lang.states+8 },
+                            { lang.elements+6 , lang.states+9 }
+                           }
+    },
+    { 28 , lang.finals+8 ,
+                           {
+                            { lang.elements+2 , lang.states+15 },
+                            { lang.elements+6 , lang.states+16 }
+                           }
+    },
+    { 29 , lang.finals+9 ,
                            {
                             
                            }
     },
-    { 28 , lang.finals+10 ,
+    { 30 , lang.finals+10 ,
                             {
                              
                             }
     },
-    { 29 , lang.finals+11 ,
+    { 31 , lang.finals+11 ,
                             {
                              
                             }
     },
-    { 30 , lang.finals+12 ,
+    { 32 , lang.finals+12 ,
                             {
                              
                             }
     },
-    { 31 , lang.finals+13 ,
+    { 33 , lang.finals+13 ,
                             {
                              
                             }
     },
-    { 32 , lang.finals+14 ,
+    { 34 , lang.finals+14 ,
                             {
                              
                             }
     },
-    { 33 , lang.finals+15 ,
+    { 35 , lang.finals+15 ,
                             {
                              
                             }
     },
-    { 34 , lang.finals+16 ,
+    { 36 , lang.finals+16 ,
                             {
                              
                             }
     },
-    { 35 , lang.finals+17 ,
+    { 37 , lang.finals+17 ,
                             {
                              
                             }
     },
-    { 36 , lang.finals+18 ,
+    { 38 , lang.finals+18 ,
                             {
                              
                             }
     },
-    { 37 , lang.finals+19 ,
+    { 39 , lang.finals+19 ,
                             {
                              
-                            }
-    },
-    { 38 , lang.finals+20 ,
-                            {
-                             { lang.elements+4 , lang.states+69 }
-                            }
-    },
-    { 39 , lang.finals+20 ,
-                            {
-                             { lang.elements+4 , lang.states+70 }
                             }
     },
     { 40 , lang.finals+20 ,
@@ -1057,271 +1077,277 @@ Lang lang=
                              { lang.elements+4 , lang.states+71 }
                             }
     },
-    { 41 , lang.finals+21 ,
+    { 41 , lang.finals+20 ,
+                            {
+                             { lang.elements+4 , lang.states+72 }
+                            }
+    },
+    { 42 , lang.finals+20 ,
+                            {
+                             { lang.elements+4 , lang.states+73 }
+                            }
+    },
+    { 43 , lang.finals+21 ,
                             {
                              
                             }
     },
-    { 42 , lang.finals+22 ,
+    { 44 , lang.finals+22 ,
                             {
                              
                             }
     },
-    { 43 , lang.finals+23 ,
+    { 45 , lang.finals+23 ,
                             {
                              
                             }
     },
-    { 44 , lang.finals+24 ,
+    { 46 , lang.finals+24 ,
                             {
                              
                             }
     },
-    { 45 , lang.finals+25 ,
+    { 47 , lang.finals+25 ,
                             {
                              
                             }
     },
-    { 46 , lang.finals+26 ,
+    { 48 , lang.finals+26 ,
                             {
                              
                             }
     },
-    { 47 , lang.finals+27 ,
+    { 49 , lang.finals+27 ,
                             {
                              
                             }
     },
-    { 48 , lang.finals+28 ,
+    { 50 , lang.finals+28 ,
                             {
-                             { lang.elements+2 , lang.states+6 },
-                             { lang.elements+3 , lang.states+4 },
-                             { lang.elements+5 , lang.states+5 },
-                             { lang.elements+6 , lang.states+7 }
+                             { lang.elements+2 , lang.states+8 },
+                             { lang.elements+3 , lang.states+6 },
+                             { lang.elements+5 , lang.states+7 },
+                             { lang.elements+6 , lang.states+9 }
                             }
     },
-    { 49 , lang.finals+29 ,
+    { 51 , lang.finals+29 ,
                             {
-                             { lang.elements+3 , lang.states+4 },
-                             { lang.elements+5 , lang.states+5 }
+                             { lang.elements+3 , lang.states+6 },
+                             { lang.elements+5 , lang.states+7 }
                             }
     },
-    { 50 , lang.finals+30 ,
+    { 52 , lang.finals+30 ,
                             {
-                             { lang.elements+2 , lang.states+6 },
-                             { lang.elements+3 , lang.states+4 },
-                             { lang.elements+5 , lang.states+5 },
-                             { lang.elements+6 , lang.states+7 }
+                             { lang.elements+2 , lang.states+8 },
+                             { lang.elements+3 , lang.states+6 },
+                             { lang.elements+5 , lang.states+7 },
+                             { lang.elements+6 , lang.states+9 }
                             }
     },
-    { 51 , lang.finals+31 ,
+    { 53 , lang.finals+31 ,
                             {
-                             { lang.elements+3 , lang.states+4 },
-                             { lang.elements+5 , lang.states+5 }
-                            }
-    },
-    { 52 , lang.finals+32 ,
-                            {
-                             { lang.elements+1 , lang.states+35 }
-                            }
-    },
-    { 53 , lang.finals+32 ,
-                            {
-                             { lang.elements+1 , lang.states+36 }
+                             { lang.elements+3 , lang.states+6 },
+                             { lang.elements+5 , lang.states+7 }
                             }
     },
     { 54 , lang.finals+32 ,
                             {
-                             { lang.elements+1 , lang.states+46 }
+                             { lang.elements+1 , lang.states+37 }
                             }
     },
     { 55 , lang.finals+32 ,
                             {
-                             { lang.elements+1 , lang.states+47 }
+                             { lang.elements+1 , lang.states+38 }
                             }
     },
     { 56 , lang.finals+32 ,
                             {
-                             { lang.elements+1 , lang.states+80 }
+                             { lang.elements+1 , lang.states+48 }
                             }
     },
     { 57 , lang.finals+32 ,
                             {
-                             { lang.elements+1 , lang.states+85 }
+                             { lang.elements+1 , lang.states+49 }
                             }
     },
-    { 58 , lang.finals+33 ,
+    { 58 , lang.finals+32 ,
                             {
-                             { lang.elements+1 , lang.states+33 },
-                             { lang.elements+2 , lang.states+13 },
-                             { lang.elements+3 , lang.states+11 },
-                             { lang.elements+5 , lang.states+12 },
-                             { lang.elements+6 , lang.states+14 }
+                             { lang.elements+1 , lang.states+82 }
                             }
     },
-    { 59 , lang.finals+33 ,
+    { 59 , lang.finals+32 ,
                             {
-                             { lang.elements+1 , lang.states+34 },
-                             { lang.elements+2 , lang.states+13 },
-                             { lang.elements+3 , lang.states+11 },
-                             { lang.elements+5 , lang.states+12 },
-                             { lang.elements+6 , lang.states+14 }
+                             { lang.elements+1 , lang.states+87 }
                             }
     },
     { 60 , lang.finals+33 ,
                             {
-                             { lang.elements+1 , lang.states+79 },
-                             { lang.elements+2 , lang.states+13 },
-                             { lang.elements+3 , lang.states+11 },
-                             { lang.elements+5 , lang.states+12 },
-                             { lang.elements+6 , lang.states+14 }
+                             { lang.elements+1 , lang.states+35 },
+                             { lang.elements+2 , lang.states+15 },
+                             { lang.elements+3 , lang.states+13 },
+                             { lang.elements+5 , lang.states+14 },
+                             { lang.elements+6 , lang.states+16 }
                             }
     },
-    { 61 , lang.finals+34 ,
+    { 61 , lang.finals+33 ,
                             {
-                             { lang.elements+1 , lang.states+33 },
-                             { lang.elements+3 , lang.states+11 },
-                             { lang.elements+5 , lang.states+12 }
+                             { lang.elements+1 , lang.states+36 },
+                             { lang.elements+2 , lang.states+15 },
+                             { lang.elements+3 , lang.states+13 },
+                             { lang.elements+5 , lang.states+14 },
+                             { lang.elements+6 , lang.states+16 }
                             }
     },
-    { 62 , lang.finals+34 ,
+    { 62 , lang.finals+33 ,
                             {
-                             { lang.elements+1 , lang.states+34 },
-                             { lang.elements+3 , lang.states+11 },
-                             { lang.elements+5 , lang.states+12 }
+                             { lang.elements+1 , lang.states+81 },
+                             { lang.elements+2 , lang.states+15 },
+                             { lang.elements+3 , lang.states+13 },
+                             { lang.elements+5 , lang.states+14 },
+                             { lang.elements+6 , lang.states+16 }
                             }
     },
     { 63 , lang.finals+34 ,
                             {
-                             { lang.elements+1 , lang.states+79 },
-                             { lang.elements+3 , lang.states+11 },
-                             { lang.elements+5 , lang.states+12 }
-                            }
-    },
-    { 64 , lang.finals+35 ,
-                            {
                              { lang.elements+1 , lang.states+35 },
-                             { lang.elements+4 , lang.states+3 }
+                             { lang.elements+3 , lang.states+13 },
+                             { lang.elements+5 , lang.states+14 }
                             }
     },
-    { 65 , lang.finals+35 ,
+    { 64 , lang.finals+34 ,
                             {
                              { lang.elements+1 , lang.states+36 },
-                             { lang.elements+4 , lang.states+3 }
+                             { lang.elements+3 , lang.states+13 },
+                             { lang.elements+5 , lang.states+14 }
+                            }
+    },
+    { 65 , lang.finals+34 ,
+                            {
+                             { lang.elements+1 , lang.states+81 },
+                             { lang.elements+3 , lang.states+13 },
+                             { lang.elements+5 , lang.states+14 }
                             }
     },
     { 66 , lang.finals+35 ,
                             {
-                             { lang.elements+1 , lang.states+80 },
-                             { lang.elements+4 , lang.states+3 }
+                             { lang.elements+1 , lang.states+37 },
+                             { lang.elements+4 , lang.states+5 }
                             }
     },
-    { 67 , lang.finals+36 ,
+    { 67 , lang.finals+35 ,
                             {
-                             { lang.elements+7 , lang.states+15 }
+                             { lang.elements+1 , lang.states+38 },
+                             { lang.elements+4 , lang.states+5 }
                             }
     },
-    { 68 , lang.finals+0 ,
+    { 68 , lang.finals+35 ,
+                            {
+                             { lang.elements+1 , lang.states+82 },
+                             { lang.elements+4 , lang.states+5 }
+                            }
+    },
+    { 69 , lang.finals+36 ,
+                            {
+                             { lang.elements+7 , lang.states+17 }
+                            }
+    },
+    { 70 , lang.finals+0 ,
                            {
-                            { lang.elements+0 , lang.states+2 },
-                            { lang.elements+17 , lang.states+52 },
-                            { lang.elements+18 , lang.states+64 }
+                            { lang.elements+0 , lang.states+2 }
                            }
     },
-    { 69 , lang.finals+38 ,
-                            {
-                             { lang.elements+11 , lang.states+54 }
-                            }
-    },
-    { 70 , lang.finals+38 ,
-                            {
-                             { lang.elements+11 , lang.states+55 }
-                            }
-    },
     { 71 , lang.finals+38 ,
+                            {
+                             { lang.elements+11 , lang.states+56 }
+                            }
+    },
+    { 72 , lang.finals+38 ,
                             {
                              { lang.elements+11 , lang.states+57 }
                             }
     },
-    { 72 , lang.finals+39 ,
+    { 73 , lang.finals+38 ,
                             {
-                             { lang.elements+2 , lang.states+18 },
-                             { lang.elements+3 , lang.states+16 },
-                             { lang.elements+5 , lang.states+17 },
-                             { lang.elements+6 , lang.states+19 }
+                             { lang.elements+11 , lang.states+59 }
                             }
     },
-    { 73 , lang.finals+40 ,
+    { 74 , lang.finals+39 ,
                             {
-                             { lang.elements+3 , lang.states+16 },
-                             { lang.elements+5 , lang.states+17 }
+                             { lang.elements+2 , lang.states+20 },
+                             { lang.elements+3 , lang.states+18 },
+                             { lang.elements+5 , lang.states+19 },
+                             { lang.elements+6 , lang.states+21 }
                             }
     },
-    { 74 , lang.finals+41 ,
+    { 75 , lang.finals+40 ,
                             {
-                             { lang.elements+2 , lang.states+18 },
-                             { lang.elements+6 , lang.states+19 }
+                             { lang.elements+3 , lang.states+18 },
+                             { lang.elements+5 , lang.states+19 }
                             }
     },
-    { 75 , lang.finals+42 ,
+    { 76 , lang.finals+41 ,
                             {
-                             { lang.elements+2 , lang.states+18 },
-                             { lang.elements+6 , lang.states+19 }
+                             { lang.elements+2 , lang.states+20 },
+                             { lang.elements+6 , lang.states+21 }
                             }
     },
-    { 76 , lang.finals+43 ,
+    { 77 , lang.finals+42 ,
                             {
-                             
+                             { lang.elements+2 , lang.states+20 },
+                             { lang.elements+6 , lang.states+21 }
                             }
     },
-    { 77 , lang.finals+44 ,
-                            {
-                             
-                            }
-    },
-    { 78 , lang.finals+45 ,
+    { 78 , lang.finals+43 ,
                             {
                              
                             }
     },
-    { 79 , lang.finals+46 ,
+    { 79 , lang.finals+44 ,
                             {
                              
                             }
     },
-    { 80 , lang.finals+47 ,
+    { 80 , lang.finals+45 ,
                             {
                              
                             }
     },
-    { 81 , lang.finals+48 ,
-                            {
-                             { lang.elements+0 , lang.states+2 },
-                             { lang.elements+17 , lang.states+56 },
-                             { lang.elements+18 , lang.states+66 }
-                            }
-    },
-    { 82 , lang.finals+49 ,
+    { 81 , lang.finals+46 ,
                             {
                              
                             }
     },
-    { 83 , lang.finals+50 ,
+    { 82 , lang.finals+47 ,
                             {
                              
                             }
     },
-    { 84 , lang.finals+51 ,
+    { 83 , lang.finals+48 ,
+                            {
+                             { lang.elements+0 , lang.states+4 }
+                            }
+    },
+    { 84 , lang.finals+49 ,
                             {
                              
                             }
     },
-    { 85 , lang.finals+52 ,
+    { 85 , lang.finals+50 ,
                             {
                              
                             }
     },
-    { 86 , lang.finals+53 ,
+    { 86 , lang.finals+51 ,
+                            {
+                             
+                            }
+    },
+    { 87 , lang.finals+52 ,
+                            {
+                             
+                            }
+    },
+    { 88 , lang.finals+53 ,
                             {
                              
                             }

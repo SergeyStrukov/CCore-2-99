@@ -11,7 +11,34 @@
 #
 #----------------------------------------------------------------------------------------
 
+CCORE_ROOT = ../..
+
 LANG = $(HOME)/bin/CCore-CondLangLR1.exe
 
-run:
+TEST = $(CCORE_ROOT)/tools/CondLangLR1/BFTest/BFTest.exe 
+
+Formula.ddl: Formula.lang
 	$(LANG) Formula.lang
+
+test: Formula.ddl
+	$(TEST) Formula.ddl
+
+#----------------------------------------------------------------------------------------
+
+include $(CCORE_ROOT)/Makefile.host
+
+OBJ_PATH = obj
+
+SRC_PATH_LIST = .
+
+TARGET = ./gen.exe
+
+include $(CCORE_ROOT)/Target/Makefile.app
+
+gen: $(TARGET)
+
+run: $(TARGET) Formula.ddl
+	$(TARGET)
+
+
+
