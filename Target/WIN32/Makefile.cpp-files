@@ -196,6 +196,7 @@
 ../../Applied/CCore/src/EventRecorder.cpp
 ../../Applied/CCore/src/FileName.cpp
 ../../Applied/CCore/src/FileNameMatch.cpp
+../../Applied/CCore/src/lang/LangDataMap.cpp
 ../../Applied/CCore/src/LineInput.cpp
 ../../Applied/CCore/src/Log.cpp
 ../../Applied/CCore/src/math/APRTest.cpp

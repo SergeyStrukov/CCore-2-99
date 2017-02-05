@@ -17,50 +17,13 @@
 #define CCore_test_testPrint_h
 
 #include <CCore/inc/Print.h>
-
-#include <CCore/inc/AsyncBinaryFile.h>
+#include <CCore/inc/BinaryFile.h>
 
 namespace App {
 
 /* using */
 
 using namespace CCore;
-
-/* classes */
-
-class PrintFile;
-
-class BinaryFile;
-
-/* class PrintFile */
-
-class PrintFile : public PrintAsyncFile
- {
-  public:
-
-   PrintFile();
-
-   explicit PrintFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
-
-   ~PrintFile();
-
-   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
- };
-
-/* class BinaryFile */
-
-class BinaryFile : public AsyncBinaryFile
- {
-  public:
-
-   BinaryFile();
-
-   explicit BinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
-
-   ~BinaryFile();
-
-   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
- };
 
 } // namespace App
 

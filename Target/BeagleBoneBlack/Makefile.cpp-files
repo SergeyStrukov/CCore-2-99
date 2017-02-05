@@ -196,6 +196,7 @@
 ../../Applied/CCore/src/EventRecorder.cpp
 ../../Applied/CCore/src/FileName.cpp
 ../../Applied/CCore/src/FileNameMatch.cpp
+../../Applied/CCore/src/lang/LangDataMap.cpp
 ../../Applied/CCore/src/LineInput.cpp
 ../../Applied/CCore/src/Log.cpp
 ../../Applied/CCore/src/math/APRTest.cpp
@@ -264,6 +265,9 @@
 ../../Applied/CCore/src/video/VideoConsole.cpp
 ../../Applied/CCore/src/video/VideoDevice.cpp
 ../../XCore/CCore/src/Abort.cpp
+../../XCore/CCore/src/BinaryFile.cpp
+../../XCore/CCore/src/DefaultFileDevice.cpp
+../../XCore/CCore/src/FileToMem.cpp
 ../../XCore/CCore/src/libc/assert.cpp
 ../../XCore/CCore/src/libc/CDef.cpp
 ../../XCore/CCore/src/libc/CPrintf.cpp
@@ -276,6 +280,7 @@
 ../../XCore/CCore/src/libc/time.cpp
 ../../XCore/CCore/src/MemBase.cpp
 ../../XCore/CCore/src/print/PrintCon.cpp
+../../XCore/CCore/src/print/PrintFile.cpp
 ../../XCore/CCore/src/Print.cpp
 ../../XCore/CCore/src/ReadCon.cpp
 ../../XCore/CCore/src/RedirectPTPCon.cpp

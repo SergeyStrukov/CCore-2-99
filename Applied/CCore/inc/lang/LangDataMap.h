@@ -1,52 +1,29 @@
-/* DataMap.h */
+/* LangDataMap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CondLangLR1-BFTest 1.00
+//  Project: CCore 3.00
+//
+//  Tag: Applied CondLangLR1
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef BFTest_DataMap_h
-#define BFTest_DataMap_h
+#ifndef CCore_inc_lang_LangDataMap_h
+#define CCore_inc_lang_LangDataMap_h
 
 #include <CCore/inc/ddl/DDLMapTypes.h>
 
-namespace App {
-
-/* using */
-
-using namespace CCore;
+namespace CCore {
+namespace Lang {
 
 /* TypeDef */
 
-#include "LangTypeDef.gen.h"
-
-/* functions */
-
-template <class T>
-bool Checkin(T *ptr,PtrLen<T> range)
- {
-  if( ptr==0 ) return false;
-
-  ulen index=ptr->index;
-
-  return index<range.len && ptr==range.ptr+index ;
- }
-
-template <class T>
-bool Checkin_null(T *ptr,PtrLen<T> range)
- {
-  if( ptr==0 ) return true;
-
-  ulen index=ptr->index;
-
-  return index<range.len && ptr==range.ptr+index ;
- }
+#include "LangData.TypeDef.gen.h"
 
 /* classes */
 
@@ -61,6 +38,26 @@ class DataMap : NoCopy
    TypeDef::Lang lang;
 
   private:
+
+   template <class T>
+   static bool Checkin(T *ptr,PtrLen<T> range)
+    {
+     if( ptr==0 ) return false;
+
+     ulen index=ptr->index;
+
+     return index<range.len && ptr==range.ptr+index ;
+    }
+
+   template <class T>
+   static bool Checkin_null(T *ptr,PtrLen<T> range)
+    {
+     if( ptr==0 ) return true;
+
+     ulen index=ptr->index;
+
+     return index<range.len && ptr==range.ptr+index ;
+    }
 
    void sanity_atoms();
    void sanity_synts();
@@ -81,7 +78,8 @@ class DataMap : NoCopy
    void sanity();
  };
 
-} // namespace App
+} // namespace Lang
+} // namespace CCore
 
 #endif
 

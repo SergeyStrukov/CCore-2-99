@@ -1,4 +1,4 @@
-/* struct TypeSet */
+/* FontInfo.TypeSet.gen.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 2.00
@@ -12,6 +12,8 @@
 //  Copyright (c) 2016 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
+
+/* struct TypeSet */
 
 struct TypeSet : TypeDefCore
  {

@@ -1,7 +1,7 @@
-/* struct TypeDefCore */
+/* FontInfo.TypeDef.gen.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -13,12 +13,14 @@
 //
 //----------------------------------------------------------------------------------------
 
+/* struct TypeDefCore */
+
 struct TypeDefCore
  {
   // types
 
-  struct S1; // #FontSize 
-  struct S2; // #FontInfo 
+  struct S1; // #FontSize
+  struct S2; // #FontInfo
 
   using A1 = DDL::MapRange< S2 > ; // #FontDatabase
   using A2 = sint16 ; // #Coord

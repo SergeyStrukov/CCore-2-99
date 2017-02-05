@@ -11,12 +11,14 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "DataMap.h"
+#include <CCore/inc/lang/LangDataMap.h>
 
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
 namespace App {
+
+using namespace CCore;
 
 enum AtomClass
  {
@@ -60,7 +62,7 @@ AtomClass Map(int atom)
 
 void Main()
  {
-  DataMap data("Formula.ddl");
+  Lang::DataMap data("Formula.ddl");
 
   data.sanity();
 
@@ -101,14 +103,14 @@ void Main()
 
      for(auto &action : final.actions.getRange() )
        {
-        TypeDef::AtomIndex atom_index;
+        Lang::TypeDef::AtomIndex atom_index;
 
         if( +action.atom )
           atom_index=Map(action.atom->index);
         else
           atom_index=0;
 
-        TypeDef::RuleIndex rule_index;
+        Lang::TypeDef::RuleIndex rule_index;
 
         if( +action.rule )
           rule_index=action.rule->index+1;

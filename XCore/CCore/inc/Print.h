@@ -20,6 +20,7 @@
 #include <CCore/inc/print/PrintAsyncFile.h>
 
 #include <CCore/inc/print/PrintCon.h>
+#include <CCore/inc/print/PrintFile.h>
 
 namespace CCore {
 

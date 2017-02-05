@@ -24,6 +24,7 @@ obj/AutoGlobal.o \
 obj/AutoText.o \
 obj/BaseRangeAlgo.o \
 obj/BestSearch.o \
+obj/BinaryFile.o \
 obj/BinarySearch.o \
 obj/BlockCipher.o \
 obj/BlockFifo.o \
@@ -78,6 +79,7 @@ obj/DDLTypes.o \
 obj/DDLValue.o \
 obj/DHExp.o \
 obj/DebugCon.o \
+obj/DefaultFileDevice.o \
 obj/DefaultTimeout.o \
 obj/DeferCall.o \
 obj/DestroyGuard.o \
@@ -113,6 +115,7 @@ obj/FastMutex.o \
 obj/Fifo.o \
 obj/FileName.o \
 obj/FileNameMatch.o \
+obj/FileToMem.o \
 obj/Forget.o \
 obj/FrameBuf.o \
 obj/FuncTask.o \
@@ -140,6 +143,7 @@ obj/IntegerOctetBuilder.o \
 obj/IntegerSlowAlgo.o \
 obj/InterfaceHost.o \
 obj/Job.o \
+obj/LangDataMap.o \
 obj/Len.o \
 obj/LineInput.o \
 obj/List.o \
@@ -220,6 +224,7 @@ obj/PrintBase.o \
 obj/PrintBits.o \
 obj/PrintCon.o \
 obj/PrintError.o \
+obj/PrintFile.o \
 obj/PrintPTPCon.o \
 obj/PrintProxy.o \
 obj/PrintSet.o \
@@ -370,6 +375,7 @@ obj/AutoGlobal.s \
 obj/AutoText.s \
 obj/BaseRangeAlgo.s \
 obj/BestSearch.s \
+obj/BinaryFile.s \
 obj/BinarySearch.s \
 obj/BlockCipher.s \
 obj/BlockFifo.s \
@@ -424,6 +430,7 @@ obj/DDLTypes.s \
 obj/DDLValue.s \
 obj/DHExp.s \
 obj/DebugCon.s \
+obj/DefaultFileDevice.s \
 obj/DefaultTimeout.s \
 obj/DeferCall.s \
 obj/DestroyGuard.s \
@@ -459,6 +466,7 @@ obj/FastMutex.s \
 obj/Fifo.s \
 obj/FileName.s \
 obj/FileNameMatch.s \
+obj/FileToMem.s \
 obj/Forget.s \
 obj/FrameBuf.s \
 obj/FuncTask.s \
@@ -486,6 +494,7 @@ obj/IntegerOctetBuilder.s \
 obj/IntegerSlowAlgo.s \
 obj/InterfaceHost.s \
 obj/Job.s \
+obj/LangDataMap.s \
 obj/Len.s \
 obj/LineInput.s \
 obj/List.s \
@@ -566,6 +575,7 @@ obj/PrintBase.s \
 obj/PrintBits.s \
 obj/PrintCon.s \
 obj/PrintError.s \
+obj/PrintFile.s \
 obj/PrintPTPCon.s \
 obj/PrintProxy.s \
 obj/PrintSet.s \
@@ -716,6 +726,7 @@ obj/AutoGlobal.dep \
 obj/AutoText.dep \
 obj/BaseRangeAlgo.dep \
 obj/BestSearch.dep \
+obj/BinaryFile.dep \
 obj/BinarySearch.dep \
 obj/BlockCipher.dep \
 obj/BlockFifo.dep \
@@ -770,6 +781,7 @@ obj/DDLTypes.dep \
 obj/DDLValue.dep \
 obj/DHExp.dep \
 obj/DebugCon.dep \
+obj/DefaultFileDevice.dep \
 obj/DefaultTimeout.dep \
 obj/DeferCall.dep \
 obj/DestroyGuard.dep \
@@ -805,6 +817,7 @@ obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FileName.dep \
 obj/FileNameMatch.dep \
+obj/FileToMem.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
 obj/FuncTask.dep \
@@ -832,6 +845,7 @@ obj/IntegerOctetBuilder.dep \
 obj/IntegerSlowAlgo.dep \
 obj/InterfaceHost.dep \
 obj/Job.dep \
+obj/LangDataMap.dep \
 obj/Len.dep \
 obj/LineInput.dep \
 obj/List.dep \
@@ -912,6 +926,7 @@ obj/PrintBase.dep \
 obj/PrintBits.dep \
 obj/PrintCon.dep \
 obj/PrintError.dep \
+obj/PrintFile.dep \
 obj/PrintPTPCon.dep \
 obj/PrintProxy.dep \
 obj/PrintSet.dep \
@@ -1127,6 +1142,9 @@ obj/BaseRangeAlgo.o : ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
 obj/BestSearch.o : ../../Fundamental/CCore/src/algon/BestSearch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/BinaryFile.o : ../../XCore/CCore/src/BinaryFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/BinarySearch.o : ../../Fundamental/CCore/src/algon/BinarySearch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1289,6 +1307,9 @@ obj/DHExp.o : ../../Applied/CCore/src/crypton/DHExp.cpp
 obj/DebugCon.o : ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DefaultFileDevice.o : ../../XCore/CCore/src/DefaultFileDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DefaultTimeout.o : ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1394,6 +1415,9 @@ obj/FileName.o : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameMatch.o : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/FileToMem.o : ../../XCore/CCore/src/FileToMem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Forget.o : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1473,6 +1497,9 @@ obj/InterfaceHost.o : ../../Fundamental/CCore/src/InterfaceHost.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Job.o : ../../Fundamental/CCore/src/Job.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangDataMap.o : ../../Applied/CCore/src/lang/LangDataMap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Len.o : ../../Simple/CCore/src/gadget/Len.cpp
@@ -1713,6 +1740,9 @@ obj/PrintCon.o : ../../XCore/CCore/src/print/PrintCon.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PrintError.o : ../../Simple/CCore/src/PrintError.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintFile.o : ../../XCore/CCore/src/print/PrintFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PrintPTPCon.o : ../../Applied/CCore/src/print/PrintPTPCon.cpp
@@ -2158,6 +2188,9 @@ obj/BaseRangeAlgo.s : ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
 obj/BestSearch.s : ../../Fundamental/CCore/src/algon/BestSearch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/BinaryFile.s : ../../XCore/CCore/src/BinaryFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/BinarySearch.s : ../../Fundamental/CCore/src/algon/BinarySearch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2320,6 +2353,9 @@ obj/DHExp.s : ../../Applied/CCore/src/crypton/DHExp.cpp
 obj/DebugCon.s : ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DefaultFileDevice.s : ../../XCore/CCore/src/DefaultFileDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DefaultTimeout.s : ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2425,6 +2461,9 @@ obj/FileName.s : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameMatch.s : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FileToMem.s : ../../XCore/CCore/src/FileToMem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Forget.s : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2504,6 +2543,9 @@ obj/InterfaceHost.s : ../../Fundamental/CCore/src/InterfaceHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Job.s : ../../Fundamental/CCore/src/Job.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangDataMap.s : ../../Applied/CCore/src/lang/LangDataMap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Len.s : ../../Simple/CCore/src/gadget/Len.cpp
@@ -2744,6 +2786,9 @@ obj/PrintCon.s : ../../XCore/CCore/src/print/PrintCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/PrintError.s : ../../Simple/CCore/src/PrintError.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintFile.s : ../../XCore/CCore/src/print/PrintFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/PrintPTPCon.s : ../../Applied/CCore/src/print/PrintPTPCon.cpp
@@ -3189,6 +3234,9 @@ obj/BaseRangeAlgo.dep : ../../Fundamental/CCore/src/algon/BaseRangeAlgo.cpp
 obj/BestSearch.dep : ../../Fundamental/CCore/src/algon/BestSearch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BestSearch.o $< -MF $@
 
+obj/BinaryFile.dep : ../../XCore/CCore/src/BinaryFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BinaryFile.o $< -MF $@
+
 obj/BinarySearch.dep : ../../Fundamental/CCore/src/algon/BinarySearch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BinarySearch.o $< -MF $@
 
@@ -3351,6 +3399,9 @@ obj/DHExp.dep : ../../Applied/CCore/src/crypton/DHExp.cpp
 obj/DebugCon.dep : ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DebugCon.o $< -MF $@
 
+obj/DefaultFileDevice.dep : ../../XCore/CCore/src/DefaultFileDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultFileDevice.o $< -MF $@
+
 obj/DefaultTimeout.dep : ../../Simple/CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultTimeout.o $< -MF $@
 
@@ -3456,6 +3507,9 @@ obj/FileName.dep : ../../Applied/CCore/src/FileName.cpp
 obj/FileNameMatch.dep : ../../Applied/CCore/src/FileNameMatch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileNameMatch.o $< -MF $@
 
+obj/FileToMem.dep : ../../XCore/CCore/src/FileToMem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileToMem.o $< -MF $@
+
 obj/Forget.dep : ../../Applied/CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Forget.o $< -MF $@
 
@@ -3536,6 +3590,9 @@ obj/InterfaceHost.dep : ../../Fundamental/CCore/src/InterfaceHost.cpp
 
 obj/Job.dep : ../../Fundamental/CCore/src/Job.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Job.o $< -MF $@
+
+obj/LangDataMap.dep : ../../Applied/CCore/src/lang/LangDataMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangDataMap.o $< -MF $@
 
 obj/Len.dep : ../../Simple/CCore/src/gadget/Len.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Len.o $< -MF $@
@@ -3776,6 +3833,9 @@ obj/PrintCon.dep : ../../XCore/CCore/src/print/PrintCon.cpp
 
 obj/PrintError.dep : ../../Simple/CCore/src/PrintError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintError.o $< -MF $@
+
+obj/PrintFile.dep : ../../XCore/CCore/src/print/PrintFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintFile.o $< -MF $@
 
 obj/PrintPTPCon.dep : ../../Applied/CCore/src/print/PrintPTPCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintPTPCon.o $< -MF $@

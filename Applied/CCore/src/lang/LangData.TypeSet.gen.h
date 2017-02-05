@@ -1,3 +1,18 @@
+/* LangData.TypeSet.gen.h */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 3.00
+//
+//  Tag: Applied CondLangLR1
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
 /* struct TypeSet */
 
 struct TypeSet : TypeDefCore
