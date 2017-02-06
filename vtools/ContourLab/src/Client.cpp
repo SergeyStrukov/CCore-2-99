@@ -262,7 +262,7 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    menu(wlist,cfg.menu_cfg,menu_data),
    cascade_menu(host.getFrameDesktop(),cfg.cascade_menu_cfg),
    editor(wlist,cfg.editor_cfg),
-   file_frame(host.getFrameDesktop(),cfg.file_cfg,{true}),
+   file_frame(host.getFrameDesktop(),cfg.file_cfg,{true,".cont.ddl"_def}),
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),

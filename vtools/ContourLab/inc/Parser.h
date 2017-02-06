@@ -435,8 +435,8 @@ class FormulaTextParser : public ParserBase , FormulaParserData
      ( ... , paintAtom(tt) );
     }
 
-   template <class E,class ... TT,int ... II>
-   bool applyRule(bool (E::*method)(Context &,TT...),int elem,Meta::IndexListBox<II...>)
+   template <class E,class ... TT,int ... IList>
+   bool applyRule(bool (E::*method)(Context &,TT...),int elem,Meta::IndexListBox<IList...>)
     {
      stack.reserve(1);
 
@@ -445,11 +445,11 @@ class FormulaTextParser : public ParserBase , FormulaParserData
 
      E *element=new E{};
 
-     bool ok=(element->*method)(ctx,base[II-1]...);
+     bool ok=(element->*method)(ctx,base[IList]...);
 
      if( !ok )
        {
-        paintAtoms<TT...>(base[II-1]...);
+        paintAtoms<TT...>(base[IList]...);
 
         delete element;
 
@@ -468,7 +468,7 @@ class FormulaTextParser : public ParserBase , FormulaParserData
    template <class E,class ... TT>
    bool applyRule(bool (E::*method)(Context &,TT...),int elem)
     {
-     return applyRule(method,elem,Meta::IndexList<TT...>());
+     return applyRule(method,elem, Meta::IndexList<0,TT...>() );
     }
 
    bool applyRule(int rule)

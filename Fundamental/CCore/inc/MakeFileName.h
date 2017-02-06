@@ -31,7 +31,11 @@ class MakeFileName : public MakeString<MaxPathLen>
  {
   private:
 
+   static bool HasNoExt(StrLen file_name);
+
    void make(StrLen dir_name,StrLen file_name);
+
+   void make(StrLen dir_name,StrLen file_name,StrLen auto_ext);
 
   public:
 
@@ -39,11 +43,22 @@ class MakeFileName : public MakeString<MaxPathLen>
 
    MakeFileName(StrLen dir_name,StrLen file_name) { make(dir_name,file_name); }
 
+   MakeFileName(StrLen dir_name,StrLen file_name,StrLen auto_ext) { make(dir_name,file_name,auto_ext); }
+
    StrLen operator () (StrLen dir_name,StrLen file_name)
     {
      reset();
 
      make(dir_name,file_name);
+
+     return get();
+    }
+
+   StrLen operator () (StrLen dir_name,StrLen file_name,StrLen auto_ext)
+    {
+     reset();
+
+     make(dir_name,file_name,auto_ext);
 
      return get();
     }

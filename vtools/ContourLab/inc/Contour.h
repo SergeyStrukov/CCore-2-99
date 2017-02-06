@@ -203,7 +203,7 @@ struct Formular : Geometry
   template <class S,class IList,class ... SS> struct FormulaFactory;
 
   template <class S,class ... SS,int ... IList>
-  struct FormulaFactory<S,Meta::IndexListBox<IList...>,SS...>
+  struct FormulaFactory<S, Meta::IndexListBox<IList...> ,SS...>
    {
     template <S Func(SS...)>
     struct Pack : UnusedPad<S>
@@ -230,7 +230,7 @@ struct Formular : Geometry
           }
        }
 
-      S operator () () const { return SafeCall( args[IList-1].template get<SS>()... ); }
+      S operator () () const { return SafeCall( args[IList].template get<SS>()... ); }
      };
 
     template <S Func(SS...)>
@@ -245,24 +245,24 @@ struct Formular : Geometry
 
       int temp[]={ SS::TypeId ... };
 
-      if( ( TestType(list.ptr,temp,IList-1) || ... ) ) return false;
+      if( ( TestType(list.ptr,temp,IList) || ... ) ) return false;
 
-      ret=CreateObject<Pack<Func> >( list[IList-1]... );
+      ret=CreateObject<Pack<Func> >( list[IList]... );
 
       return true;
      }
    };
 
   template <class S,class ... SS>
-  using FormulaAlias = FormulaFactory<S, Meta::IndexList<SS...> ,SS...> ;
+  using FormulaAlias = FormulaFactory<S, Meta::IndexList<0,SS...> ,SS...> ;
+
+  template <class T> struct Formula;
 
   template <class S,class ... SS>
-  struct Formula : FormulaAlias<S,SS...>
-   {
-   };
+  struct Formula<S (SS...)> : FormulaAlias<S,SS...> {};
 
   template <class S>
-  struct Formula<S>
+  struct Formula<S ()>
    {
     template <S Func()>
     struct Pack : UnusedPad<S>
@@ -291,17 +291,6 @@ struct Formular : Geometry
     template <S Func()>
     static Object Create() { return CreateObject<Pack<Func> >(); }
    };
-
-  template <class Sig> struct FormulaTypeCtor;
-
-  template <class S,class ... SS>
-  struct FormulaTypeCtor<S (SS...)>
-   {
-    using RetType = Formula<S,SS...> ;
-   };
-
-  template <class Sig>
-  using FormulaType = typename FormulaTypeCtor<Sig>::RetType ;
 
   // Pad
 
@@ -336,21 +325,21 @@ struct Label
 
   // work
 
-  MPoint pos;
-  bool pos_ok = false ;
+  mutable MPoint pos;
+  mutable bool pos_ok = false ;
 
   Label() noexcept {}
 
   explicit Label(const String &name_) noexcept : name(name_) {}
 
-  bool test()
+  bool test() const
    {
     pos_ok=false;
 
     return show;
    }
 
-  void setPos(MPoint pos_)
+  void setPos(MPoint pos_) const
    {
     pos=pos_;
     pos_ok=true;
@@ -386,7 +375,7 @@ class Contour : public Formular
  {
    struct Item
     {
-     mutable Label label;
+     Label label;
      Object obj;
     };
 
@@ -482,7 +471,6 @@ class Contour : public Formular
      return true;
     }
 
-   template <class ... OO>
    bool addFormula(ulen index,StrLen name,Object obj)
     {
      formulas.reserve(1);
@@ -519,7 +507,7 @@ class Contour : public Formular
     {
      Func func;
      bool selected;
-     Label &label;
+     const Label &label;
 
      void operator () (AnyType s) { if( !s.rex ) func(label,selected,s); }
 
@@ -530,7 +518,7 @@ class Contour : public Formular
    struct BindRef
     {
      Func func;
-     Label &label;
+     const Label &label;
      const Object &obj;
 
      void operator () (AnyType &s) { func(label,obj,s); }

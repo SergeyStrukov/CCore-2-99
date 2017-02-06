@@ -23,6 +23,8 @@ namespace Meta {
 
 /* classes */
 
+template <int Base,class T> struct BaseBox;
+
 template <int ... IList> struct IndexListBox;
 
 template <class ... TT> struct TypeListBox;
@@ -42,18 +44,26 @@ template <class ... TT> requires ( sizeof ... (TT) > 0 ) struct PopTypeList;
 template <class T>
 using EraseType = int ;
 
+/* struct BaseBox<int Base,T> */
+
+template <int Base,class T>
+struct BaseBox
+ {
+ };
+
 /* struct IndexListBox<int ... IList> */
 
 template <int ... IList>
 struct IndexListBox
  {
-  IndexListBox<IList...,1+sizeof ... (IList)> operator + (int);
+  template <int Base,class T>
+  IndexListBox<IList...,Base+sizeof ... (IList)> operator + (BaseBox<Base,T>);
  };
 
-/* type IndexList<TT> */
+/* type IndexList<int Base,TT> */
 
-template <class ... TT>
-using IndexList = decltype( ( IndexListBox<>() + ... + EraseType<TT>() ) ) ;
+template <int Base,class ... TT>
+using IndexList = decltype( ( IndexListBox<>() + ... + BaseBox<Base,TT>() ) ) ;
 
 /* struct TypeListBox<TT> */
 

@@ -155,22 +155,22 @@ class Contour::PadAddParser : public PadTextParser
 
    virtual bool point(StrLen name,StrLen x,StrLen y)
     {
-     return obj->addPad<Geometry::Point>(index,name,{StrToReal(x),StrToReal(y)});
+     return obj->addPad<Point>(index,name,{StrToReal(x),StrToReal(y)});
     }
 
    virtual bool length(StrLen name,StrLen x)
     {
-     return obj->addPad<Geometry::Length>(index,name,StrToReal(x));
+     return obj->addPad<Length>(index,name,StrToReal(x));
     }
 
    virtual bool angle(StrLen name,StrLen x)
     {
-     return obj->addPad<Geometry::Angle>(index,name,GradToRadian(StrToReal(x)));
+     return obj->addPad<Angle>(index,name,GradToRadian(StrToReal(x)));
     }
 
    virtual bool ratio(StrLen name,StrLen x)
     {
-     return obj->addPad<Geometry::Ratio>(index,name,StrToReal(x));
+     return obj->addPad<Ratio>(index,name,StrToReal(x));
     }
 
   public:
@@ -216,7 +216,7 @@ class Contour::FormulaTestContext : NoCopy
      Object &ret;
      Object a;
 
-     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+     bool operator () (auto)
       {
        return false;
       }
@@ -224,7 +224,7 @@ class Contour::FormulaTestContext : NoCopy
      template <OneOfTypes<Ratio,Length,Angle> S>
      bool operator () (S)
       {
-       ret=FormulaType<S (S)>::template Create<Neg>(a);
+       ret=Formula<S (S)>::template Create<Neg>(a);
 
        return true;
       }
@@ -238,7 +238,7 @@ class Contour::FormulaTestContext : NoCopy
      Object a;
      Object b;
 
-     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+     bool operator () (auto)
       {
        return false;
       }
@@ -248,7 +248,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( b.getTypeId()!=S::TypeId ) return false;
 
-       ret=FormulaType<S (S,S)>::template Create<Add>(a,b);
+       ret=Formula<S (S,S)>::template Create<Add>(a,b);
 
        return true;
       }
@@ -262,7 +262,7 @@ class Contour::FormulaTestContext : NoCopy
      Object a;
      Object b;
 
-     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+     bool operator () (auto)
       {
        return false;
       }
@@ -272,7 +272,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( b.getTypeId()!=S::TypeId ) return false;
 
-       ret=FormulaType<S (S,S)>::template Create<Sub>(a,b);
+       ret=Formula<S (S,S)>::template Create<Sub>(a,b);
 
        return true;
       }
@@ -286,7 +286,7 @@ class Contour::FormulaTestContext : NoCopy
      Object a;
      Object b;
 
-     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+     bool operator () (auto)
       {
        return false;
       }
@@ -296,7 +296,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( a.getTypeId()!=Ratio::TypeId ) return false;
 
-       ret=FormulaType<S (Ratio,S)>::template Create<Mul>(a,b);
+       ret=Formula<S (Ratio,S)>::template Create<Mul>(a,b);
 
        return true;
       }
@@ -310,7 +310,7 @@ class Contour::FormulaTestContext : NoCopy
      Object a;
      Object b;
 
-     bool operator () (OneOfTypes<Point,Line,Circle,Couple>)
+     bool operator () (auto)
       {
        return false;
       }
@@ -320,7 +320,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( b.getTypeId()!=Ratio::TypeId ) return false;
 
-       ret=FormulaType<S (S,Ratio)>::template Create<Div>(a,b);
+       ret=Formula<S (S,Ratio)>::template Create<Div>(a,b);
 
        return true;
       }
@@ -330,11 +330,11 @@ class Contour::FormulaTestContext : NoCopy
        switch( b.getTypeId() )
          {
           case Length::TypeId :
-            ret=FormulaType<Ratio (Length,Length)>::Create<Div>(a,b);
+            ret=Formula<Ratio (Length,Length)>::Create<Div>(a,b);
           return true;
 
           case Ratio::TypeId :
-            ret=FormulaType<Length (Length,Ratio)>::Create<Div>(a,b);
+            ret=Formula<Length (Length,Ratio)>::Create<Div>(a,b);
           return true;
          }
 
@@ -388,7 +388,7 @@ class Contour::FormulaTestContext : NoCopy
 
    bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list)
     {
-#define DEF(N,F) if( name.equal( #N ## _c ) ) return FormulaType<decltype(F)>::SafeCreate<F>(ret,list);
+#define DEF(N,F) if( name.equal( #N ## _c ) ) return Formula<decltype(F)>::SafeCreate<F>(ret,list);
 
      DEF(Len,LengthOf)
      DEF(Angle,AngleOf)
@@ -439,28 +439,28 @@ class Contour::FormulaTestContext : NoCopy
 
    bool number(ExprType &ret,StrLen number)
     {
-     ret=CreateObject<Pad<Ratio> >(StrToReal(number));
+     ret=Pad<Ratio>::Create(StrToReal(number));
 
      return true;
     }
 
    bool angle(ExprType &ret,StrLen number)
     {
-     ret=CreateObject<Pad<Angle> >(StrToReal(number));
+     ret=Pad<Angle>::Create(StrToReal(number));
 
      return true;
     }
 
    bool length(ExprType &ret,StrLen number)
     {
-     ret=CreateObject<Pad<Length> >(StrToReal(number));
+     ret=Pad<Length>::Create(StrToReal(number));
 
      return true;
     }
 
    bool point(ExprType &ret,StrLen number_x,StrLen number_y)
     {
-     ret=CreateObject<Pad<Point> >(Point(StrToReal(number_x),StrToReal(number_y)));
+     ret=Pad<Point>::Create(Point(StrToReal(number_x),StrToReal(number_y)));
 
      return true;
     }

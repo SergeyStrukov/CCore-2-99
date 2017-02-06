@@ -101,7 +101,7 @@ class GeometryWindow::DrawItem : Geometry
        }
     }
 
-   void drawLine(Point a,Point b,bool selected,Label &label)
+   void drawLine(Point a,Point b,bool selected,const Label &label)
     {
      MPoint beg=Map(a);
      MPoint end=Map(b);
@@ -128,7 +128,7 @@ class GeometryWindow::DrawItem : Geometry
        }
     }
 
-   static void SetPos(Label &label,Couple C)
+   static void SetPos(const Label &label,Couple C)
     {
      if( C.a.rex )
        label.setPos(Map(C.b));
@@ -156,7 +156,7 @@ class GeometryWindow::DrawItem : Geometry
      return p+t*e;
     }
 
-   void drawArc(Label &label,bool selected,Point c,Real r,Point a,Point b)
+   void drawArc(const Label &label,bool selected,Point c,Real r,Point a,Point b)
     {
      if( a.rex || b.rex ) return;
 
@@ -199,7 +199,7 @@ class GeometryWindow::DrawItem : Geometry
        }
     }
 
-   void drawArc(Label &label,bool selected,Point c,Real r,Couple A,Couple B)
+   void drawArc(const Label &label,bool selected,Point c,Real r,Couple A,Couple B)
     {
      if( A.rex ) return drawArc(label,selected,c,r,B);
 
@@ -208,7 +208,7 @@ class GeometryWindow::DrawItem : Geometry
      return drawArc(label,selected,c,r,A.a,B.a);
     }
 
-   void drawArc(Label &label,bool selected,Point c,Real r,Couple A)
+   void drawArc(const Label &label,bool selected,Point c,Real r,Couple A)
     {
      if( A.rex ) return;
 
@@ -259,12 +259,12 @@ class GeometryWindow::DrawItem : Geometry
     {
     }
 
-   void operator () (Label &,bool,auto)
+   void operator () (const Label &,bool,auto)
     {
      // do nothing
     }
 
-   void operator () (Label &label,bool selected,Point s)
+   void operator () (const Label &label,bool selected,Point s)
     {
      if( !label.test() ) return;
 
@@ -283,7 +283,7 @@ class GeometryWindow::DrawItem : Geometry
        }
     }
 
-   void operator () (Label &label,bool selected,Line s)
+   void operator () (const Label &label,bool selected,Line s)
     {
      if( !label.test() ) return;
 
@@ -348,7 +348,7 @@ class GeometryWindow::DrawItem : Geometry
        }
     }
 
-   void operator () (Label &label,bool selected,Circle s)
+   void operator () (const Label &label,bool selected,Circle s)
     {
      if( !label.test() ) return;
 
@@ -544,12 +544,12 @@ class GeometryWindow::DrawName
      shift=RoundUpLen(6*width);
     }
 
-   void operator () (Label &,bool,auto)
+   void operator () (const Label &,bool,auto)
     {
      // do nothing
     }
 
-   void operator () (Label &label,bool selected,OneOfTypes<Geometry::Point,Geometry::Line,Geometry::Circle>)
+   void operator () (const Label &label,bool selected,OneOfTypes<Geometry::Point,Geometry::Line,Geometry::Circle>)
     {
      if( ( label.show_name || selected ) && label.pos_ok ) drawName(label.pos,label.name);
     }

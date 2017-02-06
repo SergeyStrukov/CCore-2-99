@@ -22,11 +22,33 @@ namespace CCore {
 
 /* class MakeFileName */
 
+bool MakeFileName::HasNoExt(StrLen file_name)
+ {
+  SplitExt split(file_name);
+
+  return !split;
+ }
+
 void MakeFileName::make(StrLen dir_name,StrLen file_name)
  {
   if( +dir_name && PathBase::IsSlash(dir_name.back(1)) ) dir_name.len--;
 
   add(dir_name,'/',file_name);
+
+  if( !(*this) )
+    {
+     Printf(Exception,"CCore::MakeFileName::make(#.q;,#.q;) : too long path",dir_name,file_name);
+    }
+ }
+
+void MakeFileName::make(StrLen dir_name,StrLen file_name,StrLen auto_ext)
+ {
+  if( +dir_name && PathBase::IsSlash(dir_name.back(1)) ) dir_name.len--;
+
+  if( +auto_ext && HasNoExt(file_name) )
+    add(dir_name,'/',file_name,auto_ext);
+  else
+    add(dir_name,'/',file_name);
 
   if( !(*this) )
     {

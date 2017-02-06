@@ -751,7 +751,7 @@ void FileWindow::buildFilePath()
  {
   if( param.new_file && alt_new_file.isChecked() )
     {
-     file_path=file_buf(edit_dir.getText(),edit_new_file.getText());
+     file_path=file_buf(edit_dir.getText(),edit_new_file.getText(),param.auto_ext.str());
     }
   else
     {
@@ -1096,6 +1096,13 @@ Point FileWindow::getMinSize(StrLen sample_text) const
   if( param.new_file ) dy += dir_dy + 2*space ;
 
   return Point(dx,dy);
+ }
+
+void FileWindow::setNewFile(bool on,DefString auto_ext)
+ {
+  param.auto_ext=auto_ext;
+
+  setNewFile(on);
  }
 
 void FileWindow::setNewFile(bool on)

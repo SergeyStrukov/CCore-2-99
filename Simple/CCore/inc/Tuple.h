@@ -87,7 +87,7 @@ struct TupleFactory<Meta::IndexListBox<IList...>,TT...>
 /* struct Tuple<TT> */
 
 template <class ... TT>
-using TupleAlias = typename TupleFactory< Meta::IndexList<TT...> ,TT...>::Tuple ;
+using TupleAlias = typename TupleFactory< Meta::IndexList<1,TT...> ,TT...>::Tuple ;
 
 template <class ... TT>
 struct Tuple : TupleAlias<TT...>
@@ -136,7 +136,7 @@ struct ForwardTupleFactory<Meta::IndexListBox<IList...>,TT...>
 /* struct ForwardTuple<TT> */
 
 template <class ... TT>
-using ForwardTupleAlias = typename ForwardTupleFactory< Meta::IndexList<TT...> ,TT...>::Tuple ;
+using ForwardTupleAlias = typename ForwardTupleFactory< Meta::IndexList<1,TT...> ,TT...>::Tuple ;
 
 template <class ... TT>
 struct ForwardTuple : ForwardTupleAlias<TT...>

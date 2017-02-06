@@ -390,6 +390,7 @@ class FileCheckShape
 struct FileWindowParam
  {
   bool new_file = false ;
+  DefString auto_ext;
   FileBoss file_boss;
  };
 
@@ -638,6 +639,8 @@ class FileWindow : public ComboWindow
 
    StrLen getFilePath() const { return file_path; }
 
+   void setNewFile(bool on,DefString auto_ext);
+
    void setNewFile(bool on);
 
    void addFilter(StrLen filter,bool check) { filter_list.add(filter,check); }
@@ -699,6 +702,8 @@ class FileFrame : public DragFrame
    virtual ~FileFrame();
 
    // methods
+
+   void setNewFile(bool on,DefString auto_ext) { sub_win.setNewFile(on,auto_ext); }
 
    void setNewFile(bool on) { sub_win.setNewFile(on); }
 
