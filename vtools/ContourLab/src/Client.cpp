@@ -81,27 +81,7 @@ void ClientWindow::startSave(Point point)
   disableFrameReact();
  }
 
-void ClientWindow::menu_selected(int id,Point point)
- {
-  if( cascade_menu.isAlive() ) cascade_menu.destroy();
-
-  switch( id )
-    {
-     case MenuFile :
-      {
-       cascade_menu.create(getFrame(),menu_file_data,point);
-      }
-     break;
-
-     case MenuOptions :
-      {
-       cascade_menu.create(getFrame(),menu_opt_data,point);
-      }
-     break;
-    }
- }
-
-void ClientWindow::cascade_menu_selected(int id,Point point) // TODO
+void ClientWindow::menuAction(int id,Point point) // TODO
  {
   switch( id )
     {
@@ -163,12 +143,40 @@ void ClientWindow::cascade_menu_selected(int id,Point point) // TODO
       }
      break;
     }
+ }
 
-  cascade_menu.destroy();
+void ClientWindow::menuAction(int id)
+ {
+  menuAction(id,toScreen(Point(10,10)));
+ }
+
+void ClientWindow::menu_selected(int id,Point point)
+ {
+  if( cascade_menu.isAlive() ) cascade_menu.destroy();
+
+  switch( id )
+    {
+     case MenuFile :
+      {
+       cascade_menu.create(getFrame(),menu_file_data,point);
+      }
+     break;
+
+     case MenuOptions :
+      {
+       cascade_menu.create(getFrame(),menu_opt_data,point);
+      }
+     break;
+    }
+ }
+
+void ClientWindow::cascade_menu_selected(int id,Point point)
+ {
+  menuAction(id,point);
+
+  menuOff();
 
   editor.setFocus();
-
-  menu.unselect();
  }
 
 void ClientWindow::file_destroyed()
@@ -324,19 +332,38 @@ void ClientWindow::react(UserAction action)
 
 void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
  {
-  if( vkey==VKey_F10 )
+  switch( vkey )
     {
-     menu.setFocus();
-    }
-  else if( vkey==VKey_Esc )
-    {
-     menu.unselect();
+     case VKey_F2 :
+      {
+       menuAction(MenuFileSave);
+      }
+     break;
 
-     if( wlist.getFocus()==&menu ) editor.setFocus();
-    }
-  else
-    {
-     wlist.put_Key(vkey,kmod);
+     case VKey_F3 :
+      {
+       menuAction(MenuFileOpen);
+      }
+     break;
+
+     case VKey_F10 :
+      {
+       menu.setFocus();
+      }
+     break;
+
+     case VKey_Esc :
+      {
+       menuOff();
+
+       editor.setFocus();
+      }
+     break;
+
+     default:
+      {
+       wlist.put_Key(vkey,kmod);
+      }
     }
  }
 

@@ -164,6 +164,10 @@ class EditorWindow : public ComboWindow
 
    void unselectFormula();
 
+   void setModified() { text_file.alert(true); }
+
+   void clearModified() { text_file.alert(false); }
+
   private:
 
    void angle_changed(Geometry::Angle angle);
@@ -172,9 +176,12 @@ class EditorWindow : public ComboWindow
 
    void ratio_changed(Geometry::Ratio ratio);
 
+   void geom_changed();
+
    SignalConnector<EditorWindow,Geometry::Angle> connector_angle_changed;
    SignalConnector<EditorWindow,Geometry::Length> connector_length_changed;
    SignalConnector<EditorWindow,Geometry::Ratio> connector_ratio_changed;
+   SignalConnector<EditorWindow> connector_geom_changed;
 
   private:
 

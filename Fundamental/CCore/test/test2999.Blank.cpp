@@ -15,6 +15,8 @@
 
 #include <CCore/test/test.h>
 
+#include <math.h>
+
 namespace App {
 
 namespace Private_2999 {

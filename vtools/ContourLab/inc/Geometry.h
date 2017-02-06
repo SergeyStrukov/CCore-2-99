@@ -99,9 +99,13 @@ struct Geometry
 
      static Real Pow(Real x,ulen deg);
 
+     static Real Den(Real x,Real cap);
+
+     static Real RoundMul(Real x,Real den);
+
      // map
 
-     int map(int prec);
+     double map(int prec);
 
      // print object
 
@@ -559,19 +563,19 @@ struct Geometry
   static Point Left(Length len,Point p) { return {p.x-len.val,p.y}; }
 
   static Point Right(Length len,Point p) { return {p.x+len.val,p.y}; }
+
+  // conversions
+
+  static MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }
+
+  static MPoint Map(Geometry::Point point) { return MPoint(Map(point.x),Map(point.y)); }
  };
 
 /* functions */
 
 inline Geometry::Angle GradToRadian(Geometry::Real val) { return Geometry::Angle( (val/180)*Geometry::Real::Pi() ); }
 
-inline MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }
-
-inline MCoord Map(Geometry::Length x,Geometry::Real cap) { return Map(Cap(-cap,x.val,cap)); }
-
-inline MPoint Map(Geometry::Point point) { return MPoint(Map(point.x),Map(point.y)); }
-
-inline Geometry::Point Map(Point point) { return Geometry::Point(point.x,point.y); }
+inline Geometry::Point GPoint(Point point) { return Geometry::Point(point.x,point.y); }
 
 Geometry::Real StrToReal(StrLen str);
 

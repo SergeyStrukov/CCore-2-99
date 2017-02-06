@@ -75,8 +75,7 @@ struct EditorWindow::SelectPad
  {
   EditorWindow *ptr;
 
-  template <class T>
-  void operator () (const Label &,const Contour::Object &,T &)
+  void operator () (const Label &,const Contour::Object &,auto &)
    {
    }
 
@@ -122,20 +121,44 @@ void EditorWindow::unselectFormula()
   geom.setFormulaIndex(MaxULen);
  }
 
+ // edit changed
+
 void EditorWindow::angle_changed(Geometry::Angle angle)
  {
-  if( angle_pad.set(angle) ) geom.redraw();
+  if( angle_pad.set(angle) )
+    {
+     geom.redraw();
+
+     setModified();
+    }
  }
 
 void EditorWindow::length_changed(Geometry::Length length)
  {
-  if( length_pad.set(length) ) geom.redraw();
+  if( length_pad.set(length) )
+    {
+     geom.redraw();
+
+     setModified();
+    }
  }
 
 void EditorWindow::ratio_changed(Geometry::Ratio ratio)
  {
-  if( ratio_pad.set(ratio) ) geom.redraw();
+  if( ratio_pad.set(ratio) )
+    {
+     geom.redraw();
+
+     setModified();
+    }
  }
+
+void EditorWindow::geom_changed()
+ {
+  setModified();
+ }
+
+ // layout
 
 Coord EditorWindow::getMinDXY() const
  {
@@ -190,6 +213,8 @@ void EditorWindow::adjustSplit(Point point)
     }
  }
 
+ // split
+
 void EditorWindow::split1_dragged(Point point)
  {
   adjustSplit(point);
@@ -200,6 +225,8 @@ void EditorWindow::split2_dragged(Point point)
   adjustSplit(point);
  }
 
+ // pad
+
 void EditorWindow::pad_up(ulen ind)
  {
   if( geom.contour.padUp(ind) )
@@ -209,6 +236,8 @@ void EditorWindow::pad_up(ulen ind)
      list_pad.updateList();
 
      list_pad.ping();
+
+     setModified();
     }
  }
 
@@ -221,6 +250,8 @@ void EditorWindow::pad_down(ulen ind)
      list_pad.updateList();
 
      list_pad.ping();
+
+     setModified();
     }
  }
 
@@ -240,6 +271,8 @@ void EditorWindow::pad_del(ulen ind)
 
         unselectPad();
        }
+
+     setModified();
     }
  }
 
@@ -258,6 +291,8 @@ void EditorWindow::pad_add(ulen ind)
      list_pad.ping();
 
      geom.redraw();
+
+     setModified();
     }
  }
 
@@ -271,6 +306,8 @@ void EditorWindow::pad_show_changed(ulen ind,bool check)
   geom.contour.refPadLabel(ind).show=check;
 
   geom.redraw();
+
+  setModified();
  }
 
 void EditorWindow::pad_gray_changed(ulen ind,bool check)
@@ -278,6 +315,8 @@ void EditorWindow::pad_gray_changed(ulen ind,bool check)
   geom.contour.refPadLabel(ind).gray=check;
 
   geom.redraw();
+
+  setModified();
  }
 
 void EditorWindow::pad_name_changed(ulen ind,bool check)
@@ -285,6 +324,8 @@ void EditorWindow::pad_name_changed(ulen ind,bool check)
   geom.contour.refPadLabel(ind).show_name=check;
 
   geom.redraw();
+
+  setModified();
  }
 
 void EditorWindow::pad_text_changed()
@@ -310,6 +351,8 @@ void EditorWindow::pad_text_paused()
   pad_test();
  }
 
+ // formula
+
 void EditorWindow::formula_up(ulen ind)
  {
   if( geom.contour.formulaUp(ind) )
@@ -319,6 +362,8 @@ void EditorWindow::formula_up(ulen ind)
      list_formula.updateList();
 
      list_formula.ping();
+
+     setModified();
     }
  }
 
@@ -331,6 +376,8 @@ void EditorWindow::formula_down(ulen ind)
      list_formula.updateList();
 
      list_formula.ping();
+
+     setModified();
     }
  }
 
@@ -350,6 +397,8 @@ void EditorWindow::formula_del(ulen ind)
 
         unselectFormula();
        }
+
+     setModified();
     }
  }
 
@@ -368,6 +417,8 @@ void EditorWindow::formula_add(ulen ind)
      list_formula.ping();
 
      geom.redraw();
+
+     setModified();
     }
  }
 
@@ -381,6 +432,8 @@ void EditorWindow::formula_show_changed(ulen ind,bool check)
   geom.contour.refFormulaLabel(ind).show=check;
 
   geom.redraw();
+
+  setModified();
  }
 
 void EditorWindow::formula_gray_changed(ulen ind,bool check)
@@ -388,6 +441,8 @@ void EditorWindow::formula_gray_changed(ulen ind,bool check)
   geom.contour.refFormulaLabel(ind).gray=check;
 
   geom.redraw();
+
+  setModified();
  }
 
 void EditorWindow::formula_name_changed(ulen ind,bool check)
@@ -395,6 +450,8 @@ void EditorWindow::formula_name_changed(ulen ind,bool check)
   geom.contour.refFormulaLabel(ind).show_name=check;
 
   geom.redraw();
+
+  setModified();
  }
 
 void EditorWindow::formula_text_changed()
@@ -419,6 +476,8 @@ void EditorWindow::formula_text_paused()
  {
   formula_test();
  }
+
+ // msg
 
 void EditorWindow::errorMsg(StrLen text)
  {
@@ -452,6 +511,7 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
    connector_angle_changed(this,&EditorWindow::angle_changed,edit_angle.changed),
    connector_length_changed(this,&EditorWindow::length_changed,edit_length.changed),
    connector_ratio_changed(this,&EditorWindow::ratio_changed,edit_ratio.changed),
+   connector_geom_changed(this,&EditorWindow::geom_changed,geom.changed),
 
    connector_split1_dragged(this,&EditorWindow::split1_dragged,split1.dragged),
    connector_split2_dragged(this,&EditorWindow::split2_dragged,split2.dragged),
@@ -488,11 +548,7 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
 
   list_pad.setInfo(geom.contour.getPadInfo());
 
-  list_pad.ping();
-
   list_formula.setInfo(geom.contour.getFormulaInfo());
-
-  list_formula.ping();
  }
 
 EditorWindow::~EditorWindow()
@@ -509,7 +565,7 @@ Point EditorWindow::getMinSize() const
 void EditorWindow::load()
  {
   text_file.setText(""_def);
-  text_file.alert(false);
+  clearModified();
   has_file=false;
 
   geom.contour.erase();
@@ -526,7 +582,7 @@ void EditorWindow::load()
 
   unselectFormula();
 
-  geom.redraw();
+  redraw();
  }
 
 void EditorWindow::load(StrLen file_name_)
@@ -534,7 +590,7 @@ void EditorWindow::load(StrLen file_name_)
   DefString file_name(file_name_);
 
   text_file.setText(file_name);
-  text_file.alert(false);
+  clearModified();
   has_file=true;
 
   ErrorText etext;
@@ -545,10 +601,6 @@ void EditorWindow::load(StrLen file_name_)
     {
      errorMsg(etext.getText());
     }
-  else
-    {
-     text_file.alert(true);
-    }
 
   if( list_pad.select(0) ) list_pad.ping(); else unselectPad();
 
@@ -558,7 +610,7 @@ void EditorWindow::load(StrLen file_name_)
 
   list_formula.updateList();
 
-  geom.redraw();
+  redraw();
  }
 
 bool EditorWindow::save()
@@ -572,11 +624,11 @@ bool EditorWindow::save()
   if( !etext )
     {
      errorMsg(etext.getText());
-
-     return true;
     }
-
-  text_file.alert(false);
+  else
+    {
+     clearModified();
+    }
 
   return true;
  }
@@ -586,7 +638,7 @@ void EditorWindow::save(StrLen file_name_)
   DefString file_name(file_name_);
 
   text_file.setText(file_name);
-  text_file.alert(true);
+  setModified();
   has_file=true;
 
   save();

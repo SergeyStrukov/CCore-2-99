@@ -35,7 +35,7 @@ inline void GuardType(int t1,int t2) { if( t1!=t2 ) GuardTypeMismatch(); }
 
 template <class S> struct UnusedPad;
 
-struct Formula;
+struct Formular;
 
 struct Label;
 
@@ -52,7 +52,7 @@ struct UnusedPad
 template <class S>
 S UnusedPad<S>::pad{};
 
-/* struct Formula */
+/* struct Formular */
 
 struct Formular : Geometry
  {

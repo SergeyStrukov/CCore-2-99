@@ -23,9 +23,11 @@ void GeometryWindow::pin(Point point_)
  {
   if( point )
     {
-     *point=Map(point_);
+     *point=GPoint(point_);
 
      redraw();
+
+     changed.assert();
     }
  }
 
@@ -36,6 +38,8 @@ void GeometryWindow::shift_x(Coord delta)
      point->x=point->x+Geometry::Real(delta);
 
      redraw();
+
+     changed.assert();
     }
  }
 
@@ -46,10 +50,12 @@ void GeometryWindow::shift_y(Coord delta)
      point->y=point->y+Geometry::Real(delta);
 
      redraw();
+
+     changed.assert();
     }
  }
 
-class GeometryWindow::DrawItem
+class GeometryWindow::DrawItem : Geometry
  {
    SmoothDrawArt art;
 
@@ -60,55 +66,42 @@ class GeometryWindow::DrawItem
 
    VColor face;
    VColor gray;
-   VColor text;
-
-   Font font;
 
    // work
 
-   Geometry::Real cap_radius;
+   Real cap_radius;
 
-   Geometry::Point A,B,C,D;
+   Point A,B,C,D;
 
    static const Coord Guard = 2 ;
 
-   Geometry::Point P1,P2;
-   Geometry::Point P3,P4;
-   Geometry::Point Q1,Q2;
-   Geometry::Point Q3,Q4;
+   Point P1,P2;
+   Point P3,P4;
+   Point Q1,Q2;
+   Point Q3,Q4;
 
   private:
 
-   bool test(Geometry::Point p)
+   bool test(Point p)
     {
      return p.x>=-dx && p.y>=-dy && p.x<=2*dx && p.y<=2*dy ;
     }
 
-   static Geometry::Point SafeMeet(Geometry::Line a,Geometry::Point b,Geometry::Point c)
+   // line
+
+   static Point SafeMeet(Line a,Point b,Point c)
     {
      try
        {
-        return Geometry::MeetIn(a,b,c);
+        return MeetIn(a,b,c);
        }
-     catch(Geometry::RealException rex)
+     catch(RealException rex)
        {
         return rex;
        }
     }
 
-   static Geometry::Couple SafeMeet(Geometry::Circle C,Geometry::Point a,Geometry::Point b)
-    {
-     try
-       {
-        return Geometry::MeetCircleIn(C,a,b);
-       }
-     catch(Geometry::RealException rex)
-       {
-        return rex;
-       }
-    }
-
-   void drawLine(Geometry::Point a,Geometry::Point b,bool selected,Label &label)
+   void drawLine(Point a,Point b,bool selected,Label &label)
     {
      MPoint beg=Map(a);
      MPoint end=Map(b);
@@ -121,7 +114,21 @@ class GeometryWindow::DrawItem
      label.setPos(end);
     }
 
-   static void SetPos(Label &label,Geometry::Couple C)
+   // circle
+
+   static Couple SafeMeet(Circle C,Point a,Point b)
+    {
+     try
+       {
+        return MeetCircleIn(C,a,b);
+       }
+     catch(RealException rex)
+       {
+        return rex;
+       }
+    }
+
+   static void SetPos(Label &label,Couple C)
     {
      if( C.a.rex )
        label.setPos(Map(C.b));
@@ -129,27 +136,27 @@ class GeometryWindow::DrawItem
        label.setPos(Map(C.a));
     }
 
-   static Geometry::Point Middle(Geometry::Point c,Geometry::Real r,Geometry::Point a,Geometry::Point b)
+   static Point ArcMid(Point c,Real r,Point a,Point b)
     {
-     Geometry::Point p=(a+b)/2;
+     Point p=(a+b)/2;
 
-     Geometry::Point e=Geometry::Point::Ort(p-c);
+     Point e=Point::Ort(p-c);
 
-     Geometry::Real x=Geometry::Point::Norm(p-a);
-     Geometry::Real x2=Sq(x);
-     Geometry::Real r2=Sq(r);
+     Real x=Point::Norm(p-a);
+     Real x2=Sq(x);
+     Real r2=Sq(r);
 
-     Geometry::Real t;
+     Real t;
 
      if( r2<x2 )
        t=x2/r;
      else
-       t=x2/(r+Geometry::Real::Sqrt(r2-x2));
+       t=x2/(r+Real::Sqrt(r2-x2));
 
      return p+t*e;
     }
 
-   void drawArc(Label &label,bool selected,Geometry::Point c,Geometry::Real r,Geometry::Point a,Geometry::Point b)
+   void drawArc(Label &label,bool selected,Point c,Real r,Point a,Point b)
     {
      if( a.rex || b.rex ) return;
 
@@ -157,14 +164,14 @@ class GeometryWindow::DrawItem
 
      try
        {
-        Geometry::Point p4=Middle(c,r,a,b);
-        Geometry::Point p2=Middle(c,r,a,p4);
-        Geometry::Point p6=Middle(c,r,p4,b);
+        Point p4=ArcMid(c,r,a,b);
+        Point p2=ArcMid(c,r,a,p4);
+        Point p6=ArcMid(c,r,p4,b);
 
-        Geometry::Point p1=Middle(c,r,a,p2);
-        Geometry::Point p3=Middle(c,r,p2,p4);
-        Geometry::Point p5=Middle(c,r,p4,p6);
-        Geometry::Point p7=Middle(c,r,p6,b);
+        Point p1=ArcMid(c,r,a,p2);
+        Point p3=ArcMid(c,r,p2,p4);
+        Point p5=ArcMid(c,r,p4,p6);
+        Point p7=ArcMid(c,r,p6,b);
 
         MPoint temp[9];
 
@@ -187,12 +194,12 @@ class GeometryWindow::DrawItem
         else
           art.curvePath(Range(temp),width,face);
        }
-     catch(Geometry::RealException)
+     catch(RealException)
        {
        }
     }
 
-   void drawArc(Label &label,bool selected,Geometry::Point c,Geometry::Real r,Geometry::Couple A,Geometry::Couple B)
+   void drawArc(Label &label,bool selected,Point c,Real r,Couple A,Couple B)
     {
      if( A.rex ) return drawArc(label,selected,c,r,B);
 
@@ -201,21 +208,21 @@ class GeometryWindow::DrawItem
      return drawArc(label,selected,c,r,A.a,B.a);
     }
 
-   void drawArc(Label &label,bool selected,Geometry::Point c,Geometry::Real r,Geometry::Couple A)
+   void drawArc(Label &label,bool selected,Point c,Real r,Couple A)
     {
      if( A.rex ) return;
 
      drawArc(label,selected,c,r,A.a,A.b);
     }
 
-   void testPoint(Geometry::Point a)
+   void testPoint(Point a)
     {
      if( a.rex ) return;
 
      art.ball(Map(a),Fraction(5),Red);
     }
 
-   void testPoint(Geometry::Couple C)
+   void testPoint(Couple C)
     {
      if( C.rex ) return;
 
@@ -232,8 +239,6 @@ class GeometryWindow::DrawItem
       width(+cfg.width),
       face(+cfg.face),
       gray(+cfg.gray),
-      text(+cfg.text),
-      font(+cfg.font),
 
       cap_radius( 3*Max(dx,dy) ),
 
@@ -254,15 +259,16 @@ class GeometryWindow::DrawItem
     {
     }
 
-   template <class S>
-   void operator () (Label &,bool,S)
+   void operator () (Label &,bool,auto)
     {
      // do nothing
     }
 
-   void operator () (Label &label,bool selected,Geometry::Point s)
+   void operator () (Label &label,bool selected,Point s)
     {
      if( !label.test() ) return;
+
+     if( s.rex ) return;
 
      if( test(s) )
        {
@@ -277,14 +283,16 @@ class GeometryWindow::DrawItem
        }
     }
 
-   void operator () (Label &label,bool selected,Geometry::Line s)
+   void operator () (Label &label,bool selected,Line s)
     {
      if( !label.test() ) return;
 
-     Geometry::Point p1=SafeMeet(s,P1,P2);
-     Geometry::Point q1=SafeMeet(s,Q1,Q2);
-     Geometry::Point p2=SafeMeet(s,P3,P4);
-     Geometry::Point q2=SafeMeet(s,Q3,Q4);
+     if( s.rex ) return;
+
+     Point p1=SafeMeet(s,P1,P2);
+     Point q1=SafeMeet(s,Q1,Q2);
+     Point p2=SafeMeet(s,P3,P4);
+     Point q2=SafeMeet(s,Q3,Q4);
 
      if( p1.rex )
        {
@@ -340,12 +348,14 @@ class GeometryWindow::DrawItem
        }
     }
 
-   void operator () (Label &label,bool selected,Geometry::Circle s)
+   void operator () (Label &label,bool selected,Circle s)
     {
      if( !label.test() ) return;
 
-     Geometry::Point c=s.center;
-     Geometry::Real r=Geometry::Real::Abs(s.radius.val);
+     if( s.rex ) return;
+
+     Point c=s.center;
+     Real r=Real::Abs(s.radius.val);
 
      if( test(c) )
        {
@@ -356,23 +366,23 @@ class GeometryWindow::DrawItem
            else
              art.circle(Map(c),Map(r),width,face);
 
-           Geometry::Couple q1=SafeMeet(s,Q1,Q2);
+           Couple q1=SafeMeet(s,Q1,Q2);
 
            if( q1.rex )
              {
-              Geometry::Couple q2=SafeMeet(s,Q3,Q4);
+              Couple q2=SafeMeet(s,Q3,Q4);
 
               if( q2.rex )
                 {
-                 Geometry::Couple p1=SafeMeet(s,P1,P2);
+                 Couple p1=SafeMeet(s,P1,P2);
 
                  if( p1.rex )
                    {
-                    Geometry::Couple p2=SafeMeet(s,P3,P4);
+                    Couple p2=SafeMeet(s,P3,P4);
 
                     if( p2.rex )
                       {
-                       label.setPos(Map(c+Geometry::Point(0,r)));
+                       label.setPos(Map(c+Point(0,r)));
                       }
                     else
                       {
@@ -397,16 +407,16 @@ class GeometryWindow::DrawItem
        }
      else
        {
-        Geometry::Couple p1=SafeMeet(s,P1,P2);
+        Couple p1=SafeMeet(s,P1,P2);
 
         if( p1.rex )
           {
-           Geometry::Couple q1=SafeMeet(s,Q1,Q2);
-           Geometry::Couple q2=SafeMeet(s,Q3,Q4);
+           Couple q1=SafeMeet(s,Q1,Q2);
+           Couple q2=SafeMeet(s,Q3,Q4);
 
            if( q1.rex )
              {
-              Geometry::Couple p2=SafeMeet(s,P3,P4);
+              Couple p2=SafeMeet(s,P3,P4);
 
               drawArc(label,selected,c,r,p2,q2);
              }
@@ -414,7 +424,7 @@ class GeometryWindow::DrawItem
              {
               if( q2.rex )
                 {
-                 Geometry::Couple p2=SafeMeet(s,P3,P4);
+                 Couple p2=SafeMeet(s,P3,P4);
 
                  drawArc(label,selected,c,r,p2,q1);
                 }
@@ -426,12 +436,12 @@ class GeometryWindow::DrawItem
           }
         else
           {
-           Geometry::Couple p2=SafeMeet(s,P3,P4);
+           Couple p2=SafeMeet(s,P3,P4);
 
            if( p2.rex )
              {
-              Geometry::Couple q1=SafeMeet(s,Q1,Q2);
-              Geometry::Couple q2=SafeMeet(s,Q3,Q4);
+              Couple q1=SafeMeet(s,Q1,Q2);
+              Couple q2=SafeMeet(s,Q3,Q4);
 
               if( q1.rex )
                 {
@@ -534,8 +544,7 @@ class GeometryWindow::DrawName
      shift=RoundUpLen(6*width);
     }
 
-   template <class S>
-   void operator () (Label &,bool,S)
+   void operator () (Label &,bool,auto)
     {
      // do nothing
     }

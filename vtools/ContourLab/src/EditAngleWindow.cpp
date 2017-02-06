@@ -32,7 +32,7 @@ void EditAngleWindow::pin(Point point)
  {
   if( point!=base )
     {
-     newValue( Geometry::Point::Arg(Map(point-base)) );
+     newValue( Geometry::Point::Arg(GPoint(point-base)) );
     }
  }
 
@@ -115,10 +115,10 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
    Geometry::Real radius2(len*0.45);
    Geometry::Real radius3(len*0.35);
 
-   MPoint line_x=Map(Geometry::Point(radius2,0));
-   MPoint line_y=Map(Geometry::Point(0,radius2));
+   MPoint line_x=Geometry::Map(Geometry::Point(radius2,0));
+   MPoint line_y=Geometry::Map(Geometry::Point(0,radius2));
 
-   MPoint line=Map(Geometry::Point::Polar(radius,value));
+   MPoint line=Geometry::Map(Geometry::Point::Polar(radius,value));
 
    MPoint end_x=base+line_x;
    MPoint end_y=base-line_y;
@@ -141,7 +141,7 @@ void EditAngleWindow::draw(DrawBuf buf,bool) const
        {
         Geometry::Angle a=GradToRadian(x+y);
 
-        art.path(w/2,gray,base+Map(Geometry::Point::Polar(radius3,a)),base+Map(Geometry::Point::Polar(radius2,a)));
+        art.path(w/2,gray,base+Geometry::Map(Geometry::Point::Polar(radius3,a)),base+Geometry::Map(Geometry::Point::Polar(radius2,a)));
        }
 
    art.path(w,face,base,base+line);

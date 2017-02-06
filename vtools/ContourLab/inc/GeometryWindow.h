@@ -188,6 +188,10 @@ class GeometryWindow : public SubWindow
    void react_Leave();
 
    void react_Wheel(Point,MouseKey mkey,Coord delta);
+
+   // signals
+
+   Signal<> changed;
  };
 
 } // namespace App

@@ -38,8 +38,6 @@ class EditRatioWindow : public SubWindow
 
      RefVal<Coord> shade_dxy = 8 ;
 
-     RefVal<MCoord> arrow_size = Fraction(5) ;
-
      RefVal<VColor> back    =     White ;
      RefVal<VColor> border  =     Black ;
      RefVal<VColor> face    =     Black ;
@@ -71,7 +69,6 @@ class EditRatioWindow : public SubWindow
      void bindApp(const Bag &bag)
       {
        shade_dxy.bind(bag.shade_dxy);
-       arrow_size.bind(bag.arrow_size);
        back.bind(bag.back);
        border.bind(bag.border);
        face.bind(bag.face);
@@ -92,6 +89,8 @@ class EditRatioWindow : public SubWindow
    const Config &cfg;
 
    Geometry::Ratio value;
+   Coord a;
+   Coord b; // >0
 
    bool hilight = false ;
    bool focus = false ;
@@ -104,11 +103,15 @@ class EditRatioWindow : public SubWindow
 
   private:
 
-   void newValue(Geometry::Ratio value);
+   static Coord ToCoord(Geometry::Real x);
+
+   void newValue();
 
    void pin(Point point);
 
-   void shift(Coord delta);
+   void shiftA(Coord delta);
+
+   void shiftB(Coord delta);
 
   public:
 
@@ -122,12 +125,7 @@ class EditRatioWindow : public SubWindow
 
    Geometry::Ratio getValue() const { return value; }
 
-   void setValue(Geometry::Ratio value_)
-    {
-     value=value_;
-
-     redraw();
-    }
+   void setValue(Geometry::Ratio value_);
 
    // drawing
 

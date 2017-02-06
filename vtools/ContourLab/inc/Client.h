@@ -134,8 +134,6 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    void startSave(Point point);
 
-  private:
-
    enum MenuId
     {
      MenuFile = 1,
@@ -151,6 +149,12 @@ class ClientWindow : public ComboWindow , public AliveControl
      MenuOptionsUserPref = 201,
      MenuOptionsAppPref = 202
     };
+
+   void menuAction(int id,Point point);
+
+   void menuAction(int id);
+
+  private:
 
    void menu_selected(int id,Point point);
 

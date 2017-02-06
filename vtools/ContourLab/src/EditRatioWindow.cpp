@@ -19,23 +19,56 @@ namespace App {
 
 /* class EditRatioWindow */
 
-void EditRatioWindow::newValue(Geometry::Ratio value_)
+Coord EditRatioWindow::ToCoord(Geometry::Real x)
  {
-  value=value_;
+  return (Coord)x.val;
+ }
+
+void EditRatioWindow::newValue()
+ {
+  value=Geometry::Real(a)/Geometry::Real(b);
 
   redraw();
 
   changed.assert(value);
  }
 
-void EditRatioWindow::pin(Point point) // TODO
+void EditRatioWindow::pin(Point point)
  {
-  Used(point);
+  point-=base;
+
+  if( point.y<0 )
+    {
+     a=point.x;
+     b=-point.y;
+
+     newValue();
+    }
  }
 
-void EditRatioWindow::shift(Coord delta) // TODO
+void EditRatioWindow::shiftA(Coord delta)
  {
-  Used(delta);
+  a+=delta;
+
+  newValue();
+ }
+
+void EditRatioWindow::shiftB(Coord delta)
+ {
+  Coord new_b=b+delta;
+
+  if( new_b>0 )
+    {
+     b=new_b;
+
+     newValue();
+    }
+  else if( b>1 )
+    {
+     b=1;
+
+     newValue();
+    }
  }
 
 EditRatioWindow::EditRatioWindow(SubWindowHost &host,const Config &cfg_)
@@ -57,6 +90,30 @@ Point EditRatioWindow::getMinSize() const
   return {+cfg.dx,+cfg.dy};
  }
 
+void EditRatioWindow::setValue(Geometry::Ratio value_)
+ {
+  if( value_.rex )
+    {
+     value=Geometry::Ratio(1);
+     a=0;
+     b=1;
+    }
+  else
+    {
+     value=value_;
+
+     Geometry::Real x=value_.val;
+
+     Geometry::Real d=Geometry::Real::Den(x,50);
+
+     b=ToCoord(d);
+
+     a=ToCoord(Geometry::Real::RoundMul(d,Cap<Geometry::Real>(MinCoord/d,x,MaxCoord/d)));
+    }
+
+  redraw();
+ }
+
  // drawing
 
 bool EditRatioWindow::isGoodSize(Point size) const
@@ -64,7 +121,7 @@ bool EditRatioWindow::isGoodSize(Point size) const
   return size>=getMinSize();
  }
 
-void EditRatioWindow::layout() // TODO
+void EditRatioWindow::layout()
  {
   Coord s=+cfg.shade_dxy;
 
@@ -79,13 +136,13 @@ void EditRatioWindow::layout() // TODO
   text=Pane(0,base.y+size.y/12,size.x,size.y/3);
  }
 
-void EditRatioWindow::draw(DrawBuf buf,bool) const // TODO
+void EditRatioWindow::draw(DrawBuf buf,bool) const
  {
   if( pane.dx<10 || pane.dy<10 ) return;
 
   MCoord w=+cfg.width;
 
-  //VColor face=+cfg.face;
+  VColor face=+cfg.face;
   VColor gray=+cfg.gray;
 
   SmoothDrawArt art(buf.cut(pane));
@@ -102,13 +159,28 @@ void EditRatioWindow::draw(DrawBuf buf,bool) const // TODO
    buf.erase(shade2,gray);
   }
 
+  // length
+
+  {
+   Coord d=RoundUpLen(w);
+   MPoint endA=base.addX(Cap<Coord>(-base.x+d,a,base.x+1+d));
+   MPoint endB=base.subY(b);
+
+   art.ball(base,2*w,face);
+   art.ball(endA,2*w,face);
+   art.ball(endB,2*w,face);
+
+   art.path(w,face,base,endA);
+   art.path(w,face,base,endB);
+  }
+
   // text
 
   {
    char temp[TextBufLen];
    PrintBuf out(Range(temp));
 
-   Putobj(out,value);
+   Printf(out,"#;/#;",a,b);
 
    cfg.font->text(buf,text,TextPlace(AlignX_Center,AlignY_Top),out.close(),+cfg.text);
   }
@@ -161,11 +233,48 @@ void EditRatioWindow::react(UserAction action)
   action.dispatch(*this);
  }
 
-void EditRatioWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat) // TODO
+void EditRatioWindow::react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
  {
-  Used(vkey);
-  Used(kmod);
-  Used(repeat);
+  switch( vkey )
+    {
+     case VKey_Up :
+      {
+       if( kmod&KeyMod_Shift )
+         shiftB(10*Coord(repeat));
+       else
+         shiftB(Coord(repeat));
+      }
+     break;
+
+     case VKey_Down :
+      {
+       if( kmod&KeyMod_Shift )
+         shiftB(-10*Coord(repeat));
+       else
+         shiftB(-Coord(repeat));
+      }
+     break;
+
+     case VKey_Right :
+     case VKey_NumPlus :
+      {
+       if( kmod&KeyMod_Shift )
+         shiftA(10*Coord(repeat));
+       else
+         shiftA(Coord(repeat));
+      }
+     break;
+
+     case VKey_Left :
+     case VKey_NumMinus :
+      {
+       if( kmod&KeyMod_Shift )
+         shiftA(-10*Coord(repeat));
+       else
+         shiftA(-Coord(repeat));
+      }
+     break;
+    }
  }
 
 void EditRatioWindow::react_LeftClick(Point point,MouseKey)
@@ -192,10 +301,16 @@ void EditRatioWindow::react_Leave()
   if( Change(hilight,false) ) redraw();
  }
 
-void EditRatioWindow::react_Wheel(Point,MouseKey mkey,Coord delta) // TODO
+void EditRatioWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
  {
-  Used(mkey);
-  Used(delta);
+  if( mkey&MouseKey_Shift )
+    {
+     shiftB(delta);
+    }
+  else
+    {
+     shiftA(delta);
+    }
  }
 
 } // namespace App

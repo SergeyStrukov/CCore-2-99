@@ -506,6 +506,7 @@ void Contour::erase()
  {
   pads.erase();
   formulas.erase();
+  map.erase();
  }
 
 void Contour::save(StrLen file_name,ErrorText &etext) const // TODO
@@ -517,6 +518,8 @@ void Contour::save(StrLen file_name,ErrorText &etext) const // TODO
 
 void Contour::load(StrLen file_name,ErrorText &etext) // TODO
  {
+  erase();
+
   Used(file_name);
 
   etext.setText("Not implemented yet"_c);

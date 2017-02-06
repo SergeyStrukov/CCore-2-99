@@ -130,11 +130,56 @@ Geometry::Real Geometry::Real::Pow(Real x,ulen deg)
   return ret;
  }
 
+Geometry::Real Geometry::Real::Den(Real x_,Real cap)
+ {
+  double x=fabs(x_.val);
+
+  x=x-floor(x);
+
+  if( x>0 )
+    {
+     double a=1,b=0,c=0,d=1;
+     double y=x;
+
+     while( y>1/Cap && d<cap )
+       {
+        double Y=1/y;
+        double t=floor(Y);
+        double z=Y-t;
+
+        double a1=b;
+        double b1=a+b*t;
+        double c1=d;
+        double d1=c+d*t;
+
+        if( d1>cap ) break;
+
+        a=a1;
+        b=b1;
+        c=c1;
+        d=d1;
+
+        y=z;
+       }
+
+     return d;
+    }
+  else
+    {
+     return 1;
+    }
+ }
+
+Geometry::Real Geometry::Real::RoundMul(Real x,Real den)
+ {
+  return round(x.val*den.val);
+ }
+
  // map
 
-int Geometry::Real::map(int prec)
+double Geometry::Real::map(int prec)
  {
-  return (int)ldexp(val,prec);
+  return round(ldexp(val,prec));
  }
 
  // print object

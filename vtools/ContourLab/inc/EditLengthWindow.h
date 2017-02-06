@@ -104,6 +104,8 @@ class EditLengthWindow : public SubWindow
 
   private:
 
+   static MCoord Map(Geometry::Length x,Geometry::Real cap) { return Geometry::Map(Cap(-cap,x.val,cap)); }
+
    void newValue(Geometry::Length value);
 
    void pin(Point point);
