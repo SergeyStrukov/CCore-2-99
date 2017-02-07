@@ -292,6 +292,75 @@ struct Formular : Geometry
     static Object Create() { return CreateObject<Pack<Func> >(); }
    };
 
+  template <class A>
+  class ArgCursor
+   {
+     PtrLen<const Object> list;
+
+    public:
+
+     ArgCursor(PtrLen<const Object> list_) : list(list_) {}
+
+     ulen getLen() const { return list.len; }
+
+     // object cursor
+
+     bool operator + () const { return +list; }
+
+     bool operator ! () const { return !list; }
+
+     A operator * () const
+      {
+       A ret=list->get<A>();
+
+       AssertValid(ret);
+
+       return ret;
+      }
+
+     void operator ++ () { ++list; }
+   };
+
+  template <class S,class A>
+  struct Formula<S (A[])>
+   {
+    template <S Func(ArgCursor<A>)>
+    struct Pack : UnusedPad<S>
+     {
+      static const int TypeId = S::TypeId ;
+
+      using RetType = S ;
+
+      DynArray<Object> args;
+
+      explicit Pack(PtrLen<const Object> list) : args(DoCopy(list.len),list.ptr) {}
+
+      static S SafeCall(ArgCursor<A> args)
+       {
+        try
+          {
+           return Func(args);
+          }
+        catch(RealException rex)
+          {
+           return S(rex);
+          }
+       }
+
+      S operator () () const { return SafeCall(Range(args)); }
+     };
+
+    template <S Func(ArgCursor<A>)>
+    static bool SafeCreate(Object &ret,PtrLen<const Object> list)
+     {
+      for(const Object &obj : list ) if( obj.getTypeId()!=A::TypeId ) return false;
+
+      ret=CreateObject<Pack<Func> >(list);
+
+      return true;
+     }
+   };
+
   // Pad
 
   template <class S>

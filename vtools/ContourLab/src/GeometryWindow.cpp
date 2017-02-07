@@ -230,6 +230,38 @@ class GeometryWindow::DrawItem : Geometry
      testPoint(C.b);
     }
 
+   // path
+
+   struct TempPath
+    {
+     DynArray<SmoothDot> temp;
+     bool ok=true;
+
+     TempPath(DrawItem *obj,const Label &label,bool selected,PtrLen<const Dot> dots)
+      : temp(dots.len)
+      {
+       for(ulen i=0; i<dots.len ;i++)
+         {
+          Dot dot=dots[i];
+
+          if( !obj->test(dot.point) ) { ok=false; return; }
+
+          MPoint p=Map(dot.point);
+
+          if( i==0 ) label.setPos(p);
+
+          if( label.gray && !selected )
+            obj->art.ball(p,obj->width,obj->gray);
+          else
+            obj->art.ball(p,2*obj->width,obj->face);
+
+          temp[i]=SmoothDot(p,dot.break_flag?Smooth::DotBreak:Smooth::DotSimple);
+         }
+      }
+
+     auto get() const { return Range(temp); }
+    };
+
   public:
 
    DrawItem(const SmoothDrawArt &art_,Coord dx_,Coord dy_,const Config &cfg)
@@ -466,6 +498,54 @@ class GeometryWindow::DrawItem : Geometry
           }
        }
     }
+
+   void operator () (const Label &label,bool selected,Path s)
+    {
+     if( !label.test() ) return;
+
+     if( s.rex ) return;
+
+     TempPath temp(this,label,selected,Range(s.dots));
+
+     if( !temp.ok ) return;
+
+     if( label.gray && !selected )
+       art.curvePath(temp.get(),width,gray);
+     else
+       art.curvePath(temp.get(),2*width,face);
+    }
+
+   void operator () (const Label &label,bool selected,Loop s)
+    {
+     if( !label.test() ) return;
+
+     if( s.rex ) return;
+
+     TempPath temp(this,label,selected,Range(s.dots));
+
+     if( !temp.ok ) return;
+
+     if( label.gray && !selected )
+       art.curveLoop(temp.get(),width,gray);
+     else
+       art.curveLoop(temp.get(),2*width,face);
+    }
+
+   void operator () (const Label &label,bool selected,Solid s)
+    {
+     if( !label.test() ) return;
+
+     if( s.rex ) return;
+
+     TempPath temp(this,label,selected,Range(s.dots));
+
+     if( !temp.ok ) return;
+
+     if( label.gray && !selected )
+       art.curveSolid(temp.get(),SolidAll,gray);
+     else
+       art.curveSolid(temp.get(),SolidAll,face);
+    }
  };
 
 class GeometryWindow::DrawName
@@ -549,7 +629,7 @@ class GeometryWindow::DrawName
      // do nothing
     }
 
-   void operator () (const Label &label,bool selected,OneOfTypes<Geometry::Point,Geometry::Line,Geometry::Circle>)
+   void operator () (const Label &label,bool selected,OneOfTypes<Geometry::Point,Geometry::Line,Geometry::Circle,Geometry::Path,Geometry::Loop,Geometry::Solid>)
     {
      if( ( label.show_name || selected ) && label.pos_ok ) drawName(label.pos,label.name);
     }

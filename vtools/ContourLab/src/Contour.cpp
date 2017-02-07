@@ -416,6 +416,22 @@ class Contour::FormulaTestContext : NoCopy
      DEF(Left,Left)
      DEF(Right,Right)
 
+     DEF(Solid,SolidOf)
+
+#undef DEF
+
+#define DEF(N,T,A,F) if( name.equal( #N ## _c ) ) return Formula<T (A[])>::SafeCreate<F>(ret,list);
+
+     DEF(Step,Step,Point,StepOf)
+
+     DEF(Path,Path,Point,PathOf)
+
+     DEF(Loop,Loop,Point,LoopOf)
+
+     DEF(BPath,Path,Step,PathOf)
+
+     DEF(BLoop,Loop,Step,LoopOf)
+
 #undef DEF
 
      return false;

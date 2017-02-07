@@ -18,6 +18,18 @@
 
 namespace App {
 
+/* concept ArgCursorType<R,A> */
+
+template <NothrowCopyableType R,class A>
+concept bool ArgCursorType = NullableType<R> && requires(R &obj,Meta::ToConst<R> &cobj)
+ {
+  { cobj.getLen() } -> ulen ;
+
+  { *cobj } -> A ;
+
+  ++obj;
+ };
+
 /* classes */
 
 struct Geometry;
@@ -375,7 +387,7 @@ struct Geometry
     Real y;
     RealException rex;
 
-    Point(RealException rex_=RealBlank) : rex(rex_) {}
+    Point(RealException rex_=RealBlank) noexcept : rex(rex_) {}
 
     Point(Real x_,Real y_) : x(x_),y(y_),rex(RealOk) {}
 
@@ -472,6 +484,179 @@ struct Geometry
     Couple(Point a_,Point b_) : a(a_),b(b_),rex(RealOk) {}
    };
 
+  // Dot
+
+  struct Dot
+   {
+    Point point;
+    bool break_flag = false ;
+   };
+
+  template <ArgCursorType<Point> Cur>
+  struct PointBuilder
+   {
+    Cur cur;
+
+    ulen getLen() const { return cur.getLen(); }
+
+    PtrLen<Dot> operator () (Place<void> place) const
+     {
+      ulen len=cur.getLen();
+
+      if( !len ) return Empty;
+
+      Dot *base=place;
+
+      for(Cur r=cur; +r ;++r,place+=sizeof (Dot)) new(place) Dot{*r};
+
+      return Range(base,len);
+     }
+   };
+
+  struct StepBuilder
+   {
+    PtrLen<const Point> cur;
+
+    ulen getLen() const { return cur.len; }
+
+    PtrLen<Dot> operator () (Place<void> place) const
+     {
+      if( !cur.len ) return Empty;
+
+      Dot *base=place;
+
+      auto r=cur;
+
+      new(place) Dot{*r,true};
+
+      for(++r,place+=sizeof (Dot); +r ;++r,place+=sizeof (Dot)) new(place) Dot{*r};
+
+      return Range(base,cur.len);
+     }
+   };
+
+  // Step
+
+  struct Step
+   {
+    static const int TypeId = 8 ;
+
+    static StrLen TypeName() { return "Step"_c ; }
+
+    RefArray<Point> points;
+    RealException rex;
+
+    Step(RealException rex_=RealBlank) : rex(rex_) {}
+
+    template <ArgCursorType<Point> Cur>
+    struct PointBuilder
+     {
+      Cur cur;
+
+      ulen getLen() const { return cur.getLen(); }
+
+      PtrLen<Point> operator () (Place<void> place) const
+       {
+        ulen len=cur.getLen();
+
+        if( !len ) return Empty;
+
+        Point *base=place;
+
+        for(Cur r=cur; +r ;++r,place+=sizeof (Point)) new(place) Point(*r);
+
+        return Range(base,len);
+       }
+     };
+
+    template <ArgCursorType<Point> Cur>
+    Step(Cur cur)
+     : points(DoBuild,PointBuilder<Cur>{cur}),
+       rex(RealOk)
+     {
+     }
+   };
+
+  // Path
+
+  struct Path
+   {
+    static const int TypeId = 9 ;
+
+    static StrLen TypeName() { return "Path"_c ; }
+
+    RefArray<Dot> dots;
+    RealException rex;
+
+    Path(RealException rex_=RealBlank) : rex(rex_) {}
+
+    template <ArgCursorType<Point> Cur>
+    Path(Cur cur)
+     : dots(DoBuild,PointBuilder<Cur>{cur}),
+       rex(RealOk)
+     {
+     }
+
+    Path(ArgCursorType<Step> cur)
+     : rex(RealOk)
+     {
+      for(; +cur ;++cur)
+        {
+         Step step=*cur;
+
+         dots.extend(StepBuilder{Range(step.points)});
+        }
+     }
+   };
+
+  // Loop
+
+  struct Loop
+   {
+    static const int TypeId = 10 ;
+
+    static StrLen TypeName() { return "Loop"_c ; }
+
+    RefArray<Dot> dots;
+    RealException rex;
+
+    Loop(RealException rex_=RealBlank) : rex(rex_) {}
+
+    template <ArgCursorType<Point> Cur>
+    Loop(Cur cur)
+     : dots(DoBuild,PointBuilder<Cur>{cur}),
+       rex(RealOk)
+     {
+     }
+
+    Loop(ArgCursorType<Step> cur)
+     : rex(RealOk)
+     {
+      for(; +cur ;++cur)
+        {
+         Step step=*cur;
+
+         dots.extend(StepBuilder{Range(step.points)});
+        }
+     }
+   };
+
+  // Solid
+
+  struct Solid
+   {
+    static const int TypeId = 11 ;
+
+    static StrLen TypeName() { return "Solid"_c ; }
+
+    RefArray<Dot> dots;
+    RealException rex;
+
+    Solid(RealException rex_=RealBlank) : rex(rex_) {}
+
+    Solid(Loop loop) : dots(loop.dots),rex(loop.rex) {}
+   };
+
   // type functions
 
   template <class Func>
@@ -492,6 +677,14 @@ struct Geometry
        case Circle::TypeId : return func.template doIt<Circle>();
 
        case Couple::TypeId : return func.template doIt<Couple>();
+
+       case Step::TypeId : return func.template doIt<Step>();
+
+       case Path::TypeId : return func.template doIt<Path>();
+
+       case Loop::TypeId : return func.template doIt<Loop>();
+
+       case Solid::TypeId : return func.template doIt<Solid>();
 
        default: return func.doOther();
       }
@@ -563,6 +756,18 @@ struct Geometry
   static Point Left(Length len,Point p) { return {p.x-len.val,p.y}; }
 
   static Point Right(Length len,Point p) { return {p.x+len.val,p.y}; }
+
+  static Step StepOf(ArgCursorType<Point> cur) { return Step(cur); }
+
+  static Path PathOf(ArgCursorType<Point> cur) { return Path(cur); }
+
+  static Path PathOf(ArgCursorType<Step> cur) { return Path(cur); }
+
+  static Loop LoopOf(ArgCursorType<Point> cur) { return Loop(cur); }
+
+  static Loop LoopOf(ArgCursorType<Step> cur) { return Loop(cur); }
+
+  static Solid SolidOf(Loop loop) { return Solid(loop); }
 
   // conversions
 
