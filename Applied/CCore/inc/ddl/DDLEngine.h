@@ -168,6 +168,8 @@ class FileEngine : ParserContext
 
    using ParserContext::reset;
 
+   void purge();
+
    EngineResult process(StrLen file_name,StrLen pretext);
 
    EngineResult process(StrLen file_name);
@@ -276,6 +278,14 @@ template <FileNameType FileName,FileTextType FileText>
 FileEngine<FileName,FileText>::~FileEngine()
  {
   Destroy(root.root);
+ }
+
+template <FileNameType FileName,FileTextType FileText>
+void FileEngine<FileName,FileText>::purge()
+ {
+  Destroy(root.root);
+
+  root.init();
  }
 
 template <FileNameType FileName,FileTextType FileText>

@@ -51,6 +51,8 @@ auto DDLFile::open(StrLen file_name) -> OpenResult
     {
      eout.cleanup();
 
+     engine.purge();
+
      result=engine.process(file_name,Mutate<const char>(Range(pretext)));
 
      if( !result )
