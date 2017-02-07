@@ -177,9 +177,20 @@ Geometry::Real Geometry::Real::RoundMul(Real x,Real den)
 
  // map
 
-double Geometry::Real::map(int prec)
+double Geometry::Real::map(int prec) const
  {
   return round(ldexp(val,prec));
+ }
+
+Geometry::Real::Bin Geometry::Real::toBin() const
+ {
+  int exp;
+
+  double x=frexp(val,&exp);
+
+  double y=ldexp(x,63);
+
+  return { sint64(y) , sint16(exp-63) };
  }
 
  // print object

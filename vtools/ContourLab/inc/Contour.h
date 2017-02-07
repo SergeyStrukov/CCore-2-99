@@ -23,6 +23,8 @@
 #include <CCore/inc/CompactMap.h>
 #include <CCore/inc/StrKey.h>
 
+#include <CCore/inc/video/PrintDDL.h>
+
 namespace App {
 
 /* functions */
@@ -60,13 +62,34 @@ struct Formular : Geometry
 
   static const int PadFlag = 1<<10 ;
 
+  class Object;
+
+  enum TextType
+   {
+    TextFormulaFixed,
+    TextFormulaVariable,
+    TextPad
+   };
+
+  struct Text
+   {
+    TextType type;
+    ulen index;
+    StrLen name;
+    PtrLen<const Object> args;
+   };
+
   class Object
    {
+    private:
+
      class Base : MemBase_nocopy
       {
         ulen ref_count = 1 ;
 
        public:
+
+        ulen index = MaxULen ;
 
         Base() {}
 
@@ -77,6 +100,8 @@ struct Formular : Geometry
         bool decRef() { return !--ref_count; }
 
         void destroy() noexcept { delete this; }
+
+        virtual Text getText() const { return {}; }
 
         // default object
 
@@ -111,6 +136,8 @@ struct Formular : Geometry
        virtual S get() const { return obj(); }
 
        virtual S & ref() { return obj.pad; }
+
+       virtual Text getText() const { return obj.getText(this->index); }
       };
 
      RefPtr<Base> ptr;
@@ -190,6 +217,12 @@ struct Formular : Geometry
       {
        return TypeSwitch(getTypeId(),CallRefFunc<Func>(func,*this));
       }
+
+     Text getText() const { return ptr->getText(); }
+
+     ulen getIndex() const { return ptr->index; }
+
+     void setIndex(ulen index) const { ptr->index=index; }
    };
 
   template <class T,class ... SS>
@@ -212,9 +245,10 @@ struct Formular : Geometry
 
       using RetType = S ;
 
+      StrLen text_name;
       Object args[sizeof ... (SS)];
 
-      explicit Pack(const ToObject<SS> & ... ss) : args{ss...} {}
+      explicit Pack(StrLen text_name_,const ToObject<SS> & ... ss) : text_name(text_name_),args{ss...} {}
 
       static S SafeCall(SS ... ss)
        {
@@ -231,15 +265,17 @@ struct Formular : Geometry
        }
 
       S operator () () const { return SafeCall( args[IList].template get<SS>()... ); }
+
+      Text getText(ulen index) const { return {TextFormulaFixed,index,text_name,Range(args)}; }
      };
 
     template <S Func(SS...)>
-    static Object Create(const ToObject<SS> & ... ss) { return CreateObject<Pack<Func> >(ss...); }
+    static Object Create(StrLen text_name,const ToObject<SS> & ... ss) { return CreateObject<Pack<Func> >(text_name,ss...); }
 
     static bool TestType(const Object *list,const int *type,int ind) { return list[ind].getTypeId()!=type[ind]; }
 
     template <S Func(SS...)>
-    static bool SafeCreate(Object &ret,PtrLen<const Object> list)
+    static bool SafeCreate(StrLen text_name,Object &ret,PtrLen<const Object> list)
      {
       if( list.len!=sizeof ... (SS) ) return false;
 
@@ -247,7 +283,7 @@ struct Formular : Geometry
 
       if( ( TestType(list.ptr,temp,IList) || ... ) ) return false;
 
-      ret=CreateObject<Pack<Func> >( list[IList]... );
+      ret=Create<Func>(text_name, list[IList]... );
 
       return true;
      }
@@ -271,7 +307,9 @@ struct Formular : Geometry
 
       using RetType = S ;
 
-      Pack() {}
+      StrLen text_name;
+
+      explicit Pack(StrLen text_name_) : text_name(text_name_) {}
 
       static S SafeCall()
        {
@@ -286,10 +324,12 @@ struct Formular : Geometry
        }
 
       S operator () () const { return SafeCall(); }
+
+      Text getText(ulen index) const { return {TextFormulaFixed,index,text_name}; }
      };
 
     template <S Func()>
-    static Object Create() { return CreateObject<Pack<Func> >(); }
+    static Object Create(StrLen text_name) { return CreateObject<Pack<Func> >(text_name); }
    };
 
   template <class A>
@@ -331,9 +371,10 @@ struct Formular : Geometry
 
       using RetType = S ;
 
+      StrLen text_name;
       DynArray<Object> args;
 
-      explicit Pack(PtrLen<const Object> list) : args(DoCopy(list.len),list.ptr) {}
+      Pack(StrLen text_name_,PtrLen<const Object> list) : text_name(text_name_),args(DoCopy(list.len),list.ptr) {}
 
       static S SafeCall(ArgCursor<A> args)
        {
@@ -348,14 +389,16 @@ struct Formular : Geometry
        }
 
       S operator () () const { return SafeCall(Range(args)); }
+
+      Text getText(ulen index) const { return {TextFormulaVariable,index,text_name,Range(args)}; }
      };
 
     template <S Func(ArgCursor<A>)>
-    static bool SafeCreate(Object &ret,PtrLen<const Object> list)
+    static bool SafeCreate(StrLen text_name,Object &ret,PtrLen<const Object> list)
      {
       for(const Object &obj : list ) if( obj.getTypeId()!=A::TypeId ) return false;
 
-      ret=CreateObject<Pack<Func> >(list);
+      ret=CreateObject<Pack<Func> >(text_name,list);
 
       return true;
      }
@@ -375,6 +418,8 @@ struct Formular : Geometry
     explicit Pad(const S &obj) : pad(obj) {}
 
     S operator () () const { return pad; }
+
+    Text getText(ulen index) const { return {TextPad,index}; }
 
     static Object Create(const S &obj) { return CreateObject<Pad>(obj); }
    };
@@ -412,6 +457,13 @@ struct Label
    {
     pos=pos_;
     pos_ok=true;
+   }
+
+  // print object
+
+  void print(PrinterType &out) const
+   {
+    Printf(out,"{ '#;' , #; , #; , #; }",name,DDLBool(show),DDLBool(gray),DDLBool(show_name));
    }
  };
 
@@ -488,76 +540,23 @@ class Contour : public Formular
       ~ItemInfo();
     };
 
-   static bool UpItem(DynArray<AnyType> &a,ulen index)
-    {
-     auto r=Range(a);
+   static bool UpItem(DynArray<Item> &a,ulen index);
 
-     if( index>0 && index<r.len )
-       {
-        Swap(r[index],r[index-1]);
-
-        return true;
-       }
-
-     return false;
-    }
-
-   static bool DownItem(DynArray<AnyType> &a,ulen index)
-    {
-     auto r=Range(a);
-
-     if( r.len && index<r.len-1 )
-       {
-        Swap(r[index],r[index+1]);
-
-        return true;
-       }
-
-     return false;
-    }
+   static bool DownItem(DynArray<Item> &a,ulen index);
 
   private:
 
    template <class S>
    bool addPad(ulen index,StrLen name,S s)
     {
-     pads.reserve(1);
-
-     StrKey k(name);
-
      Object obj=Pad<S>::Create(s);
 
-     auto result=map.find_or_add(k,obj);
-
-     if( !result.new_flag ) return false;
-
-     Label label(result.key->name);
-
-     Item item{label,obj};
-
-     ArrayCopyIns(pads,index,item);
-
-     return true;
+     return addPad(index,name,obj);
     }
 
-   bool addFormula(ulen index,StrLen name,Object obj)
-    {
-     formulas.reserve(1);
+   bool addPad(ulen index,StrLen name,Object obj);
 
-     StrKey k(name);
-
-     auto result=map.find_or_add(k,obj);
-
-     if( !result.new_flag ) return false;
-
-     Label label(result.key->name);
-
-     Item item{label,obj};
-
-     ArrayCopyIns(formulas,index,item);
-
-     return true;
-    }
+   bool addFormula(ulen index,StrLen name,Object obj);
 
    bool testName(StrLen name) const;
 
@@ -570,6 +569,10 @@ class Contour : public Formular
    class FormulaTestContext;
 
    class FormulaAddContext;
+
+   struct PrintPad;
+
+   struct PrintArg;
 
    template <class Func>
    struct Bind

@@ -11,6 +11,8 @@
 //
 //----------------------------------------------------------------------------------------
 
+/* --- Common ------------------------------------------------------------------------- */
+
 type Bool = uint8 ;
 
 Bool True = 1 ;
@@ -28,8 +30,12 @@ struct Label
 
 type Exception = uint8 ;
 
+/* --- Geometry ----------------------------------------------------------------------- */
+
 struct Real
  {
+  sint64 mantissa;
+  sint16 exp;
  };
  
 struct Ratio
@@ -108,20 +114,250 @@ struct Solid
   Exception rex;
  };
 
+/* --- Pad ---------------------------------------------------------------------------- */ 
+
 struct Pad
  {
   Label label;
+  ulen index;
+  
   {Ratio,Length,Angle,Point} *object;
  };
+
+/* --- Formula ------------------------------------------------------------------------ */
+
+struct Neg
+ {
+  Arg a;
+ };
  
+struct Add
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Sub
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Mul
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Div
+ {
+  Arg a;
+  Arg b;  
+ };
+
+struct LengthOf
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct AngleOf
+ {
+  Arg a;
+  Arg b;
+  Arg c;  
+ };
+ 
+struct LineOf
+ {
+  Arg a;
+  Arg b;  
+ };  
+ 
+struct Middle
+ {
+  Arg a;
+  Arg b;  
+ };
+   
+struct Part
+ {
+  Arg a;
+  Arg b;  
+  Arg c;  
+ };
+ 
+struct MidOrt 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct CircleOf 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct CircleOuter 
+ {
+  Arg a;
+  Arg b;  
+  Arg c;  
+ };
+ 
+struct Proj 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct AngleC 
+ {
+  Arg a;
+  Arg b;  
+  Arg c;  
+ };
+ 
+struct Meet 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct MeetCircle
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct MeetCircles
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Rotate 
+ {
+  Arg a;
+  Arg b;  
+  Arg c;  
+ };
+
+struct RotateOrt
+ {
+  Arg a;
+  Arg b;  
+ };
+
+struct Move
+ {
+  Arg a;
+  Arg b;  
+  Arg c;  
+ };
+ 
+struct MoveLen
+ {
+  Arg a;
+  Arg b;  
+  Arg c;  
+ };
+ 
+struct Mirror 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct First
+ {
+  Arg a;
+ };
+  
+struct Second
+ {
+  Arg a;
+ }; 
+ 
+struct Up 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Down 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Left 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct Right 
+ {
+  Arg a;
+  Arg b;  
+ };
+ 
+struct StepOf
+ {
+  Arg[] args;
+ }; 
+ 
+struct PathOf
+ {
+  Arg[] args;
+ };
+ 
+struct BPathOf
+ {
+  Arg[] args;
+ };
+  
+struct LoopOf
+ {
+  Arg[] args;
+ };
+ 
+struct BLoopOf
+ {
+  Arg[] args;
+ };
+ 
+struct SolidOf 
+ {
+  Arg a;
+ }; 
+ 
+type Arg = {
+            Ratio,Length,Angle,Point,Pad,Formula,
+            Neg,Add,Sub,Mul,Div, 
+            LengthOf,AngleOf,LineOf,Middle,Part,MidOrt,CircleOf,CircleOuter,
+            Proj,AngleC,Meet,MeetCircle,MeetCircles,Rotate,RotateOrt,Move,MoveLen,
+            Mirror,First,Second,Up,Down,Left,Right,
+            StepOf,PathOf,BPathOf,LoopOf,BLoopOf,SolidOf
+           } * ;
+
 struct Formula
  {
   Label label;
+  ulen index;
+  
+  Arg object;
  };
+
+/* --- Contour ------------------------------------------------------------------------ */
  
 struct Contour
  {
   Pad[] pads;
   Formula[] formulas;
  };
+
+
    

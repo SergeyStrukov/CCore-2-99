@@ -14,6 +14,8 @@
 #include <inc/Contour.h>
 #include <inc/Parser.h>
 
+#include <CCore/inc/Print.h>
+#include <CCore/inc/PrintStem.h>
 #include <CCore/inc/Exception.h>
 
 namespace App {
@@ -65,6 +67,82 @@ Contour::ItemInfo::~ItemInfo()
 
 /* class Contour */
 
+bool Contour::UpItem(DynArray<Item> &a,ulen index)
+ {
+  auto r=Range(a);
+
+  if( index>0 && index<r.len )
+    {
+     Swap(r[index],r[index-1]);
+
+     r[index].obj.setIndex(index);
+     r[index-1].obj.setIndex(index-1);
+
+     return true;
+    }
+
+  return false;
+ }
+
+bool Contour::DownItem(DynArray<Item> &a,ulen index)
+ {
+  auto r=Range(a);
+
+  if( r.len && index<r.len-1 )
+    {
+     Swap(r[index],r[index+1]);
+
+     r[index].obj.setIndex(index);
+     r[index+1].obj.setIndex(index+1);
+
+     return true;
+    }
+
+  return false;
+ }
+
+bool Contour::addPad(ulen index,StrLen name,Object obj)
+ {
+  pads.reserve(1);
+
+  StrKey k(name);
+
+  auto result=map.find_or_add(k,obj);
+
+  if( !result.new_flag ) return false;
+
+  Label label(result.key->name);
+
+  Item item{label,obj};
+
+  ArrayCopyIns(pads,index,item);
+
+  obj.setIndex(index);
+
+  return true;
+ }
+
+bool Contour::addFormula(ulen index,StrLen name,Object obj)
+ {
+  formulas.reserve(1);
+
+  StrKey k(name);
+
+  auto result=map.find_or_add(k,obj);
+
+  if( !result.new_flag ) return false;
+
+  Label label(result.key->name);
+
+  Item item{label,obj};
+
+  ArrayCopyIns(formulas,index,item);
+
+  obj.setIndex(index);
+
+  return true;
+ }
+
 bool Contour::testName(StrLen name) const
  {
   StrKey k(name);
@@ -80,7 +158,11 @@ bool Contour::delItem(DynArray<Item> &a,ulen index)
 
      map.del(key);
 
+     a[index].obj.setIndex(MaxULen);
+
      ArrayCopyDel(a,index);
+
+     for(ulen i=index,len=a.getLen(); i<len ;i++) a[i].obj.setIndex(i);
 
      return true;
     }
@@ -224,7 +306,7 @@ class Contour::FormulaTestContext : NoCopy
      template <OneOfTypes<Ratio,Length,Angle> S>
      bool operator () (S)
       {
-       ret=Formula<S (S)>::template Create<Neg>(a);
+       ret=Formula<S (S)>::template Create<Neg>("Neg"_c,a);
 
        return true;
       }
@@ -248,7 +330,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( b.getTypeId()!=S::TypeId ) return false;
 
-       ret=Formula<S (S,S)>::template Create<Add>(a,b);
+       ret=Formula<S (S,S)>::template Create<Add>("Add"_c,a,b);
 
        return true;
       }
@@ -272,7 +354,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( b.getTypeId()!=S::TypeId ) return false;
 
-       ret=Formula<S (S,S)>::template Create<Sub>(a,b);
+       ret=Formula<S (S,S)>::template Create<Sub>("Sub"_c,a,b);
 
        return true;
       }
@@ -296,7 +378,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( a.getTypeId()!=Ratio::TypeId ) return false;
 
-       ret=Formula<S (Ratio,S)>::template Create<Mul>(a,b);
+       ret=Formula<S (Ratio,S)>::template Create<Mul>("Mul"_c,a,b);
 
        return true;
       }
@@ -320,7 +402,7 @@ class Contour::FormulaTestContext : NoCopy
       {
        if( b.getTypeId()!=Ratio::TypeId ) return false;
 
-       ret=Formula<S (S,Ratio)>::template Create<Div>(a,b);
+       ret=Formula<S (S,Ratio)>::template Create<Div>("Div"_c,a,b);
 
        return true;
       }
@@ -330,11 +412,11 @@ class Contour::FormulaTestContext : NoCopy
        switch( b.getTypeId() )
          {
           case Length::TypeId :
-            ret=Formula<Ratio (Length,Length)>::Create<Div>(a,b);
+            ret=Formula<Ratio (Length,Length)>::Create<Div>("Div"_c,a,b);
           return true;
 
           case Ratio::TypeId :
-            ret=Formula<Length (Length,Ratio)>::Create<Div>(a,b);
+            ret=Formula<Length (Length,Ratio)>::Create<Div>("Div"_c,a,b);
           return true;
          }
 
@@ -388,7 +470,7 @@ class Contour::FormulaTestContext : NoCopy
 
    bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list)
     {
-#define DEF(N,F) if( name.equal( #N ## _c ) ) return Formula<decltype(F)>::SafeCreate<F>(ret,list);
+#define DEF(N,F) if( name.equal( #N ## _c ) ) return Formula<decltype(F)>::SafeCreate<F>(#F,ret,list);
 
      DEF(Len,LengthOf)
      DEF(Angle,AngleOf)
@@ -420,17 +502,17 @@ class Contour::FormulaTestContext : NoCopy
 
 #undef DEF
 
-#define DEF(N,T,A,F) if( name.equal( #N ## _c ) ) return Formula<T (A[])>::SafeCreate<F>(ret,list);
+#define DEF(N,T,A,F,TN) if( name.equal( #N ## _c ) ) return Formula<T (A[])>::SafeCreate<F>(#TN,ret,list);
 
-     DEF(Step,Step,Point,StepOf)
+     DEF(Step,Step,Point,StepOf,StepOf)
 
-     DEF(Path,Path,Point,PathOf)
+     DEF(Path,Path,Point,PathOf,PathOf)
 
-     DEF(Loop,Loop,Point,LoopOf)
+     DEF(Loop,Loop,Point,LoopOf,LoopOf)
 
-     DEF(BPath,Path,Step,PathOf)
+     DEF(BPath,Path,Step,PathOf,BPathOf)
 
-     DEF(BLoop,Loop,Step,LoopOf)
+     DEF(BLoop,Loop,Step,LoopOf,BLoopOf)
 
 #undef DEF
 
@@ -502,6 +584,8 @@ class Contour::FormulaAddContext : public FormulaTestContext
 
    bool set(StrLen name,ExprType value)
     {
+     if( value.getIndex()!=MaxULen ) return false;
+
      return const_cast<Contour *>(obj)->addFormula(index,name,value);
     }
  };
@@ -525,11 +609,186 @@ void Contour::erase()
   map.erase();
  }
 
-void Contour::save(StrLen file_name,ErrorText &etext) const // TODO
+struct Contour::PrintPad
  {
-  Used(file_name);
+  PrintBase &out;
+  StrLen name;
+  ulen ind;
 
-  etext.setText("Not implemented yet"_c);
+  void operator () (auto) {}
+
+  void operator () () {}
+
+  void operator () (Ratio s)
+   {
+    Printf(out,"Ratio #;#;={#;,#;};\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
+   }
+
+  void operator () (Angle s)
+   {
+    Printf(out,"Angle #;#;={#;,#;};\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
+   }
+
+  void operator () (Length s)
+   {
+    Printf(out,"Length #;#;={#;,#;};\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
+   }
+
+  void operator () (Point s)
+   {
+    Printf(out,"Point #;#;={#;,#;,#;};\n\n",name,ind,s.x.toBin(),s.y.toBin(),(uint8)s.rex);
+   }
+ };
+
+struct Contour::PrintArg
+ {
+  PrintBase &out;
+  ulen free_ind;
+
+  void printTop(Object o,ulen ind)
+   {
+    auto t=o.getText();
+
+    print(o,ind,t);
+   }
+
+  void print(Object o,ulen ind)
+   {
+    auto t=o.getText();
+
+    if( t.index==MaxULen ) print(o,ind,t);
+   }
+
+  void print(Object o,ulen ind,Text t)
+   {
+    switch( t.type )
+      {
+       case TextFormulaFixed :
+       case TextFormulaVariable :
+        {
+         Printf(out,"#; F#;={",t.name,ind);
+
+         if( t.type==TextFormulaVariable ) Putch(out,'{');
+
+         ulen base_ind=free_ind;
+
+         free_ind+=t.args.len;
+
+         PrintFirst stem(""_c,","_c);
+
+         for(ulen i=0; i<t.args.len ;i++)
+           {
+            auto ta=t.args[i].getText();
+
+            if( ta.index==MaxULen )
+              {
+               Printf(out,"#;&F#;",stem,base_ind+i);
+              }
+            else
+              {
+               if( ta.type==TextPad )
+                 Printf(out,"#;Data.pads+#;",stem,ta.index);
+               else
+                 Printf(out,"#;Data.formulas+#;",stem,ta.index);
+              }
+           }
+
+         if( t.type==TextFormulaVariable ) Putch(out,'}');
+
+         Printf(out,"};\n\n");
+
+         for(ulen i=0; i<t.args.len ;i++) print(t.args[i],base_ind+i);
+        }
+       break;
+
+       case TextPad :
+        {
+         o.call(PrintPad{out,"F"_c,ind});
+        }
+       break;
+      }
+   }
+ };
+
+void Contour::save(StrLen file_name,ErrorText &etext) const
+ {
+  char temp[TextBufLen];
+  PrintBuf eout(Range(temp));
+
+  ReportExceptionTo<PrintBuf> report(eout);
+
+  try
+    {
+     PrintFile out(file_name);
+
+     Printf(out,"//##include <Contour.ddl>\n\n");
+
+     Printf(out,"Contour Data=\n {\n");
+
+     // pads
+
+     Printf(out,"  {");
+
+     {
+      auto r=Range(pads);
+
+      PrintFirst stem("\n   "_c,",\n   "_c);
+
+      for(ulen i=0; i<r.len ;i++)
+        {
+         Printf(out,"#;{ #; , #; , &Pad#; }",stem,r[i].label,i,i);
+        }
+     }
+
+     Printf(out,"\n  },\n");
+
+     // formulas
+
+     Printf(out,"  {");
+
+     {
+      auto r=Range(formulas);
+
+      PrintFirst stem("\n  "_c,",\n  "_c);
+
+      for(ulen i=0; i<r.len ;i++)
+        {
+         Printf(out,"#;{ #; , #; , &F#; }",stem,r[i].label,i,i);
+        }
+     }
+
+     Printf(out,"\n  }\n");
+
+     Printf(out," };\n\n");
+
+     // pads
+
+     {
+      auto r=Range(pads);
+
+      for(ulen i=0; i<r.len ;i++)
+        {
+         r[i].obj.call(PrintPad{out,"Pad"_c,i});
+        }
+     }
+
+     // formulas
+
+     {
+      auto r=Range(formulas);
+
+      PrintArg parg{out,r.len};
+
+      for(ulen i=0; i<r.len ;i++)
+        {
+         parg.printTop(r[i].obj,i);
+        }
+     }
+    }
+  catch(CatchType)
+    {
+     etext.setText(eout.close());
+    }
  }
 
 void Contour::load(StrLen file_name,ErrorText &etext) // TODO

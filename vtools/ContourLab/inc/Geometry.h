@@ -117,7 +117,20 @@ struct Geometry
 
      // map
 
-     double map(int prec);
+     double map(int prec) const;
+
+     struct Bin
+      {
+       sint64 mantissa;
+       sint16 exp;
+
+       void print(PrinterType &out) const
+        {
+         Printf(out,"{#.h;,#;}",mantissa,exp);
+        }
+      };
+
+     Bin toBin() const;
 
      // print object
 
