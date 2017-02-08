@@ -138,7 +138,7 @@ class TestResultBuilder : public ResultBuilder
        {
         if( getCancel() )
           {
-           setResult("test cancelled");
+           setResult("test cancelled"_def);
 
            return;
           }
@@ -154,7 +154,7 @@ class TestResultBuilder : public ResultBuilder
 
      Printf(out,"delta = #;",delta);
 
-     setResult(out.close());
+     setResult(String(out.close()));
     }
 
   public:

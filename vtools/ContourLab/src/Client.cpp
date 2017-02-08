@@ -275,24 +275,24 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   wlist.enableTabFocus(false);
 
-  menu_data("@File",MenuFile)
-           ("@Options",MenuOptions);
+  menu_data("@File"_def,MenuFile)
+           ("@Options"_def,MenuOptions);
 
-  menu_file_data("@New",MenuFileNew)
-                ("@Open",MenuFileOpen)
+  menu_file_data("@New"_def,MenuFileNew)
+                ("@Open"_def,MenuFileOpen)
                 (MenuSeparator)
-                ("@Save",MenuFileSave)
-                ("Save @as",MenuFileSaveAs)
+                ("@Save"_def,MenuFileSave)
+                ("Save @as"_def,MenuFileSaveAs)
                 (MenuSeparator)
-                ("E@xit",MenuFileExit);
+                ("E@xit"_def,MenuFileExit);
 
-  menu_opt_data("@Global",MenuOptionsUserPref)
-               ("@Application",MenuOptionsAppPref);
+  menu_opt_data("@Global"_def,MenuOptionsUserPref)
+               ("@Application"_def,MenuOptionsAppPref);
 
   file_frame.addFilter("*.cont.ddl"_c);
   file_frame.addFilter("*"_c,false);
 
-  msg_frame.setInfo(cfg.text_AskSave.get().str())
+  msg_frame.setInfo(+cfg.text_AskSave)
            .add(+cfg.text_Yes,Button_Yes)
            .add(+cfg.text_No,Button_No)
            .add(+cfg.text_Cancel,Button_Cancel);

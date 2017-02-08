@@ -30,7 +30,7 @@ class FontEditWindow::FDBInfo::Base : public InfoBase
      DefString name;
      const FontInfo *info;
 
-     Rec() noexcept : name("-- Default --"),info(0) {}
+     Rec() noexcept : name("-- Default --"_def),info(0) {}
 
      explicit Rec(const FontInfo &obj)
       {
@@ -149,11 +149,11 @@ ulen FontEditWindow::FDBInfo::getIndex(StrLen file_name) const
 
 /* class FontEditWindow */
 
-const char *const FontEditWindow::TestText =
+DefString FontEditWindow::TestText =
 "Far over the misty mountains cold\n"
 "To dungeons deep and caverns old\n"
 "We must away ere break of day,\n"
-"To find our long-forgotten gold.\n";
+"To find our long-forgotten gold.\n"_def;
 
 class FontEditWindow::MaxIndexFunc : public Funchor
  {

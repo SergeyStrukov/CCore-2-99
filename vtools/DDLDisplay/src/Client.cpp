@@ -131,22 +131,22 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   wlist.enableTabFocus(false);
 
-  menu_data("@File",Cmd_File)
-           ("@Options",Cmd_Options);
+  menu_data("@File"_def,Cmd_File)
+           ("@Options"_def,Cmd_Options);
 
-  menu_file_data("@Open ...",Cmd_Open)
+  menu_file_data("@Open ..."_def,Cmd_Open)
                 (MenuSeparator)
-                ("E@xit",Cmd_Exit);
+                ("E@xit"_def,Cmd_Exit);
 
-  menu_options_data("@Pretext ...",Cmd_Pretext)
-                   ("@No Pretext",Cmd_NoPretext)
-                   (MenuDisabled,"@DDL",299);
+  menu_options_data("@Pretext ..."_def,Cmd_Pretext)
+                   ("@No Pretext"_def,Cmd_NoPretext)
+                   (MenuDisabled,"@DDL"_def,299);
 
-  open_file.addFilter("*.ddl");
-  open_file.addFilter("*",false);
+  open_file.addFilter("*.ddl"_c);
+  open_file.addFilter("*"_c,false);
 
-  open_pretext.addFilter("*.ddl");
-  open_pretext.addFilter("*",false);
+  open_pretext.addFilter("*.ddl"_c);
+  open_pretext.addFilter("*"_c,false);
  }
 
 ClientWindow::~ClientWindow()

@@ -481,7 +481,7 @@ void EditorWindow::formula_text_paused()
 
 void EditorWindow::errorMsg(StrLen text)
  {
-  msg_frame.setInfo(text);
+  msg_frame.setInfo(String(text));
 
   msg_frame.create(getFrame(),+cfg.text_Error);
 

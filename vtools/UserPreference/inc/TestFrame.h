@@ -81,9 +81,9 @@ class TestWindow : public ComboWindow
 
   private:
 
-   static const char *const InfoText;
+   static DefString InfoText;
 
-   static const char *const ListText;
+   static DefString ListText;
 
    void changeColor(int new_id,int prev_id);
 

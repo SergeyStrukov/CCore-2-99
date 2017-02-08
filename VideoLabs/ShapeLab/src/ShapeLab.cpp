@@ -372,7 +372,7 @@ void ShapeLab2::btn2_pressed()
 
   if( msg.isDead() )
     {
-     const char *str="This is a test information.\nThe second line.\nThe end of information.";
+     auto str="This is a test information.\nThe second line.\nThe end of information."_def;
 
      msg.setInfo(str);
 
@@ -426,7 +426,7 @@ void ShapeLab2::check_changed(bool check)
   edit.enable(check);
  }
 
-static const char * TestStr="This is a test string\rthe second line of the test\nthe third line\r\nand the last line.";
+static auto TestStr="This is a test string\rthe second line of the test\nthe third line\r\nand the last line."_def;
 
 ShapeLab2::ShapeLab2(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),

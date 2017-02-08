@@ -41,6 +41,8 @@ struct Formular;
 
 struct Label;
 
+class ErrorText;
+
 class Contour;
 
 /* struct UnusedPad<S> */
@@ -467,27 +469,31 @@ struct Label
    }
  };
 
-/* struct ErrorText */
+/* class ErrorText */
 
-struct ErrorText : NoCopy
+class ErrorText : NoCopy
  {
-  char buf[TextBufLen];
-  ulen len = 0 ;
+   SimpleArray<char> buf;
+   ulen len = 0 ;
 
-  // methods
+  public:
 
-  bool operator + () const { return len==0; }
+   ErrorText() : buf(64_KByte) {}
 
-  bool operator ! () const { return len!=0; }
+   // methods
 
-  StrLen getText() const { return Range(buf,len); }
+   bool operator + () const { return len==0; }
 
-  void setText(StrLen str)
-   {
-    len=Min(DimOf(buf),str.len);
+   bool operator ! () const { return len!=0; }
 
-    Range(buf,len).copy(str.ptr);
-   }
+   StrLen getText() const { return Range(buf.getPtr(),len); }
+
+   void setText(StrLen str)
+    {
+     len=Min(buf.getLen(),str.len);
+
+     Range(buf.getPtr(),len).copy(str.ptr);
+    }
  };
 
 /* class Contour */

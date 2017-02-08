@@ -740,7 +740,7 @@ struct Contour::PrintArg
 
 void Contour::save(StrLen file_name,ErrorText &etext) const
  {
-  char temp[TextBufLen];
+  SimpleArray<char> temp(64_KByte);
   PrintBuf eout(Range(temp));
 
   ReportExceptionTo<PrintBuf> report(eout);

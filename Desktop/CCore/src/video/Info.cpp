@@ -70,11 +70,11 @@ Info::Info() noexcept
 
 /* class InfoFromString */
 
-InfoFromString::StringSet::StringSet(StrLen str_)
+InfoFromString::StringSet::StringSet(DefString str_)
  : str(str_),
    list(DoReserve,100)
  {
-  StrLen total=Range(str);
+  StrLen total=str.str();
 
   while( +total )
     {
@@ -100,7 +100,7 @@ StrLen InfoFromString::StringSet::getLine(ulen index) const
   return list.at(index);
  }
 
-InfoFromString::InfoFromString(StrLen str)
+InfoFromString::InfoFromString(DefString str)
  : Info(new StringSet(str))
  {
  }
@@ -245,9 +245,9 @@ ComboInfoBuilder::~ComboInfoBuilder()
  {
  }
 
-void ComboInfoBuilder::add(ComboInfoType type,StrLen text)
+void ComboInfoBuilder::add(ComboInfoType type,StrLen line)
  {
-  list.append_fill(type,pool.dup(text));
+  list.append_fill(type,pool.dup(line));
  }
 
 ComboInfo ComboInfoBuilder::complete()

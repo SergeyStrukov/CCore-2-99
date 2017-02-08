@@ -79,7 +79,7 @@ class FontEditWindow : public ComboWindow
 
   private:
 
-   static const char *const TestText;
+   static DefString TestText;
 
    const Config &cfg;
 

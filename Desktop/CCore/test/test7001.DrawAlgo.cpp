@@ -122,7 +122,7 @@ class TestResultBuilder : public ResultBuilder
        {
         if( getCancel() )
           {
-           setResult("test cancelled");
+           setResult("test cancelled"_def);
 
            return;
           }
@@ -137,7 +137,7 @@ class TestResultBuilder : public ResultBuilder
         test3((uCoord)sx,(uCoord)sy);
        }
 
-     setResult("test ok");
+     setResult("test ok"_def);
     }
 
   public:

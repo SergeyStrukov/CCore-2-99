@@ -294,7 +294,7 @@ class ResultBuilder : Task
 
    void setResult(const Info &result);
 
-   void setResult(StrLen str) { setResult(InfoFromString(str)); }
+   void setResult(DefString str) { setResult(InfoFromString(str)); }
 
   public:
 

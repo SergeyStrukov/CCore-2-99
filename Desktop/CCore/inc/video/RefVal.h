@@ -56,8 +56,6 @@ class DefString
 
    DefString(NothingType) noexcept {}
 
-   DefString(const char *persistent_zstr) noexcept : def_const(persistent_zstr) {}
-
    DefString(const char *persistent_str,ulen str_len) noexcept : def_const(persistent_str,str_len) {}
 
    DefString(const String &obj) noexcept : dynamic_str(obj) {}
@@ -89,7 +87,7 @@ inline DefString operator "" _def (const char *str,ulen len) { return DefString(
 
 /* SafeString() */
 
-DefString SafeString(StrLen str,const char *out_of_memory);
+DefString SafeString(StrLen str,DefString out_of_memory);
 
 DefString SafeString(StrLen str);
 

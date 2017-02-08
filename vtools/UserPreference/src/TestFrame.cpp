@@ -19,19 +19,19 @@ namespace App {
 
 /* class TestWindow */
 
-const char *const TestWindow::InfoText=
+DefString TestWindow::InfoText=
 "This is a test control panel.\n"
 "You can see user preferences here.\n"
-"Use main window to adjust sizes, colors etc...";
+"Use main window to adjust sizes, colors etc..."_def;
 
-const char *const TestWindow::ListText=
+DefString TestWindow::ListText=
 "button\n"
 "check box\n"
 "radio button\n"
 "text line\n"
 "light\n"
 "scroll\n"
-"line edit";
+"line edit"_def;
 
 void TestWindow::changeColor(int new_id,int)
  {
@@ -161,9 +161,9 @@ TestWindow::TestWindow(SubWindowHost &host,const UserPreference &pref_)
 
   xscroll.setRange(KnobShape::FaceLim,1);
 
-  edit.setText("To find our long-forgotten gold.");
+  edit.setText("To find our long-forgotten gold."_c);
 
-  enable_frame.add("Ok"_def,Button_Ok).setInfo(InfoFromString("Press Ok to enable"));
+  enable_frame.add("Ok"_def,Button_Ok).setInfo(InfoFromString("Press Ok to enable"_def));
  }
 
 TestWindow::~TestWindow()
@@ -398,46 +398,46 @@ TestClient::TestClient(SubWindowHost &host,const UserPreference &pref,Signal<> &
 
   wlist.enableTabFocus(false);
 
-  menu_data("@File",1)
-           ("@Edit",2)
+  menu_data("@File"_def,1)
+           ("@Edit"_def,2)
            (MenuSeparator)
-           ("@Options",3)
-           (MenuDisabled,"@Modules",4)
-           ("@Window",5)
-           ("@Long menu",6);
+           ("@Options"_def,3)
+           (MenuDisabled,"@Modules"_def,4)
+           ("@Window"_def,5)
+           ("@Long menu"_def,6);
 
-  menu_file_data("@New",101)
-                ("@Open",102)
-                (MenuDisabled,"@Save",103)
-                (MenuDisabled,"Save @as",104)
+  menu_file_data("@New"_def,101)
+                ("@Open"_def,102)
+                (MenuDisabled,"@Save"_def,103)
+                (MenuDisabled,"Save @as"_def,104)
                 (MenuSeparator)
-                ("E@xit",105);
+                ("E@xit"_def,105);
 
-  menu_edit_data("@Undo",201)
-                ("@Check",202)
+  menu_edit_data("@Undo"_def,201)
+                ("@Check"_def,202)
                 (MenuSeparator)
-                ("Cut",203)
-                ("Copy",204)
-                ("Paste",205)
+                ("Cut"_def,203)
+                ("Copy"_def,204)
+                ("Paste"_def,205)
                 (MenuSeparator)
-                ("@Run",206);
+                ("@Run"_def,206);
 
-  menu_options_data("@Colors",301)
-                   ("@Fonts",302)
-                   ("@Targets",303);
+  menu_options_data("@Colors"_def,301)
+                   ("@Fonts"_def,302)
+                   ("@Targets"_def,303);
 
-  menu_window_data("@Split",501)
-                  ("@Close all",502)
-                  ("S@tack",503);
+  menu_window_data("@Split"_def,501)
+                  ("@Close all"_def,502)
+                  ("S@tack"_def,503);
 
   for(int i=1; i<100 ;i++)
     {
      menu_long_data(Stringf("menu item #;",i),600+i);
     }
 
-  file_window.addFilter("*.h");
-  file_window.addFilter("*.cpp");
-  file_window.addFilter("*");
+  file_window.addFilter("*.h"_c);
+  file_window.addFilter("*.cpp"_c);
+  file_window.addFilter("*"_c);
  }
 
 TestClient::~TestClient()

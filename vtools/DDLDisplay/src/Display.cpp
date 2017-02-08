@@ -1961,7 +1961,7 @@ void DDLWindow::layout()
 
 void DisplayWindow::error(StrLen str)
  {
-  msg_frame.setInfo(str);
+  msg_frame.setInfo(String(str));
 
   if( msg_frame.isDead() ) msg_frame.create(getFrame(),"Error"_def);
  }

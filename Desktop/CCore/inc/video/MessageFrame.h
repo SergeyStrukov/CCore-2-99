@@ -148,7 +148,7 @@ class MessageWindow : public ComboWindow
 
    MessageWindow & setInfo(const Info &info);
 
-   MessageWindow & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
+   MessageWindow & setInfo(DefString str) { return setInfo(InfoFromString(str)); }
 
    MessageWindow & add(const DefString &name,int btn_id);
 
@@ -238,7 +238,7 @@ class MessageFrame : public FixedFrame
 
    MessageFrame & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
 
-   MessageFrame & setInfo(StrLen str) { return setInfo(InfoFromString(str)); }
+   MessageFrame & setInfo(DefString str) { return setInfo(InfoFromString(str)); }
 
    MessageFrame & add(const DefString &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
 

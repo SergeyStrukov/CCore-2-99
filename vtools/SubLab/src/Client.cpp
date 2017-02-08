@@ -541,7 +541,9 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
 
    class InfoWindow_SampleInfo : public InfoWindow
     {
-      static constexpr const char *Sample=
+      static DefString Sample()
+       {
+        return
         "type AtomIndex = uint32 ;\r\n"
         "type SyntIndex = uint32 ;\r\n"
         "type KindIndex = uint32 ;\r\n"
@@ -610,70 +612,69 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
         "\r\n"
         "  Arg[] args;\r\n"
         " };\r\n"
-        "\r\n";
+        "\r\n"_def;
+       }
 
      public:
 
       InfoWindow_SampleInfo(SubWindowHost &host,const ConfigType &cfg)
-       : InfoWindow(host,cfg,InfoFromString(Sample))
+       : InfoWindow(host,cfg,InfoFromString(Sample()))
        {
        }
     };
 
    class MessageWindow_knob : public MessageWindow
     {
-      static constexpr const char *Message="Knob message window";
-
      public:
 
       MessageWindow_knob(SubWindowHost &host,const ConfigType &cfg)
        : MessageWindow(host,cfg)
        {
-        setInfo(Message);
+        setInfo("Knob message window"_def);
        }
     };
 
    class MessageWindow_ok : public MessageWindow
     {
-      static constexpr const char *Message="Ok message window";
-
      public:
 
       MessageWindow_ok(SubWindowHost &host,const ConfigType &cfg)
        : MessageWindow(host,cfg)
        {
-        add("Ok"_def,Button_Ok).setInfo(Message);
+        add("Ok"_def,Button_Ok).setInfo("Ok message window"_def);
        }
     };
 
    class MessageWindow_yes_no : public MessageWindow
     {
-      static constexpr const char *Message="Yes/No message window";
-
      public:
 
       MessageWindow_yes_no(SubWindowHost &host,const ConfigType &cfg)
        : MessageWindow(host,cfg)
        {
-        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo(Message);
+        add("Yes"_def,Button_Yes).add("No"_def,Button_No).setInfo("Yes/No message window"_def);
        }
     };
 
    class SimpleTextListWindow_SampleList : public SimpleTextListWindow
     {
-      static constexpr const char *List="XSingleLine\r\n"
-                                        "YSingleLine\r\n"
-                                        "XDoubleLine\r\n"
-                                        "YDoubleLine\r\n"
-                                        "Contour\r\n"
-                                        "TextContour left\r\n"
-                                        "TextContour right\r\n"
-                                        "TextContour center\r\n";
+      static DefString List()
+       {
+        return
+        "XSingleLine\r\n"
+        "YSingleLine\r\n"
+        "XDoubleLine\r\n"
+        "YDoubleLine\r\n"
+        "Contour\r\n"
+        "TextContour left\r\n"
+        "TextContour right\r\n"
+        "TextContour center\r\n"_def;
+       }
 
      public:
 
       SimpleTextListWindow_SampleList(SubWindowHost &host,const ConfigType &cfg)
-       : SimpleTextListWindow(host,cfg,InfoFromString(List))
+       : SimpleTextListWindow(host,cfg,InfoFromString(List()))
        {
        }
     };

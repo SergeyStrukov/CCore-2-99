@@ -23,6 +23,8 @@
 #include <CCore/inc/Array.h>
 #include <CCore/inc/Sort.h>
 
+#include <CCore/inc/video/RefVal.h>
+
 namespace CCore {
 namespace Video {
 
@@ -96,12 +98,12 @@ class InfoFromString : public Info
  {
    class StringSet : public InfoBase
     {
-      String str;
+      DefString str;
       DynArray<StrLen> list;
 
      public:
 
-      explicit StringSet(StrLen str);
+      explicit StringSet(DefString str);
 
       virtual ~StringSet();
 
@@ -114,7 +116,7 @@ class InfoFromString : public Info
 
   public:
 
-   explicit InfoFromString(StrLen str);
+   explicit InfoFromString(DefString str);
 
    ~InfoFromString();
  };
@@ -227,11 +229,11 @@ class ComboInfoBuilder : NoCopy
 
    // add...()
 
-   void add(ComboInfoType type,StrLen text);
+   void add(ComboInfoType type,StrLen line);
 
-   void add(StrLen text) { add(ComboInfoText,text); }
+   void add(StrLen line) { add(ComboInfoText,line); }
 
-   void addTitle(StrLen text) { add(ComboInfoTitle,text); }
+   void addTitle(StrLen line) { add(ComboInfoTitle,line); }
 
    void addSeparator() { add(ComboInfoSeparator,Empty); }
 

@@ -29,7 +29,7 @@ void ResultBuilder::entry()
     }
   catch(CatchType)
     {
-     setResult(report.close());
+     setResult(String(report.close()));
     }
  }
 

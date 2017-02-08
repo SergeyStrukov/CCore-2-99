@@ -29,7 +29,7 @@ void GuardCtorRefValLock()
 
 /* SafeString() */
 
-DefString SafeString(StrLen str,const char *out_of_memory)
+DefString SafeString(StrLen str,DefString out_of_memory)
  {
   try
     {
@@ -43,7 +43,7 @@ DefString SafeString(StrLen str,const char *out_of_memory)
 
 DefString SafeString(StrLen str)
  {
-  return SafeString(str,"<out-of-memory>");
+  return SafeString(str,"<out-of-memory>"_def);
  }
 
 } // namespace Video
