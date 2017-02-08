@@ -118,81 +118,82 @@ ConfigItem & ConfigMap::find_or_add(StrLen name)
   return *result.obj;
  }
 
-const char *const ConfigMap::Pretext=
-"type Bool = uint8 ;\r\n"
-"\r\n"
-"Bool True = 1 ;\r\n"
-"\r\n"
-"Bool False = 0 ;\r\n"
-"\r\n"
-"type Coord = sint16 ;\r\n"
-"\r\n"
-"type MCoord = sint32 ; \r\n"
-"\r\n"
-"type VColor = uint32 ;\r\n"
-"\r\n"
-"type Clr = uint8 ;\r\n"
-"\r\n"
-"struct Point\r\n"
-" {\r\n"
-"  Coord x;\r\n"
-"  Coord y;\r\n"
-" };\r\n"
-"\r\n"
-"struct Ratio\r\n"
-" {\r\n"
-"  sint32 ratio;\r\n"
-" }; \r\n"
-"\r\n"
-"struct Font\r\n"
-" {\r\n"
-"  type EngineType = int ;\r\n"
-"\r\n"
-"  const EngineType EngineDefault  = 0 ;\r\n"
-"  const EngineType EngineFreeType = 1 ;\r\n"
-"\r\n"
-"  EngineType engine_type;\r\n"
-"\r\n"
-"  text file_name;\r\n"
-"\r\n"
-"  type SizeType = int ;\r\n"
-"\r\n"
-"  const SizeType SizeXY    = 0 ;\r\n"
-"  const SizeType SizePoint = 1 ;\r\n"
-"  const SizeType SizeIndex = 2 ;\r\n"
-"\r\n"
-"  SizeType size_type;\r\n"
-"  int dx;\r\n"
-"  int dy;\r\n"
-"\r\n"
-"  struct Config\r\n"
-"   {\r\n"
-"    type FontHintType = int ;\r\n"
-"\r\n"
-"    const FontHintType FontHintNone   = 0 ;\r\n"
-"    const FontHintType FontHintNative = 1 ;\r\n"
-"    const FontHintType FontHintAuto   = 2 ;\r\n"
-"\r\n"
-"    FontHintType fht;\r\n"
-"\r\n"
-"    type FontSmoothType = int ;\r\n"
-"\r\n"
-"    const FontSmoothType FontSmoothNone    = 0 ;\r\n"
-"    const FontSmoothType FontSmooth        = 1 ;\r\n"
-"    const FontSmoothType FontSmoothLCD_RGB = 2 ;\r\n"
-"    const FontSmoothType FontSmoothLCD_BGR = 3 ;\r\n"
-"\r\n"
-"    FontSmoothType fsm;\r\n"
-"\r\n"
-"    Bool use_kerning;\r\n"
-"    int strength;\r\n"
-"    int gamma_order; // /1024\r\n"
-"   };\r\n"
-"\r\n"
-"  Config cfg;\r\n"
-" };\r\n"
-"\r\n"
-;
+StrLen ConfigMap::Pretext()
+ {
+  return
+"type Bool = uint8 ;"
+
+"Bool True = 1 ;"
+
+"Bool False = 0 ;"
+
+"type Coord = sint16 ;"
+
+"type MCoord = sint32 ; "
+
+"type VColor = uint32 ;"
+
+"type Clr = uint8 ;"
+
+"struct Point"
+" {"
+"  Coord x;"
+"  Coord y;"
+" };"
+
+"struct Ratio"
+" {"
+"  sint32 ratio;"
+" }; "
+
+"struct Font"
+" {"
+"  type EngineType = int ;"
+
+"  const EngineType EngineDefault  = 0 ;"
+"  const EngineType EngineFreeType = 1 ;"
+
+"  EngineType engine_type;"
+
+"  text file_name;"
+
+"  type SizeType = int ;"
+
+"  const SizeType SizeXY    = 0 ;"
+"  const SizeType SizePoint = 1 ;"
+"  const SizeType SizeIndex = 2 ;"
+
+"  SizeType size_type;"
+"  int dx;"
+"  int dy;"
+
+"  struct Config"
+"   {"
+"    type FontHintType = int ;"
+
+"    const FontHintType FontHintNone   = 0 ;"
+"    const FontHintType FontHintNative = 1 ;"
+"    const FontHintType FontHintAuto   = 2 ;"
+
+"    FontHintType fht;"
+
+"    type FontSmoothType = int ;"
+
+"    const FontSmoothType FontSmoothNone    = 0 ;"
+"    const FontSmoothType FontSmooth        = 1 ;"
+"    const FontSmoothType FontSmoothLCD_RGB = 2 ;"
+"    const FontSmoothType FontSmoothLCD_BGR = 3 ;"
+
+"    FontSmoothType fsm;"
+
+"    Bool use_kerning;"
+"    int strength;"
+"    int gamma_order;"
+"   };"
+
+"  Config cfg;"
+" };"_c;
+ }
 
 template <class Func>
 struct ConfigMap::TypeFilter
@@ -451,7 +452,7 @@ void ConfigMap::loadDDL(StrLen file_name)
   PrintBuf eout(Range(temp));
   DDL::FileEngine<FileName,FileToMem> engine(eout);
 
-  auto result=engine.process(file_name,Pretext);
+  auto result=engine.process(file_name,Pretext());
 
   if( !result )
     {

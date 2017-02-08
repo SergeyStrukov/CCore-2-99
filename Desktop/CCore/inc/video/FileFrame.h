@@ -69,7 +69,7 @@ class DirHitList : NoCopy
 
   private:
 
-   static const char *const Pretext;
+   static StrLen Pretext();
 
   public:
 

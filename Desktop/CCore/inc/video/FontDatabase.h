@@ -118,9 +118,9 @@ class FontDatabase : NoCopy
 
   private:
 
-   static const char *const CacheFile;
+   static StrLen CacheFile();
 
-   static const char *const Pretext;
+   static StrLen Pretext();
 
    static String CatPath(StrLen path,StrLen name);
 

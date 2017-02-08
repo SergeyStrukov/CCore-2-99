@@ -237,7 +237,7 @@ class ConfigMap : NoCopy
 
    ConfigItem & find_or_add(StrLen name);
 
-   static const char *const Pretext;
+   static StrLen Pretext();
 
    template <class Func> struct TypeFilter;
 

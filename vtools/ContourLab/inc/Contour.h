@@ -584,6 +584,8 @@ class Contour : public Formular
 
    struct PrintArg;
 
+   struct PrintContour;
+
    template <class Func>
    struct Bind
     {
@@ -608,7 +610,7 @@ class Contour : public Formular
      void operator () () {}
     };
 
-   static const char *const Pretext;
+   static StrLen Pretext();
 
    static Real ToReal(AnyType);
 

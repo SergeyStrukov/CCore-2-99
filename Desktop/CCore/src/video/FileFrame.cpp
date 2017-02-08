@@ -64,13 +64,16 @@ void DirHitList::Rec::init(StrLen dir_name,unsigned count_)
   count=count_;
  }
 
-const char *const DirHitList::Pretext=
-"struct HitDirData\r\n"
-" {\r\n"
-"  text[] hit_list;\r\n"
-"  \r\n"
-"  struct Rec { text dir; uint count; } [] last_list;\r\n"
-" };\r\n\r\n";
+StrLen DirHitList::Pretext()
+ {
+  return
+"struct HitDirData"
+" {"
+"  text[] hit_list;"
+
+"  struct Rec { text dir; uint count; } [] last_list;"
+" };"_c;
+ }
 
 DirHitList::DirHitList() noexcept
  {
@@ -98,7 +101,7 @@ void DirHitList::loadDDL(StrLen file_name)
   PrintBuf eout(Range(temp));
   DDL::FileEngine<FileName,FileToMem> engine(eout);
 
-  auto result=engine.process(file_name,Pretext);
+  auto result=engine.process(file_name,Pretext());
 
   if( !result )
     {

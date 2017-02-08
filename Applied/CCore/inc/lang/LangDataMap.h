@@ -39,6 +39,8 @@ class DataMap : NoCopy
 
   private:
 
+   static StrLen Pretext();
+
    template <class T>
    static bool Checkin(T *ptr,PtrLen<T> range)
     {

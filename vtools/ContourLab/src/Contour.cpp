@@ -738,6 +738,74 @@ struct Contour::PrintArg
    }
  };
 
+struct Contour::PrintContour
+ {
+  PrintBase &out;
+  String name;
+
+  void print(StrLen type,StrLen name,PtrLen<const Dot> dots)
+   {
+    // 1
+
+    {
+     Printf(out,"#; Contour_#;=\n {\n",type,name);
+
+     Printf(out,"  {");
+
+     PrintFirst stem("\n   ",",\n   ");
+
+     for(Dot dot : dots )
+       {
+        Printf(out,"#;{{#;,#;,#;},#;}",stem,dot.point.x.toBin(),dot.point.y.toBin(),(uint8)dot.point.rex,DDLBool(dot.break_flag));
+       }
+
+     Printf(out,"\n  },\n");
+     Printf(out,"  0\n");
+
+     Printf(out," };\n\n");
+    }
+
+    // 2
+
+    {
+     Printf(out,"/*\n\n");
+
+     Printf(out,"SmoothDot Contour_#;[]=\n {",name);
+
+     PrintFirst stem("\n  ",",\n  ");
+
+     for(Dot dot : dots )
+       {
+        MPoint p=Map(dot.point);
+
+        Printf(out,"#;{{#;,#;},#;}",stem,p.x,p.y, dot.break_flag?"Smooth::DotBreak"_c:"Smooth::DotSimple"_c );
+       }
+
+     Printf(out,"\n };\n\n");
+
+     Printf(out,"*/\n\n");
+    }
+   }
+
+  void operator () (auto) {}
+
+  void operator () () {}
+
+  void operator () (Path s)
+   {
+    if( s.rex ) return;
+
+    print("Path"_c,Range(name),Range(s.dots));
+   }
+
+  void operator () (Loop s)
+   {
+    if( s.rex ) return;
+
+    print("Loop"_c,Range(name),Range(s.dots));
+   }
+ };
+
 void Contour::save(StrLen file_name,ErrorText &etext) const
  {
   SimpleArray<char> temp(64_KByte);
@@ -812,6 +880,19 @@ void Contour::save(StrLen file_name,ErrorText &etext) const
          parg.printTop(r[i].obj,i);
         }
      }
+
+     // contours
+
+     {
+      auto r=Range(formulas);
+
+      for(ulen i=0; i<r.len ;i++)
+        {
+         const Item &item=r[i];
+
+         item.obj.call(PrintContour{out,item.label.name});
+        }
+     }
     }
   catch(CatchType)
     {
@@ -824,355 +905,347 @@ void Contour::save(StrLen file_name,ErrorText &etext) const
 #include "Contour.TypeDef.gen.h"
 #include "Contour.TypeSet.gen.h"
 
-const char *const Contour::Pretext=
-"/* --- Common ------------------------------------------------------------------------- */\r\n"
-"\r\n"
-"type Bool = uint8 ;\r\n"
-"\r\n"
-"Bool True = 1 ;\r\n"
-"\r\n"
-"Bool False = 0 ;\r\n"
-"\r\n"
-"struct Label\r\n"
-" {\r\n"
-"  text name;\r\n"
-"\r\n"
-"  Bool show;\r\n"
-"  Bool gray;\r\n"
-"  Bool show_name;\r\n"
-" };\r\n"
-"\r\n"
-"type Exception = uint8 ;\r\n"
-"\r\n"
-"/* --- Geometry ----------------------------------------------------------------------- */\r\n"
-"\r\n"
-"struct Real\r\n"
-" {\r\n"
-"  sint64 mantissa;\r\n"
-"  sint16 exp;\r\n"
-" };\r\n"
-" \r\n"
-"struct Ratio\r\n"
-" {\r\n"
-"  Real val;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-"  \r\n"
-"struct Length\r\n"
-" {\r\n"
-"  Real val;\r\n"
-"  Exception rex;\r\n"
-" }; \r\n"
-" \r\n"
-"struct Angle\r\n"
-" {\r\n"
-"  Real val;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-"  \r\n"
-"struct Point\r\n"
-" {\r\n"
-"  Real x;\r\n"
-"  Real y;\r\n"
-"  Exception rex;\r\n"
-" }; \r\n"
-" \r\n"
-"struct Line\r\n"
-" {\r\n"
-"  Point a;\r\n"
-"  Point ort;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-" \r\n"
-"struct Circle \r\n"
-" {\r\n"
-"  Point center;\r\n"
-"  Length radius;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-" \r\n"
-"struct Couple\r\n"
-" {\r\n"
-"  Point a;\r\n"
-"  Point b;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-" \r\n"
-"struct Dot \r\n"
-" {\r\n"
-"  Point point;\r\n"
-"  Bool break_flag;\r\n"
-" };\r\n"
-" \r\n"
-"struct Step \r\n"
-" {\r\n"
-"  Point[] points;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-" \r\n"
-"struct Path\r\n"
-" {\r\n"
-"  Dot[] dots;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-" \r\n"
-"struct Loop\r\n"
-" {\r\n"
-"  Dot[] dots;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-"  \r\n"
-"struct Solid\r\n"
-" {\r\n"
-"  Dot[] dots;\r\n"
-"  Exception rex;\r\n"
-" };\r\n"
-"\r\n"
-"/* --- Pad ---------------------------------------------------------------------------- */ \r\n"
-"\r\n"
-"struct Pad\r\n"
-" {\r\n"
-"  Label label;\r\n"
-"  ulen index;\r\n"
-"  \r\n"
-"  {Ratio,Length,Angle,Point} *object;\r\n"
-" };\r\n"
-"\r\n"
-"/* --- Formula ------------------------------------------------------------------------ */\r\n"
-"\r\n"
-"struct Neg\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-" };\r\n"
-" \r\n"
-"struct Add\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Sub\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Mul\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Div\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-"\r\n"
-"struct LengthOf\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct AngleOf\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;\r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-" \r\n"
-"struct LineOf\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };  \r\n"
-" \r\n"
-"struct Middle\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-"   \r\n"
-"struct Part\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-" \r\n"
-"struct MidOrt \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct CircleOf \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct CircleOuter \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Proj \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct AngleC \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Meet \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct MeetCircle\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct MeetCircles\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Rotate \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-"\r\n"
-"struct RotateOrt\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-"\r\n"
-"struct Move\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-" \r\n"
-"struct MoveLen\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-"  Arg c;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Mirror \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct First\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-" };\r\n"
-"  \r\n"
-"struct Second\r\n"
-" {\r\n"
-"  Arg a;\r\n"
-" }; \r\n"
-" \r\n"
-"struct Up \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Down \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Left \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct Right \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-"  Arg b;  \r\n"
-" };\r\n"
-" \r\n"
-"struct StepOf\r\n"
-" {\r\n"
-"  Arg[] args;\r\n"
-" }; \r\n"
-" \r\n"
-"struct PathOf\r\n"
-" {\r\n"
-"  Arg[] args;\r\n"
-" };\r\n"
-" \r\n"
-"struct BPathOf\r\n"
-" {\r\n"
-"  Arg[] args;\r\n"
-" };\r\n"
-"  \r\n"
-"struct LoopOf\r\n"
-" {\r\n"
-"  Arg[] args;\r\n"
-" };\r\n"
-" \r\n"
-"struct BLoopOf\r\n"
-" {\r\n"
-"  Arg[] args;\r\n"
-" };\r\n"
-" \r\n"
-"struct SolidOf \r\n"
-" {\r\n"
-"  Arg a;\r\n"
-" }; \r\n"
-" \r\n"
-"type Arg = {\r\n"
-"            Ratio,Length,Angle,Point,Pad,Formula,\r\n"
-"            Neg,Add,Sub,Mul,Div, \r\n"
-"            LengthOf,AngleOf,LineOf,Middle,Part,MidOrt,CircleOf,CircleOuter,\r\n"
-"            Proj,AngleC,Meet,MeetCircle,MeetCircles,Rotate,RotateOrt,Move,MoveLen,\r\n"
-"            Mirror,First,Second,Up,Down,Left,Right,\r\n"
-"            StepOf,PathOf,BPathOf,LoopOf,BLoopOf,SolidOf\r\n"
-"           } * ;\r\n"
-"\r\n"
-"struct Formula\r\n"
-" {\r\n"
-"  Label label;\r\n"
-"  ulen index;\r\n"
-"  \r\n"
-"  Arg object;\r\n"
-" };\r\n"
-"\r\n"
-"/* --- Contour ------------------------------------------------------------------------ */\r\n"
-" \r\n"
-"struct Contour\r\n"
-" {\r\n"
-"  Pad[] pads;\r\n"
-"  Formula[] formulas;\r\n"
-" };\r\n"
-"";
+StrLen Contour::Pretext()
+ {
+  return
+"type Bool = uint8 ;"
+
+"Bool True = 1 ;"
+
+"Bool False = 0 ;"
+
+"struct Label"
+" {"
+"  text name;"
+
+"  Bool show;"
+"  Bool gray;"
+"  Bool show_name;"
+" };"
+
+"type Exception = uint8 ;"
+
+"struct Real"
+" {"
+"  sint64 mantissa;"
+"  sint16 exp;"
+" };"
+
+"struct Ratio"
+" {"
+"  Real val;"
+"  Exception rex;"
+" };"
+
+"struct Length"
+" {"
+"  Real val;"
+"  Exception rex;"
+" };"
+
+"struct Angle"
+" {"
+"  Real val;"
+"  Exception rex;"
+" };"
+
+"struct Point"
+" {"
+"  Real x;"
+"  Real y;"
+"  Exception rex;"
+" };"
+
+"struct Line"
+" {"
+"  Point a;"
+"  Point ort;"
+"  Exception rex;"
+" };"
+
+"struct Circle "
+" {"
+"  Point center;"
+"  Length radius;"
+"  Exception rex;"
+" };"
+
+"struct Couple"
+" {"
+"  Point a;"
+"  Point b;"
+"  Exception rex;"
+" };"
+
+"struct Dot "
+" {"
+"  Point point;"
+"  Bool break_flag;"
+" };"
+
+"struct Step "
+" {"
+"  Point[] points;"
+"  Exception rex;"
+" };"
+
+"struct Path"
+" {"
+"  Dot[] dots;"
+"  Exception rex;"
+" };"
+
+"struct Loop"
+" {"
+"  Dot[] dots;"
+"  Exception rex;"
+" };"
+
+"struct Solid"
+" {"
+"  Dot[] dots;"
+"  Exception rex;"
+" };"
+
+"struct Pad"
+" {"
+"  Label label;"
+"  ulen index;"
+
+"  {Ratio,Length,Angle,Point} *object;"
+" };"
+
+"struct Neg"
+" {"
+"  Arg a;"
+" };"
+
+"struct Add"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Sub"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Mul"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Div"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct LengthOf"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct AngleOf"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct LineOf"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Middle"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Part"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct MidOrt"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct CircleOf"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct CircleOuter"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct Proj"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct AngleC"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct Meet"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct MeetCircle"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct MeetCircles"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Rotate"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct RotateOrt"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Move"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct MoveLen"
+" {"
+"  Arg a;"
+"  Arg b;"
+"  Arg c;"
+" };"
+
+"struct Mirror"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct First"
+" {"
+"  Arg a;"
+" };"
+
+"struct Second"
+" {"
+"  Arg a;"
+" };"
+
+"struct Up"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Down"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Left"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct Right"
+" {"
+"  Arg a;"
+"  Arg b;"
+" };"
+
+"struct StepOf"
+" {"
+"  Arg[] args;"
+" };"
+
+"struct PathOf"
+" {"
+"  Arg[] args;"
+" };"
+
+"struct BPathOf"
+" {"
+"  Arg[] args;"
+" };"
+
+"struct LoopOf"
+" {"
+"  Arg[] args;"
+" };"
+
+"struct BLoopOf"
+" {"
+"  Arg[] args;"
+" };"
+
+"struct SolidOf"
+" {"
+"  Arg a;"
+" }; "
+
+"type Arg = {"
+"            Ratio,Length,Angle,Point,Pad,Formula,"
+"            Neg,Add,Sub,Mul,Div,"
+"            LengthOf,AngleOf,LineOf,Middle,Part,MidOrt,CircleOf,CircleOuter,"
+"            Proj,AngleC,Meet,MeetCircle,MeetCircles,Rotate,RotateOrt,Move,MoveLen,"
+"            Mirror,First,Second,Up,Down,Left,Right,"
+"            StepOf,PathOf,BPathOf,LoopOf,BLoopOf,SolidOf"
+"           } * ;"
+
+"struct Formula"
+" {"
+"  Label label;"
+"  ulen index;"
+
+"  Arg object;"
+" };"
+
+"struct Contour"
+" {"
+"  Pad[] pads;"
+"  Formula[] formulas;"
+" };"_c;
+ }
 
 Geometry::Real Contour::ToReal(AnyType x)
  {
@@ -1469,7 +1542,7 @@ void Contour::load(StrLen file_name,ErrorText &etext)
     {
      DDL::FileEngine<FileName,FileToMem> engine(eout);
 
-     auto result=engine.process(file_name,Pretext);
+     auto result=engine.process(file_name,Pretext());
 
      if( !result )
        {

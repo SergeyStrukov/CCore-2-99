@@ -34,8 +34,9 @@ namespace Lang {
 
 /* class DataMap */
 
-static const char *Pretext=
-
+StrLen DataMap::Pretext()
+ {
+  return
 "  type AtomIndex = uint32 ;"
 "  type SyntIndex = uint32 ;"
 "  type KindIndex = uint32 ;"
@@ -144,16 +145,15 @@ static const char *Pretext=
 "     };"
 
 "    Action[] actions;"
-"   };"
-
-;
+"   };"_c;
+ }
 
 DataMap::DataMap(StrLen file_name)
  {
   PrintCon out;
   DDL::FileEngine<FileName,FileToMem> engine(out);
 
-  auto result=engine.process(file_name,Pretext);
+  auto result=engine.process(file_name,Pretext());
 
   out.flush();
 

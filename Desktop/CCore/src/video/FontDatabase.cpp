@@ -135,44 +135,46 @@ void FontInfo::turnSlash()
 
 /* class FontDatabase */
 
-const char *const FontDatabase::CacheFile="/FontCache.ddl";
+StrLen FontDatabase::CacheFile() { return "/FontCache.ddl"_c; }
 
-const char *const FontDatabase::Pretext=
-"type Bool = uint8 ;\r\n"
-"\r\n"
-"Bool True = 1 ;\r\n"
-"Bool False = 0 ;\r\n"
-"\r\n"
-"type Coord = sint16 ;\r\n"
-"\r\n"
-"struct FontSize\r\n"
-" {\r\n"
-"  Coord min_dx;\r\n"
-"  Coord max_dx;\r\n"
-"  Coord dy;\r\n"
-"  Coord by;\r\n"
-"  Coord dx0;\r\n"
-"  Coord dx1;\r\n"
-"  Coord skew;\r\n"
-" };\r\n"
-"\r\n"
-"struct FontInfo\r\n"
-" {\r\n"
-"  text file_name;\r\n"
-"\r\n"
-"  text family;\r\n"
-"  text style;\r\n"
-"\r\n"
-"  Bool scalable;\r\n"
-"  Bool monospace;\r\n"
-"  Bool italic;\r\n"
-"  Bool bold;\r\n"
-"\r\n"
-"  FontSize def_size;\r\n"
-" };\r\n"
-"\r\n"
-"type FontDatabase = FontInfo[] ;\r\n"
-;
+StrLen FontDatabase::Pretext()
+ {
+  return
+"type Bool = uint8 ;"
+
+"Bool True = 1 ;"
+"Bool False = 0 ;"
+
+"type Coord = sint16 ;"
+
+"struct FontSize"
+" {"
+"  Coord min_dx;"
+"  Coord max_dx;"
+"  Coord dy;"
+"  Coord by;"
+"  Coord dx0;"
+"  Coord dx1;"
+"  Coord skew;"
+" };"
+
+"struct FontInfo"
+" {"
+"  text file_name;"
+
+"  text family;"
+"  text style;"
+
+"  Bool scalable;"
+"  Bool monospace;"
+"  Bool italic;"
+"  Bool bold;"
+
+"  FontSize def_size;"
+" };"
+
+"type FontDatabase = FontInfo[] ;"_c;
+ }
 
 String FontDatabase::CatPath(StrLen path,StrLen name)
  {
@@ -294,7 +296,7 @@ void FontDatabase::loadDDL(StrLen file_name)
   PrintBuf eout(Range(temp));
   DDL::FileEngine<FileName,FileToMem> engine(eout);
 
-  auto result=engine.process(file_name,Pretext);
+  auto result=engine.process(file_name,Pretext());
 
   if( !result )
     {
@@ -391,7 +393,7 @@ void FontDatabase::tryCache()
 
   MakeString<MaxPathLen> buf;
 
-  buf.add(home.get(),HomeKey,CacheFile);
+  buf.add(home.get(),HomeKey,CacheFile());
 
   if( !buf )
     {
