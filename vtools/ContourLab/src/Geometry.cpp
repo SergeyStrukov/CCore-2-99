@@ -13,6 +13,8 @@
 
 #include <inc/Geometry.h>
 
+#include <CCore/inc/Exception.h>
+
 #include <math.h>
 
 namespace App {
@@ -49,6 +51,16 @@ double Geometry::Real::Guard(double x)
 void Geometry::Real::GuardDiv(double y)
  {
   if( fabs(y)<1/Cap ) throw RealTooSmall;
+ }
+
+Geometry::Real::Real(Bin bin)
+ {
+  val=ldexp(bin.mantissa,bin.exp);
+
+  if( fabs(val)>Cap )
+    {
+     Printf(Exception,"App::Geometry::Real::Real({#;,#;}) : too big",bin.mantissa,bin.exp);
+    }
  }
 
 Geometry::Real Geometry::Real::Norm(Real x,Real y)

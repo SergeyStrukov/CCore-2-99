@@ -12,7 +12,8 @@ Contour Data=
   {
   { { 'E' , True , True , True } , 0 , &F0 },
   { { 'AB' , True , True , True } , 1 , &F1 },
-  { { 'm' , True , True , True } , 2 , &F2 }
+  { { 's' , True , True , True } , 2 , &F2 },
+  { { 'm' , True , True , True } , 3 , &F3 }
   }
  };
 
@@ -30,9 +31,13 @@ CircleOuter F0={Data.pads+0,Data.pads+1,Data.pads+2};
 
 LineOf F1={Data.pads+0,Data.pads+1};
 
-LineOf F2={Data.pads+2,&F9};
+Meet F2={Data.formulas+3,&F10};
 
-Rotate F9={Data.pads+0,&F11,Data.pads+1};
+LineOf F10={Data.pads+0,Data.pads+1};
 
-Mul F11={Data.pads+3,Data.pads+4};
+LineOf F3={Data.pads+2,&F14};
+
+Rotate F14={Data.pads+0,&F16,Data.pads+1};
+
+Mul F16={Data.pads+3,Data.pads+4};
 

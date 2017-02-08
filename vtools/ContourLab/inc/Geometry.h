@@ -65,7 +65,20 @@ struct Geometry
 
     public:
 
+     struct Bin
+      {
+       sint64 mantissa;
+       sint16 exp;
+
+       void print(PrinterType &out) const
+        {
+         Printf(out,"{#.h;,#;}",mantissa,exp);
+        }
+      };
+
      Real(double val_=0) : val(val_) {}
+
+     Real(Bin);
 
      Real operator - () const { return -val; }
 
@@ -118,17 +131,6 @@ struct Geometry
      // map
 
      double map(int prec) const;
-
-     struct Bin
-      {
-       sint64 mantissa;
-       sint16 exp;
-
-       void print(PrinterType &out) const
-        {
-         Printf(out,"{#.h;,#;}",mantissa,exp);
-        }
-      };
 
      Bin toBin() const;
 

@@ -558,6 +558,8 @@ class Contour : public Formular
 
    bool addFormula(ulen index,StrLen name,Object obj);
 
+   bool setFormula(ulen index,StrLen name,Object obj);
+
    bool testName(StrLen name) const;
 
    bool delItem(DynArray<Item> &a,ulen index);
@@ -565,6 +567,8 @@ class Contour : public Formular
    class PadTestParser;
 
    class PadAddParser;
+
+   struct CreateOp;
 
    class FormulaTestContext;
 
@@ -597,6 +601,16 @@ class Contour : public Formular
 
      void operator () () {}
     };
+
+   static const char *const Pretext;
+
+   static Real ToReal(AnyType);
+
+   static void CopyFlags(Label &label,AnyType);
+
+   struct CreateDataPadObject;
+
+   struct CreateDataFormulaObject;
 
   public:
 

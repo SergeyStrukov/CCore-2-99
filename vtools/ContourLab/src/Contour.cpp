@@ -18,6 +18,12 @@
 #include <CCore/inc/PrintStem.h>
 #include <CCore/inc/Exception.h>
 
+#include <CCore/inc/FileName.h>
+#include <CCore/inc/FileToMem.h>
+
+#include <CCore/inc/ddl/DDLEngine.h>
+#include <CCore/inc/ddl/DDLTypeSet.h>
+
 namespace App {
 
 /* functions */
@@ -137,6 +143,25 @@ bool Contour::addFormula(ulen index,StrLen name,Object obj)
   Item item{label,obj};
 
   ArrayCopyIns(formulas,index,item);
+
+  obj.setIndex(index);
+
+  return true;
+ }
+
+bool Contour::setFormula(ulen index,StrLen name,Object obj)
+ {
+  StrKey k(name);
+
+  auto result=map.find_or_add(k,obj);
+
+  if( !result.new_flag ) return false;
+
+  Label label(result.key->name);
+
+  Item item{label,obj};
+
+  formulas[index]=item;
 
   obj.setIndex(index);
 
@@ -291,141 +316,171 @@ bool Contour::formulaDel(ulen index)
   return delItem(formulas,index);
  }
 
-class Contour::FormulaTestContext : NoCopy
+struct Contour::CreateOp
  {
-   struct NegFunc
-    {
-     Object &ret;
-     Object a;
+  struct NegFunc
+   {
+    Object &ret;
+    Object a;
 
-     bool operator () (auto)
-      {
-       return false;
-      }
+    bool operator () (auto)
+     {
+      return false;
+     }
 
-     template <OneOfTypes<Ratio,Length,Angle> S>
-     bool operator () (S)
-      {
-       ret=Formula<S (S)>::template Create<Neg>("Neg"_c,a);
+    template <OneOfTypes<Ratio,Length,Angle> S>
+    bool operator () (S)
+     {
+      ret=Formula<S (S)>::template Create<Neg>("Neg"_c,a);
 
-       return true;
-      }
+      return true;
+     }
 
-     bool operator () () { return false; }
-    };
+    bool operator () () { return false; }
+   };
 
-   struct AddFunc
-    {
-     Object &ret;
-     Object a;
-     Object b;
+  struct AddFunc
+   {
+    Object &ret;
+    Object a;
+    Object b;
 
-     bool operator () (auto)
-      {
-       return false;
-      }
+    bool operator () (auto)
+     {
+      return false;
+     }
 
-     template <OneOfTypes<Ratio,Length,Angle> S>
-     bool operator () (S)
-      {
-       if( b.getTypeId()!=S::TypeId ) return false;
+    template <OneOfTypes<Ratio,Length,Angle> S>
+    bool operator () (S)
+     {
+      if( b.getTypeId()!=S::TypeId ) return false;
 
-       ret=Formula<S (S,S)>::template Create<Add>("Add"_c,a,b);
+      ret=Formula<S (S,S)>::template Create<Add>("Add"_c,a,b);
 
-       return true;
-      }
+      return true;
+     }
 
-     bool operator () () { return false; }
-    };
+    bool operator () () { return false; }
+   };
 
-   struct SubFunc
-    {
-     Object &ret;
-     Object a;
-     Object b;
+  struct SubFunc
+   {
+    Object &ret;
+    Object a;
+    Object b;
 
-     bool operator () (auto)
-      {
-       return false;
-      }
+    bool operator () (auto)
+     {
+      return false;
+     }
 
-     template <OneOfTypes<Ratio,Length,Angle> S>
-     bool operator () (S)
-      {
-       if( b.getTypeId()!=S::TypeId ) return false;
+    template <OneOfTypes<Ratio,Length,Angle> S>
+    bool operator () (S)
+     {
+      if( b.getTypeId()!=S::TypeId ) return false;
 
-       ret=Formula<S (S,S)>::template Create<Sub>("Sub"_c,a,b);
+      ret=Formula<S (S,S)>::template Create<Sub>("Sub"_c,a,b);
 
-       return true;
-      }
+      return true;
+     }
 
-     bool operator () () { return false; }
-    };
+    bool operator () () { return false; }
+   };
 
-   struct MulFunc
-    {
-     Object &ret;
-     Object a;
-     Object b;
+  struct MulFunc
+   {
+    Object &ret;
+    Object a;
+    Object b;
 
-     bool operator () (auto)
-      {
-       return false;
-      }
+    bool operator () (auto)
+     {
+      return false;
+     }
 
-     template <OneOfTypes<Ratio,Length,Angle> S>
-     bool operator () (S)
-      {
-       if( a.getTypeId()!=Ratio::TypeId ) return false;
+    template <OneOfTypes<Ratio,Length,Angle> S>
+    bool operator () (S)
+     {
+      if( a.getTypeId()!=Ratio::TypeId ) return false;
 
-       ret=Formula<S (Ratio,S)>::template Create<Mul>("Mul"_c,a,b);
+      ret=Formula<S (Ratio,S)>::template Create<Mul>("Mul"_c,a,b);
 
-       return true;
-      }
+      return true;
+     }
 
-     bool operator () () { return false; }
-    };
+    bool operator () () { return false; }
+   };
 
-   struct DivFunc
-    {
-     Object &ret;
-     Object a;
-     Object b;
+  struct DivFunc
+   {
+    Object &ret;
+    Object a;
+    Object b;
 
-     bool operator () (auto)
-      {
-       return false;
-      }
+    bool operator () (auto)
+     {
+      return false;
+     }
 
-     template <OneOfTypes<Ratio,Angle> S>
-     bool operator () (S)
-      {
-       if( b.getTypeId()!=Ratio::TypeId ) return false;
+    template <OneOfTypes<Ratio,Angle> S>
+    bool operator () (S)
+     {
+      if( b.getTypeId()!=Ratio::TypeId ) return false;
 
-       ret=Formula<S (S,Ratio)>::template Create<Div>("Div"_c,a,b);
+      ret=Formula<S (S,Ratio)>::template Create<Div>("Div"_c,a,b);
 
-       return true;
-      }
+      return true;
+     }
 
-     bool operator () (Length)
-      {
-       switch( b.getTypeId() )
-         {
-          case Length::TypeId :
-            ret=Formula<Ratio (Length,Length)>::Create<Div>("Div"_c,a,b);
-          return true;
+    bool operator () (Length)
+     {
+      switch( b.getTypeId() )
+        {
+         case Length::TypeId :
+           ret=Formula<Ratio (Length,Length)>::Create<Div>("Div"_c,a,b);
+         return true;
 
-          case Ratio::TypeId :
-            ret=Formula<Length (Length,Ratio)>::Create<Div>("Div"_c,a,b);
-          return true;
-         }
+         case Ratio::TypeId :
+           ret=Formula<Length (Length,Ratio)>::Create<Div>("Div"_c,a,b);
+         return true;
+        }
 
-       return false;
-      }
+      return false;
+     }
 
-     bool operator () () { return false; }
-    };
+    bool operator () () { return false; }
+   };
 
+  using ExprType = Object ;
+
+  static bool add(ExprType &ret,ExprType a,ExprType b)
+   {
+    return a.call(AddFunc{ret,a,b});
+   }
+
+  static bool sub(ExprType &ret,ExprType a,ExprType b)
+   {
+    return a.call(SubFunc{ret,a,b});
+   }
+
+  static bool mul(ExprType &ret,ExprType a,ExprType b)
+   {
+    return b.call(MulFunc{ret,a,b});
+   }
+
+  static bool div(ExprType &ret,ExprType a,ExprType b)
+   {
+    return a.call(DivFunc{ret,a,b});
+   }
+
+  static bool neg(ExprType &ret,ExprType a)
+   {
+    return a.call(NegFunc{ret,a});
+   }
+ };
+
+class Contour::FormulaTestContext : NoCopy , public CreateOp
+ {
   protected:
 
    const Contour *obj;
@@ -434,39 +489,12 @@ class Contour::FormulaTestContext : NoCopy
 
    explicit FormulaTestContext(const Contour *obj_) : obj(obj_) {}
 
-   using ExprType = Object ;
-
    bool set(StrLen name,ExprType)
     {
      return obj->testName(name);
     }
 
    // functions
-
-   bool add(ExprType &ret,ExprType a,ExprType b)
-    {
-     return a.call(AddFunc{ret,a,b});
-    }
-
-   bool sub(ExprType &ret,ExprType a,ExprType b)
-    {
-     return a.call(SubFunc{ret,a,b});
-    }
-
-   bool mul(ExprType &ret,ExprType a,ExprType b)
-    {
-     return b.call(MulFunc{ret,a,b});
-    }
-
-   bool div(ExprType &ret,ExprType a,ExprType b)
-    {
-     return a.call(DivFunc{ret,a,b});
-    }
-
-   bool neg(ExprType &ret,ExprType a)
-    {
-     return a.call(NegFunc{ret,a});
-    }
 
    bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list)
     {
@@ -787,17 +815,720 @@ void Contour::save(StrLen file_name,ErrorText &etext) const
     }
   catch(CatchType)
     {
+     Printf(eout,"\n@ #.q;",file_name);
+
      etext.setText(eout.close());
     }
  }
 
-void Contour::load(StrLen file_name,ErrorText &etext) // TODO
+#include "Contour.TypeDef.gen.h"
+#include "Contour.TypeSet.gen.h"
+
+const char *const Contour::Pretext=
+"/* --- Common ------------------------------------------------------------------------- */\r\n"
+"\r\n"
+"type Bool = uint8 ;\r\n"
+"\r\n"
+"Bool True = 1 ;\r\n"
+"\r\n"
+"Bool False = 0 ;\r\n"
+"\r\n"
+"struct Label\r\n"
+" {\r\n"
+"  text name;\r\n"
+"\r\n"
+"  Bool show;\r\n"
+"  Bool gray;\r\n"
+"  Bool show_name;\r\n"
+" };\r\n"
+"\r\n"
+"type Exception = uint8 ;\r\n"
+"\r\n"
+"/* --- Geometry ----------------------------------------------------------------------- */\r\n"
+"\r\n"
+"struct Real\r\n"
+" {\r\n"
+"  sint64 mantissa;\r\n"
+"  sint16 exp;\r\n"
+" };\r\n"
+" \r\n"
+"struct Ratio\r\n"
+" {\r\n"
+"  Real val;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+"  \r\n"
+"struct Length\r\n"
+" {\r\n"
+"  Real val;\r\n"
+"  Exception rex;\r\n"
+" }; \r\n"
+" \r\n"
+"struct Angle\r\n"
+" {\r\n"
+"  Real val;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+"  \r\n"
+"struct Point\r\n"
+" {\r\n"
+"  Real x;\r\n"
+"  Real y;\r\n"
+"  Exception rex;\r\n"
+" }; \r\n"
+" \r\n"
+"struct Line\r\n"
+" {\r\n"
+"  Point a;\r\n"
+"  Point ort;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+" \r\n"
+"struct Circle \r\n"
+" {\r\n"
+"  Point center;\r\n"
+"  Length radius;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+" \r\n"
+"struct Couple\r\n"
+" {\r\n"
+"  Point a;\r\n"
+"  Point b;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+" \r\n"
+"struct Dot \r\n"
+" {\r\n"
+"  Point point;\r\n"
+"  Bool break_flag;\r\n"
+" };\r\n"
+" \r\n"
+"struct Step \r\n"
+" {\r\n"
+"  Point[] points;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+" \r\n"
+"struct Path\r\n"
+" {\r\n"
+"  Dot[] dots;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+" \r\n"
+"struct Loop\r\n"
+" {\r\n"
+"  Dot[] dots;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+"  \r\n"
+"struct Solid\r\n"
+" {\r\n"
+"  Dot[] dots;\r\n"
+"  Exception rex;\r\n"
+" };\r\n"
+"\r\n"
+"/* --- Pad ---------------------------------------------------------------------------- */ \r\n"
+"\r\n"
+"struct Pad\r\n"
+" {\r\n"
+"  Label label;\r\n"
+"  ulen index;\r\n"
+"  \r\n"
+"  {Ratio,Length,Angle,Point} *object;\r\n"
+" };\r\n"
+"\r\n"
+"/* --- Formula ------------------------------------------------------------------------ */\r\n"
+"\r\n"
+"struct Neg\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+" };\r\n"
+" \r\n"
+"struct Add\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Sub\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Mul\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Div\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+"\r\n"
+"struct LengthOf\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct AngleOf\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;\r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+" \r\n"
+"struct LineOf\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };  \r\n"
+" \r\n"
+"struct Middle\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+"   \r\n"
+"struct Part\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+" \r\n"
+"struct MidOrt \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct CircleOf \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct CircleOuter \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Proj \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct AngleC \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Meet \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct MeetCircle\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct MeetCircles\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Rotate \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+"\r\n"
+"struct RotateOrt\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+"\r\n"
+"struct Move\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+" \r\n"
+"struct MoveLen\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+"  Arg c;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Mirror \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct First\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+" };\r\n"
+"  \r\n"
+"struct Second\r\n"
+" {\r\n"
+"  Arg a;\r\n"
+" }; \r\n"
+" \r\n"
+"struct Up \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Down \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Left \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct Right \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+"  Arg b;  \r\n"
+" };\r\n"
+" \r\n"
+"struct StepOf\r\n"
+" {\r\n"
+"  Arg[] args;\r\n"
+" }; \r\n"
+" \r\n"
+"struct PathOf\r\n"
+" {\r\n"
+"  Arg[] args;\r\n"
+" };\r\n"
+" \r\n"
+"struct BPathOf\r\n"
+" {\r\n"
+"  Arg[] args;\r\n"
+" };\r\n"
+"  \r\n"
+"struct LoopOf\r\n"
+" {\r\n"
+"  Arg[] args;\r\n"
+" };\r\n"
+" \r\n"
+"struct BLoopOf\r\n"
+" {\r\n"
+"  Arg[] args;\r\n"
+" };\r\n"
+" \r\n"
+"struct SolidOf \r\n"
+" {\r\n"
+"  Arg a;\r\n"
+" }; \r\n"
+" \r\n"
+"type Arg = {\r\n"
+"            Ratio,Length,Angle,Point,Pad,Formula,\r\n"
+"            Neg,Add,Sub,Mul,Div, \r\n"
+"            LengthOf,AngleOf,LineOf,Middle,Part,MidOrt,CircleOf,CircleOuter,\r\n"
+"            Proj,AngleC,Meet,MeetCircle,MeetCircles,Rotate,RotateOrt,Move,MoveLen,\r\n"
+"            Mirror,First,Second,Up,Down,Left,Right,\r\n"
+"            StepOf,PathOf,BPathOf,LoopOf,BLoopOf,SolidOf\r\n"
+"           } * ;\r\n"
+"\r\n"
+"struct Formula\r\n"
+" {\r\n"
+"  Label label;\r\n"
+"  ulen index;\r\n"
+"  \r\n"
+"  Arg object;\r\n"
+" };\r\n"
+"\r\n"
+"/* --- Contour ------------------------------------------------------------------------ */\r\n"
+" \r\n"
+"struct Contour\r\n"
+" {\r\n"
+"  Pad[] pads;\r\n"
+"  Formula[] formulas;\r\n"
+" };\r\n"
+"";
+
+Geometry::Real Contour::ToReal(AnyType x)
+ {
+  return Real::Bin{x.mantissa,x.exp};
+ }
+
+void Contour::CopyFlags(Label &label,AnyType x)
+ {
+  label.show=x.show;
+  label.gray=x.gray;
+  label.show_name=x.show_name;
+ }
+
+struct Contour::CreateDataPadObject : NoCopy
+ {
+  Object obj;
+
+  void create(AnyType ptr)
+   {
+    if( !ptr )
+      {
+       Printf(Exception,"App::Contour::load(...) : null pad object");
+      }
+
+    ElaborateAnyPtr(*this,ptr);
+   }
+
+  void operator () (TypeDef::Ratio *ptr)
+   {
+    Ratio s;
+
+    s.val=ToReal(ptr->val);
+    s.rex=RealException(ptr->rex);
+
+    obj=Pad<Ratio>::Create(s);
+   }
+
+  void operator () (TypeDef::Angle *ptr)
+   {
+    Angle s;
+
+    s.val=ToReal(ptr->val);
+    s.rex=RealException(ptr->rex);
+
+    obj=Pad<Angle>::Create(s);
+   }
+
+  void operator () (TypeDef::Length *ptr)
+   {
+    Length s;
+
+    s.val=ToReal(ptr->val);
+    s.rex=RealException(ptr->rex);
+
+    obj=Pad<Length>::Create(s);
+   }
+
+  void operator () (TypeDef::Point *ptr)
+   {
+    Point s;
+
+    s.x=ToReal(ptr->x);
+    s.y=ToReal(ptr->y);
+    s.rex=RealException(ptr->rex);
+
+    obj=Pad<Point>::Create(s);
+   }
+ };
+
+struct Contour::CreateDataFormulaObject : CreateDataPadObject
+ {
+  Contour *host;
+  PtrLen<TypeDef::Formula> data_formulas;
+  bool *lock;
+
+  CreateDataFormulaObject(Contour *host_,PtrLen<TypeDef::Formula> data_formulas_,bool *lock_)
+   : host(host_),data_formulas(data_formulas_),lock(lock_) {}
+
+  void create(AnyType ptr)
+   {
+    if( !ptr )
+      {
+       Printf(Exception,"App::Contour::load(...) : null formula object");
+      }
+
+    ElaborateAnyPtr(*this,ptr);
+   }
+
+  void set(ulen i)
+   {
+    Object o=host->formulas[i].obj;
+
+    if( o.getTypeId()!=0 )
+      {
+       obj=o;
+
+       return;
+      }
+
+    if( !Change(lock[i],true) )
+      {
+       Printf(Exception,"App::Contour::load(...) : formula self-dependence");
+      }
+
+    TypeDef::Formula formula=data_formulas[i];
+
+    create(formula.object.getPtr());
+
+    if( !host->setFormula(i,formula.label.name,obj) )
+      {
+       Printf(Exception,"App::Contour::load(...) : cannot create formula");
+      }
+
+    CopyFlags(host->formulas[i].label,formula.label);
+   }
+
+  Object createArg(AnyType ptr)
+   {
+    CreateDataFormulaObject func(host,data_formulas,lock);
+
+    func.create(ptr);
+
+    return func.obj;
+   }
+
+  static void Guard(bool ok)
+   {
+    if( !ok )
+      {
+       Printf(Exception,"App::Contour::load(...) : argument type mismatch");
+      }
+   }
+
+  using CreateDataPadObject::operator ();
+
+  void operator () (TypeDef::Pad *ptr)
+   {
+    obj=host->pads.at(ptr->index).obj;
+   }
+
+  void operator () (TypeDef::Formula *ptr)
+   {
+    ulen index=ptr->index;
+
+    GuardIndex(index,data_formulas.len);
+
+    set(index);
+   }
+
+  void operator () (TypeDef::Neg *ptr)
+   {
+    Guard( CreateOp::neg(obj,createArg(ptr->a.getPtr())) );
+   }
+
+  void operator () (TypeDef::Add *ptr)
+   {
+    Guard( CreateOp::add(obj,createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())) );
+   }
+
+  void operator () (TypeDef::Sub *ptr)
+   {
+    Guard( CreateOp::sub(obj,createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())) );
+   }
+
+  void operator () (TypeDef::Mul *ptr)
+   {
+    Guard( CreateOp::mul(obj,createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())) );
+   }
+
+  void operator () (TypeDef::Div *ptr)
+   {
+    Guard( CreateOp::div(obj,createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())) );
+   }
+
+#define DEF1(F)                                                                     \
+  void operator () (TypeDef::F *ptr)                                                \
+   {                                                                                \
+    Object list[1]={createArg(ptr->a.getPtr())};                                    \
+                                                                                    \
+    Guard( Formula<decltype(F)>::SafeCreate<F>(#F,obj,Range(list)) );               \
+   }
+
+#define DEF2(F)                                                                     \
+  void operator () (TypeDef::F *ptr)                                                \
+   {                                                                                \
+    Object list[2]={createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())};         \
+                                                                                    \
+    Guard( Formula<decltype(F)>::SafeCreate<F>(#F,obj,Range(list)) );               \
+   }
+
+#define DEF3(F)                                                                     \
+  void operator () (TypeDef::F *ptr)                                                \
+   {                                                                                \
+    Object list[3]={createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr()),createArg(ptr->c.getPtr())};     \
+                                                                                    \
+    Guard( Formula<decltype(F)>::SafeCreate<F>(#F,obj,Range(list)) );               \
+   }
+
+  DEF2(LengthOf)
+  DEF3(AngleOf)
+  DEF2(LineOf)
+  DEF2(CircleOf)
+  DEF3(CircleOuter)
+  DEF2(Middle)
+
+  DEF3(Part)
+  DEF2(MidOrt)
+  DEF2(Proj)
+  DEF3(AngleC)
+  DEF2(Meet)
+  DEF2(MeetCircle)
+  DEF2(MeetCircles)
+  DEF3(Rotate)
+  DEF2(RotateOrt)
+  DEF3(Move)
+  DEF3(MoveLen)
+  DEF2(Mirror)
+  DEF1(First)
+  DEF1(Second)
+  DEF2(Up)
+  DEF2(Down)
+  DEF2(Left)
+  DEF2(Right)
+
+  DEF1(SolidOf)
+
+#undef DEF1
+#undef DEF2
+#undef DEF3
+
+  void fill(DynArray<Object> &list,PtrLen<TypeDef::Arg> r)
+   {
+    list.extend_default(r.len);
+
+    for(ulen i=0; i<r.len ;i++) list[i]=createArg(r[i].getPtr());
+   }
+
+  void operator () (TypeDef::StepOf *ptr)
+   {
+    DynArray<Object> list;
+
+    fill(list,ptr->args.getRange());
+
+    Guard( Formula<Step (Point[])>::SafeCreate<StepOf>("StepOf",obj,Range(list)) );
+   }
+
+  void operator () (TypeDef::PathOf *ptr)
+   {
+    DynArray<Object> list;
+
+    fill(list,ptr->args.getRange());
+
+    Guard( Formula<Path (Point[])>::SafeCreate<PathOf>("PathOf",obj,Range(list)) );
+   }
+
+  void operator () (TypeDef::BPathOf *ptr)
+   {
+    DynArray<Object> list;
+
+    fill(list,ptr->args.getRange());
+
+    Guard( Formula<Path (Step[])>::SafeCreate<PathOf>("BPathOf",obj,Range(list)) );
+   }
+
+  void operator () (TypeDef::LoopOf *ptr)
+   {
+    DynArray<Object> list;
+
+    fill(list,ptr->args.getRange());
+
+    Guard( Formula<Loop (Point[])>::SafeCreate<LoopOf>("LoopOf",obj,Range(list)) );
+   }
+
+  void operator () (TypeDef::BLoopOf *ptr)
+   {
+    DynArray<Object> list;
+
+    fill(list,ptr->args.getRange());
+
+    Guard( Formula<Loop (Step[])>::SafeCreate<LoopOf>("BLoopOf",obj,Range(list)) );
+   }
+ };
+
+void Contour::load(StrLen file_name,ErrorText &etext)
  {
   erase();
 
-  Used(file_name);
+  SimpleArray<char> temp(64_KByte);
+  PrintBuf eout(Range(temp));
 
-  etext.setText("Not implemented yet"_c);
+  ReportExceptionTo<PrintBuf> report(eout);
+
+  try
+    {
+     DDL::FileEngine<FileName,FileToMem> engine(eout);
+
+     auto result=engine.process(file_name,Pretext);
+
+     if( !result )
+       {
+        Printf(eout,"\n@ #.q;",file_name);
+
+        etext.setText(eout.close());
+
+        return;
+       }
+     else
+       {
+        DDL::TypedMap<TypeSet> map(result);
+        MemAllocGuard guard(map.getLen());
+
+        map(guard);
+
+        // populate
+
+        TypeDef::Contour data=map.takeConst<TypeDef::Contour>("Data");
+
+        PtrLen<TypeDef::Pad> data_pads=data.pads.getRange();
+
+        pads.reserve(data_pads.len);
+
+        for(ulen i=0; i<data_pads.len ;i++)
+          {
+           TypeDef::Pad pad=data_pads[i];
+
+           CreateDataPadObject func;
+
+           func.create(pad.object.getPtr());
+
+           if( !addPad(i,pad.label.name,func.obj) )
+             {
+              Printf(Exception,"App::Contour::load(...) : cannot create pad");
+             }
+
+           CopyFlags(pads[i].label,pad.label);
+          }
+
+        PtrLen<TypeDef::Formula> data_formulas=data.formulas.getRange();
+
+        formulas.extend_default(data_formulas.len);
+
+        DynArray<bool> lock(data_formulas.len);
+
+        CreateDataFormulaObject func(this,data_formulas,lock.getPtr());
+
+        for(ulen i=0; i<data_formulas.len ;i++) func.set(i);
+       }
+    }
+  catch(CatchType)
+    {
+     erase();
+
+     Printf(eout,"\n@ #.q;",file_name);
+
+     etext.setText(eout.close());
+    }
  }
 
 } // namespace App
