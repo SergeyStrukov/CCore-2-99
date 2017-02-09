@@ -17,6 +17,7 @@ all:
 	make $(OPT) -C MakeList
 	make $(OPT) -C Keywords
 	make $(OPT) -C CondLangLR1/Main
+	make $(OPT) -C CondLangLR1/Gen
 	make $(OPT) -C DDLShow
 	make $(OPT) -C DDLTypeSet
 	make $(OPT) -C EllipticPi
@@ -35,6 +36,7 @@ clean:
 	make -C MakeList               clean
 	make -C Keywords               clean
 	make -C CondLangLR1/Main       clean
+	make -C CondLangLR1/Gen        clean
 	make -C DDLShow                clean
 	make -C DDLTypeSet             clean
 	make -C EllipticPi             clean
@@ -53,6 +55,7 @@ list:
 	make -C MakeList               list
 	make -C Keywords               list
 	make -C CondLangLR1/Main       list
+	make -C CondLangLR1/Gen        list
 	make -C DDLShow                list
 	make -C DDLTypeSet             list
 	make -C EllipticPi             list

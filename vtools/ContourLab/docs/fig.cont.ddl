@@ -3,7 +3,7 @@
 Contour Data=
  {
   {
-   { { 'A' , True , False , True } , 0 , &Pad0 },
+   { { 'A' , True , False , False } , 0 , &Pad0 },
    { { 'h' , True , True , True } , 1 , &Pad1 },
    { { 's' , True , True , True } , 2 , &Pad2 },
    { { 'alpha' , True , True , True } , 3 , &Pad3 },
@@ -40,7 +40,7 @@ Contour Data=
   },
   {
   { { 'b' , True , True , True } , 0 , &F0 },
-  { { 'solid' , True , True , True } , 1 , &F1 },
+  { { 'solid' , True , True , False } , 1 , &F1 },
   { { 'c' , True , True , True } , 2 , &F2 },
   { { 'r' , True , True , True } , 3 , &F3 },
   { { 'B' , True , False , True } , 4 , &F4 },
