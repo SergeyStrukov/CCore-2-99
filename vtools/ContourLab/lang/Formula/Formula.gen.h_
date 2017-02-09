@@ -34,8 +34,6 @@ struct FormulaParserData
 
   using Property = Rule (*)(AtomClass) ;
 
-  struct State;
-
   using Transition = const State * (*)(ElementIndex) ;
 
   static ElementIndex RuleOutput(Rule rule);
@@ -59,6 +57,7 @@ struct FormulaParserData
   struct Element_EXPR_LIST;
 
   static auto Apply(Rule rule,auto func);
+
  };
 
 struct FormulaParserData::Element // TODO

@@ -42,12 +42,10 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
    Printf(outh," {\n");
    Printf(outh,"  AtomNull = 0,\n\n");
 
-   for(const TypeDef::Atom &atom : lang.atoms.getRange() )
-     {
-      auto ac=atom.index+1;
-
-      Printf(outh,"  Atom_XXX_#; = #;,  /*  #;  */\n",ac,ac,atom.name.getStr());
-     }
+   map.atoms( [&] (auto atom_index,StrLen name)
+                  {
+                   Printf(outh,"  Atom_XXX_#; = #;,  /*  #;  */\n",atom_index,atom_index,name);
+                  } );
 
    Printf(outh," };\n\n");
 
@@ -67,6 +65,8 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
 
    Printf(outh,"  using Property = Rule (*)(AtomClass) ;\n\n");
 
+   Printf(outh,"  struct State;\n\n");
+
    Printf(outh,"  using Transition = const State * (*)(ElementIndex) ;\n\n");
 
    Printf(outh,"  static ElementIndex RuleOutput(Rule rule);\n\n");
@@ -79,7 +79,76 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
    Printf(outh,"    Transition trans;\n");
    Printf(outh,"   };\n\n");
 
-   Printf(outh,"  static const State *Start;\n");
+   Printf(outh,"  static const State *Start;\n\n");
+
+   Printf(outh,"  struct Element;\n\n");
+
+   Printf(outh,"  struct ElementAtom;\n\n");
+
+   map.synts( [&] (StrLen name,auto rule_list)
+                  {
+                   Used(rule_list);
+
+                   Printf(outh,"  struct Element_#;;\n",name);
+                  } );
+
+   Printf(outh,"\n  static auto Apply(Rule rule,auto func);\n");
+
+   Printf(outh," };\n\n");
+
+   Printf(outh,"struct #;::Element // TODO\n",class_name);
+   Printf(outh," {\n");
+   Printf(outh,"  using RetType = void ;\n\n");
+   Printf(outh,"  using ContextType = int ;\n\n");
+   Printf(outh," };\n\n");
+
+   Printf(outh,"struct #;::ElementAtom : Element // TODO\n",class_name);
+   Printf(outh," {\n");
+   Printf(outh,"  // TODO\n");
+   Printf(outh," };\n\n");
+
+   map.synts( [&] (StrLen synt_name,auto rule_list)
+                  {
+                   Printf(outh,"struct #;::Element_#; : Element\n",class_name,synt_name);
+                   Printf(outh," {\n");
+                   Printf(outh,"  // TODO\n\n");
+
+                   rule_list( [&] (StrLen rule_name,auto arg_list)
+                                  {
+                                   Printf(outh,"  RetType #;(ContextType",rule_name);
+
+                                   arg_list( [&] (bool is_atom,StrLen name)
+                                                 {
+                                                  if( is_atom )
+                                                   {
+                                                    Printf(outh,",ElementAtom *");
+                                                   }
+                                                  else
+                                                   {
+                                                    Printf(outh,",Element_#; *",name);
+                                                   }
+
+                                                 } );
+
+                                   Printf(outh,");\n\n");
+                                  } );
+
+                   Printf(outh," };\n\n");
+                  } );
+
+   Printf(outh,"auto #;::Apply(Rule rule,auto func)\n",class_name);
+   Printf(outh," {\n");
+   Printf(outh,"  switch( rule )\n");
+   Printf(outh,"    {\n");
+
+   map.rules( [&] (auto rule_index,StrLen synt_name,StrLen rule_name,auto element_index)
+                  {
+                   Printf(outh,"     case #; : return func(&Element_#;::#;,ElementIndex(#;));\n",rule_index,synt_name,rule_name,element_index);
+                  } );
+
+   Printf(outh,"\n     default: return func();\n");
+
+   Printf(outh,"    }\n");
 
    Printf(outh," };\n\n");
   }
@@ -95,12 +164,10 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
    Printf(outc,"    {\n");
    Printf(outc,"     case 0 : return \"(Null)\";\n");
 
-   for(const TypeDef::Atom &atom : lang.atoms.getRange() )
-     {
-      auto ac=atom.index+1;
-
-      Printf(outc,"     case #; : return \"#;\";\n",ac,atom.name.getStr());
-     }
+   map.atoms( [&] (auto atom_index,StrLen name)
+                  {
+                   Printf(outc,"     case #; : return \"#;\";\n",atom_index,name);
+                  } );
 
    Printf(outc,"\n     default: return \"???\";\n");
    Printf(outc,"    }\n");
@@ -117,10 +184,13 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
    Printf(outc,"  switch( rule )\n");
    Printf(outc,"    {\n");
 
-   for(const TypeDef::Rule &rule : lang.rules.getRange() )
-     {
-      Printf(outc,"     case #; : return #;;\n",rule.index+1,rule.result->element->index+1);
-     }
+   map.rules( [&] (auto rule_index,StrLen synt_name,StrLen rule_name,auto element_index)
+                  {
+                   Used(synt_name);
+                   Used(rule_name);
+
+                   Printf(outc,"     case #; : return #;;\n",rule_index,element_index);
+                  } );
 
    Printf(outc,"\n     default: return 0;\n");
    Printf(outc,"    }\n");
@@ -132,67 +202,61 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
   ulen state_count=lang.states.len;
 
   {
-   for(const TypeDef::Final &final : lang.finals.getRange() )
-     {
-      Printf(outc,"static #;::Rule Prop#;(AtomClass ac)\n",class_name,final.index);
-      Printf(outc," {\n");
-      Printf(outc,"  switch( ac )\n");
-      Printf(outc,"    {\n");
+   map.finals( [&] (auto final_index,auto action_list)
+                   {
+                    Printf(outc,"static #;::Rule Prop#;(AtomClass ac)\n",class_name,final_index);
+                    Printf(outc," {\n");
+                    Printf(outc,"  switch( ac )\n");
+                    Printf(outc,"    {\n");
 
-      for(const TypeDef::Final::Action &action : final.actions.getRange() )
-        {
-         TypeDef::AtomIndex ac=0;
+                    action_list( [&] (auto atom_index,auto rule_index)
+                                     {
+                                      Printf(outc,"     case #; : return #;;\n",atom_index,rule_index);
+                                     } );
 
-         if( action.atom ) ac=action.atom->index+1;
-
-         TypeDef::RuleIndex rule=0;
-
-         if( action.rule ) rule=action.rule->index+1;
-
-         Printf(outc,"     case #; : return #;;\n",ac,rule);
-        }
-
-      Printf(outc,"\n     default: return -1;\n");
-      Printf(outc,"    }\n");
-      Printf(outc," }\n\n");
-     }
+                    Printf(outc,"\n     default: return -1;\n");
+                    Printf(outc,"    }\n");
+                    Printf(outc," }\n\n");
+                   } );
 
    Printf(outc,"static const #;::State * TransNone(#;::ElementIndex)\n",class_name,class_name);
    Printf(outc," {\n");
    Printf(outc,"  return 0;\n");
    Printf(outc," }\n\n");
 
-   for(const TypeDef::State &state : lang.states.getRange() )
-     {
-      if( state.transitions.len==0 ) continue;
+   map.states( [&] (auto state_index,auto final_index,auto trans_list)
+                   {
+                    Used(final_index);
 
-      Printf(outc,"static const #;::State * Trans#;(#;::ElementIndex ei)\n",class_name,state.index,class_name);
-      Printf(outc," {\n");
-      Printf(outc,"  switch( ei )\n");
-      Printf(outc,"    {\n");
+                    if( !trans_list ) return;
 
-      for(const TypeDef::State::Transition &t : state.transitions.getRange() )
-        {
-         Printf(outc,"     case #; : return #;::Start+#;;\n",t.element->index+1,class_name,t.state->index);
-        }
+                    Printf(outc,"static const #;::State * Trans#;(#;::ElementIndex ei)\n",class_name,state_index,class_name);
+                    Printf(outc," {\n");
+                    Printf(outc,"  switch( ei )\n");
+                    Printf(outc,"    {\n");
 
-      Printf(outc,"\n     default: return 0;\n");
-      Printf(outc,"    }\n");
-      Printf(outc," }\n\n");
-     }
+                    trans_list( [&] (auto element_index,auto state_index)
+                                    {
+                                     Printf(outc,"     case #; : return #;::Start+#;;\n",element_index,class_name,state_index);
+                                    } );
+
+                    Printf(outc,"\n     default: return 0;\n");
+                    Printf(outc,"    }\n");
+                    Printf(outc," }\n\n");
+                   } );
 
    Printf(outc,"static const #;::State StateList[#;]=\n",class_name,state_count);
    Printf(outc," {");
 
    PrintFirst stem("\n  ",",\n  ");
 
-   for(const TypeDef::State &state : lang.states.getRange() )
-     {
-      if( state.transitions.len )
-        Printf(outc,"#;{Prop#;,Trans#;}",stem,state.final->index,state.index);
-      else
-        Printf(outc,"#;{Prop#;,TransNone}",stem,state.final->index);
-     }
+   map.states( [&] (auto state_index,auto final_index,auto trans_list)
+                   {
+                    if( +trans_list )
+                      Printf(outc,"#;{Prop#;,Trans#;}",stem,final_index,state_index);
+                    else
+                      Printf(outc,"#;{Prop#;,TransNone}",stem,final_index);
+                   } );
 
    Printf(outc,"\n };\n\n");
 

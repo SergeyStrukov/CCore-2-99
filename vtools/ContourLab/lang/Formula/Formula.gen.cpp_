@@ -1,19 +1,26 @@
-/* ParserData.cpp */
-//----------------------------------------------------------------------------------------
-//
-//  Project: ContourLab 1.00
-//
-//  License: Boost Software License - Version 1.0 - August 17th, 2003
-//
-//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
-//
-//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
-//
-//----------------------------------------------------------------------------------------
+/* enum AtomClass */
 
-#include <inc/Parser.h>
+const char * GetTextDesc(AtomClass ac)
+ {
+  switch( ac )
+    {
+     case 0 : return "(Null)";
+     case 1 : return "(";
+     case 2 : return ")";
+     case 3 : return "*";
+     case 4 : return "+";
+     case 5 : return ",";
+     case 6 : return "-";
+     case 7 : return "/";
+     case 8 : return "=";
+     case 9 : return "Angle";
+     case 10 : return "Length";
+     case 11 : return "Name";
+     case 12 : return "Number";
 
-namespace App {
+     default: return "???";
+    }
+ };
 
 /* struct FormulaParserData */
 
@@ -1722,6 +1729,4 @@ static const FormulaParserData::State StateList[89]=
  };
 
 const FormulaParserData::State * FormulaParserData::Start=StateList;
-
-} // namespace App
 

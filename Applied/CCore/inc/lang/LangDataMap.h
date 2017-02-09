@@ -78,6 +78,147 @@ class DataMap : NoCopy
    const TypeDef::Lang & getLang() const { return lang; }
 
    void sanity();
+
+   // generator support
+
+   void atoms(auto func) const // func(1-based index,StrLen name)
+    {
+     for(const TypeDef::Atom &atom : lang.atoms.getRange() )
+       {
+        func(atom.index+1,atom.name.getStr());
+       }
+    }
+
+   class ArgList
+    {
+      PtrLen<const TypeDef::Rule::Arg> args;
+
+     public:
+
+      explicit ArgList(const TypeDef::Rule &rule) : args(rule.args.getRange()) {}
+
+      template <class Func>
+      void operator () (Func func) const // func(bool is_atom,StrLen name)
+       {
+        for(TypeDef::Rule::Arg arg : args )
+          {
+           struct SplitArg
+            {
+             Func func;
+
+             void operator () (TypeDef::Synt *synt)
+              {
+               func(false,synt->name.getStr());
+              }
+
+             void operator () (TypeDef::Atom *atom)
+              {
+               func(true,atom->name.getStr());
+              }
+            };
+
+           arg.getPtr().apply(SplitArg{func});
+          }
+       }
+    };
+
+   class RuleList
+    {
+      PtrLen<const DDL::MapPtr<TypeDef::Rule> > rules;
+
+     public:
+
+      explicit RuleList(const TypeDef::Synt &synt) : rules(synt.rules.getRange()) {}
+
+      void operator () (auto func) const // func(StrLen rule_name,ArgList arg_list)
+       {
+        for(const TypeDef::Rule *rule : rules )
+          {
+           func(rule->name.getStr(),ArgList(*rule));
+          }
+       }
+    };
+
+   void synts(auto func) const // func(StrLen name,RuleList rule_list)
+    {
+     for(const TypeDef::Synt &synt : lang.synts.getRange() )
+       {
+        func(synt.name.getStr(),RuleList(synt));
+       }
+    }
+
+   void rules(auto func) const // func(1-based index,StrLen synt_name,StrLen rule_name,1-based element index)
+    {
+     for(const TypeDef::Rule &rule : lang.rules.getRange() )
+       {
+        auto synt_name=rule.result->synt->name.getStr();
+        auto rule_name=rule.name.getStr();
+
+        func(rule.index+1,synt_name,rule_name,rule.result->element->index+1);
+       }
+    }
+
+   class ActionList
+    {
+      PtrLen<const TypeDef::Final::Action> actions;
+
+     public:
+
+      explicit ActionList(const TypeDef::Final &final) : actions(final.actions.getRange()) {}
+
+      void operator () (auto func) const // func(1-based atom index plus 0,1-based rule index plus 0)
+       {
+        for(const TypeDef::Final::Action &action : actions )
+          {
+           TypeDef::AtomIndex atom=0;
+
+           if( action.atom ) atom=action.atom->index+1;
+
+           TypeDef::RuleIndex rule=0;
+
+           if( action.rule ) rule=action.rule->index+1;
+
+           func(atom,rule);
+          }
+       }
+    };
+
+   void finals(auto func) // func(0-based final index,ActionList action_list)
+    {
+     for(const TypeDef::Final &final : lang.finals.getRange() )
+       {
+        func(final.index,ActionList(final));
+       }
+    }
+
+   class TransList
+    {
+      PtrLen<const TypeDef::State::Transition> transitions;
+
+     public:
+
+      explicit TransList(const TypeDef::State &state) : transitions(state.transitions.getRange()) {}
+
+      bool operator + () const { return transitions.len; }
+
+      bool operator ! () const { return !transitions.len; }
+
+      void operator () (auto func) const // func(1-based element index,0-based state index)
+       {
+        for(const TypeDef::State::Transition &t : transitions )
+          {
+           func(t.element->index+1,t.state->index);
+          }
+       }
+    };
+
+   void states(auto func) // func(0-based state index,0-based final index,TransList trans_list)
+    {
+     for(const TypeDef::State &state : lang.states.getRange() )
+       {
+        func(state.index,state.final->index,TransList(state));
+       }
+    }
  };
 
 } // namespace Lang

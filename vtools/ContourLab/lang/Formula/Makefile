@@ -13,5 +13,8 @@
 
 LANG = $(HOME)/bin/CCore-CondLangLR1.exe
 
+GEN = $(HOME)/bin/CCore-ParserGen.exe
+
 run:
 	$(LANG) Formula.lang
+	$(GEN) Formula.ddl FormulaParserData Formula.gen.h_ Formula.gen.cpp_

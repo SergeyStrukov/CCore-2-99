@@ -247,21 +247,21 @@ class PadTextParser : public ParserBase
 
 enum AtomClass
  {
-  Atom_Nothing = 0,
+  AtomNull = 0,
 
-  Atom_Name,
-  Atom_Number,
-  Atom_Angle,
-  Atom_Length,
+  Atom_obr = 1,       /*  (  */
+  Atom_cbr = 2,       /*  )  */
+  Atom_asterisk = 3,  /*  *  */
+  Atom_plus = 4,      /*  +  */
+  Atom_comma = 5,     /*  ,  */
+  Atom_minus = 6,     /*  -  */
+  Atom_div = 7,       /*  /  */
+  Atom_assign = 8,    /*  =  */
 
-  Atom_obr,       // (
-  Atom_cbr,       // )
-  Atom_asterisk,  // *
-  Atom_div,       // /
-  Atom_plus,      // +
-  Atom_minus,     // -
-  Atom_comma,     // ,
-  Atom_assign     // =
+  Atom_Angle = 9,     /*  Angle  */
+  Atom_Length = 10,   /*  Length  */
+  Atom_Name = 11,     /*  Name  */
+  Atom_Number = 12    /*  Number  */
  };
 
 /* struct Atom */
@@ -270,7 +270,7 @@ struct Atom : Token
  {
   AtomClass ac;
 
-  Atom() noexcept : ac(Atom_Nothing) {}
+  Atom() noexcept : ac(AtomNull) {}
 
   Atom(const Token &token);
  };
@@ -279,15 +279,31 @@ struct Atom : Token
 
 struct FormulaParserData
  {
-  static int Property(int state);
+  using Rule = int ;
 
-  static int Rule(int prop,AtomClass ac); // -1 no rule , 0 <- OR STOP , ac = Atom_Nothing (End)
+  static const Rule NoRule = -1 ;
 
-  static int ElemRule(int rule); // production kind number
+  static const Rule ShiftRule = 0 ;
 
-  static int ElemAtom(AtomClass ac);
+  using ElementIndex = int ;
 
-  static int Transition(int state,int element);
+  using Property = Rule (*)(AtomClass) ;
+
+  struct State;
+
+  using Transition = const State * (*)(ElementIndex) ;
+
+  static ElementIndex RuleOutput(Rule rule);
+
+  static ElementIndex AtomToElement(AtomClass ac) { return ac; }
+
+  struct State
+   {
+    Property prop;
+    Transition trans;
+   };
+
+  static const State *Start;
  };
 
 /* class FormulaTextParser<Context> */
@@ -374,14 +390,41 @@ class FormulaTextParser : public ParserBase , FormulaParserData
       }
     };
 
-   struct State
+   static auto Apply(Rule rule,auto func)
     {
-     int state = 0 ;
+     switch( rule )
+       {
+        case 1 : return func(&Element_FORMULA::set,ElementIndex(13));
+        case 2 : return func(&Element_EXPR::add,ElementIndex(14));
+        case 3 : return func(&Element_EXPR::sub,ElementIndex(14));
+        case 4 : return func(&Element_EXPR::mul,ElementIndex(15));
+        case 5 : return func(&Element_EXPR::div,ElementIndex(15));
+        case 6 : return func(&Element_EXPR::neg,ElementIndex(16));
+        case 7 : return func(&Element_EXPR::brace,ElementIndex(17));
+        case 8 : return func(&Element_EXPR::func,ElementIndex(17));
+        case 9 : return func(&Element_EXPR::arg,ElementIndex(17));
+        case 10 : return func(&Element_EXPR::number,ElementIndex(17));
+        case 11 : return func(&Element_EXPR::angle,ElementIndex(17));
+        case 12 : return func(&Element_EXPR::length,ElementIndex(17));
+        case 13 : return func(&Element_EXPR::point,ElementIndex(17));
+        case 14 : return func(&Element_EXPR_LIST::empty,ElementIndex(18));
+        case 15 : return func(&Element_EXPR_LIST::one,ElementIndex(19));
+        case 16 : return func(&Element_EXPR_LIST::ext,ElementIndex(19));
+
+        default: return func();
+       }
+    };
+
+  private:
+
+   struct Prod
+    {
+     const State *state = Start ;
      Element *element = 0 ;
 
-     State() noexcept {}
+     Prod() noexcept {}
 
-     State(int state_,Element *element_) : state(state_),element(element_) {}
+     Prod(const State *state_,Element *element_) : state(state_),element(element_) {}
 
      template <class E>
      operator E * () const { return static_cast<E *>(element); }
@@ -389,7 +432,7 @@ class FormulaTextParser : public ParserBase , FormulaParserData
 
    Context &ctx;
 
-   DynArray<State> stack;
+   DynArray<Prod> stack;
    bool ok = true ;
 
   private:
@@ -401,7 +444,7 @@ class FormulaTextParser : public ParserBase , FormulaParserData
      paint(token,CharError);
     }
 
-   State & top()
+   Prod & top()
     {
      ulen len=stack.getLen();
 
@@ -412,14 +455,14 @@ class FormulaTextParser : public ParserBase , FormulaParserData
     {
      stack.reserve(1);
 
-     int state=top().state;
+     const State *state=top().state;
 
-     stack.append_fill(Transition(state,ElemAtom(atom.ac)),new ElementAtom(atom));
+     stack.append_fill(state->trans(AtomToElement(atom.ac)),new ElementAtom(atom));
     }
 
    void pop(ulen count)
     {
-     for(State &state : Range(stack).suffix(count) ) delete state.element;
+     for(Prod &prod : Range(stack).suffix(count) ) delete prod.element;
 
      stack.shrink(count);
     }
@@ -436,12 +479,12 @@ class FormulaTextParser : public ParserBase , FormulaParserData
     }
 
    template <class E,class ... TT,int ... IList>
-   bool applyRule(bool (E::*method)(Context &,TT...),int elem,Meta::IndexListBox<IList...>)
+   bool applyRule(bool (E::*method)(Context &,TT...),ElementIndex ei,Meta::IndexListBox<IList...>)
     {
      stack.reserve(1);
 
      ulen len=stack.getLen();
-     State *base=stack.getPtr()+(len-sizeof ... (TT));
+     Prod *base=stack.getPtr()+(len-sizeof ... (TT));
 
      E *element=new E{};
 
@@ -458,59 +501,29 @@ class FormulaTextParser : public ParserBase , FormulaParserData
 
      pop(sizeof ... (TT));
 
-     int state=top().state;
+     const State *state=top().state;
 
-     stack.append_fill(Transition(state,elem),element);
+     stack.append_fill(state->trans(ei),element);
 
      return true;
     }
 
-   template <class E,class ... TT>
-   bool applyRule(bool (E::*method)(Context &,TT...),int elem)
+   struct RuleFunc
     {
-     return applyRule(method,elem, Meta::IndexList<0,TT...>() );
-    }
+     FormulaTextParser *obj;
 
-   bool applyRule(int rule)
+     bool operator () () { return false; }
+
+     template <class E,class ... TT>
+     bool operator () (bool (E::*method)(Context &,TT...),ElementIndex ei)
+      {
+       return obj->applyRule(method,ei, Meta::IndexList<0,TT...>() );
+      }
+    };
+
+   bool applyRule(Rule rule)
     {
-     int elem=ElemRule(rule);
-
-     switch( rule )
-       {
-        case 1 : return applyRule(&Element_FORMULA::set,elem);
-
-        case 2 : return applyRule(&Element_EXPR::add,elem);
-
-        case 3 : return applyRule(&Element_EXPR::sub,elem);
-
-        case 4 : return applyRule(&Element_EXPR::mul,elem);
-
-        case 5 : return applyRule(&Element_EXPR::div,elem);
-
-        case 6 : return applyRule(&Element_EXPR::neg,elem);
-
-        case 7 : return applyRule(&Element_EXPR::brace,elem);
-
-        case 8 : return applyRule(&Element_EXPR::func,elem);
-
-        case 9 : return applyRule(&Element_EXPR::arg,elem);
-
-        case 10 : return applyRule(&Element_EXPR::number,elem);
-
-        case 11 : return applyRule(&Element_EXPR::angle,elem);
-
-        case 12 : return applyRule(&Element_EXPR::length,elem);
-
-        case 13 : return applyRule(&Element_EXPR::point,elem);
-
-        case 14 : return applyRule(&Element_EXPR_LIST::empty,elem);
-
-        case 15 : return applyRule(&Element_EXPR_LIST::one,elem);
-
-        case 16 : return applyRule(&Element_EXPR_LIST::ext,elem);
-
-        default: return false;
-       }
+     return Apply(rule,RuleFunc{this});
     }
 
    virtual void next(Token token)
@@ -531,7 +544,7 @@ class FormulaTextParser : public ParserBase , FormulaParserData
      Atom atom(token);
 
      for(;;)
-       switch( int rule=Rule(Property(top().state),atom.ac) )
+       switch( Rule rule=top().state->prop(atom.ac) )
          {
           case -1 : paintError(token); return;
 
@@ -546,7 +559,7 @@ class FormulaTextParser : public ParserBase , FormulaParserData
      if( !ok ) return;
 
      for(;;)
-       switch( int rule=Rule(Property(top().state),Atom_Nothing) )
+       switch( Rule rule=top().state->prop(AtomNull) )
          {
           case -1 : ok=false; return;
 

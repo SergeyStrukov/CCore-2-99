@@ -474,7 +474,7 @@ bool PadTextParser::ratio(StrLen,StrLen) { return true; }
 
 Atom::Atom(const Token &token)
  : Token(token),
-   ac(Atom_Nothing)
+   ac(AtomNull)
  {
   switch( tc )
     {
