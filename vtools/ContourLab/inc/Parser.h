@@ -249,19 +249,19 @@ enum AtomClass
  {
   AtomNull = 0,
 
-  Atom_obr = 1,       /*  (  */
-  Atom_cbr = 2,       /*  )  */
-  Atom_asterisk = 3,  /*  *  */
-  Atom_plus = 4,      /*  +  */
-  Atom_comma = 5,     /*  ,  */
-  Atom_minus = 6,     /*  -  */
-  Atom_div = 7,       /*  /  */
-  Atom_assign = 8,    /*  =  */
+  Atom_obr      =  1,  /*  (  */
+  Atom_cbr      =  2,  /*  )  */
+  Atom_asterisk =  3,  /*  *  */
+  Atom_plus     =  4,  /*  +  */
+  Atom_comma    =  5,  /*  ,  */
+  Atom_minus    =  6,  /*  -  */
+  Atom_div      =  7,  /*  /  */
+  Atom_assign   =  8,  /*  =  */
 
-  Atom_Angle = 9,     /*  Angle  */
-  Atom_Length = 10,   /*  Length  */
-  Atom_Name = 11,     /*  Name  */
-  Atom_Number = 12    /*  Number  */
+  Atom_Angle    =  9,  /*  Angle   */
+  Atom_Length   = 10,  /*  Length  */
+  Atom_Name     = 11,  /*  Name    */
+  Atom_Number   = 12   /*  Number  */
  };
 
 /* struct Atom */
