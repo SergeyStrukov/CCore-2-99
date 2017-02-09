@@ -759,7 +759,7 @@ class PolyFigureQuestion
    MPoint o;
    MCoord r;
 
-   //FigureDots<10> fig;
+   FigureDots<30> fig;
 
   public:
 
@@ -769,7 +769,7 @@ class PolyFigureQuestion
     {
      art.ball(o,r,vc);
 
-     //fig.curveSolid(art,vc);
+     fig.curveSolid(art,vc);
     }
  };
 

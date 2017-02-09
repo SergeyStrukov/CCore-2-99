@@ -551,7 +551,7 @@ PolyFigureExclamation::PolyFigureExclamation(MCoord x,MCoord y,MCoord h)
 
 /* class PolyFigureQuestion */
 
-PolyFigureQuestion::PolyFigureQuestion(MCoord x,MCoord y,MCoord h) // TODO
+PolyFigureQuestion::PolyFigureQuestion(MCoord x,MCoord y,MCoord h)
  {
   MCoord c=h/6;
   MCoord b=4*c+c/2;
@@ -559,6 +559,50 @@ PolyFigureQuestion::PolyFigureQuestion(MCoord x,MCoord y,MCoord h) // TODO
   r=Ratio(3,2)*c;
 
   o={x,y+b+r};
+
+  MPoint E(x,y+b);
+
+  static const SmoothDot Contour[30]=
+   {
+    {{284672,523264},Smooth::DotBreak},
+    {{293888,468992},Smooth::DotSimple},
+    {{339968,432128},Smooth::DotSimple},
+    {{419840,391168},Smooth::DotSimple},
+    {{473088,334848},Smooth::DotSimple},
+    {{492544,254976},Smooth::DotSimple},
+    {{477184,182272},Smooth::DotSimple},
+    {{432128,120832},Smooth::DotSimple},
+    {{379904,86016},Smooth::DotSimple},
+    {{332800,67584},Smooth::DotSimple},
+    {{284672,63488},Smooth::DotSimple},
+    {{214016,73728},Smooth::DotSimple},
+    {{139264,119808},Smooth::DotSimple},
+    {{94208,179200},Smooth::DotSimple},
+    {{84992,224256},Smooth::DotSimple},
+    {{100352,256000},Smooth::DotSimple},
+    {{131072,269312},Smooth::DotSimple},
+    {{163840,262144},Smooth::DotSimple},
+    {{182272,239616},Smooth::DotSimple},
+    {{195584,207872},Smooth::DotSimple},
+    {{216064,184320},Smooth::DotSimple},
+    {{250880,166912},Smooth::DotSimple},
+    {{303104,162816},Smooth::DotSimple},
+    {{359424,189440},Smooth::DotSimple},
+    {{393216,237568},Smooth::DotSimple},
+    {{399360,299008},Smooth::DotSimple},
+    {{369664,356352},Smooth::DotSimple},
+    {{323584,388096},Smooth::DotSimple},
+    {{278528,422912},Smooth::DotSimple},
+    {{267264,472064},Smooth::DotSimple}
+   };
+
+  Ratio A=Div(h,Fraction(600));
+
+  MPoint B=E-A*Contour[0].point;
+
+  for(ulen i=0; i<30 ;i++) fig[i]=Contour[i];
+
+  fig.transform( [=] (MPoint p) -> MPoint { return A*p+B; } );
  }
 
 } // namespace Video
