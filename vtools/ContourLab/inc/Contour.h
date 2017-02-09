@@ -550,6 +550,8 @@ class Contour : public Formular
 
    static bool DownItem(DynArray<Item> &a,ulen index);
 
+   static void SetIndexes(DynArray<Item> &a,ulen index);
+
   private:
 
    template <class S>

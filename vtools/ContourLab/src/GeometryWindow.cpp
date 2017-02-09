@@ -510,9 +510,9 @@ class GeometryWindow::DrawItem : Geometry
      if( !temp.ok ) return;
 
      if( label.gray && !selected )
-       art.curvePath(temp.get(),width,gray);
+       art.curvePath(temp.get(),width/2,gray);
      else
-       art.curvePath(temp.get(),2*width,face);
+       art.curvePath(temp.get(),width,face);
     }
 
    void operator () (const Label &label,bool selected,Loop s)
@@ -526,9 +526,9 @@ class GeometryWindow::DrawItem : Geometry
      if( !temp.ok ) return;
 
      if( label.gray && !selected )
-       art.curveLoop(temp.get(),width,gray);
+       art.curveLoop(temp.get(),width/2,gray);
      else
-       art.curveLoop(temp.get(),2*width,face);
+       art.curveLoop(temp.get(),width,face);
     }
 
    void operator () (const Label &label,bool selected,Solid s)

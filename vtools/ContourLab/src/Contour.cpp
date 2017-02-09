@@ -107,8 +107,18 @@ bool Contour::DownItem(DynArray<Item> &a,ulen index)
   return false;
  }
 
+void Contour::SetIndexes(DynArray<Item> &a,ulen index)
+ {
+  for(ulen i=index,len=a.getLen(); i<len ;i++) a[i].obj.setIndex(i);
+ }
+
 bool Contour::addPad(ulen index,StrLen name,Object obj)
  {
+  if( index>pads.getLen() )
+    {
+     Printf(Exception,"App::Contour::addPad(#;,...) : out of range",index);
+    }
+
   pads.reserve(1);
 
   StrKey k(name);
@@ -123,13 +133,18 @@ bool Contour::addPad(ulen index,StrLen name,Object obj)
 
   ArrayCopyIns(pads,index,item);
 
-  obj.setIndex(index);
+  SetIndexes(pads,index);
 
   return true;
  }
 
 bool Contour::addFormula(ulen index,StrLen name,Object obj)
  {
+  if( index>formulas.getLen() )
+    {
+     Printf(Exception,"App::Contour::addFormula(#;,...) : out of range",index);
+    }
+
   formulas.reserve(1);
 
   StrKey k(name);
@@ -144,7 +159,7 @@ bool Contour::addFormula(ulen index,StrLen name,Object obj)
 
   ArrayCopyIns(formulas,index,item);
 
-  obj.setIndex(index);
+  SetIndexes(formulas,index);
 
   return true;
  }
@@ -187,7 +202,7 @@ bool Contour::delItem(DynArray<Item> &a,ulen index)
 
      ArrayCopyDel(a,index);
 
-     for(ulen i=index,len=a.getLen(); i<len ;i++) a[i].obj.setIndex(i);
+     SetIndexes(a,index);
 
      return true;
     }
