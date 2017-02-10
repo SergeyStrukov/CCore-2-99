@@ -90,6 +90,8 @@ class InsWindow : public ComboWindow
    RefButtonWindow btn_Insert;
    RefButtonWindow btn_Close;
 
+   Info info_ins;
+
   private:
 
    void btn_Insert_pressed();
@@ -112,7 +114,7 @@ class InsWindow : public ComboWindow
    class Builder : NoCopy
     {
       ComboInfoBuilder list;
-      ComboInfoBuilder ins;
+      InfoBuilder ins;
 
      public:
 
@@ -129,17 +131,28 @@ class InsWindow : public ComboWindow
       struct Result
        {
         ComboInfo info_list;
-        ComboInfo info_ins;
+        Info info_ins;
        };
 
       Result complete() { return {list.complete(),ins.complete()}; }
     };
+
+   void set(Builder::Result result)
+    {
+     list.setInfo(result.info_list);
+
+     info_ins=result.info_ins;
+    }
 
    // drawing
 
    virtual void layout();
 
    virtual void drawBack(DrawBuf buf,bool drag_active) const;
+
+   // signals
+
+   Signal<StrLen> selected;
  };
 
 /* class InsFrame */
@@ -195,6 +208,10 @@ class InsFrame : public DragFrame
 
    // methods
 
+   void set(InsWindow::Builder::Result result) { client.set(result); }
+
+   // create
+
    Pane getPane(StrLen title,Point base) const;
 
    using DragFrame::create;
@@ -203,6 +220,10 @@ class InsFrame : public DragFrame
     {
      create(parent,getPane(title.str(),base),title);
     }
+
+   // signals
+
+   Signal<StrLen> &selected;
  };
 
 /* class EditFormulaShape */
@@ -324,6 +345,8 @@ class ItemListWindow : public ComboWindow
      RefVal<DefString> text_gray = "gray"_def ;
      RefVal<DefString> text_name = "name"_def ;
 
+     RefVal<DefString> ins_title = "Function list"_def ;
+
      Config() noexcept {}
 
      template <class AppPref>
@@ -353,6 +376,7 @@ class ItemListWindow : public ComboWindow
        text_show.bind(bag.text_show);
        text_gray.bind(bag.text_gray);
        text_name.bind(bag.text_name);
+       ins_title.bind(bag.ins_title);
       }
     };
 
@@ -370,6 +394,7 @@ class ItemListWindow : public ComboWindow
    KnobWindow knob_up;
    KnobWindow knob_del;
    KnobWindow knob_add;
+   KnobWindow knob_ins;
 
    RefLabelWindow label_show;
    RefLabelWindow label_gray;
@@ -380,6 +405,7 @@ class ItemListWindow : public ComboWindow
    CheckWindow check_name;
 
    InsFrame ins_frame;
+   bool ins_set = false ;
 
   private:
 
@@ -412,6 +438,16 @@ class ItemListWindow : public ComboWindow
    SignalConnector<ItemListWindow,bool> connector_check_gray_changed;
    SignalConnector<ItemListWindow,bool> connector_check_name_changed;
 
+   void knob_ins_pressed();
+
+   void ins_frame_destroyed();
+
+   void ins_frame_selected(StrLen text);
+
+   SignalConnector<ItemListWindow> connector_knob_ins_pressed;
+   SignalConnector<ItemListWindow> connector_ins_frame_destroyed;
+   SignalConnector<ItemListWindow,StrLen> connector_ins_frame_selected;
+
   public:
 
    ItemListWindow(SubWindowHost &host,const Config &cfg);
@@ -423,6 +459,14 @@ class ItemListWindow : public ComboWindow
    Point getMinSize(Point cap=Point::Max()) const;
 
    void setInfo(const ComboInfo &info) { list.setInfo(info); }
+
+   void set(InsWindow::Builder::Result result)
+    {
+     ins_frame.set(result);
+     ins_set=true;
+     wlist.insBefore(edit,knob_ins);
+     knob_ins.enable();
+    }
 
    bool select(ulen index) { return list.select(index); }
 

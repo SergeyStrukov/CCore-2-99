@@ -549,6 +549,43 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
   list_pad.setInfo(geom.contour.getPadInfo());
 
   list_formula.setInfo(geom.contour.getFormulaInfo());
+
+  // function list
+
+  InsWindow::Builder builder;
+
+  builder.add("Length(Point A,Point B)"_c,"Len(?,?)"_c);
+  builder.add("Angle(Point A,Point O,Point B)"_c,"Angle(?,?,?)"_c);
+  builder.add("Line(Point A,Point B)"_c,"Line(?,?)"_c);
+  builder.add("Circle(Point O,Length radius)"_c,"Cir(?,?)"_c);
+  builder.add("Circle(Point A,Point B,Point C)"_c,"OCir(?,?,?)"_c);
+  builder.add("Point Middle(Point A,Point B)"_c,"Mid(?,?)"_c);
+  builder.add("Point Part(Point A,Point B,Ratio rat)"_c,"Part(?,?,?)"_c);
+  builder.add("Line MiddleOrthogonal(Point A,Point B)"_c,"MidOrt(?,?)"_c);
+  builder.add("Point Projection(Line m,Point A)"_c,"Proj(?,?)"_c);
+  builder.add("AngleC(Length a,Length b,Length c)"_c,"AngleC(?,?,?)"_c);
+  builder.add("Point Meet(Line m,Line n)"_c,"Meet(?,?)"_c);
+  builder.add("Couple Meet(Line m,Circle cir)"_c,"MeetCircle(?,?)"_c);
+  builder.add("Couple Meet(Circle cir1,Circle cir2)"_c,"MeetCircles(?,?)"_c);
+  builder.add("Point Rotate(Point O,Angle alpha,Point A)"_c,"Rotate(?,?,?)"_c);
+  builder.add("Point RotateOrt(Point O,Point A)"_c,"RotateOrt(?,?)"_c);
+  builder.add("Point Move(Point A,Point B,Point P)"_c,"Move(?,?,?)"_c);
+  builder.add("Point MoveLen(Line m,Length len,Point A)"_c,"MoveLen(?,?,?)"_c);
+  builder.add("Point Mirror(Line m,Point A)"_c,"Mirror(?,?)"_c);
+  builder.add("Point First(Couple AB)"_c,"First(?)"_c);
+  builder.add("Point Second(Couple AB)"_c,"Second(?)"_c);
+  builder.add("Point Up(Length len,Point A)"_c,"Up(?,?)"_c);
+  builder.add("Point Down(Length len,Point A)"_c,"Down(?,?)"_c);
+  builder.add("Point Left(Length len,Point A)"_c,"Left(?,?)"_c);
+  builder.add("Point Right(Length len,Point A)"_c,"Right(?,?)"_c);
+  builder.add("Step(Point A1,Point A2,...)"_c,"Step(?..)"_c);
+  builder.add("Path(Point A1,Point A2,...)"_c,"Path(?..)"_c);
+  builder.add("Loop(Point A1,Point A2,...)"_c,"Loop(?..)"_c);
+  builder.add("Path(Step s1,Step s2,...)"_c,"BPath(?..)"_c);
+  builder.add("Loop(Step s1,Step s2,...)"_c,"BLoop(?..)"_c);
+  builder.add("Solid(Loop loop)"_c,"SolidOf(?)"_c);
+
+  list_formula.set(builder.complete());
  }
 
 EditorWindow::~EditorWindow()

@@ -83,6 +83,8 @@ struct AppPreferenceBag
   DefString text_gray = "gray"_def ;
   DefString text_name = "name"_def ;
 
+  DefString ins_title = "Function list"_def ;
+
   // constructors
 
   AppPreferenceBag() noexcept {}

@@ -19,11 +19,13 @@ namespace App {
 
 /* class InsWindow */
 
-void InsWindow::btn_Insert_pressed() // TODO
+void InsWindow::btn_Insert_pressed()
  {
   ulen select=list.getSelect();
 
+  ulen count=info_ins->getLineCount();
 
+  if( select<count ) selected.assert(info_ins->getLine(select));
  }
 
 void InsWindow::btn_Close_pressed()
@@ -84,7 +86,9 @@ void InsWindow::drawBack(DrawBuf buf,bool) const
 
 InsFrame::InsFrame(Desktop *desktop,const Config &cfg)
  : DragFrame(desktop,cfg.drag_cfg),
-   client(*this,cfg.ins_cfg)
+   client(*this,cfg.ins_cfg),
+
+   selected(client.selected)
  {
   bindClient(client);
  }
@@ -244,6 +248,25 @@ void ItemListWindow::check_name_changed(bool check)
   name_changed.assert(list.getSelect(),check);
  }
 
+void ItemListWindow::knob_ins_pressed()
+ {
+  Point base(getSize().x,0);
+
+  ins_frame.create(getFrame(),toScreen(base),+cfg.ins_title);
+
+  knob_ins.disable();
+ }
+
+void ItemListWindow::ins_frame_destroyed()
+ {
+  knob_ins.enable();
+ }
+
+void ItemListWindow::ins_frame_selected(StrLen text)
+ {
+  edit.insText(text);
+ }
+
 ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -255,6 +278,7 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
    knob_up(wlist,cfg.knob_cfg,KnobShape::FaceUp),
    knob_del(wlist,cfg.knob_cfg,KnobShape::FaceCross),
    knob_add(wlist,cfg.knob_cfg,KnobShape::FacePlus),
+   knob_ins(wlist,cfg.knob_cfg,KnobShape::FaceList),
 
    label_show(wlist,cfg.label_cfg,cfg.text_show),
    label_gray(wlist,cfg.label_cfg,cfg.text_gray),
@@ -277,6 +301,10 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
    connector_check_gray_changed(this,&ItemListWindow::check_gray_changed,check_gray.changed),
    connector_check_name_changed(this,&ItemListWindow::check_name_changed,check_name.changed),
 
+   connector_knob_ins_pressed(this,&ItemListWindow::knob_ins_pressed,knob_ins.pressed),
+   connector_ins_frame_destroyed(this,&ItemListWindow::ins_frame_destroyed,ins_frame.destroyed),
+   connector_ins_frame_selected(this,&ItemListWindow::ins_frame_selected,ins_frame.selected),
+
    text_changed(edit.changed),
    text_paused(edit.paused)
  {
@@ -285,6 +313,8 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
   noItem();
 
   enableAdd(false);
+
+  knob_ins.disable();
  }
 
 ItemListWindow::~ItemListWindow()
@@ -360,7 +390,10 @@ void ItemListWindow::layout()
 
    PaneCut p=pane.cutBottom(dy);
 
-   p.place_cutRight(knob__add).place(edit_);
+   if( ins_set )
+     p.place_cutRight(knob__add).place_cutLeft(knob_ins).place(edit_);
+   else
+     p.place_cutRight(knob__add).place(edit_);
   }
 
   // label... , check...
