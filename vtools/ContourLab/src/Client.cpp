@@ -13,6 +13,8 @@
 
 #include <inc/Client.h>
 
+#include <CCore/inc/Print.h>
+
 namespace App {
 
 /* class ClientWindow */

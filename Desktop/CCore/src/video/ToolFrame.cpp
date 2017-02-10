@@ -270,7 +270,7 @@ void ToolFrame::askClose()
 
 void ToolFrame::setSize(Point size_,bool buf_dirty)
  {
-  if( size!=size_ || buf_dirty )
+  if( ( size_!=Null && size!=size_ ) || buf_dirty )
     {
      size=size_;
 

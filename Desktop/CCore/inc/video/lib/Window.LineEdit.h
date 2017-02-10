@@ -549,6 +549,46 @@ class LineEditWindowOf : public SubWindow
      setTextLen( out.close().len );
     }
 
+   bool insText(const char *ptr,ulen len) // false on truncation
+    {
+     delSelectedRange();
+
+     ulen free=shape.text_buf.len-shape.len;
+     bool ret=true;
+
+     if( len>free )
+       {
+        len=free;
+        ret=false;
+       }
+
+     char *base=shape.text_buf.ptr;
+
+     Range(ptr,len).copyTo(base+shape.len);
+
+     RotateCharRange(base,shape.len,shape.pos,len);
+
+     shape.len+=len;
+     shape.pos+=len;
+
+     shape.cursor=true;
+
+     shape.setMax();
+
+     Replace_min(shape.xoff,shape.xoffMax);
+
+     shape.showCursor();
+
+     redraw();
+
+     return ret;
+    }
+
+   bool insText(StrLen str) // false on truncation
+    {
+     return insText(str.ptr,str.len);
+    }
+
    // drawing
 
    virtual bool isGoodSize(Point size) const

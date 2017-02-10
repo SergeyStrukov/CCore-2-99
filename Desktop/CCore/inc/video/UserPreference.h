@@ -177,6 +177,9 @@ struct UserPreferenceBag
   DefString text_Error   = "Error"_def ;
   DefString text_Warning = "Warning"_def ;
 
+  DefString text_Close   = "Close"_def ;
+  DefString text_Insert  = "Insert"_def ;
+
   // text
 
   Coord text_cursor_dx = 3 ;

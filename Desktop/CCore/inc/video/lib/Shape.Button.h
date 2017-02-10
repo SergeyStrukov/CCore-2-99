@@ -180,6 +180,7 @@ class KnobShape
      FaceOk,
      FacePlus,
      FaceMinus,
+     FaceList,
      FaceCross,
      FaceAsterisk,
      FaceExclamation,

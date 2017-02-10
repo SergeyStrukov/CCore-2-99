@@ -17,6 +17,91 @@
 
 namespace App {
 
+/* class InsWindow */
+
+void InsWindow::btn_Insert_pressed() // TODO
+ {
+  ulen select=list.getSelect();
+
+
+ }
+
+void InsWindow::btn_Close_pressed()
+ {
+  askFrameClose();
+ }
+
+InsWindow::InsWindow(SubWindowHost &host,const Config &cfg_)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   list(wlist,cfg.list_cfg),
+   btn_Insert(wlist,cfg.btn_cfg,cfg.text_Insert),
+   btn_Close(wlist,cfg.btn_cfg,cfg.text_Close),
+
+   connector_btn_Insert_pressed(this,&InsWindow::btn_Insert_pressed,btn_Insert.pressed),
+   connector_btn_Close_pressed(this,&InsWindow::btn_Close_pressed,btn_Close.pressed)
+ {
+  wlist.insTop(list,btn_Insert,btn_Close);
+ }
+
+InsWindow::~InsWindow()
+ {
+ }
+
+ // methods
+
+Point InsWindow::getMinSize(Point cap) const
+ {
+  Coord space=+cfg.space_dxy;
+
+  Point bs=SupMinSize(btn_Insert,btn_Close);
+
+  Point delta( 2*space , 3*space+bs.y );
+
+  Point s=list.getMinSize(cap-delta);
+
+  return delta+Point( Max_cast(s.x,2*bs.x+space) , s.y );
+ }
+
+ // drawing
+
+void InsWindow::layout()
+ {
+  PaneCut pane(getSize(),+cfg.space_dxy);
+
+  pane.shrink();
+
+  pane.placeRow_cutBottom(btn_Insert,btn_Close).place(list);
+ }
+
+void InsWindow::drawBack(DrawBuf buf,bool) const
+ {
+  buf.erase(+cfg.back);
+ }
+
+/* class InsFrame */
+
+InsFrame::InsFrame(Desktop *desktop,const Config &cfg)
+ : DragFrame(desktop,cfg.drag_cfg),
+   client(*this,cfg.ins_cfg)
+ {
+  bindClient(client);
+ }
+
+InsFrame::~InsFrame()
+ {
+ }
+
+Pane InsFrame::getPane(StrLen title,Point base) const
+ {
+  Point screen_size=getScreenSize();
+
+  Point size=getMinSize(false,title,client.getMinSize(screen_size));
+
+  return FitToScreen(base,size,screen_size);
+ }
+
 /* class EditFormulaShape */
 
 void EditFormulaShape::drawText(Font font,const DrawBuf &buf,Pane pane,TextPlace place,StrLen text,ulen off,VColor) const
@@ -178,6 +263,8 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
    check_show(wlist,cfg.check_cfg),
    check_gray(wlist,cfg.check_cfg),
    check_name(wlist,cfg.check_cfg),
+
+   ins_frame(host.getFrameDesktop(),cfg.ins_cfg),
 
    connector_list_selected(this,&ItemListWindow::list_selected,list.selected),
    connector_edit_entered(this,&ItemListWindow::knob_add_pressed,edit.entered),

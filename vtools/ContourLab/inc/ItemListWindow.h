@@ -20,11 +20,190 @@ namespace App {
 
 /* classes */
 
+class InsWindow;
+
+class InsFrame;
+
 class EditFormulaShape;
 
 class EditFormulaWindow;
 
 class ItemListWindow;
+
+/* class InsWindow */
+
+class InsWindow : public ComboWindow
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<Coord> space_dxy = 10 ;
+
+     RefVal<VColor> back = Silver ;
+
+     RefVal<DefString> text_Close  = "Close"_def ;
+     RefVal<DefString> text_Insert = "Insert"_def ;
+
+     CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
+     CtorRefVal<RefButtonWindow::ConfigType> btn_cfg;
+
+     // app
+
+     Config() noexcept {}
+
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      {
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       space_dxy.bind(bag.space_dxy);
+       back.bind(bag.back);
+
+       text_Close.bind(bag.text_Close);
+       text_Insert.bind(bag.text_Insert);
+
+       list_cfg.bind(proxy);
+       btn_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       Used(bag);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   ScrollListWindow list;
+
+   RefButtonWindow btn_Insert;
+   RefButtonWindow btn_Close;
+
+  private:
+
+   void btn_Insert_pressed();
+
+   void btn_Close_pressed();
+
+   SignalConnector<InsWindow> connector_btn_Insert_pressed;
+   SignalConnector<InsWindow> connector_btn_Close_pressed;
+
+  public:
+
+   InsWindow(SubWindowHost &host,const Config &cfg);
+
+   virtual ~InsWindow();
+
+   // methods
+
+   Point getMinSize(Point cap=Point::Max()) const;
+
+   class Builder : NoCopy
+    {
+      ComboInfoBuilder list;
+      ComboInfoBuilder ins;
+
+     public:
+
+      Builder() {}
+
+      ~Builder() {}
+
+      void add(StrLen line,StrLen ins_text)
+       {
+        list.add(line);
+        ins.add(ins_text);
+       }
+
+      struct Result
+       {
+        ComboInfo info_list;
+        ComboInfo info_ins;
+       };
+
+      Result complete() { return {list.complete(),ins.complete()}; }
+    };
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
+ };
+
+/* class InsFrame */
+
+class InsFrame : public DragFrame
+ {
+  public:
+
+   struct Config
+    {
+     CtorRefVal<DragFrame::ConfigType> drag_cfg;
+
+     // app
+
+     CtorRefVal<InsWindow::ConfigType> ins_cfg;
+
+     Config() noexcept {}
+
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      : ins_cfg(pref,app_pref)
+      {
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       Used(bag);
+
+       drag_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       Used(bag);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   InsWindow client;
+
+  public:
+
+   InsFrame(Desktop *desktop,const Config &cfg);
+
+   virtual ~InsFrame();
+
+   // methods
+
+   Pane getPane(StrLen title,Point base) const;
+
+   using DragFrame::create;
+
+   void create(FrameWindow *parent,Point base,const DefString &title)
+    {
+     create(parent,getPane(title.str(),base),title);
+    }
+ };
 
 /* class EditFormulaShape */
 
@@ -139,6 +318,7 @@ class ItemListWindow : public ComboWindow
      // app
 
      CtorRefVal<EditFormulaWindow::ConfigType> edit_cfg;
+     CtorRefVal<InsFrame::ConfigType> ins_cfg;
 
      RefVal<DefString> text_show = "show"_def ;
      RefVal<DefString> text_gray = "gray"_def ;
@@ -148,7 +328,8 @@ class ItemListWindow : public ComboWindow
 
      template <class AppPref>
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
-      : edit_cfg(pref,app_pref)
+      : edit_cfg(pref,app_pref),
+        ins_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
        bindApp(app_pref.get());
@@ -197,6 +378,8 @@ class ItemListWindow : public ComboWindow
    CheckWindow check_show;
    CheckWindow check_gray;
    CheckWindow check_name;
+
+   InsFrame ins_frame;
 
   private:
 

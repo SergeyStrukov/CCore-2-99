@@ -218,6 +218,20 @@ void KnobShape::draw(const DrawBuf &buf) const
       }
      break;
 
+     case FaceList :
+      {
+       MCoord a=radius/2;
+       MCoord w=radius/3;
+
+       MPoint p=center.subY(a);
+       MPoint q=center.addY(a);
+
+       art.path(w,fc,p.subX(a),p.addX(a));
+       art.path(w,fc,center.subX(a),center.addX(a));
+       art.path(w,fc,q.subX(a),q.addX(a));
+      }
+     break;
+
      case FaceCross :
       {
        MCoord a=radius/2;
