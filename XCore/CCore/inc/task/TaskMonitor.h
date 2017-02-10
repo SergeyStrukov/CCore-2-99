@@ -226,7 +226,7 @@ class TaskMonitor_CPU : public TaskMonitor
        }
     };
 
-   DynArray<Record_CPU> buf;
+   SimpleArray<Record_CPU> buf;
    ulen len;
 
   private:

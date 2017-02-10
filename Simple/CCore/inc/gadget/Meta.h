@@ -55,6 +55,8 @@ template <class T> struct PromoteSInt_extra;
 
 template <class SInt> struct PromoteSInt;
 
+template <class T,bool Flag> struct PoorFlagCtor;
+
 /* struct Empty */
 
 struct Empty
@@ -484,6 +486,28 @@ struct PromoteSInt<long long>
 
 template <>
 struct PromoteSInt<char> : Select<( char(-1)<0 ), PromoteSInt<int> , Empty > {};
+
+/* struct PoorFlagCtor<T,bool Flag> */
+
+template <class T>
+struct PoorFlagCtor<T,true>
+ {
+  enum RetType { Ret = true };
+ };
+
+template <class T>
+struct PoorFlagCtor<T,false>
+ {
+  [[deprecated("poor object flag value")]]
+  static constexpr bool Warning() { return false; }
+
+  enum RetType { Ret = Warning() };
+ };
+
+/* const PoorFlag<T,bool Flag> */
+
+template <class T,bool Flag>
+const bool PoorFlag = PoorFlagCtor<T,Flag>::Ret ;
 
 } // namespace Meta
 } // namespace CCore

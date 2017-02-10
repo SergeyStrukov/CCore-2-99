@@ -46,7 +46,7 @@ class TaskMemStackAllocGuard;
 
 template <NothrowDtorType T> class StackObject;
 
-template <class T,class Algo=ArrayAlgo<T> > class StackArray;
+template <class T,class Algo=ArrayAlgo_mini<T> > class StackArray;
 
 /* class TaskMemStack */
 

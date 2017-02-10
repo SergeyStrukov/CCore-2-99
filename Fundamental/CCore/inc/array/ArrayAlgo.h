@@ -125,7 +125,7 @@ template <TrivDtorType T> struct ArrayAlgoBase_nodtor;
 
 template <NothrowDtorType T> struct ArrayAlgoBase;
 
-template <NothrowDtorType T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_mini;
+template <class T,class Flags=GetNoThrowFlags<T> > struct ArrayAlgo_mini;
 
 template <PODType T> struct ArrayAlgo_pod;
 
@@ -330,7 +330,7 @@ struct ArrayAlgoBase<T> : ArrayAlgoBase_nodtor<T> {};
 
 /* struct ArrayAlgo_mini<T,Flags> */
 
-template <NothrowDtorType T,class Flags>
+template <class T,class Flags>
 struct ArrayAlgo_mini : ArrayAlgoBase<T>
  {
   using ArrayAlgoBase<T>::Create;
@@ -391,7 +391,7 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
     Default_no_throw = true,
     Copy_no_throw = true,
 
-    MoveTo_exist = NothrowCopyCtorType<T>
+    MoveTo_exist = Meta::PoorFlag<T, NothrowCopyCtorType<T> >
    };
 
   static PtrLen<T> Create_raw(Place<void> place,ulen len)
@@ -494,7 +494,7 @@ struct ArrayAlgo_class : ArrayAlgoBase<T>
     Default_no_throw = Flags::Default_no_throw,
     Copy_no_throw = Flags::Copy_no_throw,
 
-    MoveTo_exist = ReplaceableType<T>
+    MoveTo_exist = Meta::PoorFlag<T, ReplaceableType<T> >
    };
 
   static PtrLen<T> Create_raw(Place<void> place,ulen len) requires ( DefaultCtorType<T> )

@@ -322,6 +322,7 @@ obj/StartStop.o \
 obj/Starter.o \
 obj/StepEval.o \
 obj/StrKey.o \
+obj/StrMap.o \
 obj/StrParse.o \
 obj/StrPrint.o \
 obj/String.o \
@@ -726,6 +727,7 @@ obj/StartStop.s \
 obj/Starter.s \
 obj/StepEval.s \
 obj/StrKey.s \
+obj/StrMap.s \
 obj/StrParse.s \
 obj/StrPrint.s \
 obj/String.s \
@@ -1130,6 +1132,7 @@ obj/StartStop.dep \
 obj/Starter.dep \
 obj/StepEval.dep \
 obj/StrKey.dep \
+obj/StrMap.dep \
 obj/StrParse.dep \
 obj/StrPrint.dep \
 obj/String.dep \
@@ -2190,6 +2193,9 @@ obj/StepEval.o : ../../Fundamental/CCore/src/StepEval.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/StrKey.o : ../../Simple/CCore/src/StrKey.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StrMap.o : ../../Fundamental/CCore/src/StrMap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/StrParse.o : ../../Fundamental/CCore/src/StrParse.cpp
@@ -3397,6 +3403,9 @@ obj/StepEval.s : ../../Fundamental/CCore/src/StepEval.cpp
 obj/StrKey.s : ../../Simple/CCore/src/StrKey.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/StrMap.s : ../../Fundamental/CCore/src/StrMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/StrParse.s : ../../Fundamental/CCore/src/StrParse.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4601,6 +4610,9 @@ obj/StepEval.dep : ../../Fundamental/CCore/src/StepEval.cpp
 
 obj/StrKey.dep : ../../Simple/CCore/src/StrKey.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrKey.o $< -MF $@
+
+obj/StrMap.dep : ../../Fundamental/CCore/src/StrMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrMap.o $< -MF $@
 
 obj/StrParse.dep : ../../Fundamental/CCore/src/StrParse.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrParse.o $< -MF $@

@@ -210,7 +210,7 @@ class LangStateMachine : NoCopy
 
   private:
 
-   DynArray<StateDesc> state_table;
+   SimpleArray<StateDesc> state_table;
    DynArray<const StateDesc *> transition_buf;
 
    ulen atom_count;
@@ -299,7 +299,7 @@ void LangStateMachine<Estimate,Context>::build(const Lang &lang,const LangDiagra
   {
    Head headN;
 
-   DynArray<Head> headT(count);
+   SimpleArray<Head> headT(count);
 
    auto arrows=diagram.getArrows();
 
@@ -398,7 +398,7 @@ void LangStateMachine<Estimate,Context>::build(const Lang &lang,const LangDiagra
   {
    ulen state_count=storage.getCount();
 
-   DynArray<StateDesc> state_table(state_count);
+   SimpleArray<StateDesc> state_table(state_count);
 
    auto tbuf=transition_buf.extend_raw(LenOf(count,state_count));
 

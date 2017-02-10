@@ -261,7 +261,7 @@ Geometry::Real::ToStr::ToStr(double val,ulen prec)
 
   if( val>0 )
     {
-     if( val<1'000'000'000 )
+     if( val<1000000000 )
        {
         double ival;
         double fval=modf(val,&ival);
@@ -305,10 +305,61 @@ Geometry::Real::PrintOptType::PrintOptType(const char *ptr,const char *lim)
 
 /* struct Geometry */
 
-Geometry::Point Geometry::Middle(Point a,Point b)
+ // special functions
+
+Geometry::Point Geometry::MeetIn(Line a,Point b,Point c)
  {
-  return (a+b)/2;
+  Point dir=c-b;
+  Point e=Point::Orthogonal(a.ort);
+
+  Real s=Point::Prod(dir,e);
+  Real t=Point::Prod(a.p-b,e);
+
+  if( RealException rex=Real::BoundedDiv(t,s) ) return rex;
+
+  return b+(t/s)*dir;
  }
+
+Geometry::Couple Geometry::MeetCircleIn(Circle C,Point a,Point b)
+ {
+  Point dir=b-a;
+
+  Real len=Point::Norm(dir);
+  Point ort=dir/len;
+
+  Real s=Point::Prod(C.center-a,ort);
+
+  Point p=a+s*ort;
+
+  Real x=Point::Norm(p-C.center);
+
+  Real T=Sq(C.radius.val)-Sq(x);
+
+  if( T<0 ) return RealOutOfDomain;
+
+  Real t=Real::Sqrt(T);
+
+  Real s1=s-t;
+  Real s2=s+t;
+
+  if( s1>len || s2<0 ) return RealOutOfDomain;
+
+  if( s1<0 )
+    {
+     if( s2>len ) return RealOutOfDomain;
+
+     return { a+s2*ort , RealOutOfDomain };
+    }
+
+  if( s2>len )
+    {
+     return { a+s1*ort , RealOutOfDomain };
+    }
+
+  return { a+s1*ort , a+s2*ort };
+ }
+
+ // functions
 
 Geometry::Line Geometry::MidOrt(Point a,Point b)
  {
@@ -353,19 +404,6 @@ Geometry::Point Geometry::Meet(Line a,Line b)
   return a.p-t*a.ort;
  }
 
-Geometry::Point Geometry::MeetIn(Line a,Point b,Point c)
- {
-  Point dir=c-b;
-  Point e=Point::Orthogonal(a.ort);
-
-  Real s=Point::Prod(dir,e);
-  Real t=Point::Prod(a.p-b,e);
-
-  if( RealException rex=Real::BoundedDiv(t,s) ) return rex;
-
-  return b+(t/s)*dir;
- }
-
 Geometry::Couple Geometry::MeetCircle(Line a,Circle C)
  {
   Point p=Proj(a,C.center);
@@ -386,45 +424,6 @@ Geometry::Couple Geometry::MeetCircles(Circle C,Circle D)
   Angle d=Point::Arg(D.center-C.center);
 
   return {C.center+Point::Polar(C.radius,d-a),C.center+Point::Polar(C.radius,d+a)};
- }
-
-Geometry::Couple Geometry::MeetCircleIn(Circle C,Point a,Point b)
- {
-  Point dir=b-a;
-
-  Real len=Point::Norm(dir);
-  Point ort=dir/len;
-
-  Real s=Point::Prod(C.center-a,ort);
-
-  Point p=a+s*ort;
-
-  Real x=Point::Norm(p-C.center);
-
-  Real T=Sq(C.radius.val)-Sq(x);
-
-  if( T<0 ) return RealOutOfDomain;
-
-  Real t=Real::Sqrt(T);
-
-  Real s1=s-t;
-  Real s2=s+t;
-
-  if( s1>len || s2<0 ) return RealOutOfDomain;
-
-  if( s1<0 )
-    {
-     if( s2>len ) return RealOutOfDomain;
-
-     return { a+s2*ort , RealOutOfDomain };
-    }
-
-  if( s2>len )
-    {
-     return { a+s1*ort , RealOutOfDomain };
-    }
-
-  return { a+s1*ort , a+s2*ort };
  }
 
 Geometry::Point Geometry::Mirror(Line a,Point p)

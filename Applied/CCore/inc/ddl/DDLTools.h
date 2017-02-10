@@ -344,7 +344,7 @@ class Enlist : NoCopy
    T *root;
    T *last;
 
-   Collector<T> col;
+   Collector<T,ArrayAlgo_mini<T> > col;
 
   private:
 

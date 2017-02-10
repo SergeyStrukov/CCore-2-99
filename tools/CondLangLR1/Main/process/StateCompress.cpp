@@ -39,7 +39,7 @@ void StateTrace::create(PtrLen<const Desc> table)
  {
   DynArray<const Desc *> buf(DoReserve,table.len);
 
-  DynArray<BackTrace> trace(table.len);
+  SimpleArray<BackTrace> trace(table.len);
 
   // start
   {

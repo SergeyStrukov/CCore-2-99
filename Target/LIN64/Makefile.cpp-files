@@ -146,6 +146,7 @@
 ../../Fundamental/CCore/src/Starter.cpp
 ../../Fundamental/CCore/src/StepEval.cpp
 ../../Fundamental/CCore/src/String.cpp
+../../Fundamental/CCore/src/StrMap.cpp
 ../../Fundamental/CCore/src/StrParse.cpp
 ../../Fundamental/CCore/src/TextTools.cpp
 ../../Fundamental/CCore/src/tree/RBTreeBase.cpp

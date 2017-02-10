@@ -26,7 +26,7 @@ namespace CCore {
 
 /* classes */
 
-template <class T,class Algo=ArrayAlgo<T> > class SimpleArray;
+template <class T,class Algo=ArrayAlgo_mini<T> > class SimpleArray;
 
 /* class SimpleArray<T,Algo> */
 

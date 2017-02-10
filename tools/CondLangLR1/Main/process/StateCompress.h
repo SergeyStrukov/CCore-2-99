@@ -222,7 +222,7 @@ class StateTrace : NoCopy
 
   private:
 
-   DynArray<BackTrace> trace;
+   SimpleArray<BackTrace> trace;
 
   public:
 
@@ -288,7 +288,7 @@ class StateCompress : public StateCompressBase
  {
   private:
 
-   DynArray<StateDesc> state_table;
+   SimpleArray<StateDesc> state_table;
    DynArray<EstProp> prop_buf;
    DynArray<Transition> transition_buf;
 
@@ -612,7 +612,7 @@ StateCompress<Estimate,EstProp>::StateCompress(const Machine &machine,const SS &
   //--------------------------------------------------------------------------
 
   {
-   DynArray<StateDesc> state_table(num_count);
+   SimpleArray<StateDesc> state_table(num_count);
    Collector<Transition> tbuf;
 
    ulen last_prop=prop_buf.getLen()-1;

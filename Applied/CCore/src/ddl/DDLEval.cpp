@@ -7221,7 +7221,7 @@ bool EvalContext::process(Eval &eval,BodyNode *body_node,EvalResult &result)
    for(ConstNode &node : body_node->const_list ) node.index=index++;
 
    {
-    DynArray<ConstRec> temp(index);
+    SimpleArray<ConstRec> temp(index);
 
     Swap(const_list,temp);
    }
@@ -7248,7 +7248,7 @@ bool EvalContext::process(Eval &eval,BodyNode *body_node,EvalResult &result)
      }
 
    {
-    DynArray<FieldRec> temp(index);
+    SimpleArray<FieldRec> temp(index);
 
     Swap(field_list,temp);
    }
@@ -7271,7 +7271,7 @@ bool EvalContext::process(Eval &eval,BodyNode *body_node,EvalResult &result)
    for(LenNode &node : body_node->len_list ) node.index=index++;
 
    {
-    DynArray<LenRec> temp(index);
+    SimpleArray<LenRec> temp(index);
 
     Swap(len_list,temp);
    }

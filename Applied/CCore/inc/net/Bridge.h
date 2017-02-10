@@ -122,9 +122,9 @@ class Bridge : NoCopy
    PacketFormat to_client_format;
 
    Server server;
-   DynArray<Client> clients;
+   DynArray<Client,ArrayAlgo_mini<Client> > clients;
 
-   DynArray<ObjMaster> masters;
+   DynArray<ObjMaster,ArrayAlgo_mini<ObjMaster> > masters;
 
    enum Events
     {

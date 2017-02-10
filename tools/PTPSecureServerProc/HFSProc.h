@@ -326,7 +326,7 @@ class NodeSet : NoCopy
 
    using TreeAlgo = typename TreeUpLink<Node,XPoint>::template RadixAlgo<&Node::tlink> ;
 
-   DynArray<Node> pool;
+   SimpleArray<Node> pool;
 
    typename Algo::Top avail_list;
    typename Algo::Top active_list;

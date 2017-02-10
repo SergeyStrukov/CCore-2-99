@@ -710,7 +710,7 @@ struct Geometry
     template <class S>
     static StrLen doIt() { return S::TypeName(); }
 
-    static StrLen doOther() { return Null; }
+    static StrLen doOther() { return "???"_c; }
    };
 
   static StrLen TypeName(int type_id)
@@ -718,15 +718,21 @@ struct Geometry
     return TypeSwitch(type_id,TypeNameFunc());
    }
 
+  // special functions
+
+  static Point MeetIn(Line a,Point b,Point c);
+
+  static Couple MeetCircleIn(Circle C,Point a,Point b); // Couple in a -> b direction
+
   // functions
 
   static Length LengthOf(Point a,Point b) { return Point::Norm(a-b); }
 
-  static Angle AngleOf(Point a,Point b,Point c) { return Point::Arg(c-b)-Point::Arg(a-b); }
+  static Angle AngleOf(Point a,Point o,Point b) { return Point::Arg(b-o)-Point::Arg(a-o); }
 
   static Line LineOf(Point a,Point b) { return {a,b-a}; }
 
-  static Point Middle(Point a,Point b);
+  static Point Middle(Point a,Point b) { return (a+b)/2; }
 
   static Point Part(Point a,Point b,Ratio r) { return a+r.val*(b-a); }
 
@@ -742,13 +748,9 @@ struct Geometry
 
   static Point Meet(Line a,Line b);
 
-  static Point MeetIn(Line a,Point b,Point c);
-
   static Couple MeetCircle(Line a,Circle C); // Couple in a direction
 
   static Couple MeetCircles(Circle C,Circle D); // Couple in C direction
-
-  static Couple MeetCircleIn(Circle C,Point a,Point b); // Couple in a -> b direction
 
   static Point Rotate(Point o,Angle a,Point p) { return o+Point::Rotate(a,p-o); }
 

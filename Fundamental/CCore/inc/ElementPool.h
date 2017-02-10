@@ -182,7 +182,7 @@ class ElementPool : NoCopy
    template <TrivDtorType T>
    PtrLen<T> createArray(ulen len) requires ( DefaultCtorType<T> )
     {
-     using Algo = ArrayAlgo<T> ;
+     using Algo = ArrayAlgo_mini<T> ;
 
      return Algo::Create_default(alloc<T>(len),len);
     }
@@ -190,7 +190,7 @@ class ElementPool : NoCopy
    template <TrivDtorType T,CreatorType<T> Creator>
    PtrLen<T> createArray(ulen len,Creator creator)
     {
-     using Algo = ArrayAlgo<T> ;
+     using Algo = ArrayAlgo_mini<T> ;
 
      return Algo::Create(alloc<T>(len),len,creator);
     }
@@ -198,7 +198,7 @@ class ElementPool : NoCopy
    template <TrivDtorType T>
    PtrLen<T> createArray_raw(ulen len) requires ( DefaultCtorType<T> )
     {
-     using Algo = ArrayAlgo<T> ;
+     using Algo = ArrayAlgo_mini<T> ;
 
      return Algo::Create_raw(alloc<T>(len),len);
     }
@@ -206,7 +206,7 @@ class ElementPool : NoCopy
    template <TrivDtorType T,class ... SS>
    PtrLen<T> createArray_fill(ulen len,SS && ... ss) requires ( ConstructibleType<T,SS...> )
     {
-     using Algo = ArrayAlgo<T> ;
+     using Algo = ArrayAlgo_mini<T> ;
 
      return Algo::Create_fill(alloc<T>(len),len, std::forward<SS>(ss)... );
     }
@@ -214,7 +214,7 @@ class ElementPool : NoCopy
    template <TrivDtorType T>
    PtrLen<T> createArray_copy(ulen len,const T src[]) requires ( CopyCtorType<T> )
     {
-     using Algo = ArrayAlgo<T> ;
+     using Algo = ArrayAlgo_mini<T> ;
 
      return Algo::Create_copy(alloc<T>(len),len,src);
     }
@@ -228,7 +228,7 @@ class ElementPool : NoCopy
    template <TrivDtorType T,class S>
    PtrLen<T> createArray_cast(ulen len,const S src[]) requires ( ConstructibleType<T,const S> )
     {
-     using Algo = ArrayAlgo<T> ;
+     using Algo = ArrayAlgo_mini<T> ;
 
      return Algo::Create_cast(alloc<T>(len),len,src);
     }

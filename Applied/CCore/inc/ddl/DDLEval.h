@@ -703,9 +703,9 @@ class EvalContext : NoCopy
 
   private:
 
-   DynArray<ConstRec> const_list;
-   DynArray<LenRec> len_list;
-   DynArray<FieldRec> field_list;
+   SimpleArray<ConstRec> const_list;
+   SimpleArray<LenRec> len_list;
+   SimpleArray<FieldRec> field_list;
 
   private:
 

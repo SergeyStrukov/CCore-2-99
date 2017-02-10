@@ -72,7 +72,7 @@ class Context : NoCopy
      Var() noexcept : value(0),expr(0),gate(0) {}
     };
 
-   DynArray<Var> table;
+   SimpleArray<Var> table;
 
   private:
 
