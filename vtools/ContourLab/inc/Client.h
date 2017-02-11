@@ -33,7 +33,7 @@ class ClientWindow : public ComboWindow , public AliveControl
      RefVal<DefString> text_LoadFile = "Select a file to load from"_def ;
      RefVal<DefString> text_SaveFile = "Select a file to save to"_def ;
 
-     RefVal<DefString> text_Alert = "Alert"_def ;
+     RefVal<DefString> text_Alert   = "Alert"_def ;
      RefVal<DefString> text_AskSave = "Save modifications?"_def ;
 
      RefVal<DefString> text_Yes    = "Yes"_def ;

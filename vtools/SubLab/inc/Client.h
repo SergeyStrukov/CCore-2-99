@@ -206,6 +206,14 @@ class ClientWindow : public ComboWindow
 
      RefVal<VColor> backAlt = Wheat ;
 
+     RefVal<DefString> hint_Text  = "Show SubWindow variety"_def ;
+
+     RefVal<DefString> hint_Wheat = "Check to Wheat the background"_def ;
+
+     RefVal<DefString> hint_List  = "Select some SubWindow type"_def ;
+
+     RefVal<DefString> hint_Space = "Drag here to change the space"_def ;
+
      CtorRefVal<SpaceWindow::ConfigType> space_cfg;
 
      Config() noexcept {}

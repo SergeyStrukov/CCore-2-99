@@ -87,11 +87,11 @@ struct AppPreferenceBag
 
   // hints
 
-  DefString hint_File = "The current file"_def ;
-  DefString hint_Angle = "Set the selected angle"_def ;
+  DefString hint_File   = "The current file"_def ;
+  DefString hint_Angle  = "Set the selected angle"_def ;
   DefString hint_Length = "Set the selected length"_def ;
-  DefString hint_Ratio = "Set the selected ratio"_def ;
-  DefString hint_Geom = "Draw of elements, use to set the selected point"_def ;
+  DefString hint_Ratio  = "Set the selected ratio"_def ;
+  DefString hint_Geom   = "Draw of elements, use to set the selected point"_def ;
 
   DefString hint_function_List = "Select a function to be inserted into the cursor position"_def ;
 
