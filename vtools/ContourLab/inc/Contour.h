@@ -201,7 +201,7 @@ struct Formular : Geometry
       }
 
      template <class Func>
-     auto call(Func func) const
+     auto call(Func func) const // func(S s)
       {
        return TypeSwitch(getTypeId(),CallFunc<Func>(func,*this));
       }
@@ -215,7 +215,7 @@ struct Formular : Geometry
       }
 
      template <class Func>
-     auto callRef(Func func) const
+     auto callRef(Func func) const // func(S &s)
       {
        return TypeSwitch(getTypeId(),CallRefFunc<Func>(func,*this));
       }
@@ -300,41 +300,6 @@ struct Formular : Geometry
 
   template <class S,class ... SS>
   struct Formula<S (SS...)> : FormulaAlias<S,SS...> {};
-
-  template <class S>
-  struct Formula<S ()>
-   {
-    template <S Func()>
-    struct Pack : UnusedPad<S>
-     {
-      static const int TypeId = S::TypeId ;
-
-      using RetType = S ;
-
-      StrLen text_name;
-
-      explicit Pack(StrLen text_name_) : text_name(text_name_) {}
-
-      static S SafeCall()
-       {
-        try
-          {
-           return Func();
-          }
-        catch(RealException rex)
-          {
-           return S(rex);
-          }
-       }
-
-      S operator () () const { return SafeCall(); }
-
-      Text getText(ulen index) const { return {TextFormulaFixed,index,text_name}; }
-     };
-
-    template <S Func()>
-    static Object Create(StrLen text_name) { return CreateObject<Pack<Func> >(text_name); }
-   };
 
   template <class A>
   class ArgCursor
@@ -502,7 +467,7 @@ class ErrorText : NoCopy
 
 /* class Contour */
 
-class Contour : public Formular
+class Contour : public NoCopyBase<Formular>
  {
    struct Item
     {
@@ -586,18 +551,12 @@ class Contour : public Formular
 
    class FormulaAddContext;
 
-   struct PrintPad;
-
-   struct PrintArg;
-
-   struct PrintContour;
-
    template <class Func>
    struct Bind
     {
      Func func;
-     bool selected;
      const Label &label;
+     bool selected;
 
      void operator () (AnyType s) { if( !s.rex ) func(label,selected,s); }
 
@@ -615,6 +574,12 @@ class Contour : public Formular
 
      void operator () () {}
     };
+
+   struct PrintPad;
+
+   struct PrintArg;
+
+   struct PrintContour;
 
    static StrLen Pretext();
 
@@ -667,7 +632,7 @@ class Contour : public Formular
    Label & refFormulaLabel(ulen index) { return formulas.at(index).label; }
 
    template <class Func>
-   void pad(ulen index,Func func)
+   void pad(ulen index,Func func) // func(const Label &label,const Object &obj,S &s)
     {
      Item &item=pads.at(index);
 
@@ -675,30 +640,34 @@ class Contour : public Formular
     }
 
    template <class Func>
-   void apply(ulen pad_ind,ulen formula_ind,Func func) const
+   void apply(ulen pad_ind,ulen formula_ind,Func func) const // func(const Label &label,bool selected,S s)
     {
      for(ulen i=0,len=pads.getLen(); i<len ;i++)
        {
         const Item &item=pads[i];
 
-        item.obj.call( Bind<Func>{func,i==pad_ind,item.label} );
+        item.obj.call( Bind<Func>{func,item.label,i==pad_ind} );
        }
 
      for(ulen i=0,len=formulas.getLen(); i<len ;i++)
        {
         const Item &item=formulas[i];
 
-        item.obj.call( Bind<Func>{func,i==formula_ind,item.label} );
+        item.obj.call( Bind<Func>{func,item.label,i==formula_ind} );
        }
     }
 
+#if 0
+
    template <class Func>
-   void applyRef(Func func)
+   void applyRef(Func func) // func(const Label &label,const Object &obj,S &s)
     {
      auto temp = [=] (Item &item) { item.obj.callRef( BindRef<Func>{func,item.label,item.obj} ); } ;
 
      pads.apply(temp);
     }
+
+#endif
 
    // save/load
 

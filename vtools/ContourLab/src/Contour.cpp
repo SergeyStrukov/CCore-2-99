@@ -340,10 +340,9 @@ struct Contour::CreateOp
     Object &ret;
     Object a;
 
-    bool operator () (auto)
-     {
-      return false;
-     }
+    bool operator () () { return false; }
+
+    bool operator () (auto) { return false; }
 
     template <OneOfTypes<Ratio,Length,Angle> S>
     bool operator () (S)
@@ -352,8 +351,6 @@ struct Contour::CreateOp
 
       return true;
      }
-
-    bool operator () () { return false; }
    };
 
   struct AddFunc
@@ -362,10 +359,9 @@ struct Contour::CreateOp
     Object a;
     Object b;
 
-    bool operator () (auto)
-     {
-      return false;
-     }
+    bool operator () () { return false; }
+
+    bool operator () (auto) { return false; }
 
     template <OneOfTypes<Ratio,Length,Angle> S>
     bool operator () (S)
@@ -376,8 +372,6 @@ struct Contour::CreateOp
 
       return true;
      }
-
-    bool operator () () { return false; }
    };
 
   struct SubFunc
@@ -386,10 +380,9 @@ struct Contour::CreateOp
     Object a;
     Object b;
 
-    bool operator () (auto)
-     {
-      return false;
-     }
+    bool operator () () { return false; }
+
+    bool operator () (auto) { return false; }
 
     template <OneOfTypes<Ratio,Length,Angle> S>
     bool operator () (S)
@@ -400,8 +393,6 @@ struct Contour::CreateOp
 
       return true;
      }
-
-    bool operator () () { return false; }
    };
 
   struct MulFunc
@@ -410,10 +401,9 @@ struct Contour::CreateOp
     Object a;
     Object b;
 
-    bool operator () (auto)
-     {
-      return false;
-     }
+    bool operator () () { return false; }
+
+    bool operator () (auto) { return false; }
 
     template <OneOfTypes<Ratio,Length,Angle> S>
     bool operator () (S)
@@ -424,8 +414,6 @@ struct Contour::CreateOp
 
       return true;
      }
-
-    bool operator () () { return false; }
    };
 
   struct DivFunc
@@ -434,10 +422,9 @@ struct Contour::CreateOp
     Object a;
     Object b;
 
-    bool operator () (auto)
-     {
-      return false;
-     }
+    bool operator () () { return false; }
+
+    bool operator () (auto) { return false; }
 
     template <OneOfTypes<Ratio,Angle> S>
     bool operator () (S)
@@ -464,11 +451,14 @@ struct Contour::CreateOp
 
       return false;
      }
-
-    bool operator () () { return false; }
    };
 
   using ExprType = Object ;
+
+  static bool neg(ExprType &ret,ExprType a)
+   {
+    return a.call(NegFunc{ret,a});
+   }
 
   static bool add(ExprType &ret,ExprType a,ExprType b)
    {
@@ -488,11 +478,6 @@ struct Contour::CreateOp
   static bool div(ExprType &ret,ExprType a,ExprType b)
    {
     return a.call(DivFunc{ret,a,b});
-   }
-
-  static bool neg(ExprType &ret,ExprType a)
-   {
-    return a.call(NegFunc{ret,a});
    }
  };
 
@@ -549,8 +534,10 @@ class Contour::FormulaTestContext : public NoCopyBase<CreateOp>
 
    explicit FormulaTestContext(const Contour *obj_) : obj(obj_) {}
 
-   bool set(StrLen name,ExprType)
+   bool set(StrLen name,ExprType value)
     {
+     if( value.getIndex()!=MaxULen ) return false;
+
      return obj->testName(name);
     }
 
@@ -602,7 +589,7 @@ class Contour::FormulaTestContext : public NoCopyBase<CreateOp>
 
    bool point(ExprType &ret,StrLen number_x,StrLen number_y)
     {
-     ret=Pad<Point>::Create(Point(StrToReal(number_x),StrToReal(number_y)));
+     ret=Pad<Point>::Create({StrToReal(number_x),StrToReal(number_y)});
 
      return true;
     }
