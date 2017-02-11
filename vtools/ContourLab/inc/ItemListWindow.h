@@ -50,6 +50,8 @@ class InsWindow : public ComboWindow
 
      // app
 
+     RefVal<DefString> hint_List = "Select a function to be inserted into the cursor position"_def ;
+
      Config() noexcept {}
 
      template <class AppPref>
@@ -75,7 +77,7 @@ class InsWindow : public ComboWindow
      template <class Bag>
      void bindApp(const Bag &bag)
       {
-       Used(bag);
+       hint_List.bind(bag.hint_function_List);
       }
     };
 
@@ -345,7 +347,20 @@ class ItemListWindow : public ComboWindow
      RefVal<DefString> text_gray = "gray"_def ;
      RefVal<DefString> text_name = "name"_def ;
 
-     RefVal<DefString> ins_title = "Function list"_def ;
+     RefVal<DefString> title_Ins = "Function list"_def ;
+
+     RefVal<DefString> hint_List = "Geometry object list"_def ;
+     RefVal<DefString> hint_Edit = "Enter a formula to create a new object"_def ;
+
+     RefVal<DefString> hint_Down = "Move the object down in the list"_def ;
+     RefVal<DefString> hint_Up   = "Move the object up in the list"_def ;
+     RefVal<DefString> hint_Del  = "Delete the object"_def ;
+     RefVal<DefString> hint_Add  = "Add a new object"_def ;
+     RefVal<DefString> hint_Ins  = "Open the Function list window"_def ;
+
+     RefVal<DefString> hint_Show = "Show this object"_def ;
+     RefVal<DefString> hint_Gray = "Gray this object if not selected"_def ;
+     RefVal<DefString> hint_Name = "Show the name of this object"_def ;
 
      Config() noexcept {}
 
@@ -376,7 +391,17 @@ class ItemListWindow : public ComboWindow
        text_show.bind(bag.text_show);
        text_gray.bind(bag.text_gray);
        text_name.bind(bag.text_name);
-       ins_title.bind(bag.ins_title);
+       title_Ins.bind(bag.title_Ins);
+       hint_List.bind(bag.hint_item_List);
+       hint_Edit.bind(bag.hint_item_Edit);
+       hint_Down.bind(bag.hint_item_Down);
+       hint_Up.bind(bag.hint_item_Up);
+       hint_Del.bind(bag.hint_item_Del);
+       hint_Add.bind(bag.hint_item_Add);
+       hint_Ins.bind(bag.hint_item_Ins);
+       hint_Show.bind(bag.hint_item_Show);
+       hint_Gray.bind(bag.hint_item_Gray);
+       hint_Name.bind(bag.hint_item_Name);
       }
     };
 

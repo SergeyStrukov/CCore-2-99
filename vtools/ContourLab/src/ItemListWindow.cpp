@@ -45,6 +45,10 @@ InsWindow::InsWindow(SubWindowHost &host,const Config &cfg_)
    connector_btn_Close_pressed(this,&InsWindow::btn_Close_pressed,btn_Close.pressed)
  {
   wlist.insTop(list,btn_Insert,btn_Close);
+
+  // bind hints
+
+  list.bindHint(cfg.hint_List);
  }
 
 InsWindow::~InsWindow()
@@ -252,7 +256,7 @@ void ItemListWindow::knob_ins_pressed()
  {
   Point base(getSize().x,0);
 
-  ins_frame.create(getFrame(),toScreen(base),+cfg.ins_title);
+  ins_frame.create(getFrame(),toScreen(base),+cfg.title_Ins);
 
   knob_ins.disable();
  }
@@ -315,6 +319,21 @@ ItemListWindow::ItemListWindow(SubWindowHost &host,const Config &cfg_)
   enableAdd(false);
 
   knob_ins.disable();
+
+  // bind hints
+
+  list.bindHint(cfg.hint_List);
+  edit.bindHint(cfg.hint_Edit);
+
+  knob_down.bindHint(cfg.hint_Down);
+  knob_up.bindHint(cfg.hint_Up);
+  knob_del.bindHint(cfg.hint_Del);
+  knob_add.bindHint(cfg.hint_Add);
+  knob_ins.bindHint(cfg.hint_Ins);
+
+  check_show.bindHint(cfg.hint_Show);
+  check_gray.bindHint(cfg.hint_Gray);
+  check_name.bindHint(cfg.hint_Name);
  }
 
 ItemListWindow::~ItemListWindow()

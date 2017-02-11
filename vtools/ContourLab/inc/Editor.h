@@ -46,6 +46,12 @@ class EditorWindow : public ComboWindow
 
      // app
 
+     RefVal<DefString> hint_File = "The current file"_def ;
+     RefVal<DefString> hint_Angle = "Set the selected angle"_def ;
+     RefVal<DefString> hint_Length = "Set the selected length"_def ;
+     RefVal<DefString> hint_Ratio = "Set the selected ratio"_def ;
+     RefVal<DefString> hint_Geom = "Draw of elements, use to set the selected point"_def ;
+
      CtorRefVal<EditAngleWindow::ConfigType> edit_angle_cfg;
      CtorRefVal<EditLengthWindow::ConfigType> edit_length_cfg;
      CtorRefVal<EditRatioWindow::ConfigType> edit_ratio_cfg;
@@ -63,6 +69,7 @@ class EditorWindow : public ComboWindow
         ilist_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
       }
 
      template <class Bag,class Proxy>
@@ -75,6 +82,16 @@ class EditorWindow : public ComboWindow
        text_cfg.bind(proxy);
        split_cfg.bind(proxy);
        msg_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       hint_File.bind(bag.hint_File);
+       hint_Angle.bind(bag.hint_Angle);
+       hint_Length.bind(bag.hint_Length);
+       hint_Ratio.bind(bag.hint_Ratio);
+       hint_Geom.bind(bag.hint_Geom);
       }
     };
 

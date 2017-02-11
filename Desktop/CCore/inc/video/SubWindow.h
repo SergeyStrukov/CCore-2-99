@@ -107,8 +107,7 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    SubWindowHost &host;
 
-   DefString hint_text;
-   bool hint_ok = false ;
+   const RefVal<DefString> * hint_text = 0 ;
 
    friend class SubWindowHost;
    friend class WindowList;
@@ -172,15 +171,14 @@ class SubWindow : public NoCopyBase<MemBase,UserInput,InterfaceHost>
 
    // hint
 
-   void setHintText(const DefString &str)
+   void bindHint(const RefVal<DefString> &str)
     {
-     hint_text=str;
-     hint_ok=true;
+     hint_text=&str;
     }
 
    virtual Hint getHint(Point point) const // relative host coords
     {
-     if( hint_ok && place.contains(point) ) return Hint(place,hint_text);
+     if( hint_text && place.contains(point) ) return Hint(place,hint_text->get());
 
      return Nothing;
     }

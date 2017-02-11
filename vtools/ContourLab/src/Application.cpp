@@ -83,7 +83,30 @@ struct AppPreferenceBag
   DefString text_gray = "gray"_def ;
   DefString text_name = "name"_def ;
 
-  DefString ins_title = "Function list"_def ;
+  DefString title_Ins = "Function list"_def ;
+
+  // hints
+
+  DefString hint_File = "The current file"_def ;
+  DefString hint_Angle = "Set the selected angle"_def ;
+  DefString hint_Length = "Set the selected length"_def ;
+  DefString hint_Ratio = "Set the selected ratio"_def ;
+  DefString hint_Geom = "Draw of elements, use to set the selected point"_def ;
+
+  DefString hint_function_List = "Select a function to be inserted into the cursor position"_def ;
+
+  DefString hint_item_List = "Geometry object list"_def ;
+  DefString hint_item_Edit = "Enter a formula to create a new object"_def ;
+
+  DefString hint_item_Down = "Move the object down in the list"_def ;
+  DefString hint_item_Up   = "Move the object up in the list"_def ;
+  DefString hint_item_Del  = "Delete the object"_def ;
+  DefString hint_item_Add  = "Add a new object"_def ;
+  DefString hint_item_Ins  = "Open the Function list window"_def ;
+
+  DefString hint_item_Show = "Show this object"_def ;
+  DefString hint_item_Gray = "Gray this object if not selected"_def ;
+  DefString hint_item_Name = "Show the name of this object"_def ;
 
   // constructors
 

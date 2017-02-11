@@ -372,9 +372,9 @@ FileFilterWindow::FileFilterWindow(SubWindowHost &host,const Config &cfg_,ulen i
 
   // set hints
 
-  check.setHintText(+cfg.hint_FileEnableFilter);
-  edit.setHintText(+cfg.hint_FileFilter);
-  knob.setHintText(+cfg.hint_FileDelFilter);
+  check.bindHint(cfg.hint_FileEnableFilter);
+  edit.bindHint(cfg.hint_FileFilter);
+  knob.bindHint(cfg.hint_FileDelFilter);
  }
 
 FileFilterWindow::~FileFilterWindow()
@@ -457,7 +457,7 @@ FileFilterListWindow::FileFilterListWindow(SubWindowHost &host,const ConfigType 
 
   // set hints
 
-  knob.setHintText(+cfg.hint_FileAddFilter);
+  knob.bindHint(cfg.hint_FileAddFilter);
  }
 
 FileFilterListWindow::~FileFilterListWindow()
@@ -1057,17 +1057,17 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
   edit_dir.hideInactiveCursor();
   edit_new_file.hideInactiveCursor();
 
-  // set hints
+  // bind hints
 
-  edit_dir.setHintText(+cfg.hint_FileCurdir);
-  knob_hit.setHintText(+cfg.hint_FileHitList);
-  knob_add.setHintText(+cfg.hint_FileAddHit);
-  knob_back.setHintText(+cfg.hint_FileUpdir);
-  list_dir.setHintText(+cfg.hint_FileDirList);
-  list_file.setHintText(+cfg.hint_FileList);
-  knob_mkdir.setHintText(+cfg.hint_FileMakeDir);
-  knob_rmdir.setHintText(+cfg.hint_FileRemoveDir);
-  alt_new_file.setHintText(+cfg.hint_FileAlt);
+  edit_dir.bindHint(cfg.hint_FileCurdir);
+  knob_hit.bindHint(cfg.hint_FileHitList);
+  knob_add.bindHint(cfg.hint_FileAddHit);
+  knob_back.bindHint(cfg.hint_FileUpdir);
+  list_dir.bindHint(cfg.hint_FileDirList);
+  list_file.bindHint(cfg.hint_FileList);
+  knob_mkdir.bindHint(cfg.hint_FileMakeDir);
+  knob_rmdir.bindHint(cfg.hint_FileRemoveDir);
+  alt_new_file.bindHint(cfg.hint_FileAlt);
  }
 
 FileWindow::~FileWindow()

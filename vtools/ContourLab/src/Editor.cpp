@@ -586,6 +586,14 @@ EditorWindow::EditorWindow(SubWindowHost &host,const Config &cfg_)
   builder.add("Solid(Loop loop)"_c,"SolidOf(?)"_c);
 
   list_formula.set(builder.complete());
+
+  // bind hints
+
+  text_file.bindHint(cfg.hint_File);
+  edit_angle.bindHint(cfg.hint_Angle);
+  edit_length.bindHint(cfg.hint_Length);
+  edit_ratio.bindHint(cfg.hint_Ratio);
+  geom.bindHint(cfg.hint_Geom);
  }
 
 EditorWindow::~EditorWindow()
