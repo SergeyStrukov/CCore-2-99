@@ -786,6 +786,44 @@ struct Geometry
 
   static Solid SolidOf(Loop loop) { return Solid(loop); }
 
+  // function list
+
+  template <class Func>
+  static void FunctionList(Func func)
+   {
+    func.template doIt<decltype(LengthOf),LengthOf>( "Len"_c ,"LengthOf"_c );
+    func.template doIt<decltype(AngleOf),AngleOf>( "Angle"_c , "AngleOf"_c );
+    func.template doIt<decltype(LineOf),LineOf>( "Line"_c , "LineOf"_c );
+    func.template doIt<decltype(Middle),Middle>( "Mid"_c , "Middle"_c );
+    func.template doIt<decltype(Part),Part>( "Part"_c , "Part"_c );
+    func.template doIt<decltype(MidOrt),MidOrt>( "MidOrt"_c , "MidOrt"_c );
+    func.template doIt<decltype(CircleOf),CircleOf>( "Cir"_c , "CircleOf"_c );
+    func.template doIt<decltype(CircleOuter),CircleOuter>( "OCir"_c , "CircleOuter"_c );
+    func.template doIt<decltype(Proj),Proj>( "Proj"_c , "Proj"_c );
+    func.template doIt<decltype(AngleC),AngleC>( "AngleC"_c , "AngleC"_c );
+    func.template doIt<decltype(Meet),Meet>( "Meet"_c , "Meet"_c );
+    func.template doIt<decltype(MeetCircle),MeetCircle>( "MeetCircle"_c , "MeetCircle"_c );
+    func.template doIt<decltype(MeetCircles),MeetCircles>( "MeetCircles"_c , "MeetCircles"_c );
+    func.template doIt<decltype(Rotate),Rotate>( "Rot"_c , "Rotate"_c );
+    func.template doIt<decltype(RotateOrt),RotateOrt>( "RotOrt"_c , "RotateOrt"_c );
+    func.template doIt<decltype(Move),Move>( "Move"_c , "Move"_c );
+    func.template doIt<decltype(MoveLen),MoveLen>( "MoveLen"_c , "MoveLen"_c );
+    func.template doIt<decltype(Mirror),Mirror>( "Mirror"_c , "Mirror"_c );
+    func.template doIt<decltype(First),First>( "First"_c , "First"_c );
+    func.template doIt<decltype(Second),Second>( "Second"_c , "Second"_c );
+    func.template doIt<decltype(Up),Up>( "Up"_c , "Up"_c );
+    func.template doIt<decltype(Down),Down>( "Down"_c , "Down"_c );
+    func.template doIt<decltype(Left),Left>( "Left"_c , "Left"_c );
+    func.template doIt<decltype(Right),Right>( "Right"_c , "Right"_c );
+    func.template doIt<decltype(SolidOf),SolidOf>( "Solid"_c , "SolidOf"_c );
+
+    func.template doIt<Step (Point[]),StepOf>( "Step"_c , "StepOf"_c );
+    func.template doIt<Path (Point[]),PathOf>( "Path"_c , "PathOf"_c );
+    func.template doIt<Loop (Point[]),LoopOf>( "Loop"_c , "LoopOf"_c );
+    func.template doIt<Path (Step[]),PathOf>( "BPath"_c , "BPathOf"_c );
+    func.template doIt<Loop (Step[]),LoopOf>( "BLoop"_c , "BLoopOf"_c );
+   }
+
   // conversions
 
   static MCoord Map(Geometry::Real x) { return (MCoord)x.map(MPoint::Precision); }

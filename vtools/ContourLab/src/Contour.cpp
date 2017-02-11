@@ -21,6 +21,8 @@
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
 
+#include <CCore/inc/StrMap.h>
+
 #include <CCore/inc/ddl/DDLEngine.h>
 #include <CCore/inc/ddl/DDLTypeSet.h>
 
@@ -494,11 +496,54 @@ struct Contour::CreateOp
    }
  };
 
-class Contour::FormulaTestContext : NoCopy , public CreateOp
+class Contour::FormulaTestContext : public NoCopyBase<CreateOp>
  {
   protected:
 
    const Contour *obj;
+
+   struct CreateFunc
+    {
+     StrLen text_name;
+
+     using FuncType = bool (*)(StrLen text_name,ExprType &ret,PtrLen<const ExprType> list) ;
+
+     FuncType func = 0 ;
+
+     CreateFunc() noexcept {}
+
+     CreateFunc(StrLen text_name_,FuncType func_) : text_name(text_name_),func(func_) {}
+
+     bool create(ExprType &ret,PtrLen<const ExprType> list)
+      {
+       return func(text_name,ret,list);
+      }
+    };
+
+   class Map : public StrMap<CreateFunc>
+    {
+      struct AddFunc
+       {
+        Map *obj;
+
+        template <class FormulaType,typename Formula<FormulaType>::FuncType F>
+        void doIt(StrLen name,StrLen text_name)
+         {
+          obj->add(name,text_name,Formula<FormulaType>::template SafeCreate<F>);
+         }
+       };
+
+     public:
+
+      Map()
+       {
+        FunctionList(AddFunc{this});
+
+        complete();
+       }
+    };
+
+   Map map;
 
   public:
 
@@ -513,51 +558,7 @@ class Contour::FormulaTestContext : NoCopy , public CreateOp
 
    bool func(ExprType &ret,StrLen name,PtrLen<const ExprType> list)
     {
-#define DEF(N,F) if( name.equal( #N ## _c ) ) return Formula<decltype(F)>::SafeCreate<F>(#F,ret,list);
-
-     DEF(Len,LengthOf)
-     DEF(Angle,AngleOf)
-     DEF(Line,LineOf)
-     DEF(Cir,CircleOf)
-     DEF(OCir,CircleOuter)
-     DEF(Mid,Middle)
-
-     DEF(Part,Part)
-     DEF(MidOrt,MidOrt)
-     DEF(Proj,Proj)
-     DEF(AngleC,AngleC)
-     DEF(Meet,Meet)
-     DEF(MeetCircle,MeetCircle)
-     DEF(MeetCircles,MeetCircles)
-     DEF(Rot,Rotate)
-     DEF(RotOrt,RotateOrt)
-     DEF(Move,Move)
-     DEF(MoveLen,MoveLen)
-     DEF(Mirror,Mirror)
-     DEF(First,First)
-     DEF(Second,Second)
-     DEF(Up,Up)
-     DEF(Down,Down)
-     DEF(Left,Left)
-     DEF(Right,Right)
-
-     DEF(Solid,SolidOf)
-
-#undef DEF
-
-#define DEF(N,T,A,F,TN) if( name.equal( #N ## _c ) ) return Formula<T (A[])>::SafeCreate<F>(#TN,ret,list);
-
-     DEF(Step,Step,Point,StepOf,StepOf)
-
-     DEF(Path,Path,Point,PathOf,PathOf)
-
-     DEF(Loop,Loop,Point,LoopOf,LoopOf)
-
-     DEF(BPath,Path,Step,PathOf,BPathOf)
-
-     DEF(BLoop,Loop,Step,LoopOf,BLoopOf)
-
-#undef DEF
+     if( auto *obj=map[name] ) return obj->create(ret,list);
 
      return false;
     }

@@ -1153,7 +1153,14 @@ void FileWindow::open()
      check_new_file_changed(true);
     }
 
-  if( Change(first_open,false) ) setDir("."_c);
+  if( Change(first_open,false) )
+    {
+     setDir("."_c);
+    }
+  else
+    {
+     if( list_dir.isEnabled() ) fillLists();
+    }
 
   hit_list.load(param.file_boss->getHitDirFile());
 

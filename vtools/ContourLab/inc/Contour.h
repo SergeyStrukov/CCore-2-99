@@ -276,6 +276,8 @@ struct Formular : Geometry
 
     static bool TestType(const Object *list,const int *type,int ind) { return list[ind].getTypeId()!=type[ind]; }
 
+    using FuncType = S (*)(SS...) ;
+
     template <S Func(SS...)>
     static bool SafeCreate(StrLen text_name,Object &ret,PtrLen<const Object> list)
      {
@@ -394,6 +396,8 @@ struct Formular : Geometry
 
       Text getText(ulen index) const { return {TextFormulaVariable,index,text_name,Range(args)}; }
      };
+
+    using FuncType = S (*)(ArgCursor<A>) ;
 
     template <S Func(ArgCursor<A>)>
     static bool SafeCreate(StrLen text_name,Object &ret,PtrLen<const Object> list)
