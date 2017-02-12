@@ -73,10 +73,24 @@ struct Formular : Geometry
     TextPad
    };
 
+  enum IndexType
+   {
+    IndexNone = 0,
+
+    IndexPad,
+    IndexFormula
+   };
+
+  struct Index
+   {
+    IndexType type = IndexNone ;
+    ulen index = MaxULen ;
+   };
+
   struct Text
    {
     TextType type;
-    ulen index;
+    Index index;
     StrLen name;
     PtrLen<const Object> args;
    };
@@ -91,7 +105,7 @@ struct Formular : Geometry
 
        public:
 
-        ulen index = MaxULen ;
+        Index index;
 
         Base() {}
 
@@ -222,9 +236,11 @@ struct Formular : Geometry
 
      Text getText() const { return ptr->getText(); }
 
-     ulen getIndex() const { return ptr->index; }
+     Index getIndex() const { return ptr->index; }
 
-     void setIndex(ulen index) const { ptr->index=index; }
+     void setIndex(Index index) const { ptr->index=index; }
+
+     void updateIndex(ulen index) const { ptr->index.index=index; }
    };
 
   template <class T,class ... SS>
@@ -268,7 +284,7 @@ struct Formular : Geometry
 
       S operator () () const { return SafeCall( args[IList].template get<SS>()... ); }
 
-      Text getText(ulen index) const { return {TextFormulaFixed,index,text_name,Range(args)}; }
+      Text getText(Index index) const { return {TextFormulaFixed,index,text_name,Range(args)}; }
      };
 
     template <S Func(SS...)>
@@ -359,7 +375,7 @@ struct Formular : Geometry
 
       S operator () () const { return SafeCall(Range(args)); }
 
-      Text getText(ulen index) const { return {TextFormulaVariable,index,text_name,Range(args)}; }
+      Text getText(Index index) const { return {TextFormulaVariable,index,text_name,Range(args)}; }
      };
 
     using FuncType = S (*)(ArgCursor<A>) ;
@@ -390,7 +406,7 @@ struct Formular : Geometry
 
     S operator () () const { return pad; }
 
-    Text getText(ulen index) const { return {TextPad,index}; }
+    Text getText(Index index) const { return {TextPad,index}; }
 
     static Object Create(const S &obj) { return CreateObject<Pad>(obj); }
    };
@@ -457,11 +473,11 @@ class ErrorText : NoCopy
 
    StrLen getText() const { return Range(buf.getPtr(),len); }
 
-   void setText(StrLen str)
-    {
-     len=Min(buf.getLen(),str.len);
+   PtrLen<char> getBuf() { return Range(buf); }
 
-     Range(buf.getPtr(),len).copy(str.ptr);
+   void setTextLen(ulen len_)
+    {
+     len=Min(buf.getLen(),len_);
     }
  };
 
@@ -519,7 +535,7 @@ class Contour : public NoCopyBase<Formular>
 
    static bool DownItem(DynArray<Item> &a,ulen index);
 
-   static void SetIndexes(DynArray<Item> &a,ulen index);
+   static void UpdateIndexes(DynArray<Item> &a,ulen index);
 
   private:
 

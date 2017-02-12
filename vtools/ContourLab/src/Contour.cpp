@@ -83,8 +83,8 @@ bool Contour::UpItem(DynArray<Item> &a,ulen index)
     {
      Swap(r[index],r[index-1]);
 
-     r[index].obj.setIndex(index);
-     r[index-1].obj.setIndex(index-1);
+     r[index].obj.updateIndex(index);
+     r[index-1].obj.updateIndex(index-1);
 
      return true;
     }
@@ -100,8 +100,8 @@ bool Contour::DownItem(DynArray<Item> &a,ulen index)
     {
      Swap(r[index],r[index+1]);
 
-     r[index].obj.setIndex(index);
-     r[index+1].obj.setIndex(index+1);
+     r[index].obj.updateIndex(index);
+     r[index+1].obj.updateIndex(index+1);
 
      return true;
     }
@@ -109,9 +109,9 @@ bool Contour::DownItem(DynArray<Item> &a,ulen index)
   return false;
  }
 
-void Contour::SetIndexes(DynArray<Item> &a,ulen index)
+void Contour::UpdateIndexes(DynArray<Item> &a,ulen index)
  {
-  for(ulen i=index,len=a.getLen(); i<len ;i++) a[i].obj.setIndex(i);
+  for(ulen i=index,len=a.getLen(); i<len ;i++) a[i].obj.updateIndex(i);
  }
 
 bool Contour::addPad(ulen index,StrLen name,Object obj)
@@ -135,7 +135,9 @@ bool Contour::addPad(ulen index,StrLen name,Object obj)
 
   ArrayCopyIns(pads,index,item);
 
-  SetIndexes(pads,index);
+  obj.setIndex({IndexPad,index});
+
+  UpdateIndexes(pads,index+1);
 
   return true;
  }
@@ -161,7 +163,9 @@ bool Contour::addFormula(ulen index,StrLen name,Object obj)
 
   ArrayCopyIns(formulas,index,item);
 
-  SetIndexes(formulas,index);
+  obj.setIndex({IndexFormula,index});
+
+  UpdateIndexes(formulas,index+1);
 
   return true;
  }
@@ -180,7 +184,7 @@ bool Contour::setFormula(ulen index,StrLen name,Object obj)
 
   formulas[index]=item;
 
-  obj.setIndex(index);
+  obj.setIndex({IndexFormula,index});
 
   return true;
  }
@@ -200,11 +204,11 @@ bool Contour::delItem(DynArray<Item> &a,ulen index)
 
      map.del(key);
 
-     a[index].obj.setIndex(MaxULen);
+     a[index].obj.setIndex({IndexNone});
 
      ArrayCopyDel(a,index);
 
-     SetIndexes(a,index);
+     UpdateIndexes(a,index);
 
      return true;
     }
@@ -536,7 +540,7 @@ class Contour::FormulaTestContext : public NoCopyBase<CreateOp>
 
    bool set(StrLen name,ExprType value)
     {
-     if( value.getIndex()!=MaxULen ) return false;
+     if( value.getIndex().type!=IndexNone ) return false;
 
      return obj->testName(name);
     }
@@ -615,7 +619,7 @@ class Contour::FormulaAddContext : public FormulaTestContext
 
    bool set(StrLen name,ExprType value)
     {
-     if( value.getIndex()!=MaxULen ) return false;
+     if( value.getIndex().type!=IndexNone ) return false;
 
      return const_cast<Contour *>(obj)->addFormula(index,name,value);
     }
@@ -646,28 +650,28 @@ struct Contour::PrintPad
   StrLen name;
   ulen ind;
 
-  void operator () (auto) {}
-
   void operator () () {}
+
+  void operator () (auto) {}
 
   void operator () (Ratio s)
    {
-    Printf(out,"Ratio #;#;={#;,#;};\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
+    Printf(out,"Ratio #;#; = { #; , #; };\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
    }
 
   void operator () (Angle s)
    {
-    Printf(out,"Angle #;#;={#;,#;};\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
+    Printf(out,"Angle #;#; = { #; , #; };\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
    }
 
   void operator () (Length s)
    {
-    Printf(out,"Length #;#;={#;,#;};\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
+    Printf(out,"Length #;#; = { #; , #; };\n\n",name,ind,s.val.toBin(),(uint8)s.rex);
    }
 
   void operator () (Point s)
    {
-    Printf(out,"Point #;#;={#;,#;,#;};\n\n",name,ind,s.x.toBin(),s.y.toBin(),(uint8)s.rex);
+    Printf(out,"Point #;#; = { #; , #; , #; };\n\n",name,ind,s.x.toBin(),s.y.toBin(),(uint8)s.rex);
    }
  };
 
@@ -687,7 +691,7 @@ struct Contour::PrintArg
    {
     auto t=o.getText();
 
-    if( t.index==MaxULen ) print(o,ind,t);
+    if( t.index.type==IndexNone ) print(o,ind,t);
    }
 
   void print(Object o,ulen ind,Text t)
@@ -697,36 +701,45 @@ struct Contour::PrintArg
        case TextFormulaFixed :
        case TextFormulaVariable :
         {
-         Printf(out,"#; F#;={",t.name,ind);
+         Printf(out,"#; F#; = { ",t.name,ind);
 
-         if( t.type==TextFormulaVariable ) Putch(out,'{');
+         if( t.type==TextFormulaVariable ) Putch(out,'{',' ');
 
          ulen base_ind=free_ind;
 
          free_ind+=t.args.len;
 
-         PrintFirst stem(""_c,","_c);
+         PrintFirst stem(""_c," , "_c);
 
          for(ulen i=0; i<t.args.len ;i++)
            {
             auto ta=t.args[i].getText();
 
-            if( ta.index==MaxULen )
+            switch( ta.index.type )
               {
-               Printf(out,"#;&F#;",stem,base_ind+i);
-              }
-            else
-              {
-               if( ta.type==TextPad )
-                 Printf(out,"#;Data.pads+#;",stem,ta.index);
-               else
-                 Printf(out,"#;Data.formulas+#;",stem,ta.index);
+               case IndexNone :
+                {
+                 Printf(out,"#;&F#;",stem,base_ind+i);
+                }
+               break;
+
+               case IndexPad :
+                {
+                 Printf(out,"#;Data.pads+#;",stem,ta.index.index);
+                }
+               break;
+
+               case IndexFormula :
+                {
+                 Printf(out,"#;Data.formulas+#;",stem,ta.index.index);
+                }
+               break;
               }
            }
 
-         if( t.type==TextFormulaVariable ) Putch(out,'}');
+         if( t.type==TextFormulaVariable ) Putch(out,' ','}');
 
-         Printf(out,"};\n\n");
+         Printf(out," };\n\n");
 
          for(ulen i=0; i<t.args.len ;i++) print(t.args[i],base_ind+i);
         }
@@ -759,7 +772,7 @@ struct Contour::PrintContour
 
      for(Dot dot : dots )
        {
-        Printf(out,"#;{{#;,#;,#;},#;}",stem,dot.point.x.toBin(),dot.point.y.toBin(),(uint8)dot.point.rex,DDLBool(dot.break_flag));
+        Printf(out,"#;{ { #; , #; , #; } , #; }",stem,dot.point.x.toBin(),dot.point.y.toBin(),(uint8)dot.point.rex,DDLBool(dot.break_flag));
        }
 
      Printf(out,"\n  },\n");
@@ -781,7 +794,7 @@ struct Contour::PrintContour
        {
         MPoint p=Map(dot.point);
 
-        Printf(out,"#;{{#;,#;},#;}",stem,p.x,p.y, dot.break_flag?"Smooth::DotBreak"_c:"Smooth::DotSimple"_c );
+        Printf(out,"#;{ { #; , #; } , #; }",stem,p.x,p.y, dot.break_flag?"Smooth::DotBreak"_c:"Smooth::DotSimple"_c );
        }
 
      Printf(out,"\n };\n\n");
@@ -790,9 +803,9 @@ struct Contour::PrintContour
     }
    }
 
-  void operator () (auto) {}
-
   void operator () () {}
+
+  void operator () (auto) {}
 
   void operator () (Path s)
    {
@@ -811,8 +824,7 @@ struct Contour::PrintContour
 
 void Contour::save(StrLen file_name,ErrorText &etext) const
  {
-  SimpleArray<char> temp(64_KByte);
-  PrintBuf eout(Range(temp));
+  PrintBuf eout(etext.getBuf());
 
   ReportExceptionTo<PrintBuf> report(eout);
 
@@ -901,7 +913,7 @@ void Contour::save(StrLen file_name,ErrorText &etext) const
     {
      Printf(eout,"\n@ #.q;",file_name);
 
-     etext.setText(eout.close());
+     etext.setTextLen(eout.close().len);
     }
  }
 
@@ -1536,8 +1548,7 @@ void Contour::load(StrLen file_name,ErrorText &etext)
  {
   erase();
 
-  SimpleArray<char> temp(64_KByte);
-  PrintBuf eout(Range(temp));
+  PrintBuf eout(etext.getBuf());
 
   ReportExceptionTo<PrintBuf> report(eout);
 
@@ -1551,7 +1562,7 @@ void Contour::load(StrLen file_name,ErrorText &etext)
        {
         Printf(eout,"\n@ #.q;",file_name);
 
-        etext.setText(eout.close());
+        etext.setTextLen(eout.close().len);
 
         return;
        }
@@ -1603,7 +1614,7 @@ void Contour::load(StrLen file_name,ErrorText &etext)
 
      Printf(eout,"\n@ #.q;",file_name);
 
-     etext.setText(eout.close());
+     etext.setTextLen(eout.close().len);
     }
  }
 
