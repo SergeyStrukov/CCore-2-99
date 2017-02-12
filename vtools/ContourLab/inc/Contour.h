@@ -27,6 +27,25 @@
 
 namespace App {
 
+/* classes */
+
+template <class Func> struct ArgCount;
+
+/* struct ArgCount<Func> */
+
+template <class S,class ... SS>
+struct ArgCount<S (SS...)>
+ {
+  enum RetType { Ret = sizeof ... (SS) };
+ };
+
+/* concept FuncArgCountType<Func,int Count> */
+
+template <class Func,int Count>
+concept bool FuncArgCountType = ( ArgCount<Func>::Ret == Count ) ;
+
+//----------------------------------------------------------------------------------------
+
 /* functions */
 
 void GuardTypeMismatch();

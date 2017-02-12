@@ -1332,26 +1332,20 @@ struct Contour::CreateDataPadObject : NoCopy
 
 struct Contour::CreateDataFormulaObject : CreateDataPadObject
  {
-  Contour *host;
+  Contour *cont;
   PtrLen<TypeDef::Formula> data_formulas;
   bool *lock;
 
-  CreateDataFormulaObject(Contour *host_,PtrLen<TypeDef::Formula> data_formulas_,bool *lock_)
-   : host(host_),data_formulas(data_formulas_),lock(lock_) {}
-
-  void create(AnyType ptr)
+  CreateDataFormulaObject(Contour *cont_,PtrLen<TypeDef::Formula> data_formulas_,bool *lock_)
+   : cont(cont_),
+     data_formulas(data_formulas_),
+     lock(lock_)
    {
-    if( !ptr )
-      {
-       Printf(Exception,"App::Contour::load(...) : null formula object");
-      }
-
-    ElaborateAnyPtr(*this,ptr);
    }
 
   void set(ulen i)
    {
-    Object o=host->formulas[i].obj;
+    Object o=cont->formulas[i].obj;
 
     if( o.getTypeId()!=0 )
       {
@@ -1369,17 +1363,17 @@ struct Contour::CreateDataFormulaObject : CreateDataPadObject
 
     create(formula.object.getPtr());
 
-    if( !host->setFormula(i,formula.label.name,obj) )
+    if( !cont->setFormula(i,formula.label.name,obj) )
       {
        Printf(Exception,"App::Contour::load(...) : cannot create formula");
       }
 
-    CopyFlags(host->formulas[i].label,formula.label);
+    CopyFlags(cont->formulas[i].label,formula.label);
    }
 
   Object createArg(AnyType ptr)
    {
-    CreateDataFormulaObject func(host,data_formulas,lock);
+    CreateDataFormulaObject func(cont,data_formulas,lock);
 
     func.create(ptr);
 
@@ -1394,11 +1388,21 @@ struct Contour::CreateDataFormulaObject : CreateDataPadObject
       }
    }
 
+  void create(AnyType ptr)
+   {
+    if( !ptr )
+      {
+       Printf(Exception,"App::Contour::load(...) : null formula object");
+      }
+
+    ElaborateAnyPtr(*this,ptr);
+   }
+
   using CreateDataPadObject::operator ();
 
   void operator () (TypeDef::Pad *ptr)
    {
-    obj=host->pads.at(ptr->index).obj;
+    obj=cont->pads.at(ptr->index).obj;
    }
 
   void operator () (TypeDef::Formula *ptr)
@@ -1435,61 +1439,59 @@ struct Contour::CreateDataFormulaObject : CreateDataPadObject
     Guard( CreateOp::div(obj,createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())) );
    }
 
-#define DEF1(F)                                                                     \
-  void operator () (TypeDef::F *ptr)                                                \
-   {                                                                                \
-    Object list[1]={createArg(ptr->a.getPtr())};                                    \
-                                                                                    \
-    Guard( Formula<decltype(F)>::SafeCreate<F>(#F,obj,Range(list)) );               \
+  template <FuncArgCountType<1> Func,Func *F,class T>
+  void createFunc(T *ptr,StrLen name)
+   {
+    Object list[1]={createArg(ptr->a.getPtr())};
+
+    Guard( Formula<Func>::template SafeCreate<F>(name,obj,Range(list)) );
    }
 
-#define DEF2(F)                                                                     \
-  void operator () (TypeDef::F *ptr)                                                \
-   {                                                                                \
-    Object list[2]={createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())};         \
-                                                                                    \
-    Guard( Formula<decltype(F)>::SafeCreate<F>(#F,obj,Range(list)) );               \
+  template <FuncArgCountType<2> Func,Func *F,class T>
+  void createFunc(T *ptr,StrLen name)
+   {
+    Object list[2]={createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr())};
+
+    Guard( Formula<Func>::template SafeCreate<F>(name,obj,Range(list)) );
    }
 
-#define DEF3(F)                                                                     \
-  void operator () (TypeDef::F *ptr)                                                \
-   {                                                                                \
-    Object list[3]={createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr()),createArg(ptr->c.getPtr())};     \
-                                                                                    \
-    Guard( Formula<decltype(F)>::SafeCreate<F>(#F,obj,Range(list)) );               \
+  template <FuncArgCountType<3> Func,Func *F,class T>
+  void createFunc(T *ptr,StrLen name)
+   {
+    Object list[3]={createArg(ptr->a.getPtr()),createArg(ptr->b.getPtr()),createArg(ptr->c.getPtr())};
+
+    Guard( Formula<Func>::template SafeCreate<F>(name,obj,Range(list)) );
    }
 
-  DEF2(LengthOf)
-  DEF3(AngleOf)
-  DEF2(LineOf)
-  DEF2(CircleOf)
-  DEF3(CircleOuter)
-  DEF2(Middle)
+#define DEF(F) void operator () (TypeDef::F *ptr) { createFunc<decltype(F),F>(ptr, #F ## _c ); }                                                                    \
 
-  DEF3(Part)
-  DEF2(MidOrt)
-  DEF2(Proj)
-  DEF3(AngleC)
-  DEF2(Meet)
-  DEF2(MeetCircle)
-  DEF2(MeetCircles)
-  DEF3(Rotate)
-  DEF2(RotateOrt)
-  DEF3(Move)
-  DEF3(MoveLen)
-  DEF2(Mirror)
-  DEF1(First)
-  DEF1(Second)
-  DEF2(Up)
-  DEF2(Down)
-  DEF2(Left)
-  DEF2(Right)
+  DEF(LengthOf)
+  DEF(AngleOf)
+  DEF(LineOf)
+  DEF(Middle)
+  DEF(Part)
+  DEF(MidOrt)
+  DEF(CircleOf)
+  DEF(CircleOuter)
+  DEF(Proj)
+  DEF(AngleC)
+  DEF(Meet)
+  DEF(MeetCircle)
+  DEF(MeetCircles)
+  DEF(Rotate)
+  DEF(RotateOrt)
+  DEF(Move)
+  DEF(MoveLen)
+  DEF(Mirror)
+  DEF(First)
+  DEF(Second)
+  DEF(Up)
+  DEF(Down)
+  DEF(Left)
+  DEF(Right)
+  DEF(SolidOf)
 
-  DEF1(SolidOf)
-
-#undef DEF1
-#undef DEF2
-#undef DEF3
+#undef DEF
 
   void fill(DynArray<Object> &list,PtrLen<TypeDef::Arg> r)
    {
