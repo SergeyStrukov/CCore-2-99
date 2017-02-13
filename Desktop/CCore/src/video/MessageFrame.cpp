@@ -127,11 +127,6 @@ MessageWindow & MessageWindow::add(const DefString &name,int btn_id)
 
  // drawing
 
-bool MessageWindow::isGoodSize(Point size) const
- {
-  return size>=getMinSize();
- }
-
 void MessageWindow::layout()
  {
   Coord space_dxy=+cfg.space_dxy;

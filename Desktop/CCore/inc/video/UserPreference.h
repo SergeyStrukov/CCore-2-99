@@ -25,6 +25,9 @@
 #include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/FileFrame.h>
 
+#include <CCore/inc/video/pref/SpinEdit.h>
+#include <CCore/inc/video/pref/CoordEdit.h>
+
 namespace CCore {
 namespace Video {
 
@@ -418,6 +421,13 @@ struct UserPreferenceBag
 
   DefString hint_FileAddFilter = "Add a filter"_def ;
 
+  // CoordEdit
+
+  MCoord coord_edit_width = Fraction(1) ;
+  Coord coord_edit_mark_dy = 3 ;
+
+  VColor coord_edit_line = Black ;
+
   // constructors
 
   UserPreferenceBag() noexcept {}
@@ -476,7 +486,10 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            FileFilterListWindow::ConfigType,
                                            FileCheckShape::Config,
                                            FileWindow::ConfigType,
-                                           FileFrame::ConfigType
+                                           FileFrame::ConfigType,
+
+                                           SpinEditWindow::ConfigType,
+                                           CoordEditWindow::ConfigType
                                           >
  {
    static StrLen PrefFile();

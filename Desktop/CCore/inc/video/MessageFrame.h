@@ -154,8 +154,6 @@ class MessageWindow : public ComboWindow
 
    // drawing
 
-   virtual bool isGoodSize(Point size) const;
-
    virtual void layout();
 
    virtual void drawBack(DrawBuf buf,bool drag_active) const;

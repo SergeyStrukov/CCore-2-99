@@ -613,11 +613,6 @@ class ScrollListWindowOf : public ComboWindow , public ScrollListWindowBase
 
    // drawing
 
-   virtual bool isGoodSize(Point size) const
-    {
-     return inner.isGoodSize(size);
-    }
-
    virtual void layout()
     {
      Pane all(Null,getSize());

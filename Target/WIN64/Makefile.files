@@ -40,6 +40,7 @@ obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
 obj/Color.o \
+obj/ColorEdit.o \
 obj/ColorField.o \
 obj/CommonDrawArt.o \
 obj/CommonIntAlgo.o \
@@ -48,6 +49,7 @@ obj/CompactMap.o \
 obj/CompactNodeAllocator.o \
 obj/ConfigStore.o \
 obj/ContainerList.o \
+obj/CoordEdit.o \
 obj/Counters.o \
 obj/Crc.o \
 obj/CreateAt.o \
@@ -109,6 +111,7 @@ obj/FileSystem.o \
 obj/FileToMem.o \
 obj/Font.o \
 obj/FontDatabase.o \
+obj/FontEdit.o \
 obj/FontParam.o \
 obj/Forget.o \
 obj/FrameBase.o \
@@ -158,6 +161,7 @@ obj/ListCursor.o \
 obj/LockObject.o \
 obj/Locked.o \
 obj/Log.o \
+obj/MCoordEdit.o \
 obj/MD5.o \
 obj/MSec.o \
 obj/MakeFileName.o \
@@ -230,6 +234,7 @@ obj/PlanInit.o \
 obj/PlanInit_CCore.o \
 obj/PlatformBase.o \
 obj/Point.o \
+obj/PointEdit.o \
 obj/PosSub.o \
 obj/Print.o \
 obj/PrintAbort.o \
@@ -318,6 +323,7 @@ obj/SmoothDrawArt.o \
 obj/Sort.o \
 obj/SortUnique.o \
 obj/Space.o \
+obj/SpinEdit.o \
 obj/StartStop.o \
 obj/Starter.o \
 obj/StepEval.o \
@@ -446,6 +452,7 @@ obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
 obj/Color.s \
+obj/ColorEdit.s \
 obj/ColorField.s \
 obj/CommonDrawArt.s \
 obj/CommonIntAlgo.s \
@@ -454,6 +461,7 @@ obj/CompactMap.s \
 obj/CompactNodeAllocator.s \
 obj/ConfigStore.s \
 obj/ContainerList.s \
+obj/CoordEdit.s \
 obj/Counters.s \
 obj/Crc.s \
 obj/CreateAt.s \
@@ -515,6 +523,7 @@ obj/FileSystem.s \
 obj/FileToMem.s \
 obj/Font.s \
 obj/FontDatabase.s \
+obj/FontEdit.s \
 obj/FontParam.s \
 obj/Forget.s \
 obj/FrameBase.s \
@@ -564,6 +573,7 @@ obj/ListCursor.s \
 obj/LockObject.s \
 obj/Locked.s \
 obj/Log.s \
+obj/MCoordEdit.s \
 obj/MD5.s \
 obj/MSec.s \
 obj/MakeFileName.s \
@@ -636,6 +646,7 @@ obj/PlanInit.s \
 obj/PlanInit_CCore.s \
 obj/PlatformBase.s \
 obj/Point.s \
+obj/PointEdit.s \
 obj/PosSub.s \
 obj/Print.s \
 obj/PrintAbort.s \
@@ -724,6 +735,7 @@ obj/SmoothDrawArt.s \
 obj/Sort.s \
 obj/SortUnique.s \
 obj/Space.s \
+obj/SpinEdit.s \
 obj/StartStop.s \
 obj/Starter.s \
 obj/StepEval.s \
@@ -852,6 +864,7 @@ obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
 obj/Color.dep \
+obj/ColorEdit.dep \
 obj/ColorField.dep \
 obj/CommonDrawArt.dep \
 obj/CommonIntAlgo.dep \
@@ -860,6 +873,7 @@ obj/CompactMap.dep \
 obj/CompactNodeAllocator.dep \
 obj/ConfigStore.dep \
 obj/ContainerList.dep \
+obj/CoordEdit.dep \
 obj/Counters.dep \
 obj/Crc.dep \
 obj/CreateAt.dep \
@@ -921,6 +935,7 @@ obj/FileSystem.dep \
 obj/FileToMem.dep \
 obj/Font.dep \
 obj/FontDatabase.dep \
+obj/FontEdit.dep \
 obj/FontParam.dep \
 obj/Forget.dep \
 obj/FrameBase.dep \
@@ -970,6 +985,7 @@ obj/ListCursor.dep \
 obj/LockObject.dep \
 obj/Locked.dep \
 obj/Log.dep \
+obj/MCoordEdit.dep \
 obj/MD5.dep \
 obj/MSec.dep \
 obj/MakeFileName.dep \
@@ -1042,6 +1058,7 @@ obj/PlanInit.dep \
 obj/PlanInit_CCore.dep \
 obj/PlatformBase.dep \
 obj/Point.dep \
+obj/PointEdit.dep \
 obj/PosSub.dep \
 obj/Print.dep \
 obj/PrintAbort.dep \
@@ -1130,6 +1147,7 @@ obj/SmoothDrawArt.dep \
 obj/Sort.dep \
 obj/SortUnique.dep \
 obj/Space.dep \
+obj/SpinEdit.dep \
 obj/StartStop.dep \
 obj/Starter.dep \
 obj/StepEval.dep \
@@ -1352,6 +1370,9 @@ obj/Collector.o : ../../Fundamental/CCore/src/array/Collector.cpp
 obj/Color.o : ../../Applied/CCore/src/video/Color.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/ColorEdit.o : ../../Desktop/CCore/src/video/pref/ColorEdit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ColorField.o : ../../Desktop/CCore/src/video/ColorField.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1374,6 +1395,9 @@ obj/ConfigStore.o : ../../Desktop/CCore/src/video/ConfigStore.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ContainerList.o : ../../Fundamental/CCore/src/ContainerList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CoordEdit.o : ../../Desktop/CCore/src/video/pref/CoordEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Counters.o : ../../Simple/CCore/src/Counters.cpp
@@ -1559,6 +1583,9 @@ obj/Font.o : ../../Desktop/CCore/src/video/Font.cpp
 obj/FontDatabase.o : ../../Desktop/CCore/src/video/FontDatabase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/FontEdit.o : ../../Desktop/CCore/src/video/pref/FontEdit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/FontParam.o : ../../Desktop/CCore/src/video/FontParam.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1704,6 +1731,9 @@ obj/Locked.o : ../../Simple/CCore/src/gadget/Locked.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Log.o : ../../Applied/CCore/src/Log.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MCoordEdit.o : ../../Desktop/CCore/src/video/pref/MCoordEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MD5.o : ../../Applied/CCore/src/crypton/MD5.cpp
@@ -1920,6 +1950,9 @@ obj/PlatformBase.o : ../../Target/WIN64/CCore/src/base/PlatformBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Point.o : ../../Applied/CCore/src/video/Point.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PointEdit.o : ../../Desktop/CCore/src/video/pref/PointEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PosSub.o : ../../Simple/CCore/src/gadget/PosSub.cpp
@@ -2184,6 +2217,9 @@ obj/SortUnique.o : ../../Fundamental/CCore/src/algon/SortUnique.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Space.o : ../../Simple/CCore/src/gadget/Space.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SpinEdit.o : ../../Desktop/CCore/src/video/pref/SpinEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/StartStop.o : ../../Simple/CCore/src/StartStop.cpp
@@ -2563,6 +2599,9 @@ obj/Collector.s : ../../Fundamental/CCore/src/array/Collector.cpp
 obj/Color.s : ../../Applied/CCore/src/video/Color.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ColorEdit.s : ../../Desktop/CCore/src/video/pref/ColorEdit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ColorField.s : ../../Desktop/CCore/src/video/ColorField.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2585,6 +2624,9 @@ obj/ConfigStore.s : ../../Desktop/CCore/src/video/ConfigStore.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ContainerList.s : ../../Fundamental/CCore/src/ContainerList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CoordEdit.s : ../../Desktop/CCore/src/video/pref/CoordEdit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Counters.s : ../../Simple/CCore/src/Counters.cpp
@@ -2770,6 +2812,9 @@ obj/Font.s : ../../Desktop/CCore/src/video/Font.cpp
 obj/FontDatabase.s : ../../Desktop/CCore/src/video/FontDatabase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FontEdit.s : ../../Desktop/CCore/src/video/pref/FontEdit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FontParam.s : ../../Desktop/CCore/src/video/FontParam.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2915,6 +2960,9 @@ obj/Locked.s : ../../Simple/CCore/src/gadget/Locked.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Log.s : ../../Applied/CCore/src/Log.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MCoordEdit.s : ../../Desktop/CCore/src/video/pref/MCoordEdit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/MD5.s : ../../Applied/CCore/src/crypton/MD5.cpp
@@ -3131,6 +3179,9 @@ obj/PlatformBase.s : ../../Target/WIN64/CCore/src/base/PlatformBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Point.s : ../../Applied/CCore/src/video/Point.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PointEdit.s : ../../Desktop/CCore/src/video/pref/PointEdit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/PosSub.s : ../../Simple/CCore/src/gadget/PosSub.cpp
@@ -3395,6 +3446,9 @@ obj/SortUnique.s : ../../Fundamental/CCore/src/algon/SortUnique.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Space.s : ../../Simple/CCore/src/gadget/Space.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SpinEdit.s : ../../Desktop/CCore/src/video/pref/SpinEdit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/StartStop.s : ../../Simple/CCore/src/StartStop.cpp
@@ -3774,6 +3828,9 @@ obj/Collector.dep : ../../Fundamental/CCore/src/array/Collector.cpp
 obj/Color.dep : ../../Applied/CCore/src/video/Color.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Color.o $< -MF $@
 
+obj/ColorEdit.dep : ../../Desktop/CCore/src/video/pref/ColorEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ColorEdit.o $< -MF $@
+
 obj/ColorField.dep : ../../Desktop/CCore/src/video/ColorField.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ColorField.o $< -MF $@
 
@@ -3797,6 +3854,9 @@ obj/ConfigStore.dep : ../../Desktop/CCore/src/video/ConfigStore.cpp
 
 obj/ContainerList.dep : ../../Fundamental/CCore/src/ContainerList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ContainerList.o $< -MF $@
+
+obj/CoordEdit.dep : ../../Desktop/CCore/src/video/pref/CoordEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CoordEdit.o $< -MF $@
 
 obj/Counters.dep : ../../Simple/CCore/src/Counters.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Counters.o $< -MF $@
@@ -3981,6 +4041,9 @@ obj/Font.dep : ../../Desktop/CCore/src/video/Font.cpp
 obj/FontDatabase.dep : ../../Desktop/CCore/src/video/FontDatabase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FontDatabase.o $< -MF $@
 
+obj/FontEdit.dep : ../../Desktop/CCore/src/video/pref/FontEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FontEdit.o $< -MF $@
+
 obj/FontParam.dep : ../../Desktop/CCore/src/video/FontParam.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FontParam.o $< -MF $@
 
@@ -4127,6 +4190,9 @@ obj/Locked.dep : ../../Simple/CCore/src/gadget/Locked.cpp
 
 obj/Log.dep : ../../Applied/CCore/src/Log.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Log.o $< -MF $@
+
+obj/MCoordEdit.dep : ../../Desktop/CCore/src/video/pref/MCoordEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MCoordEdit.o $< -MF $@
 
 obj/MD5.dep : ../../Applied/CCore/src/crypton/MD5.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MD5.o $< -MF $@
@@ -4343,6 +4409,9 @@ obj/PlatformBase.dep : ../../Target/WIN64/CCore/src/base/PlatformBase.cpp
 
 obj/Point.dep : ../../Applied/CCore/src/video/Point.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Point.o $< -MF $@
+
+obj/PointEdit.dep : ../../Desktop/CCore/src/video/pref/PointEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PointEdit.o $< -MF $@
 
 obj/PosSub.dep : ../../Simple/CCore/src/gadget/PosSub.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PosSub.o $< -MF $@
@@ -4607,6 +4676,9 @@ obj/SortUnique.dep : ../../Fundamental/CCore/src/algon/SortUnique.cpp
 
 obj/Space.dep : ../../Simple/CCore/src/gadget/Space.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Space.o $< -MF $@
+
+obj/SpinEdit.dep : ../../Desktop/CCore/src/video/pref/SpinEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SpinEdit.o $< -MF $@
 
 obj/StartStop.dep : ../../Simple/CCore/src/StartStop.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StartStop.o $< -MF $@

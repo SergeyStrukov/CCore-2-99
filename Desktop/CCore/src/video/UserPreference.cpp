@@ -315,6 +315,11 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_FileFilter",ptr->hint_FileFilter);
 
   func("hint_FileAddFilter",ptr->hint_FileAddFilter);
+
+  func("coord_edit_width",ptr->coord_edit_width);
+  func("coord_edit_mark_dy",ptr->coord_edit_mark_dy);
+
+  func("coord_edit_line",ptr->coord_edit_line);
  }
 
 void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
@@ -536,6 +541,13 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("?'Delete filter'"_def,hint_FileDelFilter);
    binder.item("?'Filename filter'"_def,hint_FileFilter);
    binder.item("?'Add filter'"_def,hint_FileAddFilter);
+
+  binder.group("CoordEdit window"_def);
+
+    binder.item("line width"_def,coord_edit_width);
+    binder.item("mark height"_def,coord_edit_mark_dy);
+    binder.space();
+    binder.item("line"_def,coord_edit_line);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here

@@ -76,6 +76,16 @@ FileFrame.h          ++
         
 UserPreference.h     ++
 
+--- Pref -----------------------------------------------------------------------
+
+SpinEdit.h           .
+CoordEdit.h          .
+MCoordEdit.h
+PointEdit.h
+
+ColorEdit.h
+FontEdit.h
+
 --------------------------------------------------------------------------------
 
  
