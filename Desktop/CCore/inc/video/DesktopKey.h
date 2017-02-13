@@ -21,9 +21,9 @@
 namespace CCore {
 namespace Video {
 
-/* global HomeKey */
+/* HomeKey() */
 
-extern const char *const HomeKey; // "/ABED...."
+StrLen HomeKey(); // "/ABED...."
 
 } // namespace Video
 } // namespace CCore

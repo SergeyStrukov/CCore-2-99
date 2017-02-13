@@ -177,7 +177,7 @@ void DirHitList::load(StrLen hit_file)
 
      MakeString<MaxPathLen> buf;
 
-     buf.add(home.get(),HomeKey,'/',hit_file);
+     buf.add(home.get(),HomeKey(),'/',hit_file);
 
      if( !buf )
        {
@@ -203,7 +203,7 @@ void DirHitList::save(StrLen hit_file) const
 
      MakeString<MaxPathLen> buf;
 
-     buf.add(home.get(),HomeKey);
+     buf.add(home.get(),HomeKey());
 
      StrLen dir=buf.get();
 

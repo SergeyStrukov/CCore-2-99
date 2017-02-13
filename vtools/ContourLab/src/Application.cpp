@@ -111,12 +111,94 @@ struct AppPreferenceBag
   // constructors
 
   AppPreferenceBag() noexcept {}
+
+  // methods
+
+  template <class Ptr,class Func>
+  static void Members(Ptr ptr,Func func);
+
+  void bind(ConfigItemBind &binder);
+
+  void createFonts();
  };
+
+template <class Ptr,class Func>
+void AppPreferenceBag::Members(Ptr ptr,Func func)
+ {
+  func("arrow_size",ptr->arrow_size);
+
+  func("shade_dxy",ptr->shade_dxy);
+
+  func("back",ptr->back);
+  func("border",ptr->border);
+  func("face",ptr->face);
+  func("gray",ptr->gray);
+  func("vtext",ptr->text);
+  func("hilight",ptr->hilight);
+  func("focus",ptr->focus);
+
+  func("edit_angle_dxy",ptr->edit_angle_dxy);
+
+  func("edit_length_dx",ptr->edit_length_dx);
+  func("edit_length_dy",ptr->edit_length_dy);
+
+  func("edit_ratio_dx",ptr->edit_ratio_dx);
+  func("edit_ratio_dy",ptr->edit_ratio_dy);
+
+  func("edit_text",ptr->edit_text);
+  func("edit_error_text",ptr->edit_error_text);
+  func("edit_number_text",ptr->edit_number_text);
+  func("edit_length_text",ptr->edit_length_text);
+  func("edit_angle_text",ptr->edit_angle_text);
+  func("edit_name_text",ptr->edit_name_text);
+  func("edit_punct_text",ptr->edit_punct_text);
+
+  func("edit_delay",ptr->edit_delay);
+
+  func("geometry_dxy",ptr->geometry_dxy);
+  func("text_show",ptr->text_show);
+  func("text_gray",ptr->text_gray);
+  func("text_name",ptr->text_name);
+  func("title_Ins",ptr->title_Ins);
+
+  func("hint_File",ptr->hint_File);
+  func("hint_Angle",ptr->hint_Angle);
+  func("hint_Length",ptr->hint_Length);
+  func("hint_Ratio",ptr->hint_Ratio);
+  func("hint_Geom",ptr->hint_Geom);
+
+  func("hint_function_List",ptr->hint_function_List);
+
+  func("hint_item_List",ptr->hint_item_List);
+  func("hint_item_Edit",ptr->hint_item_Edit);
+
+  func("hint_item_Down",ptr->hint_item_Down);
+  func("hint_item_Up",ptr->hint_item_Up);
+  func("hint_item_Del",ptr->hint_item_Del);
+  func("hint_item_Add",ptr->hint_item_Add);
+  func("hint_item_Ins",ptr->hint_item_Ins);
+
+  func("hint_item_Show",ptr->hint_item_Show);
+  func("hint_item_Gray",ptr->hint_item_Gray);
+  func("hint_item_Name",ptr->hint_item_Name);
+ }
+
+void AppPreferenceBag::bind(ConfigItemBind &binder) // TODO
+ {
+ }
+
+void AppPreferenceBag::createFonts()
+ {
+ }
 
 /* class AppPreference */
 
 class AppPreference : public ConfigBinder<AppPreferenceBag>
  {
+   static StrLen Key() { return "/5C73F691B5ED963C3580A06131FD2D6EC57ECE3349028B3986554636EC1A70B8"_c;  }
+
+   static StrLen File() { return "/AppPreference.ddl"_c;  }
+
   public:
 
    // constructors
@@ -127,6 +209,18 @@ class AppPreference : public ConfigBinder<AppPreferenceBag>
 
    ~AppPreference()
     {
+    }
+
+   // methods
+
+   void sync() noexcept
+    {
+     syncHome(Key(),File());
+    }
+
+   void update() noexcept
+    {
+     updateHome(Key(),File());
     }
  };
 
@@ -236,6 +330,7 @@ int Main(CmdDisplay cmd_display)
      SetAppIcon(DefaultAppIcon());
 
      param.pref.sync();
+     param.app_pref.sync();
 
      Application app(report,param,cmd_display);
 

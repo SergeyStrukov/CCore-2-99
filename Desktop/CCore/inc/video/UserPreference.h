@@ -32,7 +32,11 @@ namespace Video {
 
 struct FontCouple;
 
+struct HomeSyncBase;
+
 template <class Bag,class ... TT> class ConfigBinder;
+
+struct ConfigItemBind;
 
 struct UserPreferenceBag;
 
@@ -50,10 +54,23 @@ struct FontCouple
   void create() { font=param.create(); }
  };
 
+/* struct HomeSyncBase */
+
+struct HomeSyncBase
+ {
+  virtual void syncMap(ConfigMap &map)=0;
+
+  virtual void updateMap(ConfigMap &map) const = 0;
+
+  void syncHome(StrLen home_dir,StrLen cfg_file) noexcept; // "/dir" "/file"
+
+  void updateHome(StrLen home_dir,StrLen cfg_file) noexcept; // "/dir" "/file"
+ };
+
 /* class ConfigBinder<Bag,TT> */
 
 template <class Bag,class ... TT>
-class ConfigBinder : NoCopyBase<Bag>
+class ConfigBinder : NoCopyBase<Bag> , public HomeSyncBase
  {
    template <class T>
    struct Item
@@ -110,6 +127,18 @@ class ConfigBinder : NoCopyBase<Bag>
      return static_cast<const Item<T> &>(pack).obj;
     }
 
+   virtual void syncMap(ConfigMap &map)
+    {
+     Bag::Members(this, [&map] (const char *name,AnyType &obj) { map.sync(name,obj); } );
+
+     Bag::createFonts();
+    }
+
+   virtual void updateMap(ConfigMap &map) const
+    {
+     Bag::Members(this, [&map] (const char *name,AnyType &obj) { map.update(name,obj); } );
+    }
+
    // getSmartConfig()
 
    class Proxy
@@ -125,6 +154,35 @@ class ConfigBinder : NoCopyBase<Bag>
     };
 
    Proxy getSmartConfig() const { return this; }
+ };
+
+/* struct ConfigItemBind */
+
+struct ConfigItemBind
+ {
+  virtual void group(DefString name)=0;
+
+  virtual void space()=0;
+
+  virtual void item(DefString name,unsigned &var)=0;
+
+  virtual void item(DefString name,Coord &var)=0;
+
+  virtual void item(DefString name,MCoord &var)=0;
+
+  virtual void item(DefString name,VColor &var)=0;
+
+  virtual void item(DefString name,Clr &var)=0;
+
+  virtual void item(DefString name,Point &var)=0;
+
+  virtual void item(DefString name,DefString &var)=0;
+
+  virtual void item(DefString name,FontCouple &var)=0;
+
+  virtual void item(DefString name,bool &var)=0;
+
+  virtual void item(DefString name,Ratio &var)=0;
  };
 
 /* struct UserPreferenceBag */
@@ -369,38 +427,7 @@ struct UserPreferenceBag
   template <class Ptr,class Func>
   static void Members(Ptr ptr,Func func);
 
-  void sync(ConfigMap &map);
-
-  void update(ConfigMap &map) const;
-
-  struct Bind
-   {
-    virtual void group(DefString name)=0;
-
-    virtual void space()=0;
-
-    virtual void item(DefString name,Coord &var)=0;
-
-    virtual void item(DefString name,MCoord &var)=0;
-
-    virtual void item(DefString name,VColor &var)=0;
-
-    virtual void item(DefString name,Clr &var)=0;
-
-    virtual void item(DefString name,unsigned &var)=0;
-
-    virtual void item(DefString name,DefString &var)=0;
-
-    virtual void item(DefString name,Point &var)=0;
-
-    virtual void item(DefString name,FontCouple &var)=0;
-
-    virtual void item(DefString name,bool &var)=0;
-
-    virtual void item(DefString name,Ratio &var)=0;
-   };
-
-  void bind(Bind &binder);
+  void bind(ConfigItemBind &binder);
 
   void createFonts();
  };
@@ -452,7 +479,7 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            FileFrame::ConfigType
                                           >
  {
-   static const char *const PrefFile;
+   static StrLen PrefFile();
 
   public:
 

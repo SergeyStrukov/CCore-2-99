@@ -393,7 +393,7 @@ void FontDatabase::tryCache()
 
   MakeString<MaxPathLen> buf;
 
-  buf.add(home.get(),HomeKey,CacheFile());
+  buf.add(home.get(),HomeKey(),CacheFile());
 
   if( !buf )
     {
@@ -409,7 +409,7 @@ void FontDatabase::saveCache() const
 
   MakeString<MaxPathLen> buf;
 
-  buf.add(home.get(),HomeKey);
+  buf.add(home.get(),HomeKey());
 
   StrLen dir=buf.get();
 

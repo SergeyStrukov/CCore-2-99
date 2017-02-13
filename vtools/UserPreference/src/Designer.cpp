@@ -420,7 +420,7 @@ class DesignerWindow::PrefInfo::Base : public ComboInfoBase
 
 /* class DesignerWindow::PrefInfo::Binder */
 
-class DesignerWindow::PrefInfo::Binder : public UserPreferenceBag::Bind
+class DesignerWindow::PrefInfo::Binder : public ConfigItemBind
  {
    Base *base;
 

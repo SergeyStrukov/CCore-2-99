@@ -18,9 +18,9 @@
 namespace CCore {
 namespace Video {
 
-/* global HomeKey */
+/* HomeKey() */
 
-const char *const HomeKey="/ABED40C1F3A7CF2B30372A5D3619A8377AC83B89B229D15FB102E60100737DE7";
+StrLen HomeKey() { return "/ABED40C1F3A7CF2B30372A5D3619A8377AC83B89B229D15FB102E60100737DE7"_c; }
 
 } // namespace Video
 } // namespace CCore

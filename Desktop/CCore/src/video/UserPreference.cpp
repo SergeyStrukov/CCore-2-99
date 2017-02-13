@@ -26,6 +26,87 @@
 namespace CCore {
 namespace Video {
 
+/* struct HomeSyncBase */
+
+void HomeSyncBase::syncHome(StrLen home_dir,StrLen cfg_file) noexcept
+ {
+  try
+    {
+     HomeDir home;
+
+     MakeString<MaxPathLen> buf;
+
+     buf.add(home.get(),home_dir);
+
+     StrLen dir=buf.get();
+
+     buf.add(cfg_file);
+
+     if( !buf )
+       {
+        Printf(Exception,"CCore::Video::HomeSyncBase::syncHome(...) : too long file name");
+       }
+
+     StrLen file_name=buf.get();
+
+     ConfigMap map;
+
+     map.loadDDL_safe(file_name);
+
+     syncMap(map);
+
+     if( map.isModified() )
+       {
+        FileSystem fs;
+
+        if( fs.getFileType(dir)==FileType_none ) fs.createDir(dir);
+
+        map.saveDDL(file_name);
+       }
+    }
+  catch(...)
+    {
+    }
+ }
+
+void HomeSyncBase::updateHome(StrLen home_dir,StrLen cfg_file) noexcept
+ {
+  try
+    {
+     HomeDir home;
+
+     MakeString<MaxPathLen> buf;
+
+     buf.add(home.get(),home_dir);
+
+     StrLen dir=buf.get();
+
+     buf.add(cfg_file);
+
+     if( !buf )
+       {
+        Printf(Exception,"CCore::Video::HomeSyncBase::updateHome(...) : too long file name");
+       }
+
+     StrLen file_name=buf.get();
+
+     ConfigMap map;
+
+     map.loadDDL_safe(file_name);
+
+     updateMap(map);
+
+     FileSystem fs;
+
+     if( fs.getFileType(dir)==FileType_none ) fs.createDir(dir);
+
+     map.saveDDL(file_name);
+    }
+  catch(...)
+    {
+    }
+ }
+
 /* struct UserPreferenceBag */
 
 template <class Ptr,class Func>
@@ -236,19 +317,7 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_FileAddFilter",ptr->hint_FileAddFilter);
  }
 
-void UserPreferenceBag::sync(ConfigMap &map)
- {
-  Members(this, [&map] (const char *name,AnyType &obj) { map.sync(name,obj); } );
-
-  createFonts();
- }
-
-void UserPreferenceBag::update(ConfigMap &map) const
- {
-  Members(this, [&map] (const char *name,AnyType &obj) { map.update(name,obj); } );
- }
-
-void UserPreferenceBag::bind(Bind &binder) // Update here
+void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
  {
   binder.group("Common"_def);
 
@@ -490,7 +559,7 @@ void UserPreferenceBag::createFonts() // Update fonts here
 
 /* class UserPreference */
 
-const char *const UserPreference::PrefFile="/UserPreference.ddl";
+StrLen UserPreference::PrefFile() { return "/UserPreference.ddl"_c; }
 
 UserPreference::UserPreference() noexcept
  {
@@ -502,81 +571,12 @@ UserPreference::~UserPreference()
 
 void UserPreference::sync() noexcept
  {
-  try
-    {
-     HomeDir home;
-
-     MakeString<MaxPathLen> buf;
-
-     buf.add(home.get(),HomeKey);
-
-     StrLen dir=buf.get();
-
-     buf.add(PrefFile);
-
-     if( !buf )
-       {
-        Printf(Exception,"CCore::Video::UserPreference::sync() : too long file name");
-       }
-
-     StrLen file_name=buf.get();
-
-     ConfigMap map;
-
-     map.loadDDL_safe(file_name);
-
-     ref().sync(map);
-
-     if( map.isModified() )
-       {
-        FileSystem fs;
-
-        if( fs.getFileType(dir)==FileType_none ) fs.createDir(dir);
-
-        map.saveDDL(file_name);
-       }
-    }
-  catch(...)
-    {
-    }
+  syncHome(HomeKey(),PrefFile());
  }
 
 void UserPreference::update() noexcept
  {
-  try
-    {
-     HomeDir home;
-
-     MakeString<MaxPathLen> buf;
-
-     buf.add(home.get(),HomeKey);
-
-     StrLen dir=buf.get();
-
-     buf.add(PrefFile);
-
-     if( !buf )
-       {
-        Printf(Exception,"CCore::Video::UserPreference::update() : too long file name");
-       }
-
-     StrLen file_name=buf.get();
-
-     ConfigMap map;
-
-     map.loadDDL_safe(file_name);
-
-     ref().update(map);
-
-     FileSystem fs;
-
-     if( fs.getFileType(dir)==FileType_none ) fs.createDir(dir);
-
-     map.saveDDL(file_name);
-    }
-  catch(...)
-    {
-    }
+  updateHome(HomeKey(),PrefFile());
  }
 
 } // namespace Video
