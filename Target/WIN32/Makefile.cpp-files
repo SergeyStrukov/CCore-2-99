@@ -270,6 +270,7 @@
 ../../Desktop/CCore/src/video/ColorField.cpp
 ../../Desktop/CCore/src/video/CommonDrawArt.cpp
 ../../Desktop/CCore/src/video/ConfigBinder.cpp
+../../Desktop/CCore/src/video/ConfigEditor.cpp
 ../../Desktop/CCore/src/video/ConfigStore.cpp
 ../../Desktop/CCore/src/video/CurveDriver.cpp
 ../../Desktop/CCore/src/video/DesktopKey.cpp

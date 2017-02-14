@@ -25,11 +25,13 @@ namespace Video {
 
 struct FontCouple;
 
+struct ConfigItemBind;
+
+struct ConfigItemHost;
+
 struct HomeSyncBase;
 
 template <class Bag,class ... TT> class ConfigBinder;
-
-struct ConfigItemBind;
 
 /* struct FontCouple */
 
@@ -41,6 +43,42 @@ struct FontCouple
   FontCouple() noexcept {}
 
   void create() { font=param.create(); }
+ };
+
+/* struct ConfigItemBind */
+
+struct ConfigItemBind
+ {
+  virtual void group(DefString name)=0;
+
+  virtual void space()=0;
+
+  virtual void item(DefString name,unsigned &var)=0;
+
+  virtual void item(DefString name,Coord &var)=0;
+
+  virtual void item(DefString name,MCoord &var)=0;
+
+  virtual void item(DefString name,VColor &var)=0;
+
+  virtual void item(DefString name,Clr &var)=0;
+
+  virtual void item(DefString name,Point &var)=0;
+
+  virtual void item(DefString name,DefString &var)=0;
+
+  virtual void item(DefString name,FontCouple &var)=0;
+
+  virtual void item(DefString name,bool &var)=0;
+
+  virtual void item(DefString name,Ratio &var)=0;
+ };
+
+/* struct ConfigItemHost */
+
+struct ConfigItemHost
+ {
+  virtual void bind(ConfigItemBind &binder)=0;
  };
 
 /* struct HomeSyncBase */
@@ -143,35 +181,6 @@ class ConfigBinder : NoCopyBase<Bag> , public HomeSyncBase
     };
 
    Proxy getSmartConfig() const { return this; }
- };
-
-/* struct ConfigItemBind */
-
-struct ConfigItemBind
- {
-  virtual void group(DefString name)=0;
-
-  virtual void space()=0;
-
-  virtual void item(DefString name,unsigned &var)=0;
-
-  virtual void item(DefString name,Coord &var)=0;
-
-  virtual void item(DefString name,MCoord &var)=0;
-
-  virtual void item(DefString name,VColor &var)=0;
-
-  virtual void item(DefString name,Clr &var)=0;
-
-  virtual void item(DefString name,Point &var)=0;
-
-  virtual void item(DefString name,DefString &var)=0;
-
-  virtual void item(DefString name,FontCouple &var)=0;
-
-  virtual void item(DefString name,bool &var)=0;
-
-  virtual void item(DefString name,Ratio &var)=0;
  };
 
 } // namespace Video

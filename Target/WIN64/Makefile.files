@@ -48,6 +48,7 @@ obj/CompactList.o \
 obj/CompactMap.o \
 obj/CompactNodeAllocator.o \
 obj/ConfigBinder.o \
+obj/ConfigEditor.o \
 obj/ConfigStore.o \
 obj/ContainerList.o \
 obj/CoordEdit.o \
@@ -461,6 +462,7 @@ obj/CompactList.s \
 obj/CompactMap.s \
 obj/CompactNodeAllocator.s \
 obj/ConfigBinder.s \
+obj/ConfigEditor.s \
 obj/ConfigStore.s \
 obj/ContainerList.s \
 obj/CoordEdit.s \
@@ -874,6 +876,7 @@ obj/CompactList.dep \
 obj/CompactMap.dep \
 obj/CompactNodeAllocator.dep \
 obj/ConfigBinder.dep \
+obj/ConfigEditor.dep \
 obj/ConfigStore.dep \
 obj/ContainerList.dep \
 obj/CoordEdit.dep \
@@ -1395,6 +1398,9 @@ obj/CompactNodeAllocator.o : ../../Fundamental/CCore/src/CompactNodeAllocator.cp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ConfigBinder.o : ../../Desktop/CCore/src/video/ConfigBinder.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ConfigEditor.o : ../../Desktop/CCore/src/video/ConfigEditor.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ConfigStore.o : ../../Desktop/CCore/src/video/ConfigStore.cpp
@@ -2629,6 +2635,9 @@ obj/CompactNodeAllocator.s : ../../Fundamental/CCore/src/CompactNodeAllocator.cp
 obj/ConfigBinder.s : ../../Desktop/CCore/src/video/ConfigBinder.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ConfigEditor.s : ../../Desktop/CCore/src/video/ConfigEditor.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ConfigStore.s : ../../Desktop/CCore/src/video/ConfigStore.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3860,6 +3869,9 @@ obj/CompactNodeAllocator.dep : ../../Fundamental/CCore/src/CompactNodeAllocator.
 
 obj/ConfigBinder.dep : ../../Desktop/CCore/src/video/ConfigBinder.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ConfigBinder.o $< -MF $@
+
+obj/ConfigEditor.dep : ../../Desktop/CCore/src/video/ConfigEditor.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ConfigEditor.o $< -MF $@
 
 obj/ConfigStore.dep : ../../Desktop/CCore/src/video/ConfigStore.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ConfigStore.o $< -MF $@

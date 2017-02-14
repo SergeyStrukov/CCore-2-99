@@ -24,13 +24,7 @@
 #include <CCore/inc/video/MessageFrame.h>
 #include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/FileFrame.h>
-
-#include <CCore/inc/video/pref/SpinEdit.h>
-#include <CCore/inc/video/pref/CoordEdit.h>
-#include <CCore/inc/video/pref/MCoordEdit.h>
-#include <CCore/inc/video/pref/PointEdit.h>
-#include <CCore/inc/video/pref/ColorEdit.h>
-#include <CCore/inc/video/pref/FontEdit.h>
+#include <CCore/inc/video/ConfigEditor.h>
 
 namespace CCore {
 namespace Video {
@@ -43,7 +37,7 @@ class UserPreference;
 
 /* struct UserPreferenceBag */
 
-struct UserPreferenceBag
+struct UserPreferenceBag : ConfigItemHost
  {
   // common
 
@@ -294,7 +288,7 @@ struct UserPreferenceBag
   template <class Ptr,class Func>
   static void Members(Ptr ptr,Func func);
 
-  void bind(ConfigItemBind &binder);
+  virtual void bind(ConfigItemBind &binder);
 
   void createFonts();
  };
@@ -350,7 +344,9 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            MCoordEditWindow::ConfigType,
                                            PointEditWindow::ConfigType,
                                            ColorEditWindow::ConfigType,
-                                           FontEditWindow::ConfigType
+                                           FontEditWindow::ConfigType,
+                                           ConfigEditorWindow::ConfigType,
+                                           ConfigEditorFrame::ConfigType
                                           >
  {
    static StrLen PrefFile();
