@@ -74,6 +74,7 @@ Menu.h               ++
 MessageFrame.h       ++           
 FileFrame.h          ++
         
+ConfigBinder.h       ++        
 UserPreference.h     ++
 
 --- Pref -----------------------------------------------------------------------
@@ -83,8 +84,8 @@ CoordEdit.h          .
 MCoordEdit.h         .
 PointEdit.h          .
 
-ColorEdit.h
-FontEdit.h
+ColorEdit.h          .
+FontEdit.h           .
 
 --------------------------------------------------------------------------------
 

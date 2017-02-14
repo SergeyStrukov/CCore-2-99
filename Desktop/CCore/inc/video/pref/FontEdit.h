@@ -21,7 +21,7 @@
 #include <CCore/inc/video/FontParam.h>
 #include <CCore/inc/video/FontDatabase.h>
 
-#include <CCore/inc/video/UserPreference.h>
+#include <CCore/inc/video/ConfigBinder.h>
 
 namespace CCore {
 namespace Video {
@@ -38,9 +38,9 @@ class FontEditWindow : public ComboWindow
 
    struct Config
     {
-     RefVal<Coord> progress_dy = 20 ;
      RefVal<Coord> space_dxy = 10 ;
-     RefVal<Coord> check_dxy = 18 ;
+     RefVal<Coord> progress_dy = 24 ;
+     RefVal<Coord> check_dxy = 20 ;
      RefVal<Coord> light_dxy = 20 ;
 
      CtorRefVal<ProgressWindow::ConfigType> progress_cfg;
@@ -53,29 +53,29 @@ class FontEditWindow : public ComboWindow
      CtorRefVal<RadioWindow::ConfigType> radio_cfg;
      CtorRefVal<TextContourWindow::ConfigType> text_contour_cfg;
      CtorRefVal<ContourWindow::ConfigType> contour_cfg;
-
      CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
-      : spin_cfg(SmartBind,pref)
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
       {
-       progress_dy.bind(pref.get().progress_dy);
-       space_dxy.bind(pref.get().space_dxy);
-       check_dxy.bind(pref.get().check_dxy);
-       light_dxy.bind(pref.get().light_dxy);
+       space_dxy.bind(bag.space_dxy);
+       progress_dy.bind(bag.progress_dy);
+       check_dxy.bind(bag.check_dxy);
+       light_dxy.bind(bag.light_dxy);
 
-       progress_cfg.bind(pref.getSmartConfig());
-       text_list_cfg.bind(pref.getSmartConfig());
-       text_cfg.bind(pref.getSmartConfig());
-       light_cfg.bind(pref.getSmartConfig());
-       label_cfg.bind(pref.getSmartConfig());
-       dline_cfg.bind(pref.getSmartConfig());
-       check_cfg.bind(pref.getSmartConfig());
-       radio_cfg.bind(pref.getSmartConfig());
-       text_contour_cfg.bind(pref.getSmartConfig());
-       contour_cfg.bind(pref.getSmartConfig());
+       progress_cfg.bind(proxy);
+       text_list_cfg.bind(proxy);
+       text_cfg.bind(proxy);
+       light_cfg.bind(proxy);
+       label_cfg.bind(proxy);
+       dline_cfg.bind(proxy);
+       check_cfg.bind(proxy);
+       radio_cfg.bind(proxy);
+       text_contour_cfg.bind(proxy);
+       contour_cfg.bind(proxy);
+       spin_cfg.bind(proxy);
       }
     };
 
@@ -266,7 +266,7 @@ class FontEditWindow : public ComboWindow
 
    // methods
 
-   Point getMinSize() const { return Null; }
+   Point getMinSize() const;
 
    const FontParam & getParam() const { return font.param; }
 

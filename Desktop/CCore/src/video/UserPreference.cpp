@@ -1,7 +1,7 @@
 /* UserPreference.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Desktop
 //
@@ -16,96 +16,9 @@
 #include <CCore/inc/video/UserPreference.h>
 
 #include <CCore/inc/video/DesktopKey.h>
-#include <CCore/inc/video/Desktop.h>
-
-#include <CCore/inc/MakeString.h>
-#include <CCore/inc/FileSystem.h>
-
-#include <CCore/inc/Exception.h>
 
 namespace CCore {
 namespace Video {
-
-/* struct HomeSyncBase */
-
-void HomeSyncBase::syncHome(StrLen home_dir,StrLen cfg_file) noexcept
- {
-  try
-    {
-     HomeDir home;
-
-     MakeString<MaxPathLen> buf;
-
-     buf.add(home.get(),home_dir);
-
-     StrLen dir=buf.get();
-
-     buf.add(cfg_file);
-
-     if( !buf )
-       {
-        Printf(Exception,"CCore::Video::HomeSyncBase::syncHome(...) : too long file name");
-       }
-
-     StrLen file_name=buf.get();
-
-     ConfigMap map;
-
-     map.loadDDL_safe(file_name);
-
-     syncMap(map);
-
-     if( map.isModified() )
-       {
-        FileSystem fs;
-
-        if( fs.getFileType(dir)==FileType_none ) fs.createDir(dir);
-
-        map.saveDDL(file_name);
-       }
-    }
-  catch(...)
-    {
-    }
- }
-
-void HomeSyncBase::updateHome(StrLen home_dir,StrLen cfg_file) noexcept
- {
-  try
-    {
-     HomeDir home;
-
-     MakeString<MaxPathLen> buf;
-
-     buf.add(home.get(),home_dir);
-
-     StrLen dir=buf.get();
-
-     buf.add(cfg_file);
-
-     if( !buf )
-       {
-        Printf(Exception,"CCore::Video::HomeSyncBase::updateHome(...) : too long file name");
-       }
-
-     StrLen file_name=buf.get();
-
-     ConfigMap map;
-
-     map.loadDDL_safe(file_name);
-
-     updateMap(map);
-
-     FileSystem fs;
-
-     if( fs.getFileType(dir)==FileType_none ) fs.createDir(dir);
-
-     map.saveDDL(file_name);
-    }
-  catch(...)
-    {
-    }
- }
 
 /* struct UserPreferenceBag */
 

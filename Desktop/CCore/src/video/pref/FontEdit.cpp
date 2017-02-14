@@ -601,6 +601,11 @@ FontEditWindow::~FontEditWindow()
 
  // methods
 
+Point FontEditWindow::getMinSize() const
+ {
+  return Point(100,100);
+ }
+
 void FontEditWindow::setCouple(const FontCouple &font_)
  {
   font=font_;
