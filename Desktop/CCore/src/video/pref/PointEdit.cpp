@@ -24,28 +24,22 @@ namespace Video {
 
 void PointEditWindow::drawBox(const DrawBuf &buf) const
  {
-  try
-    {
-     SmoothDrawArt art(buf);
+  SmoothDrawArt art(buf);
 
-     Pane pane=Envelope(pos,pos+getPoint());
+  Pane pane=Envelope(pos,pos+getPoint());
 
-     MCoord width=+cfg.width;
+  MCoord width=+cfg.width;
 
-     FigureBox fig(pane);
+  FigureBox fig(pane);
 
-     fig.loop(art,HalfPos,width,+cfg.line);
-    }
-  catch(CatchType)
-    {
-    }
+  fig.loop(art,HalfPos,width,+cfg.line);
  }
 
 void PointEditWindow::changePoint(int)
  {
-  changed.assert(getPoint());
-
   redraw();
+
+  changed.assert(getPoint());
  }
 
 PointEditWindow::PointEditWindow(SubWindowHost &host,const ConfigType &cfg_)
@@ -60,8 +54,8 @@ PointEditWindow::PointEditWindow(SubWindowHost &host,const ConfigType &cfg_)
  {
   wlist.insTop(x_spin,y_spin);
 
-  x_spin.setValue(0,-1000,1000);
-  y_spin.setValue(0,-1000,1000);
+  x_spin.setValue(0,MinCoord,MaxCoord);
+  y_spin.setValue(0,MinCoord,MaxCoord);
  }
 
 PointEditWindow::~PointEditWindow()
@@ -76,7 +70,7 @@ Point PointEditWindow::getMinSize() const
 
   Coord space_dxy=+cfg.space_dxy;
 
-  Coord dx=2*s.x+space_dxy;
+  Coordinate dx=2*Coordinate(s.x)+space_dxy;
 
   return Point(dx,s.y+dx);
  }

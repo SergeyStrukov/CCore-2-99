@@ -18,8 +18,6 @@
 
 #include <CCore/inc/video/WindowLib.h>
 
-#include <CCore/inc/video/UserPreference.h>
-
 namespace CCore {
 namespace Video {
 
@@ -35,9 +33,18 @@ class ColorEditWindow : public SubWindow
 
    struct Config
     {
+     RefVal<Coord> space_dxy =  10 ;
+
+     RefVal<VColor> top    =      Gray ;
+     RefVal<VColor> bottom =      Snow ;
+     RefVal<VColor> focus  = OrangeRed ;
+
+     RefVal<Font> font;
+
+     // ---
+
      RefVal<MCoord> width = Fraction(8,2) ;
 
-     RefVal<Coord> space_dxy =  10 ;
      RefVal<Coord> radius    =  15 ;
 
      RefVal<Coord> mix_len   = 350 ;
@@ -47,21 +54,16 @@ class ColorEditWindow : public SubWindow
 
      RefVal<unsigned> len = 10 ;
 
-     RefVal<VColor> top    =      Gray ;
-     RefVal<VColor> bottom =      Snow ;
-     RefVal<VColor> focus  = OrangeRed ;
-
-     RefVal<Font> font;
-
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy)
       {
-       space_dxy.bind(pref.get().space_dxy);
-       top.bind(pref.get().gray);
-       bottom.bind(pref.get().snow);
-       focus.bind(pref.get().focus);
-       font.bind(pref.get().label_font.font);
+       space_dxy.bind(bag.space_dxy);
+       top.bind(bag.gray);
+       bottom.bind(bag.snow);
+       focus.bind(bag.focus);
+       font.bind(bag.label_font.font);
       }
     };
 
@@ -167,13 +169,15 @@ class ColorEditWindow : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return Null; }
+   Point getMinSize() const;
 
    VColor getColor() const { return value; }
 
    void setColor(VColor value);
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const;
 
    virtual void layout();
 
@@ -192,16 +196,6 @@ class ColorEditWindow : public SubWindow
    virtual void gainFocus();
 
    virtual void looseFocus();
-
-   // tab focus
-
-   virtual void topTabFocus();
-
-   virtual bool nextTabFocus();
-
-   virtual void bottomTabFocus();
-
-   virtual bool prevTabFocus();
 
    // mouse
 

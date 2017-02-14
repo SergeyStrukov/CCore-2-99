@@ -27,6 +27,9 @@
 
 #include <CCore/inc/video/pref/SpinEdit.h>
 #include <CCore/inc/video/pref/CoordEdit.h>
+#include <CCore/inc/video/pref/MCoordEdit.h>
+#include <CCore/inc/video/pref/PointEdit.h>
+#include <CCore/inc/video/pref/ColorEdit.h>
 
 namespace CCore {
 namespace Video {
@@ -428,6 +431,10 @@ struct UserPreferenceBag
 
   VColor coord_edit_line = Black ;
 
+  // MCoordEdit
+
+  unsigned mcoord_edit_precision = 4 ;
+
   // constructors
 
   UserPreferenceBag() noexcept {}
@@ -489,7 +496,10 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            FileFrame::ConfigType,
 
                                            SpinEditWindow::ConfigType,
-                                           CoordEditWindow::ConfigType
+                                           CoordEditWindow::ConfigType,
+                                           MCoordEditWindow::ConfigType,
+                                           PointEditWindow::ConfigType,
+                                           ColorEditWindow::ConfigType
                                           >
  {
    static StrLen PrefFile();

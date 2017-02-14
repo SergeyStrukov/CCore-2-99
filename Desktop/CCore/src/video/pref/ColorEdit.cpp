@@ -304,6 +304,7 @@ bool ColorEditWindow::past(VColor &ret)
 ColorEditWindow::ColorEditWindow(SubWindowHost &host,const Config &cfg_)
  : SubWindow(host),
    cfg(cfg_),
+
    palette{Black,Gray,Silver,White,Red,Green,Blue,Cyan,Fuchsia,Yellow,Teal,Purple,Olive,
            Maroon,Navy,Orange,Crimson,DarkGray,DarkGreen,DarkOrange,DarkOrchid,
            DarkRed,DarkViolet,DimGray,ForestGreen,GhostWhite,Gold,GoldenRod,Indigo,
@@ -318,6 +319,11 @@ ColorEditWindow::~ColorEditWindow()
 
  // methods
 
+Point ColorEditWindow::getMinSize() const
+ {
+  return Point(100,100);
+ }
+
 void ColorEditWindow::setColor(VColor value_)
  {
   value=value_;
@@ -326,6 +332,11 @@ void ColorEditWindow::setColor(VColor value_)
  }
 
  // drawing
+
+bool ColorEditWindow::isGoodSize(Point size) const
+ {
+  return size>=getMinSize();
+ }
 
 void ColorEditWindow::layout()
  {
@@ -384,113 +395,107 @@ void ColorEditWindow::layout()
 
 void ColorEditWindow::draw(DrawBuf buf,bool) const
  {
-  try
+  MCoord width=+cfg.width;
+  Coord radius=+cfg.radius;
+  Coord space_dxy=+cfg.space_dxy;
+  Coord mix_width=+cfg.mix_width;
+
+  Art art(buf);
+
+  // value
+
+  draw(art,value_center,value,item==Item_value);
+
+  if( focus )
     {
-     MCoord width=+cfg.width;
-     Coord radius=+cfg.radius;
-     Coord space_dxy=+cfg.space_dxy;
-     Coord mix_width=+cfg.mix_width;
+     art.circle(value_center,Fraction(radius),width,+cfg.focus);
+    }
 
-     Art art(buf);
+  // palette
 
-     // value
+  {
+   Coord grid=2*radius+space_dxy;
 
-     draw(art,value_center,value,item==Item_value);
+   FigureTopBorder fig_top(palette_contour,width);
+   FigureBottomBorder fig_bottom(palette_contour,width);
 
-     if( focus )
+   fig_top.solid(art,+cfg.top);
+   fig_bottom.solid(art,+cfg.bottom);
+
+   for(unsigned i=0; i<len ;i++)
+     for(unsigned j=0; j<len ;j++)
        {
-        art.circle(value_center,Fraction(radius),width,+cfg.focus);
+        unsigned k=i+j*len;
+
+        draw(art,palette_base_center+Point(i,j)*grid,pal(k),item==(Item_palette_base+k));
        }
+  }
 
-     // palette
+  // mixer
 
+  {
+   draw(art,left_center,left,item==Item_left);
+   draw(art,right_center,right,item==Item_right);
+
+   Point base=mix_place.getBase();
+
+   TwoField field(base.addX(mix_width/2),left,base.addX(mix_place.dx-mix_width/2),right);
+
+   FigureBox(mix_place).solid(art,field);
+
+   Pane box_mix(base.x+mix_pos,mixUp_place.y,mix_width,mixUp_place.dy);
+
+   FigureBox(box_mix).solid(art,field(base.addX(mix_pos+mix_width/2)));
+
+   if( item==Item_mix )
      {
-      Coord grid=2*radius+space_dxy;
+      MPoint pos(box_mix.getBase()+box_mix.getSize()/2);
 
-      FigureTopBorder fig_top(palette_contour,width);
-      FigureBottomBorder fig_bottom(palette_contour,width);
+      MCoord radius2=Div(1,3)*Fraction(mix_width);
 
-      fig_top.solid(art,+cfg.top);
-      fig_bottom.solid(art,+cfg.bottom);
+      FigureAsterisk fig(pos,radius2);
 
-      for(unsigned i=0; i<len ;i++)
-        for(unsigned j=0; j<len ;j++)
-          {
-           unsigned k=i+j*len;
-
-           draw(art,palette_base_center+Point(i,j)*grid,pal(k),item==(Item_palette_base+k));
-          }
+      fig.curveSolid(art,RadioField(pos,radius2,White,Black));
      }
+  }
 
-     // mixer
+  // text
 
+  {
+   art.block(text_place,back);
+
+   cfg.font.get()->text(buf,text_place,TextPlace(AlignX_Center,AlignY_Center),"Sample text",fore);
+
+   draw(art,back_center,back,item==Item_back);
+   draw(art,fore_center,fore,item==Item_fore);
+  }
+
+  // white
+
+  {
+   draw(art,top_center,top,item==Item_top);
+
+   Point base=white_place.getBase();
+
+   WhiteField field(base.addY(mix_width/2),top,base.addY(white_place.dy-mix_width/2));
+
+   FigureBox(white_place).solid(art,field);
+
+   Pane box_white(whiteUp_place.x,base.y+white_pos,whiteUp_place.dx,mix_width);
+
+   FigureBox(box_white).solid(art,field(base.addY(white_pos+mix_width/2)));
+
+   if( item==Item_white )
      {
-      draw(art,left_center,left,item==Item_left);
-      draw(art,right_center,right,item==Item_right);
+      MPoint pos(box_white.getBase()+box_white.getSize()/2);
 
-      Point base=mix_place.getBase();
+      MCoord radius2=Div(1,3)*Fraction(mix_width);
 
-      TwoField field(base.addX(mix_width/2),left,base.addX(mix_place.dx-mix_width/2),right);
+      FigureAsterisk fig(pos,radius2);
 
-      FigureBox(mix_place).solid(art,field);
-
-      Pane box_mix(base.x+mix_pos,mixUp_place.y,mix_width,mixUp_place.dy);
-
-      FigureBox(box_mix).solid(art,field(base.addX(mix_pos+mix_width/2)));
-
-      if( item==Item_mix )
-        {
-         MPoint pos(box_mix.getBase()+box_mix.getSize()/2);
-
-         MCoord radius2=Div(1,3)*Fraction(mix_width);
-
-         FigureAsterisk fig(pos,radius2);
-
-         fig.curveSolid(art,RadioField(pos,radius2,White,Black));
-        }
+      fig.curveSolid(art,RadioField(pos,radius2,White,Black));
      }
-
-     // text
-
-     {
-      art.block(text_place,back);
-
-      cfg.font.get()->text(buf,text_place,TextPlace(AlignX_Center,AlignY_Center),"Sample text",fore);
-
-      draw(art,back_center,back,item==Item_back);
-      draw(art,fore_center,fore,item==Item_fore);
-     }
-
-     // white
-
-     {
-      draw(art,top_center,top,item==Item_top);
-
-      Point base=white_place.getBase();
-
-      WhiteField field(base.addY(mix_width/2),top,base.addY(white_place.dy-mix_width/2));
-
-      FigureBox(white_place).solid(art,field);
-
-      Pane box_white(whiteUp_place.x,base.y+white_pos,whiteUp_place.dx,mix_width);
-
-      FigureBox(box_white).solid(art,field(base.addY(white_pos+mix_width/2)));
-
-      if( item==Item_white )
-        {
-         MPoint pos(box_white.getBase()+box_white.getSize()/2);
-
-         MCoord radius2=Div(1,3)*Fraction(mix_width);
-
-         FigureAsterisk fig(pos,radius2);
-
-         fig.curveSolid(art,RadioField(pos,radius2,White,Black));
-        }
-     }
-    }
-  catch(CatchType)
-    {
-    }
+  }
  }
 
  // base
@@ -513,36 +518,12 @@ FocusType ColorEditWindow::askFocus() const
 
 void ColorEditWindow::gainFocus()
  {
-  focus=true;
-
-  redraw();
+  if( Change(focus,true) ) redraw();
  }
 
 void ColorEditWindow::looseFocus()
  {
-  focus=false;
-
-  redraw();
- }
-
- // tab focus
-
-void ColorEditWindow::topTabFocus()
- {
- }
-
-bool ColorEditWindow::nextTabFocus()
- {
-  return false;
- }
-
-void ColorEditWindow::bottomTabFocus()
- {
- }
-
-bool ColorEditWindow::prevTabFocus()
- {
-  return false;
+  if( Change(focus,false) ) redraw();
  }
 
  // mouse

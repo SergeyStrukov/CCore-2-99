@@ -80,8 +80,8 @@ UserPreference.h     ++
 
 SpinEdit.h           .
 CoordEdit.h          .
-MCoordEdit.h
-PointEdit.h
+MCoordEdit.h         .
+PointEdit.h          .
 
 ColorEdit.h
 FontEdit.h

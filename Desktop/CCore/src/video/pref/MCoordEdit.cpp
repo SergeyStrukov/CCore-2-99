@@ -37,36 +37,36 @@ void MCoordEditWindow::plusVal()
  {
   value+=Fraction(1);
 
-  changed.assert(value);
-
   showVal();
+
+  changed.assert(value);
  }
 
 void MCoordEditWindow::minusVal()
  {
   value-=Fraction(1);
 
-  changed.assert(value);
-
   showVal();
+
+  changed.assert(value);
  }
 
 void MCoordEditWindow::plusSmallVal()
  {
   value+=Fraction(1,+cfg.precision);
 
-  changed.assert(value);
-
   showVal();
+
+  changed.assert(value);
  }
 
 void MCoordEditWindow::minusSmallVal()
  {
   value-=Fraction(1,+cfg.precision);
 
-  changed.assert(value);
-
   showVal();
+
+  changed.assert(value);
  }
 
 MCoordEditWindow::MCoordEditWindow(SubWindowHost &host,const ConfigType &cfg_)

@@ -18,8 +18,6 @@
 
 #include <CCore/inc/video/WindowLib.h>
 
-#include <CCore/inc/video/UserPreference.h>
-
 namespace CCore {
 namespace Video {
 
@@ -42,10 +40,13 @@ class MCoordEditWindow : public ComboWindow
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
-      : knob_cfg(SmartBind,pref),
-        text_cfg(SmartBind,pref)
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
       {
+       precision.bind(bag.mcoord_edit_precision);
+
+       knob_cfg.bind(proxy);
+       text_cfg.bind(proxy);
       }
     };
 

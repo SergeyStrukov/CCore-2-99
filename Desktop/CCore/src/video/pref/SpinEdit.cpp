@@ -44,18 +44,18 @@ void SpinEditWindow::plusVal()
  {
   value++;
 
-  changed.assert(value);
-
   showVal();
+
+  changed.assert(value);
  }
 
 void SpinEditWindow::minusVal()
  {
   value--;
 
-  changed.assert(value);
-
   showVal();
+
+  changed.assert(value);
  }
 
 SpinEditWindow::SpinEditWindow(SubWindowHost &host,const ConfigType &cfg_)

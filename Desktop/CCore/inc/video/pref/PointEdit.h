@@ -18,8 +18,6 @@
 
 #include <CCore/inc/video/pref/SpinEdit.h>
 
-#include <CCore/inc/video/UserPreference.h>
-
 namespace CCore {
 namespace Video {
 
@@ -35,9 +33,9 @@ class PointEditWindow : public ComboWindow
 
    struct Config
     {
-     RefVal<MCoord> width = Fraction(1) ;
-
      RefVal<Coord> space_dxy = 10 ;
+
+     RefVal<MCoord> width = Fraction(1) ;
 
      RefVal<VColor> line = Black ;
 
@@ -45,10 +43,14 @@ class PointEditWindow : public ComboWindow
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
-      : spin_cfg(SmartBind,pref)
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
       {
-       space_dxy.bind(pref.get().space_dxy);
+       space_dxy.bind(bag.space_dxy);
+       width.bind(bag.coord_edit_width);
+       line.bind(bag.coord_edit_line);
+
+       spin_cfg.bind(proxy);
       }
     };
 

@@ -83,9 +83,17 @@ class CoordEditWindow : public ComboWindow
 
    Point getMinSize() const;
 
-   Coord getCoord() const { return Coord(spin.getValue()); }
+   Coord getCoord() const
+    {
+     return Coord(spin.getValue());
+    }
 
-   void setCoord(Coord value) { spin.setValue(value); redraw(); }
+   void setCoord(Coord value)
+    {
+     spin.setValue(value);
+
+     redraw();
+    }
 
    // drawing
 
