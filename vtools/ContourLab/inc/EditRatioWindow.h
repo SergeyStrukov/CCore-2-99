@@ -32,9 +32,9 @@ class EditRatioWindow : public SubWindow
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<Font> font;
-
      // app
+
+     RefVal<Font> font;
 
      RefVal<Coord> shade_dxy = 8 ;
 
@@ -62,12 +62,12 @@ class EditRatioWindow : public SubWindow
      void bind(const Bag &bag)
       {
        width.bind(bag.width);
-       font.bind(bag.line_edit_font.font);
       }
 
      template <class Bag>
      void bindApp(const Bag &bag)
       {
+       font.bind(bag.font.font);
        shade_dxy.bind(bag.shade_dxy);
        back.bind(bag.back);
        border.bind(bag.border);

@@ -50,6 +50,8 @@ struct AppPreferenceBag : ConfigItemHost
   VColor hilight =     Green ;
   VColor focus   = OrangeRed ;
 
+  FontCouple font;
+
   // edit angle
 
   Coord edit_angle_dxy = 100 ;
@@ -79,6 +81,8 @@ struct AppPreferenceBag : ConfigItemHost
   // geometry
 
   Coord geometry_dxy = 300 ;
+
+  // item list
 
   DefString text_show = "show"_def ;
   DefString text_gray = "gray"_def ;
@@ -136,7 +140,7 @@ struct AppPreferenceBag : ConfigItemHost
  };
 
 template <class Ptr,class Func>
-void AppPreferenceBag::Members(Ptr ptr,Func func) // TODO
+void AppPreferenceBag::Members(Ptr ptr,Func func)
  {
   func("arrow_size",ptr->arrow_size);
 
@@ -149,6 +153,8 @@ void AppPreferenceBag::Members(Ptr ptr,Func func) // TODO
   func("vtext",ptr->text);
   func("hilight",ptr->hilight);
   func("focus",ptr->focus);
+
+  func("font",ptr->font.param);
 
   func("edit_angle_dxy",ptr->edit_angle_dxy);
 
@@ -169,10 +175,22 @@ void AppPreferenceBag::Members(Ptr ptr,Func func) // TODO
   func("edit_delay",ptr->edit_delay);
 
   func("geometry_dxy",ptr->geometry_dxy);
+
   func("text_show",ptr->text_show);
   func("text_gray",ptr->text_gray);
   func("text_name",ptr->text_name);
+
   func("title_Ins",ptr->title_Ins);
+
+  func("menu_File",ptr->menu_File);
+  func("menu_Options",ptr->menu_Options);
+  func("menu_New",ptr->menu_New);
+  func("menu_Open",ptr->menu_Open);
+  func("menu_Save",ptr->menu_Save);
+  func("menu_SaveAs",ptr->menu_SaveAs);
+  func("menu_Exit",ptr->menu_Exit);
+  func("menu_Global",ptr->menu_Global);
+  func("menu_App",ptr->menu_App);
 
   func("hint_File",ptr->hint_File);
   func("hint_Angle",ptr->hint_Angle);
@@ -196,14 +214,78 @@ void AppPreferenceBag::Members(Ptr ptr,Func func) // TODO
   func("hint_item_Name",ptr->hint_item_Name);
  }
 
-void AppPreferenceBag::bind(ConfigItemBind &binder) // TODO
+void AppPreferenceBag::bind(ConfigItemBind &binder)
  {
   binder.group("Common"_def);
 
-    binder.item("Arrow size"_def,arrow_size);
-    binder.item("Shade length"_def,shade_dxy);
+    binder.item("arrow size"_def,arrow_size);
+    binder.item("shade dxy"_def,shade_dxy);
     binder.space();
-    binder.item("Back"_def,back);
+    binder.item("back"_def,back);
+    binder.item("border"_def,border);
+    binder.item("face"_def,face);
+    binder.item("gray"_def,gray);
+    binder.item("text"_def,text);
+    binder.item("hilight"_def,hilight);
+    binder.item("focus"_def,focus);
+    binder.space();
+    binder.item("font"_def,font);
+
+  binder.group("Edit"_def);
+
+    binder.item("angle dxy"_def,edit_angle_dxy);
+    binder.item("length dx"_def,edit_length_dx);
+    binder.item("length dy"_def,edit_length_dy);
+    binder.item("ratio dx"_def,edit_ratio_dx);
+    binder.item("ratio dy"_def,edit_ratio_dy);
+    binder.item("text"_def,edit_text);
+    binder.item("error text"_def,edit_error_text);
+    binder.item("number text"_def,edit_number_text);
+    binder.item("length text"_def,edit_length_text);
+    binder.item("angle text"_def,edit_angle_text);
+    binder.item("name text"_def,edit_name_text);
+    binder.item("punct text"_def,edit_punct_text);
+    binder.item("delay"_def,edit_delay);
+    binder.item("geometry dxy"_def,geometry_dxy);
+
+  binder.group("Item list"_def);
+
+    binder.item("'show'"_def,text_show);
+    binder.item("'gray'"_def,text_gray);
+    binder.item("'name'"_def,text_name);
+
+    binder.item("'Ins'"_def,title_Ins);
+
+  binder.group("Menu"_def);
+
+    binder.item("File"_def,menu_File);
+    binder.item("Options"_def,menu_Options);
+    binder.item("New"_def,menu_New);
+    binder.item("Open"_def,menu_Open);
+    binder.item("Save"_def,menu_Save);
+    binder.item("SaveAs"_def,menu_SaveAs);
+    binder.item("Exit"_def,menu_Exit);
+    binder.item("Global"_def,menu_Global);
+    binder.item("App"_def,menu_App);
+
+  binder.group("Hints"_def);
+
+    binder.item("?'File'"_def,hint_File);
+    binder.item("?'Angle'"_def,hint_Angle);
+    binder.item("?'Length'"_def,hint_Length);
+    binder.item("?'Ration'"_def,hint_Ratio);
+    binder.item("?'Geom'"_def,hint_Geom);
+    binder.item("?'Function List'"_def,hint_function_List);
+    binder.item("?'List'"_def,hint_item_List);
+    binder.item("?'Edit'"_def,hint_item_Edit);
+    binder.item("?'Down'"_def,hint_item_Down);
+    binder.item("?'Up'"_def,hint_item_Up);
+    binder.item("?'Del'"_def,hint_item_Del);
+    binder.item("?'Add'"_def,hint_item_Add);
+    binder.item("?'Ins'"_def,hint_item_Ins);
+    binder.item("?'Show'"_def,hint_item_Show);
+    binder.item("?'Gray'"_def,hint_item_Gray);
+    binder.item("?'Name'"_def,hint_item_Name);
  }
 
 void AppPreferenceBag::createFonts()
@@ -282,13 +364,18 @@ class Application : public ApplicationBase
 
    ClientWindow client;
 
+   UserPreference editor_pref;
+   ConfigEditorFrame user_frame;
    ConfigEditorFrame app_frame;
 
   private:
 
-   void userPref(Point base) // TODO
+   void userPref(Point base)
     {
-     Used(base);
+     if( user_frame.isDead() )
+       {
+        user_frame.create(main_frame.getFrame(),base,param.pref.get().title_UserPref);
+       }
     }
 
    void appPref(Point base)
@@ -314,6 +401,27 @@ class Application : public ApplicationBase
 
    SignalConnector<Application> connector_app_updated;
    SignalConnector<Application> connector_app_save;
+
+   void userUpdate()
+    {
+     param.pref.updated.assert();
+    }
+
+   void userSave()
+    {
+     param.pref.update();
+    }
+
+   void userSelf()
+    {
+     editor_pref.ref()=param.pref.get();
+
+     editor_pref.updated.assert();
+    }
+
+   SignalConnector<Application> connector_user_updated;
+   SignalConnector<Application> connector_user_save;
+   SignalConnector<Application> connector_user_self;
 
   private:
 
@@ -361,17 +469,27 @@ class Application : public ApplicationBase
       main_frame(param.desktop,param.frame_cfg,param.pref.updated),
       exception_client(main_frame,param.exception_cfg,report),
       client(main_frame,param.client_cfg),
+      user_frame(param.desktop,editor_pref.getSmartConfig(),true),
       app_frame(param.desktop,param.pref.getSmartConfig(),false),
 
       connector_userPref(this,&Application::userPref,client.doUserPref),
       connector_appPref(this,&Application::appPref,client.doAppPref),
       connector_app_updated(this,&Application::appUpdated,app_frame.updated),
-      connector_app_save(this,&Application::appSave,app_frame.doSave)
+      connector_app_save(this,&Application::appSave,app_frame.doSave),
+      connector_user_updated(this,&Application::userUpdate,user_frame.updated),
+      connector_user_save(this,&Application::userSave,user_frame.doSave),
+      connector_user_self(this,&Application::userSelf,user_frame.doSelf)
     {
      main_frame.bindAlertClient(exception_client);
      main_frame.bindClient(client);
 
+     editor_pref.ref()=param.pref.get();
+
+     user_frame.bindConfig(param.pref.ref());
+     user_frame.connectUpdate(editor_pref.updated);
+
      app_frame.bindConfig(param.app_pref.ref());
+     app_frame.connectUpdate(param.pref.updated);
     }
 
    ~Application()
