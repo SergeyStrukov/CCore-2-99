@@ -918,7 +918,7 @@ ConfigEditorWindow::~ConfigEditorWindow()
 
  // methods
 
-Point ConfigEditorWindow::getMinSize() const // TODO
+Point ConfigEditorWindow::getMinSize(Point cap) const // TODO
  {
   return Point(300,300);
  }
@@ -1044,9 +1044,11 @@ void ConfigEditorWindow::drawBack(DrawBuf buf,bool) const
 
 /* class ConfigEditorFrame */
 
-ConfigEditorFrame::ConfigEditorFrame(Desktop *desktop,const Config &cfg,bool use_self)
- : DragFrame(desktop,cfg.frame_cfg),
-   client(*this,cfg.editor_cfg,use_self),
+ConfigEditorFrame::ConfigEditorFrame(Desktop *desktop,const Config &cfg_,bool use_self)
+ : DragFrame(desktop,cfg_.frame_cfg),
+   cfg(cfg_),
+
+   client(*this,cfg_.editor_cfg,use_self),
 
    updated(client.updated),
    doSave(client.doSave),
@@ -1063,18 +1065,24 @@ ConfigEditorFrame::~ConfigEditorFrame()
 
 Pane ConfigEditorFrame::getPane(StrLen title,Point base) const
  {
-  Point size=getMinSize(false,title,client.getMinSize());
-
   Point screen_size=getScreenSize();
+
+  Point cap=Div(9,10)*screen_size-getDeltaSize();
+
+  Point size=getMinSize(false,title,client.getMinSize(cap));
 
   return FitToScreen(base,size,screen_size);
  }
 
 Pane ConfigEditorFrame::getPane(bool is_main,StrLen title) const
  {
-  Point size=getMinSize(is_main,title,client.getMinSize());
+  Point screen_size=getScreenSize();
 
-  return GetWindowPlace(desktop,Div(5,12),size);
+  Point cap=Div(9,10)*screen_size-getDeltaSize();
+
+  Point size=getMinSize(is_main,title,client.getMinSize(cap));
+
+  return GetWindowPlace(desktop,+cfg.pos_ry,size);
  }
 
 } // namespace Video

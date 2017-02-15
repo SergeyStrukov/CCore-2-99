@@ -47,6 +47,16 @@ class ClientWindow : public ComboWindow , public AliveControl
 
      // app
 
+     RefVal<DefString> menu_File    = "@File"_def ;
+     RefVal<DefString> menu_Options = "@Options"_def ;
+     RefVal<DefString> menu_New     = "@New"_def ;
+     RefVal<DefString> menu_Open    = "@Open"_def ;
+     RefVal<DefString> menu_Save    = "@Save"_def ;
+     RefVal<DefString> menu_SaveAs  = "Save @as"_def ;
+     RefVal<DefString> menu_Exit    = "E@xit"_def ;
+     RefVal<DefString> menu_Global  = "@Global"_def ;
+     RefVal<DefString> menu_App     = "@Application"_def ;
+
      EditorWindow::ConfigType editor_cfg;
 
      Config() noexcept {}
@@ -56,6 +66,7 @@ class ClientWindow : public ComboWindow , public AliveControl
       : editor_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
       }
 
      template <class Bag,class Proxy>
@@ -75,6 +86,20 @@ class ClientWindow : public ComboWindow , public AliveControl
        msg_cfg.bind(proxy);
        menu_cfg.bind(proxy);
        cascade_menu_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       menu_File.bind(bag.menu_File);
+       menu_Options.bind(bag.menu_Options);
+       menu_New.bind(bag.menu_New);
+       menu_Open.bind(bag.menu_Open);
+       menu_Save.bind(bag.menu_Save);
+       menu_SaveAs.bind(bag.menu_SaveAs);
+       menu_Exit.bind(bag.menu_Exit);
+       menu_Global.bind(bag.menu_Global);
+       menu_App.bind(bag.menu_App);
       }
     };
 
@@ -201,6 +226,11 @@ class ClientWindow : public ComboWindow , public AliveControl
    // AliveControl
 
    virtual bool askDestroy();
+
+   // signals
+
+   Signal<Point> doUserPref;
+   Signal<Point> doAppPref;
  };
 
 } // namespace App

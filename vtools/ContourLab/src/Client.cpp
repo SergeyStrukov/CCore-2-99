@@ -83,7 +83,7 @@ void ClientWindow::startSave(Point point)
   disableFrameReact();
  }
 
-void ClientWindow::menuAction(int id,Point point) // TODO
+void ClientWindow::menuAction(int id,Point point)
  {
   switch( id )
     {
@@ -135,13 +135,13 @@ void ClientWindow::menuAction(int id,Point point) // TODO
 
      case MenuOptionsUserPref :
       {
-       // TODO
+       doUserPref.assert(point);
       }
      break;
 
      case MenuOptionsAppPref :
       {
-       // TODO
+       doAppPref.assert(point);
       }
      break;
     }
@@ -277,19 +277,19 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   wlist.enableTabFocus(false);
 
-  menu_data("@File"_def,MenuFile)
-           ("@Options"_def,MenuOptions);
+  menu_data(+cfg.menu_File,MenuFile)
+           (+cfg.menu_Options,MenuOptions);
 
-  menu_file_data("@New"_def,MenuFileNew)
-                ("@Open"_def,MenuFileOpen)
+  menu_file_data(+cfg.menu_New,MenuFileNew)
+                (+cfg.menu_Open,MenuFileOpen)
                 (MenuSeparator)
-                ("@Save"_def,MenuFileSave)
-                ("Save @as"_def,MenuFileSaveAs)
+                (+cfg.menu_Save,MenuFileSave)
+                (+cfg.menu_SaveAs,MenuFileSaveAs)
                 (MenuSeparator)
-                ("E@xit"_def,MenuFileExit);
+                (+cfg.menu_Exit,MenuFileExit);
 
-  menu_opt_data("@Global"_def,MenuOptionsUserPref)
-               ("@Application"_def,MenuOptionsAppPref);
+  menu_opt_data(+cfg.menu_Global,MenuOptionsUserPref)
+               (+cfg.menu_App,MenuOptionsAppPref);
 
   file_frame.addFilter("*.cont.ddl"_c);
   file_frame.addFilter("*"_c,false);

@@ -41,6 +41,8 @@ struct UserPreferenceBag : ConfigItemHost
  {
   // common
 
+  Ratio frame_pos_ry = Div(5,12) ;
+
   MCoord width = Fraction(6,2) ;
 
   Coord space_dxy = 10 ;
@@ -87,6 +89,9 @@ struct UserPreferenceBag : ConfigItemHost
 
   DefString text_Close   = "Close"_def ;
   DefString text_Insert  = "Insert"_def ;
+
+  DefString title_UserPref = "User preferences"_def ;
+  DefString title_AppPref = "Application preferences"_def ;
 
   // text
 
@@ -235,8 +240,6 @@ struct UserPreferenceBag : ConfigItemHost
   // Message
 
   Coord message_knob_dxy = 50 ;
-
-  Ratio message_pos_ry = Div(5,12) ;
 
   // File
 

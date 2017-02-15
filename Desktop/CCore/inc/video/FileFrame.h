@@ -679,7 +679,7 @@ class FileFrame : public DragFrame
        frame_cfg.bind(proxy);
        file_cfg.bind(proxy);
 
-       pos_ry.bind(bag.message_pos_ry);
+       pos_ry.bind(bag.frame_pos_ry);
       }
     };
 

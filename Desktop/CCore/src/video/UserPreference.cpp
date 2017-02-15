@@ -25,6 +25,8 @@ namespace Video {
 template <class Ptr,class Func>
 void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
  {
+  func("frame_pos_ry",ptr->frame_pos_ry);
+
   func("width",ptr->width);
 
   func("space_dxy",ptr->space_dxy);
@@ -71,6 +73,9 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
 
   func("text_Close",ptr->text_Close);
   func("text_Insert",ptr->text_Insert);
+
+  func("title_UserPref",ptr->title_UserPref);
+  func("title_AppPref",ptr->title_AppPref);
 
   func("text_cursor_dx",ptr->text_cursor_dx);
 
@@ -199,8 +204,6 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
 
   func("message_knob_dxy",ptr->message_knob_dxy);
 
-  func("message_pos_ry",ptr->message_pos_ry);
-
   func("file_alt_dxy",ptr->file_alt_dxy);
 
   func("file_accent",ptr->file_accent);
@@ -239,6 +242,7 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
  {
   binder.group("Common"_def);
 
+   binder.item("Y-position ratio"_def,frame_pos_ry);
    binder.item("line width"_def,width);
    binder.item("space"_def,space_dxy);
    binder.space();
@@ -279,6 +283,8 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("'Warning'"_def,text_Warning);
    binder.item("'Close'"_def,text_Close);
    binder.item("'Insert'"_def,text_Insert);
+   binder.item("'UserPref'"_def,title_UserPref);
+   binder.item("'AppPref'"_def,title_AppPref);
 
   binder.group("Text"_def);
 
@@ -425,7 +431,6 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
   binder.group("Message window"_def);
 
    binder.item("knob box"_def,message_knob_dxy);
-   binder.item("Y-position ratio"_def,message_pos_ry);
 
   binder.group("File window"_def);
 

@@ -15,6 +15,7 @@
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
+#include <CCore/inc/video/ConfigEditor.h>
 #include <CCore/inc/video/Picture.h>
 
 #include <CCore/inc/TaskMemStack.h>
@@ -33,7 +34,7 @@ class Application;
 
 /* struct AppPreferenceBag */
 
-struct AppPreferenceBag
+struct AppPreferenceBag : ConfigItemHost
  {
   // common
 
@@ -85,6 +86,18 @@ struct AppPreferenceBag
 
   DefString title_Ins = "Function list"_def ;
 
+  // menu
+
+  DefString menu_File    = "@File"_def ;
+  DefString menu_Options = "@Options"_def ;
+  DefString menu_New     = "@New"_def ;
+  DefString menu_Open    = "@Open"_def ;
+  DefString menu_Save    = "@Save"_def ;
+  DefString menu_SaveAs  = "Save @as"_def ;
+  DefString menu_Exit    = "E@xit"_def ;
+  DefString menu_Global  = "@Global"_def ;
+  DefString menu_App     = "@Application"_def ;
+
   // hints
 
   DefString hint_File   = "The current file"_def ;
@@ -117,13 +130,13 @@ struct AppPreferenceBag
   template <class Ptr,class Func>
   static void Members(Ptr ptr,Func func);
 
-  void bind(ConfigItemBind &binder);
+  virtual void bind(ConfigItemBind &binder);
 
   void createFonts();
  };
 
 template <class Ptr,class Func>
-void AppPreferenceBag::Members(Ptr ptr,Func func)
+void AppPreferenceBag::Members(Ptr ptr,Func func) // TODO
  {
   func("arrow_size",ptr->arrow_size);
 
@@ -185,6 +198,12 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
 
 void AppPreferenceBag::bind(ConfigItemBind &binder) // TODO
  {
+  binder.group("Common"_def);
+
+    binder.item("Arrow size"_def,arrow_size);
+    binder.item("Shade length"_def,shade_dxy);
+    binder.space();
+    binder.item("Back"_def,back);
  }
 
 void AppPreferenceBag::createFonts()
@@ -253,6 +272,8 @@ struct Param
 
 class Application : public ApplicationBase
  {
+   Param &param;
+
    const CmdDisplay cmd_display;
 
    DragFrame main_frame;
@@ -260,6 +281,39 @@ class Application : public ApplicationBase
    ExceptionClient exception_client;
 
    ClientWindow client;
+
+   ConfigEditorFrame app_frame;
+
+  private:
+
+   void userPref(Point base) // TODO
+    {
+     Used(base);
+    }
+
+   void appPref(Point base)
+    {
+     if( app_frame.isDead() )
+       {
+        app_frame.create(main_frame.getFrame(),base,param.pref.get().title_AppPref);
+       }
+    }
+
+   SignalConnector<Application,Point> connector_userPref;
+   SignalConnector<Application,Point> connector_appPref;
+
+   void appUpdated()
+    {
+     param.pref.updated.assert();
+    }
+
+   void appSave()
+    {
+     param.app_pref.update();
+    }
+
+   SignalConnector<Application> connector_app_updated;
+   SignalConnector<Application> connector_app_save;
 
   private:
 
@@ -300,15 +354,24 @@ class Application : public ApplicationBase
 
   public:
 
-   explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
-    : ApplicationBase(param.desktop,param.tick_period),
+   explicit Application(WindowReportBase &report,Param &param_,CmdDisplay cmd_display_)
+    : ApplicationBase(param_.desktop,param_.tick_period),
+      param(param_),
       cmd_display(cmd_display_),
       main_frame(param.desktop,param.frame_cfg,param.pref.updated),
       exception_client(main_frame,param.exception_cfg,report),
-      client(main_frame,param.client_cfg)
+      client(main_frame,param.client_cfg),
+      app_frame(param.desktop,param.pref.getSmartConfig(),false),
+
+      connector_userPref(this,&Application::userPref,client.doUserPref),
+      connector_appPref(this,&Application::appPref,client.doAppPref),
+      connector_app_updated(this,&Application::appUpdated,app_frame.updated),
+      connector_app_save(this,&Application::appSave,app_frame.doSave)
     {
      main_frame.bindAlertClient(exception_client);
      main_frame.bindClient(client);
+
+     app_frame.bindConfig(param.app_pref.ref());
     }
 
    ~Application()

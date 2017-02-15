@@ -142,7 +142,7 @@ class MessageWindow : public ComboWindow
 
    // methods
 
-   Point getMinSize() const;
+   Point getMinSize(Point cap=Point::Max()) const;
 
    void erase(); // for dead windows!
 
@@ -175,20 +175,20 @@ class MessageFrame : public FixedFrame
 
    struct Config
     {
+     RefVal<Ratio> pos_ry = Div(5,12) ;
+
      CtorRefVal<FixedFrame::ConfigType> frame_cfg;
      CtorRefVal<MessageWindow::ConfigType> msg_cfg;
-
-     RefVal<Ratio> pos_ry = Div(5,12) ;
 
      Config() noexcept {}
 
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
+       pos_ry.bind(bag.frame_pos_ry);
+
        frame_cfg.bind(proxy);
        msg_cfg.bind(proxy);
-
-       pos_ry.bind(bag.message_pos_ry);
       }
     };
 
@@ -204,7 +204,7 @@ class MessageFrame : public FixedFrame
        frame_cfg.bind(proxy);
        msg_cfg.bind((const MessageWindow::AlertConfigType &)proxy);
 
-       pos_ry.bind(bag.message_pos_ry);
+       pos_ry.bind(bag.frame_pos_ry);
       }
     };
 
@@ -253,11 +253,20 @@ class MessageFrame : public FixedFrame
    using FixedFrame::createMain;
    using FixedFrame::create;
 
-   void createMain(const DefString &title) { createMain(getPane(true,title.str()),title); }
+   void createMain(const DefString &title)
+    {
+     createMain(getPane(true,title.str()),title);
+    }
 
-   void create(const DefString &title) { create(getPane(false,title.str()),title); }
+   void create(const DefString &title)
+    {
+     create(getPane(false,title.str()),title);
+    }
 
-   void create(FrameWindow *parent,const DefString &title) { create(parent,getPane(false,title.str()),title); }
+   void create(FrameWindow *parent,const DefString &title)
+    {
+     create(parent,getPane(false,title.str()),title);
+    }
  };
 
 } // namespace Video

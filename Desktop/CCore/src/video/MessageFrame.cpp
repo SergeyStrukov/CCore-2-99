@@ -67,13 +67,11 @@ MessageWindow::~MessageWindow()
 
  // methods
 
-Point MessageWindow::getMinSize() const
+Point MessageWindow::getMinSize(Point cap) const
  {
   Coordinate space_dxy=+cfg.space_dxy;
 
   Coordinate space2=2*space_dxy;
-
-  Point top=info.getMinSize().addXY(+space2);
 
   Coordinate line_dy=dline.getMinSize().dy;
 
@@ -99,7 +97,11 @@ Point MessageWindow::getMinSize() const
 
   Point bottom=btn.addXY(+space2);
 
-  return Point( Max(bottom.x,top.x) , bottom.y+line_dy+top.y );
+  Point delta(0,bottom.y+line_dy);
+
+  Point top=info.getMinSize(cap-delta).addXY(+space2);
+
+  return Point( Max(bottom.x,top.x) , delta.y+top.y );
  }
 
 void MessageWindow::erase()
@@ -234,7 +236,11 @@ void MessageFrame::alive()
 
 Pane MessageFrame::getPane(bool is_main,StrLen title) const
  {
-  Point size=getMinSize(is_main,title,sub_win.getMinSize());
+  Point screen_size=getScreenSize();
+
+  Point cap=Div(9,10)*screen_size-getDeltaSize();
+
+  Point size=getMinSize(is_main,title,sub_win.getMinSize(cap));
 
   return GetWindowPlace(desktop,+cfg.pos_ry,size);
  }
