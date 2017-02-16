@@ -73,24 +73,42 @@ class StrMap : NoCopy
      return Algon::BinarySearch_if(r, [=] (const Rec &rec) { StrLen key=rec.key; return key.len>len; } );
     }
 
-   static T * Pick(PtrLen<Rec> r)
+   static T * PickNone(PtrLen<Rec>)
     {
-     if( +r ) return &r->obj;
-
      return 0;
     }
 
-   static const T * Pick(PtrLen<const Rec> r)
+   static const T * PickNone(PtrLen<const Rec>)
+    {
+     return 0;
+    }
+
+   template <class R>
+   static auto Pick(R r)
     {
      if( +r ) return &r->obj;
 
-     return 0;
+     return PickNone(r);
     }
 
    template <class R>
    static auto Search(R r,StrLen key)
     {
-     for(ulen i=0; i<key.len ;i++) r=Search(r,i,key[i]);
+     for(ulen i=0; i<key.len ;i++)
+       {
+        r=Search(r,i,key[i]);
+
+        if( r.len==0 ) return PickNone(r);
+
+        if( r.len==1 )
+          {
+           ulen off=i+1;
+
+           if( r->key.part(off).equal(key.part(off)) ) return Pick(r);
+
+           return PickNone(r);
+          }
+       }
 
      r=Search(r,key.len);
 
