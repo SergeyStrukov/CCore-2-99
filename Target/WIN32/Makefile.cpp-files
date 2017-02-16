@@ -310,6 +310,7 @@
 ../../Desktop/CCore/src/video/lib/Shape.Scroll.cpp
 ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cpp
 ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
+../../Desktop/CCore/src/video/lib/Shape.Spinor.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Switch.cpp
 ../../Desktop/CCore/src/video/lib/Shape.Text.cpp
@@ -327,6 +328,7 @@
 ../../Desktop/CCore/src/video/lib/Window.Scroll.cpp
 ../../Desktop/CCore/src/video/lib/Window.ScrollList.cpp
 ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
+../../Desktop/CCore/src/video/lib/Window.Spinor.cpp
 ../../Desktop/CCore/src/video/lib/Window.Split.cpp
 ../../Desktop/CCore/src/video/lib/Window.Text.cpp
 ../../Desktop/CCore/src/video/lib/Window.TextLine.cpp

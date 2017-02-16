@@ -302,6 +302,7 @@ obj/Shape.Radio.o \
 obj/Shape.Scroll.o \
 obj/Shape.ScrollList.o \
 obj/Shape.SimpleTextList.o \
+obj/Shape.Spinor.o \
 obj/Shape.Split.o \
 obj/Shape.Switch.o \
 obj/Shape.Text.o \
@@ -400,6 +401,7 @@ obj/Window.Radio.o \
 obj/Window.Scroll.o \
 obj/Window.ScrollList.o \
 obj/Window.SimpleTextList.o \
+obj/Window.Spinor.o \
 obj/Window.Split.o \
 obj/Window.Text.o \
 obj/Window.TextLine.o \
@@ -712,6 +714,7 @@ obj/Shape.Radio.s \
 obj/Shape.Scroll.s \
 obj/Shape.ScrollList.s \
 obj/Shape.SimpleTextList.s \
+obj/Shape.Spinor.s \
 obj/Shape.Split.s \
 obj/Shape.Switch.s \
 obj/Shape.Text.s \
@@ -810,6 +813,7 @@ obj/Window.Radio.s \
 obj/Window.Scroll.s \
 obj/Window.ScrollList.s \
 obj/Window.SimpleTextList.s \
+obj/Window.Spinor.s \
 obj/Window.Split.s \
 obj/Window.Text.s \
 obj/Window.TextLine.s \
@@ -1122,6 +1126,7 @@ obj/Shape.Radio.dep \
 obj/Shape.Scroll.dep \
 obj/Shape.ScrollList.dep \
 obj/Shape.SimpleTextList.dep \
+obj/Shape.Spinor.dep \
 obj/Shape.Split.dep \
 obj/Shape.Switch.dep \
 obj/Shape.Text.dep \
@@ -1220,6 +1225,7 @@ obj/Window.Radio.dep \
 obj/Window.Scroll.dep \
 obj/Window.ScrollList.dep \
 obj/Window.SimpleTextList.dep \
+obj/Window.Spinor.dep \
 obj/Window.Split.dep \
 obj/Window.Text.dep \
 obj/Window.TextLine.dep \
@@ -2147,6 +2153,9 @@ obj/Shape.ScrollList.o : ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cpp
 obj/Shape.SimpleTextList.o : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Shape.Spinor.o : ../../Desktop/CCore/src/video/lib/Shape.Spinor.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Shape.Split.o : ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2439,6 +2448,9 @@ obj/Window.ScrollList.o : ../../Desktop/CCore/src/video/lib/Window.ScrollList.cp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.SimpleTextList.o : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Window.Spinor.o : ../../Desktop/CCore/src/video/lib/Window.Spinor.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Window.Split.o : ../../Desktop/CCore/src/video/lib/Window.Split.cpp
@@ -3370,6 +3382,9 @@ obj/Shape.ScrollList.s : ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cpp
 obj/Shape.SimpleTextList.s : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shape.Spinor.s : ../../Desktop/CCore/src/video/lib/Shape.Spinor.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Shape.Split.s : ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3662,6 +3677,9 @@ obj/Window.ScrollList.s : ../../Desktop/CCore/src/video/lib/Window.ScrollList.cp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.SimpleTextList.s : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Window.Spinor.s : ../../Desktop/CCore/src/video/lib/Window.Spinor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Window.Split.s : ../../Desktop/CCore/src/video/lib/Window.Split.cpp
@@ -4593,6 +4611,9 @@ obj/Shape.ScrollList.dep : ../../Desktop/CCore/src/video/lib/Shape.ScrollList.cp
 obj/Shape.SimpleTextList.dep : ../../Desktop/CCore/src/video/lib/Shape.SimpleTextList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.SimpleTextList.o $< -MF $@
 
+obj/Shape.Spinor.dep : ../../Desktop/CCore/src/video/lib/Shape.Spinor.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Spinor.o $< -MF $@
+
 obj/Shape.Split.dep : ../../Desktop/CCore/src/video/lib/Shape.Split.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shape.Split.o $< -MF $@
 
@@ -4886,6 +4907,9 @@ obj/Window.ScrollList.dep : ../../Desktop/CCore/src/video/lib/Window.ScrollList.
 
 obj/Window.SimpleTextList.dep : ../../Desktop/CCore/src/video/lib/Window.SimpleTextList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.SimpleTextList.o $< -MF $@
+
+obj/Window.Spinor.dep : ../../Desktop/CCore/src/video/lib/Window.Spinor.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Spinor.o $< -MF $@
 
 obj/Window.Split.dep : ../../Desktop/CCore/src/video/lib/Window.Split.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Window.Split.o $< -MF $@
