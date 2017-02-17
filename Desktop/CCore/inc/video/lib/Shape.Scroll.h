@@ -26,14 +26,6 @@
 namespace CCore {
 namespace Video {
 
-/* classes */
-
-class ScrollShape;
-
-class XScrollShape;
-
-class YScrollShape;
-
 /* enum ScrollType */
 
 enum ScrollType
@@ -46,6 +38,14 @@ enum ScrollType
   ScrollType_UpPage,
   ScrollType_Up
  };
+
+/* classes */
+
+class ScrollShape;
+
+class XScrollShape;
+
+class YScrollShape;
 
 /* class ScrollShape */
 

@@ -46,18 +46,18 @@ Point SpinorShape::getMinSize() const
   return Point(dx,dy);
  }
 
-auto SpinorShape::getZone(Point point) const -> ZoneType
+SpinType SpinorShape::getZone(Point point) const
  {
   if( pane.contains(point) )
     {
      int x=point.x-pane.x;
 
-     if( x<pane.dy ) return ZonePlus;
+     if( x<pane.dy ) return SpinType_Plus;
 
-     if( pane.dx-x<pane.dy ) return ZoneMinus;
+     if( pane.dx-x<pane.dy ) return SpinType_Minus;
     }
 
-  return ZoneNone;
+  return SpinType_None;
  }
 
 void SpinorShape::draw(const DrawBuf &buf) const
@@ -125,11 +125,11 @@ void SpinorShape::draw(const DrawBuf &buf) const
       TwoField field(f1,+cfg.snow,f2,gray);
       TwoField fieldUp(f1,+cfg.snowUp,f2,gray);
 
-      if( down==ZonePlus )
+      if( down==SpinType_Plus )
         {
          art.ball(c1,radius2,gray);
         }
-      else if( mover==ZonePlus )
+      else if( mover==SpinType_Plus )
         {
          art.ball(c1,radius2,fieldUp);
         }
@@ -138,11 +138,11 @@ void SpinorShape::draw(const DrawBuf &buf) const
          art.ball(c1,radius2,field);
         }
 
-      if( down==ZoneMinus )
+      if( down==SpinType_Minus )
         {
          art.ball(c2,radius2,gray);
         }
-      else if( mover==ZoneMinus )
+      else if( mover==SpinType_Minus )
         {
          art.ball(c2,radius2,fieldUp);
         }
@@ -153,9 +153,7 @@ void SpinorShape::draw(const DrawBuf &buf) const
      }
    else
      {
-      VColor top=+cfg.snow;
-
-      TwoField field(f1,top,f2,gray);
+      TwoField field(f1,+cfg.snow,f2,gray);
 
       art.ball(c1,radius2,field);
 
@@ -167,15 +165,45 @@ void SpinorShape::draw(const DrawBuf &buf) const
    MCoord a=radius2/2;
    MCoord w=radius2/3;
 
-   art.path(w,fc,c1.subX(a),c1.addX(a));
-   art.path(w,fc,c1.subY(a),c1.addY(a));
+   if( val<max_val )
+     {
+      art.path(w,fc,c1.subX(a),c1.addX(a));
+      art.path(w,fc,c1.subY(a),c1.addY(a));
+     }
+   else
+     {
+      art.path(w,gray,c1.subX(a),c1.addX(a));
+      art.path(w,gray,c1.subY(a),c1.addY(a));
+     }
 
-   art.path(w,fc,c2.subX(a),c2.addX(a));
+   if( val>min_val )
+     {
+      art.path(w,fc,c2.subX(a),c2.addX(a));
+     }
+   else
+     {
+      art.path(w,gray,c2.subX(a),c2.addX(a));
+     }
 
    VColor border = enable? +cfg.border : gray ;
 
-   art.circle(c1,radius2-width/2,width,border);
-   art.circle(c2,radius2-width/2,width,border);
+   if( val<max_val )
+     {
+      art.circle(c1,radius2-width/2,width,border);
+     }
+   else
+     {
+      art.circle(c1,radius2-width/2,width,gray);
+     }
+
+   if( val>min_val )
+     {
+      art.circle(c2,radius2-width/2,width,border);
+     }
+   else
+     {
+      art.circle(c2,radius2-width/2,width,gray);
+     }
   }
  }
 

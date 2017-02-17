@@ -21,8 +21,20 @@
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/RefVal.h>
 
+#include <CCore/inc/DeferCall.h>
+
 namespace CCore {
 namespace Video {
+
+/* enum SpinType */
+
+enum SpinType
+ {
+  SpinType_None = 0,
+
+  SpinType_Plus,
+  SpinType_Minus
+ };
 
 /* classes */
 
@@ -81,18 +93,10 @@ class SpinorShape
 
    // state
 
-   enum ZoneType
-    {
-     ZoneNone = 0,
-
-     ZonePlus,
-     ZoneMinus
-    };
-
    bool enable =  true ;
    bool focus  = false ;
-   ZoneType mover = ZoneNone ;
-   ZoneType down  = ZoneNone ;
+   SpinType mover = SpinType_None ;
+   SpinType down  = SpinType_None ;
 
    bool mouse = false ;
 
@@ -104,7 +108,7 @@ class SpinorShape
 
    bool isGoodSize(Point size) const { return size >= getMinSize() && size.x >= 4*size.y ; }
 
-   ZoneType getZone(Point point) const;
+   SpinType getZone(Point point) const;
 
    void draw(const DrawBuf &buf) const;
  };

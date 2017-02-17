@@ -34,14 +34,77 @@ class SpinorWindowOf : public SubWindow
  {
    Shape shape;
 
+   DeferInput<SpinorWindowOf<Shape> > input;
+
+   DeferTick defer_tick;
+
   private:
 
-   void btnDown(typename Shape::ZoneType type) // TODO
+   void spin()
     {
-     Used(type);
+     switch( shape.down )
+       {
+        case SpinType_Plus :
+         {
+          if( shape.val<shape.max_val )
+            {
+             shape.val++;
+
+             changed.assert(shape.val);
+            }
+         }
+        break;
+
+        case SpinType_Minus :
+         {
+          if( shape.val>shape.min_val )
+            {
+             shape.val--;
+
+             changed.assert(shape.val);
+            }
+         }
+        break;
+       }
     }
 
-   void btnUp() // TODO
+   void btnDown()
+    {
+     redraw();
+
+     defer_tick.start();
+
+     spin();
+    }
+
+   void btnUp()
+    {
+     defer_tick.stop();
+
+     redraw();
+    }
+
+   void hilight(SpinType zone)
+    {
+     if( shape.down && shape.mouse )
+       {
+        if( zone!=shape.down )
+          {
+           shape.down=SpinType_None;
+           shape.mover=SpinType_None;
+
+           releaseMouse();
+
+           btnUp();
+          }
+       }
+     else
+       {
+        if( Change(shape.mover,zone) ) redraw();
+       }
+    }
+
+   void tick() // TODO
     {
     }
 
@@ -53,8 +116,10 @@ class SpinorWindowOf : public SubWindow
    template <class ... TT>
    explicit SpinorWindowOf(SubWindowHost &host,TT && ... tt)
     : SubWindow(host),
-      shape( std::forward<TT>(tt)... )
+      shape( std::forward<TT>(tt)... ),
+      input(this)
     {
+     defer_tick=input.create(&SpinorWindowOf<Shape>::tick);
     }
 
    virtual ~SpinorWindowOf() {}
@@ -125,8 +190,13 @@ class SpinorWindowOf : public SubWindow
    virtual void open()
     {
      shape.focus=false;
-     shape.mover=Shape::ZoneNone;
-     shape.down=Shape::ZoneNone;
+     shape.mover=SpinType_None;
+     shape.down=SpinType_None;
+    }
+
+   virtual void close()
+    {
+     defer_tick.stop();
     }
 
    // keyboard
@@ -146,11 +216,9 @@ class SpinorWindowOf : public SubWindow
      if( shape.down && !shape.mouse )
        {
         shape.focus=false;
-        shape.down=Shape::ZoneNone;
+        shape.down=SpinType_None;
 
         btnUp();
-
-        redraw();
        }
      else
        {
@@ -164,18 +232,16 @@ class SpinorWindowOf : public SubWindow
     {
      if( shape.down && shape.mouse )
        {
-        shape.mover=Shape::ZoneNone;
-        shape.down=Shape::ZoneNone;
+        shape.mover=SpinType_None;
+        shape.down=SpinType_None;
 
         btnUp();
-
-        redraw();
        }
     }
 
-   virtual MouseShape getMouseShape(Point,KeyMod) const
+   virtual MouseShape getMouseShape(Point point,KeyMod) const
     {
-     return shape.enable?Mouse_Hand:Mouse_Arrow;
+     return ( shape.enable && shape.getZone(point) )?Mouse_Hand:Mouse_Arrow;
     }
 
    // user input
@@ -183,6 +249,109 @@ class SpinorWindowOf : public SubWindow
    virtual void react(UserAction action)
     {
      action.dispatch(*this);
+    }
+
+   void react_Key(VKey vkey,KeyMod kmod)
+    {
+     switch( vkey )
+       {
+        case VKey_NumPlus :
+        case VKey_Equal :
+         {
+          if( shape.enable && !shape.down )
+            {
+             shape.down=SpinType_None;
+             shape.mouse=false;
+
+             btnDown();
+            }
+         }
+        break;
+
+        case VKey_NumMinus :
+        case VKey_Minus :
+         {
+          if( shape.enable && !shape.down )
+            {
+             shape.down=SpinType_None;
+             shape.mouse=false;
+
+             btnDown();
+            }
+         }
+        break;
+
+        case VKey_Tab :
+         {
+          tabbed.assert(kmod&KeyMod_Shift);
+         }
+        break;
+       }
+    }
+
+   void react_KeyUp(VKey vkey,KeyMod)
+    {
+     switch( vkey )
+       {
+        case VKey_NumPlus :
+        case VKey_Equal :
+        case VKey_NumMinus :
+        case VKey_Minus :
+         {
+          if( shape.down && !shape.mouse )
+            {
+             shape.down=SpinType_None;
+
+             btnUp();
+            }
+         }
+        break;
+       }
+    }
+
+   void react_LeftClick(Point point,MouseKey)
+    {
+     if( shape.enable && !shape.down && shape.pane.contains(point) )
+       {
+        if( SpinType zone=shape.getZone(point) )
+          {
+           shape.down=zone;
+           shape.mouse=true;
+
+           captureMouse();
+
+           btnDown();
+          }
+       }
+    }
+
+   void react_LeftUp(Point,MouseKey)
+    {
+     if( shape.down && shape.mouse )
+       {
+        shape.down=SpinType_None;
+
+        releaseMouse();
+
+        btnUp();
+       }
+    }
+
+   void react_Move(Point point,MouseKey)
+    {
+     if( shape.pane.contains(point) )
+       {
+        hilight(shape.getZone(point));
+       }
+     else
+       {
+        hilight(SpinType_None);
+       }
+    }
+
+   void react_Leave()
+    {
+     hilight(SpinType_None);
     }
 
    // signals
