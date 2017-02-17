@@ -108,6 +108,7 @@ struct UserPreferenceBag : ConfigItemHost
   VColor info_text      =  Black ;
   VColor line_edit_text =  Black ;
   VColor list_text      =  Black ;
+  VColor spinor_text    =  Black ;
 
   Point button_space    = Point(6,4) ;
   Point message_space   = Point(6,4) ;
@@ -125,6 +126,7 @@ struct UserPreferenceBag : ConfigItemHost
   FontCouple line_edit_font;
   FontCouple list_font;
   FontCouple menu_font;
+  FontCouple spinor_font;
 
   FontCouple code_font;
 
@@ -320,6 +322,7 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            TextLineWindow::ConfigType,
                                            ScrollListWindow::ConfigType,
                                            XSplitWindow::ConfigType,
+                                           SpinorWindow::ConfigType,
 
                                            DragFrame::ConfigType,
                                            FixedFrame::ConfigType,

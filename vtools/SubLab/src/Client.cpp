@@ -701,6 +701,17 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        }
     };
 
+   class SpinorWindow_Sample : public SpinorWindow
+    {
+     public:
+
+      SpinorWindow_Sample(SubWindowHost &host,const ConfigType &cfg)
+       : SpinorWindow(host,cfg)
+       {
+        setRange(-10000,10000);
+       }
+    };
+
    // CreateCombo()
 
    template <class W>
@@ -993,6 +1004,7 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
        add("LineEdit"_def,Create<LineEditWindow>);
        add("ScrollX"_def,Create<XScrollWindow_Sample>);
        add("ScrollY"_def,Create<YScrollWindow_Sample>);
+       add("Spinor"_def,Create<SpinorWindow_Sample>);
 
      add("Pane"_def);
 

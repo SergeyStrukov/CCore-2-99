@@ -142,76 +142,76 @@ struct AppPreferenceBag : ConfigItemHost
 template <class Ptr,class Func>
 void AppPreferenceBag::Members(Ptr ptr,Func func)
  {
-  func("arrow_size",ptr->arrow_size);
+  func("arrow_size"_c,ptr->arrow_size);
 
-  func("shade_dxy",ptr->shade_dxy);
+  func("shade_dxy"_c,ptr->shade_dxy);
 
-  func("back",ptr->back);
-  func("border",ptr->border);
-  func("face",ptr->face);
-  func("gray",ptr->gray);
-  func("vtext",ptr->text);
-  func("hilight",ptr->hilight);
-  func("focus",ptr->focus);
+  func("back"_c,ptr->back);
+  func("border"_c,ptr->border);
+  func("face"_c,ptr->face);
+  func("gray"_c,ptr->gray);
+  func("vtext"_c,ptr->text);
+  func("hilight"_c,ptr->hilight);
+  func("focus"_c,ptr->focus);
 
-  func("font",ptr->font.param);
+  func("font"_c,ptr->font.param);
 
-  func("edit_angle_dxy",ptr->edit_angle_dxy);
+  func("edit_angle_dxy"_c,ptr->edit_angle_dxy);
 
-  func("edit_length_dx",ptr->edit_length_dx);
-  func("edit_length_dy",ptr->edit_length_dy);
+  func("edit_length_dx"_c,ptr->edit_length_dx);
+  func("edit_length_dy"_c,ptr->edit_length_dy);
 
-  func("edit_ratio_dx",ptr->edit_ratio_dx);
-  func("edit_ratio_dy",ptr->edit_ratio_dy);
+  func("edit_ratio_dx"_c,ptr->edit_ratio_dx);
+  func("edit_ratio_dy"_c,ptr->edit_ratio_dy);
 
-  func("edit_text",ptr->edit_text);
-  func("edit_error_text",ptr->edit_error_text);
-  func("edit_number_text",ptr->edit_number_text);
-  func("edit_length_text",ptr->edit_length_text);
-  func("edit_angle_text",ptr->edit_angle_text);
-  func("edit_name_text",ptr->edit_name_text);
-  func("edit_punct_text",ptr->edit_punct_text);
+  func("edit_text"_c,ptr->edit_text);
+  func("edit_error_text"_c,ptr->edit_error_text);
+  func("edit_number_text"_c,ptr->edit_number_text);
+  func("edit_length_text"_c,ptr->edit_length_text);
+  func("edit_angle_text"_c,ptr->edit_angle_text);
+  func("edit_name_text"_c,ptr->edit_name_text);
+  func("edit_punct_text"_c,ptr->edit_punct_text);
 
-  func("edit_delay",ptr->edit_delay);
+  func("edit_delay"_c,ptr->edit_delay);
 
-  func("geometry_dxy",ptr->geometry_dxy);
+  func("geometry_dxy"_c,ptr->geometry_dxy);
 
-  func("text_show",ptr->text_show);
-  func("text_gray",ptr->text_gray);
-  func("text_name",ptr->text_name);
+  func("text_show"_c,ptr->text_show);
+  func("text_gray"_c,ptr->text_gray);
+  func("text_name"_c,ptr->text_name);
 
-  func("title_Ins",ptr->title_Ins);
+  func("title_Ins"_c,ptr->title_Ins);
 
-  func("menu_File",ptr->menu_File);
-  func("menu_Options",ptr->menu_Options);
-  func("menu_New",ptr->menu_New);
-  func("menu_Open",ptr->menu_Open);
-  func("menu_Save",ptr->menu_Save);
-  func("menu_SaveAs",ptr->menu_SaveAs);
-  func("menu_Exit",ptr->menu_Exit);
-  func("menu_Global",ptr->menu_Global);
-  func("menu_App",ptr->menu_App);
+  func("menu_File"_c,ptr->menu_File);
+  func("menu_Options"_c,ptr->menu_Options);
+  func("menu_New"_c,ptr->menu_New);
+  func("menu_Open"_c,ptr->menu_Open);
+  func("menu_Save"_c,ptr->menu_Save);
+  func("menu_SaveAs"_c,ptr->menu_SaveAs);
+  func("menu_Exit"_c,ptr->menu_Exit);
+  func("menu_Global"_c,ptr->menu_Global);
+  func("menu_App"_c,ptr->menu_App);
 
-  func("hint_File",ptr->hint_File);
-  func("hint_Angle",ptr->hint_Angle);
-  func("hint_Length",ptr->hint_Length);
-  func("hint_Ratio",ptr->hint_Ratio);
-  func("hint_Geom",ptr->hint_Geom);
+  func("hint_File"_c,ptr->hint_File);
+  func("hint_Angle"_c,ptr->hint_Angle);
+  func("hint_Length"_c,ptr->hint_Length);
+  func("hint_Ratio"_c,ptr->hint_Ratio);
+  func("hint_Geom"_c,ptr->hint_Geom);
 
-  func("hint_function_List",ptr->hint_function_List);
+  func("hint_function_List"_c,ptr->hint_function_List);
 
-  func("hint_item_List",ptr->hint_item_List);
-  func("hint_item_Edit",ptr->hint_item_Edit);
+  func("hint_item_List"_c,ptr->hint_item_List);
+  func("hint_item_Edit"_c,ptr->hint_item_Edit);
 
-  func("hint_item_Down",ptr->hint_item_Down);
-  func("hint_item_Up",ptr->hint_item_Up);
-  func("hint_item_Del",ptr->hint_item_Del);
-  func("hint_item_Add",ptr->hint_item_Add);
-  func("hint_item_Ins",ptr->hint_item_Ins);
+  func("hint_item_Down"_c,ptr->hint_item_Down);
+  func("hint_item_Up"_c,ptr->hint_item_Up);
+  func("hint_item_Del"_c,ptr->hint_item_Del);
+  func("hint_item_Add"_c,ptr->hint_item_Add);
+  func("hint_item_Ins"_c,ptr->hint_item_Ins);
 
-  func("hint_item_Show",ptr->hint_item_Show);
-  func("hint_item_Gray",ptr->hint_item_Gray);
-  func("hint_item_Name",ptr->hint_item_Name);
+  func("hint_item_Show"_c,ptr->hint_item_Show);
+  func("hint_item_Gray"_c,ptr->hint_item_Gray);
+  func("hint_item_Name"_c,ptr->hint_item_Name);
  }
 
 void AppPreferenceBag::bind(ConfigItemBind &binder)

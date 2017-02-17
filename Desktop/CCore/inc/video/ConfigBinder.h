@@ -156,14 +156,14 @@ class ConfigBinder : NoCopyBase<Bag> , public HomeSyncBase
 
    virtual void syncMap(ConfigMap &map)
     {
-     Bag::Members(this, [&map] (const char *name,AnyType &obj) { map.sync(name,obj); } );
+     Bag::Members(this, [&map] (StrLen name,AnyType &obj) { map.sync(name,obj); } );
 
      Bag::createFonts();
     }
 
    virtual void updateMap(ConfigMap &map) const
     {
-     Bag::Members(this, [&map] (const char *name,AnyType &obj) { map.update(name,obj); } );
+     Bag::Members(this, [&map] (StrLen name,AnyType &obj) { map.update(name,obj); } );
     }
 
    // getSmartConfig()
