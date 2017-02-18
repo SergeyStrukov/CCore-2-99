@@ -708,7 +708,9 @@ class ClientWindow::TypeInfo::Base : public ComboInfoBase
       SpinorWindow_Sample(SubWindowHost &host,const ConfigType &cfg)
        : SpinorWindow(host,cfg)
        {
-        setRange(-10000,10000);
+        setRange(-100,100);
+
+        setOptions("+4i");
        }
     };
 

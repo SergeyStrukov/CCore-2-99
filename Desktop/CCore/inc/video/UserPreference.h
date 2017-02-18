@@ -162,6 +162,10 @@ struct UserPreferenceBag : ConfigItemHost
   VColor scroll_list_titleTop    = Aqua ;
   VColor scroll_list_titleBottom = Gray ;
 
+  // spinor
+
+  unsigned spinor_period = 1_sectick/2 ;
+
   // menu
 
   VColor menu_back      =    Silver ;

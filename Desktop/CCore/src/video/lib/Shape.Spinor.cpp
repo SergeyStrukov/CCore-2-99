@@ -125,26 +125,40 @@ void SpinorShape::draw(const DrawBuf &buf) const
       TwoField field(f1,+cfg.snow,f2,gray);
       TwoField fieldUp(f1,+cfg.snowUp,f2,gray);
 
-      if( down==SpinType_Plus )
+      if( val<max_val )
         {
-         art.ball(c1,radius2,gray);
-        }
-      else if( mover==SpinType_Plus )
-        {
-         art.ball(c1,radius2,fieldUp);
+         if( down==SpinType_Plus )
+           {
+            art.ball(c1,radius2,gray);
+           }
+         else if( mover==SpinType_Plus )
+           {
+            art.ball(c1,radius2,fieldUp);
+           }
+         else
+           {
+            art.ball(c1,radius2,field);
+           }
         }
       else
         {
          art.ball(c1,radius2,field);
         }
 
-      if( down==SpinType_Minus )
+      if( val>min_val )
         {
-         art.ball(c2,radius2,gray);
-        }
-      else if( mover==SpinType_Minus )
-        {
-         art.ball(c2,radius2,fieldUp);
+         if( down==SpinType_Minus )
+           {
+            art.ball(c2,radius2,gray);
+           }
+         else if( mover==SpinType_Minus )
+           {
+            art.ball(c2,radius2,fieldUp);
+           }
+         else
+           {
+            art.ball(c2,radius2,field);
+           }
         }
       else
         {

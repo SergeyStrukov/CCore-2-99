@@ -63,6 +63,8 @@ class SpinorShape
 
      RefVal<Font> font;
 
+     RefVal<unsigned> period = 1_sectick/2 ;
+
      Config() noexcept {}
 
      template <class Bag>
@@ -79,6 +81,7 @@ class SpinorShape
 
        text.bind(bag.spinor_text);
        font.bind(bag.spinor_font.font);
+       period.bind(bag.spinor_period);
       }
     };
 
@@ -88,6 +91,7 @@ class SpinorShape
    int min_val = 0 ;
    int max_val = 0 ;
    int val = 0 ;
+   int delta = 1 ;
    IntPrintOpt opt;
    Pane pane;
 
@@ -97,6 +101,8 @@ class SpinorShape
    bool focus  = false ;
    SpinType mover = SpinType_None ;
    SpinType down  = SpinType_None ;
+   unsigned time   = 0 ;
+   unsigned period = 0 ;
 
    bool mouse = false ;
 
@@ -106,9 +112,29 @@ class SpinorShape
 
    Point getMinSize() const;
 
-   bool isGoodSize(Point size) const { return size >= getMinSize() && size.x >= 4*size.y ; }
+   bool isGoodSize(Point size) const { return size>=getMinSize() && size.x>=4*size.y ; }
 
    SpinType getZone(Point point) const;
+
+   void tickStart()
+    {
+     time=0;
+     period=+cfg.period;
+    }
+
+   bool tick()
+    {
+     if( (++time)>=period )
+       {
+        time=0;
+
+        if( period>1 ) period--;
+
+        return true;
+       }
+
+     return false;
+    }
 
    void draw(const DrawBuf &buf) const;
  };

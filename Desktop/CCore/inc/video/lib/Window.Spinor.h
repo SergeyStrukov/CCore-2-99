@@ -40,6 +40,10 @@ class SpinorWindowOf : public SubWindow
 
   private:
 
+   static int Abs(int a) { return (a<0)? -a : a ; }
+
+   static int MinSub(int delta,int a,int b) { return (int)Min<unsigned>(delta,(unsigned)b-(unsigned)a); }
+
    void spin()
     {
      switch( shape.down )
@@ -48,9 +52,13 @@ class SpinorWindowOf : public SubWindow
          {
           if( shape.val<shape.max_val )
             {
-             shape.val++;
+             shape.val+=MinSub(shape.delta,shape.val,shape.max_val);
 
              changed.assert(shape.val);
+            }
+          else
+            {
+             defer_tick.stop();
             }
          }
         break;
@@ -59,9 +67,13 @@ class SpinorWindowOf : public SubWindow
          {
           if( shape.val>shape.min_val )
             {
-             shape.val--;
+             shape.val-=MinSub(shape.delta,shape.min_val,shape.val);
 
              changed.assert(shape.val);
+            }
+          else
+            {
+             defer_tick.stop();
             }
          }
         break;
@@ -73,6 +85,8 @@ class SpinorWindowOf : public SubWindow
      redraw();
 
      defer_tick.start();
+
+     shape.tickStart();
 
      spin();
     }
@@ -104,8 +118,14 @@ class SpinorWindowOf : public SubWindow
        }
     }
 
-   void tick() // TODO
+   void tick()
     {
+     if( shape.tick() )
+       {
+        redraw();
+
+        spin();
+       }
     }
 
   public:
@@ -260,7 +280,7 @@ class SpinorWindowOf : public SubWindow
          {
           if( shape.enable && !shape.down )
             {
-             shape.down=SpinType_None;
+             shape.down=SpinType_Plus;
              shape.mouse=false;
 
              btnDown();
@@ -273,11 +293,42 @@ class SpinorWindowOf : public SubWindow
          {
           if( shape.enable && !shape.down )
             {
-             shape.down=SpinType_None;
+             shape.down=SpinType_Minus;
              shape.mouse=false;
 
              btnDown();
             }
+         }
+        break;
+
+        case VKey_PageUp :
+         {
+          int a=shape.max_val/10;
+          int b=shape.min_val/10;
+
+          if( shape.delta<Max(Abs(a),Abs(b)) )
+            {
+             shape.delta*=10;
+
+             redraw();
+            }
+         }
+        break;
+
+        case VKey_PageDown :
+         {
+          if( shape.delta>=10 )
+            {
+             shape.delta/=10;
+
+             redraw();
+            }
+         }
+        break;
+
+        case VKey_Home :
+         {
+          if( Change(shape.delta,1) ) redraw();
          }
         break;
 
@@ -352,6 +403,35 @@ class SpinorWindowOf : public SubWindow
    void react_Leave()
     {
      hilight(SpinType_None);
+    }
+
+   void react_Wheel(Point,MouseKey,Coord delta)
+    {
+     if( shape.enable && !shape.down )
+       {
+        if( delta>0 )
+          {
+           if( shape.val<shape.max_val )
+             {
+              shape.val+=MinSub(delta*shape.delta,shape.val,shape.max_val);
+
+              redraw();
+
+              changed.assert(shape.val);
+             }
+          }
+        else
+          {
+           if( shape.val>shape.min_val )
+             {
+              shape.val-=MinSub(-delta*shape.delta,shape.min_val,shape.val);
+
+              redraw();
+
+              changed.assert(shape.val);
+             }
+          }
+       }
     }
 
    // signals
