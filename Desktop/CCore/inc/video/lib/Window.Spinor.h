@@ -40,8 +40,6 @@ class SpinorWindowOf : public SubWindow
 
   private:
 
-   static int Abs(int a) { return (a<0)? -a : a ; }
-
    static int MinSub(int delta,int a,int b) { return (int)Min<unsigned>(delta,(unsigned)b-(unsigned)a); }
 
    void spin()
@@ -125,6 +123,26 @@ class SpinorWindowOf : public SubWindow
         redraw();
 
         spin();
+       }
+    }
+
+   void deltaUp()
+    {
+     if( shape.delta<Shape::DeltaCap )
+       {
+        shape.delta*=10;
+
+        redraw();
+       }
+    }
+
+   void deltaDown()
+    {
+     if( shape.delta>=10 )
+       {
+        shape.delta/=10;
+
+        redraw();
        }
     }
 
@@ -303,26 +321,13 @@ class SpinorWindowOf : public SubWindow
 
         case VKey_PageUp :
          {
-          int a=shape.max_val/10;
-          int b=shape.min_val/10;
-
-          if( shape.delta<Max(Abs(a),Abs(b)) )
-            {
-             shape.delta*=10;
-
-             redraw();
-            }
+          deltaUp();
          }
         break;
 
         case VKey_PageDown :
          {
-          if( shape.delta>=10 )
-            {
-             shape.delta/=10;
-
-             redraw();
-            }
+          deltaDown();
          }
         break;
 
@@ -405,30 +410,44 @@ class SpinorWindowOf : public SubWindow
      hilight(SpinType_None);
     }
 
-   void react_Wheel(Point,MouseKey,Coord delta)
+   void react_Wheel(Point,MouseKey mkey,Coord delta)
     {
      if( shape.enable && !shape.down )
        {
-        if( delta>0 )
+        if( mkey&MouseKey_Shift )
           {
-           if( shape.val<shape.max_val )
+           if( delta>0 )
              {
-              shape.val+=MinSub(delta*shape.delta,shape.val,shape.max_val);
-
-              redraw();
-
-              changed.assert(shape.val);
+              deltaUp();
+             }
+           else
+             {
+              deltaDown();
              }
           }
         else
           {
-           if( shape.val>shape.min_val )
+           if( delta>0 )
              {
-              shape.val-=MinSub(-delta*shape.delta,shape.min_val,shape.val);
+              if( shape.val<shape.max_val )
+                {
+                 shape.val+=MinSub(delta*shape.delta,shape.val,shape.max_val);
 
-              redraw();
+                 redraw();
 
-              changed.assert(shape.val);
+                 changed.assert(shape.val);
+                }
+             }
+           else
+             {
+              if( shape.val>shape.min_val )
+                {
+                 shape.val-=MinSub(-delta*shape.delta,shape.min_val,shape.val);
+
+                 redraw();
+
+                 changed.assert(shape.val);
+                }
              }
           }
        }

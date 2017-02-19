@@ -87,6 +87,8 @@ class SpinorShape
 
    // parameters
 
+   static const int DeltaCap = 100'000 ;
+
    const Config &cfg;
    int min_val = 0 ;
    int max_val = 0 ;

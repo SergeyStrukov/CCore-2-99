@@ -218,6 +218,91 @@ void SpinorShape::draw(const DrawBuf &buf) const
      {
       art.circle(c2,radius2-width/2,width,gray);
      }
+
+   MCoord r=w/2;
+
+   switch( delta )
+     {
+      case 10 :
+       {
+        MPoint p1(radius2+r,0);
+
+        art.ball(c1+p1,r,fc);
+
+        art.ball(c2-p1,r,fc);
+       }
+      break;
+
+      case 100 :
+       {
+        MPoint p1(radius2+r,r);
+        MPoint p2(radius2+r,-r);
+
+        art.ball(c1+p1,r,fc);
+        art.ball(c1+p2,r,fc);
+
+        art.ball(c2-p1,r,fc);
+        art.ball(c2-p2,r,fc);
+       }
+      break;
+
+      case 1000 :
+       {
+        MPoint p1(radius2+r,2*r);
+        MPoint p2(radius2+r,0);
+        MPoint p3(radius2+r,-2*r);
+
+        art.ball(c1+p1,r,fc);
+        art.ball(c1+p2,r,fc);
+        art.ball(c1+p3,r,fc);
+
+        art.ball(c2-p1,r,fc);
+        art.ball(c2-p2,r,fc);
+        art.ball(c2-p3,r,fc);
+       }
+      break;
+
+      case 10'000 :
+       {
+        MPoint p1(radius2+r,3*r);
+        MPoint p2(radius2+r,r);
+        MPoint p3(radius2+r,-r);
+        MPoint p4(radius2+r,-3*r);
+
+        art.ball(c1+p1,r,fc);
+        art.ball(c1+p2,r,fc);
+        art.ball(c1+p3,r,fc);
+        art.ball(c1+p4,r,fc);
+
+        art.ball(c2-p1,r,fc);
+        art.ball(c2-p2,r,fc);
+        art.ball(c2-p3,r,fc);
+        art.ball(c2-p4,r,fc);
+       }
+      break;
+
+      case 100'000 :
+       {
+        MPoint p1(radius2+r,4*r);
+        MPoint p2(radius2+r,2*r);
+        MPoint p3(radius2+r,0);
+        MPoint p4(radius2+r,-2*r);
+        MPoint p5(radius2+r,-4*r);
+
+        art.ball(c1+p1,r,fc);
+        art.ball(c1+p2,r,fc);
+        art.ball(c1+p3,r,fc);
+        art.ball(c1+p4,r,fc);
+        art.ball(c1+p5,r,fc);
+
+        art.ball(c2-p1,r,fc);
+        art.ball(c2-p2,r,fc);
+        art.ball(c2-p3,r,fc);
+        art.ball(c2-p4,r,fc);
+        art.ball(c2-p5,r,fc);
+       }
+      break;
+     }
   }
  }
 
