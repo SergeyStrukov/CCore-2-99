@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_pref_CoordEdit_h
 #define CCore_inc_video_pref_CoordEdit_h
 
-#include <CCore/inc/video/pref/SpinEdit.h>
+#include <CCore/inc/video/WindowLib.h>
 
 namespace CCore {
 namespace Video {
@@ -38,7 +38,7 @@ class CoordEditWindow : public ComboWindow
 
      RefVal<VColor> line = Black ;
 
-     CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
+     CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
 
@@ -59,19 +59,15 @@ class CoordEditWindow : public ComboWindow
 
    const Config &cfg;
 
-   SpinEditWindow spin;
+   SpinorWindow spin;
 
    Point pos;
 
   private:
 
-   void drawLine(const DrawBuf &buf) const;
+   void spin_changed(int value);
 
-  private:
-
-   void valueChanged(int value);
-
-   SignalConnector<CoordEditWindow,int> spin_changed;
+   SignalConnector<CoordEditWindow,int> connector_spin_changed;
 
   public:
 
@@ -99,9 +95,7 @@ class CoordEditWindow : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
 
    // signals
 

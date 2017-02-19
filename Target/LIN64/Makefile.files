@@ -326,7 +326,6 @@ obj/SmoothDrawArt.o \
 obj/Sort.o \
 obj/SortUnique.o \
 obj/Space.o \
-obj/SpinEdit.o \
 obj/StartStop.o \
 obj/Starter.o \
 obj/StepEval.o \
@@ -741,7 +740,6 @@ obj/SmoothDrawArt.s \
 obj/Sort.s \
 obj/SortUnique.s \
 obj/Space.s \
-obj/SpinEdit.s \
 obj/StartStop.s \
 obj/Starter.s \
 obj/StepEval.s \
@@ -1156,7 +1154,6 @@ obj/SmoothDrawArt.dep \
 obj/Sort.dep \
 obj/SortUnique.dep \
 obj/Space.dep \
-obj/SpinEdit.dep \
 obj/StartStop.dep \
 obj/Starter.dep \
 obj/StepEval.dep \
@@ -2235,9 +2232,6 @@ obj/SortUnique.o : ../../Fundamental/CCore/src/algon/SortUnique.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Space.o : ../../Simple/CCore/src/gadget/Space.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/SpinEdit.o : ../../Desktop/CCore/src/video/pref/SpinEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/StartStop.o : ../../Simple/CCore/src/StartStop.cpp
@@ -3475,9 +3469,6 @@ obj/SortUnique.s : ../../Fundamental/CCore/src/algon/SortUnique.cpp
 obj/Space.s : ../../Simple/CCore/src/gadget/Space.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/SpinEdit.s : ../../Desktop/CCore/src/video/pref/SpinEdit.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
 obj/StartStop.s : ../../Simple/CCore/src/StartStop.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4712,9 +4703,6 @@ obj/SortUnique.dep : ../../Fundamental/CCore/src/algon/SortUnique.cpp
 
 obj/Space.dep : ../../Simple/CCore/src/gadget/Space.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Space.o $< -MF $@
-
-obj/SpinEdit.dep : ../../Desktop/CCore/src/video/pref/SpinEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SpinEdit.o $< -MF $@
 
 obj/StartStop.dep : ../../Simple/CCore/src/StartStop.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StartStop.o $< -MF $@

@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_pref_FontEdit_h
 #define CCore_inc_video_pref_FontEdit_h
 
-#include <CCore/inc/video/pref/SpinEdit.h>
+#include <CCore/inc/video/WindowLib.h>
 
 #include <CCore/inc/video/FontParam.h>
 #include <CCore/inc/video/FontDatabase.h>
@@ -53,7 +53,7 @@ class FontEditWindow : public ComboWindow
      CtorRefVal<RadioWindow::ConfigType> radio_cfg;
      CtorRefVal<TextContourWindow::ConfigType> text_contour_cfg;
      CtorRefVal<ContourWindow::ConfigType> contour_cfg;
-     CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
+     CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
 
@@ -161,9 +161,9 @@ class FontEditWindow : public ComboWindow
 
    XDoubleLineWindow line1;
 
-   SpinEditWindow fdy_spin;
+   SpinorWindow fdy_spin;
    CheckWindow fdx_check;
-   SpinEditWindow fdx_spin;
+   SpinorWindow fdx_spin;
 
    XDoubleLineWindow line2;
 
@@ -197,7 +197,7 @@ class FontEditWindow : public ComboWindow
 
    LabelWindow kerning_label;
 
-   SpinEditWindow strength_spin;
+   SpinorWindow strength_spin;
 
    LabelWindow strength_label;
 

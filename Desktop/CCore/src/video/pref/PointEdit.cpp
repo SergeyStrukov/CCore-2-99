@@ -22,20 +22,7 @@ namespace Video {
 
 /* class PointEditWindow */
 
-void PointEditWindow::drawBox(const DrawBuf &buf) const
- {
-  SmoothDrawArt art(buf);
-
-  Pane pane=Envelope(pos,pos+getPoint());
-
-  MCoord width=+cfg.width;
-
-  FigureBox fig(pane);
-
-  fig.loop(art,HalfPos,width,+cfg.line);
- }
-
-void PointEditWindow::changePoint(int)
+void PointEditWindow::spin_changed(int)
  {
   redraw();
 
@@ -46,16 +33,16 @@ PointEditWindow::PointEditWindow(SubWindowHost &host,const ConfigType &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
 
-   x_spin(wlist,cfg.spin_cfg),
-   y_spin(wlist,cfg.spin_cfg),
+   spin_x(wlist,cfg.spin_cfg),
+   spin_y(wlist,cfg.spin_cfg),
 
-   connector_x_spin_changed(this,&PointEditWindow::changePoint,x_spin.changed),
-   connector_y_spin_changed(this,&PointEditWindow::changePoint,y_spin.changed)
+   connector_spin_x_changed(this,&PointEditWindow::spin_changed,spin_x.changed),
+   connector_spin_y_changed(this,&PointEditWindow::spin_changed,spin_y.changed)
  {
-  wlist.insTop(x_spin,y_spin);
+  wlist.insTop(spin_x,spin_y);
 
-  x_spin.setValue(0,MinCoord,MaxCoord);
-  y_spin.setValue(0,MinCoord,MaxCoord);
+  spin_x.setRange(MinCoord,MaxCoord);
+  spin_y.setRange(MinCoord,MaxCoord);
  }
 
 PointEditWindow::~PointEditWindow()
@@ -66,7 +53,7 @@ PointEditWindow::~PointEditWindow()
 
 Point PointEditWindow::getMinSize() const
  {
-  Point s=x_spin.getMinSize();
+  Point s=spin_x.getMinSize();
 
   Coord space_dxy=+cfg.space_dxy;
 
@@ -77,13 +64,13 @@ Point PointEditWindow::getMinSize() const
 
 Point PointEditWindow::getPoint() const
  {
-  return Point(Coord(x_spin.getValue()),Coord(y_spin.getValue()));
+  return Point(Coord(spin_x.getValue()),Coord(spin_y.getValue()));
  }
 
 void PointEditWindow::setPoint(Point value)
  {
-  x_spin.setValue(value.x);
-  y_spin.setValue(value.y);
+  spin_x.setValue(value.x);
+  spin_y.setValue(value.y);
 
   redraw();
  }
@@ -92,31 +79,30 @@ void PointEditWindow::setPoint(Point value)
 
 void PointEditWindow::layout()
  {
-  Point s=x_spin.getMinSize();
+  Point s=spin_x.getMinSize();
 
   Coord space_dxy=+cfg.space_dxy;
 
-  x_spin.setPlace(Pane(Null,s));
+  spin_x.setPlace(Pane(Null,s));
 
-  y_spin.setPlace(Pane(Point(s.x+space_dxy,0),s));
+  spin_y.setPlace(Pane(Point(s.x+space_dxy,0),s));
 
   Coord dx=s.x+space_dxy/2;
 
   pos=Point(dx,s.y+dx);
  }
 
-void PointEditWindow::draw(DrawBuf buf,bool drag_active) const
+void PointEditWindow::drawBack(DrawBuf buf,bool) const
  {
-  drawBox(buf);
+  SmoothDrawArt art(buf);
 
-  wlist.draw(buf,drag_active);
- }
+  Pane pane=Envelope(pos,pos+getPoint());
 
-void PointEditWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  drawBox(buf);
+  MCoord width=+cfg.width;
 
-  wlist.draw(buf,pane,drag_active);
+  FigureBox fig(pane);
+
+  fig.loop(art,HalfPos,width,+cfg.line);
  }
 
 } // namespace Video

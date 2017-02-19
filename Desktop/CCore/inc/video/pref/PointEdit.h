@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_pref_PointEdit_h
 #define CCore_inc_video_pref_PointEdit_h
 
-#include <CCore/inc/video/pref/SpinEdit.h>
+#include <CCore/inc/video/WindowLib.h>
 
 namespace CCore {
 namespace Video {
@@ -39,7 +39,7 @@ class PointEditWindow : public ComboWindow
 
      RefVal<VColor> line = Black ;
 
-     CtorRefVal<SpinEditWindow::ConfigType> spin_cfg;
+     CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
 
@@ -60,19 +60,17 @@ class PointEditWindow : public ComboWindow
 
    const Config &cfg;
 
-   SpinEditWindow x_spin;
-   SpinEditWindow y_spin;
+   SpinorWindow spin_x;
+   SpinorWindow spin_y;
 
    Point pos;
 
   private:
 
-   void drawBox(const DrawBuf &buf) const;
+   void spin_changed(int);
 
-   void changePoint(int);
-
-   SignalConnector<PointEditWindow,int> connector_x_spin_changed;
-   SignalConnector<PointEditWindow,int> connector_y_spin_changed;
+   SignalConnector<PointEditWindow,int> connector_spin_x_changed;
+   SignalConnector<PointEditWindow,int> connector_spin_y_changed;
 
   public:
 
@@ -92,9 +90,7 @@ class PointEditWindow : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
 
    // signals
 

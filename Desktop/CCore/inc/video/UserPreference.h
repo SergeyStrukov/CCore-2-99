@@ -349,7 +349,6 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            FileWindow::ConfigType,
                                            FileFrame::ConfigType,
 
-                                           SpinEditWindow::ConfigType,
                                            CoordEditWindow::ConfigType,
                                            MCoordEditWindow::ConfigType,
                                            PointEditWindow::ConfigType,

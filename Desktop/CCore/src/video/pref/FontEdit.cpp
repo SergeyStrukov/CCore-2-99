@@ -250,7 +250,8 @@ void FontEditWindow::setSize()
        fdx_check.enable();
        fdx_spin.disable();
 
-       fdy_spin.setValue(font.param.set_size.size_xy,1,1000);
+       fdy_spin.setRange(1,1000);
+       fdy_spin.setValue(font.param.set_size.size_xy);
 
        fdx_check.check(false);
       }
@@ -262,7 +263,8 @@ void FontEditWindow::setSize()
        fdx_check.enable();
        fdx_spin.enable();
 
-       fdy_spin.setValue(font.param.set_size.size.y,1,1000);
+       fdy_spin.setRange(1,1000);
+       fdy_spin.setValue(font.param.set_size.size.y);
 
        fdx_check.check(true);
 
@@ -276,7 +278,8 @@ void FontEditWindow::setSize()
        fdx_check.disable();
        fdx_spin.disable();
 
-       fdy_spin.setValue(font.param.set_size.index,0,GetMaxIndex(font.font));
+       fdy_spin.setRange(0,GetMaxIndex(font.font));
+       fdy_spin.setValue(font.param.set_size.index);
       }
      break;
     }
@@ -579,8 +582,11 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    connector_kerning_check_changed(this,&FontEditWindow::kerningChanged,kerning_check.changed),
    connector_strength_spin_changed(this,&FontEditWindow::strengthChanged,strength_spin.changed)
  {
-  fdy_spin.setValue(def_dy,1,1000);
-  fdx_spin.setValue(def_dy,1,1000);
+  fdy_spin.setRange(1,1000);
+  fdx_spin.setRange(1,1000);
+
+  fdy_spin.setValue(def_dy);
+  fdx_spin.setValue(def_dy);
 
   fdy_spin.disable();
   fdx_check.disable();
@@ -590,7 +596,7 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
   smooth_group.add(no_smooth_radio,smooth_radio,RGB_radio,BGR_radio);
 
-  strength_spin.setValue(0,-1000,1000);
+  strength_spin.setRange(-1000,1000);
 
   info_cfg.font.bind(font.font);
  }

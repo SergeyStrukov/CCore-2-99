@@ -22,23 +22,7 @@ namespace Video {
 
 /* class CoordEditWindow */
 
-void CoordEditWindow::drawLine(const DrawBuf &buf) const
- {
-  Coord mark_dy=+cfg.mark_dy;
-  MCoord width=+cfg.width;
-
-  SmoothDrawArt art(buf);
-
-  Point end=pos.addX(getCoord());
-
-  art.path(width,+cfg.line,pos,end);
-
-  art.path(width,+cfg.line,pos.subY(mark_dy),pos.addY(mark_dy));
-
-  art.path(width,+cfg.line,end.subY(mark_dy),end.addY(mark_dy));
- }
-
-void CoordEditWindow::valueChanged(int value)
+void CoordEditWindow::spin_changed(int value)
  {
   redraw();
 
@@ -51,11 +35,11 @@ CoordEditWindow::CoordEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
    spin(wlist,cfg.spin_cfg),
 
-   spin_changed(this,&CoordEditWindow::valueChanged,spin.changed)
+   connector_spin_changed(this,&CoordEditWindow::spin_changed,spin.changed)
  {
   wlist.insTop(spin);
 
-  spin.setValue(0,MinCoord,MaxCoord);
+  spin.setRange(MinCoord,MaxCoord);
  }
 
 CoordEditWindow::~CoordEditWindow()
@@ -83,18 +67,20 @@ void CoordEditWindow::layout()
   pos.y=Div(3,4)*size.y;
  }
 
-void CoordEditWindow::draw(DrawBuf buf,bool drag_active) const
+void CoordEditWindow::drawBack(DrawBuf buf,bool) const
  {
-  drawLine(buf);
+  Coord mark_dy=+cfg.mark_dy;
+  MCoord width=+cfg.width;
 
-  wlist.draw(buf,drag_active);
- }
+  SmoothDrawArt art(buf);
 
-void CoordEditWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  drawLine(buf);
+  Point end=pos.addX(getCoord());
 
-  wlist.draw(buf,pane,drag_active);
+  art.path(width,+cfg.line,pos,end);
+
+  art.path(width,+cfg.line,pos.subY(mark_dy),pos.addY(mark_dy));
+
+  art.path(width,+cfg.line,end.subY(mark_dy),end.addY(mark_dy));
  }
 
 } // namespace Video

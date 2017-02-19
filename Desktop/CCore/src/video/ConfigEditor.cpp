@@ -934,7 +934,7 @@ void ConfigEditorWindow::bindConfig(ConfigItemHost &host)
 
  // drawing
 
-void ConfigEditorWindow::layout() // TODO
+void ConfigEditorWindow::layout()
  {
   PaneCut pane(getSize(),+cfg.space_dxy);
 
@@ -1014,11 +1014,19 @@ void ConfigEditorWindow::layout() // TODO
 
   // coord_edit
 
-  pane.placeMin(coord_edit);
+  {
+   auto p=pane;
+
+   p.place_cutTop(coord_edit);
+  }
 
   // mcoord_edit
 
-  pane.placeMin(mcoord_edit);
+  {
+   auto p=pane;
+
+   p.place_cutTop(mcoord_edit);
+  }
 
   // unsigned_edit
 
@@ -1030,7 +1038,7 @@ void ConfigEditorWindow::layout() // TODO
 
   // point_edit
 
-  pane.placeMin(point_edit);
+  pane.place(point_edit);
 
   // bool_edit
 
