@@ -16,7 +16,8 @@
 #ifndef CCore_inc_video_ConfigEditor_h
 #define CCore_inc_video_ConfigEditor_h
 
-#include <CCore/inc/video/pref/SpinEdit.h>
+#include <CCore/inc/video/WindowLib.h>
+
 #include <CCore/inc/video/pref/CoordEdit.h>
 #include <CCore/inc/video/pref/MCoordEdit.h>
 #include <CCore/inc/video/pref/PointEdit.h>
@@ -50,12 +51,12 @@ class ConfigEditorWindow : public ComboWindow
      CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
 
+     CtorRefVal<SpinorWindow::ConfigType> spinor_cfg;
      CtorRefVal<CoordEditWindow::ConfigType> coord_cfg;
      CtorRefVal<MCoordEditWindow::ConfigType> mcoord_cfg;
-     CtorRefVal<FontEditWindow::ConfigType> font_cfg;
-     CtorRefVal<SpinEditWindow::ConfigType> unsigned_cfg;
      CtorRefVal<PointEditWindow::ConfigType> point_cfg;
      CtorRefVal<ColorEditWindow::ConfigType> color_cfg;
+     CtorRefVal<FontEditWindow::ConfigType> font_cfg;
 
      Config() noexcept {}
 
@@ -71,12 +72,12 @@ class ConfigEditorWindow : public ComboWindow
        btn_cfg.bind(proxy);
        edit_cfg.bind(proxy);
 
+       spinor_cfg.bind(proxy);
        coord_cfg.bind(proxy);
        mcoord_cfg.bind(proxy);
-       font_cfg.bind(proxy);
-       unsigned_cfg.bind(proxy);
        point_cfg.bind(proxy);
        color_cfg.bind(proxy);
+       font_cfg.bind(proxy);
       }
     };
 
@@ -281,11 +282,11 @@ class ConfigEditorWindow : public ComboWindow
    FontEditWindow font_edit;
    BackPad<FontCouple,FontEditWindow,const FontCouple &,&FontEditWindow::setCouple> font_pad;
 
-   SpinEditWindow unsigned_edit;
-   BackPad<unsigned,SpinEditWindow,int,&SpinEditWindow::setValue> unsigned_pad;
+   SpinorWindow unsigned_edit;
+   BackPad<unsigned,SpinorWindow,int,&SpinorWindow::setValue> unsigned_pad;
 
-   SpinEditWindow clr_edit;
-   BackPad<Clr,SpinEditWindow,int,&SpinEditWindow::setValue> clr_pad;
+   SpinorWindow clr_edit;
+   BackPad<Clr,SpinorWindow,int,&SpinorWindow::setValue> clr_pad;
 
    PointEditWindow point_edit;
    BackPad<Point,PointEditWindow,Point,&PointEditWindow::setPoint> point_pad;

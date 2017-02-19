@@ -853,10 +853,10 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    font_edit(wlist,cfg.font_cfg),
    font_pad(font_edit),
 
-   unsigned_edit(wlist,cfg.unsigned_cfg),
+   unsigned_edit(wlist,cfg.spinor_cfg),
    unsigned_pad(unsigned_edit),
 
-   clr_edit(wlist,cfg.unsigned_cfg),
+   clr_edit(wlist,cfg.spinor_cfg),
    clr_pad(clr_edit),
 
    point_edit(wlist,cfg.point_cfg),
@@ -908,8 +908,8 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
   btn_Back.disable();
   btn_Save.disable();
 
-  unsigned_edit.setValue(0,0,10000);
-  clr_edit.setValue(0,0,MaxClr);
+  unsigned_edit.setRange(0,10'000);
+  clr_edit.setRange(0,MaxClr);
  }
 
 ConfigEditorWindow::~ConfigEditorWindow()
@@ -934,7 +934,7 @@ void ConfigEditorWindow::bindConfig(ConfigItemHost &host)
 
  // drawing
 
-void ConfigEditorWindow::layout()
+void ConfigEditorWindow::layout() // TODO
  {
   PaneCut pane(getSize(),+cfg.space_dxy);
 
