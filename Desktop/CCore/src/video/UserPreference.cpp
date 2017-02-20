@@ -240,6 +240,23 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("cfg_edit_mark_dy"_c,ptr->cfg_edit_mark_dy);
   func("cfg_edit_line"_c,ptr->cfg_edit_line);
   func("cfg_edit_precision"_c,ptr->cfg_edit_precision);
+
+  func("text_all"_c,ptr->text_all);
+  func("text_Coord"_c,ptr->text_Coord);
+  func("text_MCoord"_c,ptr->text_MCoord);
+  func("text_VColor"_c,ptr->text_VColor);
+  func("text_Clr"_c,ptr->text_Clr);
+  func("text_unsigned"_c,ptr->text_unsigned);
+  func("text_String"_c,ptr->text_String);
+  func("text_Point"_c,ptr->text_Point);
+  func("text_Font"_c,ptr->text_Font);
+  func("text_bool"_c,ptr->text_bool);
+  func("text_Ratio"_c,ptr->text_Ratio);
+
+  func("text_Set"_c,ptr->text_Set);
+  func("text_Back"_c,ptr->text_Back);
+  func("text_Save"_c,ptr->text_Save);
+  func("text_Self"_c,ptr->text_Self);
  }
 
 void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
@@ -476,6 +493,23 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("mark height"_def,cfg_edit_mark_dy);
    binder.item("line"_def,cfg_edit_line);
    binder.item("precision"_def,cfg_edit_precision);
+
+   binder.item("'all'"_def,text_all);
+   binder.item("'Coord'"_def,text_Coord);
+   binder.item("'MCoord'"_def,text_MCoord);
+   binder.item("'VColor'"_def,text_VColor);
+   binder.item("'Clr'"_def,text_Clr);
+   binder.item("'unsigned'"_def,text_unsigned);
+   binder.item("'String'"_def,text_String);
+   binder.item("'Point'"_def,text_Point);
+   binder.item("'Font'"_def,text_Font);
+   binder.item("'bool'"_def,text_bool);
+   binder.item("'Ratio'"_def,text_Ratio);
+
+   binder.item("'Set'"_def,text_Set);
+   binder.item("'Back'"_def,text_Back);
+   binder.item("'Save'"_def,text_Save);
+   binder.item("'Self'"_def,text_Self);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here

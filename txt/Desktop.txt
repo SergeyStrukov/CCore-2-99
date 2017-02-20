@@ -87,7 +87,7 @@ RatioEdit.h          +
 ColorEdit.h          .
 FontEdit.h           .
 
-ConfigEditor.h       . // names to cfg , hints , getMinSize()
+ConfigEditor.h       . // hints , getMinSize() , splitter
 
 --------------------------------------------------------------------------------
 

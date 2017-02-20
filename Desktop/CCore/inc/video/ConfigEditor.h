@@ -46,10 +46,27 @@ class ConfigEditorWindow : public ComboWindow
 
      RefVal<VColor> back = Silver ;
 
+     RefVal<DefString> text_all      =         "All"_def ;
+     RefVal<DefString> text_Coord    =        "size"_def ;
+     RefVal<DefString> text_MCoord   =  "milli-size"_def ;
+     RefVal<DefString> text_VColor   =       "color"_def ;
+     RefVal<DefString> text_Clr      = "color pitch"_def ;
+     RefVal<DefString> text_unsigned =       "count"_def ;
+     RefVal<DefString> text_String   =        "text"_def ;
+     RefVal<DefString> text_Point    =       "point"_def ;
+     RefVal<DefString> text_Font     =        "font"_def ;
+     RefVal<DefString> text_bool     =        "bool"_def ;
+     RefVal<DefString> text_Ratio    =       "ratio"_def ;
+
+     RefVal<DefString> text_Set  =           "Set"_def ;
+     RefVal<DefString> text_Back =          "Back"_def ;
+     RefVal<DefString> text_Save =          "Save"_def ;
+     RefVal<DefString> text_Self = "Apply to self"_def ;
+
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
-     CtorRefVal<LabelWindow::ConfigType> label_cfg;
-     CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
+     CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
+     CtorRefVal<RefButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
 
      CtorRefVal<SpinorWindow::ConfigType> spinor_cfg;
@@ -67,6 +84,23 @@ class ConfigEditorWindow : public ComboWindow
       {
        space_dxy.bind(bag.space_dxy);
        back.bind(bag.back);
+
+       text_all.bind(bag.text_all);
+       text_Coord.bind(bag.text_Coord);
+       text_MCoord.bind(bag.text_MCoord);
+       text_VColor.bind(bag.text_VColor);
+       text_Clr.bind(bag.text_Clr);
+       text_unsigned.bind(bag.text_unsigned);
+       text_String.bind(bag.text_String);
+       text_Point.bind(bag.text_Point);
+       text_Font.bind(bag.text_Font);
+       text_bool.bind(bag.text_bool);
+       text_Ratio.bind(bag.text_Ratio);
+
+       text_Set.bind(bag.text_Set);
+       text_Back.bind(bag.text_Back);
+       text_Save.bind(bag.text_Save);
+       text_Self.bind(bag.text_Self);
 
        list_cfg.bind(proxy);
        check_cfg.bind(proxy);
@@ -106,22 +140,22 @@ class ConfigEditorWindow : public ComboWindow
    CheckWindow check_bool;
    CheckWindow check_Ratio;
 
-   LabelWindow label_all;
-   LabelWindow label_Coord;
-   LabelWindow label_MCoord;
-   LabelWindow label_VColor;
-   LabelWindow label_Clr;
-   LabelWindow label_unsigned;
-   LabelWindow label_String;
-   LabelWindow label_Point;
-   LabelWindow label_Font;
-   LabelWindow label_bool;
-   LabelWindow label_Ratio;
+   RefLabelWindow label_all;
+   RefLabelWindow label_Coord;
+   RefLabelWindow label_MCoord;
+   RefLabelWindow label_VColor;
+   RefLabelWindow label_Clr;
+   RefLabelWindow label_unsigned;
+   RefLabelWindow label_String;
+   RefLabelWindow label_Point;
+   RefLabelWindow label_Font;
+   RefLabelWindow label_bool;
+   RefLabelWindow label_Ratio;
 
-   ButtonWindow btn_Set;
-   ButtonWindow btn_Back;
-   ButtonWindow btn_Save;
-   ButtonWindow btn_Self;
+   RefButtonWindow btn_Set;
+   RefButtonWindow btn_Back;
+   RefButtonWindow btn_Save;
+   RefButtonWindow btn_Self;
 
    class PrefInfo : public ComboInfo
     {

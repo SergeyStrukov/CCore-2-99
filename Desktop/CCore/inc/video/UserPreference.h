@@ -287,6 +287,23 @@ struct UserPreferenceBag : ConfigItemHost
 
   unsigned cfg_edit_precision = 4 ;
 
+  DefString text_all      =         "All"_def ;
+  DefString text_Coord    =        "size"_def ;
+  DefString text_MCoord   =  "milli-size"_def ;
+  DefString text_VColor   =       "color"_def ;
+  DefString text_Clr      = "color pitch"_def ;
+  DefString text_unsigned =       "count"_def ;
+  DefString text_String   =        "text"_def ;
+  DefString text_Point    =       "point"_def ;
+  DefString text_Font     =        "font"_def ;
+  DefString text_bool     =        "bool"_def ;
+  DefString text_Ratio    =       "ratio"_def ;
+
+  DefString text_Set  =           "Set"_def ;
+  DefString text_Back =          "Back"_def ;
+  DefString text_Save =          "Save"_def ;
+  DefString text_Self = "Apply to self"_def ;
+
   // constructors
 
   UserPreferenceBag() noexcept {}
