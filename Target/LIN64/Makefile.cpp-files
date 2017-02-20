@@ -342,6 +342,7 @@
 ../../Desktop/CCore/src/video/pref/FontEdit.cpp
 ../../Desktop/CCore/src/video/pref/MCoordEdit.cpp
 ../../Desktop/CCore/src/video/pref/PointEdit.cpp
+../../Desktop/CCore/src/video/pref/RatioEdit.cpp
 ../../Desktop/CCore/src/video/PrintDDL.cpp
 ../../Desktop/CCore/src/video/ProgressScale.cpp
 ../../Desktop/CCore/src/video/RefVal.cpp

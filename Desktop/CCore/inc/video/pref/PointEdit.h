@@ -33,11 +33,11 @@ class PointEditWindow : public ComboWindow
 
    struct Config
     {
-     RefVal<Coord> space_dxy = 10 ;
-
      RefVal<MCoord> width = Fraction(1) ;
 
      RefVal<VColor> line = Black ;
+
+     RefVal<Coord> space_dxy = 10 ;
 
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
@@ -46,9 +46,9 @@ class PointEditWindow : public ComboWindow
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
+       width.bind(bag.cfg_edit_width);
+       line.bind(bag.cfg_edit_line);
        space_dxy.bind(bag.space_dxy);
-       width.bind(bag.coord_edit_width);
-       line.bind(bag.coord_edit_line);
 
        spin_cfg.bind(proxy);
       }

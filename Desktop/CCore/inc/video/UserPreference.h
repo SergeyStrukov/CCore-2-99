@@ -277,16 +277,15 @@ struct UserPreferenceBag : ConfigItemHost
 
   DefString hint_FileAddFilter = "Add a filter"_def ;
 
-  // CoordEdit
+  // ConfigEditor
 
-  MCoord coord_edit_width = Fraction(1) ;
-  Coord coord_edit_mark_dy = 3 ;
+  MCoord cfg_edit_width = Fraction(1) ;
 
-  VColor coord_edit_line = Black ;
+  Coord cfg_edit_mark_dy = 3 ;
 
-  // MCoordEdit
+  VColor cfg_edit_line = Black ;
 
-  unsigned mcoord_edit_precision = 4 ;
+  unsigned cfg_edit_precision = 4 ;
 
   // constructors
 
@@ -354,6 +353,7 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            PointEditWindow::ConfigType,
                                            ColorEditWindow::ConfigType,
                                            FontEditWindow::ConfigType,
+                                           RatioEditWindow::ConfigType,
                                            ConfigEditorWindow::ConfigType,
                                            ConfigEditorFrame::ConfigType
                                           >

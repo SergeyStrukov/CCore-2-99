@@ -38,6 +38,7 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
      Var_Point,
      Var_Font,
      Var_bool,
+     Var_Ratio,
 
      VarLim
     };
@@ -58,6 +59,7 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
        Point      &of_Point;
        FontCouple &of_Font;
        bool       &of_bool;
+       Ratio      &of_Ratio;
 
        Ref() {}
 
@@ -78,6 +80,8 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
        Ref(FontCouple &var) : of_Font{var} {}
 
        Ref(bool &var) : of_bool{var} {}
+
+       Ref(Ratio &var) : of_Ratio{var} {}
       };
 
      Ref ref;
@@ -149,6 +153,13 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
       {
       }
 
+     Rec(DefString name_,Ratio &var)
+      : name(name_),
+        type(Var_Ratio),
+        ref(var)
+      {
+      }
+
      template <class Func>
      void operator () (Func func)
       {
@@ -171,6 +182,8 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
           case Var_Font : func(ref.of_Font); break;
 
           case Var_bool : func(ref.of_bool); break;
+
+          case Var_Ratio : func(ref.of_Ratio); break;
          }
       }
     };
@@ -344,6 +357,8 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
 
    void add(DefString name,bool &var) { list.append_fill(name,var); }
 
+   void add(DefString name,Ratio &var) { list.append_fill(name,var); }
+
    // enable...()
 
    bool enable_all(bool on)
@@ -393,6 +408,8 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
    bool enable_Font(bool on) { return enable(Var_Font,on); }
 
    bool enable_bool(bool on) { return enable(Var_bool,on); }
+
+   bool enable_Ratio(bool on) { return enable(Var_Ratio,on); }
 
    // AbstractComboInfo
 
@@ -455,7 +472,7 @@ class ConfigEditorWindow::PrefInfo::Binder : public ConfigItemBind
 
    virtual void item(DefString name,bool &var) { base->add(name,var); }
 
-   virtual void item(DefString name,Ratio &var) { Used(name); Used(var); } // TODO
+   virtual void item(DefString name,Ratio &var) { base->add(name,var); }
  };
 
 /* class ConfigEditorWindow::PrefInfo */
@@ -527,6 +544,11 @@ bool ConfigEditorWindow::PrefInfo::enable_Font(bool on)
 bool ConfigEditorWindow::PrefInfo::enable_bool(bool on)
  {
   return getBase()->enable_bool(on);
+ }
+
+bool ConfigEditorWindow::PrefInfo::enable_Ratio(bool on)
+ {
+  return getBase()->enable_Ratio(on);
  }
 
 template <class Func>
@@ -620,6 +642,11 @@ void ConfigEditorWindow::enable_Font(bool on)
 void ConfigEditorWindow::enable_bool(bool on)
  {
   if( info.enable_bool(on) ) newList();
+ }
+
+void ConfigEditorWindow::enable_Ratio(bool on)
+ {
+  if( info.enable_Ratio(on) ) newList();
  }
 
  // buttons
@@ -729,6 +756,13 @@ void ConfigEditorWindow::select(bool &var)
   switchTo(bool_edit,bool_pad);
  }
 
+void ConfigEditorWindow::select(Ratio &var)
+ {
+  ratio_pad.bind(var);
+
+  switchTo(ratio_edit,ratio_pad);
+ }
+
 void ConfigEditorWindow::select()
  {
   switchTo(0);
@@ -805,6 +839,11 @@ void ConfigEditorWindow::bool_edit_changed(bool value)
   if( bool_pad.update(value) ) changed();
  }
 
+void ConfigEditorWindow::ratio_edit_changed(Ratio value)
+ {
+  if( ratio_pad.update(value) ) changed();
+ }
+
  // constructors
 
 ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bool use_self_)
@@ -824,6 +863,7 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    check_Point(wlist,cfg.check_cfg),
    check_Font(wlist,cfg.check_cfg),
    check_bool(wlist,cfg.check_cfg),
+   check_Ratio(wlist,cfg.check_cfg),
 
    label_all(wlist,cfg.label_cfg,"All"_def,AlignX_Left),
    label_Coord(wlist,cfg.label_cfg,"size"_def,AlignX_Left),
@@ -835,6 +875,7 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    label_Point(wlist,cfg.label_cfg,"point"_def,AlignX_Left),
    label_Font(wlist,cfg.label_cfg,"font"_def,AlignX_Left),
    label_bool(wlist,cfg.label_cfg,"bool"_def,AlignX_Left),
+   label_Ratio(wlist,cfg.label_cfg,"ratio"_def,AlignX_Left),
 
    btn_Set(wlist,cfg.btn_cfg,"Set"_def),
    btn_Back(wlist,cfg.btn_cfg,"Back"_def),
@@ -868,6 +909,9 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    bool_edit(wlist,cfg.check_cfg),
    bool_pad(bool_edit),
 
+   ratio_edit(wlist,cfg.ratio_cfg),
+   ratio_pad(ratio_edit),
+
    connector_check_all_changed(this,&ConfigEditorWindow::enable_all,check_all.changed),
    connector_check_Coord_changed(this,&ConfigEditorWindow::enable_Coord,check_Coord.changed),
    connector_check_MCoord_changed(this,&ConfigEditorWindow::enable_MCoord,check_MCoord.changed),
@@ -878,6 +922,7 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    connector_check_Point_changed(this,&ConfigEditorWindow::enable_Point,check_Point.changed),
    connector_check_Font_changed(this,&ConfigEditorWindow::enable_Font,check_Font.changed),
    connector_check_bool_changed(this,&ConfigEditorWindow::enable_bool,check_bool.changed),
+   connector_check_Ratio_changed(this,&ConfigEditorWindow::enable_Ratio,check_Ratio.changed),
 
    connector_btnSet_pressed(this,&ConfigEditorWindow::setPref,btn_Set.pressed),
    connector_btnBack_pressed(this,&ConfigEditorWindow::backPref,btn_Back.pressed),
@@ -894,12 +939,13 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    connector_clr_edit_changed(this,&ConfigEditorWindow::clr_edit_changed,clr_edit.changed),
    connector_point_edit_changed(this,&ConfigEditorWindow::point_edit_changed,point_edit.changed),
    connector_color_edit_changed(this,&ConfigEditorWindow::color_edit_changed,color_edit.changed),
-   connector_bool_edit_changed(this,&ConfigEditorWindow::bool_edit_changed,bool_edit.changed)
+   connector_bool_edit_changed(this,&ConfigEditorWindow::bool_edit_changed,bool_edit.changed),
+   connector_ratio_edit_changed(this,&ConfigEditorWindow::ratio_edit_changed,ratio_edit.changed)
  {
   wlist.insTop(item_list,check_all,check_Coord,check_MCoord,check_VColor,check_Clr,
-                         check_unsigned,check_String,check_Point,check_Font,check_bool,
+                         check_unsigned,check_String,check_Point,check_Font,check_bool,check_Ratio,
                          label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
-                         label_unsigned,label_String,label_Point,label_Font,label_bool,
+                         label_unsigned,label_String,label_Point,label_Font,label_bool,label_Ratio,
                          btn_Set,btn_Back,btn_Save);
 
   if( use_self ) wlist.insBottom(btn_Self);
@@ -920,7 +966,9 @@ ConfigEditorWindow::~ConfigEditorWindow()
 
 Point ConfigEditorWindow::getMinSize(Point cap) const // TODO
  {
-  return Point(300,300);
+  Used(cap);
+
+  return Point(800,500);
  }
 
 void ConfigEditorWindow::bindConfig(ConfigItemHost &host)
@@ -961,9 +1009,10 @@ void ConfigEditorWindow::layout()
    auto label__Point=CutPoint(label_Point);
    auto label__Font=CutPoint(label_Font);
    auto label__bool=CutPoint(label_bool);
+   auto label__Ratio=CutPoint(label_Ratio);
 
    Point size=SupMinSize(label__all,label__Coord,label__MCoord,label__VColor,label__Clr,
-                         label__unsigned,label__String,label__Point,label__Font,label__bool);
+                         label__unsigned,label__String,label__Point,label__Font,label__bool,label__Ratio);
 
    auto btn__Set=CutPoint(btn_Set);
    auto btn__Back=CutPoint(btn_Back);
@@ -986,6 +1035,7 @@ void ConfigEditorWindow::layout()
    p.cutTop(dy).place_cutLeft(check_Point).place_cutLeft(label__Point);
    p.cutTop(dy).place_cutLeft(check_Font).place_cutLeft(label__Font);
    p.cutTop(dy).place_cutLeft(check_bool).place_cutLeft(label__bool);
+   p.cutTop(dy).place_cutLeft(check_Ratio).place_cutLeft(label__Ratio);
 
    ReplaceToSup(btn__Set.size.x,btn__Back.size.x,btn__Save.size.x);
 
@@ -1043,6 +1093,14 @@ void ConfigEditorWindow::layout()
   // bool_edit
 
   pane.placeMin(bool_edit);
+
+  // ratio_edit
+
+  {
+   auto p=pane;
+
+   p.place_cutTop(ratio_edit);
+  }
  }
 
 void ConfigEditorWindow::drawBack(DrawBuf buf,bool) const

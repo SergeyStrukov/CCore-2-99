@@ -71,16 +71,17 @@ void CoordEditWindow::drawBack(DrawBuf buf,bool) const
  {
   Coord mark_dy=+cfg.mark_dy;
   MCoord width=+cfg.width;
+  VColor line=+cfg.line;
 
   SmoothDrawArt art(buf);
 
   Point end=pos.addX(getCoord());
 
-  art.path(width,+cfg.line,pos,end);
+  art.path(width,line,pos,end);
 
-  art.path(width,+cfg.line,pos.subY(mark_dy),pos.addY(mark_dy));
+  art.path(width,line,pos.subY(mark_dy),pos.addY(mark_dy));
 
-  art.path(width,+cfg.line,end.subY(mark_dy),end.addY(mark_dy));
+  art.path(width,line,end.subY(mark_dy),end.addY(mark_dy));
  }
 
 } // namespace Video

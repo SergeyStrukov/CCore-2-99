@@ -43,7 +43,7 @@ class MCoordEditWindow : public ComboWindow
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
-       precision.bind(bag.mcoord_edit_precision);
+       precision.bind(bag.cfg_edit_precision);
 
        knob_cfg.bind(proxy);
        text_cfg.bind(proxy);

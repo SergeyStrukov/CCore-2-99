@@ -236,10 +236,10 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
 
   func("hint_FileAddFilter"_c,ptr->hint_FileAddFilter);
 
-  func("coord_edit_width"_c,ptr->coord_edit_width);
-  func("coord_edit_mark_dy"_c,ptr->coord_edit_mark_dy);
-
-  func("coord_edit_line"_c,ptr->coord_edit_line);
+  func("cfg_edit_width"_c,ptr->cfg_edit_width);
+  func("cfg_edit_mark_dy"_c,ptr->cfg_edit_mark_dy);
+  func("cfg_edit_line"_c,ptr->cfg_edit_line);
+  func("cfg_edit_precision"_c,ptr->cfg_edit_precision);
  }
 
 void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
@@ -470,12 +470,12 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("?'Filename filter'"_def,hint_FileFilter);
    binder.item("?'Add filter'"_def,hint_FileAddFilter);
 
-  binder.group("CoordEdit window"_def);
+  binder.group("ConfigEditor window"_def);
 
-    binder.item("line width"_def,coord_edit_width);
-    binder.item("mark height"_def,coord_edit_mark_dy);
-    binder.space();
-    binder.item("line"_def,coord_edit_line);
+   binder.item("line width"_def,cfg_edit_width);
+   binder.item("mark height"_def,cfg_edit_mark_dy);
+   binder.item("line"_def,cfg_edit_line);
+   binder.item("precision"_def,cfg_edit_precision);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here

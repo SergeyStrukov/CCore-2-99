@@ -1,4 +1,4 @@
-/* CoordEdit.h */
+/* RatioEdit.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 3.00
@@ -13,8 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_pref_CoordEdit_h
-#define CCore_inc_video_pref_CoordEdit_h
+#ifndef CCore_inc_video_pref_RatioEdit_h
+#define CCore_inc_video_pref_RatioEdit_h
 
 #include <CCore/inc/video/WindowLib.h>
 
@@ -23,11 +23,11 @@ namespace Video {
 
 /* classes */
 
-class CoordEditWindow;
+class RatioEditWindow;
 
-/* class CoordEditWindow */
+/* class RatioEditWindow */
 
-class CoordEditWindow : public ComboWindow
+class RatioEditWindow : public ComboWindow
  {
   public:
 
@@ -39,6 +39,8 @@ class CoordEditWindow : public ComboWindow
 
      RefVal<VColor> line = Black ;
 
+     RefVal<Coord> space_dxy = 10 ;
+
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
@@ -49,6 +51,7 @@ class CoordEditWindow : public ComboWindow
        width.bind(bag.cfg_edit_width);
        mark_dy.bind(bag.cfg_edit_mark_dy);
        line.bind(bag.cfg_edit_line);
+       space_dxy.bind(bag.space_dxy);
 
        spin_cfg.bind(proxy);
       }
@@ -60,37 +63,35 @@ class CoordEditWindow : public ComboWindow
 
    const Config &cfg;
 
-   SpinorWindow spin;
+   SpinorWindow spin_a;
+   SpinorWindow spin_b;
 
    Point pos;
 
   private:
 
-   void spin_changed(int value);
+   static MCoord Den(MCoord a,MCoord b,MCoord cap);
 
-   SignalConnector<CoordEditWindow,int> connector_spin_changed;
+  private:
+
+   void spin_changed(int);
+
+   SignalConnector<RatioEditWindow,int> connector_spin_a_changed;
+   SignalConnector<RatioEditWindow,int> connector_spin_b_changed;
 
   public:
 
-   CoordEditWindow(SubWindowHost &host,const ConfigType &cfg);
+   RatioEditWindow(SubWindowHost &host,const ConfigType &cfg);
 
-   virtual ~CoordEditWindow();
+   virtual ~RatioEditWindow();
 
    // methods
 
    Point getMinSize() const;
 
-   Coord getCoord() const
-    {
-     return Coord(spin.getValue());
-    }
+   Ratio getRatio() const;
 
-   void setCoord(Coord value)
-    {
-     spin.setValue(value);
-
-     redraw();
-    }
+   void setRatio(Ratio value);
 
    // drawing
 
@@ -100,13 +101,11 @@ class CoordEditWindow : public ComboWindow
 
    // signals
 
-   Signal<Coord> changed; // value
+   Signal<Ratio> changed; // value
  };
 
 } // namespace Video
 } // namespace CCore
 
 #endif
-
-
 

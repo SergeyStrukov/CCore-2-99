@@ -21,6 +21,7 @@
 #include <CCore/inc/video/pref/CoordEdit.h>
 #include <CCore/inc/video/pref/MCoordEdit.h>
 #include <CCore/inc/video/pref/PointEdit.h>
+#include <CCore/inc/video/pref/RatioEdit.h>
 #include <CCore/inc/video/pref/ColorEdit.h>
 #include <CCore/inc/video/pref/FontEdit.h>
 
@@ -55,6 +56,7 @@ class ConfigEditorWindow : public ComboWindow
      CtorRefVal<CoordEditWindow::ConfigType> coord_cfg;
      CtorRefVal<MCoordEditWindow::ConfigType> mcoord_cfg;
      CtorRefVal<PointEditWindow::ConfigType> point_cfg;
+     CtorRefVal<RatioEditWindow::ConfigType> ratio_cfg;
      CtorRefVal<ColorEditWindow::ConfigType> color_cfg;
      CtorRefVal<FontEditWindow::ConfigType> font_cfg;
 
@@ -76,6 +78,7 @@ class ConfigEditorWindow : public ComboWindow
        coord_cfg.bind(proxy);
        mcoord_cfg.bind(proxy);
        point_cfg.bind(proxy);
+       ratio_cfg.bind(proxy);
        color_cfg.bind(proxy);
        font_cfg.bind(proxy);
       }
@@ -101,6 +104,7 @@ class ConfigEditorWindow : public ComboWindow
    CheckWindow check_Point;
    CheckWindow check_Font;
    CheckWindow check_bool;
+   CheckWindow check_Ratio;
 
    LabelWindow label_all;
    LabelWindow label_Coord;
@@ -112,6 +116,7 @@ class ConfigEditorWindow : public ComboWindow
    LabelWindow label_Point;
    LabelWindow label_Font;
    LabelWindow label_bool;
+   LabelWindow label_Ratio;
 
    ButtonWindow btn_Set;
    ButtonWindow btn_Back;
@@ -155,6 +160,8 @@ class ConfigEditorWindow : public ComboWindow
       bool enable_Font(bool on);
 
       bool enable_bool(bool on);
+
+      bool enable_Ratio(bool on);
 
       template <class Func>
       void select(ulen index,Func func);
@@ -297,6 +304,9 @@ class ConfigEditorWindow : public ComboWindow
    CheckWindow bool_edit;
    BackPad<bool,CheckWindow,bool,&CheckWindow::check> bool_pad;
 
+   RatioEditWindow ratio_edit;
+   BackPad<Ratio,RatioEditWindow,Ratio,&RatioEditWindow::setRatio> ratio_pad;
+
    SubWindow *active_editor = 0 ;
    BackSet *active_backset = 0 ;
 
@@ -334,6 +344,8 @@ class ConfigEditorWindow : public ComboWindow
 
    void enable_bool(bool on);
 
+   void enable_Ratio(bool on);
+
    SignalConnector<ConfigEditorWindow,bool> connector_check_all_changed;
    SignalConnector<ConfigEditorWindow,bool> connector_check_Coord_changed;
    SignalConnector<ConfigEditorWindow,bool> connector_check_MCoord_changed;
@@ -344,6 +356,7 @@ class ConfigEditorWindow : public ComboWindow
    SignalConnector<ConfigEditorWindow,bool> connector_check_Point_changed;
    SignalConnector<ConfigEditorWindow,bool> connector_check_Font_changed;
    SignalConnector<ConfigEditorWindow,bool> connector_check_bool_changed;
+   SignalConnector<ConfigEditorWindow,bool> connector_check_Ratio_changed;
 
    // buttons
 
@@ -382,6 +395,8 @@ class ConfigEditorWindow : public ComboWindow
    void select(FontCouple &var);
 
    void select(bool &var);
+
+   void select(Ratio &var);
 
    void select();
 
@@ -430,6 +445,10 @@ class ConfigEditorWindow : public ComboWindow
    void bool_edit_changed(bool value);
 
    SignalConnector<ConfigEditorWindow,bool> connector_bool_edit_changed;
+
+   void ratio_edit_changed(Ratio value);
+
+   SignalConnector<ConfigEditorWindow,Ratio> connector_ratio_edit_changed;
 
   public:
 

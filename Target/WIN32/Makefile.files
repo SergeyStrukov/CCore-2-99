@@ -263,6 +263,7 @@ obj/RBTreeUpLink.o \
 obj/RadixHeap.o \
 obj/Random.o \
 obj/RangeDel.o \
+obj/RatioEdit.o \
 obj/ReadCon.o \
 obj/ReadConType.o \
 obj/RefArray.o \
@@ -674,6 +675,7 @@ obj/RBTreeUpLink.s \
 obj/RadixHeap.s \
 obj/Random.s \
 obj/RangeDel.s \
+obj/RatioEdit.s \
 obj/ReadCon.s \
 obj/ReadConType.s \
 obj/RefArray.s \
@@ -1085,6 +1087,7 @@ obj/RBTreeUpLink.dep \
 obj/RadixHeap.dep \
 obj/Random.dep \
 obj/RangeDel.dep \
+obj/RatioEdit.dep \
 obj/ReadCon.dep \
 obj/ReadConType.dep \
 obj/RefArray.dep \
@@ -2031,6 +2034,9 @@ obj/Random.o : ../../Fundamental/CCore/src/Random.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/RangeDel.o : ../../Simple/CCore/src/RangeDel.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RatioEdit.o : ../../Desktop/CCore/src/video/pref/RatioEdit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ReadCon.o : ../../HCore/CCore/src/ReadCon.cpp
@@ -3259,6 +3265,9 @@ obj/Random.s : ../../Fundamental/CCore/src/Random.cpp
 obj/RangeDel.s : ../../Simple/CCore/src/RangeDel.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/RatioEdit.s : ../../Desktop/CCore/src/video/pref/RatioEdit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ReadCon.s : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4484,6 +4493,9 @@ obj/Random.dep : ../../Fundamental/CCore/src/Random.cpp
 
 obj/RangeDel.dep : ../../Simple/CCore/src/RangeDel.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RangeDel.o $< -MF $@
+
+obj/RatioEdit.dep : ../../Desktop/CCore/src/video/pref/RatioEdit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RatioEdit.o $< -MF $@
 
 obj/ReadCon.dep : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ReadCon.o $< -MF $@

@@ -79,15 +79,15 @@ UserPreference.h     ++
 
 --- Pref -----------------------------------------------------------------------
 
-SpinEdit.h           .
-CoordEdit.h          .
+CoordEdit.h          +
 MCoordEdit.h         .
-PointEdit.h          .
+PointEdit.h          +
+RatioEdit.h          +
 
 ColorEdit.h          .
 FontEdit.h           .
 
-ConfigEditor.h       .
+ConfigEditor.h       . // names to cfg , hints , getMinSize()
 
 --------------------------------------------------------------------------------
 
