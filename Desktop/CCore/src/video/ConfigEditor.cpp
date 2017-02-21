@@ -592,6 +592,22 @@ void ConfigEditorWindow::newList()
   redraw();
  }
 
+ // dragged
+
+void ConfigEditorWindow::split_dragged(Point delta)
+ {
+  if( min_list_dx<=max_list_dx )
+    {
+     list_split_dx=Cap<Coord>(min_list_dx,list_split_dx+delta.x,max_list_dx);
+
+     split_on=true;
+
+     layout();
+
+     redraw();
+    }
+ }
+
  // enable
 
 void ConfigEditorWindow::enable_all(bool on)
@@ -882,6 +898,8 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
    btn_Save(wlist,cfg.btn_cfg,cfg.text_Save),
    btn_Self(wlist,cfg.btn_cfg,cfg.text_Self),
 
+   split(wlist,cfg.split_cfg),
+
    string_edit(wlist,cfg.edit_cfg),
    string_pad(string_edit),
 
@@ -911,6 +929,8 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
 
    ratio_edit(wlist,cfg.ratio_cfg),
    ratio_pad(ratio_edit),
+
+   connector_split_dragged(this,&ConfigEditorWindow::split_dragged,split.dragged),
 
    connector_check_all_changed(this,&ConfigEditorWindow::enable_all,check_all.changed),
    connector_check_Coord_changed(this,&ConfigEditorWindow::enable_Coord,check_Coord.changed),
@@ -946,7 +966,7 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
                          check_unsigned,check_String,check_Point,check_Font,check_bool,check_Ratio,
                          label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
                          label_unsigned,label_String,label_Point,label_Font,label_bool,label_Ratio,
-                         btn_Set,btn_Back,btn_Save);
+                         btn_Set,btn_Back,btn_Save,split);
 
   if( use_self ) wlist.insBottom(btn_Self);
 
@@ -991,7 +1011,23 @@ void ConfigEditorWindow::layout()
   // item_list
 
   {
-   pane.place_cutLeft(item_list);
+   auto item__list=CutPoint(item_list);
+
+   Coord len=item__list.getMinSize().x;
+
+   min_list_dx=len/2;
+   max_list_dx=pane.getSize().x/2;
+
+   if( split_on )
+     {
+      pane.place_cutLeft(item__list,list_split_dx);
+     }
+   else
+     {
+      list_split_dx=len;
+
+      pane.place_cutLeft(item__list);
+     }
   }
 
   // checks labels buttons
@@ -1044,6 +1080,12 @@ void ConfigEditorWindow::layout()
    p.place_cutTopLeft(btn__Save);
 
    if( use_self ) p.place_cutBottomLeft(btn__Self);
+  }
+
+  // split
+
+  {
+   pane.place_cutLeft(split);
   }
 
   // font_edit

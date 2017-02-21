@@ -68,6 +68,7 @@ class ConfigEditorWindow : public ComboWindow
      CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
      CtorRefVal<RefButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<LineEditWindow::ConfigType> edit_cfg;
+     CtorRefVal<XSplitWindow::ConfigType> split_cfg;
 
      CtorRefVal<SpinorWindow::ConfigType> spinor_cfg;
      CtorRefVal<CoordEditWindow::ConfigType> coord_cfg;
@@ -107,6 +108,7 @@ class ConfigEditorWindow : public ComboWindow
        label_cfg.bind(proxy);
        btn_cfg.bind(proxy);
        edit_cfg.bind(proxy);
+       split_cfg.bind(proxy);
 
        spinor_cfg.bind(proxy);
        coord_cfg.bind(proxy);
@@ -156,6 +158,13 @@ class ConfigEditorWindow : public ComboWindow
    RefButtonWindow btn_Back;
    RefButtonWindow btn_Save;
    RefButtonWindow btn_Self;
+
+   Coord min_list_dx = 0 ;
+   Coord max_list_dx = 0 ;
+   Coord list_split_dx = 0 ;
+   bool split_on = false ;
+
+   XSplitWindow split;
 
    class PrefInfo : public ComboInfo
     {
@@ -355,6 +364,12 @@ class ConfigEditorWindow : public ComboWindow
   private:
 
    void newList();
+
+   // dragged
+
+   void split_dragged(Point delta);
+
+   SignalConnector<ConfigEditorWindow,Point> connector_split_dragged;
 
    // enable
 

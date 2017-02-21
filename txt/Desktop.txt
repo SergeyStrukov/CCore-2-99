@@ -79,15 +79,15 @@ UserPreference.h     ++
 
 --- Pref -----------------------------------------------------------------------
 
-CoordEdit.h          +
-MCoordEdit.h         .
-PointEdit.h          +
-RatioEdit.h          +
+CoordEdit.h          + // hints
+PointEdit.h          + // hints
+RatioEdit.h          + // hints
 
+MCoordEdit.h         .
 ColorEdit.h          .
 FontEdit.h           .
 
-ConfigEditor.h       . // hints , getMinSize() , splitter
+ConfigEditor.h       . // hints , getMinSize()
 
 --------------------------------------------------------------------------------
 
