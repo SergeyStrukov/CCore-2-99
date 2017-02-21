@@ -63,6 +63,13 @@ class ConfigEditorWindow : public ComboWindow
      RefVal<DefString> text_Save =          "Save"_def ;
      RefVal<DefString> text_Self = "Apply to self"_def ;
 
+     RefVal<DefString> hint_list = "Configuration parameters list"_def ;
+
+     RefVal<DefString> hint_Set  = "Set the parameter"_def ;
+     RefVal<DefString> hint_Back = "Revert back the parameter"_def ;
+     RefVal<DefString> hint_Save = "Save the current settings"_def ;
+     RefVal<DefString> hint_Self = "Apply parameters to this window"_def ;
+
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
@@ -86,22 +93,28 @@ class ConfigEditorWindow : public ComboWindow
        space_dxy.bind(bag.space_dxy);
        back.bind(bag.back);
 
-       text_all.bind(bag.text_all);
-       text_Coord.bind(bag.text_Coord);
-       text_MCoord.bind(bag.text_MCoord);
-       text_VColor.bind(bag.text_VColor);
-       text_Clr.bind(bag.text_Clr);
-       text_unsigned.bind(bag.text_unsigned);
-       text_String.bind(bag.text_String);
-       text_Point.bind(bag.text_Point);
-       text_Font.bind(bag.text_Font);
-       text_bool.bind(bag.text_bool);
-       text_Ratio.bind(bag.text_Ratio);
+       text_all.bind(bag.text_cfg_all);
+       text_Coord.bind(bag.text_cfg_Coord);
+       text_MCoord.bind(bag.text_cfg_MCoord);
+       text_VColor.bind(bag.text_cfg_VColor);
+       text_Clr.bind(bag.text_cfg_Clr);
+       text_unsigned.bind(bag.text_cfg_unsigned);
+       text_String.bind(bag.text_cfg_String);
+       text_Point.bind(bag.text_cfg_Point);
+       text_Font.bind(bag.text_cfg_Font);
+       text_bool.bind(bag.text_cfg_bool);
+       text_Ratio.bind(bag.text_cfg_Ratio);
 
-       text_Set.bind(bag.text_Set);
-       text_Back.bind(bag.text_Back);
-       text_Save.bind(bag.text_Save);
-       text_Self.bind(bag.text_Self);
+       text_Set.bind(bag.text_cfg_Set);
+       text_Back.bind(bag.text_cfg_Back);
+       text_Save.bind(bag.text_cfg_Save);
+       text_Self.bind(bag.text_cfg_Self);
+
+       hint_list.bind(bag.hint_cfg_list);
+       hint_Set.bind(bag.hint_cfg_Set);
+       hint_Back.bind(bag.hint_cfg_Back);
+       hint_Save.bind(bag.hint_cfg_Save);
+       hint_Self.bind(bag.hint_cfg_Self);
 
        list_cfg.bind(proxy);
        check_cfg.bind(proxy);

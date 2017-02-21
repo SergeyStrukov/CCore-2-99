@@ -287,22 +287,29 @@ struct UserPreferenceBag : ConfigItemHost
 
   unsigned cfg_edit_precision = 4 ;
 
-  DefString text_all      =         "All"_def ;
-  DefString text_Coord    =        "size"_def ;
-  DefString text_MCoord   =  "milli-size"_def ;
-  DefString text_VColor   =       "color"_def ;
-  DefString text_Clr      = "color pitch"_def ;
-  DefString text_unsigned =       "count"_def ;
-  DefString text_String   =        "text"_def ;
-  DefString text_Point    =       "point"_def ;
-  DefString text_Font     =        "font"_def ;
-  DefString text_bool     =        "bool"_def ;
-  DefString text_Ratio    =       "ratio"_def ;
+  DefString text_cfg_all      =         "All"_def ;
+  DefString text_cfg_Coord    =        "size"_def ;
+  DefString text_cfg_MCoord   =  "milli-size"_def ;
+  DefString text_cfg_VColor   =       "color"_def ;
+  DefString text_cfg_Clr      = "color pitch"_def ;
+  DefString text_cfg_unsigned =       "count"_def ;
+  DefString text_cfg_String   =        "text"_def ;
+  DefString text_cfg_Point    =       "point"_def ;
+  DefString text_cfg_Font     =        "font"_def ;
+  DefString text_cfg_bool     =        "bool"_def ;
+  DefString text_cfg_Ratio    =       "ratio"_def ;
 
-  DefString text_Set  =           "Set"_def ;
-  DefString text_Back =          "Back"_def ;
-  DefString text_Save =          "Save"_def ;
-  DefString text_Self = "Apply to self"_def ;
+  DefString text_cfg_Set  =           "Set"_def ;
+  DefString text_cfg_Back =          "Back"_def ;
+  DefString text_cfg_Save =          "Save"_def ;
+  DefString text_cfg_Self = "Apply to self"_def ;
+
+  DefString hint_cfg_list = "Configuration parameters list"_def ;
+
+  DefString hint_cfg_Set  = "Set the parameter"_def ;
+  DefString hint_cfg_Back = "Revert back the parameter"_def ;
+  DefString hint_cfg_Save = "Save the current settings"_def ;
+  DefString hint_cfg_Self = "Apply parameters to this window"_def ;
 
   // constructors
 

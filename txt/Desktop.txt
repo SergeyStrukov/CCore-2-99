@@ -87,7 +87,7 @@ MCoordEdit.h         .
 ColorEdit.h          .
 FontEdit.h           .
 
-ConfigEditor.h       . // hints , getMinSize()
+ConfigEditor.h       +
 
 --------------------------------------------------------------------------------
 

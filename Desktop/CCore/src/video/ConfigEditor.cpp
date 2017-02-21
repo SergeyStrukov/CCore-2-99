@@ -976,6 +976,15 @@ ConfigEditorWindow::ConfigEditorWindow(SubWindowHost &host,const Config &cfg_,bo
 
   unsigned_edit.setRange(0,10'000);
   clr_edit.setRange(0,MaxClr);
+
+  // bind hints
+
+  item_list.bindHint(cfg.hint_list);
+
+  btn_Set.bindHint(cfg.hint_Set);
+  btn_Back.bindHint(cfg.hint_Back);
+  btn_Save.bindHint(cfg.hint_Save);
+  btn_Self.bindHint(cfg.hint_Self);
  }
 
 ConfigEditorWindow::~ConfigEditorWindow()
@@ -984,11 +993,39 @@ ConfigEditorWindow::~ConfigEditorWindow()
 
  // methods
 
-Point ConfigEditorWindow::getMinSize(Point cap) const // TODO
+Point ConfigEditorWindow::getMinSize(Point cap) const
  {
-  Used(cap);
+  Coordinate space=+cfg.space_dxy;
 
-  return Point(800,500);
+  Point m;
+
+  {
+   Coord check_dxy=check_all.getMinSize().dxy;
+
+   Coordinate ex=BoxExt(check_dxy);
+
+   Point s1=SupMinSize(label_all,label_Coord,label_MCoord,label_VColor,label_Clr,
+                       label_unsigned,label_String,label_Point,label_Font,label_bool,label_Ratio);
+
+   Point s2=SupMinSize(btn_Save,btn_Self,btn_Set,btn_Back);
+
+   Coordinate dx=Sup(ex+s1.x,s2.x);
+   Coordinate dy=14*space+4*Coordinate(s2.y)+11*Coordinate(Sup(check_dxy,s1.y));
+
+   m=Point(dx,dy);
+  }
+
+  Point t=SupMinSize(font_edit,color_edit,string_edit,coord_edit,
+                     mcoord_edit,unsigned_edit,clr_edit,point_edit,
+                     bool_edit,ratio_edit);
+
+  Coord ex=split.getMinSize().dx;
+
+  Point delta(3*space+m.x+t.x+ex,2*space);
+
+  Point s=item_list.getMinSize(cap-delta);
+
+  return delta+Point( s.x , Sup(s.y,m.y,t.y) );
  }
 
 void ConfigEditorWindow::bindConfig(ConfigItemHost &host)
