@@ -80,6 +80,11 @@ RatioEditWindow::RatioEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
   spin_b.setRange(1,1000);
   spin_b.setValue(1);
+
+  // bind hints
+
+  spin_a.bindHint(cfg.hint_a);
+  spin_b.bindHint(cfg.hint_b);
  }
 
 RatioEditWindow::~RatioEditWindow()

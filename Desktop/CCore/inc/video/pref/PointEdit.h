@@ -39,6 +39,9 @@ class PointEditWindow : public ComboWindow
 
      RefVal<Coord> space_dxy = 10 ;
 
+     RefVal<DefString> hint_x = "Select x coordinate"_def ;
+     RefVal<DefString> hint_y = "Select y coordinate"_def ;
+
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
@@ -49,6 +52,8 @@ class PointEditWindow : public ComboWindow
        width.bind(bag.cfg_edit_width);
        line.bind(bag.cfg_edit_line);
        space_dxy.bind(bag.space_dxy);
+       hint_x.bind(bag.hint_cfg_x);
+       hint_y.bind(bag.hint_cfg_y);
 
        spin_cfg.bind(proxy);
       }

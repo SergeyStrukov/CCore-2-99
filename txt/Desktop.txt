@@ -79,9 +79,9 @@ UserPreference.h     ++
 
 --- Pref -----------------------------------------------------------------------
 
-CoordEdit.h          + // hints
-PointEdit.h          + // hints
-RatioEdit.h          + // hints
+CoordEdit.h          +
+PointEdit.h          +
+RatioEdit.h          +
 
 MCoordEdit.h         .
 ColorEdit.h          .

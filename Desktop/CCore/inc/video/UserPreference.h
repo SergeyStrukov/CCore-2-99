@@ -311,6 +311,12 @@ struct UserPreferenceBag : ConfigItemHost
   DefString hint_cfg_Save = "Save the current settings"_def ;
   DefString hint_cfg_Self = "Apply parameters to this window"_def ;
 
+  DefString hint_cfg_x = "Select x coordinate"_def ;
+  DefString hint_cfg_y = "Select y coordinate"_def ;
+
+  DefString hint_cfg_a = "Select divisible"_def ;
+  DefString hint_cfg_b = "Select divider"_def ;
+
   // constructors
 
   UserPreferenceBag() noexcept {}

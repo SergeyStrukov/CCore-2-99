@@ -263,6 +263,11 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_cfg_Back"_c,ptr->hint_cfg_Back);
   func("hint_cfg_Save"_c,ptr->hint_cfg_Save);
   func("hint_cfg_Self"_c,ptr->hint_cfg_Self);
+
+  func("hint_cfg_x"_c,ptr->hint_cfg_x);
+  func("hint_cfg_y"_c,ptr->hint_cfg_y);
+  func("hint_cfg_a"_c,ptr->hint_cfg_a);
+  func("hint_cfg_b"_c,ptr->hint_cfg_b);
  }
 
 void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
@@ -522,6 +527,11 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("?'Back'"_def,hint_cfg_Back);
    binder.item("?'Save'"_def,hint_cfg_Save);
    binder.item("?'Self'"_def,hint_cfg_Self);
+
+   binder.item("?'x-coord'"_def,hint_cfg_x);
+   binder.item("?'y-coord'"_def,hint_cfg_y);
+   binder.item("?'divisible'"_def,hint_cfg_a);
+   binder.item("?'divider'"_def,hint_cfg_b);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here

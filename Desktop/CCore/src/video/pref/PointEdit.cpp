@@ -43,6 +43,11 @@ PointEditWindow::PointEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
   spin_x.setRange(MinCoord,MaxCoord);
   spin_y.setRange(MinCoord,MaxCoord);
+
+  // bind hints
+
+  spin_x.bindHint(cfg.hint_x);
+  spin_y.bindHint(cfg.hint_y);
  }
 
 PointEditWindow::~PointEditWindow()

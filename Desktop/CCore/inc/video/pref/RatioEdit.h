@@ -41,6 +41,9 @@ class RatioEditWindow : public ComboWindow
 
      RefVal<Coord> space_dxy = 10 ;
 
+     RefVal<DefString> hint_a = "Select divisible"_def ;
+     RefVal<DefString> hint_b = "Select divider"_def ;
+
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
 
      Config() noexcept {}
@@ -52,6 +55,8 @@ class RatioEditWindow : public ComboWindow
        mark_dy.bind(bag.cfg_edit_mark_dy);
        line.bind(bag.cfg_edit_line);
        space_dxy.bind(bag.space_dxy);
+       hint_a.bind(bag.hint_cfg_a);
+       hint_b.bind(bag.hint_cfg_b);
 
        spin_cfg.bind(proxy);
       }
