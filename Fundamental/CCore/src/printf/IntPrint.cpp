@@ -27,7 +27,7 @@ IntPrintOpt::IntPrintOpt(const char *ptr,const char *lim)
 
   ParseUInt_empty(dev,width,0u);
 
-  Parse_IntBase(dev,base,show_base);
+  Parse_IntBase(dev,base,fract,show_base);
 
   Parse_empty(dev,align);
 

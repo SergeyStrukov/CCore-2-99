@@ -285,8 +285,6 @@ struct UserPreferenceBag : ConfigItemHost
 
   VColor cfg_edit_line = Black ;
 
-  unsigned cfg_edit_precision = 4 ;
-
   DefString text_cfg_all      =         "All"_def ;
   DefString text_cfg_Coord    =        "size"_def ;
   DefString text_cfg_MCoord   =  "milli-size"_def ;

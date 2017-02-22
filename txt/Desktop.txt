@@ -83,7 +83,7 @@ CoordEdit.h          +
 PointEdit.h          +
 RatioEdit.h          +
 
-MCoordEdit.h         .
+MCoordEdit.h         +
 ColorEdit.h          .
 FontEdit.h           .
 

@@ -25,6 +25,9 @@ namespace CCore {
 const unsigned MinIntBase =  2 ;
 const unsigned MaxIntBase = 16 ;
 
+const unsigned MinIntFract =   1 ;
+const unsigned MaxIntFract = 100 ;
+
 /* classes */
 
 //enum IntShowSign;
@@ -113,8 +116,12 @@ enum IntShowBase
  };
 
 template <CharPeekType Dev>
-void Parse_IntBase(Dev &dev,unsigned &base,IntShowBase &show_base)
+void Parse_IntBase(Dev &dev,unsigned &base,unsigned &fract,IntShowBase &show_base)
  {
+  base=10;
+  fract=0;
+  show_base=IntShowBaseDefault;
+
   if( ParseChar_try(dev,'.') )
     {
      typename Dev::Peek peek(dev);
@@ -129,23 +136,29 @@ void Parse_IntBase(Dev &dev,unsigned &base,IntShowBase &show_base)
      switch( *peek )
        {
         case 'b' : case 'B' : base=2 ; show_base=IntShowBaseSuffix; ++dev; break;
+
         case 'h' : case 'H' : base=16; show_base=IntShowBaseSuffix; ++dev; break;
+
         case 'x' : case 'X' : base=16; show_base=IntShowBasePrefix; ++dev; break;
+
         case 'c' : case 'C' : base=0 ; show_base=IntShowNoBase    ; ++dev; break;
+
+        case 'f' : case 'F' :
+         {
+          base=10;
+          show_base=IntShowNoBase;
+
+          ++dev;
+
+          ParseUInt(dev,fract,MinIntFract,MaxIntFract);
+         }
+        break;
 
         default:
          {
           ParseUInt(dev,base,MinIntBase,MaxIntBase);
-
-          show_base=IntShowBaseDefault;
          }
        }
-    }
-  else
-    {
-     base=10;
-
-     show_base=IntShowBaseDefault;
     }
  }
 
@@ -155,6 +168,7 @@ struct IntPrintOpt
  {
   ulen width;
   unsigned base; // 2..16, 0 for c
+  unsigned fract;
   IntAlign align;
   IntShowSign show_sign;
   IntShowBase show_base;
@@ -163,6 +177,7 @@ struct IntPrintOpt
    {
     width=0;
     base=10;
+    fract=0;
     align=IntAlignDefault;
     show_sign=IntShowSignDefault;
     show_base=IntShowBaseDefault;
@@ -173,7 +188,7 @@ struct IntPrintOpt
   IntPrintOpt(const char *ptr,const char *lim);
 
   //
-  // [+][width=0][.base|.b|.h|.x|.c=.10][l|L|r|R|i|I=R]
+  // [+][width=0][.base|.b|.h|.x|.c|.f<prec>=.10][l|L|r|R|i|I=R]
   //
  };
 
@@ -355,6 +370,83 @@ class IntToStr : NoCopy
         out.put(str.ptr,str.len);
        }
     }
+
+   static void Print(PrinterType &out,ulen fract,PtrLen<const char> pref,PtrLen<const char> suff,ulen extra=0)
+    {
+     out.put(pref.ptr,pref.len);
+
+     out.put('0',extra);
+
+     if( suff.len>fract )
+       {
+        auto r=( suff+=(suff.len-fract) );
+
+        out.put(r.ptr,r.len);
+
+        out.put('.');
+
+        out.put(suff.ptr,suff.len);
+       }
+     else
+       {
+        out.put('0');
+        out.put('.');
+
+        out.put('0',fract-suff.len);
+
+        out.put(suff.ptr,suff.len);
+       }
+    }
+
+   void print(PrinterType &out,ulen width,ulen fract,IntAlign align) const
+    {
+     auto pref=getPrefix();
+     auto suff=getSuffix();
+     ulen len;
+
+     if( suff.len>fract )
+       {
+        len=suff.len+1;
+       }
+     else
+       {
+        len=fract+2;
+       }
+
+     len+=pref.len;
+
+     if( width>len )
+       {
+        ulen extra=width-len;
+
+        switch( align )
+          {
+           case IntAlignLeft :
+            {
+             Print(out,fract,pref,suff);
+             out.put(' ',extra);
+            }
+           break;
+
+           case IntAlignRight :
+            {
+             out.put(' ',extra);
+             Print(out,fract,pref,suff);
+            }
+           break;
+
+           case IntAlignInternal :
+            {
+             Print(out,fract,pref,suff,extra);
+            }
+           break;
+          }
+       }
+     else
+       {
+        Print(out,fract,pref,suff);
+       }
+    }
  };
 
 /* class UIntPrint<UInt> */
@@ -376,7 +468,10 @@ class UIntPrint
 
      dev.do_promote_uint<UInt>(value);
 
-     dev.print(out,opt.width,opt.align);
+     if( opt.fract )
+       dev.print(out,opt.width,opt.fract,opt.align);
+     else
+       dev.print(out,opt.width,opt.align);
     }
  };
 
@@ -399,7 +494,10 @@ class SIntPrint
 
      dev.do_promote_sint<SInt>(value);
 
-     dev.print(out,opt.width,opt.align);
+     if( opt.fract )
+       dev.print(out,opt.width,opt.fract,opt.align);
+     else
+       dev.print(out,opt.width,opt.align);
     }
  };
 

@@ -239,7 +239,6 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("cfg_edit_width"_c,ptr->cfg_edit_width);
   func("cfg_edit_mark_dy"_c,ptr->cfg_edit_mark_dy);
   func("cfg_edit_line"_c,ptr->cfg_edit_line);
-  func("cfg_edit_precision"_c,ptr->cfg_edit_precision);
 
   func("text_cfg_all"_c,ptr->text_cfg_all);
   func("text_cfg_Coord"_c,ptr->text_cfg_Coord);
@@ -503,7 +502,6 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("line width"_def,cfg_edit_width);
    binder.item("mark height"_def,cfg_edit_mark_dy);
    binder.item("line"_def,cfg_edit_line);
-   binder.item("precision"_def,cfg_edit_precision);
 
    binder.item("'all'"_def,text_cfg_all);
    binder.item("'Coord'"_def,text_cfg_Coord);

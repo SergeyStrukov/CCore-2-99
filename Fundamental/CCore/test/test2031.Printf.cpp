@@ -73,6 +73,26 @@ bool Testit<2031>::Main()
   Printf(Con,"--- #+10.hi; ---\n",12345);
   Printf(Con,"--- #10.hi; ---\n",-12345);
 
+  Printf(Con,"--- #10.f2l; ---\n",12345);
+  Printf(Con,"--- #10.f2i; ---\n",12345);
+  Printf(Con,"--- #10.f2r; ---\n",12345);
+
+  Printf(Con,"--- #10.f2l; ---\n",-12345);
+  Printf(Con,"--- #10.f2i; ---\n",-12345);
+  Printf(Con,"--- #10.f2r; ---\n",-12345);
+
+  Printf(Con,"--- #10.f2l; ---\n",-12);
+  Printf(Con,"--- #10.f2i; ---\n",-12);
+  Printf(Con,"--- #10.f2r; ---\n",-12);
+
+  Printf(Con,"--- #10.f4l; ---\n",12);
+  Printf(Con,"--- #10.f4i; ---\n",12);
+  Printf(Con,"--- #10.f4r; ---\n",12);
+
+  Printf(Con,"--- #10.f2l; ---\n",0);
+  Printf(Con,"--- #10.f2i; ---\n",0);
+  Printf(Con,"--- #10.f2r; ---\n",0);
+
   Printf(Con,"\n#;\n\n",TextDivider());
 
   uint8 buf[50];

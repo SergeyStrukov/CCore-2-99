@@ -33,20 +33,14 @@ class MCoordEditWindow : public ComboWindow
 
    struct Config
     {
-     RefVal<unsigned> precision = 4 ;
-
-     CtorRefVal<KnobWindow::ConfigType> knob_cfg;
-     CtorRefVal<TextWindow::ConfigType> text_cfg;
+     CtorRefVal<SpinorWindow::ConfigType> spinor_cfg;
 
      Config() noexcept {}
 
      template <class Bag,class Proxy>
-     void bind(const Bag &bag,Proxy proxy)
+     void bind(const Bag &,Proxy proxy)
       {
-       precision.bind(bag.cfg_edit_precision);
-
-       knob_cfg.bind(proxy);
-       text_cfg.bind(proxy);
+       spinor_cfg.bind(proxy);
       }
     };
 
@@ -56,31 +50,13 @@ class MCoordEditWindow : public ComboWindow
 
    const Config &cfg;
 
-   MCoord value = 0 ;
-
-   KnobWindow plus;
-   KnobWindow minus;
-   KnobWindow small_plus;
-   KnobWindow small_minus;
-   TextWindow text;
+   SpinorWindow spinor;
 
   private:
 
-   void showVal();
+   void spinor_changed(int);
 
-   void plusVal();
-
-   void minusVal();
-
-   void plusSmallVal();
-
-   void minusSmallVal();
-
-   SignalConnector<MCoordEditWindow> connector_plus_pressed;
-   SignalConnector<MCoordEditWindow> connector_minus_pressed;
-
-   SignalConnector<MCoordEditWindow> connector_small_plus_pressed;
-   SignalConnector<MCoordEditWindow> connector_small_minus_pressed;
+   SignalConnector<MCoordEditWindow,int> connector_spinor_changed;
 
   public:
 
@@ -92,19 +68,13 @@ class MCoordEditWindow : public ComboWindow
 
    Point getMinSize() const;
 
-   MCoord getMCoord() const { return value; }
+   MCoord getMCoord() const { return (spinor.getValue()*1024)/100; }
 
-   void setMCoord(MCoord value);
+   void setMCoord(MCoord value) { spinor.setValue( (value*100)/1024 ); }
 
    // drawing
 
    virtual void layout();
-
-   // user input
-
-   virtual void react(UserAction action);
-
-   void react_Char(char ch);
 
    // signals
 
