@@ -11,11 +11,13 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <inc/Designer.h>
+#include <inc/TestFrame.h>
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
 #include <CCore/inc/video/Picture.h>
+#include <CCore/inc/video/ConfigEditor.h>
+#include <CCore/inc/video/Layout.h>
 
 #include <CCore/inc/TaskMemStack.h>
 
@@ -39,14 +41,13 @@ struct Param
   const WindowReportConfig &report_cfg;
   const ExceptionWindow::ConfigType &exception_cfg;
   const DragFrame::ConfigType &frame_cfg;
-
-  DesignerWindow::ConfigType designer_cfg;
+  const ConfigEditorFrame::ConfigType &editor_cfg;
 
   Param() noexcept
    : report_cfg(pref.getSmartConfig()),
      exception_cfg(pref.getSmartConfig()),
      frame_cfg(pref.getSmartConfig()),
-     designer_cfg(pref)
+     editor_cfg(pref.getSmartConfig())
    {
    }
  };
@@ -55,13 +56,17 @@ struct Param
 
 class Application : public ApplicationBase
  {
+   UserPreference &self_pref;
+
    const CmdDisplay cmd_display;
 
-   DragFrame main_frame;
+   UserPreference pref;
+
+   ConfigEditorFrame main_frame;
 
    ExceptionClient exception_client;
 
-   DesignerWindow client;
+   TestFrame test_frame;
 
   private:
 
@@ -82,12 +87,27 @@ class Application : public ApplicationBase
 
    virtual void prepare()
     {
-     PlaceFrame place(desktop);
+     pref.sync();
 
-     main_frame.createMain(cmd_display,
-                           place.getPane(Div(1,8),Div(1,2),Div(1,8),Div(3,4)),
-                           place.getMaxSize(),
-                           "User Preference"_def);
+     main_frame.bindConfig(pref.ref());
+
+     Point size=desktop->getScreenSize();
+
+     Coord y=Div(1,6)*size.y;
+     Coord dy=Div(2,3)*size.y;
+
+     Coord x1=Div(1,12)*size.x;
+     Coord dx1=Div(1,2)*size.x;
+
+     Coord x2=x1+dx1+10;
+     Coord dx2=Div(1,3)*size.x;
+
+     Pane pane1(x1,y,dx1,dy);
+     Pane pane2(x2,y,dx2,dy);
+
+     main_frame.createMain(cmd_display,pane1,"User Preference"_def);
+
+     test_frame.create(&main_frame,pane2,"Test frame"_def);
     }
 
    virtual void beforeLoop() noexcept
@@ -105,17 +125,53 @@ class Application : public ApplicationBase
      // do nothing
     }
 
+  private:
+
+   void pref_updated()
+    {
+     pref.updated.assert();
+    }
+
+   void pref_save()
+    {
+     pref.update();
+    }
+
+   void pref_self()
+    {
+     self_pref.ref()=pref.get();
+
+     self_pref.updated.assert();
+    }
+
+   SignalConnector<Application> connector_updated;
+   SignalConnector<Application> connector_doSave;
+   SignalConnector<Application> connector_doSelf;
+
+   void test_destroyed()
+    {
+     main_frame.askClose();
+    }
+
+   SignalConnector<Application> connector_test_destroyed;
+
   public:
 
    explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
+      self_pref(param.pref),
       cmd_display(cmd_display_),
-      main_frame(param.desktop,param.frame_cfg,param.pref.updated),
+      main_frame(param.desktop,param.editor_cfg,true),
       exception_client(main_frame,param.exception_cfg,report),
-      client(main_frame,param.designer_cfg,param.pref)
+      test_frame(param.desktop,pref,pref.updated),
+
+      connector_updated(this,&Application::pref_updated,main_frame.updated),
+      connector_doSave(this,&Application::pref_save,main_frame.doSave),
+      connector_doSelf(this,&Application::pref_self,main_frame.doSelf),
+      connector_test_destroyed(this,&Application::test_destroyed,test_frame.destroyed)
     {
      main_frame.bindAlertClient(exception_client);
-     main_frame.bindClient(client);
+     main_frame.connectUpdate(param.pref.updated);
     }
 
    ~Application()

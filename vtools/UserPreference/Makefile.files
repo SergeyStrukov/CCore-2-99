@@ -1,38 +1,17 @@
 OBJ_LIST = \
 obj/Application.o \
-obj/ColorEdit.o \
-obj/CoordEdit.o \
-obj/Designer.o \
-obj/FontEdit.o \
-obj/MCoordEdit.o \
-obj/PointEdit.o \
-obj/SpinEdit.o \
 obj/TestFrame.o \
 obj/main.o \
 
 
 ASM_LIST = \
 obj/Application.s \
-obj/ColorEdit.s \
-obj/CoordEdit.s \
-obj/Designer.s \
-obj/FontEdit.s \
-obj/MCoordEdit.s \
-obj/PointEdit.s \
-obj/SpinEdit.s \
 obj/TestFrame.s \
 obj/main.s \
 
 
 DEP_LIST = \
 obj/Application.dep \
-obj/ColorEdit.dep \
-obj/CoordEdit.dep \
-obj/Designer.dep \
-obj/FontEdit.dep \
-obj/MCoordEdit.dep \
-obj/PointEdit.dep \
-obj/SpinEdit.dep \
 obj/TestFrame.dep \
 obj/main.dep \
 
@@ -46,27 +25,6 @@ include $(RULES_FILE)
 obj/Application.o : ./src/Application.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ColorEdit.o : ./src/ColorEdit.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/CoordEdit.o : ./src/CoordEdit.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/Designer.o : ./src/Designer.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/FontEdit.o : ./src/FontEdit.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/MCoordEdit.o : ./src/MCoordEdit.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/PointEdit.o : ./src/PointEdit.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/SpinEdit.o : ./src/SpinEdit.cpp
-	$(CC) $(CCOPT) $< -o $@
-
 obj/TestFrame.o : ./src/TestFrame.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -76,27 +34,6 @@ obj/main.o : ./src/main.cpp
 
 
 obj/Application.s : ./src/Application.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/ColorEdit.s : ./src/ColorEdit.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/CoordEdit.s : ./src/CoordEdit.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/Designer.s : ./src/Designer.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/FontEdit.s : ./src/FontEdit.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/MCoordEdit.s : ./src/MCoordEdit.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/PointEdit.s : ./src/PointEdit.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/SpinEdit.s : ./src/SpinEdit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/TestFrame.s : ./src/TestFrame.cpp
@@ -109,27 +46,6 @@ obj/main.s : ./src/main.cpp
 
 obj/Application.dep : ./src/Application.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Application.o $< -MF $@
-
-obj/ColorEdit.dep : ./src/ColorEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ColorEdit.o $< -MF $@
-
-obj/CoordEdit.dep : ./src/CoordEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CoordEdit.o $< -MF $@
-
-obj/Designer.dep : ./src/Designer.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Designer.o $< -MF $@
-
-obj/FontEdit.dep : ./src/FontEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FontEdit.o $< -MF $@
-
-obj/MCoordEdit.dep : ./src/MCoordEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MCoordEdit.o $< -MF $@
-
-obj/PointEdit.dep : ./src/PointEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PointEdit.o $< -MF $@
-
-obj/SpinEdit.dep : ./src/SpinEdit.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SpinEdit.o $< -MF $@
 
 obj/TestFrame.dep : ./src/TestFrame.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TestFrame.o $< -MF $@
