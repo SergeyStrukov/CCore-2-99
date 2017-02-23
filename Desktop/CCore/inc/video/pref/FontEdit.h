@@ -272,7 +272,7 @@ class FontEditWindow : public ComboWindow
 
    const Font & getFont() const { return font.font; }
 
-   const FontCouple getCouple() const { return font; }
+   const FontCouple & getCouple() const { return font; }
 
    void setCouple(const FontCouple &font);
 
