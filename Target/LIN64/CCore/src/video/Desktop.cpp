@@ -2418,6 +2418,11 @@ class X11Host : public WindowHost , WindowDispatcher
      guardAlive(format);
 
      destroyAll();
+
+     while( is_alive && !is_main )
+       {
+        if( !frame->desktop->pump() ) break;
+       }
     }
 
    // operations
