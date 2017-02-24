@@ -290,6 +290,7 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
 
 void AppPreferenceBag::createFonts()
  {
+  font.create();
  }
 
 /* class AppPreference */

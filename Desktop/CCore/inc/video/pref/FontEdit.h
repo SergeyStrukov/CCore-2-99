@@ -44,7 +44,7 @@ class FontEditWindow : public ComboWindow
      RefVal<Coord> light_dxy = 20 ;
 
      CtorRefVal<ProgressWindow::ConfigType> progress_cfg;
-     CtorRefVal<SimpleTextListWindow::ConfigType> text_list_cfg;
+     CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<TextWindow::ConfigType> text_cfg;
      CtorRefVal<LightWindow::ConfigType> light_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
@@ -54,6 +54,7 @@ class FontEditWindow : public ComboWindow
      CtorRefVal<TextContourWindow::ConfigType> text_contour_cfg;
      CtorRefVal<ContourWindow::ConfigType> contour_cfg;
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
+     CtorRefVal<InfoWindow::ConfigType> info_cfg;
 
      Config() noexcept {}
 
@@ -66,7 +67,7 @@ class FontEditWindow : public ComboWindow
        light_dxy.bind(bag.light_dxy);
 
        progress_cfg.bind(proxy);
-       text_list_cfg.bind(proxy);
+       list_cfg.bind(proxy);
        text_cfg.bind(proxy);
        light_cfg.bind(proxy);
        label_cfg.bind(proxy);
@@ -76,6 +77,7 @@ class FontEditWindow : public ComboWindow
        text_contour_cfg.bind(proxy);
        contour_cfg.bind(proxy);
        spin_cfg.bind(proxy);
+       info_cfg.bind(proxy);
       }
     };
 
@@ -83,7 +85,7 @@ class FontEditWindow : public ComboWindow
 
   private:
 
-   static DefString TestText;
+   static DefString TestText();
 
    const Config &cfg;
 
@@ -99,19 +101,19 @@ class FontEditWindow : public ComboWindow
 
      public:
 
-      ProgressControl(WindowList &wlist_,ProgressWindow &window_) : wlist(wlist_),window(window_) {}
+      ProgressControl(WindowList &wlist,ProgressWindow &window);
 
-      ~ProgressControl() {}
+      ~ProgressControl();
 
       // IncrementalProgress
 
-      virtual void start() { wlist.insTop(window); }
+      virtual void start();
 
-      virtual void setTotal(unsigned total) { window.setTotal(total); }
+      virtual void setTotal(unsigned total);
 
-      virtual bool setPos(unsigned pos) { window.setPosPing(pos); return true; }
+      virtual bool setPos(unsigned pos);
 
-      virtual void stop() noexcept { wlist.del(window); }
+      virtual void stop() noexcept;
     };
 
    ProgressControl progress_control;
@@ -120,7 +122,7 @@ class FontEditWindow : public ComboWindow
    FontDatabase::Incremental fdb_inc;
    bool fdb_flag = true ;
 
-   class FDBInfo : public Info
+   class FDBInfo : public ComboInfo
     {
       class Base;
 
@@ -145,67 +147,67 @@ class FontEditWindow : public ComboWindow
 
    FDBInfo info;
 
-   SimpleTextListWindow text_list;
-   TextWindow file_name_text;
-   TextWindow family_text;
+   ScrollListWindow list;
+   TextWindow text_file_name;
+   TextWindow text_family;
 
-   LightWindow scalable_light;
-   LightWindow monospace_light;
-   LightWindow bold_light;
-   LightWindow italic_light;
+   LightWindow light_scalable;
+   LightWindow light_monospace;
+   LightWindow light_bold;
+   LightWindow light_italic;
 
-   LabelWindow scalable_label;
-   LabelWindow monospace_label;
-   LabelWindow bold_label;
-   LabelWindow italic_label;
+   LabelWindow label_scalable;
+   LabelWindow label_monospace;
+   LabelWindow label_bold;
+   LabelWindow label_italic;
 
    XDoubleLineWindow line1;
 
-   SpinorWindow fdy_spin;
-   CheckWindow fdx_check;
-   SpinorWindow fdx_spin;
+   SpinorWindow spin_fdy;
+   CheckWindow check_fdx;
+   SpinorWindow spin_fdx;
 
    XDoubleLineWindow line2;
 
-   RadioGroup hint_group;
+   RadioGroup group_hint;
 
-   RadioWindow no_hint_radio;
-   RadioWindow native_hint_radio;
-   RadioWindow auto_hint_radio;
+   RadioWindow radio_no_hint;
+   RadioWindow radio_native_hint;
+   RadioWindow radio_auto_hint;
 
-   LabelWindow no_hint_label;
-   LabelWindow native_hint_label;
-   LabelWindow auto_hint_label;
+   LabelWindow label_no_hint;
+   LabelWindow label_native_hint;
+   LabelWindow label_auto_hint;
 
-   TextContourWindow hint_contour;
+   TextContourWindow contour_hint;
 
-   RadioGroup smooth_group;
+   RadioGroup group_smooth;
 
-   RadioWindow no_smooth_radio;
-   RadioWindow smooth_radio;
-   RadioWindow RGB_radio;
-   RadioWindow BGR_radio;
+   RadioWindow radio_no_smooth;
+   RadioWindow radio_smooth;
+   RadioWindow radio_RGB;
+   RadioWindow radio_BGR;
 
-   LabelWindow no_smooth_label;
-   LabelWindow smooth_label;
-   LabelWindow RGB_label;
-   LabelWindow BGR_label;
+   LabelWindow label_no_smooth;
+   LabelWindow label_smooth;
+   LabelWindow label_RGB;
+   LabelWindow label_BGR;
 
-   TextContourWindow smooth_contour;
+   TextContourWindow contour_smooth;
 
-   CheckWindow kerning_check;
+   CheckWindow check_kerning;
 
-   LabelWindow kerning_label;
+   LabelWindow label_kerning;
 
-   SpinorWindow strength_spin;
+   SpinorWindow spin_strength;
 
-   LabelWindow strength_label;
+   LabelWindow label_strength;
 
    InfoWindow::ConfigType info_cfg;
 
-   InfoWindow font_test;
+   InfoWindow info_test;
 
-   ContourWindow test_contour;
+   ContourWindow contour_test;
 
   private:
 
@@ -217,6 +219,8 @@ class FontEditWindow : public ComboWindow
 
    void showFont(ulen select);
 
+   void showFont();
+
    void noSize();
 
    void setSize();
@@ -225,38 +229,40 @@ class FontEditWindow : public ComboWindow
 
    void setCouple();
 
-   void fdbComplete(bool ok);
+  private:
 
-   SignalConnector<FontEditWindow,bool> connector_fdb_complete;
+   void fdb_completed(bool ok);
 
-   void selectFont(ulen select);
+   SignalConnector<FontEditWindow,bool> connector_fdb_completed;
 
-   SignalConnector<FontEditWindow,ulen> connector_text_list_selected;
+   void list_selected(ulen select);
 
-   void fdxEnable(bool enable);
+   SignalConnector<FontEditWindow,ulen> connector_list_selected;
 
-   SignalConnector<FontEditWindow,bool> connector_fdx_check_changed;
+   void check_fdx_changed(bool enable);
 
-   void fdxyChanged(int);
+   SignalConnector<FontEditWindow,bool> connector_check_fdx_changed;
 
-   SignalConnector<FontEditWindow,int> connector_fdy_spin_changed;
-   SignalConnector<FontEditWindow,int> connector_fdx_spin_changed;
+   void spin_fdxy_changed(int);
 
-   void hintChanged(int new_id,int old_id);
+   SignalConnector<FontEditWindow,int> connector_spin_fdy_changed;
+   SignalConnector<FontEditWindow,int> connector_spin_fdx_changed;
 
-   SignalConnector<FontEditWindow,int,int> connector_hint_group_changed;
+   void group_hint_changed(int new_id,int old_id);
 
-   void smoothChanged(int new_id,int old_id);
+   SignalConnector<FontEditWindow,int,int> connector_group_hint_changed;
 
-   SignalConnector<FontEditWindow,int,int> connector_smooth_group_changed;
+   void group_smooth_changed(int new_id,int old_id);
 
-   void kerningChanged(bool check);
+   SignalConnector<FontEditWindow,int,int> connector_group_smooth_changed;
 
-   SignalConnector<FontEditWindow,bool> connector_kerning_check_changed;
+   void check_kerning_changed(bool check);
 
-   void strengthChanged(int strength);
+   SignalConnector<FontEditWindow,bool> connector_check_kerning_changed;
 
-   SignalConnector<FontEditWindow,int> connector_strength_spin_changed;
+   void spin_strength_changed(int strength);
+
+   SignalConnector<FontEditWindow,int> connector_spin_strength_changed;
 
   public:
 
@@ -266,7 +272,7 @@ class FontEditWindow : public ComboWindow
 
    // methods
 
-   Point getMinSize() const;
+   Point getMinSize(Point cap=Point::Max()) const;
 
    const FontParam & getParam() const { return font.param; }
 

@@ -1015,9 +1015,11 @@ Point ConfigEditorWindow::getMinSize(Point cap) const
    m=Point(dx,dy);
   }
 
-  Point t=SupMinSize(font_edit,color_edit,string_edit,coord_edit,
+  Point t=SupMinSize(color_edit,string_edit,coord_edit,
                      mcoord_edit,unsigned_edit,clr_edit,point_edit,
                      bool_edit,ratio_edit);
+
+  t=Sup(t,font_edit.getMinSize(Point(MaxCoord,cap.y-2*space)));
 
   Coord ex=split.getMinSize().dx;
 
