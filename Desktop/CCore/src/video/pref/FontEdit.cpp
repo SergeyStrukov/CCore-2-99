@@ -16,6 +16,7 @@
 #include <CCore/inc/video/pref/FontEdit.h>
 
 #include <CCore/inc/video/Layout.h>
+#include <CCore/inc/video/SmoothDrawArt.h>
 
 #include <CCore/inc/Sort.h>
 
@@ -23,6 +24,98 @@ namespace CCore {
 namespace Video {
 
 #define DISABLE_NONSCALABLE
+
+/* class CharTableWindow */
+
+CharTableWindow::CharTableWindow(SubWindowHost &host,const Config &cfg_)
+ : SubWindow(host),
+   cfg(cfg_)
+ {
+ }
+
+CharTableWindow::~CharTableWindow()
+ {
+ }
+
+ // methods
+
+Point CharTableWindow::getMinSize() const
+ {
+  Font font=+cfg.font;
+
+  FontSize fs=font->getSize();
+
+  Coordinate cell_dxy=Cell(fs.dy);
+
+  Coordinate len=16*cell_dxy;
+
+  return Point(len,len);
+ }
+
+ // drawing
+
+bool CharTableWindow::isGoodSize(Point size) const
+ {
+  return size>=getMinSize();
+ }
+
+void CharTableWindow::layout()
+ {
+  // do nothing
+ }
+
+void CharTableWindow::draw(DrawBuf buf,bool) const
+ {
+  MCoord width=+cfg.width;
+  VColor text=+cfg.text;
+  Font font=+cfg.font;
+
+  FontSize fs=font->getSize();
+
+  Coord cell_dxy=Cell(fs.dy);
+
+  SmoothDrawArt art(buf);
+
+  Coord len=16*cell_dxy;
+
+  {
+   Coord y=0;
+
+   for(unsigned count=17; count ;count--,y+=cell_dxy)
+     {
+      Point a(0,y);
+      Point b(len,y);
+
+      Point c(y,0);
+      Point d(y,len);
+
+      art.path(width,text,a,b);
+      art.path(width,text,c,d);
+     }
+  }
+
+  {
+   char ch=0;
+   Coord y=0;
+
+   for(unsigned cnt_y=16; cnt_y ;cnt_y--,y+=cell_dxy)
+     {
+      Coord x=0;
+
+      for(unsigned cnt_x=16; cnt_x ;cnt_x--,x+=cell_dxy,ch++)
+        {
+         font->text(buf,Pane(x,y,cell_dxy,cell_dxy),TextPlace(AlignX_Center,AlignY_Center),Single(ch),text);
+        }
+     }
+  }
+ }
+
+ // keyboard
+
+FocusType CharTableWindow::askFocus() const
+ {
+  return NoFocus;
+ }
 
 /* class FontEditWindow */
 
@@ -403,6 +496,20 @@ void FontEditWindow::setCouple()
   info_test.redraw();
  }
 
+void FontEditWindow::split_dragged(Point delta)
+ {
+  if( min_list_dx<=max_list_dx )
+    {
+     list_split_dx=Cap<Coord>(min_list_dx,list_split_dx+delta.x,max_list_dx);
+
+     split_on=true;
+
+     layout();
+
+     redraw();
+    }
+ }
+
 void FontEditWindow::fdb_completed(bool ok)
  {
   fdb_flag=false;
@@ -413,7 +520,7 @@ void FontEditWindow::fdb_completed(bool ok)
 
      list.setInfo(info);
 
-     wlist.insTop(list,text_file_name,text_family,
+     wlist.insTop(list,split,text_file_name,text_family,
                   light_scalable,light_monospace,light_bold,light_italic,
                   label_scalable,label_monospace,label_bold,label_italic,
                   line1,spin_fdy,check_fdx,spin_fdx,line2,
@@ -423,7 +530,9 @@ void FontEditWindow::fdb_completed(bool ok)
                   radio_no_smooth,radio_smooth,radio_RGB,radio_BGR,
                   label_no_smooth,label_smooth,label_RGB,label_BGR,
                   contour_smooth,
-                  check_kerning,label_kerning,spin_strength,label_strength,info_test,contour_test);
+                  check_kerning,label_kerning,spin_strength,label_strength,line3,
+                  radio_sample,label_sample,radio_table,label_table,
+                  info_test,contour_test);
 
      setCouple();
     }
@@ -570,6 +679,32 @@ void FontEditWindow::spin_strength_changed(int strength)
   updateFont();
  }
 
+void FontEditWindow::group_sample_changed(int new_id,int)
+ {
+  switch( new_id )
+    {
+     case 0 :
+      {
+       wlist.del(table);
+
+       wlist.insBefore(contour_test,info_test);
+
+       redraw();
+      }
+     break;
+
+     case 1 :
+      {
+       wlist.del(info_test);
+
+       wlist.insBefore(contour_test,table);
+
+       redraw();
+      }
+     break;
+    }
+ }
+
 FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -580,6 +715,7 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    fdb_inc(progress_control),
 
    list(wlist,cfg.list_cfg),
+   split(wlist,cfg.split_cfg),
 
    text_file_name(wlist,cfg.text_cfg,AlignX_Left),
    text_family(wlist,cfg.text_cfg,AlignX_Left),
@@ -632,12 +768,25 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
    label_strength(wlist,cfg.label_cfg,"Strength"_def,AlignX_Left),
 
+   line3(wlist,cfg.dline_cfg),
+
+   radio_sample(wlist,0,cfg.radio_cfg),
+   radio_table(wlist,1,cfg.radio_cfg),
+
+   label_sample(wlist,cfg.label_cfg,"sample"_def,AlignX_Left),
+   label_table(wlist,cfg.label_cfg,"table"_def,AlignX_Left),
+
    info_cfg(cfg.info_cfg),
 
    info_test(wlist,info_cfg,InfoFromString(TestText())),
 
+   table_cfg(cfg.table_cfg),
+
+   table(wlist,table_cfg),
+
    contour_test(wlist,cfg.contour_cfg),
 
+   connector_split_dragged(this,&FontEditWindow::split_dragged,split.dragged),
    connector_fdb_completed(this,&FontEditWindow::fdb_completed,fdb_inc.completed),
    connector_list_selected(this,&FontEditWindow::list_selected,list.selected),
    connector_check_fdx_changed(this,&FontEditWindow::check_fdx_changed,check_fdx.changed),
@@ -646,7 +795,8 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    connector_group_hint_changed(this,&FontEditWindow::group_hint_changed,group_hint.changed),
    connector_group_smooth_changed(this,&FontEditWindow::group_smooth_changed,group_smooth.changed),
    connector_check_kerning_changed(this,&FontEditWindow::check_kerning_changed,check_kerning.changed),
-   connector_spin_strength_changed(this,&FontEditWindow::spin_strength_changed,spin_strength.changed)
+   connector_spin_strength_changed(this,&FontEditWindow::spin_strength_changed,spin_strength.changed),
+   connector_group_sample_changed(this,&FontEditWindow::group_sample_changed,group_sample.changed)
  {
   spin_fdy.setRange(1,1000);
   spin_fdx.setRange(1,1000);
@@ -664,7 +814,10 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
   spin_strength.setRange(-1000,1000);
 
+  group_sample.add(radio_sample,radio_table);
+
   info_cfg.font.bind(font.font);
+  table_cfg.font.bind(font.font);
  }
 
 FontEditWindow::~FontEditWindow()
@@ -776,7 +929,20 @@ Point FontEditWindow::getMinSize(Point cap) const
     dx=Sup(dx, s1.x+space+s2.x );
    }
 
-   dx+=space;
+   {
+    Coord dxy=radio_sample.getMinSize().dxy;
+
+    Point s1=label_sample.getMinSize();
+    Point s2=label_table.getMinSize();
+
+    dy+=Sup(dxy,s1.y,s2.y)+2*space;
+
+    Coordinate ex=BoxExt(dxy);
+
+    dx=Sup(dx, s1.x+space+s2.x+2*ex );
+   }
+
+   dx+=2*space;
    dy+=space;
 
    delta=Point(dx,dy);
@@ -784,7 +950,7 @@ Point FontEditWindow::getMinSize(Point cap) const
 
   Point s=list.getMinSize( Point(cap.x/3,cap.y) );
 
-  return Point( 3*Sup( s.x , (space+delta.x)/2 ) , Sup(s.y,delta.y) );
+  return Point( 3*Sup( s.x , delta.x/2 ) , Sup(s.y,delta.y) );
  }
 
 void FontEditWindow::setCouple(const FontCouple &font_)
@@ -810,11 +976,36 @@ void FontEditWindow::layout()
    p.place_cutTop(progress,+cfg.progress_dy);
   }
 
-  // list , text_file_name , text_family
+  // list , split
 
-  pane.place_cutLeft(list,Div(1,3))
-      .place_cutTop(text_file_name)
-      .place_cutTop(text_family);
+  {
+   auto list__=CutPoint(list);
+
+   Coord len=list__.getMinSize().x;
+
+   min_list_dx=len/4;
+   max_list_dx=pane.getSize().x/2;
+
+   if( split_on )
+     {
+      pane.place_cutLeft(list__,list_split_dx,0)
+          .place_cutLeft(split);
+     }
+   else
+     {
+      pane.place_cutLeft(list__,Div(1,3),0)
+          .place_cutLeft(split);
+
+      list_split_dx=list.getSize().x;
+     }
+  }
+
+  // text_file_name , text_family
+
+  {
+   pane.place_cutTop(text_file_name)
+       .place_cutTop(text_family);
+  }
 
   // lights
 
@@ -953,9 +1144,40 @@ void FontEditWindow::layout()
     .place_cutLeft(label__strength);
   }
 
-  pane.place(contour_test);
+  // line3
 
-  info_test.setPlace(contour_test.getInner());
+  pane.place_cutTop(line3);
+
+  // radio_sample , radio_table , label_sample , label_table
+
+  {
+   auto radio__sample=CutBox(radio_sample);
+   auto radio__table=CutBox(radio_table);
+
+   auto label__sample=CutPoint(label_sample);
+   auto label__table=CutPoint(label_table);
+
+   Coord dy=Sup(radio__sample.dxy,label__sample.size.y);
+
+   PaneCut p=pane.cutTop(dy);
+
+   p.place_cutLeft(radio__sample)
+    .place_cutLeft(label__sample)
+    .place_cutLeft(radio__table)
+    .place_cutLeft(label__table);
+  }
+
+  // sample
+
+  {
+   pane.place(contour_test);
+
+   Pane inner=contour_test.getInner();
+
+   info_test.setPlace(inner);
+
+   table.setPlace(inner);
+  }
  }
 
  // base

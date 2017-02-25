@@ -105,7 +105,7 @@ class Application : public ApplicationBase
      Pane pane1(x1,y,dx1,dy);
      Pane pane2(x2,y,dx2,dy);
 
-     main_frame.createMain(cmd_display,pane1,"User Preference"_def);
+     main_frame.createMain(cmd_display,pane1,"User Preferences"_def);
 
      test_frame.create(&main_frame,pane2,"Test frame"_def);
     }

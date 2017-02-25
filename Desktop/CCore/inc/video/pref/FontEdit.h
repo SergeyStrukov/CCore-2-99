@@ -28,7 +28,66 @@ namespace Video {
 
 /* classes */
 
+class CharTableWindow;
+
 class FontEditWindow;
+
+/* class CharTableWindow */
+
+class CharTableWindow : public SubWindow
+ {
+  public:
+
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<VColor> text = Black ;
+
+     RefVal<Font> font;
+
+     Config() noexcept {}
+
+     template <class Bag>
+     void bind(const Bag &bag)
+      {
+       width.bind(bag.width);
+       text.bind(bag.info_text);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+  private:
+
+   static Coord Cell(Coord fdy) { return fdy+fdy/4; }
+
+  public:
+
+   CharTableWindow(SubWindowHost &host,const Config &cfg);
+
+   virtual ~CharTableWindow();
+
+   // methods
+
+   Point getMinSize() const;
+
+   // drawing
+
+   virtual bool isGoodSize(Point size) const;
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool) const;
+
+   // keyboard
+
+   virtual FocusType askFocus() const;
+ };
 
 /* class FontEditWindow */
 
@@ -45,6 +104,7 @@ class FontEditWindow : public ComboWindow
 
      CtorRefVal<ProgressWindow::ConfigType> progress_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
+     CtorRefVal<XSplitWindow::ConfigType> split_cfg;
      CtorRefVal<TextWindow::ConfigType> text_cfg;
      CtorRefVal<LightWindow::ConfigType> light_cfg;
      CtorRefVal<LabelWindow::ConfigType> label_cfg;
@@ -55,6 +115,7 @@ class FontEditWindow : public ComboWindow
      CtorRefVal<ContourWindow::ConfigType> contour_cfg;
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
      CtorRefVal<InfoWindow::ConfigType> info_cfg;
+     CtorRefVal<CharTableWindow::ConfigType> table_cfg;
 
      Config() noexcept {}
 
@@ -68,6 +129,7 @@ class FontEditWindow : public ComboWindow
 
        progress_cfg.bind(proxy);
        list_cfg.bind(proxy);
+       split_cfg.bind(proxy);
        text_cfg.bind(proxy);
        light_cfg.bind(proxy);
        label_cfg.bind(proxy);
@@ -78,6 +140,7 @@ class FontEditWindow : public ComboWindow
        contour_cfg.bind(proxy);
        spin_cfg.bind(proxy);
        info_cfg.bind(proxy);
+       table_cfg.bind(proxy);
       }
     };
 
@@ -148,6 +211,7 @@ class FontEditWindow : public ComboWindow
    FDBInfo info;
 
    ScrollListWindow list;
+   XSplitWindow split;
    TextWindow text_file_name;
    TextWindow text_family;
 
@@ -203,11 +267,30 @@ class FontEditWindow : public ComboWindow
 
    LabelWindow label_strength;
 
+   XDoubleLineWindow line3;
+
+   RadioGroup group_sample;
+
+   RadioWindow radio_sample;
+   RadioWindow radio_table;
+
+   LabelWindow label_sample;
+   LabelWindow label_table;
+
    InfoWindow::ConfigType info_cfg;
 
    InfoWindow info_test;
 
+   CharTableWindow::ConfigType table_cfg;
+
+   CharTableWindow table;
+
    ContourWindow contour_test;
+
+   Coord min_list_dx = 0 ;
+   Coord max_list_dx = 0 ;
+   Coord list_split_dx = 0 ;
+   bool split_on = false ;
 
   private:
 
@@ -230,6 +313,10 @@ class FontEditWindow : public ComboWindow
    void setCouple();
 
   private:
+
+   void split_dragged(Point delta);
+
+   SignalConnector<FontEditWindow,Point> connector_split_dragged;
 
    void fdb_completed(bool ok);
 
@@ -263,6 +350,10 @@ class FontEditWindow : public ComboWindow
    void spin_strength_changed(int strength);
 
    SignalConnector<FontEditWindow,int> connector_spin_strength_changed;
+
+   void group_sample_changed(int new_id,int old_id);
+
+   SignalConnector<FontEditWindow,int,int> connector_group_sample_changed;
 
   public:
 

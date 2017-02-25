@@ -382,6 +382,7 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            ColorEditWindow::ConfigType,
                                            FontEditWindow::ConfigType,
                                            RatioEditWindow::ConfigType,
+                                           CharTableWindow::ConfigType,
                                            ConfigEditorWindow::ConfigType,
                                            ConfigEditorFrame::ConfigType
                                           >
