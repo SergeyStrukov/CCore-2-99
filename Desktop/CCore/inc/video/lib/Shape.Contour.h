@@ -30,6 +30,8 @@ class ContourShape;
 
 class TextContourShape;
 
+class RefTextContourShape;
+
 /* class ContourShape */
 
 class ContourShape
@@ -110,6 +112,34 @@ class TextContourShape
    // methods
 
    TextContourShape(const Config &cfg_,const DefString &title_,AlignX align_x_=AlignX_Left) : cfg(cfg_),title(title_),align_x(align_x_) {}
+
+   Point getMinSize() const;
+
+   Point getMinSize(Point inner_size) const;
+
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+
+   Pane getInner() const;
+
+   void draw(const DrawBuf &buf) const;
+ };
+
+/* class RefTextContourShape */
+
+class RefTextContourShape
+ {
+  public:
+
+   using Config = TextContourShape::Config ;
+
+   const Config &cfg;
+   const RefVal<DefString> &title;
+   AlignX align_x;
+   Pane pane;
+
+   // methods
+
+   RefTextContourShape(const Config &cfg_,const RefVal<DefString> &title_,AlignX align_x_=AlignX_Left) : cfg(cfg_),title(title_),align_x(align_x_) {}
 
    Point getMinSize() const;
 

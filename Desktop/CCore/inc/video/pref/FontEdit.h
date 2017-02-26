@@ -62,9 +62,23 @@ class CharTableWindow : public SubWindow
 
    const Config &cfg;
 
+   bool drag = false ;
+   Point drag_base;
+
+   Point off;
+   Point max_off;
+
   private:
 
    static Coord Cell(Coord fdy) { return fdy+fdy/4; }
+
+   void startDrag(Point point);
+
+   void dragTo(Point point);
+
+   void endDrag(Point point);
+
+   void endDrag();
 
   public:
 
@@ -84,9 +98,29 @@ class CharTableWindow : public SubWindow
 
    virtual void draw(DrawBuf buf,bool) const;
 
+   // base
+
+   virtual void open();
+
    // keyboard
 
    virtual FocusType askFocus() const;
+
+   // mouse
+
+   virtual void looseCapture();
+
+   virtual MouseShape getMouseShape(Point,KeyMod) const;
+
+   // user input
+
+   virtual void react(UserAction action);
+
+   void react_LeftClick(Point point,MouseKey);
+
+   void react_LeftUp(Point point,MouseKey);
+
+   void react_Move(Point point,MouseKey);
  };
 
 /* class FontEditWindow */
@@ -102,16 +136,46 @@ class FontEditWindow : public ComboWindow
      RefVal<Coord> check_dxy = 20 ;
      RefVal<Coord> light_dxy = 20 ;
 
+     RefVal<DefString> text_none = "<none>"_def ;
+
+     RefVal<DefString> text_scalable    = "scalable"_def ;
+     RefVal<DefString> text_monospace   = "monospace"_def ;
+     RefVal<DefString> text_bold        = "bold"_def ;
+     RefVal<DefString> text_italic      = "italic"_def ;
+
+     RefVal<DefString> text_Hint = "Hint"_def ;
+
+     RefVal<DefString> text_no_hint     = "No hint"_def ;
+     RefVal<DefString> text_native_hint = "Native hint"_def ;
+     RefVal<DefString> text_auto_hint   = "Auto hint"_def ;
+
+     RefVal<DefString> text_Smooth = "Smooth"_def ;
+
+     RefVal<DefString> text_no_smooth   = "No smooth"_def ;
+     RefVal<DefString> text_smooth      = "Smooth"_def ;
+     RefVal<DefString> text_RGB         = "LCD RGB"_def ;
+     RefVal<DefString> text_BGR         = "LCD BGR"_def ;
+
+     RefVal<DefString> text_kerning     = "Kerning"_def ;
+     RefVal<DefString> text_strength    = "Strength"_def ;
+     RefVal<DefString> text_sample      = "sample"_def ;
+     RefVal<DefString> text_table       = "table"_def ;
+
+     RefVal<DefString> hint_list          = "Font file list"_def ;
+     RefVal<DefString> hint_height        = "Font height"_def ;
+     RefVal<DefString> hint_length_enable = "Enable font length"_def ;
+     RefVal<DefString> hint_length        = "Font length"_def ;
+
      CtorRefVal<ProgressWindow::ConfigType> progress_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<XSplitWindow::ConfigType> split_cfg;
      CtorRefVal<TextWindow::ConfigType> text_cfg;
      CtorRefVal<LightWindow::ConfigType> light_cfg;
-     CtorRefVal<LabelWindow::ConfigType> label_cfg;
+     CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
      CtorRefVal<CheckWindow::ConfigType> check_cfg;
      CtorRefVal<RadioWindow::ConfigType> radio_cfg;
-     CtorRefVal<TextContourWindow::ConfigType> text_contour_cfg;
+     CtorRefVal<RefTextContourWindow::ConfigType> text_contour_cfg;
      CtorRefVal<ContourWindow::ConfigType> contour_cfg;
      CtorRefVal<SpinorWindow::ConfigType> spin_cfg;
      CtorRefVal<InfoWindow::ConfigType> info_cfg;
@@ -126,6 +190,35 @@ class FontEditWindow : public ComboWindow
        progress_dy.bind(bag.progress_dy);
        check_dxy.bind(bag.check_dxy);
        light_dxy.bind(bag.light_dxy);
+       text_none.bind(bag.text_none);
+
+       text_scalable.bind(bag.text_cfg_scalable);
+       text_monospace.bind(bag.text_cfg_monospace);
+       text_bold.bind(bag.text_cfg_bold);
+       text_italic.bind(bag.text_cfg_italic);
+
+       text_Hint.bind(bag.text_cfg_Hint);
+
+       text_no_hint.bind(bag.text_cfg_no_hint);
+       text_native_hint.bind(bag.text_cfg_native_hint);
+       text_auto_hint.bind(bag.text_cfg_auto_hint);
+
+       text_Smooth.bind(bag.text_cfg_Smooth);
+
+       text_no_smooth.bind(bag.text_cfg_no_smooth);
+       text_smooth.bind(bag.text_cfg_smooth);
+       text_RGB.bind(bag.text_cfg_RGB);
+       text_BGR.bind(bag.text_cfg_BGR);
+
+       text_kerning.bind(bag.text_cfg_kerning);
+       text_strength.bind(bag.text_cfg_strength);
+       text_sample.bind(bag.text_cfg_sample);
+       text_table.bind(bag.text_cfg_table);
+
+       hint_list.bind(bag.hint_cfg_font_list);
+       hint_height.bind(bag.hint_cfg_height);
+       hint_length_enable.bind(bag.hint_cfg_length_enable);
+       hint_length.bind(bag.hint_cfg_length);
 
        progress_cfg.bind(proxy);
        list_cfg.bind(proxy);
@@ -220,10 +313,10 @@ class FontEditWindow : public ComboWindow
    LightWindow light_bold;
    LightWindow light_italic;
 
-   LabelWindow label_scalable;
-   LabelWindow label_monospace;
-   LabelWindow label_bold;
-   LabelWindow label_italic;
+   RefLabelWindow label_scalable;
+   RefLabelWindow label_monospace;
+   RefLabelWindow label_bold;
+   RefLabelWindow label_italic;
 
    XDoubleLineWindow line1;
 
@@ -239,11 +332,11 @@ class FontEditWindow : public ComboWindow
    RadioWindow radio_native_hint;
    RadioWindow radio_auto_hint;
 
-   LabelWindow label_no_hint;
-   LabelWindow label_native_hint;
-   LabelWindow label_auto_hint;
+   RefLabelWindow label_no_hint;
+   RefLabelWindow label_native_hint;
+   RefLabelWindow label_auto_hint;
 
-   TextContourWindow contour_hint;
+   RefTextContourWindow contour_hint;
 
    RadioGroup group_smooth;
 
@@ -252,20 +345,20 @@ class FontEditWindow : public ComboWindow
    RadioWindow radio_RGB;
    RadioWindow radio_BGR;
 
-   LabelWindow label_no_smooth;
-   LabelWindow label_smooth;
-   LabelWindow label_RGB;
-   LabelWindow label_BGR;
+   RefLabelWindow label_no_smooth;
+   RefLabelWindow label_smooth;
+   RefLabelWindow label_RGB;
+   RefLabelWindow label_BGR;
 
-   TextContourWindow contour_smooth;
+   RefTextContourWindow contour_smooth;
 
    CheckWindow check_kerning;
 
-   LabelWindow label_kerning;
+   RefLabelWindow label_kerning;
 
    SpinorWindow spin_strength;
 
-   LabelWindow label_strength;
+   RefLabelWindow label_strength;
 
    XDoubleLineWindow line3;
 
@@ -274,8 +367,8 @@ class FontEditWindow : public ComboWindow
    RadioWindow radio_sample;
    RadioWindow radio_table;
 
-   LabelWindow label_sample;
-   LabelWindow label_table;
+   RefLabelWindow label_sample;
+   RefLabelWindow label_table;
 
    InfoWindow::ConfigType info_cfg;
 

@@ -93,6 +93,8 @@ struct UserPreferenceBag : ConfigItemHost
   DefString title_UserPref = "User preferences"_def ;
   DefString title_AppPref = "Application preferences"_def ;
 
+  DefString text_none = "<none>"_def ;
+
   // text
 
   Coord text_cursor_dx = 3 ;
@@ -314,6 +316,34 @@ struct UserPreferenceBag : ConfigItemHost
 
   DefString hint_cfg_a = "Select divisible"_def ;
   DefString hint_cfg_b = "Select divider"_def ;
+
+  DefString text_cfg_scalable    = "scalable"_def ;
+  DefString text_cfg_monospace   = "monospace"_def ;
+  DefString text_cfg_bold        = "bold"_def ;
+  DefString text_cfg_italic      = "italic"_def ;
+
+  DefString text_cfg_Hint = "Hint"_def ;
+
+  DefString text_cfg_no_hint     = "No hint"_def ;
+  DefString text_cfg_native_hint = "Native hint"_def ;
+  DefString text_cfg_auto_hint   = "Auto hint"_def ;
+
+  DefString text_cfg_Smooth = "Smooth"_def ;
+
+  DefString text_cfg_no_smooth   = "No smooth"_def ;
+  DefString text_cfg_smooth      = "Smooth"_def ;
+  DefString text_cfg_RGB         = "LCD RGB"_def ;
+  DefString text_cfg_BGR         = "LCD BGR"_def ;
+
+  DefString text_cfg_kerning     = "Kerning"_def ;
+  DefString text_cfg_strength    = "Strength"_def ;
+  DefString text_cfg_sample      = "sample"_def ;
+  DefString text_cfg_table       = "table"_def ;
+
+  DefString hint_cfg_font_list     = "Font file list"_def ;
+  DefString hint_cfg_height        = "Font height"_def ;
+  DefString hint_cfg_length_enable = "Enable font length"_def ;
+  DefString hint_cfg_length        = "Font length"_def ;
 
   // constructors
 

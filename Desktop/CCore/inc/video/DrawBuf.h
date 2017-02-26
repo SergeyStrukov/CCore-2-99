@@ -53,6 +53,8 @@ class DrawBuf
 
    FrameBuf<DesktopColor> & getFrameBuf() { return buf; }
 
+   void shift(Point delta) { origin+=delta; }
+
    // cut
 
    DrawBuf cut(Pane pane) const;

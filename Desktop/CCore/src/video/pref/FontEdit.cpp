@@ -27,6 +27,38 @@ namespace Video {
 
 /* class CharTableWindow */
 
+void CharTableWindow::startDrag(Point point)
+ {
+  drag=true;
+  drag_base=point;
+
+  captureMouse();
+ }
+
+void CharTableWindow::dragTo(Point point)
+ {
+  Point delta=Diff(drag_base,point);
+
+  off-=delta;
+
+  off.x=Cap<Coord>(0,off.x,max_off.x);
+  off.y=Cap<Coord>(0,off.y,max_off.y);
+
+  redraw();
+ }
+
+void CharTableWindow::endDrag(Point point)
+ {
+  dragTo(point);
+  endDrag();
+ }
+
+void CharTableWindow::endDrag()
+ {
+  drag=false;
+  releaseMouse();
+ }
+
 CharTableWindow::CharTableWindow(SubWindowHost &host,const Config &cfg_)
  : SubWindow(host),
    cfg(cfg_)
@@ -61,7 +93,28 @@ bool CharTableWindow::isGoodSize(Point size) const
 
 void CharTableWindow::layout()
  {
-  // do nothing
+  Font font=+cfg.font;
+
+  FontSize fs=font->getSize();
+
+  Coord cell_dxy=Cell(fs.dy);
+
+  Coord len=16*cell_dxy+RoundUpLen(+cfg.width);
+
+  Point size=getSize();
+
+  if( len>size.x )
+    max_off.x=len-size.x;
+  else
+    max_off.x=0;
+
+  if( len>size.y )
+    max_off.y=len-size.y;
+  else
+    max_off.y=0;
+
+  Replace_min(off.x,max_off.x);
+  Replace_min(off.y,max_off.y);
  }
 
 void CharTableWindow::draw(DrawBuf buf,bool) const
@@ -73,6 +126,8 @@ void CharTableWindow::draw(DrawBuf buf,bool) const
   FontSize fs=font->getSize();
 
   Coord cell_dxy=Cell(fs.dy);
+
+  buf.shift(-off);
 
   SmoothDrawArt art(buf);
 
@@ -110,11 +165,53 @@ void CharTableWindow::draw(DrawBuf buf,bool) const
   }
  }
 
+ // base
+
+void CharTableWindow::open()
+ {
+  off=Null;
+  drag=false;
+ }
+
  // keyboard
 
 FocusType CharTableWindow::askFocus() const
  {
   return NoFocus;
+ }
+
+ // mouse
+
+void CharTableWindow::looseCapture()
+ {
+  drag=false;
+ }
+
+MouseShape CharTableWindow::getMouseShape(Point,KeyMod) const
+ {
+  return ( max_off.x>0 || max_off.y>0 )?Mouse_SizeAll:Mouse_Arrow;
+ }
+
+ // user input
+
+void CharTableWindow::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+void CharTableWindow::react_LeftClick(Point point,MouseKey)
+ {
+  if( !drag ) startDrag(point);
+ }
+
+void CharTableWindow::react_LeftUp(Point point,MouseKey)
+ {
+  if( drag ) endDrag(point);
+ }
+
+void CharTableWindow::react_Move(Point point,MouseKey)
+ {
+  if( drag ) dragTo(point);
  }
 
 /* class FontEditWindow */
@@ -354,7 +451,7 @@ void FontEditWindow::showFont(ulen select)
     }
   else
     {
-     text_file_name.setText("<none>"_def);
+     text_file_name.setText(+cfg.text_none);
      text_family.setText(info.getFamily(select));
 
      light_scalable.turn(false);
@@ -367,7 +464,7 @@ void FontEditWindow::showFont(ulen select)
 void FontEditWindow::showFont()
  {
   text_file_name.setText(font.param.file_name);
-  text_family.setText("<none>"_def);
+  text_family.setText(+cfg.text_none);
 
   light_scalable.turn(false);
   light_monospace.turn(false);
@@ -689,6 +786,7 @@ void FontEditWindow::group_sample_changed(int new_id,int)
 
        wlist.insBefore(contour_test,info_test);
 
+       layout();
        redraw();
       }
      break;
@@ -699,6 +797,7 @@ void FontEditWindow::group_sample_changed(int new_id,int)
 
        wlist.insBefore(contour_test,table);
 
+       layout();
        redraw();
       }
      break;
@@ -725,10 +824,10 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    light_bold(wlist,cfg.light_cfg,Green),
    light_italic(wlist,cfg.light_cfg,Green),
 
-   label_scalable(wlist,cfg.label_cfg,"scalable"_def,AlignX_Left),
-   label_monospace(wlist,cfg.label_cfg,"monospace"_def,AlignX_Left),
-   label_bold(wlist,cfg.label_cfg,"bold"_def,AlignX_Left),
-   label_italic(wlist,cfg.label_cfg,"italic"_def,AlignX_Left),
+   label_scalable(wlist,cfg.label_cfg,cfg.text_scalable,AlignX_Left),
+   label_monospace(wlist,cfg.label_cfg,cfg.text_monospace,AlignX_Left),
+   label_bold(wlist,cfg.label_cfg,cfg.text_bold,AlignX_Left),
+   label_italic(wlist,cfg.label_cfg,cfg.text_italic,AlignX_Left),
 
    line1(wlist,cfg.dline_cfg),
 
@@ -742,39 +841,39 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
    radio_native_hint(wlist,FontHintNative,cfg.radio_cfg),
    radio_auto_hint(wlist,FontHintAuto,cfg.radio_cfg),
 
-   label_no_hint(wlist,cfg.label_cfg,"No hint"_def,AlignX_Left),
-   label_native_hint(wlist,cfg.label_cfg,"Native hint"_def,AlignX_Left),
-   label_auto_hint(wlist,cfg.label_cfg,"Auto hint"_def,AlignX_Left),
+   label_no_hint(wlist,cfg.label_cfg,cfg.text_no_hint,AlignX_Left),
+   label_native_hint(wlist,cfg.label_cfg,cfg.text_native_hint,AlignX_Left),
+   label_auto_hint(wlist,cfg.label_cfg,cfg.text_auto_hint,AlignX_Left),
 
-   contour_hint(wlist,cfg.text_contour_cfg,"Hint"_def),
+   contour_hint(wlist,cfg.text_contour_cfg,cfg.text_Hint),
 
    radio_no_smooth(wlist,FontSmoothNone,cfg.radio_cfg),
    radio_smooth(wlist,FontSmooth,cfg.radio_cfg),
    radio_RGB(wlist,FontSmoothLCD_RGB,cfg.radio_cfg),
    radio_BGR(wlist,FontSmoothLCD_BGR,cfg.radio_cfg),
 
-   label_no_smooth(wlist,cfg.label_cfg,"No smooth"_def,AlignX_Left),
-   label_smooth(wlist,cfg.label_cfg,"Smooth"_def,AlignX_Left),
-   label_RGB(wlist,cfg.label_cfg,"LCD RGB"_def,AlignX_Left),
-   label_BGR(wlist,cfg.label_cfg,"LCD BGR"_def,AlignX_Left),
+   label_no_smooth(wlist,cfg.label_cfg,cfg.text_no_smooth,AlignX_Left),
+   label_smooth(wlist,cfg.label_cfg,cfg.text_smooth,AlignX_Left),
+   label_RGB(wlist,cfg.label_cfg,cfg.text_RGB,AlignX_Left),
+   label_BGR(wlist,cfg.label_cfg,cfg.text_BGR,AlignX_Left),
 
-   contour_smooth(wlist,cfg.text_contour_cfg,"Smooth"_def),
+   contour_smooth(wlist,cfg.text_contour_cfg,cfg.text_Smooth),
 
    check_kerning(wlist,cfg.check_cfg),
 
-   label_kerning(wlist,cfg.label_cfg,"Kerning"_def,AlignX_Left),
+   label_kerning(wlist,cfg.label_cfg,cfg.text_kerning,AlignX_Left),
 
    spin_strength(wlist,cfg.spin_cfg),
 
-   label_strength(wlist,cfg.label_cfg,"Strength"_def,AlignX_Left),
+   label_strength(wlist,cfg.label_cfg,cfg.text_strength,AlignX_Left),
 
    line3(wlist,cfg.dline_cfg),
 
    radio_sample(wlist,0,cfg.radio_cfg),
    radio_table(wlist,1,cfg.radio_cfg),
 
-   label_sample(wlist,cfg.label_cfg,"sample"_def,AlignX_Left),
-   label_table(wlist,cfg.label_cfg,"table"_def,AlignX_Left),
+   label_sample(wlist,cfg.label_cfg,cfg.text_sample,AlignX_Left),
+   label_table(wlist,cfg.label_cfg,cfg.text_table,AlignX_Left),
 
    info_cfg(cfg.info_cfg),
 
@@ -818,6 +917,13 @@ FontEditWindow::FontEditWindow(SubWindowHost &host,const ConfigType &cfg_)
 
   info_cfg.font.bind(font.font);
   table_cfg.font.bind(font.font);
+
+  // bind hints
+
+  list.bindHint(cfg.hint_list);
+  spin_fdy.bindHint(cfg.hint_height);
+  check_fdx.bindHint(cfg.hint_length_enable);
+  spin_fdx.bindHint(cfg.hint_length);
  }
 
 FontEditWindow::~FontEditWindow()

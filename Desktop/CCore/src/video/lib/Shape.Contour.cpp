@@ -178,6 +178,44 @@ void TextContourShape::draw(const DrawBuf &buf) const
   font->text(buf,Pane(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),title.str(),+cfg.text);
  }
 
+/* class RefTextContourShape */
+
+Point RefTextContourShape::getMinSize() const
+ {
+  TextContourShape temp(cfg,+title,align_x);
+
+  temp.pane=pane;
+
+  return temp.getMinSize();
+ }
+
+Point RefTextContourShape::getMinSize(Point inner_size) const
+ {
+  TextContourShape temp(cfg,+title,align_x);
+
+  temp.pane=pane;
+
+  return temp.getMinSize(inner_size);
+ }
+
+Pane RefTextContourShape::getInner() const
+ {
+  TextContourShape temp(cfg,+title,align_x);
+
+  temp.pane=pane;
+
+  return temp.getInner();
+ }
+
+void RefTextContourShape::draw(const DrawBuf &buf) const
+ {
+  TextContourShape temp(cfg,+title,align_x);
+
+  temp.pane=pane;
+
+  temp.draw(buf);
+ }
+
 } // namespace Video
 } // namespace CCore
 

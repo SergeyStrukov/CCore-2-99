@@ -106,6 +106,10 @@ using ContourWindow = DecorWindowOf<ContourShape> ;
 
 using TextContourWindow = DecorWindowOf<TextContourShape> ;
 
+/* type RefTextContourWindow */
+
+using RefTextContourWindow = DecorWindowOf<RefTextContourShape> ;
+
 } // namespace Video
 } // namespace CCore
 

@@ -77,6 +77,8 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("title_UserPref"_c,ptr->title_UserPref);
   func("title_AppPref"_c,ptr->title_AppPref);
 
+  func("text_none"_c,ptr->text_none);
+
   func("text_cursor_dx"_c,ptr->text_cursor_dx);
 
   func("text_select"_c,ptr->text_select);
@@ -267,6 +269,34 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("hint_cfg_y"_c,ptr->hint_cfg_y);
   func("hint_cfg_a"_c,ptr->hint_cfg_a);
   func("hint_cfg_b"_c,ptr->hint_cfg_b);
+
+  func("text_cfg_scalable"_c,ptr->text_cfg_scalable);
+  func("text_cfg_monospace"_c,ptr->text_cfg_monospace);
+  func("text_cfg_bold"_c,ptr->text_cfg_bold);
+  func("text_cfg_italic"_c,ptr->text_cfg_italic);
+
+  func("text_cfg_Hint"_c,ptr->text_cfg_Hint);
+
+  func("text_cfg_no_hint"_c,ptr->text_cfg_no_hint);
+  func("text_cfg_native_hint"_c,ptr->text_cfg_native_hint);
+  func("text_cfg_auto_hint"_c,ptr->text_cfg_auto_hint);
+
+  func("text_cfg_Smooth"_c,ptr->text_cfg_Smooth);
+
+  func("text_cfg_no_smooth"_c,ptr->text_cfg_no_smooth);
+  func("text_cfg_smooth"_c,ptr->text_cfg_smooth);
+  func("text_cfg_RGB"_c,ptr->text_cfg_RGB);
+  func("text_cfg_BGR"_c,ptr->text_cfg_BGR);
+
+  func("text_cfg_kerning"_c,ptr->text_cfg_kerning);
+  func("text_cfg_strength"_c,ptr->text_cfg_strength);
+  func("text_cfg_sample"_c,ptr->text_cfg_sample);
+  func("text_cfg_table"_c,ptr->text_cfg_table);
+
+  func("hint_cfg_font_list"_c,ptr->hint_cfg_font_list);
+  func("hint_cfg_height"_c,ptr->hint_cfg_height);
+  func("hint_cfg_length_enable"_c,ptr->hint_cfg_length_enable);
+  func("hint_cfg_length"_c,ptr->hint_cfg_length);
  }
 
 void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
@@ -316,6 +346,7 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("'Insert'"_def,text_Insert);
    binder.item("'UserPref'"_def,title_UserPref);
    binder.item("'AppPref'"_def,title_AppPref);
+   binder.item("'<none>'"_def,text_none);
 
   binder.group("Text"_def);
 
@@ -530,6 +561,34 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("?'y-coord'"_def,hint_cfg_y);
    binder.item("?'divisible'"_def,hint_cfg_a);
    binder.item("?'divider'"_def,hint_cfg_b);
+
+   binder.item("'scalable'"_def,text_cfg_scalable);
+   binder.item("'monospace'"_def,text_cfg_monospace);
+   binder.item("'bold'"_def,text_cfg_bold);
+   binder.item("'italic'"_def,text_cfg_italic);
+
+   binder.item("'Hint'"_def,text_cfg_Hint);
+
+   binder.item("'No hint'"_def,text_cfg_no_hint);
+   binder.item("'Native hint'"_def,text_cfg_native_hint);
+   binder.item("'Auto hint'"_def,text_cfg_auto_hint);
+
+   binder.item("'Smooth'"_def,text_cfg_Smooth);
+
+   binder.item("'No smooth'"_def,text_cfg_no_smooth);
+   binder.item("'Smooth'"_def,text_cfg_smooth);
+   binder.item("'LCD RGB'"_def,text_cfg_RGB);
+   binder.item("'LCD BGR'"_def,text_cfg_BGR);
+
+   binder.item("'Kerning'"_def,text_cfg_kerning);
+   binder.item("'Strength'"_def,text_cfg_strength);
+   binder.item("'sample'"_def,text_cfg_sample);
+   binder.item("'table'"_def,text_cfg_table);
+
+   binder.item("?'Font file list'"_def,hint_cfg_font_list);
+   binder.item("?'Font height'"_def,hint_cfg_height);
+   binder.item("?'Enable font length'"_def,hint_cfg_length_enable);
+   binder.item("?'Font length'"_def,hint_cfg_length);
  }
 
 void UserPreferenceBag::createFonts() // Update fonts here
