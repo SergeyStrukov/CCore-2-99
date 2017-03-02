@@ -365,14 +365,17 @@ class DDLInnerWindow : public SubWindow
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
+     RefVal<VColor> back   =    Silver ;
+     RefVal<VColor> gray   =      Gray ; // top
+     RefVal<VColor> snow   =      Snow ; // bottom
+     RefVal<VColor> focus  = OrangeRed ;
+
+     // app
+
      RefVal<Coord> space_dxy = 3 ;
 
      RefVal<Point> space = Point(6,4) ;
 
-     RefVal<VColor> back   =    Silver ;
-     RefVal<VColor> top    =      Gray ;
-     RefVal<VColor> bottom =      Snow ;
-     RefVal<VColor> focus  = OrangeRed ;
      RefVal<VColor> text   =     Black ;
      RefVal<VColor> ptr    =      Blue ;
      RefVal<VColor> select = OrangeRed ;
@@ -382,13 +385,28 @@ class DDLInnerWindow : public SubWindow
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref) // TODO
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref)
       {
-       font.bind(pref.get().info_font.font);
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
 
-       //title_font.bind(pref.get().contour_font.font);
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy)
+      {
+       width.bind(bag.width);
 
-       title_font.bind(pref.get().title_font.font);
+       back.bind(bag.back);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
+       focus.bind(bag.focus);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag) // TODO
+      {
+       Used(bag);
       }
     };
 
@@ -626,10 +644,23 @@ class DDLWindow : public ComboWindow
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
-      : DDLInnerWindow::ConfigType(pref),
-        x_cfg(SmartBind,pref),
-        y_cfg(SmartBind,pref)
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref)
+      : DDLInnerWindow::ConfigType(pref,app_pref)
+      {
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &,Proxy proxy)
+      {
+       x_cfg.bind(proxy);
+       y_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &)
       {
       }
     };
@@ -700,19 +731,35 @@ class DisplayWindow : public ComboWindow
      CtorRefVal<TextLineWindow::ConfigType> textline_cfg;
      CtorRefVal<XDoubleLineWindow::ConfigType> dline_cfg;
 
+     // app
+
      DDLWindow::Config ddl_cfg;
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
-      : msg_cfg(SmartBind,pref),
-        label_cfg(SmartBind,pref),
-        textline_cfg(SmartBind,pref),
-        dline_cfg(SmartBind,pref),
-        ddl_cfg(pref)
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref)
+      : ddl_cfg(pref,app_pref)
       {
-       space_dxy.bind(pref.get().space_dxy);
-       back.bind(pref.get().back);
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       space_dxy.bind(bag.space_dxy);
+       back.bind(bag.back);
+
+       msg_cfg.bind(proxy);
+       label_cfg.bind(proxy);
+       textline_cfg.bind(proxy);
+       dline_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &)
+      {
       }
     };
 

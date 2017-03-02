@@ -125,7 +125,9 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed),
 
    connector_open_file_destroyed(this,&ClientWindow::open_file_destroyed,open_file.destroyed),
-   connector_open_pretext_destroyed(this,&ClientWindow::open_pretext_destroyed,open_pretext.destroyed)
+   connector_open_pretext_destroyed(this,&ClientWindow::open_pretext_destroyed,open_pretext.destroyed),
+
+   opened(display.opened)
  {
   wlist.insTop(menu,display);
 

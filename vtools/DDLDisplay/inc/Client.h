@@ -16,9 +16,6 @@
 
 #include <inc/Display.h>
 
-#include <CCore/inc/video/Menu.h>
-#include <CCore/inc/video/FileFrame.h>
-
 namespace App {
 
 /* classes */
@@ -35,16 +32,32 @@ class ClientWindow : public ComboWindow
     {
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
      CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
-     CtorRefVal<DisplayWindow::ConfigType> display_cfg;
      CtorRefVal<FileFrame::ConfigType> file_cfg;
+
+     // app
+
+     DisplayWindow::ConfigType display_cfg;
 
      Config() noexcept {}
 
-     explicit Config(const UserPreference &pref)
-      : menu_cfg(SmartBind,pref),
-        cascade_menu_cfg(SmartBind,pref),
-        display_cfg(pref),
-        file_cfg(SmartBind,pref)
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref)
+      : display_cfg(pref,app_pref)
+      {
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &,Proxy proxy)
+      {
+       menu_cfg.bind(proxy);
+       cascade_menu_cfg.bind(proxy);
+       file_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &)
       {
       }
     };
@@ -139,7 +152,12 @@ class ClientWindow : public ComboWindow
 
    // signals
 
-   Signal<StrLen,bool> & getOpened() { return display.opened; }
+   Signal<StrLen,bool> &opened;
+
+   // signals
+
+   Signal<Point> doUserPref;
+   Signal<Point> doAppPref;
  };
 
 } // namespace App
