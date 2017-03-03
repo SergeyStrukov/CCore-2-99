@@ -181,6 +181,11 @@ void ClientWindow::cascade_menu_selected(int id,Point point)
   editor.setFocus();
  }
 
+void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
+ {
+  menu.put_Key(vkey,kmod);
+ }
+
 void ClientWindow::file_destroyed()
  {
   enableFrameReact();
@@ -250,11 +255,6 @@ void ClientWindow::msg_destroyed()
       }
      break;
     }
- }
-
-void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
- {
-  menu.put_Key(vkey,kmod);
  }
 
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)

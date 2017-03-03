@@ -76,8 +76,10 @@ class ClientWindow : public ComboWindow
      Cmd_Open    = 101,
      Cmd_Exit    = 110,
 
-     Cmd_Pretext = 201,
-     Cmd_NoPretext = 202
+     Cmd_Pretext   = 201,
+     Cmd_NoPretext = 202,
+     Cmd_UserPref  = 203,
+     Cmd_AppPref   = 204
     };
 
    MenuData menu_data;
@@ -95,7 +97,7 @@ class ClientWindow : public ComboWindow
 
   private:
 
-   void menu_off();
+   void menuOff();
 
   private:
 

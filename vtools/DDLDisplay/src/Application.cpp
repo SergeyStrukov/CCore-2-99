@@ -37,6 +37,17 @@ class Application;
 
 struct AppPreferenceBag : ConfigItemHost
  {
+  Coord space_dxy = 3 ;
+
+  Point space = Point(6,4) ;
+
+  VColor text   =     Black ;
+  VColor ptr    =      Blue ;
+  VColor select = OrangeRed ;
+
+  FontCouple title_font;
+  FontCouple font;
+
   // constructors
 
   AppPreferenceBag() noexcept {}
@@ -52,19 +63,34 @@ struct AppPreferenceBag : ConfigItemHost
  };
 
 template <class Ptr,class Func>
-void AppPreferenceBag::Members(Ptr ptr,Func func) // TODO
+void AppPreferenceBag::Members(Ptr ptr,Func func)
  {
-  Used(ptr);
-  Used(func);
+  func("space_dxy"_c,ptr->space_dxy);
+  func("space"_c,ptr->space);
+  func("vc_text"_c,ptr->text);
+  func("vc_ptr"_c,ptr->ptr);
+  func("select"_c,ptr->select);
+  func("title_font"_c,ptr->title_font.param);
+  func("font"_c,ptr->font.param);
  }
 
-void AppPreferenceBag::bind(ConfigItemBind &binder) // TODO
+void AppPreferenceBag::bind(ConfigItemBind &binder)
  {
-  Used(binder);
+  binder.group("DDL"_def);
+
+   binder.item("space length"_def,space_dxy);
+   binder.item("text space"_def,space);
+   binder.item("text"_def,text);
+   binder.item("pointer"_def,ptr);
+   binder.item("select"_def,select);
+   binder.item("title font"_def,title_font);
+   binder.item("text font"_def,font);
  }
 
-void AppPreferenceBag::createFonts() // TODO
+void AppPreferenceBag::createFonts()
  {
+  title_font.create();
+  font.create();
  }
 
 /* class AppPreference */
@@ -166,6 +192,8 @@ class Application : public ApplicationBase
 
    void appUpdated()
     {
+     client.updateCfg();
+
      param.pref.updated.assert();
     }
 
@@ -179,6 +207,8 @@ class Application : public ApplicationBase
 
    void userUpdate()
     {
+     client.updateCfg();
+
      param.pref.updated.assert();
     }
 
@@ -198,7 +228,7 @@ class Application : public ApplicationBase
    SignalConnector<Application> connector_user_save;
    SignalConnector<Application> connector_user_self;
 
-   void client_opened(StrLen file_name,bool ok)
+   void clientOpened(StrLen file_name,bool ok)
     {
      if( ok )
        {
@@ -271,7 +301,7 @@ class Application : public ApplicationBase
       connector_user_updated(this,&Application::userUpdate,user_frame.updated),
       connector_user_save(this,&Application::userSave,user_frame.doSave),
       connector_user_self(this,&Application::userSelf,user_frame.doSelf),
-      connector_client_opened(this,&Application::client_opened,client.opened)
+      connector_client_opened(this,&Application::clientOpened,client.opened)
     {
      main_frame.bindAlertClient(exception_client);
      main_frame.bindClient(client);

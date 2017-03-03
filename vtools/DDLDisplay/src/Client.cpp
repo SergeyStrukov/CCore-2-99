@@ -17,11 +17,11 @@ namespace App {
 
 /* class ClientWindow */
 
-void ClientWindow::menu_off()
+void ClientWindow::menuOff()
  {
-  menu.unselect();
-
   if( cascade_menu.isAlive() ) cascade_menu.destroy();
+
+  menu.unselect();
  }
 
 void ClientWindow::menu_selected(int id,Point point)
@@ -46,11 +46,9 @@ void ClientWindow::menu_selected(int id,Point point)
 
 void ClientWindow::cascade_menu_selected(int id,Point base)
  {
-  cascade_menu.destroy();
+  menuOff();
 
   display.setFocus();
-
-  menu.unselect();
 
   switch( id )
     {
@@ -75,6 +73,18 @@ void ClientWindow::cascade_menu_selected(int id,Point base)
      case Cmd_NoPretext :
       {
        display.noPretext();
+      }
+     break;
+
+     case Cmd_UserPref :
+      {
+       doUserPref.assert(base);
+      }
+     break;
+
+     case Cmd_AppPref :
+      {
+       doAppPref.assert(base);
       }
      break;
 
@@ -142,7 +152,8 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   menu_options_data("@Pretext ..."_def,Cmd_Pretext)
                    ("@No Pretext"_def,Cmd_NoPretext)
-                   (MenuDisabled,"@DDL"_def,299);
+                   ("@User preferences"_def,Cmd_UserPref)
+                   ("@Application preferences"_def,Cmd_AppPref);
 
   open_file.addFilter("*.ddl"_c);
   open_file.addFilter("*"_c,false);
@@ -181,32 +192,39 @@ void ClientWindow::react(UserAction action)
 
 void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
  {
-  if( vkey==VKey_F10 )
+  switch( vkey )
     {
-     menu.setFocus();
-    }
-  else if( vkey==VKey_Esc )
-    {
-     menu.unselect();
+     case VKey_F10 :
+      {
+       menu.setFocus();
+      }
+     break;
 
-     if( wlist.getFocus()==&menu ) display.setFocus();
-    }
-  else
-    {
-     wlist.put_Key(vkey,kmod);
+     case VKey_Esc :
+      {
+       menuOff();
+
+       display.setFocus();
+      }
+     break;
+
+     default:
+      {
+       wlist.put_Key(vkey,kmod);
+      }
     }
  }
 
 void ClientWindow::react_LeftClick(Point point,MouseKey mkey)
  {
-  menu_off();
+  menuOff();
 
   wlist.put_LeftClick(point,mkey);
  }
 
 void ClientWindow::react_RightClick(Point point,MouseKey mkey)
  {
-  menu_off();
+  menuOff();
 
   wlist.put_RightClick(point,mkey);
  }

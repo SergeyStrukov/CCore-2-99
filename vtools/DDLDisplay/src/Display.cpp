@@ -2088,18 +2088,9 @@ void DisplayWindow::layout()
   pane.place(ddl);
  }
 
-void DisplayWindow::draw(DrawBuf buf,bool drag_active) const
+void DisplayWindow::drawBack(DrawBuf buf,bool) const
  {
   buf.erase(+cfg.back);
-
-  wlist.draw(buf,drag_active);
- }
-
-void DisplayWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
- {
-  buf.erase(pane,+cfg.back);
-
-  wlist.draw(buf,pane,drag_active);
  }
 
 } // namespace App

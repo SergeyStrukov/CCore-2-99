@@ -366,8 +366,8 @@ class DDLInnerWindow : public SubWindow
      RefVal<MCoord> width = Fraction(6,2) ;
 
      RefVal<VColor> back   =    Silver ;
-     RefVal<VColor> gray   =      Gray ; // top
-     RefVal<VColor> snow   =      Snow ; // bottom
+     RefVal<VColor> gray   =      Gray ;
+     RefVal<VColor> snow   =      Snow ;
      RefVal<VColor> focus  = OrangeRed ;
 
      // app
@@ -404,9 +404,15 @@ class DDLInnerWindow : public SubWindow
       }
 
      template <class Bag>
-     void bindApp(const Bag &bag) // TODO
+     void bindApp(const Bag &bag)
       {
-       Used(bag);
+       space_dxy.bind(bag.space_dxy);
+       space.bind(bag.space);
+       text.bind(bag.text);
+       ptr.bind(bag.ptr);
+       select.bind(bag.select);
+       title_font.bind(bag.title_font.font);
+       font.bind(bag.font.font);
       }
     };
 
@@ -592,16 +598,23 @@ class DDLInnerWindow : public SubWindow
 
    // methods
 
-   Point getMinSize() const { return Null; }
+   Point getMinSize() const { return Point(100,100); }
 
    void update(DDL::EngineResult result);
 
    void updateCfg()
     {
      layoutView();
+
+     selection={};
     }
 
    // drawing
+
+   virtual bool isGoodSize(Point size) const
+    {
+     return size>=getMinSize();
+    }
 
    virtual void layout();
 
@@ -702,7 +715,7 @@ class DDLWindow : public ComboWindow
 
    // methods
 
-   Point getMinSize() const { return Null; }
+   Point getMinSize() const { return Point(100,100); }
 
    void updateCfg()
     {
@@ -818,9 +831,7 @@ class DisplayWindow : public ComboWindow
 
    virtual void layout();
 
-   virtual void draw(DrawBuf buf,bool drag_active) const;
-
-   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
 
    // signals
 
