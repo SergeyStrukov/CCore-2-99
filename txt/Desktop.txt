@@ -84,7 +84,7 @@ PointEdit.h          +
 RatioEdit.h          +
 
 MCoordEdit.h         +
-ColorEdit.h          .
+ColorEdit.h          +
 FontEdit.h           +
 
 ConfigEditor.h       +

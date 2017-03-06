@@ -33,17 +33,9 @@ class ColorEditWindow : public SubWindow
 
    struct Config
     {
-     RefVal<Coord> space_dxy =  10 ;
-
-     RefVal<VColor> top    =      Gray ;
-     RefVal<VColor> bottom =      Snow ;
-     RefVal<VColor> focus  = OrangeRed ;
-
-     RefVal<Font> font;
-
-     // ---
-
      RefVal<MCoord> width = Fraction(8,2) ;
+
+     RefVal<Coord> space_dxy =  10 ;
 
      RefVal<Coord> radius    =  15 ;
 
@@ -54,16 +46,29 @@ class ColorEditWindow : public SubWindow
 
      RefVal<unsigned> len = 10 ;
 
+     RefVal<VColor> gray  =      Gray ;
+     RefVal<VColor> snow  =      Snow ;
+     RefVal<VColor> focus = OrangeRed ;
+
+     RefVal<Font> font;
+
      Config() noexcept {}
 
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy)
       {
        space_dxy.bind(bag.space_dxy);
-       top.bind(bag.gray);
-       bottom.bind(bag.snow);
+       gray.bind(bag.gray);
+       snow.bind(bag.snow);
        focus.bind(bag.focus);
        font.bind(bag.label_font.font);
+
+       width.bind(bag.cfg_width);
+       radius.bind(bag.cfg_radius);
+       mix_len.bind(bag.cfg_mix_len);
+       mix_width.bind(bag.cfg_mix_width);
+       white_len.bind(bag.cfg_white_len);
+       len.bind(bag.cfg_pal_len);
       }
     };
 
@@ -135,13 +140,23 @@ class ColorEditWindow : public SubWindow
 
   private:
 
+   static Pane EnvelopeX(Point base,Coordinate dy,Coordinate delta_x)
+    {
+     return Pane(base.x-delta_x,base.y,2*delta_x,dy);
+    }
+
+   static Pane EnvelopeY(Point base,Coordinate dx,Coordinate delta_y)
+    {
+     return Pane(base.x,base.y-delta_y,dx,2*delta_y);
+    }
+
    void preparePalette();
 
    VColor pal(ulen ind) const { return (ind<palette.getLen())?palette[ind]:Black; }
 
    class Art;
 
-   void draw(Art &art,MPoint center,VColor color,bool select) const;
+   void drawCap(Art &art,MPoint center,VColor color,bool select) const;
 
    static Coord Dist(Point p) { return Max(IntAbs(p.x),IntAbs(p.y)); }
 

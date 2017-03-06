@@ -242,6 +242,13 @@ void UserPreferenceBag::Members(Ptr ptr,Func func) // Update here
   func("cfg_edit_mark_dy"_c,ptr->cfg_edit_mark_dy);
   func("cfg_edit_line"_c,ptr->cfg_edit_line);
 
+  func("cfg_width"_c,ptr->cfg_width);
+  func("cfg_radius"_c,ptr->cfg_radius);
+  func("cfg_mix_len"_c,ptr->cfg_mix_len);
+  func("cfg_mix_width"_c,ptr->cfg_mix_width);
+  func("cfg_white_len"_c,ptr->cfg_white_len);
+  func("cfg_pal_len"_c,ptr->cfg_pal_len);
+
   func("text_cfg_all"_c,ptr->text_cfg_all);
   func("text_cfg_Coord"_c,ptr->text_cfg_Coord);
   func("text_cfg_MCoord"_c,ptr->text_cfg_MCoord);
@@ -533,7 +540,14 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("line width"_def,cfg_edit_width);
    binder.item("mark height"_def,cfg_edit_mark_dy);
    binder.item("line"_def,cfg_edit_line);
-
+   binder.space();
+   binder.item("width"_def,cfg_width);
+   binder.item("radius"_def,cfg_radius);
+   binder.item("mix length"_def,cfg_mix_len);
+   binder.item("mix width"_def,cfg_mix_width);
+   binder.item("white length"_def,cfg_white_len);
+   binder.item("palette row count"_def,cfg_pal_len);
+   binder.space();
    binder.item("'all'"_def,text_cfg_all);
    binder.item("'Coord'"_def,text_cfg_Coord);
    binder.item("'MCoord'"_def,text_cfg_MCoord);
@@ -545,46 +559,46 @@ void UserPreferenceBag::bind(ConfigItemBind &binder) // Update here
    binder.item("'Font'"_def,text_cfg_Font);
    binder.item("'bool'"_def,text_cfg_bool);
    binder.item("'Ratio'"_def,text_cfg_Ratio);
-
+   binder.space();
    binder.item("'Set'"_def,text_cfg_Set);
    binder.item("'Back'"_def,text_cfg_Back);
    binder.item("'Save'"_def,text_cfg_Save);
    binder.item("'Self'"_def,text_cfg_Self);
-
+   binder.space();
    binder.item("?'item list'"_def,hint_cfg_list);
    binder.item("?'Set'"_def,hint_cfg_Set);
    binder.item("?'Back'"_def,hint_cfg_Back);
    binder.item("?'Save'"_def,hint_cfg_Save);
    binder.item("?'Self'"_def,hint_cfg_Self);
-
+   binder.space();
    binder.item("?'x-coord'"_def,hint_cfg_x);
    binder.item("?'y-coord'"_def,hint_cfg_y);
    binder.item("?'divisible'"_def,hint_cfg_a);
    binder.item("?'divider'"_def,hint_cfg_b);
-
+   binder.space();
    binder.item("'scalable'"_def,text_cfg_scalable);
    binder.item("'monospace'"_def,text_cfg_monospace);
    binder.item("'bold'"_def,text_cfg_bold);
    binder.item("'italic'"_def,text_cfg_italic);
-
+   binder.space();
    binder.item("'Hint'"_def,text_cfg_Hint);
-
+   binder.space();
    binder.item("'No hint'"_def,text_cfg_no_hint);
    binder.item("'Native hint'"_def,text_cfg_native_hint);
    binder.item("'Auto hint'"_def,text_cfg_auto_hint);
-
+   binder.space();
    binder.item("'Smooth'"_def,text_cfg_Smooth);
-
+   binder.space();
    binder.item("'No smooth'"_def,text_cfg_no_smooth);
    binder.item("'Smooth'"_def,text_cfg_smooth);
    binder.item("'LCD RGB'"_def,text_cfg_RGB);
    binder.item("'LCD BGR'"_def,text_cfg_BGR);
-
+   binder.space();
    binder.item("'Kerning'"_def,text_cfg_kerning);
    binder.item("'Strength'"_def,text_cfg_strength);
    binder.item("'sample'"_def,text_cfg_sample);
    binder.item("'table'"_def,text_cfg_table);
-
+   binder.space();
    binder.item("?'Font file list'"_def,hint_cfg_font_list);
    binder.item("?'Font height'"_def,hint_cfg_height);
    binder.item("?'Enable font length'"_def,hint_cfg_length_enable);

@@ -287,6 +287,17 @@ struct UserPreferenceBag : ConfigItemHost
 
   VColor cfg_edit_line = Black ;
 
+  MCoord cfg_width = Fraction(8,2) ;
+
+  Coord cfg_radius    =  15 ;
+
+  Coord cfg_mix_len   = 350 ;
+  Coord cfg_mix_width =  30 ;
+
+  Coord cfg_white_len = 250 ;
+
+  unsigned cfg_pal_len = 10 ;
+
   DefString text_cfg_all      =         "All"_def ;
   DefString text_cfg_Coord    =        "size"_def ;
   DefString text_cfg_MCoord   =  "milli-size"_def ;

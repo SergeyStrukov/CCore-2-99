@@ -23,21 +23,17 @@
 namespace CCore {
 namespace Video {
 
-/* Envelope...() */
-
-inline Pane EnvelopeX(Point base,Coordinate dy,Coordinate delta_x) { return Pane(base.x-delta_x,base.y,2*delta_x,dy); }
-
-inline Pane EnvelopeY(Point base,Coordinate dx,Coordinate delta_y) { return Pane(base.x,base.y-delta_y,dx,2*delta_y); }
-
 /* class ColorEditWindow */
 
 void ColorEditWindow::preparePalette()
  {
   ulen size=len*len;
 
-  if( palette.getLen()<size )
+  ulen plen=palette.getLen();
+
+  if( plen<size )
     {
-     palette.extend_fill(size-palette.getLen(),White);
+     palette.extend_fill(size-plen,White);
     }
  }
 
@@ -45,17 +41,17 @@ class ColorEditWindow::Art : public SmoothDrawArt
  {
   public:
 
-   Art(const DrawBuf &buf) : SmoothDrawArt(buf) {}
+   explicit Art(const DrawBuf &buf) : SmoothDrawArt(buf) {}
  };
 
-void ColorEditWindow::draw(Art &art,MPoint center,VColor color,bool select) const
+void ColorEditWindow::drawCap(Art &art,MPoint center,VColor color,bool select) const
  {
   MCoord radius=Fraction(+cfg.radius);
   MCoord radius2=Div(8,10)*radius;
 
   MCoord delta=Ratio(724,10)*radius;
 
-  art.ball(center,radius,TwoField(center.subXY(delta),+cfg.top,center.addXY(delta),+cfg.bottom));
+  art.ball(center,radius,TwoField(center.subXY(delta),+cfg.gray,center.addXY(delta),+cfg.snow));
 
   art.ball(center,radius2,color);
 
@@ -79,7 +75,7 @@ class ColorEditWindow::WhiteField : public TwoField
      Clr g=GreenOf(vc);
      Clr b=BlueOf(vc);
 
-     Clr d=MaxClr-Max(Max(r,g),b);
+     Clr d=MaxClr-Max_cast(r,g,b);
 
      return RGBColor(r+d,g+d,b+d);
     }
@@ -321,7 +317,13 @@ ColorEditWindow::~ColorEditWindow()
 
 Point ColorEditWindow::getMinSize() const
  {
-  return Point(100,100);
+  Coordinate radius=+cfg.radius;
+  Coordinate space_dxy=+cfg.space_dxy;
+  Coordinate len=+cfg.len;
+
+  Coordinate contour_len=len*(2*radius)+(len+1)*space_dxy;
+
+  return Point(contour_len+space_dxy+2*radius,contour_len+2*space_dxy+4*radius);
  }
 
 void ColorEditWindow::setColor(VColor value_)
@@ -400,11 +402,14 @@ void ColorEditWindow::draw(DrawBuf buf,bool) const
   Coord space_dxy=+cfg.space_dxy;
   Coord mix_width=+cfg.mix_width;
 
+  VColor gray=+cfg.gray;
+  VColor snow=+cfg.snow;
+
   Art art(buf);
 
   // value
 
-  draw(art,value_center,value,item==Item_value);
+  drawCap(art,value_center,value,item==Item_value);
 
   if( focus )
     {
@@ -419,23 +424,23 @@ void ColorEditWindow::draw(DrawBuf buf,bool) const
    FigureTopBorder fig_top(palette_contour,width);
    FigureBottomBorder fig_bottom(palette_contour,width);
 
-   fig_top.solid(art,+cfg.top);
-   fig_bottom.solid(art,+cfg.bottom);
+   fig_top.solid(art,gray);
+   fig_bottom.solid(art,snow);
 
    for(unsigned i=0; i<len ;i++)
      for(unsigned j=0; j<len ;j++)
        {
         unsigned k=i+j*len;
 
-        draw(art,palette_base_center+Point(i,j)*grid,pal(k),item==(Item_palette_base+k));
+        drawCap(art,palette_base_center+Point(i,j)*grid,pal(k),item==(Item_palette_base+k));
        }
   }
 
   // mixer
 
   {
-   draw(art,left_center,left,item==Item_left);
-   draw(art,right_center,right,item==Item_right);
+   drawCap(art,left_center,left,item==Item_left);
+   drawCap(art,right_center,right,item==Item_right);
 
    Point base=mix_place.getBase();
 
@@ -464,16 +469,16 @@ void ColorEditWindow::draw(DrawBuf buf,bool) const
   {
    art.block(text_place,back);
 
-   cfg.font.get()->text(buf,text_place,TextPlace(AlignX_Center,AlignY_Center),"Sample text",fore);
+   cfg.font.get()->text(buf,text_place,TextPlace(AlignX_Center,AlignY_Center),"Sample text"_c,fore);
 
-   draw(art,back_center,back,item==Item_back);
-   draw(art,fore_center,fore,item==Item_fore);
+   drawCap(art,back_center,back,item==Item_back);
+   drawCap(art,fore_center,fore,item==Item_fore);
   }
 
   // white
 
   {
-   draw(art,top_center,top,item==Item_top);
+   drawCap(art,top_center,top,item==Item_top);
 
    Point base=white_place.getBase();
 
