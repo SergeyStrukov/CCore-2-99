@@ -24,110 +24,32 @@ void ClientWindow::menuOff()
   menu.unselect();
  }
 
-void ClientWindow::fileOff()
- {
-  if( file_frame.isAlive() )
-    {
-     cont=ContinueNone;
-
-     file_frame.destroy();
-    }
- }
-
-void ClientWindow::msgOff()
- {
-  if( msg_frame.isAlive() )
-    {
-     cont=ContinueNone;
-
-     msg_frame.destroy();
-    }
- }
-
-void ClientWindow::askSave(Continue cont_)
- {
-  msgOff();
-
-  cont=cont_;
-
-  msg_frame.create(getFrame(),+cfg.text_Alert);
-
-  disableFrameReact();
- }
-
-void ClientWindow::startOpen(Point point)
- {
-  fileOff();
-
-  file_frame.setNewFile(false);
-
-  cont=ContinueOpen;
-
-  file_frame.create(getFrame(),point,+cfg.text_LoadFile);
-
-  disableFrameReact();
- }
-
-void ClientWindow::startSave(Point point)
- {
-  fileOff();
-
-  file_frame.setNewFile(true);
-
-  cont=ContinueSaveAs;
-
-  file_frame.create(getFrame(),point,+cfg.text_SaveFile);
-
-  disableFrameReact();
- }
-
 void ClientWindow::menuAction(int id,Point point)
  {
   switch( id )
     {
      case MenuFileNew :
       {
-       if( editor.isModified() )
-         {
-          askSave(ContinueNew);
-         }
-       else
-         {
-          editor.load();
-         }
       }
      break;
 
      case MenuFileOpen :
       {
-       if( editor.isModified() )
-         {
-          file_point=point;
-
-          askSave(ContinueStartOpen);
-         }
-       else
-         {
-          startOpen(point);
-         }
       }
      break;
 
      case MenuFileSave :
       {
-       if( editor.save() ) break;
       }
-     // falldown;
+     break;
 
      case MenuFileSaveAs :
       {
-       startSave(point);
       }
      break;
 
      case MenuFileExit :
       {
-       askFrameClose();
       }
      break;
 
@@ -143,11 +65,6 @@ void ClientWindow::menuAction(int id,Point point)
       }
      break;
     }
- }
-
-void ClientWindow::menuAction(int id)
- {
-  menuAction(id,toScreen(Point(10,10)));
  }
 
 void ClientWindow::menu_selected(int id,Point point)
@@ -176,83 +93,12 @@ void ClientWindow::cascade_menu_selected(int id,Point point)
 
   menuOff();
 
-  editor.setFocus();
+  sample.setFocus();
  }
 
 void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
  {
   menu.put_Key(vkey,kmod);
- }
-
-void ClientWindow::file_destroyed()
- {
-  enableFrameReact();
-
-  switch( Replace(cont,ContinueNone) )
-    {
-     case ContinueOpen :
-      {
-       StrLen file_name=file_frame.getFilePath();
-
-       if( +file_name )
-         {
-          editor.load(file_name);
-         }
-      }
-     break;
-
-     case ContinueSaveAs :
-      {
-       StrLen file_name=file_frame.getFilePath();
-
-       if( +file_name )
-         {
-          editor.save(file_name);
-         }
-      }
-     break;
-    }
- }
-
-void ClientWindow::msg_destroyed()
- {
-  enableFrameReact();
-
-  switch( msg_frame.getButtonId() )
-    {
-     case Button_Yes :
-      {
-       editor.save();
-      }
-     break;
-
-     case Button_Cancel :
-      {
-       cont=ContinueNone;
-      }
-     return;
-    }
-
-  switch( Replace(cont,ContinueNone) )
-    {
-     case ContinueNew :
-      {
-       editor.load();
-      }
-     break;
-
-     case ContinueStartOpen :
-      {
-       startOpen(file_point);
-      }
-     break;
-
-     case ContinueExit :
-      {
-       destroyFrame();
-      }
-     break;
-    }
  }
 
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
@@ -261,17 +107,13 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
    menu(wlist,cfg.menu_cfg,menu_data),
    cascade_menu(host.getFrameDesktop(),cfg.cascade_menu_cfg),
-   editor(wlist,cfg.editor_cfg),
-   file_frame(host.getFrameDesktop(),cfg.file_cfg,{true,".cont.ddl"_def}),
-   msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
+   sample(wlist,cfg.sample_cfg),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.selected),
-   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed),
-   connector_file_destroyed(this,&ClientWindow::file_destroyed,file_frame.destroyed),
-   connector_msg_destroyed(this,&ClientWindow::msg_destroyed,msg_frame.destroyed)
+   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed)
  {
-  wlist.insTop(menu,editor);
+  wlist.insTop(menu,sample);
 
   wlist.enableTabFocus(false);
 
@@ -288,14 +130,6 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   menu_opt_data(+cfg.menu_Global,MenuOptionsUserPref)
                (+cfg.menu_App,MenuOptionsAppPref);
-
-  file_frame.addFilter("*.cont.ddl"_c);
-  file_frame.addFilter("*"_c,false);
-
-  msg_frame.setInfo(+cfg.text_AskSave)
-           .add(+cfg.text_Yes,Button_Yes)
-           .add(+cfg.text_No,Button_No)
-           .add(+cfg.text_Cancel,Button_Cancel);
  }
 
 ClientWindow::~ClientWindow()
@@ -308,7 +142,7 @@ void ClientWindow::open()
  {
   wlist.open();
 
-  editor.setFocus();
+  sample.setFocus();
  }
 
  // drawing
@@ -320,7 +154,7 @@ void ClientWindow::layout()
   Pane pane(Null,getSize());
 
   menu.setPlace(SplitY(dy,pane));
-  editor.setPlace(pane);
+  sample.setPlace(pane);
  }
 
  // user input
@@ -334,18 +168,6 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
  {
   switch( vkey )
     {
-     case VKey_F2 :
-      {
-       menuAction(MenuFileSave);
-      }
-     break;
-
-     case VKey_F3 :
-      {
-       menuAction(MenuFileOpen);
-      }
-     break;
-
      case VKey_F10 :
       {
        menu.setFocus();
@@ -356,7 +178,7 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
       {
        menuOff();
 
-       editor.setFocus();
+       sample.setFocus();
       }
      break;
 
@@ -384,20 +206,6 @@ void ClientWindow::react_RightClick(Point point,MouseKey mkey)
 void ClientWindow::react_other(UserAction action)
  {
   wlist.react(action);
- }
-
- // AliveControl
-
-bool ClientWindow::askDestroy()
- {
-  if( editor.isModified() )
-    {
-     askSave(ContinueExit);
-
-     return false;
-    }
-
-  return true;
  }
 
 } // namespace App

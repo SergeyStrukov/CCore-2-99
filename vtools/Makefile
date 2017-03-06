@@ -18,18 +18,20 @@ all:
 	make $(OPT) -C DDLDisplay
 	make $(OPT) -C SubLab
 	make $(OPT) -C ContourLab
+	make $(OPT) -C Sample
 
 clean:
 	make -C UserPreference         clean
 	make -C DDLDisplay             clean
 	make -C SubLab                 clean
 	make -C ContourLab             clean
+	make -C Sample                 clean
 
 list:
 	make -C UserPreference         list
 	make -C DDLDisplay             list
 	make -C SubLab                 list
 	make -C ContourLab             list
-
+	make -C Sample                 list
 
 
