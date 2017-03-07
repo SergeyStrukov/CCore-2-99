@@ -1,7 +1,7 @@
 /* Client.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: Sample 1.00
+//  Project: Aspect 1.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
@@ -14,7 +14,7 @@
 #ifndef Client_h
 #define Client_h
 
-#include <inc/Sample.h>
+#include <inc/Aspect.h>
 
 namespace App {
 
@@ -45,13 +45,13 @@ class ClientWindow : public ComboWindow
      RefVal<DefString> menu_Global  = "@Global"_def ;
      RefVal<DefString> menu_App     = "@Application"_def ;
 
-     SampleWindow::ConfigType sample_cfg;
+     AspectWindow::ConfigType aspect_cfg;
 
      Config() noexcept {}
 
      template <class AppPref>
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
-      : sample_cfg(pref,app_pref)
+      : aspect_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
        bindApp(app_pref.get());
@@ -97,9 +97,9 @@ class ClientWindow : public ComboWindow
    SimpleTopMenuWindow menu;
    SimpleCascadeMenu cascade_menu;
 
-   // inner
+   // aspect
 
-   SampleWindow sample;
+   AspectWindow aspect;
 
   private:
 

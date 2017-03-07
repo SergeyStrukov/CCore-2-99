@@ -1,7 +1,7 @@
 /* Client.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: Sample 1.00
+//  Project: Aspect 1.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
@@ -93,7 +93,7 @@ void ClientWindow::cascade_menu_selected(int id,Point point)
 
   menuOff();
 
-  sample.setFocus();
+  aspect.setFocus();
  }
 
 void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
@@ -107,13 +107,13 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
    menu(wlist,cfg.menu_cfg,menu_data),
    cascade_menu(host.getFrameDesktop(),cfg.cascade_menu_cfg),
-   sample(wlist,cfg.sample_cfg),
+   aspect(wlist,cfg.aspect_cfg),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.selected),
    connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed)
  {
-  wlist.insTop(menu,sample);
+  wlist.insTop(menu,aspect);
 
   wlist.enableTabFocus(false);
 
@@ -142,7 +142,7 @@ void ClientWindow::open()
  {
   wlist.open();
 
-  sample.setFocus();
+  aspect.setFocus();
  }
 
  // drawing
@@ -154,7 +154,7 @@ void ClientWindow::layout()
   Pane pane(Null,getSize());
 
   menu.setPlace(SplitY(dy,pane));
-  sample.setPlace(pane);
+  aspect.setPlace(pane);
  }
 
  // user input
@@ -178,7 +178,7 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
       {
        menuOff();
 
-       sample.setFocus();
+       aspect.setFocus();
       }
      break;
 

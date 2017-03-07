@@ -18,6 +18,7 @@ all:
 	make $(OPT) -C DDLDisplay
 	make $(OPT) -C SubLab
 	make $(OPT) -C ContourLab
+	make $(OPT) -C Aspect
 	make $(OPT) -C Sample
 
 clean:
@@ -25,6 +26,7 @@ clean:
 	make -C DDLDisplay             clean
 	make -C SubLab                 clean
 	make -C ContourLab             clean
+	make -C Aspect                 clean
 	make -C Sample                 clean
 
 list:
@@ -32,6 +34,7 @@ list:
 	make -C DDLDisplay             list
 	make -C SubLab                 list
 	make -C ContourLab             list
+	make -C Aspect                 list
 	make -C Sample                 list
 
 
