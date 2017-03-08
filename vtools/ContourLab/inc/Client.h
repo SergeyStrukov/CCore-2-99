@@ -145,6 +145,8 @@ class ClientWindow : public ComboWindow , public AliveControl
    Continue cont = ContinueNone ;
    Point file_point;
 
+   Point action_base = Point(10,10) ;
+
   private:
 
    void menuOff();

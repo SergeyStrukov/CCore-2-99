@@ -39,7 +39,7 @@ bool AspectWindow::isModified() const
   return false;
  }
 
-void AspectWindow::load()
+void AspectWindow::blank()
  {
  }
 

@@ -317,7 +317,7 @@ class EditorWindow : public ComboWindow
 
    bool isModified() const { return text_file.isAlerted(); }
 
-   void load();
+   void blank();
 
    void load(StrLen file_name);
 

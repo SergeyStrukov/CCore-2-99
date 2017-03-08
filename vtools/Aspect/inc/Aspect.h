@@ -71,7 +71,7 @@ class AspectWindow : public SubWindow
 
    bool isModified() const;
 
-   void load();
+   void blank();
 
    void load(StrLen file_name);
 

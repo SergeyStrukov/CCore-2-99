@@ -93,7 +93,7 @@ void ClientWindow::menuAction(int id,Point point)
          }
        else
          {
-          aspect.load();
+          aspect.blank();
          }
       }
      break;
@@ -115,9 +115,9 @@ void ClientWindow::menuAction(int id,Point point)
 
      case MenuFileSave :
       {
-       if( aspect.save() ) break;
+       if( !aspect.save() ) startSave(point);
       }
-     // falldown;
+     break;
 
      case MenuFileSaveAs :
       {
@@ -237,7 +237,7 @@ void ClientWindow::msg_destroyed()
     {
      case ContinueNew :
       {
-       aspect.load();
+       aspect.blank();
       }
      break;
 

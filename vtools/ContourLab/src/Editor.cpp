@@ -607,7 +607,7 @@ Point EditorWindow::getMinSize() const
   return Point(100,100);
  }
 
-void EditorWindow::load()
+void EditorWindow::blank()
  {
   text_file.setText(""_def);
   clearModified();

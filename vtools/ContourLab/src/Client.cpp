@@ -93,7 +93,7 @@ void ClientWindow::menuAction(int id,Point point)
          }
        else
          {
-          editor.load();
+          editor.blank();
          }
       }
      break;
@@ -115,9 +115,9 @@ void ClientWindow::menuAction(int id,Point point)
 
      case MenuFileSave :
       {
-       if( editor.save() ) break;
+       if( !editor.save() ) startSave(point);
       }
-     // falldown;
+     break;
 
      case MenuFileSaveAs :
       {
@@ -147,7 +147,7 @@ void ClientWindow::menuAction(int id,Point point)
 
 void ClientWindow::menuAction(int id)
  {
-  menuAction(id,toScreen(Point(10,10)));
+  menuAction(id,toScreen(action_base));
  }
 
 void ClientWindow::menu_selected(int id,Point point)
@@ -237,7 +237,7 @@ void ClientWindow::msg_destroyed()
     {
      case ContinueNew :
       {
-       editor.load();
+       editor.blank();
       }
      break;
 
@@ -322,6 +322,8 @@ void ClientWindow::open()
 void ClientWindow::layout()
  {
   Coord dy=menu.getMinSize().dy;
+
+  action_base=Point(dy,dy);
 
   Pane pane(Null,getSize());
 
