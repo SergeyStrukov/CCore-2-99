@@ -34,5 +34,29 @@ Point AspectWindow::getMinSize() const
   return Point(100,100);
  }
 
+bool AspectWindow::isModified() const
+ {
+  return false;
+ }
+
+void AspectWindow::load()
+ {
+ }
+
+void AspectWindow::load(StrLen file_name)
+ {
+  Used(file_name);
+ }
+
+bool AspectWindow::save()
+ {
+  return true;
+ }
+
+void AspectWindow::save(StrLen file_name)
+ {
+  Used(file_name);
+ }
+
 } // namespace App
 

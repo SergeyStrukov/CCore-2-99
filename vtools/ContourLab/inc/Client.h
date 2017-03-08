@@ -163,16 +163,16 @@ class ClientWindow : public ComboWindow , public AliveControl
     {
      MenuFile = 1,
 
-     MenuFileNew = 101,
-     MenuFileOpen = 102,
-     MenuFileSave = 103,
+     MenuFileNew    = 101,
+     MenuFileOpen   = 102,
+     MenuFileSave   = 103,
      MenuFileSaveAs = 104,
-     MenuFileExit = 110,
+     MenuFileExit   = 110,
 
      MenuOptions = 2,
 
      MenuOptionsUserPref = 201,
-     MenuOptionsAppPref = 202
+     MenuOptionsAppPref  = 202
     };
 
    void menuAction(int id,Point point);

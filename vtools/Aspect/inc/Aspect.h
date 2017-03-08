@@ -68,6 +68,16 @@ class AspectWindow : public SubWindow
    // methods
 
    Point getMinSize() const;
+
+   bool isModified() const;
+
+   void load();
+
+   void load(StrLen file_name);
+
+   bool save();
+
+   void save(StrLen file_name);
  };
 
 } // namespace App

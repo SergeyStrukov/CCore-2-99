@@ -24,32 +24,110 @@ void ClientWindow::menuOff()
   menu.unselect();
  }
 
+void ClientWindow::fileOff()
+ {
+  if( file_frame.isAlive() )
+    {
+     cont=ContinueNone;
+
+     file_frame.destroy();
+    }
+ }
+
+void ClientWindow::msgOff()
+ {
+  if( msg_frame.isAlive() )
+    {
+     cont=ContinueNone;
+
+     msg_frame.destroy();
+    }
+ }
+
+void ClientWindow::askSave(Continue cont_)
+ {
+  msgOff();
+
+  cont=cont_;
+
+  msg_frame.create(getFrame(),+cfg.text_Alert);
+
+  disableFrameReact();
+ }
+
+void ClientWindow::startOpen(Point point)
+ {
+  fileOff();
+
+  file_frame.setNewFile(false);
+
+  cont=ContinueOpen;
+
+  file_frame.create(getFrame(),point,+cfg.text_LoadFile);
+
+  disableFrameReact();
+ }
+
+void ClientWindow::startSave(Point point)
+ {
+  fileOff();
+
+  file_frame.setNewFile(true);
+
+  cont=ContinueSaveAs;
+
+  file_frame.create(getFrame(),point,+cfg.text_SaveFile);
+
+  disableFrameReact();
+ }
+
 void ClientWindow::menuAction(int id,Point point)
  {
   switch( id )
     {
      case MenuFileNew :
       {
+       if( aspect.isModified() )
+         {
+          askSave(ContinueNew);
+         }
+       else
+         {
+          aspect.load();
+         }
       }
      break;
 
      case MenuFileOpen :
       {
+       if( aspect.isModified() )
+         {
+          file_point=point;
+
+          askSave(ContinueStartOpen);
+         }
+       else
+         {
+          startOpen(point);
+         }
       }
      break;
 
      case MenuFileSave :
       {
+       if( aspect.save() ) break;
       }
-     break;
+     // falldown;
 
      case MenuFileSaveAs :
       {
+       startSave(point);
       }
      break;
 
      case MenuFileExit :
       {
+       askFrameClose();
       }
      break;
 
@@ -65,6 +143,11 @@ void ClientWindow::menuAction(int id,Point point)
       }
      break;
     }
+ }
+
+void ClientWindow::menuAction(int id)
+ {
+  menuAction(id,toScreen(action_base));
  }
 
 void ClientWindow::menu_selected(int id,Point point)
@@ -101,6 +184,77 @@ void ClientWindow::cascade_menu_pressed(VKey vkey,KeyMod kmod)
   menu.put_Key(vkey,kmod);
  }
 
+void ClientWindow::file_destroyed()
+ {
+  enableFrameReact();
+
+  switch( Replace(cont,ContinueNone) )
+    {
+     case ContinueOpen :
+      {
+       StrLen file_name=file_frame.getFilePath();
+
+       if( +file_name )
+         {
+          aspect.load(file_name);
+         }
+      }
+     break;
+
+     case ContinueSaveAs :
+      {
+       StrLen file_name=file_frame.getFilePath();
+
+       if( +file_name )
+         {
+          aspect.save(file_name);
+         }
+      }
+     break;
+    }
+ }
+
+void ClientWindow::msg_destroyed()
+ {
+  enableFrameReact();
+
+  switch( msg_frame.getButtonId() )
+    {
+     case Button_Yes :
+      {
+       aspect.save();
+      }
+     break;
+
+     case Button_Cancel :
+      {
+       cont=ContinueNone;
+      }
+     return;
+    }
+
+  switch( Replace(cont,ContinueNone) )
+    {
+     case ContinueNew :
+      {
+       aspect.load();
+      }
+     break;
+
+     case ContinueStartOpen :
+      {
+       startOpen(file_point);
+      }
+     break;
+
+     case ContinueExit :
+      {
+       destroyFrame();
+      }
+     break;
+    }
+ }
+
 ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -108,14 +262,20 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    menu(wlist,cfg.menu_cfg,menu_data),
    cascade_menu(host.getFrameDesktop(),cfg.cascade_menu_cfg),
    aspect(wlist,cfg.aspect_cfg),
+   file_frame(host.getFrameDesktop(),cfg.file_cfg,{true,".aspect.ddl"_def}),
+   msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.selected),
-   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed)
+   connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed),
+   connector_file_destroyed(this,&ClientWindow::file_destroyed,file_frame.destroyed),
+   connector_msg_destroyed(this,&ClientWindow::msg_destroyed,msg_frame.destroyed)
  {
   wlist.insTop(menu,aspect);
 
   wlist.enableTabFocus(false);
+
+  // menu
 
   menu_data(+cfg.menu_File,MenuFile)
            (+cfg.menu_Options,MenuOptions);
@@ -130,6 +290,18 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   menu_opt_data(+cfg.menu_Global,MenuOptionsUserPref)
                (+cfg.menu_App,MenuOptionsAppPref);
+
+  // file frame
+
+  file_frame.addFilter("*.aspect.ddl"_c);
+  file_frame.addFilter("*"_c,false);
+
+  // msg frame
+
+  msg_frame.setInfo(+cfg.text_AskSave)
+           .add(+cfg.text_Yes,Button_Yes)
+           .add(+cfg.text_No,Button_No)
+           .add(+cfg.text_Cancel,Button_Cancel);
  }
 
 ClientWindow::~ClientWindow()
@@ -151,6 +323,8 @@ void ClientWindow::layout()
  {
   Coord dy=menu.getMinSize().dy;
 
+  action_base=Point(dy,dy);
+
   Pane pane(Null,getSize());
 
   menu.setPlace(SplitY(dy,pane));
@@ -168,6 +342,18 @@ void ClientWindow::react_Key(VKey vkey,KeyMod kmod)
  {
   switch( vkey )
     {
+     case VKey_F2 :
+      {
+       menuAction(MenuFileSave);
+      }
+     break;
+
+     case VKey_F3 :
+      {
+       menuAction(MenuFileOpen);
+      }
+     break;
+
      case VKey_F10 :
       {
        menu.setFocus();
@@ -206,6 +392,20 @@ void ClientWindow::react_RightClick(Point point,MouseKey mkey)
 void ClientWindow::react_other(UserAction action)
  {
   wlist.react(action);
+ }
+
+// AliveControl
+
+bool ClientWindow::askDestroy()
+ {
+  if( aspect.isModified() )
+    {
+     askSave(ContinueExit);
+
+     return false;
+    }
+
+  return true;
  }
 
 } // namespace App

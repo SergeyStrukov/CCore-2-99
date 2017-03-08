@@ -275,6 +275,8 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
 
   wlist.enableTabFocus(false);
 
+  // menu
+
   menu_data(+cfg.menu_File,MenuFile)
            (+cfg.menu_Options,MenuOptions);
 
@@ -289,8 +291,12 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
   menu_opt_data(+cfg.menu_Global,MenuOptionsUserPref)
                (+cfg.menu_App,MenuOptionsAppPref);
 
+  // file frame
+
   file_frame.addFilter("*.cont.ddl"_c);
   file_frame.addFilter("*"_c,false);
+
+  // msg frame
 
   msg_frame.setInfo(+cfg.text_AskSave)
            .add(+cfg.text_Yes,Button_Yes)
