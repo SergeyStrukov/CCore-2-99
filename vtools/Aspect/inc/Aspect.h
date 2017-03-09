@@ -24,12 +24,21 @@ class AspectWindow;
 
 /* class AspectWindow */
 
-class AspectWindow : public SubWindow
+class AspectWindow : public ComboWindow
  {
   public:
 
    struct Config
     {
+     RefVal<VColor> back = Silver ;
+
+     RefVal<Coord> space_dxy = 10 ;
+
+     RefVal<DefString> text_Error = "Error"_def ;
+
+     CtorRefVal<TextLineWindow::ConfigType> text_cfg;
+     CtorRefVal<MessageFrame::AlertConfigType> msg_cfg;
+
      Config() noexcept {}
 
      template <class AppPref>
@@ -42,8 +51,12 @@ class AspectWindow : public SubWindow
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
-       Used(bag);
-       Used(proxy);
+       back.bind(bag.back);
+       space_dxy.bind(bag.space_dxy);
+       text_Error.bind(bag.text_Error);
+
+       text_cfg.bind(proxy);
+       msg_cfg.bind(proxy);
       }
 
      template <class Bag>
@@ -78,6 +91,12 @@ class AspectWindow : public SubWindow
    bool save();
 
    void save(StrLen file_name);
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
  };
 
 } // namespace App

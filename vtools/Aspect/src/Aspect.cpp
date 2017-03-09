@@ -18,7 +18,7 @@ namespace App {
 /* class AspectWindow */
 
 AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
- : SubWindow(host),
+ : ComboWindow(host),
    cfg(cfg_)
  {
  }
@@ -56,6 +56,17 @@ bool AspectWindow::save()
 void AspectWindow::save(StrLen file_name)
  {
   Used(file_name);
+ }
+
+ // drawing
+
+void AspectWindow::layout() // TODO
+ {
+ }
+
+void AspectWindow::drawBack(DrawBuf buf,bool) const
+ {
+  buf.erase(+cfg.back);
  }
 
 } // namespace App
