@@ -45,5 +45,24 @@ AspectData::~AspectData()
  {
  }
 
+ // save/load
+
+void AspectData::blank(StrLen path) // TODO
+ {
+  Used(path);
+ }
+
+void AspectData::save(StrLen file_name,ErrorText &etext) const // TODO
+ {
+  Used(file_name);
+  Used(etext);
+ }
+
+void AspectData::load(StrLen file_name,ErrorText &etext)
+ {
+  Used(file_name);
+  Used(etext);
+ }
+
 } // namespace App
 

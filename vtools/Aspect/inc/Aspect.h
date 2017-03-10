@@ -14,13 +14,33 @@
 #ifndef Aspect_h
 #define Aspect_h
 
-#include <inc/Application.h>
+#include <inc/AspectData.h>
 
 namespace App {
 
 /* classes */
 
+class RelPath;
+
 class AspectWindow;
+
+/* class RelPath */
+
+class RelPath : NoCopy
+ {
+   char buf[MaxPathLen];
+   ulen len = 0 ;
+
+  public:
+
+   RelPath(StrLen base_path,StrLen path);
+
+   ulen operator + () const { return len; }
+
+   bool operator ! () const { return !len; }
+
+   StrLen getPath() const { return Range(buf,len); }
+ };
 
 /* class AspectWindow */
 
@@ -36,8 +56,16 @@ class AspectWindow : public ComboWindow
 
      RefVal<DefString> text_Error = "Error"_def ;
 
+     CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
      CtorRefVal<TextLineWindow::ConfigType> text_cfg;
      CtorRefVal<MessageFrame::AlertConfigType> msg_cfg;
+
+     // app
+
+     RefVal<DefString> text_Path   = "Path"_def ;
+     RefVal<DefString> text_Aspect = "Aspect"_def ;
+
+     RefVal<DefString> text_Nothing = "Nothing to save!"_def ;
 
      Config() noexcept {}
 
@@ -55,6 +83,7 @@ class AspectWindow : public ComboWindow
        space_dxy.bind(bag.space_dxy);
        text_Error.bind(bag.text_Error);
 
+       label_cfg.bind(proxy);
        text_cfg.bind(proxy);
        msg_cfg.bind(proxy);
       }
@@ -62,7 +91,9 @@ class AspectWindow : public ComboWindow
      template <class Bag>
      void bindApp(const Bag &bag)
       {
-       Used(bag);
+       text_Path.bind(bag.text_Path);
+       text_Aspect.bind(bag.text_Aspect);
+       text_Nothing.bind(bag.text_Nothing);
       }
     };
 
@@ -71,6 +102,37 @@ class AspectWindow : public ComboWindow
   private:
 
    const Config &cfg;
+
+   AspectData data;
+
+   String aspect_file_name;
+   bool has_file = false ;
+
+   RefLabelWindow label_path;
+   RefLabelWindow label_aspect;
+
+   TextLineWindow text_path;
+   TextLineWindow text_aspect;
+
+   MessageFrame msg_frame;
+
+  private:
+
+   void setModified() { text_aspect.alert(true); }
+
+   void clearModified() { text_aspect.alert(false); }
+
+   void setAspect(StrLen file_name);
+
+  private:
+
+   void errorMsg(StrLen text);
+
+   void errorMsg(const DefString &text) { errorMsg(text.str()); }
+
+   void msg_destroyed();
+
+   SignalConnector<AspectWindow> connector_msg_destroyed;
 
   public:
 
@@ -82,7 +144,7 @@ class AspectWindow : public ComboWindow
 
    Point getMinSize() const;
 
-   bool isModified() const;
+   bool isModified() const { return text_aspect.isAlerted(); }
 
    void blank();
 

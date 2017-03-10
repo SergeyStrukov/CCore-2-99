@@ -14,7 +14,7 @@
 #ifndef AspectData_h
 #define AspectData_h
 
-#include <inc/Application.h>
+#include <inc/ErrorText.h>
 
 #include <CCore/inc/Array.h>
 
@@ -80,6 +80,14 @@ class AspectData : NoCopy
    AspectData() noexcept;
 
    ~AspectData();
+
+   // save/load
+
+   void blank(StrLen path);
+
+   void save(StrLen file_name,ErrorText &etext) const;
+
+   void load(StrLen file_name,ErrorText &etext);
  };
 
 } // namespace App
