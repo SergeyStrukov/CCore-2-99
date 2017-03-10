@@ -50,12 +50,12 @@ struct AppPreferenceBag : ConfigItemHost
   DefString menu_File    = "@File"_def ;
   DefString menu_Options = "@Options"_def ;
   DefString menu_New     = "@New"_def ;
-  DefString menu_Open    = "@Open"_def ;
+  DefString menu_Open    = "@Open ..."_def ;
   DefString menu_Save    = "@Save"_def ;
-  DefString menu_SaveAs  = "Save @as"_def ;
+  DefString menu_SaveAs  = "Save @as ..."_def ;
   DefString menu_Exit    = "E@xit"_def ;
-  DefString menu_Global  = "@Global"_def ;
-  DefString menu_App     = "@Application"_def ;
+  DefString menu_Global  = "@Global ..."_def ;
+  DefString menu_App     = "@Application ..."_def ;
 
   // constructors
 

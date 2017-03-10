@@ -58,7 +58,7 @@ void AspectData::save(StrLen file_name,ErrorText &etext) const // TODO
   Used(etext);
  }
 
-void AspectData::load(StrLen file_name,ErrorText &etext)
+void AspectData::load(StrLen file_name,ErrorText &etext) // TODO
  {
   Used(file_name);
   Used(etext);

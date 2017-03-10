@@ -50,12 +50,12 @@ class ClientWindow : public ComboWindow , public AliveControl
      RefVal<DefString> menu_File    = "@File"_def ;
      RefVal<DefString> menu_Options = "@Options"_def ;
      RefVal<DefString> menu_New     = "@New"_def ;
-     RefVal<DefString> menu_Open    = "@Open"_def ;
+     RefVal<DefString> menu_Open    = "@Open ..."_def ;
      RefVal<DefString> menu_Save    = "@Save"_def ;
-     RefVal<DefString> menu_SaveAs  = "Save @as"_def ;
+     RefVal<DefString> menu_SaveAs  = "Save @as ..."_def ;
      RefVal<DefString> menu_Exit    = "E@xit"_def ;
-     RefVal<DefString> menu_Global  = "@Global"_def ;
-     RefVal<DefString> menu_App     = "@Application"_def ;
+     RefVal<DefString> menu_Global  = "@Global ..."_def ;
+     RefVal<DefString> menu_App     = "@Application ..."_def ;
 
      EditorWindow::ConfigType editor_cfg;
 
