@@ -17,6 +17,7 @@
 #include <inc/ErrorText.h>
 
 #include <CCore/inc/Array.h>
+#include <CCore/inc/Swap.h>
 
 namespace App {
 
@@ -94,6 +95,16 @@ struct DirData : NoCopy
   ~DirData();
 
   void erase();
+
+  // swap objects
+
+  void objSwap(DirData &obj)
+   {
+    Swap(name,obj.name);
+    Swap(status,obj.status);
+    Swap(dirs,obj.dirs);
+    Swap(files,obj.files);
+   }
  };
 
 /* class AspectData */
@@ -104,6 +115,19 @@ class AspectData : NoCopy
    DirData root;
 
   private:
+
+   class DirProc;
+
+   static void Build(DirData &root,StrLen path);
+
+   template <class T,class Func>
+   static void CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy);
+
+   static void CopyFiles(SimpleArray<FileData> &dst,const SimpleArray<FileData> &src);
+
+   static void CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src);
+
+   static void Copy(DirData &root,const DirData &dir);
 
    void sync();
 

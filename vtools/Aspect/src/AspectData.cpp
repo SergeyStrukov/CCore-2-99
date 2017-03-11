@@ -13,6 +13,13 @@
 
 #include <inc/AspectData.h>
 
+#include <CCore/inc/Path.h>
+#include <CCore/inc/DirTreeRun.h>
+#include <CCore/inc/ElementPool.h>
+
+#include <CCore/inc/Cmp.h>
+#include <CCore/inc/algon/SortUnique.h>
+
 #include <CCore/inc/Print.h>
 #include <CCore/inc/PrintStem.h>
 
@@ -75,8 +82,243 @@ void DirData::erase()
 
 /* class AspectData */
 
-void AspectData::sync() // TODO
+class AspectData::DirProc : NoCopy
  {
+  public:
+
+   struct FileNode : NoCopy
+    {
+     FileNode *next;
+     StrLen name;
+
+     FileNode(FileNode *next_,StrLen name_) : next(next_),name(name_) {}
+    };
+
+   struct DirNode;
+
+   struct Final
+    {
+     SimpleArray<DirData> dirs;
+     SimpleArray<FileData> files;
+    };
+
+   struct DataType : NoCopy
+    {
+     DirNode *dirs = 0 ;
+     FileNode *files = 0 ;
+
+     Final *final;
+
+     explicit DataType(Final *final_) : final(final_) {}
+
+     void finish()
+      {
+       {
+        ulen count=0;
+
+        for(auto *node=dirs; node ;node=node->next) count++;
+
+        SimpleArray<DirData> temp(count);
+
+        auto *ptr=temp.getPtr();
+
+        for(auto *node=dirs; node ;node=node->next,ptr++)
+          {
+           ptr->name=String(node->name);
+
+           Swap(ptr->dirs,node->data.final->dirs);
+           Swap(ptr->files,node->data.final->files);
+          }
+
+        Swap(final->dirs,temp);
+       }
+
+       {
+        ulen count=0;
+
+        for(auto *node=files; node ;node=node->next) count++;
+
+        SimpleArray<FileData> temp(count);
+
+        auto *ptr=temp.getPtr();
+
+        for(auto *node=files; node ;node=node->next,ptr++) ptr->name=String(node->name);
+
+        Swap(final->files,temp);
+       }
+      }
+    };
+
+   struct DirNode : NoCopy
+    {
+     DirNode *next;
+     StrLen name;
+     DataType data;
+
+     DirNode(DirNode *next_,StrLen name_,Final *final) : next(next_),name(name_),data(final) {}
+    };
+
+  private:
+
+   ElementPool pool;
+   Collector<Final> finals;
+
+   DataType *root = 0 ;
+
+  private:
+
+   Final * createFinal()
+    {
+     return finals.append_default();
+    }
+
+   FileNode * create(FileNode *top,StrLen name)
+    {
+     return pool.create<FileNode>(top,pool.dup(name));
+    }
+
+   DirNode * create(DirNode *top,StrLen name)
+    {
+     return pool.create<DirNode>(top,pool.dup(name),createFinal());
+    }
+
+  public:
+
+   DirProc() {}
+
+   ~DirProc() {}
+
+   void finish(DirData &dir)
+    {
+     if( !root ) return;
+
+     Swap(dir.dirs,root->final->dirs);
+     Swap(dir.files,root->final->files);
+    }
+
+   DataType * dir(StrLen)
+    {
+     return root=pool.create<DataType>(createFinal());
+    }
+
+   DataType * dir(StrLen,StrLen name,DataType *parent_data)
+    {
+     DirNode *node=create(parent_data->dirs,name);
+
+     parent_data->dirs=node;
+
+     return &node->data;
+    }
+
+   void file(StrLen,StrLen name,DataType *parent_data)
+    {
+     parent_data->files=create(parent_data->files,name);
+    }
+
+   void enddir(StrLen,StrLen,DataType *data)
+    {
+     data->finish();
+    }
+ };
+
+void AspectData::Build(DirData &root,StrLen path)
+ {
+  DirTreeRun run(Range(path));
+
+  DirProc proc;
+
+  run.apply(proc);
+
+  proc.finish(root);
+ }
+
+template <class T,class Func>
+void AspectData::CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy)
+ {
+  struct Item
+   {
+    union
+     {
+      T *dst;
+      const T *src;
+     };
+
+    bool is_dst;
+
+    void setDst(T &dst_)
+     {
+      is_dst=true;
+      dst=&dst_;
+     }
+
+    void setSrc(const T &src_)
+     {
+      is_dst=false;
+      src=&src_;
+     }
+
+    StrLen getName() const { return is_dst?Range(dst->name):Range(src->name); }
+   };
+
+  SimpleArray<Item> temp(LenAdd(dst.len,src.len));
+
+  Item *ptr=temp.getPtr();
+
+  for(; +dst ;++dst,ptr++) ptr->setDst(*dst);
+
+  for(; +src ;++src,ptr++) ptr->setSrc(*src);
+
+  Algon::IncrSortThenApplyUniqueRangeBy(Range(temp), [] (const Item &item) { return CmpAsStr(item.getName()); } ,
+                                                     [copy] (PtrLen<Item> r)
+                                                            {
+                                                             const T *src=0;
+
+                                                             for(auto s=r; +s ;++s)
+                                                               if( !s->is_dst )
+                                                                 {
+                                                                  if( src ) return;
+
+                                                                  src=s->src;
+                                                                 }
+
+                                                             if( !src ) return;
+
+                                                             for(auto s=r; +s ;++s)
+                                                               if( s->is_dst )
+                                                                 {
+                                                                  copy(*(s->dst),*src);
+                                                                 }
+
+                                                            } );
+ }
+
+void AspectData::CopyFiles(SimpleArray<FileData> &dst,const SimpleArray<FileData> &src)
+ {
+  CopyByName(Range(dst),Range(src), [] (FileData &dst,const FileData &src) { dst.status=src.status; } );
+ }
+
+void AspectData::CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src)
+ {
+  CopyByName(Range(dst),Range(src),Copy);
+ }
+
+void AspectData::Copy(DirData &root,const DirData &dir)
+ {
+  root.status=dir.status;
+
+  CopyDirs(root.dirs,dir.dirs);
+  CopyFiles(root.files,dir.files);
+ }
+
+void AspectData::sync()
+ {
+  DirData temp;
+
+  Build(temp,Range(path));
+
+  Copy(temp,root);
+
+  Swap(temp,root);
  }
 
 AspectData::AspectData() noexcept
@@ -140,7 +382,7 @@ void AspectData::PrintSub(PrinterType &out,ulen &index,const DirData &dir)
  {
   for(const DirData &sub : dir.dirs )
     {
-     Printf(out,"Dir#;=\n ",sub.index);
+     Printf(out,"Dir Dir#;=\n",sub.index);
 
      PrintDir(out,index,sub);
 
