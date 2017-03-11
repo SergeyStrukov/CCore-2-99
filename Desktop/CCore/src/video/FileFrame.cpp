@@ -665,6 +665,8 @@ void FileWindow::eraseLists()
   file_info=Info();
 
   list_file.setInfo(ComboInfo());
+
+  btn_Ok.disable();
  }
 
 void FileWindow::fillLists()
@@ -707,6 +709,8 @@ void FileWindow::fillLists()
      file_info=file_builder.complete();
 
      applyFilters();
+
+     enableOk();
     }
   catch(...)
     {
@@ -773,11 +777,49 @@ void FileWindow::buildFilePath()
     }
  }
 
+void FileWindow::enableOk()
+ {
+  if( !list_dir.isEnabled() )
+    {
+     edit_new_file.alert(true);
+
+     btn_Ok.disable();
+
+     return;
+    }
+
+  bool en=false;
+
+  if( param.new_file && alt_new_file.isChecked() )
+    {
+     en=isGoodFileName(edit_new_file.getText());
+
+     edit_new_file.alert(!en);
+    }
+  else
+    {
+     const ComboInfo &info=list_file.getInfo();
+     ulen index=list_file.getSelect();
+
+     if( index<info->getLineCount() )
+       {
+        ComboInfoItem item=info->getLine(index);
+
+        if( item.type==ComboInfoText )
+          {
+           en=true;
+          }
+       }
+    }
+
+  btn_Ok.enable(en);
+ }
+
 bool FileWindow::isGoodFileName(StrLen file_name)
  {
   if( !file_name ) return false;
 
-  MakeFileName temp(edit_dir.getText(),file_name);
+  MakeFileName temp(edit_dir.getText(),file_name,param.auto_ext.str());
 
   return param.file_boss->getFileType(temp.get())==FileType_none;
  }
@@ -868,6 +910,7 @@ void FileWindow::dir_changed()
  {
   list_dir.disable();
   list_file.disable();
+  btn_Ok.disable();
  }
 
 void FileWindow::btn_Ok_pressed()
@@ -954,14 +997,7 @@ void FileWindow::check_new_file_changed(bool check)
 
   list_file.enable( !check && list_dir.isEnabled() );
 
-  if( check )
-    {
-     btn_Ok.enable( !edit_new_file.isAlerted() );
-    }
-  else
-    {
-     btn_Ok.enable();
-    }
+  enableOk();
  }
 
 void FileWindow::edit_new_file_changed()
@@ -1129,8 +1165,9 @@ void FileWindow::setNewFile(bool on)
         wlist.del(alt_new_file,label_new_file,edit_new_file,knob_mkdir,knob_rmdir);
 
         list_file.enable( list_dir.isEnabled() );
-        btn_Ok.enable();
        }
+
+     enableOk();
 
      layout();
 

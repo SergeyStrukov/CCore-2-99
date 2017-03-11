@@ -544,6 +544,8 @@ class FileWindow : public ComboWindow
 
    void buildFilePath();
 
+   void enableOk();
+
    bool isGoodFileName(StrLen file_name);
 
    static ulen PrevDir(StrLen dir_name);
