@@ -71,6 +71,15 @@ class SimpleArray : NoCopy
      return *this;
     }
 
+   // methods
+
+   void erase()
+    {
+     SimpleArray<T,Algo> temp;
+
+     Swap(*this,temp);
+    }
+
    // range access
 
    T * getPtr() { return ptr; }

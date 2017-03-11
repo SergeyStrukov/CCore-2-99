@@ -19,12 +19,6 @@
 
 namespace App {
 
-/* class RelPath */
-
-RelPath::RelPath(StrLen base_path,StrLen path) // TODO
- {
- }
-
 /* class AspectWindow */
 
 void AspectWindow::setAspect(StrLen file_name)
@@ -92,6 +86,11 @@ Point AspectWindow::getMinSize() const // TODO
 
 void AspectWindow::blank() // TODO
  {
+  data.blank(".");
+
+  text_path.setText(data.getPath());
+
+  redraw();
  }
 
 void AspectWindow::load(StrLen file_name) // TODO

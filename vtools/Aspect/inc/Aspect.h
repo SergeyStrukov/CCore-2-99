@@ -20,27 +20,7 @@ namespace App {
 
 /* classes */
 
-class RelPath;
-
 class AspectWindow;
-
-/* class RelPath */
-
-class RelPath : NoCopy
- {
-   char buf[MaxPathLen];
-   ulen len = 0 ;
-
-  public:
-
-   RelPath(StrLen base_path,StrLen path);
-
-   ulen operator + () const { return len; }
-
-   bool operator ! () const { return !len; }
-
-   StrLen getPath() const { return Range(buf,len); }
- };
 
 /* class AspectWindow */
 

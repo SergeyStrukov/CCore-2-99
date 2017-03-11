@@ -22,6 +22,8 @@ namespace App {
 
 /* classes */
 
+class RelPath;
+
 //enum ItemStatus;
 
 struct FileData;
@@ -29,6 +31,24 @@ struct FileData;
 struct DirData;
 
 class AspectData;
+
+/* class RelPath */
+
+class RelPath : NoCopy
+ {
+   char buf[MaxPathLen];
+   ulen len = 0 ;
+
+  public:
+
+   RelPath(StrLen base_path,StrLen path);
+
+   ulen operator + () const { return len; }
+
+   bool operator ! () const { return !len; }
+
+   StrLen getPath() const { return Range(buf,len); }
+ };
 
 /* enum ItemStatus */
 
@@ -40,6 +60,8 @@ enum ItemStatus
   Item_Yellow = 3,
   Item_Green  = 4
  };
+
+const char * GetTextDesc(ItemStatus status);
 
 /* struct FileData */
 
@@ -60,26 +82,44 @@ struct DirData : NoCopy
   String name;
   ItemStatus status = Item_New ;
 
-  SimpleArray<FileData> files;
   SimpleArray<DirData> dirs;
+  SimpleArray<FileData> files;
+
+  // work
+
+  mutable ulen index = 0 ;
 
   DirData() noexcept;
 
   ~DirData();
+
+  void erase();
  };
 
 /* class AspectData */
 
 class AspectData : NoCopy
  {
-   String path;
+   String path; // abs
    DirData root;
+
+  private:
+
+   void sync();
+
+   static void PrintDir(PrinterType &out,ulen &index,const DirData &dir);
+
+   static void PrintSub(PrinterType &out,ulen &index,const DirData &dir);
 
   public:
 
    AspectData() noexcept;
 
    ~AspectData();
+
+   // methods
+
+   const String & getPath() const { return path; }
 
    // save/load
 
