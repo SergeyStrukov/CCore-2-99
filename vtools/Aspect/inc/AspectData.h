@@ -150,6 +150,8 @@ class AspectData : NoCopy
 
    // methods
 
+   bool operator ! () const { return !Range(path); }
+
    const String & getPath() const { return path; }
 
    void erase();
