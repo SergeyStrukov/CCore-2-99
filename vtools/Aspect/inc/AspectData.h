@@ -135,6 +135,13 @@ class AspectData : NoCopy
 
    static void PrintSub(PrinterType &out,ulen &index,const DirData &dir);
 
+   static StrLen Pretext();
+
+   template <class Dir>
+   static void Load(DirData &dst,Dir src);
+
+   void toAbs(StrLen file_name);
+
   public:
 
    AspectData() noexcept;
@@ -144,6 +151,8 @@ class AspectData : NoCopy
    // methods
 
    const String & getPath() const { return path; }
+
+   void erase();
 
    // save/load
 

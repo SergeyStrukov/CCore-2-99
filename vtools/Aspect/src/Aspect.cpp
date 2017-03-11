@@ -95,7 +95,21 @@ void AspectWindow::blank() // TODO
 
 void AspectWindow::load(StrLen file_name) // TODO
  {
-  Used(file_name);
+  ErrorText etext;
+
+  data.load(file_name,etext);
+
+  if( !etext )
+    {
+     errorMsg(etext.getText());
+    }
+  else
+    {
+     text_path.setText(data.getPath());
+     text_aspect.setText(String(file_name));
+
+     clearModified();
+    }
  }
 
 bool AspectWindow::save()

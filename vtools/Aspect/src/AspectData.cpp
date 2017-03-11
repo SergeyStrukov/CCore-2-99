@@ -25,6 +25,12 @@
 
 #include <CCore/inc/video/PrintDDL.h>
 
+#include <CCore/inc/ddl/DDLEngine.h>
+#include <CCore/inc/ddl/DDLTypeSet.h>
+
+#include <CCore/inc/FileName.h>
+#include <CCore/inc/FileToMem.h>
+
 namespace App {
 
 /* class RelPath */
@@ -329,6 +335,12 @@ AspectData::~AspectData()
  {
  }
 
+void AspectData::erase()
+ {
+  path=Null;
+  root.erase();
+ }
+
  // save/load
 
 void AspectData::blank(StrLen path_)
@@ -436,10 +448,134 @@ void AspectData::save(StrLen file_name,ErrorText &etext) const
     }
  }
 
-void AspectData::load(StrLen file_name,ErrorText &etext) // TODO
+#include "Aspect.TypeDef.gen.h"
+#include "Aspect.TypeSet.gen.h"
+
+StrLen AspectData::Pretext()
+ {
+  return
+"type Status = uint8 ;"
+
+"Status New    = 0 ;"
+"Status Ignore = 1 ;"
+"Status Red    = 2 ;"
+"Status Yellow = 3 ;"
+"Status Green  = 4 ;"
+
+"struct File"
+" {"
+"  text name;"
+"  Status status;"
+" };"
+
+"struct Dir"
+" {"
+"  text name;"
+"  Status status;"
+
+"  Dir * [] dirs;"
+"  File[] files;"
+" };"
+
+"struct Aspect"
+" {"
+"  text path;"
+
+"  Dir root;"
+" };"_c;
+ }
+
+template <class Dir>
+void AspectData::Load(DirData &dst,Dir src)
+ {
+  dst.name=String(src.name.getStr());
+  dst.status=ItemStatus(src.status);
+
+  {
+   SimpleArray<FileData> temp(src.files.len);
+
+   FileData *ptr=temp.getPtr();
+
+   for(const TypeDef::File &f : src.files.getRange() )
+     {
+      ptr->name=String(f.name.getStr());
+      ptr->status=ItemStatus(f.status);
+
+      ptr++;
+     }
+
+   Swap(dst.files,temp);
+  }
+
+  {
+   SimpleArray<DirData> temp(src.dirs.len);
+
+   DirData *ptr=temp.getPtr();
+
+   for(auto d : src.dirs.getRange() )
+     {
+      Load(*ptr,*d);
+
+      ptr++;
+     }
+
+   Swap(dst.dirs,temp);
+  }
+ }
+
+void AspectData::toAbs(StrLen file_name) // TODO
  {
   Used(file_name);
-  Used(etext);
+ }
+
+void AspectData::load(StrLen file_name,ErrorText &etext)
+ {
+  erase();
+
+  PrintBuf eout(etext.getBuf());
+
+  ReportExceptionTo<PrintBuf> report(eout);
+
+  try
+    {
+     DDL::FileEngine<FileName,FileToMem> engine(eout);
+
+     auto result=engine.process(file_name,Pretext());
+
+     if( !result )
+       {
+        Printf(eout,"\n@ #.q;",file_name);
+
+        etext.setTextLen(eout.close().len);
+
+        return;
+       }
+     else
+       {
+        DDL::TypedMap<TypeSet> map(result);
+        MemAllocGuard guard(map.getLen());
+
+        map(guard);
+
+        // populate
+
+        TypeDef::Aspect data=map.takeConst<TypeDef::Aspect>("Data");
+
+        path=String(data.path.getStr());
+
+        Load(root,data.root);
+
+        toAbs(file_name);
+       }
+    }
+  catch(CatchType)
+    {
+     erase();
+
+     Printf(eout,"\n@ #.q;",file_name);
+
+     etext.setTextLen(eout.close().len);
+    }
  }
 
 } // namespace App
