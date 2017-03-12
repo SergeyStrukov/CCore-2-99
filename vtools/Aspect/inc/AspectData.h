@@ -18,8 +18,13 @@
 
 #include <CCore/inc/Array.h>
 #include <CCore/inc/Swap.h>
+#include <CCore/inc/MakeString.h>
 
 namespace App {
+
+/* functions */
+
+StrLen PathOf(StrLen file_name);
 
 /* classes */
 
@@ -37,18 +42,26 @@ class AspectData;
 
 class RelPath : NoCopy
  {
-   char buf[MaxPathLen];
-   ulen len = 0 ;
+   MakeString<MaxPathLen> out;
+   bool ok = false ;
+
+  private:
+
+   static ulen Down(StrLen path);
+
+   void relPath(ulen down,StrLen path);
+
+   void relPath(StrLen base_path,StrLen path);
 
   public:
 
    RelPath(StrLen base_path,StrLen path);
 
-   ulen operator + () const { return len; }
+   ulen operator + () const { return ok; }
 
-   bool operator ! () const { return !len; }
+   bool operator ! () const { return !ok; }
 
-   StrLen getPath() const { return Range(buf,len); }
+   StrLen getPath() const { return out.get(); }
  };
 
 /* enum ItemStatus */

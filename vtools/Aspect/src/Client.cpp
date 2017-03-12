@@ -55,6 +55,17 @@ void ClientWindow::askSave(Continue cont_)
   disableFrameReact();
  }
 
+void ClientWindow::startNew(Point point) // TODO
+ {
+  //dirOff();
+
+  cont=ContinueNew2;
+
+  //dir_frame.create(getFrame(),point,+cfg.text_SelectPath);
+
+  disableFrameReact();
+ }
+
 void ClientWindow::startOpen(Point point)
  {
   fileOff();
@@ -89,11 +100,13 @@ void ClientWindow::menuAction(int id,Point point)
       {
        if( aspect.isModified() )
          {
+          file_point=point;
+
           askSave(ContinueNew);
          }
        else
          {
-          aspect.blank();
+          startNew(point);
          }
       }
      break;
@@ -237,7 +250,7 @@ void ClientWindow::msg_destroyed()
     {
      case ContinueNew :
       {
-       aspect.blank();
+       startNew(file_point);
       }
      break;
 

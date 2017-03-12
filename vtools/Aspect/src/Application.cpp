@@ -47,9 +47,11 @@ struct AppPreferenceBag : ConfigItemHost
 
   // menu
 
+  DefString text_SelectPath = "Select a project path"_def ;
+
   DefString menu_File    = "@File"_def ;
   DefString menu_Options = "@Options"_def ;
-  DefString menu_New     = "@New"_def ;
+  DefString menu_New     = "@New ..."_def ;
   DefString menu_Open    = "@Open ..."_def ;
   DefString menu_Save    = "@Save"_def ;
   DefString menu_SaveAs  = "Save @as ..."_def ;
@@ -81,6 +83,8 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
 
   func("text_Nothing"_c,ptr->text_Nothing);
 
+  func("text_SelectPath"_c,ptr->text_SelectPath);
+
   func("menu_File"_c,ptr->menu_File);
   func("menu_Options"_c,ptr->menu_Options);
   func("menu_New"_c,ptr->menu_New);
@@ -105,6 +109,8 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
 
   binder.group("Menu"_def);
 
+    binder.item("path title"_def,text_SelectPath);
+    binder.space();
     binder.item("File"_def,menu_File);
     binder.item("Options"_def,menu_Options);
     binder.item("New"_def,menu_New);

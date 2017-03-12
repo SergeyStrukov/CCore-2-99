@@ -85,6 +85,7 @@ obj/Desktop.o \
 obj/DesktopKey.o \
 obj/DestroyGuard.o \
 obj/DetectProxy.o \
+obj/DirFrame.o \
 obj/DirTreeRun.o \
 obj/DrawAlgo.o \
 obj/DrawBuf.o \
@@ -497,6 +498,7 @@ obj/Desktop.s \
 obj/DesktopKey.s \
 obj/DestroyGuard.s \
 obj/DetectProxy.s \
+obj/DirFrame.s \
 obj/DirTreeRun.s \
 obj/DrawAlgo.s \
 obj/DrawBuf.s \
@@ -909,6 +911,7 @@ obj/Desktop.dep \
 obj/DesktopKey.dep \
 obj/DestroyGuard.dep \
 obj/DetectProxy.dep \
+obj/DirFrame.dep \
 obj/DirTreeRun.dep \
 obj/DrawAlgo.dep \
 obj/DrawBuf.dep \
@@ -1500,6 +1503,9 @@ obj/DestroyGuard.o : ../../Simple/CCore/src/DestroyGuard.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DetectProxy.o : ../../Fundamental/CCore/src/DetectProxy.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DirFrame.o : ../../Desktop/CCore/src/video/DirFrame.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DirTreeRun.o : ../../HCore/CCore/src/DirTreeRun.cpp
@@ -2731,6 +2737,9 @@ obj/DestroyGuard.s : ../../Simple/CCore/src/DestroyGuard.cpp
 obj/DetectProxy.s : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DirFrame.s : ../../Desktop/CCore/src/video/DirFrame.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DirTreeRun.s : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3959,6 +3968,9 @@ obj/DestroyGuard.dep : ../../Simple/CCore/src/DestroyGuard.cpp
 
 obj/DetectProxy.dep : ../../Fundamental/CCore/src/DetectProxy.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DetectProxy.o $< -MF $@
+
+obj/DirFrame.dep : ../../Desktop/CCore/src/video/DirFrame.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DirFrame.o $< -MF $@
 
 obj/DirTreeRun.dep : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DirTreeRun.o $< -MF $@

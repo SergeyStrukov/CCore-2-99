@@ -274,6 +274,7 @@
 ../../Desktop/CCore/src/video/ConfigStore.cpp
 ../../Desktop/CCore/src/video/CurveDriver.cpp
 ../../Desktop/CCore/src/video/DesktopKey.cpp
+../../Desktop/CCore/src/video/DirFrame.cpp
 ../../Desktop/CCore/src/video/DrawAlgo.cpp
 ../../Desktop/CCore/src/video/DrawBuf.cpp
 ../../Desktop/CCore/src/video/DrawTools.cpp

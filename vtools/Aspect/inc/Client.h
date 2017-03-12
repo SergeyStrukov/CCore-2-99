@@ -47,9 +47,11 @@ class ClientWindow : public ComboWindow , public AliveControl
 
      // app
 
+     RefVal<DefString> text_SelectPath = "Select a project path"_def ;
+
      RefVal<DefString> menu_File    = "@File"_def ;
      RefVal<DefString> menu_Options = "@Options"_def ;
-     RefVal<DefString> menu_New     = "@New"_def ;
+     RefVal<DefString> menu_New     = "@New ..."_def ;
      RefVal<DefString> menu_Open    = "@Open ..."_def ;
      RefVal<DefString> menu_Save    = "@Save"_def ;
      RefVal<DefString> menu_SaveAs  = "Save @as ..."_def ;
@@ -91,6 +93,8 @@ class ClientWindow : public ComboWindow , public AliveControl
      template <class Bag>
      void bindApp(const Bag &bag)
       {
+       text_SelectPath.bind(bag.text_SelectPath);
+
        menu_File.bind(bag.menu_File);
        menu_Options.bind(bag.menu_Options);
        menu_New.bind(bag.menu_New);
@@ -135,6 +139,7 @@ class ClientWindow : public ComboWindow , public AliveControl
      ContinueNone = 0,
 
      ContinueNew,
+     ContinueNew2,
      ContinueOpen,
      ContinueStartOpen,
      ContinueSave,
@@ -156,6 +161,8 @@ class ClientWindow : public ComboWindow , public AliveControl
    void msgOff();
 
    void askSave(Continue cont);
+
+   void startNew(Point point);
 
    void startOpen(Point point);
 

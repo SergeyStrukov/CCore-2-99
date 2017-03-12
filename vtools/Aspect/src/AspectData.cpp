@@ -30,15 +30,186 @@
 
 #include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
+#include <CCore/inc/FileSystem.h>
 
 namespace App {
 
+/* functions */
+
+StrLen PathOf(StrLen file_name)
+ {
+  SplitPath split1(file_name);
+  SplitPathName split2(split1.path);
+
+  ulen len=split2.path.len;
+
+  if( !!split2 && !len ) len=1;
+
+  return file_name.prefix(split1.dev.len+len);
+ }
+
 /* class RelPath */
 
-RelPath::RelPath(StrLen base_path,StrLen path) // TODO
+ulen RelPath::Down(StrLen path)
  {
-  Used(base_path);
-  Used(path);
+  ulen ret=0;
+
+  while( +path )
+    {
+     SplitDir split(path);
+
+     if( !split )
+       {
+        if( PathBase::IsDot(path) )
+          {
+           // continue;
+          }
+        else if( PathBase::IsDotDot(path) )
+          {
+           if( ret ) ret--; else return MaxULen;
+          }
+        else
+          {
+           ret++;
+          }
+
+        break;
+       }
+     else
+       {
+        if( PathBase::IsDot(split.dir) )
+          {
+           // continue;
+          }
+        else if( PathBase::IsDotDot(split.dir) )
+          {
+           if( ret ) ret--; else return MaxULen;
+          }
+        else
+          {
+           ret++;
+          }
+
+        path=split.path;
+       }
+    }
+
+  return ret;
+ }
+
+void RelPath::relPath(ulen down,StrLen path)
+ {
+  if( +path )
+    {
+     if( PathBase::IsSlash(path[0]) ) return;
+
+     for(; down ;down--) out.add("../"_c);
+
+     out.add(path);
+    }
+  else
+    {
+     if( down )
+       {
+        for(down--; down ;down--) out.add("../"_c);
+
+        out.add(".."_c);
+       }
+     else
+       {
+        out.add("."_c);
+       }
+    }
+
+  ok=+out;
+ }
+
+void RelPath::relPath(StrLen base_path,StrLen path)
+ {
+  while( +path && +base_path )
+    {
+     SplitDir split(path);
+     SplitDir base_split(base_path);
+
+     if( !split )
+       {
+        if( !base_split )
+          {
+           if( path.equal(base_path) )
+             {
+              path=Null;
+              base_path=Null;
+             }
+          }
+        else
+          {
+           if( path.equal(base_split.dir.inner(0,1)) )
+             {
+              path=Null;
+              base_path=base_split.path;
+             }
+          }
+
+        break;
+       }
+     else
+       {
+        if( !base_split )
+          {
+           if( split.dir.inner(0,1).equal(base_path) )
+             {
+              base_path=Null;
+              path=split.path;
+             }
+
+           break;
+          }
+        else
+          {
+           if( !split.dir.equal(base_split.dir) ) break;
+
+           base_path=base_split.path;
+           path=split.path;
+          }
+       }
+    }
+
+  ulen down=Down(base_path);
+
+  if( down!=MaxULen ) relPath(down,path);
+ }
+
+RelPath::RelPath(StrLen base_path,StrLen path)
+ {
+  SplitPath base_split(base_path);
+  SplitPath split(path);
+
+  if( !split )
+    {
+     if( !base_split )
+       {
+        // continue;
+       }
+     else
+       {
+        return;
+       }
+    }
+  else
+    {
+     if( !base_split )
+       {
+        return;
+       }
+     else
+       {
+        if( !split.dev.equal(base_split.dev) ) return;
+
+        // continue;
+       }
+    }
+
+  relPath(base_split.path,split.path);
  }
 
 /* enum ItemStatus */
@@ -424,7 +595,7 @@ void AspectData::save(StrLen file_name,ErrorText &etext) const
      {
       StrLen abspath=Range(path);
 
-      RelPath rel(file_name,abspath);
+      RelPath rel(PathOf(file_name),abspath);
 
       if( +rel )
         Printf(out,"  #;,\n",DDLString(rel.getPath()));
@@ -523,9 +694,28 @@ void AspectData::Load(DirData &dst,Dir src)
   }
  }
 
-void AspectData::toAbs(StrLen file_name) // TODO
+void AspectData::toAbs(StrLen file_name)
  {
-  Used(file_name);
+  StrLen str=Range(path);
+
+  if( !str ) return;
+
+  SplitDev split(str);
+
+  if( !!split ) return;
+
+  if( PathBase::IsSlash(str[0]) ) return;
+
+  MakeFileName temp(PathOf(file_name),str);
+
+  if( +temp )
+    {
+     FileSystem fs;
+
+     char buf[MaxPathLen+1];
+
+     path=String(fs.pathOf(temp.get(),buf));
+    }
  }
 
 void AspectData::load(StrLen file_name,ErrorText &etext)

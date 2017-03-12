@@ -37,6 +37,15 @@ void AspectWindow::setAspect(StrLen file_name)
   has_file=true;
  }
 
+void AspectWindow::clearAspect()
+ {
+  aspect_file_name=Null;
+
+  text_aspect.setText(""_def);
+
+  has_file=false;
+ }
+
 void AspectWindow::errorMsg(StrLen text)
  {
   msg_frame.setInfo(String(text));
@@ -79,12 +88,15 @@ Point AspectWindow::getMinSize() const // TODO
   return Point(100,100);
  }
 
-void AspectWindow::blank() // TODO
+void AspectWindow::blank(StrLen path)
  {
-  data.blank("."); // select abs path
+  data.blank(path);
 
   text_path.setText(data.getPath());
-  text_aspect.setText(""_def);
+
+  clearAspect();
+
+  clearModified();
 
   redraw();
  }
@@ -97,21 +109,20 @@ void AspectWindow::load(StrLen file_name)
 
   if( !etext )
     {
-     text_path.setText(""_def);
-     text_aspect.setText(""_def);
-     aspect_file_name=Null;
-     has_file=false;
-
-     errorMsg(etext.getText());
-    }
-  else
-    {
      text_path.setText(data.getPath());
 
      setAspect(file_name);
-
-     clearModified();
     }
+  else
+    {
+     text_path.setText(""_def);
+
+     clearAspect();
+
+     errorMsg(etext.getText());
+    }
+
+  clearModified();
 
   redraw();
  }
@@ -126,11 +137,11 @@ bool AspectWindow::save()
 
   if( !etext )
     {
-     errorMsg(etext.getText());
+     clearModified();
     }
   else
     {
-     clearModified();
+     errorMsg(etext.getText());
     }
 
   return true;
@@ -146,6 +157,7 @@ void AspectWindow::save(StrLen file_name)
     }
 
   setAspect(file_name);
+
   setModified();
 
   save();

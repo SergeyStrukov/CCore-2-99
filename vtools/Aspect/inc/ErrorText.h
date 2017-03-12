@@ -35,9 +35,9 @@ class ErrorText : NoCopy
 
    // methods
 
-   bool operator + () const { return len==0; }
+   bool operator + () const { return len!=0; }
 
-   bool operator ! () const { return len!=0; }
+   bool operator ! () const { return len==0; }
 
    StrLen getText() const { return Range(buf.getPtr(),len); }
 

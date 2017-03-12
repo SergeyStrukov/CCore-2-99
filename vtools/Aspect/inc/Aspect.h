@@ -104,6 +104,8 @@ class AspectWindow : public ComboWindow
 
    void setAspect(StrLen file_name);
 
+   void clearAspect();
+
   private:
 
    void errorMsg(StrLen text);
@@ -126,7 +128,7 @@ class AspectWindow : public ComboWindow
 
    bool isModified() const { return text_aspect.isAlerted(); }
 
-   void blank();
+   void blank(StrLen path);
 
    void load(StrLen file_name);
 
