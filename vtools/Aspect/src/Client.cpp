@@ -34,6 +34,16 @@ void ClientWindow::fileOff()
     }
  }
 
+void ClientWindow::dirOff()
+ {
+  if( dir_frame.isAlive() )
+    {
+     cont=ContinueNone;
+
+     dir_frame.destroy();
+    }
+ }
+
 void ClientWindow::msgOff()
  {
   if( msg_frame.isAlive() )
@@ -55,13 +65,13 @@ void ClientWindow::askSave(Continue cont_)
   disableFrameReact();
  }
 
-void ClientWindow::startNew(Point point) // TODO
+void ClientWindow::startNew(Point point)
  {
-  //dirOff();
+  dirOff();
 
   cont=ContinueNew2;
 
-  //dir_frame.create(getFrame(),point,+cfg.text_SelectPath);
+  dir_frame.create(getFrame(),point,+cfg.text_SelectPath);
 
   disableFrameReact();
  }
@@ -227,6 +237,25 @@ void ClientWindow::file_destroyed()
     }
  }
 
+void ClientWindow::dir_destroyed()
+ {
+  enableFrameReact();
+
+  switch( Replace(cont,ContinueNone) )
+    {
+     case ContinueNew2 :
+      {
+       StrLen dir_name=dir_frame.getPath();
+
+       if( +dir_name )
+         {
+          aspect.blank(dir_name);
+         }
+      }
+     break;
+    }
+ }
+
 void ClientWindow::msg_destroyed()
  {
   enableFrameReact();
@@ -276,12 +305,14 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
    cascade_menu(host.getFrameDesktop(),cfg.cascade_menu_cfg),
    aspect(wlist,cfg.aspect_cfg),
    file_frame(host.getFrameDesktop(),cfg.file_cfg,{true,".aspect.ddl"_def}),
+   dir_frame(host.getFrameDesktop(),cfg.dir_cfg),
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_menu_selected(this,&ClientWindow::menu_selected,menu.selected),
    connector_cascade_menu_selected(this,&ClientWindow::cascade_menu_selected,cascade_menu.selected),
    connector_cascade_menu_pressed(this,&ClientWindow::cascade_menu_pressed,cascade_menu.pressed),
    connector_file_destroyed(this,&ClientWindow::file_destroyed,file_frame.destroyed),
+   connector_dir_destroyed(this,&ClientWindow::dir_destroyed,dir_frame.destroyed),
    connector_msg_destroyed(this,&ClientWindow::msg_destroyed,msg_frame.destroyed)
  {
   wlist.insTop(menu,aspect);

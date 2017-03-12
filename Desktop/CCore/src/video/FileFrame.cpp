@@ -1184,40 +1184,6 @@ void FileWindow::setNewFile(bool on)
     }
  }
 
- // base
-
-void FileWindow::open()
- {
-  ComboWindow::open();
-
-  file_path=Empty;
-
-  if( param.new_file && !alt_new_file.isChecked() )
-    {
-     alt_new_file.check(true);
-
-     check_new_file_changed(true);
-    }
-
-  if( Change(first_open,false) )
-    {
-     setDir("."_c);
-    }
-  else
-    {
-     if( list_dir.isEnabled() ) fillLists();
-    }
-
-  hit_list.load(param.file_boss->getHitDirFile());
-
-  hit_list.prepare(hit_data);
- }
-
-void FileWindow::close()
- {
-  hit_list.save(param.file_boss->getHitDirFile());
- }
-
  // drawing
 
 void FileWindow::layout()
@@ -1248,7 +1214,7 @@ void FileWindow::layout()
    pane.place_cutTop(line1);
   }
 
-  // list_dir
+  // list_dir , knob_mkdir , knob_rmdir
 
   {
    Coord tdy=pane.getSize().y;
@@ -1338,9 +1304,46 @@ void FileWindow::drawBack(DrawBuf buf,bool) const
   buf.erase(+cfg.back);
  }
 
+ // base
+
+void FileWindow::open()
+ {
+  ComboWindow::open();
+
+  file_path=Empty;
+
+  if( param.new_file && !alt_new_file.isChecked() )
+    {
+     alt_new_file.check(true);
+
+     check_new_file_changed(true);
+    }
+
+  if( Change(first_open,false) )
+    {
+     setDir("."_c);
+    }
+  else
+    {
+     if( list_dir.isEnabled() ) fillLists();
+    }
+
+  hit_list.load(param.file_boss->getHitDirFile());
+
+  hit_list.prepare(hit_data);
+ }
+
+void FileWindow::close()
+ {
+  hit_list.save(param.file_boss->getHitDirFile());
+ }
+
 /* class FileFrame */
 
-const char *const FileFrame::SampleDir="/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay";
+StrLen FileFrame::SampleDir()
+ {
+  return "/cygdrive/d/active/home/C++/CCore-2-99/vtools/DDLDisplay"_c;
+ }
 
 FileFrame::FileFrame(Desktop *desktop,const Config &cfg_,const FileWindowParam &param)
  : DragFrame(desktop,cfg_.frame_cfg),
@@ -1364,7 +1367,7 @@ FileFrame::~FileFrame()
 
 Pane FileFrame::getPane(StrLen title,Point base) const
  {
-  Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir));
+  Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir()));
 
   Point screen_size=getScreenSize();
 
@@ -1373,7 +1376,7 @@ Pane FileFrame::getPane(StrLen title,Point base) const
 
 Pane FileFrame::getPane(StrLen title) const
  {
-  Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir));
+  Point size=getMinSize(false,title,sub_win.getMinSize(SampleDir()));
 
   return GetWindowPlace(getDesktop(),+cfg.pos_ry,size);
  }

@@ -24,6 +24,7 @@
 #include <CCore/inc/video/MessageFrame.h>
 #include <CCore/inc/video/Menu.h>
 #include <CCore/inc/video/FileFrame.h>
+#include <CCore/inc/video/DirFrame.h>
 #include <CCore/inc/video/ConfigEditor.h>
 
 namespace CCore {
@@ -416,6 +417,8 @@ class UserPreference : public ConfigBinder<UserPreferenceBag, // Update here
                                            FileCheckShape::Config,
                                            FileWindow::ConfigType,
                                            FileFrame::ConfigType,
+                                           DirWindow::ConfigType,
+                                           DirFrame::ConfigType,
 
                                            CoordEditWindow::ConfigType,
                                            MCoordEditWindow::ConfigType,

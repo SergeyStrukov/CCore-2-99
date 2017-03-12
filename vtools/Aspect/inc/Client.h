@@ -41,6 +41,7 @@ class ClientWindow : public ComboWindow , public AliveControl
      RefVal<DefString> text_Cancel = "Cancel"_def ;
 
      CtorRefVal<FileFrame::ConfigType> file_cfg;
+     CtorRefVal<DirFrame::ConfigType> dir_cfg;
      CtorRefVal<MessageFrame::AlertConfigType> msg_cfg;
      CtorRefVal<SimpleTopMenuWindow::ConfigType> menu_cfg;
      CtorRefVal<SimpleCascadeMenu::ConfigType> cascade_menu_cfg;
@@ -85,6 +86,7 @@ class ClientWindow : public ComboWindow , public AliveControl
        text_Cancel.bind(bag.text_Cancel);
 
        file_cfg.bind(proxy);
+       dir_cfg.bind(proxy);
        msg_cfg.bind(proxy);
        menu_cfg.bind(proxy);
        cascade_menu_cfg.bind(proxy);
@@ -130,6 +132,7 @@ class ClientWindow : public ComboWindow , public AliveControl
    // frames
 
    FileFrame file_frame;
+   DirFrame dir_frame;
    MessageFrame msg_frame;
 
    // continuation
@@ -157,6 +160,8 @@ class ClientWindow : public ComboWindow , public AliveControl
    void menuOff();
 
    void fileOff();
+
+   void dirOff();
 
    void msgOff();
 
@@ -202,9 +207,12 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    void file_destroyed();
 
+   void dir_destroyed();
+
    void msg_destroyed();
 
    SignalConnector<ClientWindow> connector_file_destroyed;
+   SignalConnector<ClientWindow> connector_dir_destroyed;
    SignalConnector<ClientWindow> connector_msg_destroyed;
 
   public:

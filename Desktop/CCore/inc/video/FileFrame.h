@@ -425,13 +425,12 @@ class FileWindow : public ComboWindow
      CtorRefVal<DirEditWindow::ConfigType> edit_cfg;
      CtorRefVal<ScrollListWindow::ConfigType> list_cfg;
      CtorRefVal<FileFilterListWindow::ConfigType> filter_list_cfg;
-     CtorRefVal<ButtonWindow::ConfigType> btn_cfg;
+     CtorRefVal<RefButtonWindow::ConfigType> btn_cfg;
      CtorRefVal<KnobWindow::ConfigType> knob_cfg;
 
      CtorRefVal<SimpleCascadeMenu::ConfigType> hit_menu_cfg;
 
-     CtorRefVal<CheckWindow::ConfigType> check_cfg;
-     CtorRefVal<LabelWindow::ConfigType> label_cfg;
+     CtorRefVal<RefLabelWindow::ConfigType> label_cfg;
      CtorRefVal<AltWindow::ConfigType> alt_cfg;
 
      CtorRefVal<XDoubleLineWindow::ConfigType> line_cfg;
@@ -465,7 +464,6 @@ class FileWindow : public ComboWindow
        knob_cfg.bind(proxy);
        hit_menu_cfg.bind(proxy);
 
-       check_cfg.bind(proxy);
        label_cfg.bind(proxy);
        alt_cfg.bind(proxy);
        line_cfg.bind(proxy);
@@ -693,7 +691,7 @@ class FileFrame : public DragFrame
 
    FileWindow sub_win;
 
-   static const char *const SampleDir;
+   static StrLen SampleDir();
 
   public:
 
