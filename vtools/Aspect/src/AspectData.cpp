@@ -52,10 +52,100 @@ bool IsRelPath(StrLen path)
   return false;
  }
 
+/* struct DiffPath */
+
+DiffPath::DiffPath(StrLen a,StrLen b)
+ {
+  SplitPath split_a(a);
+  SplitPath split_b(b);
+
+  if( !split_a )
+    {
+     if( !split_b )
+       {
+        // continue;
+       }
+     else
+       {
+        return;
+       }
+    }
+  else
+    {
+     if( !split_b )
+       {
+        return;
+       }
+     else
+       {
+        if( !split_a.dev.equal(split_b.dev) ) return;
+
+        // continue;
+       }
+    }
+
+  a=split_a.path;
+  b=split_b.path;
+
+  while( +a && +b )
+    {
+     SplitDir split_a(a);
+     SplitDir split_b(b);
+
+     if( !split_a )
+       {
+        if( !split_b )
+          {
+           if( a.equal(b) )
+             {
+              a=Null;
+              b=Null;
+             }
+          }
+        else
+          {
+           if( a.equal(split_b.dir.inner(0,1)) )
+             {
+              a=Null;
+              b=split_b.path;
+             }
+          }
+
+        break;
+       }
+     else
+       {
+        if( !split_b )
+          {
+           if( b.equal(split_a.dir.inner(0,1)) )
+             {
+              a=split_a.path;
+              b=Null;
+             }
+
+           break;
+          }
+        else
+          {
+           if( !split_a.dir.equal(split_b.dir) ) break;
+
+           a=split_a.path;
+           b=split_b.path;
+          }
+       }
+    }
+
+  this->a=a;
+  this->b=b;
+  ok=true;
+ }
+
 /* class RelPath */
 
 ulen RelPath::Down(StrLen path)
  {
+  if( +path && PathBase::IsSlash(path[0]) ) return MaxULen;
+
   ulen ret=0;
 
   while( +path )
@@ -128,92 +218,15 @@ void RelPath::relPath(ulen down,StrLen path)
   ok=+out;
  }
 
-void RelPath::relPath(StrLen base_path,StrLen path)
- {
-  while( +path && +base_path )
-    {
-     SplitDir split(path);
-     SplitDir base_split(base_path);
-
-     if( !split )
-       {
-        if( !base_split )
-          {
-           if( path.equal(base_path) )
-             {
-              path=Null;
-              base_path=Null;
-             }
-          }
-        else
-          {
-           if( path.equal(base_split.dir.inner(0,1)) )
-             {
-              path=Null;
-              base_path=base_split.path;
-             }
-          }
-
-        break;
-       }
-     else
-       {
-        if( !base_split )
-          {
-           if( split.dir.inner(0,1).equal(base_path) )
-             {
-              base_path=Null;
-              path=split.path;
-             }
-
-           break;
-          }
-        else
-          {
-           if( !split.dir.equal(base_split.dir) ) break;
-
-           base_path=base_split.path;
-           path=split.path;
-          }
-       }
-    }
-
-  ulen down=Down(base_path);
-
-  if( down!=MaxULen ) relPath(down,path);
- }
-
 RelPath::RelPath(StrLen base_path,StrLen path)
  {
-  SplitPath base_split(base_path);
-  SplitPath split(path);
+  DiffPath diff(base_path,path);
 
-  if( !split )
-    {
-     if( !base_split )
-       {
-        // continue;
-       }
-     else
-       {
-        return;
-       }
-    }
-  else
-    {
-     if( !base_split )
-       {
-        return;
-       }
-     else
-       {
-        if( !split.dev.equal(base_split.dev) ) return;
+  if( !diff ) return;
 
-        // continue;
-       }
-    }
+  ulen down=Down(diff.a);
 
-  relPath(base_split.path,split.path);
+  if( down!=MaxULen ) relPath(down,diff.b);
  }
 
 /* class NormalPath */

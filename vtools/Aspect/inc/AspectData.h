@@ -28,6 +28,8 @@ bool IsRelPath(StrLen path);
 
 /* classes */
 
+struct DiffPath;
+
 class RelPath;
 
 class NormalPath;
@@ -39,6 +41,19 @@ struct FileData;
 struct DirData;
 
 class AspectData;
+
+/* struct DiffPath */
+
+struct DiffPath
+ {
+  StrLen a;
+  StrLen b;
+  bool ok = false ;
+
+  DiffPath(StrLen a,StrLen b);
+
+  bool operator ! () const { return !ok; }
+ };
 
 /* class RelPath */
 
@@ -52,8 +67,6 @@ class RelPath : NoCopy
    static ulen Down(StrLen path);
 
    void relPath(ulen down,StrLen path);
-
-   void relPath(StrLen base_path,StrLen path);
 
   public:
 
