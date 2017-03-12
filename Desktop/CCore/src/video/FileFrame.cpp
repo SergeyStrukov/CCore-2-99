@@ -667,6 +667,8 @@ void FileWindow::eraseLists()
   list_file.setInfo(ComboInfo());
 
   btn_Ok.disable();
+
+  if( param.new_file ) edit_new_file.alert(false);
  }
 
 void FileWindow::fillLists()
@@ -781,7 +783,7 @@ void FileWindow::enableOk()
  {
   if( !list_dir.isEnabled() )
     {
-     edit_new_file.alert(true);
+     if( param.new_file ) edit_new_file.alert(false);
 
      btn_Ok.disable();
 
@@ -911,6 +913,8 @@ void FileWindow::dir_changed()
   list_dir.disable();
   list_file.disable();
   btn_Ok.disable();
+
+  if( param.new_file ) edit_new_file.alert(false);
  }
 
 void FileWindow::btn_Ok_pressed()
@@ -1002,17 +1006,20 @@ void FileWindow::check_new_file_changed(bool check)
 
 void FileWindow::edit_new_file_changed()
  {
-  if( list_dir.isEnabled() && isGoodFileName(edit_new_file.getText()) )
+  if( list_dir.isEnabled() )
     {
-     edit_new_file.alert(false);
+     if( isGoodFileName(edit_new_file.getText()) )
+       {
+        edit_new_file.alert(false);
 
-     btn_Ok.enable();
-    }
-  else
-    {
-     edit_new_file.alert(true);
+        btn_Ok.enable();
+       }
+     else
+       {
+        edit_new_file.alert(true);
 
-     btn_Ok.disable();
+        btn_Ok.disable();
+       }
     }
  }
 
@@ -1087,7 +1094,9 @@ FileWindow::FileWindow(SubWindowHost &host,const Config &cfg_,const FileWindowPa
 
      list_file.disable();
 
-     edit_new_file_changed();
+     edit_new_file.alert(true);
+
+     btn_Ok.disable();
     }
 
   edit_dir.hideInactiveCursor();
