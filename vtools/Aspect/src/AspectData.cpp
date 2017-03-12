@@ -36,16 +36,20 @@ namespace App {
 
 /* functions */
 
-StrLen PathOf(StrLen file_name)
+bool IsRelPath(StrLen path)
  {
-  SplitPath split1(file_name);
-  SplitPathName split2(split1.path);
+  if( !path ) return false;
 
-  ulen len=split2.path.len;
+  SplitDev split(path);
 
-  if( !!split2 && !len ) len=1;
+  if( !split )
+    {
+     if( PathBase::IsSlash(path[0]) ) return false;
 
-  return file_name.prefix(split1.dev.len+len);
+     return true;
+    }
+
+  return false;
  }
 
 /* class RelPath */
@@ -210,6 +214,15 @@ RelPath::RelPath(StrLen base_path,StrLen path)
     }
 
   relPath(base_split.path,split.path);
+ }
+
+/* class NormalPath */
+
+NormalPath::NormalPath(StrLen path_)
+ {
+  FileSystem fs;
+
+  path=fs.pathOf(path_,buf);
  }
 
 /* enum ItemStatus */
@@ -595,10 +608,10 @@ void AspectData::save(StrLen file_name,ErrorText &etext) const
      {
       StrLen abspath=Range(path);
 
-      RelPath rel(PathOf(file_name),abspath);
+      RelPath rel(PrefixPath(file_name),abspath);
 
       if( +rel )
-        Printf(out,"  #;,\n",DDLString(rel.getPath()));
+        Printf(out,"  #;,\n",DDLString(rel.get()));
       else
         Printf(out,"  #;,\n",DDLString(abspath));
      }
@@ -698,23 +711,16 @@ void AspectData::toAbs(StrLen file_name)
  {
   StrLen str=Range(path);
 
-  if( !str ) return;
-
-  SplitDev split(str);
-
-  if( !!split ) return;
-
-  if( PathBase::IsSlash(str[0]) ) return;
-
-  MakeFileName temp(PathOf(file_name),str);
-
-  if( +temp )
+  if( IsRelPath(str) )
     {
-     FileSystem fs;
+     MakeFileName temp(PrefixPath(file_name),str);
 
-     char buf[MaxPathLen+1];
+     if( +temp )
+       {
+        NormalPath normal(temp.get());
 
-     path=String(fs.pathOf(temp.get(),buf));
+        path=String(normal.get());
+       }
     }
  }
 

@@ -30,7 +30,7 @@ void AspectWindow::setAspect(StrLen file_name)
   RelPath rel(path,file_name);
 
   if( +rel )
-    text_aspect.setText(String(rel.getPath()));
+    text_aspect.setText(String(rel.get()));
   else
     text_aspect.setText(aspect_file_name);
 

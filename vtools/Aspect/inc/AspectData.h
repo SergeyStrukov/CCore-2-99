@@ -24,11 +24,13 @@ namespace App {
 
 /* functions */
 
-StrLen PathOf(StrLen file_name);
+bool IsRelPath(StrLen path);
 
 /* classes */
 
 class RelPath;
+
+class NormalPath;
 
 //enum ItemStatus;
 
@@ -61,7 +63,21 @@ class RelPath : NoCopy
 
    bool operator ! () const { return !ok; }
 
-   StrLen getPath() const { return out.get(); }
+   StrLen get() const { return out.get(); }
+ };
+
+/* class NormalPath */
+
+class NormalPath : NoCopy
+ {
+   char buf[MaxPathLen+1];
+   StrLen path;
+
+  public:
+
+   explicit NormalPath(StrLen path);
+
+   StrLen get() const { return path; }
  };
 
 /* enum ItemStatus */

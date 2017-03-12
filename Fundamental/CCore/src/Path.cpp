@@ -19,6 +19,20 @@
 
 namespace CCore {
 
+/* functions */
+
+StrLen PrefixPath(StrLen file_name)
+ {
+  SplitPath split1(file_name);
+  SplitPathName split2(split1.path);
+
+  ulen len=split2.path.len;
+
+  if( !len && !!split2 ) len=1;
+
+  return file_name.prefix(split1.dev.len+len);
+ }
+
 /* struct PathBase */
 
 void PathBase::TurnSlash(PtrLen<char> name)
