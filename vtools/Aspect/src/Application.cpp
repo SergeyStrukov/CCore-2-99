@@ -59,6 +59,21 @@ struct AppPreferenceBag : ConfigItemHost
   DefString menu_Global  = "@Global ..."_def ;
   DefString menu_App     = "@Application ..."_def ;
 
+  // hide
+
+  Coord status_dxy = 30 ;
+
+  DefString text_Hide    = "Hide"_def ;
+  DefString text_ShowAll = "Show all"_def ;
+
+  // status
+
+  VColor status_New    = SkyBlue ;
+  VColor status_Ignore = Gray ;
+  VColor status_Red    = Red ;
+  VColor status_Yellow = Yellow ;
+  VColor status_Green  = Green ;
+
   // constructors
 
   AppPreferenceBag() noexcept {}
@@ -94,6 +109,16 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
   func("menu_Exit"_c,ptr->menu_Exit);
   func("menu_Global"_c,ptr->menu_Global);
   func("menu_App"_c,ptr->menu_App);
+
+  func("status_dxy"_c,ptr->status_dxy);
+  func("text_Hide"_c,ptr->text_Hide);
+  func("text_ShowAll"_c,ptr->text_ShowAll);
+
+  func("status_New"_c,ptr->status_New);
+  func("status_Ignore"_c,ptr->status_Ignore);
+  func("status_Red"_c,ptr->status_Red);
+  func("status_Yellow"_c,ptr->status_Yellow);
+  func("status_Green"_c,ptr->status_Green);
  }
 
 void AppPreferenceBag::bind(ConfigItemBind &binder)
@@ -120,6 +145,21 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
     binder.item("Exit"_def,menu_Exit);
     binder.item("Global"_def,menu_Global);
     binder.item("App"_def,menu_App);
+
+  binder.group("Hide"_def);
+
+    binder.item("status dxy"_def,status_dxy);
+    binder.space();
+    binder.item("'Hide'"_def,text_Hide);
+    binder.item("'ShowAll'"_def,text_ShowAll);
+
+  binder.group("Status"_def);
+
+    binder.item("New"_def,status_New);
+    binder.item("Ignore"_def,status_Ignore);
+    binder.item("Red"_def,status_Red);
+    binder.item("Yellow"_def,status_Yellow);
+    binder.item("Green"_def,status_Green);
  }
 
 void AppPreferenceBag::createFonts()

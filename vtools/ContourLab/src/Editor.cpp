@@ -610,7 +610,7 @@ Point EditorWindow::getMinSize() const
 void EditorWindow::blank()
  {
   text_file.setText(""_def);
-  clearModified();
+  setModified();
   has_file=false;
 
   geom.contour.erase();

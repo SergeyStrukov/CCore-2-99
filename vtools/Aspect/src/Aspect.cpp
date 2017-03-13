@@ -14,10 +14,134 @@
 #include <inc/Aspect.h>
 
 #include <CCore/inc/video/Layout.h>
+#include <CCore/inc/video/FigureLib.h>
 
 #include <CCore/inc/Exception.h>
 
 namespace App {
+
+/* class HideControl */
+
+void HideControl::check_changed(bool)
+ {
+  changed.assert();
+ }
+
+void HideControl::btn_pressed()
+ {
+  check_New.check(false);
+  check_Ignore.check(false);
+  check_Red.check(false);
+  check_Yellow.check(false);
+  check_Green.check(false);
+
+  changed.assert();
+ }
+
+Pane HideControl::Inner(Pane pane,Coord dxy)
+ {
+  Point size=Point::Diag(dxy);
+  Point base=pane.getBase()+(pane.getSize()-size)/2;
+
+  return Pane(base,size);
+ }
+
+HideControl::HideControl(SubWindowHost &host,const Config &cfg_)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   label_Hide(wlist,cfg.label_cfg,cfg.text_Hide),
+
+   check_New(wlist,cfg.check_cfg),
+   check_Ignore(wlist,cfg.check_cfg),
+   check_Red(wlist,cfg.check_cfg),
+   check_Yellow(wlist,cfg.check_cfg),
+   check_Green(wlist,cfg.check_cfg),
+
+   btn_ShowAll(wlist,cfg.btn_cfg,cfg.text_ShowAll),
+
+   connector_check_New_changed(this,&HideControl::check_changed,check_New.changed),
+   connector_check_Ignore_changed(this,&HideControl::check_changed,check_Ignore.changed),
+   connector_check_Red_changed(this,&HideControl::check_changed,check_Red.changed),
+   connector_check_Yellow_changed(this,&HideControl::check_changed,check_Yellow.changed),
+   connector_check_Green_changed(this,&HideControl::check_changed,check_Green.changed),
+
+   connector_btn_pressed(this,&HideControl::btn_pressed,btn_ShowAll.pressed)
+ {
+  wlist.insTop(label_Hide,check_New,check_Ignore,check_Red,check_Yellow,check_Green,btn_ShowAll);
+ }
+
+HideControl::~HideControl()
+ {
+ }
+
+ // methods
+
+Point HideControl::getMinSize() const
+ {
+  Coordinate space_dxy=+cfg.space_dxy;
+  Coordinate status_dxy=+cfg.status_dxy;
+
+  Point s1=label_Hide.getMinSize();
+  Point s2=btn_ShowAll.getMinSize();
+
+  return Point( 6*space_dxy+5*status_dxy+s1.x+s2.x , Sup(s1.y,s2.y,+status_dxy) );
+ }
+
+bool HideControl::operator [] (ItemStatus status) const
+ {
+  switch( status )
+    {
+     case Item_New    : return check_New.isChecked();
+     case Item_Ignore : return check_Ignore.isChecked();
+     case Item_Red    : return check_Red.isChecked();
+     case Item_Yellow : return check_Yellow.isChecked();
+     case Item_Green  : return check_Green.isChecked();
+
+     default: return false;
+    }
+ }
+
+ // drawing
+
+void HideControl::layout()
+ {
+  Coord status_dxy=+cfg.status_dxy;
+  Point s=Point::Diag(status_dxy);
+
+  PaneCut pane(getSize(),+cfg.space_dxy);
+
+  pane.place_cutLeft(label_Hide);
+
+  place_New=pane.cutLeftCenter(s);
+  place_Ignore=pane.cutLeftCenter(s);
+  place_Red=pane.cutLeftCenter(s);
+  place_Yellow=pane.cutLeftCenter(s);
+  place_Green=pane.cutLeftCenter(s);
+
+  pane.place_cutLeftCenter(btn_ShowAll);
+
+  Coord dxy=check_New.getMinSize().dxy;
+
+  check_New.setPlace(Inner(place_New,dxy));
+  check_Ignore.setPlace(Inner(place_Ignore,dxy));
+  check_Red.setPlace(Inner(place_Red,dxy));
+  check_Yellow.setPlace(Inner(place_Yellow,dxy));
+  check_Green.setPlace(Inner(place_Green,dxy));
+ }
+
+void HideControl::drawBack(DrawBuf buf,bool) const
+ {
+  SmoothDrawArt art(buf);
+
+  Coord radius=Fraction(place_New.dx/2);
+
+  art.ball(Center(place_New),radius,+cfg.status_New);
+  art.ball(Center(place_Ignore),radius,+cfg.status_Ignore);
+  art.ball(Center(place_Red),radius,+cfg.status_Red);
+  art.ball(Center(place_Yellow),radius,+cfg.status_Yellow);
+  art.ball(Center(place_Green),radius,+cfg.status_Green);
+ }
 
 /* class AspectWindow */
 
@@ -70,11 +194,15 @@ AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
    text_path(wlist,cfg.text_cfg),
    text_aspect(wlist,cfg.text_cfg),
 
+   line1(wlist,cfg.line_cfg),
+
+   hide(wlist,cfg.hide_cfg),
+
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_msg_destroyed(this,&AspectWindow::msg_destroyed,msg_frame.destroyed)
  {
-  wlist.insTop(label_path,label_aspect,text_path,text_aspect);
+  wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide);
  }
 
 AspectWindow::~AspectWindow()
@@ -96,9 +224,9 @@ void AspectWindow::blank(StrLen path)
 
   clearAspect();
 
-  clearModified();
+  setModified();
 
-  redraw();
+  update();
  }
 
 void AspectWindow::load(StrLen file_name)
@@ -124,7 +252,7 @@ void AspectWindow::load(StrLen file_name)
 
   clearModified();
 
-  redraw();
+  update();
  }
 
 bool AspectWindow::save()
@@ -163,6 +291,11 @@ void AspectWindow::save(StrLen file_name)
   save();
  }
 
+void AspectWindow::update()
+ {
+  redraw();
+ }
+
  // drawing
 
 void AspectWindow::layout() // TODO
@@ -185,6 +318,14 @@ void AspectWindow::layout() // TODO
 
    pane.cutTop(dy).place_cutLeft(label__aspect).place(text__aspect);
   }
+
+  // line1
+
+  pane.place_cutTop(line1);
+
+  // hide
+
+  pane.place_cutTop(hide);
  }
 
 void AspectWindow::drawBack(DrawBuf buf,bool) const
