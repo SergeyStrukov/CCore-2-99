@@ -131,6 +131,12 @@ class TextLineWindowOf : public SubWindow
      redraw();
     }
 
+   template <class ... TT>
+   void printf(const char *format,const TT & ... tt)
+    {
+     setText( Stringf(format,tt...) );
+    }
+
    // drawing
 
    virtual bool isGoodSize(Point size) const

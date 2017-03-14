@@ -221,6 +221,10 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    virtual ~ClientWindow();
 
+   // methods
+
+   void update() { aspect.update(); }
+
    // base
 
    virtual void open();

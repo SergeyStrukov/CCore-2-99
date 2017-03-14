@@ -66,6 +66,10 @@ struct AppPreferenceBag : ConfigItemHost
   DefString text_Hide    = "Hide"_def ;
   DefString text_ShowAll = "Show all"_def ;
 
+  // count
+
+  Coord count_status_dxy = 15 ;
+
   // status
 
   VColor status_New    = SkyBlue ;
@@ -114,6 +118,8 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
   func("text_Hide"_c,ptr->text_Hide);
   func("text_ShowAll"_c,ptr->text_ShowAll);
 
+  func("count_status_dxy"_c,ptr->count_status_dxy);
+
   func("status_New"_c,ptr->status_New);
   func("status_Ignore"_c,ptr->status_Ignore);
   func("status_Red"_c,ptr->status_Red);
@@ -152,6 +158,10 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
     binder.space();
     binder.item("'Hide'"_def,text_Hide);
     binder.item("'ShowAll'"_def,text_ShowAll);
+
+  binder.group("Count"_def);
+
+    binder.item("count_status_dxy"_def,count_status_dxy);
 
   binder.group("Status"_def);
 
@@ -297,6 +307,13 @@ class Application : public ApplicationBase
    SignalConnector<Application> connector_user_save;
    SignalConnector<Application> connector_user_self;
 
+   void updated()
+    {
+     client.update();
+    }
+
+   SignalConnector<Application> connector_updated;
+
   private:
 
    virtual void clearException() noexcept
@@ -352,7 +369,8 @@ class Application : public ApplicationBase
       connector_app_save(this,&Application::appSave,app_frame.doSave),
       connector_user_updated(this,&Application::userUpdate,user_frame.updated),
       connector_user_save(this,&Application::userSave,user_frame.doSave),
-      connector_user_self(this,&Application::userSelf,user_frame.doSelf)
+      connector_user_self(this,&Application::userSelf,user_frame.doSelf),
+      connector_updated(this,&Application::updated,param.pref.updated)
     {
      main_frame.bindAlertClient(exception_client);
      main_frame.bindClient(client);

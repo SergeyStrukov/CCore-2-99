@@ -18,9 +18,15 @@
 
 namespace App {
 
+/* functions */
+
+MPoint MCenter(Pane pane);
+
 /* classes */
 
 class HideControl;
+
+class CountControl;
 
 class AspectWindow;
 
@@ -112,8 +118,6 @@ class HideControl : public ComboWindow
 
    static Pane Inner(Pane pane,Coord dxy);
 
-   static MPoint Center(Pane pane) { return MPoint(pane.getBase())+MPoint(pane.getSize())/2-MPoint::Diag(MPoint::Half); }
-
   private:
 
    void check_changed(bool);
@@ -151,6 +155,74 @@ class HideControl : public ComboWindow
    Signal<> changed;
  };
 
+/* class CountControl */
+
+class CountControl : public ComboWindow
+ {
+  public:
+
+   struct Config
+    {
+     CtorRefVal<TextLineWindow::ConfigType> text_cfg;
+
+     // app
+
+     RefVal<Coord> status_dxy = 15 ;
+
+     Config() noexcept {}
+
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      {
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       Used(bag);
+
+       text_cfg.bind(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       status_dxy.bind(bag.count_status_dxy);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   TextLineWindow text;
+
+   Pane place_status;
+   VColor color;
+
+  public:
+
+   CountControl(SubWindowHost &host,const Config &cfg,VColor color);
+
+   virtual ~CountControl();
+
+   // methods
+
+   Point getMinSize() const;
+
+   void setCount(ulen count);
+
+   // drawing
+
+   virtual void layout();
+
+   virtual void drawBack(DrawBuf buf,bool drag_active) const;
+ };
+
 /* class AspectWindow */
 
 class AspectWindow : public ComboWindow
@@ -178,12 +250,14 @@ class AspectWindow : public ComboWindow
      RefVal<DefString> text_Nothing = "Nothing to save!"_def ;
 
      HideControl::ConfigType hide_cfg;
+     CountControl::ConfigType count_cfg;
 
      Config() noexcept {}
 
      template <class AppPref>
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
-      : hide_cfg(pref,app_pref)
+      : hide_cfg(pref,app_pref),
+        count_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
        bindApp(app_pref.get());
@@ -234,6 +308,12 @@ class AspectWindow : public ComboWindow
 
    HideControl hide;
 
+   CountControl count_red;
+   CountControl count_yellow;
+   CountControl count_green;
+
+   XDoubleLineWindow line2;
+
    // frames
 
    MessageFrame msg_frame;
@@ -277,6 +357,8 @@ class AspectWindow : public ComboWindow
    bool save();
 
    void save(StrLen file_name);
+
+   void updateCount();
 
    void update();
 

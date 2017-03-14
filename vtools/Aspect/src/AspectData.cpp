@@ -283,6 +283,17 @@ void DirData::erase()
   dirs.erase();
  }
 
+ulen DirData::getCount(ItemStatus status) const
+ {
+  ulen ret=0;
+
+  for(const FileData &f : files ) if( f.status==status ) ret++;
+
+  for(const DirData &d : dirs ) ret+=d.getCount(status);
+
+  return ret;
+ }
+
 /* class AspectData */
 
 class AspectData::DirProc : NoCopy

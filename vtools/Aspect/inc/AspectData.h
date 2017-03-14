@@ -138,6 +138,8 @@ struct DirData : NoCopy
 
   void erase();
 
+  ulen getCount(ItemStatus status) const;
+
   // swap objects
 
   void objSwap(DirData &obj)
@@ -197,6 +199,8 @@ class AspectData : NoCopy
    const String & getPath() const { return path; }
 
    void erase();
+
+   ulen getCount(ItemStatus status) const { return root.getCount(status); }
 
    // save/load
 

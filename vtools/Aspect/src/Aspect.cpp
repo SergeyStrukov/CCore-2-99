@@ -20,6 +20,15 @@
 
 namespace App {
 
+/* functions */
+
+MPoint MCenter(Pane pane)
+ {
+  MPane p(pane);
+
+  return p.getCenter();
+ }
+
 /* class HideControl */
 
 void HideControl::check_changed(bool)
@@ -136,11 +145,71 @@ void HideControl::drawBack(DrawBuf buf,bool) const
 
   Coord radius=Fraction(place_New.dx/2);
 
-  art.ball(Center(place_New),radius,+cfg.status_New);
-  art.ball(Center(place_Ignore),radius,+cfg.status_Ignore);
-  art.ball(Center(place_Red),radius,+cfg.status_Red);
-  art.ball(Center(place_Yellow),radius,+cfg.status_Yellow);
-  art.ball(Center(place_Green),radius,+cfg.status_Green);
+  art.ball(MCenter(place_New),radius,+cfg.status_New);
+  art.ball(MCenter(place_Ignore),radius,+cfg.status_Ignore);
+  art.ball(MCenter(place_Red),radius,+cfg.status_Red);
+  art.ball(MCenter(place_Yellow),radius,+cfg.status_Yellow);
+  art.ball(MCenter(place_Green),radius,+cfg.status_Green);
+ }
+
+/* class CountControl */
+
+CountControl::CountControl(SubWindowHost &host,const Config &cfg_,VColor color_)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   text(wlist,cfg.text_cfg),
+
+   color(color_)
+ {
+  wlist.insTop(text);
+
+  setCount(0);
+ }
+
+CountControl::~CountControl()
+ {
+ }
+
+ // methods
+
+Point CountControl::getMinSize() const
+ {
+  Coordinate dxy=+cfg.status_dxy;
+
+  Point s=text.getMinSize("10000000000"_c);
+
+  return Point( 2*dxy+s.x , Sup(2*dxy,s.y) );
+ }
+
+void CountControl::setCount(ulen count)
+ {
+  text.printf("#;",count);
+ }
+
+ // drawing
+
+void CountControl::layout()
+ {
+  Coord dxy=+cfg.status_dxy;
+
+  PaneCut pane(getSize(),0);
+
+  Pane left=pane.cutLeftCenter(2*dxy,2*dxy);
+  Point s=left.getSize();
+
+  place_status=Pane(left.getBase()+s/4,s/2);
+
+  pane.place(AlignCenterY(text));
+ }
+
+void CountControl::drawBack(DrawBuf buf,bool) const
+ {
+  SmoothDrawArt art(buf);
+
+  Coord radius=Fraction(place_status.dx/2);
+
+  art.ball(MCenter(place_status),radius,color);
  }
 
 /* class AspectWindow */
@@ -198,11 +267,17 @@ AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
 
    hide(wlist,cfg.hide_cfg),
 
+   count_red(wlist,cfg.count_cfg,+cfg.hide_cfg.status_Red),
+   count_yellow(wlist,cfg.count_cfg,+cfg.hide_cfg.status_Yellow),
+   count_green(wlist,cfg.count_cfg,+cfg.hide_cfg.status_Green),
+
+   line2(wlist,cfg.line_cfg),
+
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_msg_destroyed(this,&AspectWindow::msg_destroyed,msg_frame.destroyed)
  {
-  wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide);
+  wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide,count_red,count_yellow,count_green,line2);
  }
 
 AspectWindow::~AspectWindow()
@@ -291,8 +366,17 @@ void AspectWindow::save(StrLen file_name)
   save();
  }
 
-void AspectWindow::update()
+void AspectWindow::updateCount()
  {
+  count_red.setCount(data.getCount(Item_Red));
+  count_yellow.setCount(data.getCount(Item_Yellow));
+  count_green.setCount(data.getCount(Item_Green));
+ }
+
+void AspectWindow::update() // TODO
+ {
+  updateCount();
+
   redraw();
  }
 
@@ -326,6 +410,22 @@ void AspectWindow::layout() // TODO
   // hide
 
   pane.place_cutTop(hide);
+
+  // count_red , count_yellow , count_green
+
+  {
+   auto count__red=CutPoint(count_red);
+
+   Coord dy=count__red.getMinSize().y;
+
+   PaneCut p=pane.cutTop(dy);
+
+   p.place_cutLeft(count__red).place_cutLeft(count_yellow).place_cutLeft(count_green);
+  }
+
+  // line2
+
+  pane.place_cutTop(line2);
  }
 
 void AspectWindow::drawBack(DrawBuf buf,bool) const
