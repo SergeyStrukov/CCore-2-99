@@ -28,6 +28,10 @@ class HideControl;
 
 class CountControl;
 
+class InnerDataWindow;
+
+class DataWindow;
+
 class AspectWindow;
 
 /* class HideControl */
@@ -221,6 +225,205 @@ class CountControl : public ComboWindow
    virtual void layout();
 
    virtual void drawBack(DrawBuf buf,bool drag_active) const;
+ };
+
+/* class InnerDataWindow */
+
+class InnerDataWindow : public SubWindow
+ {
+  public:
+
+   struct Config
+    {
+     // app
+
+     Config() noexcept {}
+
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      {
+       bind(pref.get(),pref.getSmartConfig());
+       bindApp(app_pref.get());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &bag,Proxy proxy)
+      {
+       Used(bag);
+       Used(proxy);
+      }
+
+     template <class Bag>
+     void bindApp(const Bag &bag)
+      {
+       Used(bag);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   AspectData &data;
+
+   bool focus = false ;
+
+   ulen off_x = 0 ;
+   ulen off_y = 0 ;
+
+   ulen total_x = 0 ;
+   ulen total_y = 0 ;
+
+   ulen page_x = 1 ;
+   ulen page_y = 1 ;
+
+  private:
+
+   void setMax();
+
+  private:
+
+   void posX(ulen pos);
+
+   void posY(ulen pos);
+
+   SignalConnector<InnerDataWindow,ulen> connector_posX;
+   SignalConnector<InnerDataWindow,ulen> connector_posY;
+
+  public:
+
+   InnerDataWindow(SubWindowHost &host,const Config &cfg,AspectData &data);
+
+   virtual ~InnerDataWindow();
+
+   // special methods
+
+   bool shortDX() const;
+
+   bool shortDY() const;
+
+   template <class W>
+   void setScrollXRange(W &window)
+    {
+     window.setRange(total_x,page_x,off_x);
+    }
+
+   template <class W>
+   void setScrollYRange(W &window)
+    {
+     window.setRange(total_x,page_x,off_y);
+    }
+
+   void connect(Signal<ulen> &scroll_x,Signal<ulen> &scroll_y)
+    {
+     connector_posX.connect(scroll_x);
+     connector_posY.connect(scroll_y);
+    }
+
+   // methods
+
+   Point getMinSize(Point cap=Point::Max()) const;
+
+   // drawing
+
+   virtual bool isGoodSize(Point size) const;
+
+   virtual void layout();
+
+   virtual void draw(DrawBuf buf,bool) const;
+
+   // base
+
+   virtual void open();
+
+   // keyboard
+
+   virtual FocusType askFocus() const;
+
+   virtual void gainFocus();
+
+   virtual void looseFocus();
+
+   // mouse
+
+   virtual void looseCapture();
+
+   virtual MouseShape getMouseShape(Point,KeyMod) const;
+
+   // user input
+
+   virtual void react(UserAction action);
+
+   // signals
+
+   Signal<ulen> scroll_x;
+   Signal<ulen> scroll_y;
+ };
+
+/* class DataWindow */
+
+class DataWindow : public ComboWindow
+ {
+  public:
+
+   struct Config : InnerDataWindow::Config
+    {
+     CtorRefVal<XScrollWindow::ConfigType> x_cfg;
+     CtorRefVal<YScrollWindow::ConfigType> y_cfg;
+
+     // app
+
+     Config() noexcept {}
+
+     template <class AppPref>
+     Config(const UserPreference &pref,const AppPref &app_pref) noexcept
+      : InnerDataWindow::Config(pref,app_pref)
+      {
+       bind(pref.get(),pref.getSmartConfig());
+      }
+
+     template <class Bag,class Proxy>
+     void bind(const Bag &,Proxy proxy)
+      {
+       x_cfg.bind(proxy);
+       y_cfg.bind(proxy);
+      }
+    };
+
+   using ConfigType = Config ;
+
+  private:
+
+   const Config &cfg;
+
+   InnerDataWindow inner;
+   XScrollWindow scroll_x;
+   YScrollWindow scroll_y;
+
+  private:
+
+   void setScroll();
+
+  private:
+
+   SignalConnector<XScrollWindow,ulen> connector_posx;
+   SignalConnector<YScrollWindow,ulen> connector_posy;
+
+  public:
+
+   DataWindow(SubWindowHost &host,const Config &cfg,AspectData &data);
+
+   virtual ~DataWindow();
+
+   // methods
+
+   Point getMinSize(Point cap=Point::Max()) const;
+
+   // drawing
+
+   virtual void layout();
  };
 
 /* class AspectWindow */

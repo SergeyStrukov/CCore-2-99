@@ -212,6 +212,240 @@ void CountControl::drawBack(DrawBuf buf,bool) const
   art.ball(MCenter(place_status),radius,color);
  }
 
+/* class InnerDataWindow */
+
+void InnerDataWindow::setMax() // TODO
+ {
+ }
+
+void InnerDataWindow::posX(ulen pos)
+ {
+  off_x=pos;
+
+  redraw();
+ }
+
+void InnerDataWindow::posY(ulen pos)
+ {
+  off_y=pos;
+
+  redraw();
+ }
+
+InnerDataWindow::InnerDataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data_)
+ : SubWindow(host),
+   cfg(cfg_),
+   data(data_),
+
+   connector_posX(this,&InnerDataWindow::posX),
+   connector_posY(this,&InnerDataWindow::posY)
+ {
+ }
+
+InnerDataWindow::~InnerDataWindow()
+ {
+ }
+
+ // special methods
+
+bool InnerDataWindow::shortDX() const
+ {
+  return page_x<total_x;
+ }
+
+bool InnerDataWindow::shortDY() const
+ {
+  return page_y<total_y;
+ }
+
+ // methods
+
+Point InnerDataWindow::getMinSize(Point cap) const // TODO
+ {
+  Used(cap);
+
+  return Point(100,100);
+ }
+
+ // drawing
+
+bool InnerDataWindow::isGoodSize(Point size) const // TODO
+ {
+  Used(size);
+
+  return true;
+ }
+
+void InnerDataWindow::layout() // TODO
+ {
+  // TODO
+
+  setMax();
+ }
+
+void InnerDataWindow::draw(DrawBuf buf,bool) const // TODO
+ {
+  Used(buf);
+ }
+
+ // base
+
+void InnerDataWindow::open()
+ {
+  focus=false;
+ }
+
+ // keyboard
+
+FocusType InnerDataWindow::askFocus() const
+ {
+  return FocusOk;
+ }
+
+void InnerDataWindow::gainFocus()
+ {
+  if( Change(focus,true) ) redraw();
+ }
+
+void InnerDataWindow::looseFocus()
+ {
+  if( Change(focus,false) ) redraw();
+ }
+
+ // mouse
+
+void InnerDataWindow::looseCapture()
+ {
+  // do nothing
+ }
+
+MouseShape InnerDataWindow::getMouseShape(Point,KeyMod) const
+ {
+  return Mouse_Arrow;
+ }
+
+ // user input
+
+void InnerDataWindow::react(UserAction action)
+ {
+  action.dispatch(*this);
+ }
+
+/* class DataWindow */
+
+void DataWindow::setScroll()
+ {
+  if( scroll_x.isListed() ) inner.setScrollXRange(scroll_x);
+
+  if( scroll_y.isListed() ) inner.setScrollYRange(scroll_y);
+ }
+
+DataWindow::DataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data)
+ : ComboWindow(host),
+   cfg(cfg_),
+
+   inner(wlist,cfg_,data),
+   scroll_x(wlist,cfg_.x_cfg),
+   scroll_y(wlist,cfg_.y_cfg),
+
+   connector_posx(&scroll_x,&XScrollWindow::setPos,inner.scroll_x),
+   connector_posy(&scroll_y,&YScrollWindow::setPos,inner.scroll_y)
+ {
+  wlist.insTop(inner);
+
+  inner.connect(scroll_x.changed,scroll_y.changed);
+ }
+
+DataWindow::~DataWindow()
+ {
+ }
+
+ // methods
+
+Point DataWindow::getMinSize(Point cap) const
+ {
+  Point delta(scroll_y.getMinSize().dx,0);
+
+  return inner.getMinSize(cap-delta)+delta;
+ }
+
+ // drawing
+
+void DataWindow::layout()
+ {
+  Pane all(Null,getSize());
+  Pane pane(all);
+
+  Coord delta_x=scroll_y.getMinSize().dx;
+  Coord delta_y=scroll_x.getMinSize().dy;
+
+  inner.setPlace(pane);
+
+  if( inner.shortDY() )
+    {
+     Pane py=SplitX(pane,delta_x);
+
+     inner.setPlace(pane);
+     scroll_y.setPlace(py);
+
+     wlist.insBottom(scroll_y);
+
+     if( inner.shortDX() )
+       {
+        Pane px=SplitY(pane,delta_y);
+
+        inner.setPlace(pane);
+        scroll_x.setPlace(px);
+
+        wlist.insBottom(scroll_x);
+       }
+     else
+       {
+        wlist.del(scroll_x);
+       }
+    }
+  else
+    {
+     if( inner.shortDX() )
+       {
+        Pane px=SplitY(pane,delta_y);
+
+        inner.setPlace(pane);
+
+        if( inner.shortDY() )
+          {
+           pane=all;
+           Pane py=SplitX(pane,delta_x);
+           Pane px=SplitY(pane,delta_y);
+
+           inner.setPlace(pane);
+           scroll_x.setPlace(px);
+           scroll_y.setPlace(py);
+
+           wlist.insBottom(scroll_x);
+
+           wlist.insBottom(scroll_y);
+          }
+        else
+          {
+           scroll_x.setPlace(px);
+
+           wlist.insBottom(scroll_x);
+
+           wlist.del(scroll_y);
+          }
+       }
+     else
+       {
+        wlist.del(scroll_x);
+
+        wlist.del(scroll_y);
+       }
+    }
+
+  setScroll();
+ }
+
 /* class AspectWindow */
 
 void AspectWindow::setAspect(StrLen file_name)
