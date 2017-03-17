@@ -267,19 +267,35 @@ Point InnerDataWindow::getMinSize(Point cap) const // TODO
   return Point(100,100);
  }
 
- // drawing
-
-bool InnerDataWindow::isGoodSize(Point size) const // TODO
+void InnerDataWindow::update(bool new_data) // TODO
  {
-  Used(size);
+  auto items=data.getItems();
 
-  return true;
+  total_x=0;
+
+  total_y=items.len;
+
+  setMax();
+
+  if( new_data )
+    {
+     off_x=0;
+     off_y=0;
+
+     scroll_x.assert(0);
+     scroll_y.assert(0);
+    }
  }
 
-void InnerDataWindow::layout() // TODO
- {
-  // TODO
+ // drawing
 
+bool InnerDataWindow::isGoodSize(Point size) const
+ {
+  return size>=getMinSize();
+ }
+
+void InnerDataWindow::layout()
+ {
   setMax();
  }
 
@@ -367,6 +383,11 @@ Point DataWindow::getMinSize(Point cap) const
   Point delta(scroll_y.getMinSize().dx,0);
 
   return inner.getMinSize(cap-delta)+delta;
+ }
+
+void DataWindow::update(bool new_data)
+ {
+  inner.update(new_data);
  }
 
  // drawing
@@ -507,11 +528,13 @@ AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
 
    line2(wlist,cfg.line_cfg),
 
+   data_window(wlist,cfg.data_cfg,data),
+
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_msg_destroyed(this,&AspectWindow::msg_destroyed,msg_frame.destroyed)
  {
-  wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide,count_red,count_yellow,count_green,line2);
+  wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide,count_red,count_yellow,count_green,line2,data_window);
  }
 
 AspectWindow::~AspectWindow()
@@ -535,7 +558,7 @@ void AspectWindow::blank(StrLen path)
 
   setModified();
 
-  update();
+  update(true);
  }
 
 void AspectWindow::load(StrLen file_name)
@@ -561,7 +584,7 @@ void AspectWindow::load(StrLen file_name)
 
   clearModified();
 
-  update();
+  update(true);
  }
 
 bool AspectWindow::save()
@@ -607,16 +630,20 @@ void AspectWindow::updateCount()
   count_green.setCount(data.getCount(Item_Green));
  }
 
-void AspectWindow::update() // TODO
+void AspectWindow::update(bool new_data)
  {
-  updateCount();
+  if( new_data ) updateCount();
+
+  data_window.update(new_data);
+
+  layout();
 
   redraw();
  }
 
  // drawing
 
-void AspectWindow::layout() // TODO
+void AspectWindow::layout()
  {
   PaneCut pane(getSize(),+cfg.space_dxy);
 
@@ -660,6 +687,10 @@ void AspectWindow::layout() // TODO
   // line2
 
   pane.place_cutTop(line2);
+
+  // data_window
+
+  pane.place(data_window);
  }
 
 void AspectWindow::drawBack(DrawBuf buf,bool) const

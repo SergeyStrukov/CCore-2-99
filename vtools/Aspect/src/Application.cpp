@@ -309,7 +309,7 @@ class Application : public ApplicationBase
 
    void updated()
     {
-     client.update();
+     client.update(false);
     }
 
    SignalConnector<Application> connector_updated;

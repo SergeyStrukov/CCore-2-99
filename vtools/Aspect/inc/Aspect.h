@@ -326,6 +326,8 @@ class InnerDataWindow : public SubWindow
 
    Point getMinSize(Point cap=Point::Max()) const;
 
+   void update(bool new_data);
+
    // drawing
 
    virtual bool isGoodSize(Point size) const;
@@ -421,6 +423,8 @@ class DataWindow : public ComboWindow
 
    Point getMinSize(Point cap=Point::Max()) const;
 
+   void update(bool new_data);
+
    // drawing
 
    virtual void layout();
@@ -454,13 +458,15 @@ class AspectWindow : public ComboWindow
 
      HideControl::ConfigType hide_cfg;
      CountControl::ConfigType count_cfg;
+     DataWindow::ConfigType data_cfg;
 
      Config() noexcept {}
 
      template <class AppPref>
      Config(const UserPreference &pref,const AppPref &app_pref) noexcept
       : hide_cfg(pref,app_pref),
-        count_cfg(pref,app_pref)
+        count_cfg(pref,app_pref),
+        data_cfg(pref,app_pref)
       {
        bind(pref.get(),pref.getSmartConfig());
        bindApp(app_pref.get());
@@ -517,6 +523,8 @@ class AspectWindow : public ComboWindow
 
    XDoubleLineWindow line2;
 
+   DataWindow data_window;
+
    // frames
 
    MessageFrame msg_frame;
@@ -563,7 +571,7 @@ class AspectWindow : public ComboWindow
 
    void updateCount();
 
-   void update();
+   void update(bool new_data);
 
    // drawing
 

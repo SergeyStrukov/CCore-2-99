@@ -223,7 +223,7 @@ class ClientWindow : public ComboWindow , public AliveControl
 
    // methods
 
-   void update() { aspect.update(); }
+   void update(bool new_data) { aspect.update(new_data); }
 
    // base
 

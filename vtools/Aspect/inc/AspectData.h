@@ -36,9 +36,13 @@ class NormalPath;
 
 //enum ItemStatus;
 
+struct CommonData;
+
 struct FileData;
 
 struct DirData;
+
+struct ItemData;
 
 class AspectData;
 
@@ -106,13 +110,18 @@ enum ItemStatus
 
 const char * GetTextDesc(ItemStatus status);
 
-/* struct FileData */
+/* struct CommonData */
 
-struct FileData
+struct CommonData
  {
   String name;
-  ItemStatus status = Item_New ;
+  mutable ItemStatus status = Item_New ;
+ };
 
+/* struct FileData */
+
+struct FileData : CommonData
+ {
   FileData() noexcept;
 
   ~FileData();
@@ -120,11 +129,8 @@ struct FileData
 
 /* struct DirData */
 
-struct DirData : NoCopy
+struct DirData : NoCopyBase<CommonData>
  {
-  String name;
-  ItemStatus status = Item_New ;
-
   SimpleArray<DirData> dirs;
   SimpleArray<FileData> files;
 
@@ -151,12 +157,42 @@ struct DirData : NoCopy
    }
  };
 
+/* struct ItemData */
+
+struct ItemData
+ {
+  const CommonData *ptr;
+  ulen depth;
+  bool is_dir;
+  ulen next_index = 0 ;
+
+  mutable bool is_open;
+
+  ItemData(const DirData *dir,ulen depth_)
+   : ptr(dir),
+     depth(depth_),
+     is_dir(true),
+     is_open(true)
+   {
+   }
+
+  ItemData(const FileData *file,ulen depth_)
+   : ptr(file),
+     depth(depth_),
+     is_dir(false),
+     is_open(false)
+   {
+   }
+ };
+
 /* class AspectData */
 
 class AspectData : NoCopy
  {
    String path; // abs
    DirData root;
+
+   DynArray<ItemData> items;
 
   private:
 
@@ -172,6 +208,10 @@ class AspectData : NoCopy
    static void CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src);
 
    static void Copy(DirData &root,const DirData &dir);
+
+   static void Fill(DynArray<ItemData> &items,const DirData &dir,ulen depth=0);
+
+   void buildItems();
 
    void sync();
 
@@ -201,6 +241,8 @@ class AspectData : NoCopy
    void erase();
 
    ulen getCount(ItemStatus status) const { return root.getCount(status); }
+
+   auto getItems() const { return Range(items); }
 
    // save/load
 

@@ -524,6 +524,24 @@ void AspectData::Copy(DirData &root,const DirData &dir)
   CopyFiles(root.files,dir.files);
  }
 
+void AspectData::Fill(DynArray<ItemData> &items,const DirData &dir,ulen depth)
+ {
+  ItemData *item=items.append_fill(&dir,depth);
+
+  for(const DirData &d : dir.dirs ) Fill(items,d,depth+1);
+
+  for(const FileData &f : dir.files ) items.append_fill(&f,depth+1);
+
+  item->next_index=items.getLen();
+ }
+
+void AspectData::buildItems()
+ {
+  items.erase();
+
+  Fill(items,root);
+ }
+
 void AspectData::sync()
  {
   DirData temp;
@@ -533,6 +551,8 @@ void AspectData::sync()
   Copy(temp,root);
 
   Swap(temp,root);
+
+  buildItems();
  }
 
 AspectData::AspectData() noexcept
@@ -547,16 +567,28 @@ void AspectData::erase()
  {
   path=Null;
   root.erase();
+  items.erase();
  }
 
  // save/load
 
 void AspectData::blank(StrLen path_)
  {
-  path=String(path_);
-  root.erase();
+  erase();
 
-  sync();
+  try
+    {
+     path=String(path_);
+     root.erase();
+
+     sync();
+    }
+  catch(CatchType)
+    {
+     erase();
+
+     throw;
+    }
  }
 
 void AspectData::PrintDir(PrinterType &out,ulen &index,const DirData &dir)
@@ -786,6 +818,8 @@ void AspectData::load(StrLen file_name,ErrorText &etext)
         Load(root,data.root);
 
         toAbs(file_name);
+
+        sync();
        }
     }
   catch(CatchType)
