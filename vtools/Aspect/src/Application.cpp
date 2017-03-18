@@ -70,6 +70,14 @@ struct AppPreferenceBag : ConfigItemHost
 
   Coord count_status_dxy = 15 ;
 
+  // item
+
+  Coord item_dxy = 30 ;
+
+  VColor item_text = Black ;
+
+  FontCouple item_font;
+
   // status
 
   VColor status_New    = SkyBlue ;
@@ -120,6 +128,10 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
 
   func("count_status_dxy"_c,ptr->count_status_dxy);
 
+  func("item_dxy"_c,ptr->item_dxy);
+  func("item_text"_c,ptr->item_text);
+  func("item_font"_c,ptr->item_font.param);
+
   func("status_New"_c,ptr->status_New);
   func("status_Ignore"_c,ptr->status_Ignore);
   func("status_Red"_c,ptr->status_Red);
@@ -131,12 +143,12 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
  {
   binder.group("Common"_def);
 
-   binder.item("title"_def,title);
-   binder.space();
-   binder.item("path"_def,text_Path);
-   binder.item("aspect"_def,text_Aspect);
-   binder.space();
-   binder.item("nothing"_def,text_Nothing);
+    binder.item("title"_def,title);
+    binder.space();
+    binder.item("path"_def,text_Path);
+    binder.item("aspect"_def,text_Aspect);
+    binder.space();
+    binder.item("nothing"_def,text_Nothing);
 
   binder.group("Menu"_def);
 
@@ -163,6 +175,12 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
 
     binder.item("count_status_dxy"_def,count_status_dxy);
 
+  binder.group("Item"_def);
+
+    binder.item("cell size"_def,item_dxy);
+    binder.item("text"_def,item_text);
+    binder.item("font"_def,item_font);
+
   binder.group("Status"_def);
 
     binder.item("New"_def,status_New);
@@ -174,6 +192,7 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
 
 void AppPreferenceBag::createFonts()
  {
+  item_font.create();
  }
 
 /* class AppPreference */

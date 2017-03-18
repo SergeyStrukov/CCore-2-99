@@ -237,6 +237,12 @@ class InnerDataWindow : public SubWindow
     {
      // app
 
+     RefVal<Coord> dxy = 30 ;
+
+     RefVal<VColor> text = Black ;
+
+     RefVal<Font> font;
+
      Config() noexcept {}
 
      template <class AppPref>
@@ -256,7 +262,11 @@ class InnerDataWindow : public SubWindow
      template <class Bag>
      void bindApp(const Bag &bag)
       {
-       Used(bag);
+       dxy.bind(bag.item_dxy);
+
+       text.bind(bag.item_text);
+
+       font.bind(bag.item_font.font);
       }
     };
 
@@ -282,6 +292,8 @@ class InnerDataWindow : public SubWindow
   private:
 
    void setMax();
+
+   class DrawItem;
 
   private:
 
@@ -313,7 +325,7 @@ class InnerDataWindow : public SubWindow
    template <class W>
    void setScrollYRange(W &window)
     {
-     window.setRange(total_x,page_x,off_y);
+     window.setRange(total_y,page_y,off_y);
     }
 
    void connect(Signal<ulen> &scroll_x,Signal<ulen> &scroll_y)

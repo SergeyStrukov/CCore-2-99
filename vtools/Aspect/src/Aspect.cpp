@@ -214,9 +214,52 @@ void CountControl::drawBack(DrawBuf buf,bool) const
 
 /* class InnerDataWindow */
 
-void InnerDataWindow::setMax() // TODO
+void InnerDataWindow::setMax()
  {
+  Point s=getSize();
+
+  Coord dxy=+cfg.dxy;
+
+  page_x=s.x/dxy;
+
+  page_y=s.y/dxy;
+
+  if( page_x>=total_x ) off_x=0; else Replace_min(off_x,total_x-page_x);
+
+  if( page_y>=total_y ) off_y=0; else Replace_min(off_y,total_y-page_y);
  }
+
+class InnerDataWindow::DrawItem : NoCopy
+ {
+   Coord dxy;
+   VColor text;
+   Font font;
+
+  public:
+
+   explicit DrawItem(const Config &cfg)
+    : dxy(+cfg.dxy),
+      text(+cfg.text),
+      font(+cfg.font)
+    {
+    }
+
+   void operator () (const DrawBuf &buf,Point point,const ItemData &item) const // TODO
+    {
+     Pane pane(point,2000,dxy);
+
+     font->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),Range(item.ptr->name),text);
+    }
+
+   ulen operator () (const ItemData &item) const // TODO
+    {
+     TextSize ts=font->text(Range(item.ptr->name));
+
+     ulen len=ts.full_dx/dxy+1;
+
+     return item.depth+len;
+    }
+ };
 
 void InnerDataWindow::posX(ulen pos)
  {
@@ -267,18 +310,20 @@ Point InnerDataWindow::getMinSize(Point cap) const // TODO
   return Point(100,100);
  }
 
-void InnerDataWindow::update(bool new_data) // TODO
+void InnerDataWindow::update(bool new_data)
  {
-  auto items=data.getItems();
-
-  total_x=0;
-
-  total_y=items.len;
-
-  setMax();
-
   if( new_data )
     {
+     DrawItem draw(cfg);
+
+     auto items=data.getItems();
+
+     total_x=0;
+
+     for(const ItemData &item : items ) Replace_max(total_x,draw(item));
+
+     total_y=items.len;
+
      off_x=0;
      off_y=0;
 
@@ -299,9 +344,30 @@ void InnerDataWindow::layout()
   setMax();
  }
 
-void InnerDataWindow::draw(DrawBuf buf,bool) const // TODO
+void InnerDataWindow::draw(DrawBuf buf,bool) const
  {
-  Used(buf);
+  DrawItem draw(cfg);
+
+  auto items=data.getItems();
+
+  Point point=Null;
+  Coord dxy=+cfg.dxy;
+  ulen off=off_x;
+
+  for(ulen i=off_y,j=0; i<items.len && j<page_y ;point=point.addY(dxy),j++)
+    {
+     const ItemData &item=items[i];
+     ulen depth=item.depth;
+
+     Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
+
+     draw(buf,p,item);
+
+     if( item.is_dir && !item.is_open )
+       i=item.next_index;
+     else
+       i++;
+    }
  }
 
  // base
