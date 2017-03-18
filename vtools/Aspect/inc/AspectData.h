@@ -105,7 +105,9 @@ enum ItemStatus
   Item_Ignore = 1,
   Item_Red    = 2,
   Item_Yellow = 3,
-  Item_Green  = 4
+  Item_Green  = 4,
+
+  ItemStatusLim
  };
 
 const char * GetTextDesc(ItemStatus status);
@@ -143,8 +145,6 @@ struct DirData : NoCopyBase<CommonData>
   ~DirData();
 
   void erase();
-
-  ulen getCount(ItemStatus status) const;
 
   // swap objects
 
@@ -196,24 +196,27 @@ class AspectData : NoCopy
 
   private:
 
+   template <OneOfTypes<FileData,DirData> T>
+   static void SortData(PtrLen<T> data);
+
    class DirProc;
 
    static void Build(DirData &root,StrLen path);
 
    template <class T,class Func>
-   static void CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy);
+   static bool CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy);
 
-   static void CopyFiles(SimpleArray<FileData> &dst,const SimpleArray<FileData> &src);
+   static bool CopyFiles(SimpleArray<FileData> &dst,const SimpleArray<FileData> &src);
 
-   static void CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src);
+   static bool CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src);
 
-   static void Copy(DirData &root,const DirData &dir);
+   static bool Copy(DirData &root,const DirData &dir);
 
    static void Fill(DynArray<ItemData> &items,const DirData &dir,ulen depth=0);
 
    void buildItems();
 
-   void sync();
+   bool sync();
 
    static void PrintDir(PrinterType &out,ulen &index,const DirData &dir);
 
@@ -240,7 +243,7 @@ class AspectData : NoCopy
 
    void erase();
 
-   ulen getCount(ItemStatus status) const { return root.getCount(status); }
+   void getCounts(ulen counts[ItemStatusLim]) const;
 
    auto getItems() const { return Range(items); }
 
@@ -250,7 +253,7 @@ class AspectData : NoCopy
 
    void save(StrLen file_name,ErrorText &etext) const;
 
-   void load(StrLen file_name,ErrorText &etext);
+   bool load(StrLen file_name,ErrorText &etext);
  };
 
 } // namespace App

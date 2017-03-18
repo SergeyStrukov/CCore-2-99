@@ -631,7 +631,7 @@ void AspectWindow::load(StrLen file_name)
  {
   ErrorText etext;
 
-  data.load(file_name,etext);
+  bool mod=data.load(file_name,etext);
 
   if( !etext )
     {
@@ -648,7 +648,10 @@ void AspectWindow::load(StrLen file_name)
      errorMsg(etext.getText());
     }
 
-  clearModified();
+  if( mod )
+    setModified();
+  else
+    clearModified();
 
   update(true);
  }
@@ -691,9 +694,13 @@ void AspectWindow::save(StrLen file_name)
 
 void AspectWindow::updateCount()
  {
-  count_red.setCount(data.getCount(Item_Red));
-  count_yellow.setCount(data.getCount(Item_Yellow));
-  count_green.setCount(data.getCount(Item_Green));
+  ulen counts[ItemStatusLim];
+
+  data.getCounts(counts);
+
+  count_red.setCount(counts[Item_Red]);
+  count_yellow.setCount(counts[Item_Yellow]);
+  count_green.setCount(counts[Item_Green]);
  }
 
 void AspectWindow::update(bool new_data)

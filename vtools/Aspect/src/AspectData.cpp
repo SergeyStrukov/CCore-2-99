@@ -18,6 +18,8 @@
 #include <CCore/inc/ElementPool.h>
 
 #include <CCore/inc/Cmp.h>
+#include <CCore/inc/Sort.h>
+#include <CCore/inc/video/FileNameCmp.h>
 #include <CCore/inc/algon/SortUnique.h>
 
 #include <CCore/inc/Print.h>
@@ -283,18 +285,13 @@ void DirData::erase()
   dirs.erase();
  }
 
-ulen DirData::getCount(ItemStatus status) const
- {
-  ulen ret=0;
-
-  for(const FileData &f : files ) if( f.status==status ) ret++;
-
-  for(const DirData &d : dirs ) ret+=d.getCount(status);
-
-  return ret;
- }
-
 /* class AspectData */
+
+template <OneOfTypes<FileData,DirData> T>
+void AspectData::SortData(PtrLen<T> data)
+ {
+  IncrSort(data, [] (const T &a,const T &b) { return ExtNameLess(Range(a.name),Range(b.name)); } );
+ }
 
 class AspectData::DirProc : NoCopy
  {
@@ -360,6 +357,9 @@ class AspectData::DirProc : NoCopy
 
         Swap(final->files,temp);
        }
+
+       SortData(Range(final->dirs));
+       SortData(Range(final->files));
       }
     };
 
@@ -447,7 +447,7 @@ void AspectData::Build(DirData &root,StrLen path)
  }
 
 template <class T,class Func>
-void AspectData::CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy)
+bool AspectData::CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy)
  {
   struct Item
    {
@@ -482,46 +482,68 @@ void AspectData::CopyByName(PtrLen<T> dst,PtrLen<const T> src,Func copy)
 
   for(; +src ;++src,ptr++) ptr->setSrc(*src);
 
+  bool ret=false;
+
   Algon::IncrSortThenApplyUniqueRangeBy(Range(temp), [] (const Item &item) { return CmpAsStr(item.getName()); } ,
-                                                     [copy] (PtrLen<Item> r)
-                                                            {
-                                                             const T *src=0;
-
-                                                             for(auto s=r; +s ;++s)
-                                                               if( !s->is_dst )
+                                                     [copy,&ret] (PtrLen<Item> r)
                                                                  {
-                                                                  if( src ) return;
+                                                                  const T *src=0;
 
-                                                                  src=s->src;
-                                                                 }
+                                                                  for(auto s=r; +s ;++s)
+                                                                    if( !s->is_dst )
+                                                                      {
+                                                                       if( src )
+                                                                         {
+                                                                          ret=true;
 
-                                                             if( !src ) return;
+                                                                          return;
+                                                                         }
 
-                                                             for(auto s=r; +s ;++s)
-                                                               if( s->is_dst )
-                                                                 {
-                                                                  copy(*(s->dst),*src);
-                                                                 }
+                                                                       src=s->src;
+                                                                      }
 
-                                                            } );
+                                                                  if( !src )
+                                                                    {
+                                                                     ret=true;
+
+                                                                     return;
+                                                                    }
+
+                                                                  ulen count=0;
+
+                                                                  for(auto s=r; +s ;++s)
+                                                                    if( s->is_dst )
+                                                                      {
+                                                                       if( copy(*(s->dst),*src) ) ret=true;
+
+                                                                       count++;
+                                                                      }
+
+                                                                  if( count!=1 ) ret=true;
+
+                                                                 } );
+
+  return ret;
  }
 
-void AspectData::CopyFiles(SimpleArray<FileData> &dst,const SimpleArray<FileData> &src)
+bool AspectData::CopyFiles(SimpleArray<FileData> &dst,const SimpleArray<FileData> &src)
  {
-  CopyByName(Range(dst),Range(src), [] (FileData &dst,const FileData &src) { dst.status=src.status; } );
+  return CopyByName(Range(dst),Range(src), [] (FileData &dst,const FileData &src) { dst.status=src.status; return false; } );
  }
 
-void AspectData::CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src)
+bool AspectData::CopyDirs(SimpleArray<DirData> &dst,const SimpleArray<DirData> &src)
  {
-  CopyByName(Range(dst),Range(src),Copy);
+  return CopyByName(Range(dst),Range(src),Copy);
  }
 
-void AspectData::Copy(DirData &root,const DirData &dir)
+bool AspectData::Copy(DirData &root,const DirData &dir)
  {
   root.status=dir.status;
 
-  CopyDirs(root.dirs,dir.dirs);
-  CopyFiles(root.files,dir.files);
+  bool f1=CopyDirs(root.dirs,dir.dirs);
+  bool f2=CopyFiles(root.files,dir.files);
+
+  return f1 || f2 ;
  }
 
 void AspectData::Fill(DynArray<ItemData> &items,const DirData &dir,ulen depth)
@@ -542,17 +564,19 @@ void AspectData::buildItems()
   Fill(items,root);
  }
 
-void AspectData::sync()
+bool AspectData::sync()
  {
   DirData temp;
 
   Build(temp,Range(path));
 
-  Copy(temp,root);
+  bool ret=Copy(temp,root);
 
   Swap(temp,root);
 
   buildItems();
+
+  return ret;
  }
 
 AspectData::AspectData() noexcept
@@ -568,6 +592,19 @@ void AspectData::erase()
   path=Null;
   root.erase();
   items.erase();
+ }
+
+void AspectData::getCounts(ulen counts[ItemStatusLim]) const
+ {
+  Range(counts,ItemStatusLim).set_null();
+
+  for(const ItemData &item : items )
+    if( !item.is_dir )
+      {
+       auto status=item.ptr->status;
+
+       if( status<ItemStatusLim ) counts[status]++;
+      }
  }
 
  // save/load
@@ -780,7 +817,7 @@ void AspectData::toAbs(StrLen file_name)
     }
  }
 
-void AspectData::load(StrLen file_name,ErrorText &etext)
+bool AspectData::load(StrLen file_name,ErrorText &etext)
  {
   erase();
 
@@ -800,7 +837,7 @@ void AspectData::load(StrLen file_name,ErrorText &etext)
 
         etext.setTextLen(eout.close().len);
 
-        return;
+        return false;
        }
      else
        {
@@ -819,7 +856,7 @@ void AspectData::load(StrLen file_name,ErrorText &etext)
 
         toAbs(file_name);
 
-        sync();
+        return sync();
        }
     }
   catch(CatchType)
@@ -829,6 +866,8 @@ void AspectData::load(StrLen file_name,ErrorText &etext)
      Printf(eout,"\n@ #.q;",file_name);
 
      etext.setTextLen(eout.close().len);
+
+     return false;
     }
  }
 
