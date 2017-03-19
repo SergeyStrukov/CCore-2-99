@@ -41,6 +41,13 @@ class AspectWindow;
 struct Filter
  {
   bool filter[ItemStatusLim] = {} ;
+
+  bool operator () (ItemStatus status) const
+   {
+    if( status>=ItemStatusLim ) return true;
+
+    return filter[status];
+   }
  };
 
 /* class HideControl */

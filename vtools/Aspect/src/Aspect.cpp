@@ -371,7 +371,7 @@ void InnerDataWindow::layout()
   setMax();
  }
 
-void InnerDataWindow::draw(DrawBuf buf,bool) const // TODO
+void InnerDataWindow::draw(DrawBuf buf,bool) const
  {
   DrawItem draw(cfg,getSize());
 
@@ -381,9 +381,12 @@ void InnerDataWindow::draw(DrawBuf buf,bool) const // TODO
   Coord dxy=+cfg.dxy;
   ulen off=off_x;
 
-  for(ulen i=off_y,j=0; i<items.len && j<page_y ;point=point.addY(dxy),j++)
+  for(ulen i=off_y,j=0; i<items.len && j<page_y ;)
     {
      const ItemData &item=items[i];
+
+     if( data_filter(item.ptr->status) ) continue;
+
      ulen depth=item.depth;
 
      Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
@@ -394,6 +397,9 @@ void InnerDataWindow::draw(DrawBuf buf,bool) const // TODO
        i=item.next_index;
      else
        i++;
+
+     point=point.addY(dxy);
+     j++;
     }
  }
 
