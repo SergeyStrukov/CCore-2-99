@@ -36,6 +36,8 @@ class NormalPath;
 
 //enum ItemStatus;
 
+struct Counts;
+
 struct CommonData;
 
 struct FileData;
@@ -111,6 +113,13 @@ enum ItemStatus
  };
 
 const char * GetTextDesc(ItemStatus status);
+
+/* struct Counts */
+
+struct Counts
+ {
+  ulen count[ItemStatusLim] = {} ;
+ };
 
 /* struct CommonData */
 
@@ -243,7 +252,7 @@ class AspectData : NoCopy
 
    void erase();
 
-   void getCounts(ulen counts[ItemStatusLim]) const;
+   Counts getCounts() const;
 
    auto getItems() const { return Range(items); }
 

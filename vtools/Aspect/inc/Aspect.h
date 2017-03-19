@@ -24,6 +24,8 @@ MPoint MCenter(Pane pane);
 
 /* classes */
 
+struct Filter;
+
 class HideControl;
 
 class CountControl;
@@ -33,6 +35,13 @@ class InnerDataWindow;
 class DataWindow;
 
 class AspectWindow;
+
+/* struct Filter */
+
+struct Filter
+ {
+  bool filter[ItemStatusLim] = {} ;
+ };
 
 /* class HideControl */
 
@@ -148,6 +157,10 @@ class HideControl : public ComboWindow
 
    bool operator [] (ItemStatus status) const;
 
+   Filter getFilter() const;
+
+   void reset();
+
    // drawing
 
    virtual void layout();
@@ -156,7 +169,7 @@ class HideControl : public ComboWindow
 
    // signals
 
-   Signal<> changed;
+   Signal<Filter> changed;
  };
 
 /* class CountControl */
@@ -277,6 +290,7 @@ class InnerDataWindow : public SubWindow
    const Config &cfg;
 
    AspectData &data;
+   Filter data_filter;
 
    bool focus = false ;
 
@@ -339,6 +353,8 @@ class InnerDataWindow : public SubWindow
    Point getMinSize(Point cap=Point::Max()) const;
 
    void update(bool new_data);
+
+   void filter(Filter filter);
 
    // drawing
 
@@ -436,6 +452,8 @@ class DataWindow : public ComboWindow
    Point getMinSize(Point cap=Point::Max()) const;
 
    void update(bool new_data);
+
+   void filter(Filter filter);
 
    // drawing
 
@@ -560,6 +578,10 @@ class AspectWindow : public ComboWindow
    void msg_destroyed();
 
    SignalConnector<AspectWindow> connector_msg_destroyed;
+
+   void hide_changed(Filter filter);
+
+   SignalConnector<AspectWindow,Filter> connector_hide_changed;
 
   public:
 

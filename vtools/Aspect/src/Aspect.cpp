@@ -33,18 +33,14 @@ MPoint MCenter(Pane pane)
 
 void HideControl::check_changed(bool)
  {
-  changed.assert();
+  changed.assert(getFilter());
  }
 
 void HideControl::btn_pressed()
  {
-  check_New.check(false);
-  check_Ignore.check(false);
-  check_Red.check(false);
-  check_Yellow.check(false);
-  check_Green.check(false);
+  reset();
 
-  changed.assert();
+  changed.assert(getFilter());
  }
 
 Pane HideControl::Inner(Pane pane,Coord dxy)
@@ -109,6 +105,28 @@ bool HideControl::operator [] (ItemStatus status) const
 
      default: return false;
     }
+ }
+
+Filter HideControl::getFilter() const
+ {
+  Filter ret;
+
+  ret.filter[Item_New   ]=check_New.isChecked();
+  ret.filter[Item_Ignore]=check_Ignore.isChecked();
+  ret.filter[Item_Red   ]=check_Red.isChecked();
+  ret.filter[Item_Yellow]=check_Yellow.isChecked();
+  ret.filter[Item_Green ]=check_Green.isChecked();
+
+  return ret;
+ }
+
+void HideControl::reset()
+ {
+  check_New.check(false);
+  check_Ignore.check(false);
+  check_Red.check(false);
+  check_Yellow.check(false);
+  check_Green.check(false);
  }
 
  // drawing
@@ -235,12 +253,16 @@ class InnerDataWindow::DrawItem : NoCopy
    VColor text;
    Font font;
 
+   Point size;
+
   public:
 
-   explicit DrawItem(const Config &cfg)
+   DrawItem(const Config &cfg,Point size_)
     : dxy(+cfg.dxy),
       text(+cfg.text),
-      font(+cfg.font)
+      font(+cfg.font),
+
+      size(size_)
     {
     }
 
@@ -314,7 +336,7 @@ void InnerDataWindow::update(bool new_data)
  {
   if( new_data )
     {
-     DrawItem draw(cfg);
+     DrawItem draw(cfg,getSize());
 
      auto items=data.getItems();
 
@@ -332,6 +354,11 @@ void InnerDataWindow::update(bool new_data)
     }
  }
 
+void InnerDataWindow::filter(Filter filter)
+ {
+  data_filter=filter;
+ }
+
  // drawing
 
 bool InnerDataWindow::isGoodSize(Point size) const
@@ -344,9 +371,9 @@ void InnerDataWindow::layout()
   setMax();
  }
 
-void InnerDataWindow::draw(DrawBuf buf,bool) const
+void InnerDataWindow::draw(DrawBuf buf,bool) const // TODO
  {
-  DrawItem draw(cfg);
+  DrawItem draw(cfg,getSize());
 
   auto items=data.getItems();
 
@@ -454,6 +481,15 @@ Point DataWindow::getMinSize(Point cap) const
 void DataWindow::update(bool new_data)
  {
   inner.update(new_data);
+ }
+
+void DataWindow::filter(Filter filter)
+ {
+  inner.filter(filter);
+
+  layout();
+
+  redraw();
  }
 
  // drawing
@@ -574,6 +610,11 @@ void AspectWindow::msg_destroyed()
   enableFrameReact();
  }
 
+void AspectWindow::hide_changed(Filter filter)
+ {
+  data_window.filter(filter);
+ }
+
 AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -598,7 +639,8 @@ AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
 
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
-   connector_msg_destroyed(this,&AspectWindow::msg_destroyed,msg_frame.destroyed)
+   connector_msg_destroyed(this,&AspectWindow::msg_destroyed,msg_frame.destroyed),
+   connector_hide_changed(this,&AspectWindow::hide_changed,hide.changed)
  {
   wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide,count_red,count_yellow,count_green,line2,data_window);
  }
@@ -609,13 +651,32 @@ AspectWindow::~AspectWindow()
 
  // methods
 
-Point AspectWindow::getMinSize() const // TODO
+Point AspectWindow::getMinSize() const
  {
-  return Point(100,100);
+  Coordinate space=+cfg.space_dxy;
+
+  Point s1=SupMinSize(label_path,label_aspect);
+  Point s2=text_path.getMinSize();
+
+  Coordinate dx1=s1.x;
+
+  dx1+=s2.x;
+
+  Coordinate dy=Max(s1.y,s2.y);
+
+  Point s3=hide.getMinSize();
+  Point s4=count_red.getMinSize();
+
+  Coordinate dx2=s3.x;
+  Coordinate dx3=s4.x;
+
+  return Point( 2*space+Sup(space+dx1,dx2,2*space+3*dx3) , 8*space+2*dy+s3.y+s4.y );
  }
 
 void AspectWindow::blank(StrLen path)
  {
+  hide.reset();
+
   data.blank(path);
 
   text_path.setText(data.getPath());
@@ -629,6 +690,8 @@ void AspectWindow::blank(StrLen path)
 
 void AspectWindow::load(StrLen file_name)
  {
+  hide.reset();
+
   ErrorText etext;
 
   bool mod=data.load(file_name,etext);
@@ -694,13 +757,11 @@ void AspectWindow::save(StrLen file_name)
 
 void AspectWindow::updateCount()
  {
-  ulen counts[ItemStatusLim];
+  Counts counts=data.getCounts();
 
-  data.getCounts(counts);
-
-  count_red.setCount(counts[Item_Red]);
-  count_yellow.setCount(counts[Item_Yellow]);
-  count_green.setCount(counts[Item_Green]);
+  count_red.setCount(counts.count[Item_Red]);
+  count_yellow.setCount(counts.count[Item_Yellow]);
+  count_green.setCount(counts.count[Item_Green]);
  }
 
 void AspectWindow::update(bool new_data)

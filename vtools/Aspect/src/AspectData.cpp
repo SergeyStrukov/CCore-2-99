@@ -594,17 +594,19 @@ void AspectData::erase()
   items.erase();
  }
 
-void AspectData::getCounts(ulen counts[ItemStatusLim]) const
+Counts AspectData::getCounts() const
  {
-  Range(counts,ItemStatusLim).set_null();
+  Counts ret;
 
   for(const ItemData &item : items )
     if( !item.is_dir )
       {
        auto status=item.ptr->status;
 
-       if( status<ItemStatusLim ) counts[status]++;
+       if( status<ItemStatusLim ) ret.count[status]++;
       }
+
+  return ret;
  }
 
  // save/load
@@ -623,8 +625,6 @@ void AspectData::blank(StrLen path_)
   catch(CatchType)
     {
      erase();
-
-     throw;
     }
  }
 
