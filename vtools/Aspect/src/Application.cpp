@@ -73,6 +73,8 @@ struct AppPreferenceBag : ConfigItemHost
   // item
 
   Coord item_dxy = 30 ;
+  Coord item_rxy = 20 ;
+  Coord item_rin =  2 ;
 
   VColor item_text = Black ;
 
@@ -129,6 +131,8 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
   func("count_status_dxy"_c,ptr->count_status_dxy);
 
   func("item_dxy"_c,ptr->item_dxy);
+  func("item_rxy"_c,ptr->item_rxy);
+  func("item_rin"_c,ptr->item_rin);
   func("item_text"_c,ptr->item_text);
   func("item_font"_c,ptr->item_font.param);
 
@@ -178,6 +182,8 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
   binder.group("Item"_def);
 
     binder.item("cell size"_def,item_dxy);
+    binder.item("radio size"_def,item_rxy);
+    binder.item("radio inner"_def,item_rin);
     binder.item("text"_def,item_text);
     binder.item("font"_def,item_font);
 

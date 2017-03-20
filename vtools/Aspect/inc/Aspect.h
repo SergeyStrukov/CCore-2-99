@@ -255,11 +255,21 @@ class InnerDataWindow : public SubWindow
 
    struct Config
     {
+     CtorRefVal<RadioShape::Config> radio_cfg;
+
      // app
 
      RefVal<Coord> dxy = 30 ;
+     RefVal<Coord> rxy = 20 ;
+     RefVal<Coord> rin =  2 ;
 
      RefVal<VColor> text = Black ;
+
+     RefVal<VColor> status_New    = SkyBlue ;
+     RefVal<VColor> status_Ignore = Gray ;
+     RefVal<VColor> status_Red    = Red ;
+     RefVal<VColor> status_Yellow = Yellow ;
+     RefVal<VColor> status_Green  = Green ;
 
      RefVal<Font> font;
 
@@ -276,15 +286,24 @@ class InnerDataWindow : public SubWindow
      void bind(const Bag &bag,Proxy proxy)
       {
        Used(bag);
-       Used(proxy);
+
+       radio_cfg.bind(proxy);
       }
 
      template <class Bag>
      void bindApp(const Bag &bag)
       {
        dxy.bind(bag.item_dxy);
+       rxy.bind(bag.item_rxy);
+       rin.bind(bag.item_rin);
 
        text.bind(bag.item_text);
+
+       status_New.bind(bag.status_New);
+       status_Ignore.bind(bag.status_Ignore);
+       status_Red.bind(bag.status_Red);
+       status_Yellow.bind(bag.status_Yellow);
+       status_Green.bind(bag.status_Green);
 
        font.bind(bag.item_font.font);
       }
@@ -311,6 +330,8 @@ class InnerDataWindow : public SubWindow
    ulen page_y = 1 ;
 
   private:
+
+   void updateTotalY();
 
    void setMax();
 
@@ -397,6 +418,7 @@ class InnerDataWindow : public SubWindow
 
    Signal<ulen> scroll_x;
    Signal<ulen> scroll_y;
+   Signal<> update_scroll;
  };
 
 /* class DataWindow */
@@ -447,6 +469,10 @@ class DataWindow : public ComboWindow
 
    SignalConnector<XScrollWindow,ulen> connector_posx;
    SignalConnector<YScrollWindow,ulen> connector_posy;
+
+   void update_scroll();
+
+   SignalConnector<DataWindow> connector_update_scroll;
 
   public:
 

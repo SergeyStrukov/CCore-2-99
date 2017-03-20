@@ -232,6 +232,31 @@ void CountControl::drawBack(DrawBuf buf,bool) const
 
 /* class InnerDataWindow */
 
+void InnerDataWindow::updateTotalY()
+ {
+  ulen count=0;
+
+  auto items=data.getItems();
+
+  for(ulen i=0; i<items.len ;)
+    {
+     const ItemData &item=items[i];
+
+     if( data_filter(item.ptr->status) ) continue;
+
+     count++;
+
+     if( item.is_dir && !item.is_open )
+       i=item.next_index;
+     else
+       i++;
+    }
+
+  total_y=count;
+
+  update_scroll.assert();
+ }
+
 void InnerDataWindow::setMax()
  {
   Point s=getSize();
@@ -250,34 +275,109 @@ void InnerDataWindow::setMax()
 class InnerDataWindow::DrawItem : NoCopy
  {
    Coord dxy;
+   Coord rxy;
+   Coord rin;
    VColor text;
+   VColor status_color[ItemStatusLim];
    Font font;
 
+   const RadioShape::Config &radio_cfg;
+
    Point size;
+   Coord file_dx;
+   Coord btn_dx;
+   Coord dir_dx;
+
+  private:
+
+   void drawBtn(const DrawBuf &buf,Pane pane,ItemStatus status,ItemStatus item_status) const
+    {
+     VColor vc=status_color[status];
+
+     SmoothDrawArt art(buf);
+
+     art.block(pane,vc);
+
+     RadioShape shape(radio_cfg, status==item_status );
+
+     shape.pane=pane.shrink(rin);
+
+     shape.draw(buf);
+    }
+
+   void drawFile(const DrawBuf &buf,Pane pane,const ItemData &item) const
+    {
+     Coord delta=(dxy-rxy)/2;
+     Pane btn(pane.getBase().addXY(delta),rxy);
+     ItemStatus status=item.ptr->status;
+     Coord shift=rxy+delta;
+
+     drawBtn(buf,btn,Item_New,   status); btn+=Point(shift,0);
+     drawBtn(buf,btn,Item_Ignore,status); btn+=Point(shift,0);
+     drawBtn(buf,btn,Item_Red,   status); btn+=Point(shift,0);
+     drawBtn(buf,btn,Item_Yellow,status); btn+=Point(shift,0);
+     drawBtn(buf,btn,Item_Green, status);
+    }
+
+   void drawBtns(const DrawBuf &buf,Pane pane,const ItemData &item) const // TODO
+    {
+     Used(buf);
+     Used(pane);
+     Used(item);
+    }
+
+   void drawDir(const DrawBuf &buf,Pane pane,const ItemData &item) const
+    {
+     drawBtns(buf,SplitX(btn_dx,pane),item);
+     drawFile(buf,pane,item);
+    }
 
   public:
 
-   DrawItem(const Config &cfg,Point size_)
+   DrawItem(const Config &cfg,Point size_) // TODO
     : dxy(+cfg.dxy),
+      rxy(+cfg.rxy),
+      rin(+cfg.rin),
       text(+cfg.text),
       font(+cfg.font),
+      radio_cfg(cfg.radio_cfg),
 
       size(size_)
     {
+     file_dx=dxy+4*(rxy+(dxy-rxy)/2);
+     btn_dx=0;
+     dir_dx=btn_dx+file_dx;
+
+     status_color[Item_New]=+cfg.status_New;
+     status_color[Item_Ignore]=+cfg.status_Ignore;
+     status_color[Item_Red]=+cfg.status_Red;
+     status_color[Item_Yellow]=+cfg.status_Yellow;
+     status_color[Item_Green]=+cfg.status_Green;
     }
 
-   void operator () (const DrawBuf &buf,Point point,const ItemData &item) const // TODO
+   void operator () (const DrawBuf &buf,Point point,const ItemData &item) const
     {
-     Pane pane(point,2000,dxy);
+     Pane pane(point,size.x-point.x,dxy);
+
+     if( item.is_dir )
+       {
+        drawDir(buf,SplitX(dir_dx,pane),item);
+       }
+     else
+       {
+        drawFile(buf,SplitX(file_dx,pane),item);
+       }
 
      font->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),Range(item.ptr->name),text);
     }
 
-   ulen operator () (const ItemData &item) const // TODO
+   ulen operator () (const ItemData &item) const
     {
+     Coord ex=item.is_dir?dir_dx:file_dx;
+
      TextSize ts=font->text(Range(item.ptr->name));
 
-     ulen len=ts.full_dx/dxy+1;
+     ulen len=(ts.full_dx+ex)/dxy+1;
 
      return item.depth+len;
     }
@@ -334,16 +434,16 @@ Point InnerDataWindow::getMinSize(Point cap) const // TODO
 
 void InnerDataWindow::update(bool new_data)
  {
+  auto items=data.getItems();
+
+  DrawItem draw(cfg,getSize());
+
+  total_x=0;
+
+  for(const ItemData &item : items ) Replace_max(total_x,draw(item));
+
   if( new_data )
     {
-     DrawItem draw(cfg,getSize());
-
-     auto items=data.getItems();
-
-     total_x=0;
-
-     for(const ItemData &item : items ) Replace_max(total_x,draw(item));
-
      total_y=items.len;
 
      off_x=0;
@@ -357,6 +457,8 @@ void InnerDataWindow::update(bool new_data)
 void InnerDataWindow::filter(Filter filter)
  {
   data_filter=filter;
+
+  updateTotalY();
  }
 
  // drawing
@@ -455,6 +557,13 @@ void DataWindow::setScroll()
   if( scroll_y.isListed() ) inner.setScrollYRange(scroll_y);
  }
 
+void DataWindow::update_scroll()
+ {
+  layout();
+
+  redraw();
+ }
+
 DataWindow::DataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data)
  : ComboWindow(host),
    cfg(cfg_),
@@ -464,7 +573,8 @@ DataWindow::DataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data)
    scroll_y(wlist,cfg_.y_cfg),
 
    connector_posx(&scroll_x,&XScrollWindow::setPos,inner.scroll_x),
-   connector_posy(&scroll_y,&YScrollWindow::setPos,inner.scroll_y)
+   connector_posy(&scroll_y,&YScrollWindow::setPos,inner.scroll_y),
+   connector_update_scroll(this,&DataWindow::update_scroll,inner.update_scroll)
  {
   wlist.insTop(inner);
 
