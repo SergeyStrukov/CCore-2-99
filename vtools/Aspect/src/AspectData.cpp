@@ -548,13 +548,15 @@ bool AspectData::Copy(DirData &root,const DirData &dir)
 
 void AspectData::Fill(DynArray<ItemData> &items,const DirData &dir,ulen depth)
  {
-  ItemData *item=items.append_fill(&dir,depth);
+  ulen ind=items.getLen();
+
+  items.append_fill(&dir,depth);
 
   for(const DirData &d : dir.dirs ) Fill(items,d,depth+1);
 
   for(const FileData &f : dir.files ) items.append_fill(&f,depth+1);
 
-  item->next_index=items.getLen();
+  items[ind].next_index=items.getLen();
  }
 
 void AspectData::buildItems()
@@ -562,6 +564,10 @@ void AspectData::buildItems()
   items.erase();
 
   Fill(items,root);
+
+  visible.erase();
+
+  visible.extend_default(items.getLen());
  }
 
 bool AspectData::sync()
@@ -592,6 +598,7 @@ void AspectData::erase()
   path=Null;
   root.erase();
   items.erase();
+  visible.erase();
  }
 
 Counts AspectData::getCounts() const

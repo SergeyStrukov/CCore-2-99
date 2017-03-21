@@ -192,6 +192,16 @@ struct ItemData
      is_open(false)
    {
    }
+
+  void open() const
+   {
+    if( is_dir ) is_open=true;
+   }
+
+  void close() const
+   {
+    if( is_dir ) is_open=false;
+   }
  };
 
 /* class AspectData */
@@ -202,6 +212,7 @@ class AspectData : NoCopy
    DirData root;
 
    DynArray<ItemData> items;
+   DynArray<ulen> visible;
 
   private:
 
@@ -255,6 +266,10 @@ class AspectData : NoCopy
    Counts getCounts() const;
 
    auto getItems() const { return Range(items); }
+
+   auto getVisible() const { return Range(visible); }
+
+   auto getVisible() { return Range(visible); }
 
    // save/load
 

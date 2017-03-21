@@ -232,24 +232,33 @@ void CountControl::drawBack(DrawBuf buf,bool) const
 
 /* class InnerDataWindow */
 
-void InnerDataWindow::updateTotalY()
+void InnerDataWindow::updateList()
  {
   ulen count=0;
 
   auto items=data.getItems();
+  auto vis=data.getVisible();
 
   for(ulen i=0; i<items.len ;)
     {
      const ItemData &item=items[i];
 
-     if( data_filter(item.ptr->status) ) continue;
-
-     count++;
-
-     if( item.is_dir && !item.is_open )
-       i=item.next_index;
+     if( data_filter(item.ptr->status) )
+       {
+        if( item.is_dir )
+          i=item.next_index;
+        else
+          i++;
+       }
      else
-       i++;
+       {
+        vis[count++]=i;
+
+        if( item.is_dir && !item.is_open )
+          i=item.next_index;
+        else
+          i++;
+       }
     }
 
   total_y=count;
@@ -439,6 +448,34 @@ class InnerDataWindow::DrawItem : NoCopy
      art.path(HalfPos,width,line,base,base.addX(len));
     }
 
+   PressType testRadio(Point point) const
+    {
+     Coord delta=(dxy-rxy)/2;
+     Pane btn(delta,delta,rxy,rxy);
+     Coord shift=rxy+delta;
+
+     if( btn.contains(point) ) return PressNew;    btn+=Point(shift,0);
+     if( btn.contains(point) ) return PressIgnore; btn+=Point(shift,0);
+     if( btn.contains(point) ) return PressRed;    btn+=Point(shift,0);
+     if( btn.contains(point) ) return PressYellow; btn+=Point(shift,0);
+     if( btn.contains(point) ) return PressGreen;
+
+     return PressNone;
+    }
+
+   PressType testKnob(Point point) const
+    {
+     Coord delta=(dxy-kxy)/2;
+     Pane btn(delta,delta,kxy,kxy);
+     Coord shift=kxy+delta;
+
+     if( btn.contains(point) ) return PressPlus;       btn+=Point(shift,0);
+     if( btn.contains(point) ) return PressPlusPlus;   btn+=Point(shift,0);
+     if( btn.contains(point) ) return PressMinusMinus;
+
+     return PressNone;
+    }
+
   public:
 
    DrawItem(const Config &cfg,Point size_)
@@ -496,8 +533,25 @@ class InnerDataWindow::DrawItem : NoCopy
      return item.depth+len;
     }
 
-   PressType operator () (const ItemData &item,Point point) const // TODO
+   PressType operator () (const ItemData &item,Point point) const
     {
+     if( item.is_dir )
+       {
+        if( point.x<btn_dx )
+          {
+           return testKnob(point);
+          }
+        else
+          {
+           point.x-=btn_dx;
+
+           return testRadio(point);
+          }
+       }
+     else
+       {
+        return testRadio(point);
+       }
     }
 
    bool operator () (Point point,Point test_point) const
@@ -564,34 +618,37 @@ void InnerDataWindow::subPosY(ulen delta)
 
 auto InnerDataWindow::test(const DrawItem &draw,Point test_point) const -> TestResult
  {
-  auto items=data.getItems();
+  if( test_point.y<0 ) return {MaxULen};
 
-  Point point=Null;
+  auto items=data.getItems();
+  auto vis=data.getVisible();
+
   Coord dxy=+cfg.dxy;
   ulen off=off_x;
 
-  for(ulen i=off_y,j=0; i<items.len && j<page_y ;)
+  ulen j=test_point.y/dxy;
+  ulen lim=Min(total_y,vis.len);
+
+  if( j<page_y && off_y<lim && j<lim-off_y )
     {
-     const ItemData &item=items[i];
+     ulen i=off_y+j;
+     ulen ind=vis[i];
 
-     if( data_filter(item.ptr->status) ) continue;
+     if( ind<items.len )
+       {
+        const ItemData &item=items[ind];
 
-     ulen depth=item.depth;
+        ulen depth=item.depth;
 
-     Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
+        Point point(0,j*dxy);
 
-     if( draw(p,test_point) ) return {i,p};
+        Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
 
-     if( item.is_dir && !item.is_open )
-       i=item.next_index;
-     else
-       i++;
-
-     point=point.addY(dxy);
-     j++;
+        if( draw(p,test_point) ) return {ind,p};
+       }
     }
 
-  return {};
+  return {MaxULen};
  }
 
 void InnerDataWindow::press(const DrawItem &draw,ulen index,Point point) // TODO
@@ -604,16 +661,25 @@ void InnerDataWindow::press(const DrawItem &draw,ulen index,Point point) // TODO
     {
      case PressPlus :
       {
+       item.is_open=!item.is_open;
+
+       updateList();
       }
      break;
 
      case PressPlusPlus :
       {
+       for(ulen i=index,lim=item.next_index; i<lim ;i++) items[i].open();
+
+       updateList();
       }
      break;
 
      case PressMinusMinus :
       {
+       for(ulen i=index,lim=item.next_index; i<lim ;i++) items[i].close();
+
+       updateList();
       }
      break;
 
@@ -687,17 +753,17 @@ void InnerDataWindow::update(bool new_data)
 
   total_x=0;
 
-  for(const ItemData &item : items ) Replace_max(total_x,draw(item));
+  for(const ItemData &item : items )
+    {
+     Replace_max(total_x,draw(item));
+    }
 
   if( new_data )
     {
-     total_y=items.len;
+     updateList();
 
      off_x=0;
      off_y=0;
-
-     scroll_x.assert(0);
-     scroll_y.assert(0);
     }
  }
 
@@ -705,7 +771,7 @@ void InnerDataWindow::filter(Filter filter)
  {
   data_filter=filter;
 
-  updateTotalY();
+  updateList();
  }
 
  // drawing
@@ -725,30 +791,26 @@ void InnerDataWindow::draw(DrawBuf buf,bool) const
   DrawItem draw(cfg,getSize());
 
   auto items=data.getItems();
+  auto vis=data.getVisible();
 
   Point point=Null;
   Coord dxy=+cfg.dxy;
   ulen off=off_x;
 
-  for(ulen i=off_y,j=0; i<items.len && j<page_y ;)
+  for(ulen i=off_y,lim=Min(total_y,vis.len),j=0; i<lim && j<page_y ;i++,j++,point=point.addY(dxy))
     {
-     const ItemData &item=items[i];
+     ulen ind=vis[i];
 
-     if( data_filter(item.ptr->status) ) continue;
+     if( ind<items.len )
+       {
+        const ItemData &item=items[ind];
 
-     ulen depth=item.depth;
+        ulen depth=item.depth;
 
-     Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
+        Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
 
-     draw(buf,p,item);
-
-     if( item.is_dir && !item.is_open )
-       i=item.next_index;
-     else
-       i++;
-
-     point=point.addY(dxy);
-     j++;
+        draw(buf,p,item);
+       }
     }
  }
 

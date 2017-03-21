@@ -351,6 +351,8 @@ class InnerDataWindow : public SubWindow
 
    enum PressType
     {
+     PressNone,
+
      PressPlus,
      PressPlusPlus,
      PressMinusMinus,
@@ -364,7 +366,7 @@ class InnerDataWindow : public SubWindow
 
   private:
 
-   void updateTotalY();
+   void updateList();
 
    void setMax();
 
@@ -395,7 +397,7 @@ class InnerDataWindow : public SubWindow
 
    struct TestResult
     {
-     ulen index = MaxULen ;
+     ulen index;
      Point base;
     };
 
