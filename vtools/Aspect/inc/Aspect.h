@@ -223,6 +223,8 @@ class CountControl : public ComboWindow
 
    const Config &cfg;
 
+   ulen count = 0 ;
+
    TextLineWindow text;
 
    Pane place_status;
@@ -239,6 +241,10 @@ class CountControl : public ComboWindow
    Point getMinSize() const;
 
    void setCount(ulen count);
+
+   void incCount() { setCount(count+1); }
+
+   void decCount() { if( count ) setCount(count-1); }
 
    // drawing
 
@@ -403,7 +409,9 @@ class InnerDataWindow : public SubWindow
 
    TestResult test(const DrawItem &draw,Point point) const;
 
-   void press(const DrawItem &draw,ulen index,Point point);
+   void press(const DrawItem &draw,ulen index,Point point,bool recursive);
+
+   void change(ulen index,const ItemData &item,ItemStatus status,bool recursive);
 
   public:
 
@@ -486,6 +494,8 @@ class InnerDataWindow : public SubWindow
    Signal<ulen> scroll_x;
    Signal<ulen> scroll_y;
    Signal<> update_scroll;
+   Signal<ItemStatus,ItemStatus> changed; // prev , status
+   Signal<> manychanged;
  };
 
 /* class DataWindow */
@@ -558,6 +568,11 @@ class DataWindow : public ComboWindow
    // drawing
 
    virtual void layout();
+
+   // signals
+
+   Signal<ItemStatus,ItemStatus> &changed; // prev , status
+   Signal<> &manychanged;
  };
 
 /* class AspectWindow */
@@ -682,6 +697,14 @@ class AspectWindow : public ComboWindow
    void hide_changed(Filter filter);
 
    SignalConnector<AspectWindow,Filter> connector_hide_changed;
+
+   void data_changed(ItemStatus prev,ItemStatus status);
+
+   SignalConnector<AspectWindow,ItemStatus,ItemStatus> connector_data_changed;
+
+   void data_manychanged();
+
+   SignalConnector<AspectWindow> connector_data_manychanged;
 
   public:
 

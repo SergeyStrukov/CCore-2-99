@@ -200,9 +200,11 @@ Point CountControl::getMinSize() const
   return Point( 2*dxy+s.x , Sup(2*dxy,s.y) );
  }
 
-void CountControl::setCount(ulen count)
+void CountControl::setCount(ulen count_)
  {
-  text.printf("#;",count);
+  count=count_;
+
+  text.printf("#;",count_);
  }
 
  // drawing
@@ -651,7 +653,7 @@ auto InnerDataWindow::test(const DrawItem &draw,Point test_point) const -> TestR
   return {MaxULen};
  }
 
-void InnerDataWindow::press(const DrawItem &draw,ulen index,Point point) // TODO
+void InnerDataWindow::press(const DrawItem &draw,ulen index,Point point,bool recursive)
  {
   auto items=data.getItems();
 
@@ -685,28 +687,58 @@ void InnerDataWindow::press(const DrawItem &draw,ulen index,Point point) // TODO
 
      case PressNew :
       {
+       change(index,item,Item_New,recursive);
       }
      break;
 
      case PressIgnore :
       {
+       change(index,item,Item_Ignore,recursive);
       }
      break;
 
      case PressRed :
       {
+       change(index,item,Item_Red,recursive);
       }
      break;
 
      case PressYellow :
       {
+       change(index,item,Item_Yellow,recursive);
       }
      break;
 
      case PressGreen :
       {
+       change(index,item,Item_Green,recursive);
       }
      break;
+    }
+ }
+
+void InnerDataWindow::change(ulen index,const ItemData &item,ItemStatus status,bool recursive)
+ {
+  if( item.is_dir && recursive )
+    {
+     auto items=data.getItems();
+
+     for(ulen lim=item.next_index; index<lim ;index++) items[index].ptr->status=status;
+
+     updateList();
+
+     manychanged.assert();
+    }
+  else
+    {
+     ItemStatus prev=item.ptr->status;
+
+     if( Change(item.ptr->status,status) )
+       {
+        updateList();
+
+        changed.assert(prev,status);
+       }
     }
  }
 
@@ -760,6 +792,8 @@ void InnerDataWindow::update(bool new_data)
 
   if( new_data )
     {
+     data_filter={};
+
      updateList();
 
      off_x=0;
@@ -857,7 +891,7 @@ void InnerDataWindow::react(UserAction action)
   action.dispatch(*this);
  }
 
-void InnerDataWindow::react_LeftClick(Point point,MouseKey)
+void InnerDataWindow::react_LeftClick(Point point,MouseKey mkey)
  {
   DrawItem draw(cfg,getSize());
 
@@ -865,7 +899,7 @@ void InnerDataWindow::react_LeftClick(Point point,MouseKey)
 
   if( res.index!=MaxULen )
     {
-     press(draw,res.index,point-res.base);
+     press(draw,res.index,point-res.base,mkey&MouseKey_Shift);
     }
  }
 
@@ -922,7 +956,10 @@ DataWindow::DataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data)
 
    connector_posx(&scroll_x,&XScrollWindow::setPos,inner.scroll_x),
    connector_posy(&scroll_y,&YScrollWindow::setPos,inner.scroll_y),
-   connector_update_scroll(this,&DataWindow::update_scroll,inner.update_scroll)
+   connector_update_scroll(this,&DataWindow::update_scroll,inner.update_scroll),
+
+   changed(inner.changed),
+   manychanged(inner.manychanged)
  {
   wlist.insTop(inner);
 
@@ -1079,6 +1116,32 @@ void AspectWindow::hide_changed(Filter filter)
   data_window.filter(filter);
  }
 
+void AspectWindow::data_changed(ItemStatus prev,ItemStatus status)
+ {
+  switch( prev )
+    {
+     case Item_Red    : count_red.decCount(); break;
+     case Item_Yellow : count_yellow.decCount(); break;
+     case Item_Green  : count_green.decCount(); break;
+    }
+
+  switch( status )
+    {
+     case Item_Red    : count_red.incCount(); break;
+     case Item_Yellow : count_yellow.incCount(); break;
+     case Item_Green  : count_green.incCount(); break;
+    }
+
+  setModified();
+ }
+
+void AspectWindow::data_manychanged()
+ {
+  updateCount();
+
+  setModified();
+ }
+
 AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
  : ComboWindow(host),
    cfg(cfg_),
@@ -1104,7 +1167,9 @@ AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
    msg_frame(host.getFrameDesktop(),cfg.msg_cfg),
 
    connector_msg_destroyed(this,&AspectWindow::msg_destroyed,msg_frame.destroyed),
-   connector_hide_changed(this,&AspectWindow::hide_changed,hide.changed)
+   connector_hide_changed(this,&AspectWindow::hide_changed,hide.changed),
+   connector_data_changed(this,&AspectWindow::data_changed,data_window.changed),
+   connector_data_manychanged(this,&AspectWindow::data_manychanged,data_window.manychanged)
  {
   wlist.insTop(label_path,label_aspect,text_path,text_aspect,line1,hide,count_red,count_yellow,count_green,line2,data_window);
  }
