@@ -277,11 +277,17 @@ class InnerDataWindow::DrawItem : NoCopy
    Coord dxy;
    Coord rxy;
    Coord rin;
+   Coord kxy;
    VColor text;
    VColor status_color[ItemStatusLim];
    Font font;
 
    const RadioShape::Config &radio_cfg;
+   const KnobShape::Config &knob_cfg;
+
+   VColor face1;
+   VColor face2;
+   VColor line;
 
    Point size;
    Coord file_dx;
@@ -290,7 +296,7 @@ class InnerDataWindow::DrawItem : NoCopy
 
   private:
 
-   void drawBtn(const DrawBuf &buf,Pane pane,ItemStatus status,ItemStatus item_status) const
+   void drawRadio(const DrawBuf &buf,Pane pane,ItemStatus status,ItemStatus item_status,bool mover=false) const
     {
      VColor vc=status_color[status];
 
@@ -301,6 +307,7 @@ class InnerDataWindow::DrawItem : NoCopy
      RadioShape shape(radio_cfg, status==item_status );
 
      shape.pane=pane.shrink(rin);
+     shape.mover=mover;
 
      shape.draw(buf);
     }
@@ -312,40 +319,147 @@ class InnerDataWindow::DrawItem : NoCopy
      ItemStatus status=item.ptr->status;
      Coord shift=rxy+delta;
 
-     drawBtn(buf,btn,Item_New,   status); btn+=Point(shift,0);
-     drawBtn(buf,btn,Item_Ignore,status); btn+=Point(shift,0);
-     drawBtn(buf,btn,Item_Red,   status); btn+=Point(shift,0);
-     drawBtn(buf,btn,Item_Yellow,status); btn+=Point(shift,0);
-     drawBtn(buf,btn,Item_Green, status);
+     drawRadio(buf,btn,Item_New,   status); btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Ignore,status); btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Red,   status); btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Yellow,status); btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Green, status);
     }
 
-   void drawBtns(const DrawBuf &buf,Pane pane,const ItemData &item) const // TODO
+   void drawKnob(const DrawBuf &buf,Pane pane,KnobType type,bool mover=false) const
     {
-     Used(buf);
-     Used(pane);
-     Used(item);
+     MPane p(pane);
+
+     SmoothDrawArt art(buf);
+
+     // center and radius
+
+     MCoord len=p.dx;
+     MCoord radius=len/2;
+
+     MPoint center=p.getCenter();
+
+     VColor gray=+knob_cfg.gray;
+
+     // body
+
+     {
+      VColor top = mover? +knob_cfg.snowUp : +knob_cfg.snow ;
+
+      art.ball(center,radius,TwoField(p.getTopLeft(),top,p.getBottomLeft(),gray));
+     }
+
+     // face
+
+     VColor fc = +knob_cfg.face ;
+
+     switch( type )
+       {
+        case KnobPlus :
+         {
+          MCoord a=radius/2;
+          MCoord w=radius/3;
+
+          art.path(w,fc,center.subX(a),center.addX(a));
+          art.path(w,fc,center.subY(a),center.addY(a));
+         }
+        break;
+
+        case KnobMinus :
+         {
+          MCoord a=radius/2;
+          MCoord w=radius/3;
+
+          art.path(w,fc,center.subX(a),center.addX(a));
+         }
+        break;
+
+        case KnobPlusPlus :
+         {
+          MCoord a=radius/2;
+          MCoord w=radius/3;
+
+          art.path(2*w,face2,center.subX(a),center.addX(a));
+          art.path(2*w,face2,center.subY(a),center.addY(a));
+
+          art.path(w,face1,center.subX(a),center.addX(a));
+          art.path(w,face1,center.subY(a),center.addY(a));
+         }
+        break;
+
+        case KnobMinusMinus :
+         {
+          MCoord a=radius/2;
+          MCoord w=radius/3;
+
+          art.path(2*w,face2,center.subX(a),center.addX(a));
+
+          art.path(w,face1,center.subX(a),center.addX(a));
+         }
+        break;
+       }
+
+     // border
+
+     {
+      MCoord width=+knob_cfg.width;
+
+      VColor border = +knob_cfg.border ;
+
+      art.circle(center,radius-width/2,width,border);
+     }
+    }
+
+   void drawKnobs(const DrawBuf &buf,Pane pane,const ItemData &item) const
+    {
+     Coord delta=(dxy-kxy)/2;
+     Pane btn(pane.getBase().addXY(delta),kxy);
+     Coord shift=kxy+delta;
+
+     drawKnob(buf,btn,item.is_open?KnobMinus:KnobPlus); btn+=Point(shift,0);
+     drawKnob(buf,btn,KnobPlusPlus);                    btn+=Point(shift,0);
+     drawKnob(buf,btn,KnobMinusMinus);
     }
 
    void drawDir(const DrawBuf &buf,Pane pane,const ItemData &item) const
     {
-     drawBtns(buf,SplitX(btn_dx,pane),item);
+     Point base=pane.addDY();
+
+     drawKnobs(buf,SplitX(btn_dx,pane),item);
      drawFile(buf,pane,item);
+
+     TextSize ts=font->text(Range(item.ptr->name));
+
+     Coord len=dir_dx+ts.full_dx;
+
+     SmoothDrawArt art(buf);
+
+     MCoord width=+knob_cfg.width;
+
+     art.path(HalfPos,width,line,base,base.addX(len));
     }
 
   public:
 
-   DrawItem(const Config &cfg,Point size_) // TODO
+   DrawItem(const Config &cfg,Point size_)
     : dxy(+cfg.dxy),
       rxy(+cfg.rxy),
       rin(+cfg.rin),
+      kxy(+cfg.kxy),
       text(+cfg.text),
       font(+cfg.font),
+
       radio_cfg(cfg.radio_cfg),
+      knob_cfg(cfg.knob_cfg),
+
+      face1(+cfg.face1),
+      face2(+cfg.face2),
+      line(+cfg.line),
 
       size(size_)
     {
      file_dx=dxy+4*(rxy+(dxy-rxy)/2);
-     btn_dx=0;
+     btn_dx=dxy+2*(kxy+(dxy-kxy)/2);
      dir_dx=btn_dx+file_dx;
 
      status_color[Item_New]=+cfg.status_New;
@@ -381,6 +495,17 @@ class InnerDataWindow::DrawItem : NoCopy
 
      return item.depth+len;
     }
+
+   PressType operator () (const ItemData &item,Point point) const // TODO
+    {
+    }
+
+   bool operator () (Point point,Point test_point) const
+    {
+     Pane pane(point,size.x-point.x,dxy);
+
+     return pane.contains(test_point);
+    }
  };
 
 void InnerDataWindow::posX(ulen pos)
@@ -395,6 +520,128 @@ void InnerDataWindow::posY(ulen pos)
   off_y=pos;
 
   redraw();
+ }
+
+void InnerDataWindow::setPosX(ulen pos)
+ {
+  if( Change(off_x,pos) )
+    {
+     redraw();
+
+     scroll_x.assert(off_x);
+    }
+ }
+
+void InnerDataWindow::addPosX(ulen delta)
+ {
+  if( page_x<total_x ) setPosX(AddToCap<ulen>(off_x,delta,total_x-page_x));
+ }
+
+void InnerDataWindow::subPosX(ulen delta)
+ {
+  if( page_x<total_x ) setPosX(PosSub(off_x,delta));
+ }
+
+void InnerDataWindow::setPosY(ulen pos)
+ {
+  if( Change(off_y,pos) )
+    {
+     redraw();
+
+     scroll_y.assert(off_y);
+    }
+ }
+
+void InnerDataWindow::addPosY(ulen delta)
+ {
+  if( page_y<total_y ) setPosY(AddToCap<ulen>(off_y,delta,total_y-page_y));
+ }
+
+void InnerDataWindow::subPosY(ulen delta)
+ {
+  if( page_y<total_y ) setPosY(PosSub(off_y,delta));
+ }
+
+auto InnerDataWindow::test(const DrawItem &draw,Point test_point) const -> TestResult
+ {
+  auto items=data.getItems();
+
+  Point point=Null;
+  Coord dxy=+cfg.dxy;
+  ulen off=off_x;
+
+  for(ulen i=off_y,j=0; i<items.len && j<page_y ;)
+    {
+     const ItemData &item=items[i];
+
+     if( data_filter(item.ptr->status) ) continue;
+
+     ulen depth=item.depth;
+
+     Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
+
+     if( draw(p,test_point) ) return {i,p};
+
+     if( item.is_dir && !item.is_open )
+       i=item.next_index;
+     else
+       i++;
+
+     point=point.addY(dxy);
+     j++;
+    }
+
+  return {};
+ }
+
+void InnerDataWindow::press(const DrawItem &draw,ulen index,Point point) // TODO
+ {
+  auto items=data.getItems();
+
+  const ItemData &item=items[index];
+
+  switch( draw(item,point) )
+    {
+     case PressPlus :
+      {
+      }
+     break;
+
+     case PressPlusPlus :
+      {
+      }
+     break;
+
+     case PressMinusMinus :
+      {
+      }
+     break;
+
+     case PressNew :
+      {
+      }
+     break;
+
+     case PressIgnore :
+      {
+      }
+     break;
+
+     case PressRed :
+      {
+      }
+     break;
+
+     case PressYellow :
+      {
+      }
+     break;
+
+     case PressGreen :
+      {
+      }
+     break;
+    }
  }
 
 InnerDataWindow::InnerDataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data_)
@@ -546,6 +793,45 @@ MouseShape InnerDataWindow::getMouseShape(Point,KeyMod) const
 void InnerDataWindow::react(UserAction action)
  {
   action.dispatch(*this);
+ }
+
+void InnerDataWindow::react_LeftClick(Point point,MouseKey)
+ {
+  DrawItem draw(cfg,getSize());
+
+  auto res=test(draw,point);
+
+  if( res.index!=MaxULen )
+    {
+     press(draw,res.index,point-res.base);
+    }
+ }
+
+void InnerDataWindow::react_Move(Point point,MouseKey) // TODO
+ {
+  Used(point);
+ }
+
+void InnerDataWindow::react_Leave() // TODO
+ {
+ }
+
+void InnerDataWindow::react_Wheel(Point,MouseKey mkey,Coord delta)
+ {
+  if( mkey&MouseKey_Shift )
+    {
+     if( delta>0 )
+       subPosX(delta);
+     else
+       addPosX(-delta);
+    }
+  else
+    {
+     if( delta>0 )
+       subPosY(delta);
+     else
+       addPosY(-delta);
+    }
  }
 
 /* class DataWindow */

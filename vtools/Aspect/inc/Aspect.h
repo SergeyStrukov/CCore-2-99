@@ -256,20 +256,26 @@ class InnerDataWindow : public SubWindow
    struct Config
     {
      CtorRefVal<RadioShape::Config> radio_cfg;
+     CtorRefVal<KnobShape::Config> knob_cfg;
 
      // app
 
      RefVal<Coord> dxy = 30 ;
      RefVal<Coord> rxy = 20 ;
      RefVal<Coord> rin =  2 ;
+     RefVal<Coord> kxy = 20 ;
 
      RefVal<VColor> text = Black ;
 
      RefVal<VColor> status_New    = SkyBlue ;
-     RefVal<VColor> status_Ignore = Gray ;
-     RefVal<VColor> status_Red    = Red ;
-     RefVal<VColor> status_Yellow = Yellow ;
-     RefVal<VColor> status_Green  = Green ;
+     RefVal<VColor> status_Ignore =    Gray ;
+     RefVal<VColor> status_Red    =     Red ;
+     RefVal<VColor> status_Yellow =  Yellow ;
+     RefVal<VColor> status_Green  =   Green ;
+
+     RefVal<VColor> face1 = Black ;
+     RefVal<VColor> face2 =  Gray ;
+     RefVal<VColor> line  =  Navy ;
 
      RefVal<Font> font;
 
@@ -288,6 +294,7 @@ class InnerDataWindow : public SubWindow
        Used(bag);
 
        radio_cfg.bind(proxy);
+       knob_cfg.bind(proxy);
       }
 
      template <class Bag>
@@ -296,6 +303,7 @@ class InnerDataWindow : public SubWindow
        dxy.bind(bag.item_dxy);
        rxy.bind(bag.item_rxy);
        rin.bind(bag.item_rin);
+       kxy.bind(bag.item_kxy);
 
        text.bind(bag.item_text);
 
@@ -304,6 +312,10 @@ class InnerDataWindow : public SubWindow
        status_Red.bind(bag.status_Red);
        status_Yellow.bind(bag.status_Yellow);
        status_Green.bind(bag.status_Green);
+
+       face1.bind(bag.item_face1);
+       face2.bind(bag.item_face2);
+       line.bind(bag.item_line);
 
        font.bind(bag.item_font.font);
       }
@@ -329,6 +341,27 @@ class InnerDataWindow : public SubWindow
    ulen page_x = 1 ;
    ulen page_y = 1 ;
 
+   enum KnobType
+    {
+     KnobPlus,
+     KnobMinus,
+     KnobPlusPlus,
+     KnobMinusMinus
+    };
+
+   enum PressType
+    {
+     PressPlus,
+     PressPlusPlus,
+     PressMinusMinus,
+
+     PressNew,
+     PressIgnore,
+     PressRed,
+     PressYellow,
+     PressGreen
+    };
+
   private:
 
    void updateTotalY();
@@ -345,6 +378,30 @@ class InnerDataWindow : public SubWindow
 
    SignalConnector<InnerDataWindow,ulen> connector_posX;
    SignalConnector<InnerDataWindow,ulen> connector_posY;
+
+  private:
+
+   void setPosX(ulen pos);
+
+   void addPosX(ulen delta);
+
+   void subPosX(ulen delta);
+
+   void setPosY(ulen pos);
+
+   void addPosY(ulen delta);
+
+   void subPosY(ulen delta);
+
+   struct TestResult
+    {
+     ulen index = MaxULen ;
+     Point base;
+    };
+
+   TestResult test(const DrawItem &draw,Point point) const;
+
+   void press(const DrawItem &draw,ulen index,Point point);
 
   public:
 
@@ -413,6 +470,14 @@ class InnerDataWindow : public SubWindow
    // user input
 
    virtual void react(UserAction action);
+
+   void react_LeftClick(Point point,MouseKey mkey);
+
+   void react_Move(Point point,MouseKey mkey);
+
+   void react_Leave();
+
+   void react_Wheel(Point point,MouseKey mkey,Coord delta);
 
    // signals
 

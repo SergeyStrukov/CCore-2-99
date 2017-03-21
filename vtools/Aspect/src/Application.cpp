@@ -75,10 +75,15 @@ struct AppPreferenceBag : ConfigItemHost
   Coord item_dxy = 30 ;
   Coord item_rxy = 20 ;
   Coord item_rin =  2 ;
+  Coord item_kxy = 20 ;
 
   VColor item_text = Black ;
 
   FontCouple item_font;
+
+  VColor item_face1 = Black ;
+  VColor item_face2 =  Gray ;
+  VColor item_line  =  Navy ;
 
   // status
 
@@ -133,8 +138,12 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
   func("item_dxy"_c,ptr->item_dxy);
   func("item_rxy"_c,ptr->item_rxy);
   func("item_rin"_c,ptr->item_rin);
+  func("item_kxy"_c,ptr->item_kxy);
   func("item_text"_c,ptr->item_text);
   func("item_font"_c,ptr->item_font.param);
+  func("item_face1"_c,ptr->item_face1);
+  func("item_face2"_c,ptr->item_face2);
+  func("item_line"_c,ptr->item_line);
 
   func("status_New"_c,ptr->status_New);
   func("status_Ignore"_c,ptr->status_Ignore);
@@ -184,8 +193,12 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
     binder.item("cell size"_def,item_dxy);
     binder.item("radio size"_def,item_rxy);
     binder.item("radio inner"_def,item_rin);
+    binder.item("knob size"_def,item_kxy);
     binder.item("text"_def,item_text);
     binder.item("font"_def,item_font);
+    binder.item("face1"_def,item_face1);
+    binder.item("face2"_def,item_face2);
+    binder.item("line"_def,item_line);
 
   binder.group("Status"_def);
 
