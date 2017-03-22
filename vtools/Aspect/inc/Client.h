@@ -51,12 +51,14 @@ class ClientWindow : public ComboWindow , public AliveControl
      RefVal<DefString> text_SelectPath = "Select a project path"_def ;
 
      RefVal<DefString> menu_File    = "@File"_def ;
+     RefVal<DefString> menu_Actions = "@Actions"_def ;
      RefVal<DefString> menu_Options = "@Options"_def ;
      RefVal<DefString> menu_New     = "@New ..."_def ;
      RefVal<DefString> menu_Open    = "@Open ..."_def ;
      RefVal<DefString> menu_Save    = "@Save"_def ;
      RefVal<DefString> menu_SaveAs  = "Save @as ..."_def ;
      RefVal<DefString> menu_Exit    = "E@xit"_def ;
+     RefVal<DefString> menu_Collect = "@Collect"_def ;
      RefVal<DefString> menu_Global  = "@Global ..."_def ;
      RefVal<DefString> menu_App     = "@Application ..."_def ;
 
@@ -98,12 +100,14 @@ class ClientWindow : public ComboWindow , public AliveControl
        text_SelectPath.bind(bag.text_SelectPath);
 
        menu_File.bind(bag.menu_File);
+       menu_Actions.bind(bag.menu_Actions);
        menu_Options.bind(bag.menu_Options);
        menu_New.bind(bag.menu_New);
        menu_Open.bind(bag.menu_Open);
        menu_Save.bind(bag.menu_Save);
        menu_SaveAs.bind(bag.menu_SaveAs);
        menu_Exit.bind(bag.menu_Exit);
+       menu_Collect.bind(bag.menu_Collect);
        menu_Global.bind(bag.menu_Global);
        menu_App.bind(bag.menu_App);
       }
@@ -120,6 +124,7 @@ class ClientWindow : public ComboWindow , public AliveControl
    MenuData menu_data;
 
    MenuData menu_file_data;
+   MenuData menu_act_data;
    MenuData menu_opt_data;
 
    SimpleTopMenuWindow menu;
@@ -177,16 +182,20 @@ class ClientWindow : public ComboWindow , public AliveControl
     {
      MenuFile = 1,
 
-     MenuFileNew    = 101,
-     MenuFileOpen   = 102,
-     MenuFileSave   = 103,
-     MenuFileSaveAs = 104,
-     MenuFileExit   = 110,
+      MenuFileNew    = 101,
+      MenuFileOpen   = 102,
+      MenuFileSave   = 103,
+      MenuFileSaveAs = 104,
+      MenuFileExit   = 110,
 
-     MenuOptions = 2,
+     MenuActions = 2,
 
-     MenuOptionsUserPref = 201,
-     MenuOptionsAppPref  = 202
+      MenuCollect = 201,
+
+     MenuOptions = 3,
+
+      MenuOptionsUserPref = 301,
+      MenuOptionsAppPref  = 302
     };
 
    void menuAction(int id,Point point);

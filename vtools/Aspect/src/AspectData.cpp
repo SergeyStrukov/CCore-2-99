@@ -616,6 +616,10 @@ Counts AspectData::getCounts() const
   return ret;
  }
 
+void AspectData::collect() // TODO
+ {
+ }
+
  // save/load
 
 void AspectData::blank(StrLen path_)

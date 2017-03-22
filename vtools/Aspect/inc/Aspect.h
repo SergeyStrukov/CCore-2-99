@@ -463,6 +463,8 @@ class InnerDataWindow : public SubWindow
 
    void filter(Filter filter);
 
+   void collect();
+
    // drawing
 
    virtual bool isGoodSize(Point size) const;
@@ -576,6 +578,8 @@ class DataWindow : public ComboWindow
    void update(bool new_data);
 
    void filter(Filter filter);
+
+   void collect();
 
    // drawing
 
@@ -741,6 +745,8 @@ class AspectWindow : public ComboWindow
    void updateCount();
 
    void update(bool new_data);
+
+   void collect();
 
    // drawing
 

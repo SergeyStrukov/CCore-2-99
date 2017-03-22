@@ -50,12 +50,14 @@ struct AppPreferenceBag : ConfigItemHost
   DefString text_SelectPath = "Select a project path"_def ;
 
   DefString menu_File    = "@File"_def ;
+  DefString menu_Actions = "@Actions"_def ;
   DefString menu_Options = "@Options"_def ;
   DefString menu_New     = "@New ..."_def ;
   DefString menu_Open    = "@Open ..."_def ;
   DefString menu_Save    = "@Save"_def ;
   DefString menu_SaveAs  = "Save @as ..."_def ;
   DefString menu_Exit    = "E@xit"_def ;
+  DefString menu_Collect = "@Collect"_def ;
   DefString menu_Global  = "@Global ..."_def ;
   DefString menu_App     = "@Application ..."_def ;
 
@@ -120,12 +122,14 @@ void AppPreferenceBag::Members(Ptr ptr,Func func)
   func("text_SelectPath"_c,ptr->text_SelectPath);
 
   func("menu_File"_c,ptr->menu_File);
+  func("menu_Actions"_c,ptr->menu_Actions);
   func("menu_Options"_c,ptr->menu_Options);
   func("menu_New"_c,ptr->menu_New);
   func("menu_Open"_c,ptr->menu_Open);
   func("menu_Save"_c,ptr->menu_Save);
   func("menu_SaveAs"_c,ptr->menu_SaveAs);
   func("menu_Exit"_c,ptr->menu_Exit);
+  func("menu_Collect"_c,ptr->menu_Collect);
   func("menu_Global"_c,ptr->menu_Global);
   func("menu_App"_c,ptr->menu_App);
 
@@ -167,15 +171,17 @@ void AppPreferenceBag::bind(ConfigItemBind &binder)
 
     binder.item("path title"_def,text_SelectPath);
     binder.space();
-    binder.item("File"_def,menu_File);
-    binder.item("Options"_def,menu_Options);
-    binder.item("New"_def,menu_New);
-    binder.item("Open"_def,menu_Open);
-    binder.item("Save"_def,menu_Save);
-    binder.item("SaveAs"_def,menu_SaveAs);
-    binder.item("Exit"_def,menu_Exit);
-    binder.item("Global"_def,menu_Global);
-    binder.item("App"_def,menu_App);
+    binder.item("'File'"_def,menu_File);
+    binder.item("'Actions'"_def,menu_Actions);
+    binder.item("'Options'"_def,menu_Options);
+    binder.item("'New'"_def,menu_New);
+    binder.item("'Open'"_def,menu_Open);
+    binder.item("'Save'"_def,menu_Save);
+    binder.item("'SaveAs'"_def,menu_SaveAs);
+    binder.item("'Exit'"_def,menu_Exit);
+    binder.item("'Collect'"_def,menu_Collect);
+    binder.item("'Global'"_def,menu_Global);
+    binder.item("'App'"_def,menu_App);
 
   binder.group("Hide"_def);
 

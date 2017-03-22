@@ -271,6 +271,8 @@ class AspectData : NoCopy
 
    auto getVisible() { return Range(visible); }
 
+   void collect();
+
    // save/load
 
    void blank(StrLen path);

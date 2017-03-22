@@ -154,6 +154,12 @@ void ClientWindow::menuAction(int id,Point point)
       }
      break;
 
+     case MenuCollect :
+      {
+       aspect.collect();
+      }
+     break;
+
      case MenuOptionsUserPref :
       {
        doUserPref.assert(point);
@@ -182,6 +188,12 @@ void ClientWindow::menu_selected(int id,Point point)
      case MenuFile :
       {
        cascade_menu.create(getFrame(),menu_file_data,point);
+      }
+     break;
+
+     case MenuActions :
+      {
+       cascade_menu.create(getFrame(),menu_act_data,point);
       }
      break;
 
@@ -322,6 +334,7 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
   // menu
 
   menu_data(+cfg.menu_File,MenuFile)
+           (+cfg.menu_Actions,MenuActions)
            (+cfg.menu_Options,MenuOptions);
 
   menu_file_data(+cfg.menu_New,MenuFileNew)
@@ -331,6 +344,8 @@ ClientWindow::ClientWindow(SubWindowHost &host,const Config &cfg_)
                 (+cfg.menu_SaveAs,MenuFileSaveAs)
                 (MenuSeparator)
                 (+cfg.menu_Exit,MenuFileExit);
+
+  menu_act_data(+cfg.menu_Collect,MenuCollect);
 
   menu_opt_data(+cfg.menu_Global,MenuOptionsUserPref)
                (+cfg.menu_App,MenuOptionsAppPref);

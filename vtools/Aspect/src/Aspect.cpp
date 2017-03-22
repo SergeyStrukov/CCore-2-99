@@ -858,6 +858,15 @@ void InnerDataWindow::filter(Filter filter)
   updateList();
  }
 
+void InnerDataWindow::collect()
+ {
+  data.collect();
+
+  updateList();
+
+  manychanged.assert();
+ }
+
  // drawing
 
 bool InnerDataWindow::isGoodSize(Point size) const
@@ -1056,6 +1065,11 @@ void DataWindow::filter(Filter filter)
   layout();
 
   redraw();
+ }
+
+void DataWindow::collect()
+ {
+  inner.collect();
  }
 
  // drawing
@@ -1367,6 +1381,11 @@ void AspectWindow::update(bool new_data)
   layout();
 
   redraw();
+ }
+
+void AspectWindow::collect()
+ {
+  data_window.collect();
  }
 
  // drawing
