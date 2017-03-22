@@ -287,6 +287,32 @@ void DirData::erase()
 
 /* class AspectData */
 
+void AspectData::Collect(ItemStatus &result,ItemStatus status)
+ {
+  if( status!=Item_Ignore ) Replace_min(result,status);
+ }
+
+void AspectData::Collect(DirData &dir)
+ {
+  ItemStatus result=ItemStatusLim;
+
+  for(DirData &d : dir.dirs )
+    {
+     Collect(d);
+
+     Collect(result,d.status);
+    }
+
+  for(const FileData &f : dir.files )
+    {
+     Collect(result,f.status);
+    }
+
+  if( result==ItemStatusLim ) result=Item_Ignore;
+
+  dir.status=result;
+ }
+
 template <OneOfTypes<FileData,DirData> T>
 void AspectData::SortData(PtrLen<T> data)
  {
@@ -616,8 +642,9 @@ Counts AspectData::getCounts() const
   return ret;
  }
 
-void AspectData::collect() // TODO
+void AspectData::collect()
  {
+  Collect(root);
  }
 
  // save/load

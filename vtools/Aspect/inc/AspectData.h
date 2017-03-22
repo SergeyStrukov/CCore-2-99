@@ -216,6 +216,10 @@ class AspectData : NoCopy
 
   private:
 
+   static void Collect(ItemStatus &result,ItemStatus status);
+
+   static void Collect(DirData &dir);
+
    template <OneOfTypes<FileData,DirData> T>
    static void SortData(PtrLen<T> data);
 

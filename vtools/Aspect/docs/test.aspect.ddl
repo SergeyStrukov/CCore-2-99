@@ -5,7 +5,7 @@ Aspect Data=
   "..",
   {
    "",
-   Yellow,
+   Green,
    {
     &Dir0,
     &Dir1,
@@ -36,12 +36,12 @@ Dir Dir0=
 Dir Dir1=
   {
    "inc",
-   Yellow,
+   Green,
    {
    },
    {
     { "Application.h" , Green },
-    { "Aspect.h" , Yellow },
+    { "Aspect.h" , Green },
     { "AspectData.h" , Green },
     { "Client.h" , Green },
     { "ErrorText.h" , Green }
@@ -75,12 +75,12 @@ Dir Dir2=
 Dir Dir3=
   {
    "src",
-   Yellow,
+   Green,
    {
    },
    {
     { "Application.cpp" , Green },
-    { "Aspect.cpp" , Yellow },
+    { "Aspect.cpp" , Green },
     { "AspectData.cpp" , Green },
     { "Client.cpp" , Green },
     { "ErrorText.cpp" , Green },
