@@ -261,6 +261,10 @@ class InnerDataWindow : public SubWindow
 
    struct Config
     {
+     RefVal<MCoord> width = Fraction(6,2) ;
+
+     RefVal<VColor> focus = OrangeRed ;
+
      CtorRefVal<RadioShape::Config> radio_cfg;
      CtorRefVal<KnobShape::Config> knob_cfg;
 
@@ -297,7 +301,8 @@ class InnerDataWindow : public SubWindow
      template <class Bag,class Proxy>
      void bind(const Bag &bag,Proxy proxy)
       {
-       Used(bag);
+       width.bind(bag.width);
+       focus.bind(bag.focus);
 
        radio_cfg.bind(proxy);
        knob_cfg.bind(proxy);
@@ -357,7 +362,7 @@ class InnerDataWindow : public SubWindow
 
    enum PressType
     {
-     PressNone,
+     PressNone = 0,
 
      PressPlus,
      PressPlusPlus,
@@ -370,7 +375,12 @@ class InnerDataWindow : public SubWindow
      PressGreen
     };
 
+   PressType hilight_type = PressNone ;
+   ulen hilight_index = 0 ;
+
   private:
+
+   void hilightOff();
 
    void updateList();
 
@@ -412,6 +422,8 @@ class InnerDataWindow : public SubWindow
    void press(const DrawItem &draw,ulen index,Point point,bool recursive);
 
    void change(ulen index,const ItemData &item,ItemStatus status,bool recursive);
+
+   void hilight(const DrawItem &draw,ulen index,Point point);
 
   public:
 

@@ -234,6 +234,11 @@ void CountControl::drawBack(DrawBuf buf,bool) const
 
 /* class InnerDataWindow */
 
+void InnerDataWindow::hilightOff()
+ {
+  if( Change(hilight_type,PressNone) ) redraw();
+ }
+
 void InnerDataWindow::updateList()
  {
   ulen count=0;
@@ -265,6 +270,8 @@ void InnerDataWindow::updateList()
 
   total_y=count;
 
+  hilight_type=PressNone;
+
   update_scroll.assert();
  }
 
@@ -285,6 +292,7 @@ void InnerDataWindow::setMax()
 
 class InnerDataWindow::DrawItem : NoCopy
  {
+   MCoord width;
    Coord dxy;
    Coord rxy;
    Coord rin;
@@ -299,6 +307,7 @@ class InnerDataWindow::DrawItem : NoCopy
    VColor face1;
    VColor face2;
    VColor line;
+   VColor focus;
 
    Point size;
    Coord file_dx;
@@ -307,7 +316,7 @@ class InnerDataWindow::DrawItem : NoCopy
 
   private:
 
-   void drawRadio(const DrawBuf &buf,Pane pane,ItemStatus status,ItemStatus item_status,bool mover=false) const
+   void drawRadio(const DrawBuf &buf,Pane pane,ItemStatus status,ItemStatus item_status,bool mover) const
     {
      VColor vc=status_color[status];
 
@@ -323,23 +332,25 @@ class InnerDataWindow::DrawItem : NoCopy
      shape.draw(buf);
     }
 
-   void drawFile(const DrawBuf &buf,Pane pane,const ItemData &item) const
+   void drawFile(const DrawBuf &buf,Pane pane,const ItemData &item,PressType hilight) const
     {
      Coord delta=(dxy-rxy)/2;
      Pane btn(pane.getBase().addXY(delta),rxy);
      ItemStatus status=item.ptr->status;
      Coord shift=rxy+delta;
 
-     drawRadio(buf,btn,Item_New,   status); btn+=Point(shift,0);
-     drawRadio(buf,btn,Item_Ignore,status); btn+=Point(shift,0);
-     drawRadio(buf,btn,Item_Red,   status); btn+=Point(shift,0);
-     drawRadio(buf,btn,Item_Yellow,status); btn+=Point(shift,0);
-     drawRadio(buf,btn,Item_Green, status);
+     drawRadio(buf,btn,Item_New,   status,hilight==PressNew);    btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Ignore,status,hilight==PressIgnore); btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Red,   status,hilight==PressRed);    btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Yellow,status,hilight==PressYellow); btn+=Point(shift,0);
+     drawRadio(buf,btn,Item_Green, status,hilight==PressGreen);
     }
 
-   void drawKnob(const DrawBuf &buf,Pane pane,KnobType type,bool mover=false) const
+   void drawKnob(const DrawBuf &buf,Pane pane,KnobType type,bool mover) const
     {
      MPane p(pane);
+
+     if( !p ) return;
 
      SmoothDrawArt art(buf);
 
@@ -421,31 +432,29 @@ class InnerDataWindow::DrawItem : NoCopy
      }
     }
 
-   void drawKnobs(const DrawBuf &buf,Pane pane,const ItemData &item) const
+   void drawKnobs(const DrawBuf &buf,Pane pane,const ItemData &item,PressType hilight) const
     {
      Coord delta=(dxy-kxy)/2;
      Pane btn(pane.getBase().addXY(delta),kxy);
      Coord shift=kxy+delta;
 
-     drawKnob(buf,btn,item.is_open?KnobMinus:KnobPlus); btn+=Point(shift,0);
-     drawKnob(buf,btn,KnobPlusPlus);                    btn+=Point(shift,0);
-     drawKnob(buf,btn,KnobMinusMinus);
+     drawKnob(buf,btn,item.is_open?KnobMinus:KnobPlus,hilight==PressPlus); btn+=Point(shift,0);
+     drawKnob(buf,btn,KnobPlusPlus,hilight==PressPlusPlus);                btn+=Point(shift,0);
+     drawKnob(buf,btn,KnobMinusMinus,hilight==PressMinusMinus);
     }
 
-   void drawDir(const DrawBuf &buf,Pane pane,const ItemData &item) const
+   void drawDir(const DrawBuf &buf,Pane pane,const ItemData &item,PressType hilight) const
     {
      Point base=pane.addDY();
 
-     drawKnobs(buf,SplitX(btn_dx,pane),item);
-     drawFile(buf,pane,item);
+     drawKnobs(buf,SplitX(btn_dx,pane),item,hilight);
+     drawFile(buf,pane,item,hilight);
 
      TextSize ts=font->text(Range(item.ptr->name));
 
      Coord len=dir_dx+ts.full_dx;
 
      SmoothDrawArt art(buf);
-
-     MCoord width=+knob_cfg.width;
 
      art.path(HalfPos,width,line,base,base.addX(len));
     }
@@ -481,7 +490,8 @@ class InnerDataWindow::DrawItem : NoCopy
   public:
 
    DrawItem(const Config &cfg,Point size_)
-    : dxy(+cfg.dxy),
+    : width(+cfg.width),
+      dxy(+cfg.dxy),
       rxy(+cfg.rxy),
       rin(+cfg.rin),
       kxy(+cfg.kxy),
@@ -494,6 +504,7 @@ class InnerDataWindow::DrawItem : NoCopy
       face1(+cfg.face1),
       face2(+cfg.face2),
       line(+cfg.line),
+      focus(+cfg.focus),
 
       size(size_)
     {
@@ -508,17 +519,17 @@ class InnerDataWindow::DrawItem : NoCopy
      status_color[Item_Green]=+cfg.status_Green;
     }
 
-   void operator () (const DrawBuf &buf,Point point,const ItemData &item) const
+   void operator () (const DrawBuf &buf,Point point,const ItemData &item,PressType hilight) const
     {
      Pane pane(point,size.x-point.x,dxy);
 
      if( item.is_dir )
        {
-        drawDir(buf,SplitX(dir_dx,pane),item);
+        drawDir(buf,SplitX(dir_dx,pane),item,hilight);
        }
      else
        {
-        drawFile(buf,SplitX(file_dx,pane),item);
+        drawFile(buf,SplitX(file_dx,pane),item,hilight);
        }
 
      font->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),Range(item.ptr->name),text);
@@ -562,11 +573,26 @@ class InnerDataWindow::DrawItem : NoCopy
 
      return pane.contains(test_point);
     }
+
+   void frame(const DrawBuf &buf,Pane pane) const
+    {
+     MPane p(pane);
+
+     if( !p ) return;
+
+     SmoothDrawArt art(buf);
+
+     FigureBox fig(p);
+
+     fig.loop(art,HalfPos,width,focus);
+    }
  };
 
 void InnerDataWindow::posX(ulen pos)
  {
   off_x=pos;
+
+  hilight_type=PressNone;
 
   redraw();
  }
@@ -575,6 +601,8 @@ void InnerDataWindow::posY(ulen pos)
  {
   off_y=pos;
 
+  hilight_type=PressNone;
+
   redraw();
  }
 
@@ -582,6 +610,8 @@ void InnerDataWindow::setPosX(ulen pos)
  {
   if( Change(off_x,pos) )
     {
+     hilight_type=PressNone;
+
      redraw();
 
      scroll_x.assert(off_x);
@@ -602,6 +632,8 @@ void InnerDataWindow::setPosY(ulen pos)
  {
   if( Change(off_y,pos) )
     {
+     hilight_type=PressNone;
+
      redraw();
 
      scroll_y.assert(off_y);
@@ -742,6 +774,22 @@ void InnerDataWindow::change(ulen index,const ItemData &item,ItemStatus status,b
     }
  }
 
+void InnerDataWindow::hilight(const DrawItem &draw,ulen index,Point point)
+ {
+  auto items=data.getItems();
+
+  const ItemData &item=items[index];
+
+  if( PressType type=draw(item,point) )
+    {
+     if( Change(hilight_type,type) | Change(hilight_index,index) ) redraw();
+    }
+  else
+    {
+     hilightOff();
+    }
+ }
+
 InnerDataWindow::InnerDataWindow(SubWindowHost &host,const Config &cfg_,AspectData &data_)
  : SubWindow(host),
    cfg(cfg_),
@@ -770,11 +818,13 @@ bool InnerDataWindow::shortDY() const
 
  // methods
 
-Point InnerDataWindow::getMinSize(Point cap) const // TODO
+Point InnerDataWindow::getMinSize(Point cap) const
  {
   Used(cap);
 
-  return Point(100,100);
+  Coord dxy=+cfg.dxy;
+
+  return Point(40*dxy,20*dxy);
  }
 
 void InnerDataWindow::update(bool new_data)
@@ -843,8 +893,15 @@ void InnerDataWindow::draw(DrawBuf buf,bool) const
 
         Point p = ( off<=depth )? point.addX((depth-off)*dxy) : point.subX((off-depth)*dxy) ;
 
-        draw(buf,p,item);
+        draw(buf,p,item, (ind==hilight_index)?hilight_type:PressNone );
        }
+    }
+
+  if( focus )
+    {
+     Pane pane(Null,getSize());
+
+     draw.frame(buf,pane);
     }
  }
 
@@ -903,13 +960,21 @@ void InnerDataWindow::react_LeftClick(Point point,MouseKey mkey)
     }
  }
 
-void InnerDataWindow::react_Move(Point point,MouseKey) // TODO
+void InnerDataWindow::react_Move(Point point,MouseKey)
  {
-  Used(point);
+  DrawItem draw(cfg,getSize());
+
+  auto res=test(draw,point);
+
+  if( res.index!=MaxULen )
+    {
+     hilight(draw,res.index,point-res.base);
+    }
  }
 
-void InnerDataWindow::react_Leave() // TODO
+void InnerDataWindow::react_Leave()
  {
+  hilightOff();
  }
 
 void InnerDataWindow::react_Wheel(Point,MouseKey mkey,Coord delta)

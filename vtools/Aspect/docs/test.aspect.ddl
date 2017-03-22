@@ -2,10 +2,10 @@
 
 Aspect Data=
  {
-  ".",
+  "..",
   {
    "",
-   New,
+   Yellow,
    {
     &Dir0,
     &Dir1,
@@ -13,80 +13,81 @@ Aspect Data=
     &Dir3
    },
    {
-    { "Makefile.s-files" , New },
-    { "Makefile.files" , New },
-    { "Makefile.cpp-files" , New },
-    { "Makefile" , New }
+    { "Makefile" , Ignore },
+    { "Makefile.cpp-files" , Ignore },
+    { "Makefile.files" , Ignore },
+    { "Makefile.s-files" , Ignore }
    }
   }
  };
 
 Dir Dir0=
   {
-   "src",
-   New,
+   "docs",
+   Ignore,
    {
    },
    {
-    { "main.cpp" , New },
-    { "ErrorText.cpp" , New },
-    { "Client.cpp" , New },
-    { "AspectData.cpp" , New },
-    { "Aspect.TypeSet.gen.h" , New },
-    { "Aspect.TypeDef.gen.h" , New },
-    { "Aspect.ddl" , New },
-    { "Aspect.cpp" , New },
-    { "Application.cpp" , New }
+    { "html.aspect.ddl" , Ignore },
+    { "test.aspect.ddl" , Ignore }
    }
   };
 
 Dir Dir1=
   {
-   "obj",
-   New,
+   "inc",
+   Yellow,
    {
    },
    {
-    { "Makefile.dep" , New },
-    { "main.o" , New },
-    { "main.dep" , New },
-    { "ErrorText.o" , New },
-    { "ErrorText.dep" , New },
-    { "empty" , New },
-    { "Client.o" , New },
-    { "Client.dep" , New },
-    { "AspectData.o" , New },
-    { "AspectData.dep" , New },
-    { "Aspect.o" , New },
-    { "Aspect.dep" , New },
-    { "Application.o" , New },
-    { "Application.dep" , New }
+    { "Application.h" , Green },
+    { "Aspect.h" , Yellow },
+    { "AspectData.h" , Green },
+    { "Client.h" , Green },
+    { "ErrorText.h" , Green }
    }
   };
 
 Dir Dir2=
   {
-   "inc",
-   New,
+   "obj",
+   Ignore,
    {
    },
    {
-    { "ErrorText.h" , New },
-    { "Client.h" , New },
-    { "AspectData.h" , New },
-    { "Aspect.h" , New },
-    { "Application.h" , New }
+    { "empty" , Ignore },
+    { "Application.dep" , Ignore },
+    { "Aspect.dep" , Ignore },
+    { "AspectData.dep" , Ignore },
+    { "Client.dep" , Ignore },
+    { "ErrorText.dep" , Ignore },
+    { "main.dep" , Ignore },
+    { "Makefile.dep" , Ignore },
+    { "Application.o" , Ignore },
+    { "Aspect.o" , Ignore },
+    { "AspectData.o" , Ignore },
+    { "Client.o" , Ignore },
+    { "ErrorText.o" , Ignore },
+    { "main.o" , Ignore }
    }
   };
 
 Dir Dir3=
   {
-   "docs",
-   New,
+   "src",
+   Yellow,
    {
    },
    {
-    { "test.aspect.ddl" , New }
+    { "Application.cpp" , Green },
+    { "Aspect.cpp" , Yellow },
+    { "AspectData.cpp" , Green },
+    { "Client.cpp" , Green },
+    { "ErrorText.cpp" , Green },
+    { "main.cpp" , Green },
+    { "Aspect.ddl" , Green },
+    { "Aspect.TypeDef.gen.h" , Ignore },
+    { "Aspect.TypeSet.gen.h" , Ignore }
    }
   };
 
