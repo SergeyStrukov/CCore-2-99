@@ -2,13 +2,13 @@
 /* page_NoCopy.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -31,20 +31,20 @@
 <p class="Files">Files <b>CCore/inc/gadget/NoCopy.h</b> <b>CCore/src/gadget/NoCopy.cpp</b></p>
 
 <p>
-<b>NoCopy</b> classes are <b>Property Type</b>s and used to disable the implicit copy constructor and the implicit assign operator
-(and move also). 
+<b>Property Type</b> <b>NoCopy</b> classes are used to disable the implicit copy constructor and the implicit assign operator
+(and the move also). 
 Unlucky, in the C++ a compiler generates these two class members by default, despite they are goodless in most cases. 
 </p>
 
 <p>
-First of them is the typedef <b>NoCopy</b>.
+The first of them is the typedef <b>NoCopy</b>:
 </p>
 
 <pre>
 
 /* struct NoCopyType */ 
 
-struct NoCopyType
+struct <span class="Att">NoCopyType</span>
  {
   NoCopyType() = default ;
   
@@ -60,7 +60,7 @@ using <span class="Att">NoCopy</span> = NoCopyType ;
 </pre>
 
 <p>
-Use it as a base class in a class definition to make a class non-copyable:
+Use it as a base class in a class definition to make the class non-copyable:
 </p>
 
 <pre>
@@ -72,32 +72,32 @@ class C : NoCopy
 </pre>
 
 <p>
-Second is the template typedef <b>NoCopyBase</b>.
+The second is the template typedef <b>NoCopyBase</b>:
 </p>
 
 <pre>
 
-/* struct ImpNoCopyBase&lt;TT&gt; */
+/* struct NoCopyBaseOf&lt;TT&gt; */
 
 template &lt;class ... TT&gt;
-struct ImpNoCopyBase : TT ...
+struct <span class="Att">ImpNoCopyBase</span> : TT ...
  {
-  ImpNoCopyBase() = default ;
+  NoCopyBaseOf() = default ;
     
-  ImpNoCopyBase(const ImpNoCopyBase &amp;) = delete ;
+  NoCopyBaseOf(const NoCopyBaseOf &amp;) = delete ;
    
-  void operator = (const ImpNoCopyBase &amp;) = delete ;
+  void operator = (const NoCopyBaseOf &amp;) = delete ;
  };
 
 /* type NoCopyBase&lt;TT&gt; */
  
 template &lt;class ... TT&gt;
-using <span class="Att">NoCopyBase</span> = ImpNoCopyBase&lt;TT...&gt; ;
+using <span class="Att">NoCopyBase</span> = NoCopyBaseOf&lt;TT...&gt; ;
 
 </pre>
 
 <p>
-Use it as a base class in a class definition to inherit a group of classes and make a class non-copyable:
+Use it as a base class in a class definition to inherit a group of classes and make the class non-copyable:
 </p>
 
 <pre>

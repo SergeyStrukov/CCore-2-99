@@ -63,7 +63,7 @@ struct <span class="Att">MSec</span>
   
   // constructors
 
-  // no default constructor -- this is deliberate
+  // there is no default constructor -- this is deliberate
   
   constexpr <span class="Att">MSec(NothingType)</span> : time(0) {}                          // null value
   
@@ -76,7 +76,7 @@ struct <span class="Att">MSec</span>
   
   constexpr bool <span class="Att">operator !</span> () const { return !time; }              // time is null
   
-  MSec <span class="Att">cap(MSec lim)</span> { Replace_min(time,lim.time); return *this; }  // cap self to limit
+  MSec <span class="Att">cap(MSec lim)</span> { Replace_min(time,lim.time); return *this; }  // cap self to the limit
  };
 
 </pre>
