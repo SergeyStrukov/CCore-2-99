@@ -2,13 +2,13 @@
 /* page_PosSub.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -46,15 +46,14 @@ if( a&lt;b ) PosSub(a,b) == 0 ;
 
 <pre>
 
-template &lt;class UInt,class ... TT&gt;
-PosSubResult&lt;UInt&gt; <span class="Att">PosSub</span>(UInt value,TT ... tt);
+template &lt;UIntType UInt,UIntType ... Args&gt;
+constexpr PosSubResult&lt;UInt&gt; <span class="Att">PosSub</span>(UInt value,Args ... args);
 
 </pre>
 
 <p>
-<b>PosSub()</b> accepts any number of arguments, value type is determined from the first one, it must be
-an unsigned integral type, other arguments must be convertible to this type. Extra arguments are subtracted 
-one by one from the first one.
+<b>PosSub()</b> accepts any number of <b>UIntType</b> arguments, value type is determined from the first one.
+Extra arguments are subtracted one by one from the first one.
 </p>
 
 <p>
@@ -63,13 +62,13 @@ The resulting type encodes both the result and the no-underflow flag, it can be 
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 struct <span class="Att">PosSubResult</span>
  {
   UInt value;
   bool ok;
   
-  operator UInt() const { return value; }
+  constexpr operator UInt() const { return value; }
 
   ....
  };
@@ -100,6 +99,25 @@ else
   }
 
 </pre>
+
+<p>
+All involved functions and methods are <b>constexpr</b>.
+</p>
+
+<pre>
+
+template &lt;UIntType UInt,UIntType ... Args&gt;
+constexpr bool <span class="Att">Enough</span>(UInt value,Args ... args)
+ {
+  return PosSub(value,args...).ok;
+ }
+
+</pre>
+
+<p>
+The function <b>Enough()</b> can be used to check if the <b>value</b> is greater of equal the sum of the other arguments. 
+It calls <b>PosSub()</b> and skips the result, only the non-overflow flag is returned.
+</p>
 
 </body>
 

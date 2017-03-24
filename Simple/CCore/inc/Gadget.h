@@ -9,7 +9,7 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -25,6 +25,7 @@
 #include <CCore/inc/gadget/Init.h>
 #include <CCore/inc/gadget/Len.h>
 #include <CCore/inc/gadget/Locked.h>
+#include <CCore/inc/gadget/LockObject.h>
 #include <CCore/inc/gadget/Meta.h>
 #include <CCore/inc/gadget/MetaList.h>
 #include <CCore/inc/gadget/MSec.h>
@@ -40,12 +41,11 @@
 #include <CCore/inc/gadget/PtrStepLen.h>
 #include <CCore/inc/gadget/Replace.h>
 #include <CCore/inc/gadget/ScopeGuard.h>
+#include <CCore/inc/gadget/SIntFunc.h>
 #include <CCore/inc/gadget/Space.h>
 #include <CCore/inc/gadget/UIntFunc.h>
-#include <CCore/inc/gadget/SIntFunc.h>
 #include <CCore/inc/gadget/UIntSat.h>
 #include <CCore/inc/gadget/UtilFunc.h>
-#include <CCore/inc/gadget/LockObject.h>
 
 namespace CCore {
 
