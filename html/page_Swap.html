@@ -2,7 +2,7 @@
 /* page_Swap.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -38,7 +38,7 @@ of the such kind of types. <b>Efficiency</b> can be defined in another terms as
 the <span class="Att">O(1)-nothrow property</span>.
 But for many types (actually, for most of them) copying is either not logically possible, 
 or not efficient, because requires duplication of a large state, and that is time and space expensive 
-and can fail. So instead of copying we should use moving or swapping whenever possible.  
+and may fail. So instead of copying we should use moving or swapping whenever possible.  
 For example, to return a result from a function: 
 </p>
 
@@ -133,10 +133,10 @@ That is the main cause why <b>Swap</b> is applicable to the wide range of types.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;CopyableType T&gt;
 void <span class="Att">CopySwap</span>(T &a,T &b) noexcept;
 
-template &lt;class T&gt;
+template &lt;MovableType T&gt;
 void <span class="Att">MoveSwap</span>(T &a,T &b) noexcept;
 
 template &lt;class T&gt;
@@ -173,9 +173,12 @@ void <span class="Att">NullBySwap</span>(T &amp;obj)
 template &lt;class T&gt;
 void <span class="Att">MoveBySwap</span>(T &amp;dst,T &amp;src)
  {
-  Swap(dst,src);
-  
-  NullBySwap(src);
+  if( &dst!=&src )
+    {
+     Swap(dst,src);
+
+     NullBySwap(src);
+    }
  }
 
 </pre>

@@ -16,6 +16,8 @@
 #include <CCore/inc/video/Layout.h>
 #include <CCore/inc/video/FigureLib.h>
 
+#include <CCore/inc/FileSystem.h>
+
 #include <CCore/inc/Exception.h>
 
 namespace App {
@@ -1221,9 +1223,10 @@ void AspectWindow::data_manychanged()
   setModified();
  }
 
-AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_)
+AspectWindow::AspectWindow(SubWindowHost &host,const Config &cfg_,const char *open_file_name_)
  : ComboWindow(host),
    cfg(cfg_),
+   open_file_name(open_file_name_),
 
    label_path(wlist,cfg.label_cfg,cfg.text_Path),
    label_aspect(wlist,cfg.label_cfg,cfg.text_Aspect),
@@ -1386,6 +1389,21 @@ void AspectWindow::update(bool new_data)
 void AspectWindow::collect()
  {
   data_window.collect();
+ }
+
+ // base
+
+void AspectWindow::open()
+ {
+  ComboWindow::open();
+
+  if( const char *file_name=Replace_null(open_file_name) )
+    {
+     FileSystem fs;
+     char buf[MaxPathLen+1];
+
+     load(fs.pathOf(file_name,buf));
+    }
  }
 
  // drawing

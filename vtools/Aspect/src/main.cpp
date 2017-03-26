@@ -23,9 +23,12 @@ using namespace App;
 
 const AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
-int main()
+int main(int argc,const char *argv[])
  {
-  return Main(StartDisplay());
+  if( argc==2 )
+    return Main(StartDisplay(),argv[1]);
+  else
+    return Main(StartDisplay());
  }
 
 

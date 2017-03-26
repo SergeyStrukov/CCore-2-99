@@ -397,13 +397,13 @@ class Application : public ApplicationBase
 
   public:
 
-   explicit Application(WindowReportBase &report,Param &param_,CmdDisplay cmd_display_)
+   explicit Application(WindowReportBase &report,Param &param_,CmdDisplay cmd_display_,const char *open_file_name)
     : ApplicationBase(param_.desktop,param_.tick_period),
       param(param_),
       cmd_display(cmd_display_),
       main_frame(param.desktop,param.frame_cfg,param.pref.updated),
       exception_client(main_frame,param.exception_cfg,report),
-      client(main_frame,param.client_cfg),
+      client(main_frame,param.client_cfg,open_file_name),
       user_frame(param.desktop,editor_pref.getSmartConfig(),true),
       app_frame(param.desktop,param.pref.getSmartConfig(),false),
 
@@ -435,7 +435,7 @@ class Application : public ApplicationBase
 
 /* Main() */
 
-int Main(CmdDisplay cmd_display)
+int Main(CmdDisplay cmd_display,const char *open_file_name)
  {
   try
     {
@@ -449,7 +449,7 @@ int Main(CmdDisplay cmd_display)
      param.pref.sync();
      param.app_pref.sync();
 
-     Application app(report,param,cmd_display);
+     Application app(report,param,cmd_display,open_file_name);
 
      return app.run();
     }

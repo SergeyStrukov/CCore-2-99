@@ -666,6 +666,8 @@ class AspectWindow : public ComboWindow
    String aspect_file_name;
    bool has_file = false ;
 
+   const char *open_file_name;
+
    // subs
 
    RefLabelWindow label_path;
@@ -724,7 +726,7 @@ class AspectWindow : public ComboWindow
 
   public:
 
-   AspectWindow(SubWindowHost &host,const Config &cfg);
+   AspectWindow(SubWindowHost &host,const Config &cfg,const char *open_file_name);
 
    virtual ~AspectWindow();
 
@@ -747,6 +749,10 @@ class AspectWindow : public ComboWindow
    void update(bool new_data);
 
    void collect();
+
+   // base
+
+   virtual void open();
 
    // drawing
 

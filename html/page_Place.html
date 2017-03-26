@@ -2,13 +2,13 @@
 /* page_Place.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -57,7 +57,7 @@ inline const byte * <span class="Att">CastPtr</span>(const void *ptr) { return s
 </pre> 
 
 <p>
-<b>CastPtr()</b> converts a raw pointer to a byte pointer.
+<b>CastPtr()</b> converts a raw pointer to the byte pointer.
 </p>
 
 <pre>
@@ -95,7 +95,7 @@ and <b>to</b> must be after <b>from</b>.
 
 <pre>
 
-template &lt;class Void&gt;
+template &lt;VoidType Void&gt;
 class <span class="Att">Place</span>
  {
    Void *ptr;
@@ -104,17 +104,13 @@ class <span class="Att">Place</span>
   
    explicit Place(Void *ptr_) : ptr(ptr_) {}
  
-   template &lt;class T&gt;
-   Place&lt;Void&gt; operator + (T delta) const { return Place&lt;Void&gt;(PtrAdd(ptr,delta)); }
+   Place&lt;Void&gt; operator + (UIntType delta) const { return Place&lt;Void&gt;(PtrAdd(ptr,delta)); }
   
-   template &lt;class T&gt;
-   Place&lt;Void&gt; operator - (T delta) const { return Place&lt;Void&gt;(PtrSub(ptr,delta)); }
+   Place&lt;Void&gt; operator - (UIntType delta) const { return Place&lt;Void&gt;(PtrSub(ptr,delta)); }
   
-   template &lt;class T&gt;
-   Place&lt;Void&gt; operator += (T delta) { return Replace(*this,*this+delta); }
+   Place&lt;Void&gt; operator += (UIntType delta) { return Replace(*this,*this+delta); }
   
-   template &lt;class T&gt;
-   Place&lt;Void&gt; operator -= (T delta) { return Replace(*this,*this-delta); }
+   Place&lt;Void&gt; operator -= (UIntType delta) { return Replace(*this,*this-delta); }
   
    template &lt;class T&gt;
    operator T * () const { return static_cast&lt;T *&gt;(ptr); }
@@ -155,7 +151,7 @@ C2 *ptr2=(place+=size2); // follows
 </pre>
 
 <p>
-<b>PlaceAt()</b> is a <b>Creator function</b> for <b>Place</b>: 
+<b>PlaceAt()</b> is a <b>Creator function</b> for the <b>Place</b>: 
 </p>
 
 <pre>

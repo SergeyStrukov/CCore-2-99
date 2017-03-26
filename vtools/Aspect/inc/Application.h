@@ -25,7 +25,7 @@ using namespace CCore::Video;
 
 /* Main() */
 
-int Main(CmdDisplay cmd_display);
+int Main(CmdDisplay cmd_display,const char *open_file_name=0);
 
 } // namespace App
 
