@@ -2,13 +2,13 @@
 /* page_Init.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -34,7 +34,7 @@
 
 <p>
 <b>InitExitObject</b> is a class for the manual object initialization/termination. It is a POD type, 
-containing inside the storage room for the object and the object pointer.
+which contains inside the storage room for the object and the object pointer.
 </p>
 
 <pre>
@@ -45,6 +45,7 @@ struct <span class="Att">InitExitObject</span>
   // private data
 
   InitStorage&lt;sizeof (T)&gt; storage;
+
   T *obj;
   
 </pre>
@@ -66,7 +67,7 @@ value initialization is required. You can do it using the default initialization
   void clean() { obj=0; }
   
   template &lt;class ... SS&gt;
-  void init(SS && ... ss); 
+  void init(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ); 
   
   void exit();
 
@@ -116,7 +117,7 @@ and access it:
 <h4>InitStorage</h4>
 
 <p>
-<b>InitStorage</b> is a simple structure, providing an aligned storage to create objects inside:
+<b>InitStorage</b> is a simple structure, which provides an aligned storage to create objects inside:
 </p>
 
 <pre>

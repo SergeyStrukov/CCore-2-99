@@ -2,13 +2,13 @@
 /* page_Function.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -46,7 +46,7 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
    
    // constructors
 
-   Function(); // null function
+   Function() noexcept; // null function
 
    Function(NothingType); // null function
 
@@ -119,6 +119,31 @@ class C : public Funchor
 <p>
 You may bind virtual methods in <b>Function</b>s, the virtualization is working in such case.
 </p>
+
+<p>
+The second way to create a <b>Function</b> is to convert a functor to the function.
+</p>
+
+<pre>
+
+template &lt;class FuncType,class T&gt;
+auto <span class="Att">ToFunction</span>(const T &obj);
+
+</pre>
+
+<p>
+This function takes a functor of the type, specified by the first template parameter and creates a <b>Funchor</b>-derived object.
+The method <b>function()</b> of this object returns the proxy <b>Function</b>, which calls the copy of the original functor. 
+You can use it with lambdas.
+</p>
+
+<pre>
+
+auto temp=ToFunction&lt;void ()&gt;( [] () { .... } );
+
+Function&lt;void ()&gt; func = temp.function() ;
+
+</pre>
 
 </body>
 
