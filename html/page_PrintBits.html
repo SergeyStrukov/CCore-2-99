@@ -2,13 +2,13 @@
 /* page_PrintBits.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -37,7 +37,7 @@ to build the <b>Helper Type</b> <b>PrintBitsType</b> object.
 
 <pre>
 
-template &lt;class UInt,class P&gt;
+template &lt;UIntType UInt,PrinterType P&gt;
 PrintBitsType&lt;P,UInt&gt; <span class="Att">PrintBits</span>(P &amp;out,UInt value) { return PrintBitsType&lt;P,UInt&gt;(out,value); }
 
 </pre>
@@ -48,7 +48,7 @@ PrintBitsType&lt;P,UInt&gt; <span class="Att">PrintBits</span>(P &amp;out,UInt v
 
 <pre>
 
-template &lt;class P,class UInt&gt;
+template &lt;PrinterType P,UIntType UInt&gt;
 class <span class="Att">PrintBitsType</span>
  {
    P &amp;out;

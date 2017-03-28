@@ -2,13 +2,13 @@
 /* page_PrintSet.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -36,7 +36,7 @@
 
 <pre>
 
-template &lt;class R&gt;
+template &lt;CursorType R&gt;
 PrintSetType&lt;R&gt; <span class="Att">PrintSet</span>(const R &amp;range) { return PrintSetType&lt;R&gt;(range); }
 
 </pre>
@@ -48,7 +48,7 @@ must be a <b>Cursor</b> to iterate through the list of objects.
 
 <pre>
 
-template &lt;class R,class T=Meta::RangeObjType&lt;R&gt; &gt;
+template &lt;CursorType R,class T=Meta::RangeObjType&lt;R&gt; &gt; requires ( CursorOverType&lt;R,T&gt; )
 class <span class="Att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
  {
    R range;
@@ -57,11 +57,9 @@ class <span class="Att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
  
    explicit PrintSetType(const R &amp;range_) : range(range_) {}
   
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
    
-   template &lt;class P,class Opt&gt;
-   void print(P &amp;out,const Opt &amp;opt) const;
+   void print(PrinterType &amp;out,const AnyType &amp;opt) const;
  };
 
 </pre>

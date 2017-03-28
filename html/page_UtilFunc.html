@@ -2,13 +2,13 @@
 /* page_UtilFunc.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -61,6 +61,20 @@ constexpr T <span class="Att">Min</span>(T a,T b) { return (a&lt;b)?a:b; }
  
 template &lt;class T&gt;
 constexpr T <span class="Att">Max</span>(T a,T b) { return (a&lt;b)?b:a; }
+
+</pre>
+
+<p>
+<b>Min_cast()/Max_cast()</b> &mdash; are multi-argument min/max functions, they also cast extra arguments to the type of the first one.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+constexpr T <span class="Att">Min_cast</span>(T a,AnyType ... args);
+
+template &lt;class T&gt;
+constexpr T <span class="Att">Max_cast</span>(T a,AnyType ... args);
 
 </pre>
 
@@ -139,7 +153,7 @@ int d3=Diff(var,x3); // d3 &lt;- x3-x2 , var &lt;- x3
 <h3>Change()</h3>
 
 <p>
-<b>Change()</b> assign a new value if it is different than the old value of the object.
+<b>Change()</b> assigns a new value if it is different than the old value of the object.
 If this happens the return value is <b>true</b>, otherwise &mdash; <b>false</b>. 
 </p>
 
@@ -160,6 +174,45 @@ bool <span class="Att">Change</span>(T &amp;obj,T val)
 
 </pre>
 
+<h3>AddToCap()</h3>
+
+<p>
+<b>AddToCap()</b> increases a value up to the cap. It the value is already above the cap, it is not changed.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+T <span class="Att">AddToCap</span>(T val,T delta,T cap)
+ {
+  if( val&lt;cap )
+    {
+     return val+Min_cast(delta,cap-val);
+    }
+  else
+    {
+     return val;
+    }
+ }
+
+</pre>
+
+<h3>CapDown()</h3>
+
+<p>
+<b>CapDown()</b> lowers the given object to the given cap.
+</p>
+
+<pre>
+
+template &lt;class T,class S&gt;
+void <span class="Att">CapDown</span>(T &obj,S cap)
+ {
+  if( obj>cap ) obj=(T)cap;
+ }
+
+</pre>
+
 <h3>Bit...()</h3>
 
 <p>
@@ -168,16 +221,16 @@ bool <span class="Att">Change</span>(T &amp;obj,T val)
 
 <pre>
 
-template &lt;class UInt,class S&gt;
+template &lt;UIntType UInt,class S&gt;
 void <span class="Att">BitSet</span>(UInt &t,S bits); // set bits
 
-template &lt;class UInt,class S&gt;
+template &lt;UIntType UInt,class S&gt;
 void <span class="Att">BitClear</span>(UInt &t,S bits); // clear bits
  
-template &lt;class UInt,class S&gt;
+template &lt;UIntType UInt,class S&gt;
 UInt <span class="Att">BitTest</span>(UInt t,S bits); // check if at least one of bits is set
 
-template &lt;class UInt,class S&gt;
+template &lt;UIntType UInt,class S&gt;
 bool <span class="Att">BitTestAll</span>(UInt t,S bits); // check if all bits are set
 
 </pre>

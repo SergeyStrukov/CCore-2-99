@@ -2,13 +2,13 @@
 /* page_PrintStem.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2016 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/PrintStem.h</b> <b>CCore/src/PrintStem.cpp</b></p>
 
 <p>
-This part provides few utility classes to help printing a set of objects.
+This files provide two utility classes to help printing a set of objects.
 These classes prints "stems" before an actual object. 
 The stem depends of the object position in the set. 
 </p>
@@ -64,8 +64,7 @@ class <span class="Att">PrintFirst</span> : NoCopy
 
    // print object
 
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -104,8 +103,7 @@ class <span class="Att">PrintPeriod</span> : NoCopy
 
    // print object
 
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>
