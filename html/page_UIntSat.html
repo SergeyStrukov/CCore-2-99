@@ -2,13 +2,13 @@
 /* page_UIntSat.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/gadget/UIntSat.h</b> <b>CCore/src/gadget/UIntSat.cpp</b></p>
 
 <p>
-This file contains a collection of tools to control an unsigned integer overflow.
+These files contain a collection of tools to control an unsigned integer overflow.
 </p>
 
 <h3>UIntSat</h3>
@@ -42,7 +42,7 @@ This file contains a collection of tools to control an unsigned integer overflow
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 struct <span class="Att">UIntSat</span>
  {
   UInt value;
@@ -54,13 +54,14 @@ struct <span class="Att">UIntSat</span>
   
   constexpr UIntSat(UIntSat&lt;UInt&gt; a,UIntSat&lt;UInt&gt; b); // add two values
 
-  template &lt;class T&gt;
-  constexpr UIntSat(T value_); // convert from unsigned integer
+  constexpr UIntSat(UIntType value_); // convert from unsigned integer
   
   // methods
   
   bool operator ! () const { return overflow; }
   
+  // operators
+
   friend constexpr UIntSat&lt;UInt&gt; operator + (UIntSat&lt;UInt&gt; a,UIntSat&lt;UInt&gt; b);
 
   friend UIntSat&lt;UInt&gt; operator += (UIntSat&lt;UInt&gt; &a,UIntSat&lt;UInt&gt; b);
@@ -112,28 +113,35 @@ using <span class="Att">ULenSat</span> = UIntSat&lt;ulen&gt; ;
 
 </pre>
 
-<h3>UIntConstAdd and UIntConstSub</h3>
+<h3>UIntConstAdd , UIntConstSub , UIntConstMul</h3>
 
 <p>
-<b>UIntConstAdd</b> and <b>UIntConstSub</b> are <b>Meta-constant</b>s.
+<b>UIntConstAdd</b> , <b>UIntConstSub</b> and <b>UIntConstMul</b> are <b>Meta-constant</b>s.
 </p>
 
 <pre>
 
-template &lt;class UInt,UInt A,UInt B&gt;
+template &lt;class UInt,UInt ... CC&gt;
 const UInt <span class="Att">UIntConstAdd</span> = .... ;
 
 template &lt;class UInt,UInt A,UInt B&gt;
 const UInt <span class="Att">UIntConstSub</span> = .... ;
 
+template &lt;class UInt,UInt A,UInt B&gt;
+const UInt <span class="Att">UIntConstMul</span> = .... ;
+
 </pre>
 
 <p>
-<b>UIntConstAdd</b> has the value <b>A+B</b> if there is no overflow, otherwise not defined. 
+<b>UIntConstAdd</b> has the value of sum of all <b>CC</b> if there is no overflow, otherwise not defined. 
 </p>
 
 <p>
 <b>UIntConstSub</b> has the value <b>A-B</b> if <b>A >= B</b>, otherwise not defined.
+</p>
+
+<p>
+<b>UIntConstMul</b> has the value <b>A*B</b> if there is no overflow, otherwise not defined. 
 </p>
 
 <pre>
