@@ -2,13 +2,13 @@
 /* page_FunctorType.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -129,6 +129,29 @@ Use the <b>Creator function</b> <b>FunctorRef()</b> to create an object of type 
 
 template &lt;class T&gt;
 FunctorRefType&lt;T&gt; <span class="Att">FunctorRef</span>(T &amp;obj) { return FunctorRefType&lt;T&gt;(obj); }
+
+</pre>
+
+<p>
+There are two concepts similar to <b>FuncType</b> and <b>FuncArgType</b> to determine, if some type can be used as a <b>Functor Initializer</b> 
+to produce a functor with the given types of arguments (and return value).  
+</p>
+
+<pre>
+
+template &lt;CopyCtorType FuncInit,class ... AA&gt;
+concept bool <span class="Att">FuncInitArgType</span> = requires(FuncInit func_init)
+ {
+  FunctorTypeOf&lt;FuncInit&gt;(func_init);
+
+  requires ( FuncArgType&lt;FunctorTypeOf&lt;FuncInit&gt;,AA...&gt; );
+ } ;
+
+template &lt;class FuncInit,class R,class ... AA&gt;
+concept bool <span class="Att">FuncInitType</span> = FuncInitArgType&lt;FuncInit,AA...&gt; &amp;&amp; requires(FuncInit func_init)
+ {
+  requires ( FuncType&lt;FunctorTypeOf&lt;FuncInit&gt;,R,AA...&gt; );
+ } ;
 
 </pre>
 

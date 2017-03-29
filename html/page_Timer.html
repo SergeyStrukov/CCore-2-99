@@ -2,13 +2,13 @@
 /* page_Timer.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -42,7 +42,7 @@ The class <b>Timer</b> can be used to get a time. We need a class, because we ha
 
 <pre>
 
-template &lt;class T,T Time()&gt;
+template &lt;UIntType T,T Time()&gt;
 class <span class="Att">Timer</span>
  {
    T start;
@@ -93,7 +93,7 @@ The next class <b>DiffTimer</b> returns the differentiated time, i.e. the time b
 
 <pre>
 
-template &lt;class T,T Time()&gt;
+template &lt;UIntType T,T Time()&gt;
 class <span class="Att">DiffTimer</span>
  {
    T prev;

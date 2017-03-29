@@ -2,13 +2,13 @@
 /* page_MemAllocGuard.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -62,12 +62,12 @@ You can use this class to allocate and keep alive a memory block for the duratio
 </p>
 
 <p>
-<b>MemAllocGuardOf</b> is a template variant. You can customize the methods of allocating/deallocating the memory.
+<b>MemAllocGuardOf</b> is a template variant. You can customize the methods of allocating/deallocating memory.
 </p>
 
 <pre>
 
-template &lt;class Algo&gt;
+template &lt;MemAllocAlgo Algo&gt;
 class <span class="Att">MemAllocGuardOf</span> : NoCopy
  {
    void *mem;
@@ -99,6 +99,22 @@ struct Algo
 
   static void MemFree(void *mem);
  };
+
+</pre>
+
+<p>
+This requirement is enforced using the concept <b>MemAllocAlgo</b>.
+</p>
+
+<pre>
+
+template &lt;class Algo&gt;
+concept bool <span class="Att">MemAllocAlgo</span> = requires(ulen len,void *mem)
+ {
+  { Algo::MemAlloc(len) } -> void * ;
+
+  Algo::MemFree(mem);
+ } ;
 
 </pre>
 
