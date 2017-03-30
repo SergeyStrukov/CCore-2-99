@@ -2,13 +2,13 @@
 /* page_Counters.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -37,7 +37,7 @@ It is widely used in <b>CCore</b>. The class <b>Counters</b> is designed to simp
 
 <pre>
 
-template &lt;class Enum,Enum Lim,class CountType=unsigned&gt;
+template &lt;EnumType Enum,Enum Lim,class CountType=unsigned&gt;
 class <span class="Att">Counters</span> : public PrintOptAdapter&lt;Enum&gt;
  {
    CountType counter[Lim];
@@ -52,21 +52,19 @@ class <span class="Att">Counters</span> : public PrintOptAdapter&lt;Enum&gt;
    
    void count(Enum e,CountType cnt) { counter[e]+=cnt; }
    
-   unsigned operator [] (Enum e) const { return counter[e]; }
+   CountType operator [] (Enum e) const { return counter[e]; }
    
-   void diff(Counters&lt;Enum,Lim&gt; &amp;next);
+   void diff(Counters &amp;next);
     
-   void operator += (const Counters&lt;Enum,Lim&gt; &obj); 
+   void operator += (const Counters &amp;obj); 
 
-   void operator -= (const Counters&lt;Enum,Lim&gt; &base); 
+   void operator -= (const Counters &amp;base); 
    
    // print object
  
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
     
-   template &lt;class P,class Opt&gt;
-   void print(P &amp;out,const Opt &amp;opt) const;
+   void print(PrinterType &amp;out,const AnyType &amp;opt) const;
  };
 
 </pre>

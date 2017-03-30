@@ -2,13 +2,13 @@
 /* page_StrKey.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -41,14 +41,24 @@ The comparison method compares hash codes first and strings after.
 
 struct <span class="Att">StrKey</span> : CmpComparable&lt;StrKey&gt;
  {
-  uint32 hash;
+  using HashType = uint32 ;
+
+  static HashType Hash(StrLen str);
+
+  // data
+
+  HashType hash;
   StrLen str;
   
+  // constructors
+
   StrKey() noexcept;
   
   explicit StrKey(StrLen str);
   
-  CmpResult objCmp(const StrKey &obj) const;
+  // cmp objects
+
+  CmpResult objCmp(const StrKey &amp;obj) const;
  };
 
 </pre>

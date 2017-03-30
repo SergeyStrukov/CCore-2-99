@@ -2,13 +2,13 @@
 /* page_Crc.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -101,7 +101,7 @@ struct <span class="Att">AlgoCrc32</span>
 
 <pre>
 
-template &lt;class Algo&gt;
+template &lt;CrcAlgo Algo&gt;
 class <span class="Att">CrcAccumulator</span>
  {
   public:
@@ -122,8 +122,7 @@ class <span class="Att">CrcAccumulator</span>
    
    void add(DataType data);
    
-   template &lt;class R&gt;
-   void addRange(R r); 
+   void addRange(CursorCastType&lt;DataType&gt; r); 
  };
 
 /* types */  
