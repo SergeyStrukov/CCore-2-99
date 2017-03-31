@@ -2,13 +2,13 @@
 /* page_BlockFifo.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -65,15 +65,13 @@ class <span class="Att">BlockFifo</span> : NoCopy
    
    // put
    
-   template &lt;class Func&gt;
-   ulen put(ulen putlen,Func func); // func(T *ptr,ulen len)
+   ulen put(ulen putlen,FuncArgType&lt;T *,ulen&gt; func);
    
    ulen put(PtrLen&lt;const T&gt; data);
    
    // get
    
-   template &lt;class Func&gt;
-   ulen get(ulen getlen,Func func); // func([const] T *ptr,ulen len)
+   ulen get(ulen getlen,FuncArgType&lt;const T *,ulen&gt; func);
  
    ulen get(PtrLen&lt;T&gt; data);
  };
