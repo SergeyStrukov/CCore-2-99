@@ -2,13 +2,13 @@
 /* page_UIntSplit.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -37,7 +37,7 @@ of smaller ones and inverse.
 
 <pre>
 
-template &lt;class UIntBig,class UIntSmall&gt;
+template &lt;UIntType UIntBig,UIntType UIntSmall&gt; requires UIntSplitEnable&lt;UIntBig,UIntSmall&gt;
 class <span class="Att">UIntSplit</span>
  {
   public:
@@ -56,7 +56,7 @@ class <span class="Att">UIntSplit</span>
  
    UIntSmall & operator [] (unsigned index) { return buf[index]; }
    
-   PtrLen&lt;UIntSmall&gt; take() { return Range(buf); }
+   PtrLen&lt;UIntSmall&gt; ref() { return Range(buf); }
 
    // get
   
@@ -75,7 +75,7 @@ There is no default constructor, so the initial value of this class is indetermi
 
 <p>
 The "big" integer length must be a multiple of the "small" one. Internally the value of the class is stored
-in the buffer of the length <b>Len</b>. You can access this buffer using the method <b>take()</b>.
+in the buffer of the length <b>Len</b>. You can access this buffer using the method <b>ref()</b>.
 </p>
 
 <p>

@@ -2,13 +2,13 @@
 /* page_Fifo.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -66,21 +66,19 @@ class <span class="Att">Fifo</span> : NoCopy
    
    // put
    
-   template &lt;class Func&gt;
-   bool put_gen(Func func);
+   bool put_gen(FuncArgType&lt;T &amp;&gt; func);
     
-   bool put(const T &obj);
+   bool put(const T &amp;obj);
    
-   bool put_swap(T &obj);
+   bool put_swap(T &amp;obj);
    
    // get
    
-   template &lt;class Func&gt;
-   bool get_gen(Func func);
+   bool get_gen(FuncArgType&lt;T &amp;&gt; func);
     
-   bool get(T &obj);
+   bool get(T &amp;obj);
     
-   bool get_swap(T &obj);
+   bool get_swap(T &amp;obj);
  };
 
 </pre>
