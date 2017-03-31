@@ -1,7 +1,7 @@
 /* CapString.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Simple
 //
@@ -9,7 +9,7 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -22,15 +22,13 @@ namespace CCore {
 
 /* classes */
 
-template <ulen MaxLen=TextBufLen> class CapString;
+template <ulen MaxLen=TextBufLen> requires ( MaxLen>0 ) class CapString;
 
 /* class CapString<ulen MaxLen> */
 
-template <ulen MaxLen>
+template <ulen MaxLen> requires ( MaxLen>0 )
 class CapString : NoCopy
  {
-   static_assert( MaxLen>0 ,"CCore::CapString<MaxLen> : MaxLen must be > 0");
-
    char buf[MaxLen+1];
 
   public:
