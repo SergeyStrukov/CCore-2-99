@@ -9,7 +9,7 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ concept bool RunableType = requires(T &obj)
 
   obj.objRun();
 
-  obj.completeRun();
+  { obj.completeRun() } noexcept;
 
   obj.signalStop();
 

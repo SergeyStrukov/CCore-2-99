@@ -116,7 +116,7 @@ class AsyncFileProcessor : NoCopy
 
       void objRun();
 
-      void completeRun() {}
+      void completeRun() noexcept {}
 
       void signalStop() { wait.interrupt(); }
 

@@ -340,7 +340,7 @@ class PTPEchoTest : public Funchor_nocopy
 
    void objRun();
 
-   void completeRun() {}
+   void completeRun() noexcept {}
 
    void signalStop() { run_flag=0; }
 

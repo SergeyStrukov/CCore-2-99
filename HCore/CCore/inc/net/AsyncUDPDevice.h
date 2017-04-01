@@ -321,7 +321,7 @@ class AsyncUDPDevice : public Funchor_nocopy
 
    void objRun();
 
-   void completeRun() { set(true); }
+   void completeRun() noexcept { set(true); }
 
    void signalStop()
     {

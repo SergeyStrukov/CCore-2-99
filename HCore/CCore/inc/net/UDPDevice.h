@@ -211,7 +211,7 @@ class UDPDevice : NoCopy
 
    void objRun();
 
-   void completeRun() { set(true); }
+   void completeRun() noexcept { set(true); }
 
    void signalStop() { stop_flag=1; }
 

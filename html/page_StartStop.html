@@ -2,13 +2,13 @@
 /* page_StartStop.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -37,7 +37,7 @@ associated working thread.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;RunnableType T&gt;
 class <span class="Att">StartStopObject</span> : NoCopy
  {
    T &amp;obj;
@@ -46,7 +46,7 @@ class <span class="Att">StartStopObject</span> : NoCopy
   public:
   
    template &lt;class ... TT&gt;
-   StartStopObject(T &obj_,TT ... tt);
+   StartStopObject(T &obj,TT ... tt);
    
    ~StartStopObject(); 
  };

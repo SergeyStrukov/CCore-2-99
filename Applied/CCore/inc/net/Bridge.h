@@ -175,7 +175,7 @@ class Bridge : NoCopy
 
    void objRun();
 
-   void completeRun() { set(true); }
+   void completeRun() noexcept { set(true); }
 
    void signalStop();
 
