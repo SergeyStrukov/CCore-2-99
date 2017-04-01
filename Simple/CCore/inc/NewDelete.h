@@ -121,10 +121,10 @@ void Delete(AllocInit init,T *obj)
 
 /* Delete_dynamic() */
 
-template <NothrowDtorType T,class AllocInit>
+template <NothrowDtorType T,AllocInitType AllocInit>
 void Delete_dynamic(AllocInit init,T *obj)
  {
-  Space space=obj->getSpace();
+  Space space=obj->objSpace();
 
   using AllocType = typename AllocInit::AllocType ;
 

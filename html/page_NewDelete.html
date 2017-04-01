@@ -2,13 +2,13 @@
 /* page_NewDelete.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -98,8 +98,8 @@ To create an object using this custom memory allocator use the function <b>New()
 
 <pre>
 
-template &lt;class T,class AllocInit,class ... SS&gt;
-T * <span class="Att">New</span>(AllocInit init,SS &amp;&amp; ... ss);
+template &lt;NothrowDtorType T,AllocInitType AllocInit,class ... SS&gt;
+T * <span class="Att">New</span>(AllocInit init,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
 
 </pre>
 
@@ -114,7 +114,7 @@ To destroy the object, the function <b>Delete()</b> is used.
 
 <pre>
 
-template &lt;class T,class AllocInit&gt;
+template &lt;NothrowDtorType T,AllocInitType AllocInit&gt;
 void <span class="Att">Delete</span>(AllocInit init,T *obj);
 
 </pre>
@@ -129,14 +129,14 @@ There is a polymorphic variant of <b>Delete</b>.
 
 <pre>
 
-template &lt;class T,class AllocInit&gt;
+template &lt;NothrowDtorType T,AllocInitType AllocInit&gt;
 void <span class="Att">Delete_dynamic</span>(AllocInit init,T *obj);
 
 </pre>
 
 <p>
 This function may be used with the pointer to some base class of the original object. You must declare the
-destructor to the base class virtual and provide the virtual method <b>getSpace()</b>:
+destructor to the base class virtual and provide the virtual method <b>objSpace()</b>:
 </p>
 
 <pre>
@@ -149,7 +149,7 @@ class Base
 
    virtual ~Base();
 
-   virtual Space getSpace();
+   virtual Space objSpace();
  };
 
 class Derived : public Base
@@ -160,7 +160,7 @@ class Derived : public Base
 
    virtual ~Derived();
 
-   virtual Space getSpace() { return Space(this,sizeof (*this)); }
+   virtual Space objSpace() { return Space(this,sizeof (*this)); }
  };
 
 </pre>
@@ -185,7 +185,7 @@ The class <b>CustomAllocGuard</b> is used in the <b>New()</b> implementation.
 
 <pre>
 
-template &lt;class AllocInit&gt;
+template &lt;AllocInitType AllocInit&gt;
 class <span class="Att">CustomAllocGuard</span> : NoCopy
  {
    using AllocType = typename AllocInit::AllocType ;

@@ -106,7 +106,7 @@ class StepEval : public Ctx
        return notLocked();
       }
 
-     virtual Space getSpace()=0;
+     virtual Space objSpace()=0;
 
      virtual void call(StepEval &eval)=0;
 
@@ -162,7 +162,7 @@ class StepEval : public Ctx
 
      virtual ~Node() {}
 
-     Space getSpace() { return Space(this,sizeof (*this)); }
+     virtual Space objSpace() { return Space(this,sizeof (*this)); }
 
      virtual void call(StepEval &eval) { CallMain<T>::Do(obj,eval,this->getDep()); }
 
@@ -224,9 +224,9 @@ class StepEval : public Ctx
      template <class Init>
      GateNode(Init init,StepId dep,Gate *gate_) : NodeBase(dep,false),obj(init),gate(gate_) {}
 
-     ~GateNode() {}
+     virtual ~GateNode() {}
 
-     Space getSpace() { return Space(this,sizeof (*this)); }
+     virtual Space objSpace() { return Space(this,sizeof (*this)); }
 
      virtual void call(StepEval &eval)
       {
