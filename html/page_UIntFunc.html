@@ -2,13 +2,13 @@
 /* page_UIntFunc.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -38,7 +38,7 @@
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 struct <span class="Att">UIntFunc</span>
  {
   // consts
@@ -272,7 +272,7 @@ the result is represented by a single length value, otherwise the behavior is un
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 const UInt <span class="Att">MaxUInt</span> = UInt(-1) ;
 
 </pre>
@@ -287,7 +287,7 @@ These two functions make a one-bit value of an unsigned integral type.
 
 inline constexpr unsigned <span class="Att">Bit</span>(unsigned num) { return 1u&lt;&lt;num; }
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 constexpr UInt <span class="Att">UIntBit</span>(unsigned num) { return UInt(1)&lt;&lt;num; }
 
 </pre>
@@ -301,40 +301,40 @@ the <b>UIntFunc&lt;UInt&gt;</b>.
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">UIntNeg</span>(UInt a);
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 unsigned <span class="Att">UIntBitsOf</span>(UInt a);
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 bool <span class="Att">UIntAdd</span>(UInt &amp;a,UInt b);
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 bool <span class="Att">UIntSub</span>(UInt &amp;a,UInt b);
 
-template &lt;class UInt&gt; 
+template &lt;UIntType UInt&gt; 
 bool <span class="Att">UIntInc</span>(UInt &amp;a);
 
-template &lt;class UInt&gt; 
+template &lt;UIntType UInt&gt; 
 bool <span class="Att">UIntDec</span>(UInt &amp;a);
 
-template &lt;class UInt&gt; 
+template &lt;UIntType UInt&gt; 
 UInt <span class="Att">UIntMulDiv</span>(UInt a,UInt b,UInt den);
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">UIntDiv</span>(UInt hi,UInt lo,UInt den); // hi &lt; den
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">UIntMod</span>(UInt hi,UInt lo,UInt den); // hi &lt; den
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">UIntModMul</span>(UInt a,UInt b,UInt mod); // a,b &lt; mod 
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">UIntModMac</span>(UInt s,UInt a,UInt b,UInt mod); // s,a,b &lt; mod
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">UIntSqRoot</span>(UInt S);
 
 </pre>
@@ -389,6 +389,65 @@ Each of these functions returns the carry/borrow condition flag.
 
 <p>
 <b>UIntSqRoot()</b> calls <b>UIntFunc&lt;UInt&gt;::UIntSqRoot()</b>.
+</p>
+
+<h3>BitScanner&lt;UInt&gt;</h3>
+
+<p>
+<b>BitScanner</b> is a bit-scanning class. It can be used to scan bits of an unsigned integral value from MSB to LSB.
+</p>
+
+<pre>
+
+template &lt;UIntType UInt&gt;
+class <span class="Att">BitScanner</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   explicit BitScanner(UInt d);
+
+   UInt operator + () const;
+
+   UInt operator * () const;
+
+   void operator ++ ();
+ };
+
+</pre>
+
+<p>
+To scan bits of the given value use the following cycle:
+</p>
+
+<pre>
+
+UInt value=....; // 1*************b
+
+for(BitScanner&lt;UInt&gt; scanner(value); +scanner ;++scanner)
+  {
+   if( *scanner )
+     {
+      // current bit is 1
+
+      ....
+     }
+   else
+     {
+      // current bit is 0
+
+      ....
+     }
+  }
+ 
+</pre>
+
+<p>
+Upon construction the <b>scanner</b> points to the most significant bit of the <b>value</b>. 
+If the <b>value</b> binary representaion is b<sub>0</sub>=1b<sub>1</sub>b<sub>2</sub>...b<sub>n</sub>, then the <b>scanner</b> output is
+b<sub>0</sub>=1 , b<sub>1</sub> , b<sub>2</sub> , ... , b<sub>n</sub>.
+
 </p>
 
 </body>
