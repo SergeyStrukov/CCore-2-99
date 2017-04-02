@@ -32,7 +32,7 @@ class DestroyGuard;
 
 /* class DestroyGuard */
 
-class DestroyGuard
+class DestroyGuard : NoCopy
  {
    bool locked = false ;
 
