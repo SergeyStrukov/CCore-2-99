@@ -30,6 +30,40 @@
 
 <p class="Files">Files <b>CCore/inc/gadget/OpAddHelper.h</b> <b>CCore/src/gadget/OpAddHelper.cpp</b></p>
 
+<p>
+<b>OppAddHelper</b> converts a function to the object <b>operator + </b>.
+</p>
+
+<pre>
+
+template &lt;class T,T Add(T,T)&gt;
+struct <span class="Att">OpAddHelper</span>
+ {
+  T val;
+
+  constexpr OpAddHelper(AnyType arg) : val(arg) {}
+
+  constexpr OpAddHelper operator + (OpAddHelper obj) const { return Add(val,obj.val); }
+ };
+
+</pre>
+
+<p>
+It can be used with the expression folding to make a multi-argument functions:
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+constexpr T Min(T a,T b) { return (a&lt;b)?a:b; }
+
+template &lt;class T&gt;
+constexpr T Min_cast(T a,AnyType ... args)
+ {
+  return ( OpAddHelper&lt;T,Min&gt;(a) + ... + OpAddHelper&lt;T,Min&gt;(args) ).val;
+ }
+
+</pre>
 
 </body>
 

@@ -2,13 +2,13 @@
 /* page_NoThrowFlags.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -43,6 +43,17 @@ Th declare class properties the base class <b>SetNoThrowFlags</b> is used:
 <pre>
 
 class SomeClass : public <span class="Att">SetNoThrowFlags&lt;SomeClass, /* Default_no_throw */ true, /* Copy_no_throw */ true&gt;</span>
+ {
+  ....
+ };
+
+</pre>
+
+OR
+
+<pre>
+
+class SomeClass : public <span class="Att">SetDefaultNoThrowFlag</span>&lt;SomeClass, true/false &gt;
  {
   ....
  };

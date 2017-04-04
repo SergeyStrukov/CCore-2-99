@@ -20,38 +20,6 @@
 
 namespace CCore {
 
-/* namespace Meta */
-
-namespace Meta {
-
-/* classes */
-
-template <class T,bool flag> struct BadNoThrowFlagCtor;
-
-/* struct BadNoThrowFlagCtor<T,bool flag> */
-
-template <class T>
-struct BadNoThrowFlagCtor<T,true>
- {
-  enum RetType { Ret = true };
- };
-
-template <class T>
-struct BadNoThrowFlagCtor<T,false>
- {
-  [[deprecated("poor default flag value")]]
-  static constexpr bool Warning() { return false; }
-
-  enum RetType { Ret = Warning() };
- };
-
-/* const BadNoThrowFlag<T,bool flag> */
-
-template <class T,bool flag>
-const bool BadNoThrowFlag = BadNoThrowFlagCtor<T,flag>::Ret ;
-
-} // namespace Meta
-
 /* classes */
 
 template <class T,bool default_no_throw> struct SetDefaultNoThrowFlag;
@@ -106,7 +74,7 @@ struct GetNoThrowFlagsBase
   template <NoDefaultNoThrowType T>
   static constexpr bool GetDefault()
    {
-    return Meta::BadNoThrowFlag<T, !Meta::HasDefaultCtor<T> || Meta::HasNothrowDefaultCtor<T> >;
+    return Meta::PoorFlag<T, !Meta::HasDefaultCtor<T> || Meta::HasNothrowDefaultCtor<T> >;
    }
 
   template <TrueDefaultNoThrowType T>
@@ -120,7 +88,7 @@ struct GetNoThrowFlagsBase
   template <NoCopyNoThrowType T>
   static constexpr bool GetCopy()
    {
-    return Meta::BadNoThrowFlag<T, !Meta::HasCopyCtor<T> || Meta::HasNothrowCopyCtor<T> >;
+    return Meta::PoorFlag<T, !Meta::HasCopyCtor<T> || Meta::HasNothrowCopyCtor<T> >;
    }
 
   template <TrueCopyNoThrowType T>
