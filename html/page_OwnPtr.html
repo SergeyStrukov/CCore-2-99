@@ -39,7 +39,7 @@
 template &lt;class T&gt;
 struct <span class="Att">OwnAlgo</span>
  {
-  static void Destroy(T *ptr) { delete ptr; }
+  static void Destroy(T *ptr) noexcept requires( NothrowDtorType&lt;T&gt; ) { delete ptr; }
  };
 
 

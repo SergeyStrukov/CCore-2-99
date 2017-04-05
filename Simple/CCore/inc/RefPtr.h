@@ -64,7 +64,7 @@ struct RefAlgo
 
 /* class RefPtr<T,Algo> */
 
-template <class T,class Algo> // TODO RefPtrAlgo<T> Algo
+template <class T,class Algo>
 class RefPtr
  {
    T *ptr;
@@ -78,26 +78,35 @@ class RefPtr
      obj->~RefPtr();
     }
 
+   static void Hold(T *ptr) requires( RefPtrAlgo<Algo,T> )
+    {
+     Algo::IncRef(ptr);
+    }
+
+   static void Release(T *ptr) requires( RefPtrAlgo<Algo,T> )
+    {
+     if( Algo::DecRef(ptr) ) Algo::Destroy(ptr);
+    }
+
   public:
 
    // constructors
 
    explicit RefPtr(T *ptr_) : ptr(ptr_) {} // ptr_!=0
 
-   ~RefPtr() { if( ptr && Algo::DecRef(ptr) ) Algo::Destroy(ptr); }
+   ~RefPtr() { if( ptr ) this->Release(ptr); }
 
    // copying
 
-   RefPtr(const RefPtr<T,Algo> &obj) noexcept : ptr(obj.ptr) { Algo::IncRef(ptr); }
+   RefPtr(const RefPtr<T,Algo> &obj) noexcept : ptr(obj.ptr) { this->Hold(ptr); }
 
    RefPtr<T,Algo> & operator = (const RefPtr<T,Algo> &obj) noexcept
     {
      T *new_ptr=obj.ptr;
      T *old_ptr=Replace(ptr,new_ptr);
 
-     Algo::IncRef(new_ptr);
-
-     if( Algo::DecRef(old_ptr) ) Algo::Destroy(old_ptr);
+     this->Hold(new_ptr);
+     this->Release(old_ptr);
 
      return *this;
     }
@@ -114,15 +123,12 @@ class RefPtr
 
    void set(T *new_ptr) noexcept // new_ptr!=0
     {
-     T *old_ptr=Replace(ptr,new_ptr);
-
-     if( Algo::DecRef(old_ptr) ) Algo::Destroy(old_ptr);
+     this->Release(Replace(ptr,new_ptr));
     }
 
    // update
 
-   template <FuncType<T *,T *> Func>
-   void update(Func func) { ptr=func(ptr); }
+   void update(FuncType<T *,T *> func) { ptr=func(ptr); }
 
    // swap/move objects
 

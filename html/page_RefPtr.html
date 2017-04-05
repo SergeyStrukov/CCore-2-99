@@ -2,13 +2,13 @@
 /* page_RefPtr.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -39,11 +39,11 @@
 template &lt;class T&gt;
 struct <span class="Att">RefAlgo</span>
  {
-  static void IncRef(T *ptr) { ptr->incRef(); }
+  static void IncRef(T *ptr) requires ( RefCountType&lt;T&gt; ) { ptr->incRef(); }
   
-  static bool DecRef(T *ptr) { return ptr->decRef(); }
+  static bool DecRef(T *ptr) requires ( RefCountType&lt;T&gt; ) { return ptr->decRef(); }
   
-  static void Destroy(T *ptr) { ptr->destroy(); }
+  static void Destroy(T *ptr) noexcept requires ( RefCountType&lt;T&gt; ) { ptr->destroy(); }
  };
  
 template &lt;class T,class Algo=RefAlgo&lt;T&gt; &gt; 
@@ -79,8 +79,7 @@ class <span class="Att">RefPtr</span>
    
    // update
    
-   template &lt;class Func&gt;
-   void update(Func func) { ptr=func(ptr); }
+   void update(FuncType&lt;T *,T *&gt; func) { ptr=func(ptr); }
  
    // swap/move objects
    

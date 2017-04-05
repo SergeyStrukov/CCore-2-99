@@ -274,7 +274,7 @@ concept bool ConstRangeableType = requires(Meta::ToConst<T> &cobj) { Range_const
 /* concept TypeRangeableType<T,S> */
 
 template <class T,class S> // T ref extended
-concept bool ConstTypeRangeableType = requires(Meta::ToConst<T> &cobj) { { Range_const(cobj) } -> PtrLen<const S> ; } ;
+concept bool ConstTypeRangeableType = ConstRangeableType<T> && requires(Meta::ToConst<T> &cobj) { { Range_const(cobj) } -> PtrLen<const S> ; } ;
 
 /* begin()/end() */
 

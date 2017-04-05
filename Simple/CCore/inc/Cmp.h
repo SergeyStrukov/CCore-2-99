@@ -58,11 +58,11 @@ CmpResult StrCmp(StrLen a,StrLen b);
 
 bool StrLess(StrLen a,StrLen b);
 
-template <TypeRangeableType<const char> T>
-CmpResult StrCmpOf(const T &a,const T &b) { return StrCmp(Range(a),Range(b)); }
+template <class T>
+CmpResult StrCmpOf(const T &a,const T &b) requires( TypeRangeableType<const T,const char> ) { return StrCmp(Range(a),Range(b)); }
 
-template <TypeRangeableType<const char> T>
-bool StrLessOf(const T &a,const T &b) { return StrLess(Range(a),Range(b)); }
+template <class T>
+bool StrLessOf(const T &a,const T &b) requires( TypeRangeableType<const T,const char> ) { return StrLess(Range(a),Range(b)); }
 
 /* classes */
 
@@ -84,8 +84,8 @@ class CmpAsStr
 
    explicit CmpAsStr(StrLen str_) : str(str_) {}
 
-   template <TypeRangeableType<const char> T>
-   explicit CmpAsStr(const T &obj) : str(Range(obj)) {}
+   template <class T>
+   explicit CmpAsStr(const T &obj) requires( TypeRangeableType<const T,const char> ) : str(Range(obj)) {}
 
    // cmp objects
 
@@ -155,11 +155,11 @@ struct CmpAdapter<T>
 /* Cmp() */
 
 template <class T>
-CmpResult Cmp(const T &a,const T &b) { return CmpAdapter<T>::Cmp(a,b); }
+CmpResult Cmp(const T &a,const T &b) requires( Has_objCmp<T> || OpLessType<T> ) { return CmpAdapter<T>::Cmp(a,b); }
 
 /* concept CmpableType<T> */
 
-template <class T>
+template <class T> // ref extended
 concept bool CmpableType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(a,b) } -> CmpResult ; } ;
 
 /* AlphaCmp() */
@@ -263,15 +263,15 @@ bool RangeLess(PtrLen<T> a,PtrLen<T> b)
     }
  }
 
-template <class T> requires ( RangeableType<Meta::ToConst<T> > )
-CmpResult RangeCmpOf(const T &a,const T &b) { return RangeCmp(Range(a),Range(b)); }
+template <class T>
+CmpResult RangeCmpOf(const T &a,const T &b) requires ( RangeableType<const T> ) { return RangeCmp(Range(a),Range(b)); }
 
-template <class T> requires ( RangeableType<Meta::ToConst<T> > )
-bool RangeLessOf(const T &a,const T &b) { return RangeLess(Range(a),Range(b)); }
+template <class T>
+bool RangeLessOf(const T &a,const T &b) requires ( RangeableType<const T> ) { return RangeLess(Range(a),Range(b)); }
 
 /* concept ToCmpableFuncType<Func,T> */
 
-template <class Func,class T>
+template <class Func,class T> // T ref extended
 concept bool ToCmpableFuncType = requires(Func func,Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { Cmp(func(a),func(b)) } -> CmpResult ; } ;
 
 /* Range...By() */
@@ -320,10 +320,10 @@ bool RangeLessBy(PtrLen<T> a,PtrLen<T> b,Func by)
     }
  }
 
-template <class T,class Func> requires ( RangeableType<Meta::ToConst<T> > )
+template <class T,class Func> requires ( RangeableType<const T> )
 CmpResult RangeCmpOfBy(const T &a,const T &b,Func by) { return RangeCmpBy(Range(a),Range(b),by); }
 
-template <class T,class Func> requires ( RangeableType<Meta::ToConst<T> > )
+template <class T,class Func> requires ( RangeableType<const T> )
 bool RangeLessOfBy(const T &a,const T &b,Func by) { return RangeLessBy(Range(a),Range(b),by); }
 
 } // namespace CCore

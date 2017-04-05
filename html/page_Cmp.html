@@ -248,15 +248,15 @@ There are two <b>Property Type</b> classes <b>LessComparable</b> and <b>CmpCompa
 template &lt;class T&gt;
 struct <span class="Att">LessComparable</span>
  {
-  friend bool operator &gt; (const T &a,const T &b) { return b&lt;a; }
+  friend bool operator &gt; (const T &a,const T &b) requires ( OpLessType&lt;T&gt; ) { return b&lt;a; }
   
-  friend bool operator &lt;= (const T &a,const T &b) { return !(b&lt;a); }
+  friend bool operator &lt;= (const T &a,const T &b) requires ( OpLessType&lt;T&gt; ) { return !(b&lt;a); }
   
-  friend bool operator &gt;= (const T &a,const T &b) { return !(a&lt;b); }
+  friend bool operator &gt;= (const T &a,const T &b) requires ( OpLessType&lt;T&gt; ) { return !(a&lt;b); }
   
-  friend bool operator == (const T &a,const T &b) { return !( a&lt;b || b&lt;a ); }
+  friend bool operator == (const T &a,const T &b) requires ( OpLessType&lt;T&gt; && !OpEqualType&lt;T&gt; ) { return !( a&lt;b || b&lt;a ); }
   
-  friend bool operator != (const T &a,const T &b) { return ( a&lt;b || b&lt;a ); }
+  friend bool operator != (const T &a,const T &b) requires ( OpLessType&lt;T&gt; && !OpEqualType&lt;T&gt; ) { return ( a&lt;b || b&lt;a ); }
  };
   
 /* struct CmpComparable&lt;T&gt; */ 
@@ -264,17 +264,17 @@ struct <span class="Att">LessComparable</span>
 template &lt;class T&gt;
 struct <span class="Att">CmpComparable</span>
  {
-  friend bool operator &lt; (const T &a,const T &b) { return a.objCmp(b)&lt;0; }
+  friend bool operator &lt; (const T &a,const T &b) requires ( Has_objCmp&lt;T&gt; ) { return a.objCmp(b)&lt;0; }
   
-  friend bool operator &gt; (const T &a,const T &b) { return a.objCmp(b)&gt;0; }
+  friend bool operator &gt; (const T &a,const T &b) requires ( Has_objCmp&lt;T&gt; ) { return a.objCmp(b)&gt;0; }
   
-  friend bool operator &lt;= (const T &a,const T &b) { return a.objCmp(b)&lt;=0; }
+  friend bool operator &lt;= (const T &a,const T &b) requires ( Has_objCmp&lt;T&gt; ) { return a.objCmp(b)&lt;=0; }
   
-  friend bool operator &gt;= (const T &a,const T &b) { return a.objCmp(b)&gt;=0; }
+  friend bool operator &gt;= (const T &a,const T &b) requires ( Has_objCmp&lt;T&gt; ) { return a.objCmp(b)&gt;=0; }
   
-  friend bool operator == (const T &a,const T &b) { return a.objCmp(b)==0; }
+  friend bool operator == (const T &a,const T &b) requires ( Has_objCmp&lt;T&gt; ) { return a.objCmp(b)==0; }
   
-  friend bool operator != (const T &a,const T &b) { return a.objCmp(b)!=0; }
+  friend bool operator != (const T &a,const T &b) requires ( Has_objCmp&lt;T&gt; ) { return a.objCmp(b)!=0; }
  };
 
 </pre>

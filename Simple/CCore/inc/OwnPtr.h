@@ -25,7 +25,7 @@ namespace CCore {
 template <class Algo,class T>
 concept bool OwnPtrAlgo = requires(T *obj)
  {
-  Algo::Destroy(obj);
+  { Algo::Destroy(obj) } noexcept;
  } ;
 
 /* classes */
@@ -39,12 +39,12 @@ template <class T,class Algo=OwnAlgo<T> > class OwnPtr;
 template <class T>
 struct OwnAlgo
  {
-  static void Destroy(T *ptr) requires( NothrowDtorType<T> ) { delete ptr; }
+  static void Destroy(T *ptr) noexcept requires( NothrowDtorType<T> ) { delete ptr; }
  };
 
 /* class OwnPtr<T,Algo> */
 
-template <class T,class Algo> // TODO OwnPtrAlgo<T> Algo
+template <class T,class Algo>
 class OwnPtr : NoCopy
  {
    T *ptr;
@@ -58,6 +58,11 @@ class OwnPtr : NoCopy
      obj->~OwnPtr();
     }
 
+   static void Destroy(T *ptr) requires ( OwnPtrAlgo<Algo,T> )
+    {
+     if( ptr ) Algo::Destroy(ptr);
+    }
+
   public:
 
    // constructors
@@ -66,7 +71,7 @@ class OwnPtr : NoCopy
 
    explicit OwnPtr(T *ptr_) : ptr(ptr_) {}
 
-   ~OwnPtr() { if( ptr ) Algo::Destroy(ptr); }
+   ~OwnPtr() { this->Destroy(ptr); }
 
    // std move
 
@@ -76,9 +81,7 @@ class OwnPtr : NoCopy
     {
      if( this!=&obj )
        {
-        T *todel=Replace(ptr,Replace_null(obj.ptr));
-
-        if( todel ) Algo::Destroy(todel);
+        this->Destroy(Replace(ptr,Replace_null(obj.ptr)));
        }
 
      return *this;
@@ -98,7 +101,7 @@ class OwnPtr : NoCopy
 
    // reset
 
-   void set(T *new_ptr) { if( T *old_ptr=Replace(ptr,new_ptr) ) Algo::Destroy(old_ptr); }
+   void set(T *new_ptr) { this->Destroy(Replace(ptr,new_ptr)); }
 
    T * detach(T *new_ptr=0) { return Replace(ptr,new_ptr); }
 

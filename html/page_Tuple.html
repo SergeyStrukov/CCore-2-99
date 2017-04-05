@@ -2,13 +2,13 @@
 /* page_Tuple.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -43,10 +43,22 @@ struct <span class="Att">Tuple</span>
   
   Tuple() {}
   
-  Tuple(const TT &amp; ...);
+  explicit Tuple(const TT &amp; ...);
   
-  template &lt;class FuncInit&gt;
-  void call(FuncInit func_init);
+  template &lt;int I&gt;
+  auto &amp; ref();
+
+  template &lt;int I&gt;
+  auto &amp; ref() const;
+
+  template &lt;int I&gt;
+  auto &amp; ref_const() const;
+
+  template &lt;FuncInitArgType&lt;TT &amp; ...&gt; FuncInit&gt;
+  auto call(FuncInit func_init);
+  
+  template &lt;FuncInitArgType&lt;const TT &amp; ...&gt; FuncInit&gt;
+  auto call(FuncInit func_init) const;
  };
 
 template &lt;class ... TT&gt;
@@ -56,10 +68,13 @@ struct <span class="Att">ForwardTuple</span>
   
   ForwardTuple() {}
   
-  ForwardTuple(TT &amp;&amp; ...);
+  explicit ForwardTuple(TT &amp;&amp; ...);
   
-  template &lt;class FuncInit&gt;
-  void call(FuncInit func_init);
+  template &lt;int I&gt;
+  auto &amp;&amp; ref() const;
+
+  template &lt;FuncInitArgType&lt;TT &amp;&amp; ...&gt; FuncInit&gt;
+  void call(FuncInit func_init) const;
  };
 
 </pre>
@@ -71,7 +86,11 @@ used when you need to store the arguments. If you have to capture them only temp
 </p>
 
 <p>
-Both classes use <a href="page_FunctorType.html">Functor Init Pattern</a>.
+The method <b>ref()</b> referes to the particular tuple member with the given 1-based index.
+</p>
+
+<p>
+Both classes use the <a href="page_FunctorType.html">Functor Init Pattern</a>.
 </p>
 
 <p>
