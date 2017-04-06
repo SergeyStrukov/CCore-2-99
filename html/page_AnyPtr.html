@@ -2,13 +2,13 @@
 /* page_AnyPtr.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -81,7 +81,7 @@ class <span class="Att">AnyPtr</span>
 
    // print object
    
-   template &lt;class P&gt;
+   template &lt;PrinterType P&gt;
    void print(P &amp;out) const;
  };
 
@@ -128,7 +128,7 @@ class <span class="Att">AnyPtr_const</span>
 
    // print object
    
-   template &lt;class P&gt;
+   template &lt;PrinterType P&gt;
    void print(P &amp;out) const;
  };
 
@@ -194,7 +194,7 @@ the object. Printing is implemented with the following functor:
 
 <pre>
 
-template &lt;class P&gt;
+template &lt;PrinterType P&gt;
 class <span class="Att">PrintAnyObj</span>
  {
    P &amp;out;

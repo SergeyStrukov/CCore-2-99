@@ -2,13 +2,13 @@
 /* page_Move.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -57,16 +57,16 @@ the implementation point for it.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;CopyCtorType T&gt;
 T * <span class="Att">CopyMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for efficiently copyable classes
 
-template &lt;class T&gt;
+template &lt;NothrowDefaultCtorType T&gt;
 T * <span class="Att">SwapMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for classes with <b>objSwap()</b> and efficient default constructor
 
-template &lt;class T&gt;
+template &lt;MoveCtorType T&gt;
 T * <span class="Att">MoveMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for classes with std move
 
-template &lt;class T&gt;
+template &lt;Has_ToMoveCtor T&gt;
 T * <span class="Att">CtorMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for classes with <b>Move constructor</b>
 
 template &lt;class T&gt;
@@ -79,10 +79,10 @@ Normally you should use the function <b>Move()</b> for <b>Move</b> operation.
 If the destined type is a class type with the method <b>objMove()</b>, it is called to do the job.
 Otherwise, if the destined type has a <b>Move constructor</b>, <b>CtorMove()</b> is used.
 Otherwise, if the destined type is std movable, <b>MoveMove()</b> is used.
-Otherwise, if the destined type is a class type with the method <b>objSwap()</b>, the 
-<b>SwapMove()</b> is used. In this case <span class="Alert">class must have the efficient default constructor</span>.
-Finally, <b>CopyMove()</b> is called for remaining cases. It is assumed, that such types are
-<span class="Alert">efficiently copyable</span>.
+Otherwise, if the destined type is a class type with the method <b>objSwap()</b> and has efficient default constructor, the 
+<b>SwapMove()</b> is used. 
+Finally, <b>CopyMove()</b> is called for copyable types. It is assumed, that such types are
+efficiently copyable, otherwise a warning is emitted.
 </p>
 
 <p>
