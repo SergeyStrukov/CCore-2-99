@@ -21,6 +21,11 @@
 
 namespace CCore {
 
+/* concept SwapMovableType<T> */
+
+template <class T>
+concept bool SwapMovableType = NothrowDefaultCtorType<T> && Has_objSwap<T> ;
+
 /* functions */
 
 template <CopyCtorType T>
@@ -44,7 +49,7 @@ T * CopyMove(T *obj,Place<void> place) noexcept
   return ret;
  }
 
-template <NothrowDefaultCtorType T>
+template <SwapMovableType T>
 T * SwapMove(T *obj,Place<void> place) noexcept
  {
   T *ret=new(place) T();
@@ -110,13 +115,13 @@ struct MoveAdapter<T>
   static T * Move(T *obj,Place<void> place) { return MoveMove(obj,place); }
  };
 
-template <No_objMove T> requires ( No_ToMoveCtor<T> && !MoveCtorType<T> && Has_objSwap<T> && NothrowDefaultCtorType<T> )
+template <No_objMove T> requires ( No_ToMoveCtor<T> && !MoveCtorType<T> && SwapMovableType<T> )
 struct MoveAdapter<T>
  {
   static T * Move(T *obj,Place<void> place) { return SwapMove(obj,place); }
  };
 
-template <No_objMove T> requires ( No_ToMoveCtor<T> && !MoveCtorType<T> && !( Has_objSwap<T> && NothrowDefaultCtorType<T> ) )
+template <No_objMove T> requires ( No_ToMoveCtor<T> && !MoveCtorType<T> && !SwapMovableType<T> )
 struct MoveAdapter<T>
  {
   static T * Move(T *obj,Place<void> place) { return CopyMove(obj,place); }
@@ -125,12 +130,11 @@ struct MoveAdapter<T>
 /* concept ReplaceableType<T> */
 
 template <class T>
-concept bool ReplaceableType = Has_objMove<T> || Has_ToMoveCtor<T> || MoveCtorType<T>
-                            || ( Has_objSwap<T> && NothrowDefaultCtorType<T> ) || CopyCtorType<T> ;
+concept bool ReplaceableType = Has_objMove<T> || Has_ToMoveCtor<T> || MoveCtorType<T> || SwapMovableType<T> || CopyCtorType<T> ;
 
 /* Move() */
 
-template <class T>
+template <ReplaceableType T>
 T * Move(T *obj,Place<void> place) noexcept { return MoveAdapter<T>::Move(obj,place); }
 
 } // namespace CCore

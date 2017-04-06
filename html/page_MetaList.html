@@ -1,0 +1,119 @@
+<!--
+/* page_MetaList.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 3.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> MetaList</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>MetaList</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/MetaList.h</b> <b>CCore/src/gadget/MetaList.cpp</b></p>
+
+<h3>IndexOf</h3>
+
+<pre>
+
+template &lt;class T,class ... TT&gt;
+const unsigned <span class="Att">IndexOf</span> = .... ;
+
+</pre>
+
+<p>
+<b>IndexOf</b> is a <b>Meta-constant</b>. It equals the 1-based index of the type <b>T</b> in the following type list <b>TT</b>.
+</p>
+
+<h3>SelectList</h3>
+
+<pre>
+
+template &lt;unsigned Index,class ... TT&gt;
+using <span class="Att">SelectList</span> = .... ;
+
+</pre>
+
+<p>
+<b>SelectList</b> is a <b>Meta-type</b>. It equals the type from the type list <b>TT</b> with the given 0-based index.
+</p>
+
+<h3>SplitTypeList</h3>
+
+<pre>
+
+template &lt;class Split,class ... TT&gt;
+using <span class="Att">SplitTypeList</span> = .... ;
+
+</pre>
+
+<p>
+<b>SplitTypeList</b> is a <b>Meta-type</b>. It can be used to split the type list <b>TT</b>:
+</p>
+
+<pre>
+
+struct Split
+ {
+  template &lt;class T&gt;
+  struct Last
+   {
+    template &lt;class ... SS&gt;
+    struct Start
+     {
+     };
+   };
+ };
+
+SplitTypeList&lt;Split,TT,T&gt; == Split::Last&lt;T&gt;::Start&lt;TT&gt;
+
+</pre>
+
+<h3>SkipTypeList</h3>
+
+<pre>
+
+template &lt;class Skip,ulen Count,class ... TT&gt;
+using <span class="Att">SkipTypeList</span> = .... ;
+
+</pre>
+
+<p>
+<b>SkipTypeList</b> is a <b>Meta-type</b>. It selects the part of the type list <b>TT</b> and use it as the argument
+of instantiation of the <b>Skip::Ctor</b>: 
+</p>
+
+<pre>
+
+struct Skip
+ {
+  template &lt;class ... SS&gt; struct Ctor;
+ };
+
+SkipTypeList&lt;Skip,Count,T<sub>1</sub>,...,T<sub>Count</sub>,T<sub>Count+1</sub>,...&gt; == Skip::Ctor&lt;T<sub>Count+1</sub>,...&gt;
+
+</pre>
+
+
+</body>
+
+</html>
+

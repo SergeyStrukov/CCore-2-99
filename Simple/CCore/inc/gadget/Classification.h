@@ -78,13 +78,13 @@ template <class T>
 concept bool NothrowDtorType = Meta::HasNothrowDtor<T> ;
 
 template <class T>
-concept bool TrivDtorType = Meta::HasTrivDtor<T> ;
+concept bool TrivDtorType = NothrowDtorType<T> && Meta::HasTrivDtor<T> ;
 
 template <class T>
 concept bool DefaultCtorType = Meta::HasDefaultCtor<T> ;
 
 template <class T>
-concept bool NothrowDefaultCtorType = Meta::HasNothrowDefaultCtor<T> ;
+concept bool NothrowDefaultCtorType = DefaultCtorType<T> && Meta::HasNothrowDefaultCtor<T> ;
 
 template <class T>
 concept bool MoveCtorType = Meta::HasMoveCtor<T> ;
@@ -93,7 +93,7 @@ template <class T>
 concept bool CopyCtorType = Meta::HasCopyCtor<T> ;
 
 template <class T>
-concept bool NothrowCopyCtorType = Meta::HasNothrowCopyCtor<T> ;
+concept bool NothrowCopyCtorType = CopyCtorType<T> && Meta::HasNothrowCopyCtor<T> ;
 
 template <class T>
 concept bool MovableType = Meta::IsMovable<T> ;
@@ -102,7 +102,7 @@ template <class T>
 concept bool CopyableType = Meta::IsCopyable<T> ;
 
 template <class T>
-concept bool NothrowCopyableType = Meta::IsNothrowCopyable<T> ;
+concept bool NothrowCopyableType = CopyableType<T> && Meta::IsNothrowCopyable<T> ;
 
 /* complex concepts */
 

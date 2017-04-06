@@ -133,13 +133,16 @@ That is the main cause why <b>Swap</b> is applicable to the wide range of types.
 
 <pre>
 
+template &lt;class T&gt;
+concept bool <span class="Att">SwappableType</span> = Has_objSwap&lt;T&gt; || MovableType&lt;T&gt; || CopyableType&lt;T&gt; ;
+
 template &lt;CopyableType T&gt;
 void <span class="Att">CopySwap</span>(T &a,T &b) noexcept;
 
 template &lt;MovableType T&gt;
 void <span class="Att">MoveSwap</span>(T &a,T &b) noexcept;
 
-template &lt;class T&gt;
+template &lt;SwappableType T&gt;
 void <span class="Att">Swap</span>(T &a,T &b) noexcept;
 
 </pre>
@@ -160,7 +163,7 @@ In such case the type must be copyable. Again, it is assumed, that copy operatio
 
 /* NullBySwap() */
 
-template &lt;class T&gt;
+template &lt;NothrowDefaultCtorType T&gt;
 void <span class="Att">NullBySwap</span>(T &amp;obj)
  {
   T temp{};
@@ -170,7 +173,7 @@ void <span class="Att">NullBySwap</span>(T &amp;obj)
 
 /* MoveBySwap() */
 
-template &lt;class T&gt;
+template &lt;NothrowDefaultCtorType T&gt;
 void <span class="Att">MoveBySwap</span>(T &amp;dst,T &amp;src)
  {
   if( &dst!=&src )

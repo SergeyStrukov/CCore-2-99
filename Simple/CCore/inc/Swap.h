@@ -87,9 +87,14 @@ struct SwapAdapter<T>
   static void Swap(T &a,T &b) { CopySwap(a,b); }
  };
 
-/* Swap() */
+/* concept SwappableType<T> */
 
 template <class T>
+concept bool SwappableType = Has_objSwap<T> || MovableType<T> || CopyableType<T> ;
+
+/* Swap() */
+
+template <class T> // TODO SwappableType
 void Swap(T &a,T &b) noexcept { SwapAdapter<T>::Swap(a,b); }
 
 /* NullBySwap() */

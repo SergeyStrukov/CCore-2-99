@@ -57,10 +57,16 @@ the implementation point for it.
 
 <pre>
 
+template &lt;class T&gt;
+concept bool <span class="Att">SwapMovableType</span> = NothrowDefaultCtorType&lt;T&gt; && Has_objSwap&lt;T&gt; ;
+
+template &lt;class T&gt;
+concept bool <span class="Att">ReplaceableType</span> = Has_objMove&lt;T&gt; || Has_ToMoveCtor&lt;T&gt; || MoveCtorType&lt;T&gt; || SwapMovableType&lt;T&gt; || CopyCtorType&lt;T&gt; ;
+
 template &lt;CopyCtorType T&gt;
 T * <span class="Att">CopyMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for efficiently copyable classes
 
-template &lt;NothrowDefaultCtorType T&gt;
+template &lt;SwapMovableType T&gt;
 T * <span class="Att">SwapMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for classes with <b>objSwap()</b> and efficient default constructor
 
 template &lt;MoveCtorType T&gt;
@@ -69,7 +75,7 @@ T * <span class="Att">MoveMove</span>(T *obj,Place&lt;void&gt; place) noexcept; 
 template &lt;Has_ToMoveCtor T&gt;
 T * <span class="Att">CtorMove</span>(T *obj,Place&lt;void&gt; place) noexcept; // for classes with <b>Move constructor</b>
 
-template &lt;class T&gt;
+template &lt;ReplaceableType T&gt;
 T * <span class="Att">Move</span>(T *obj,Place&lt;void&gt; place) noexcept; // general
 
 </pre>
@@ -229,7 +235,7 @@ It is a special class member and it is used by the <b>CtorMove()</b> like this:
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;Has_ToMoveCtor T&gt;
 T * CtorMove(T *obj,Place&lt;void&gt; place) noexcept
  {
   T *ret=new(place) T(ObjToMove(*obj));
@@ -255,7 +261,7 @@ Moving with C++ move constructor is performed the same way:
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;MoveCtorType T&gt;
 T * MoveMove(T *obj,Place&lt;void&gt; place) noexcept
  {
   T *ret=new(place) T(std::move(*obj));
@@ -275,7 +281,7 @@ This is the <b>SwapMove()</b>:
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;SwapMovableType T&gt;
 T * SwapMove(T *obj,Place&lt;void&gt; place) noexcept
  {
   T *ret=new(place) T();

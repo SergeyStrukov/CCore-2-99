@@ -47,34 +47,6 @@ template &lt;class T,T Val&gt; const T <span class="Att">Const</span> = Val ;
 This is a general <b>Meta-constant</b> with the given type and value.
 </p>
 
-<h3>SumOf()</h3>
-
-<pre>
-
-template &lt;class RetType,class ... TT&gt;
-constexpr RetType <span class="Att">SumOf</span>(TT ... tt);
-
-</pre>
-
-<p>
-This <b>constexpr</b> function sums its arguments and returns the result as the given <b>RetType</b>.
-</p>
-
-<h3>MaxOf()</h3>
-
-<pre>
-
-template &lt;class RetType,class ... TT&gt;
-constexpr RetType <span class="Att">MaxOf</span>(TT ... tt);
-
-</pre>
-
-<p>
-This <b>constexpr</b> function finds the maximum of its arguments and returns the result as the given <b>RetType</b>.
-Arguments are implicitly converted to <b>RetType</b> to participate in calculation.
-Technically the definition of this function is located not in the file <b>Meta.h</b>, but in the file <b>UtilFunc.h</b>.
-</p>
-
 <h3>Empty</h3>
 
 <pre>
@@ -89,22 +61,37 @@ struct <span class="Att">Empty</span>
 <b>Empty</b> is an empty <b>Meta-class</b>. It is used to return an empty result from <b>Meta-function</b>s.
 </p>
 
-<h3>ProbeSetBase</h3>
+<h3>EmptyBox</h3>
 
 <pre>
 
-struct <span class="Att">ProbeSetBase</span>
+template &lt;class T&gt;
+struct <span class="Att">EmptyBox</span>
  {
-  template &lt;class T&gt; static T &amp; Ref();
-
-  template &lt;class T&gt; static T Obj();
  };
 
 </pre>
 
 <p>
-This class is used as a base class of probe classes. Such classes are used to determine some type properties.
-<b>ProbeSetBase</b> declares (but not defines!) two functions to build an expression of the given type or the given reference type.
+<b>EmptyBox</b> is an utility for meta-calculations. It is empty. 
+</p>
+
+<h3>TypeBox</h3>
+
+<pre>
+
+template &lt;class T&gt;
+struct <span class="Att">TypeBox</span>
+ {
+  using Type = T ;
+
+  static T Get();
+ };
+
+</pre>
+
+<p>
+<b>TypeBox</b> is used to "box" the given type. It also can be used in meta-calculations to get a value of the type.
 </p>
 
 <h3>DefType</h3>
@@ -139,6 +126,23 @@ struct <span class="Att">DefConst</span>
 <b>DefConst</b> is a <b>Meta-function</b>, it returns the given constant as the result.
 </p>
 
+<h3>ToConst</h3>
+
+<pre>
+
+template &lt;class T&gt;
+using <span class="Att">ToConst</span> = .... ;
+
+ToConst&lt;T&gt; == const T
+
+ToConst&lt;T &&gt; == const T &
+
+</pre>
+
+<p>
+<b>ToConst</b> is a <b>Meta-type</b>. It makes the constant type from the given type with respect to references. 
+</p>
+
 <h3>Select</h3>
 
 <pre>
@@ -146,84 +150,15 @@ struct <span class="Att">DefConst</span>
 template &lt;bool Cond,class T1,class T2&gt;
 using <span class="Att">Select</span> = .... ;
 
+Select&lt;true,T1,T2&gt; == T1
+
+Select&lt;false,T1,T2&gt; == T2
+
 </pre>
 
 <p>
 <b>Select</b> is a <b>Meta-type</b>. It is used to select a type from two types. 
 If <b>Cond</b> is <b>true</b>, then the first type is selected, otherwise the second.
-</p>
-
-<h3>BuildIf</h3>
-
-<pre>
-
-template &lt;bool Cond,template &lt;class A&gt; class T,class A&gt;
-using <span class="Att">BuildIf</span> = .... ;
-
-</pre>
-
-<p>
-<b>BuildIf</b> is a <b>Meta-type</b>.
-If <b>Cond</b> is <b>true</b>, then <b>BuildIf</b> equals <b>T&lt;A&gt;</b>. Otherwise it is <b>Empty</b>.
-In the last case <b>T&lt;A&gt;</b> is not instantiated (that is the point to use this tool).
-</p>
-
-<h3>SelectBuild1,2,3</h3>
-
-<pre>
-
-template &lt;bool Cond,template &lt;class A1&gt; class T1,
-                    template &lt;class A1&gt; class T2,
-                    class A1&gt;
-using <span class="Att">SelectBuild1</span> = .... ;
-
-template &lt;bool Cond,template &lt;class A1,class A2&gt; class T1,
-                    template &lt;class A1,class A2&gt; class T2,
-                    class A1,class A2&gt;
-using <span class="Att">SelectBuild2</span> = .... ;
-
-template &lt;bool Cond,template &lt;class A1,class A2,class A3&gt; class T1,
-                    template &lt;class A1,class A2,class A3&gt; class T2,
-                    class A1,class A2,class A3&gt;
-using <span class="Att">SelectBuild3</span> = .... ;
-
-</pre>
-
-<p>
-<b>SelectBuildx</b> is a <b>Meta-type</b>.
-If <b>Cond</b> is <b>true</b>, then <b>SelectBuildx</b> equals <b>T1&lt;A1(,A2,A3)&gt;</b>. Otherwise it is <b>T2&lt;A1(,A2,A3)&gt;</b>.
-The alternative template is not instantiated (that is the point to use this tool).
-</p>
-
-<h3>EnableIf</h3>
-
-<pre>
-
-template &lt;bool Cond,class RetType=void&gt;
-using <span class="Att">EnableIf</span> = .... ;
-
-</pre>
-
-<p>
-<b>EnableIf</b> is a <b>Meta-type</b>. It can be instantiated only if <b>Cond</b> is <b>true</b> and in this case
-it equals <b>RetType</b> (defaulted to <b>void</b>). This tool is used instead of concepts in the current version of the language.
-</p>
-
-<h3>Detect</h3>
-
-<pre>
-
-template &lt;class ProbeSet,class T&gt;
-const bool <span class="Att">Detect</span> = .... ;
-
-</pre>
-
-<p>
-<b>Detect</b> is a <b>Meta-constant</b>. It equals <b>true</b> iff the following template can be instantiated:
-<b>typename ProbeSet::template Condition&lt;T&gt;</b>. 
-I.e. it is expected, that the structure <b>ProbeSet</b> contains the inner 
-template <b>template &lt;class T&gt; struct Condition</b>. <b>Detect</b> shows if this inner template can be instantiated with
-the given argument. 
 </p>
 
 <h3>IsSame</h3>
@@ -354,18 +289,35 @@ using <span class="Att">UnConst</span> = typename std::remove_const&lt;T&gt;::ty
 <b>UnConst</b> is a <b>Meta-type</b>. It removes the constant qualifier from the argument type.
 </p>
 
-<h3>RangeObjType</h3>
+<h3>PtrObjType</h3>
 
 <pre>
 
-template &lt;class R&gt;
-using <span class="Att">RangeObjType</span> = .... ;
+template &lt;class Ptr&gt;
+using <span class="Att">PtrObjType</span> = .... ;
+
+PtrObjType&lt;T *&gt; == T
+
+PtrObjType&lt;Ptr&gt; == typeof ( *Ptr )
 
 </pre>
 
 <p>
-<b>RangeObjType</b> is a <b>Meta-type</b>. It should be applied to range kind types to retrieve the type of objects from the range.
-For example, if <b>R</b> is <b>PtrLen&lt;T&gt;</b>, then <b>RangeObjType&lt;R&gt;</b> is <b>T</b>. 
+<b>PtrObjType</b> is a <b>Meta-type</b>. It should be applied to pointer kind types to retrieve the type of pointee objects.
+For example, if <b>R</b> is <b>PtrLen&lt;T&gt;</b>, then <b>PtrObjType&lt;R&gt;</b> is <b>T</b>. 
+</p>
+
+<h3>CommonType</h3>
+
+<pre>
+
+template &lt;class S,class T&gt;
+using <span class="Att">CommonType</span> = .... ;
+
+</pre>
+
+<p>
+<b>CommonType</b> is a <b>Meta-type</b>. It is defined iff <b>T</b> equals <b>S</b> and is <b>T</b> in this case.
 </p>
 
 <h3>AlignedStorage</h3>
@@ -440,101 +392,6 @@ equals than <b>int</b>. <b>UType</b> is the correspondent unsigned <b>SType</b> 
 The implementation is supported by the target (<a href="#Target">see below</a>).
 </p>
 
-<h3>IndexOf</h3>
-
-<pre>
-
-template &lt;class T,class ... TT&gt;
-const unsigned <span class="Att">IndexOf</span> = .... ;
-
-</pre>
-
-<p>
-<b>IndexOf</b> is a <b>Meta-constant</b>. It equals the 1-based index of the type <b>T</b> in the following type list <b>TT</b>.
-</p>
-
-<h3>SelectList</h3>
-
-<pre>
-
-template &lt;unsigned Index,class ... TT&gt;
-using <span class="Att">SelectList</span> = .... ;
-
-</pre>
-
-<p>
-<b>SelectList</b> is a <b>Meta-type</b>. It equals the type from the type list <b>TT</b> with the given 0-based index.
-</p>
-
-<h3>CommonType</h3>
-
-<pre>
-
-template &lt;class S,class T&gt;
-using <span class="Att">CommonType</span> = .... ;
-
-</pre>
-
-<p>
-<b>CommonType</b> is a <b>Meta-type</b>. It is defined iff <b>T</b> equals <b>S</b> and is <b>T</b> in this case.
-</p>
-
-<h3>SplitTypeList</h3>
-
-<pre>
-
-template &lt;class Split,class ... TT&gt;
-using <span class="Att">SplitTypeList</span> = .... ;
-
-</pre>
-
-<p>
-<b>SplitTypeList</b> is a <b>Meta-type</b>. It can be used to split the type list <b>TT</b>:
-</p>
-
-<pre>
-
-struct Split
- {
-  template &lt;class T&gt;
-  struct Last
-   {
-    template &lt;class ... SS&gt;
-    struct Start
-     {
-     };
-   };
- };
-
-SplitTypeList&lt;Split,TT,T&gt; == Split::Last&lt;T&gt;::Start&lt;TT&gt;
-
-</pre>
-
-<h3>SkipTypeList</h3>
-
-<pre>
-
-template &lt;class Skip,ulen Count,class ... TT&gt;
-using <span class="Att">SkipTypeList</span> = .... ;
-
-</pre>
-
-<p>
-<b>SkipTypeList</b> is a <b>Meta-type</b>. It selects the part of the type list <b>TT</b> and use it as the argument
-of instantiation of the <b>Skip::Ctor</b>: 
-</p>
-
-<pre>
-
-struct Skip
- {
-  template &lt;class ... SS&gt; struct Ctor;
- };
-
-SkipTypeList&lt;Skip,Count,T<sub>1</sub>,...,T<sub>Count</sub>,T<sub>Count+1</sub>,...&gt; == Skip::Ctor&lt;T<sub>Count+1</sub>,...&gt;
-
-</pre>
-
 <h3>Type properties</h3>
 
 <pre>
@@ -554,45 +411,60 @@ const bool <span class="Att">IsClass</span> = std::is_class&lt;T&gt;::value ;
 template &lt;class T&gt;
 const bool <span class="Att">IsPOD</span> = std::is_pod&lt;T&gt;::value ;
 
+/* const HasNothrowDtor&lt;T&gt; */
+
+template &lt;class T&gt;
+const bool <span class="Att">HasNothrowDtor</span> = std::is_nothrow_destructible&lt;T&gt;::value ;
+
 /* const HasTrivDtor&lt;T&gt; */
 
 template &lt;class T&gt;
 const bool <span class="Att">HasTrivDtor</span> = std::is_trivially_destructible&lt;T&gt;::value ;
+
+/* const HasDefaultCtor&lt;T&gt; */
+
+template &lt;class T&gt;
+const bool <span class="Att">HasDefaultCtor</span> = std::is_default_constructible&lt;T&gt;::value ;
 
 /* const HasNothrowDefaultCtor&lt;T&gt; */
 
 template &lt;class T&gt;
 const bool <span class="Att">HasNothrowDefaultCtor</span> = std::is_nothrow_default_constructible&lt;T&gt;::value ;
 
-/* const HasNothrowCopyCtor&lt;T&gt; */
-
-template &lt;class T&gt;
-const bool <span class="Att">HasNothrowCopyCtor</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value ;
-
 /* const HasCopyCtor&lt;T&gt; */
 
 template &lt;class T&gt;
 const bool <span class="Att">HasCopyCtor</span> = std::is_copy_constructible&lt;T&gt;::value ;
+
+/* const HasNothrowCopyCtor&lt;T&gt; */
+
+template &lt;class T&gt;
+const bool <span class="Att">HasNothrowCopyCtor</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value ;
 
 /* const HasMoveCtor&lt;T&gt; */
 
 template &lt;class T&gt;
 const bool <span class="Att">HasMoveCtor</span> = std::is_move_constructible&lt;T&gt;::value ;
 
-/* const IsNothrowCopyable&lt;T&gt; */
-
-template &lt;class T&gt;
-const bool <span class="Att">IsNothrowCopyable</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value && std::is_nothrow_copy_assignable&lt;T&gt;::value ;
-
 /* const IsCopyable&lt;T&gt; */
 
 template &lt;class T&gt;
 const bool <span class="Att">IsCopyable</span> = std::is_copy_constructible&lt;T&gt;::value && std::is_copy_assignable&lt;T&gt;::value ;
 
+/* const IsNothrowCopyable&lt;T&gt; */
+
+template &lt;class T&gt;
+const bool <span class="Att">IsNothrowCopyable</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value && std::is_nothrow_copy_assignable&lt;T&gt;::value ;
+
 /* const IsMovable&lt;T&gt; */
 
 template &lt;class T&gt;
 const bool <span class="Att">IsMovable</span> = std::is_move_constructible&lt;T&gt;::value && std::is_move_assignable&lt;T&gt;::value ;
+
+/* const IsBaseOf&lt;B,D&gt; */
+
+template &lt;class B,class D&gt;
+const bool <span class="Att">IsBaseOf</span> = std::is_base_of&lt;B,D&gt;::value ;
 
 </pre>
 
@@ -613,7 +485,15 @@ This is a whole list of <b>Meta-constant</b>s. They can be used to determine dif
 </p>
 
 <p>
+<b>HasNothrowDtor</b> equals <b>true</b> iff the type <b>T</b> is nothrow destructible.
+</p>
+
+<p>
 <b>HasTrivDtor</b> equals <b>true</b> iff the type <b>T</b> is trivially destructible.
+</p>
+
+<p>
+<b>HasDefaultCtor</b> equals <b>true</b> iff the type <b>T</b> is default constructible.
 </p>
 
 <p>
@@ -621,11 +501,11 @@ This is a whole list of <b>Meta-constant</b>s. They can be used to determine dif
 </p>
 
 <p>
-<b>HasNothrowCopyCtor</b> equals <b>true</b> iff the type <b>T</b> is nothrow copy constructible.
+<b>HasCopyCtor</b> equals <b>true</b> iff the type <b>T</b> is copy constructible.
 </p>
 
 <p>
-<b>HasCopyCtor</b> equals <b>true</b> iff the type <b>T</b> is copy constructible.
+<b>HasNothrowCopyCtor</b> equals <b>true</b> iff the type <b>T</b> is nothrow copy constructible.
 </p>
 
 <p>
@@ -633,15 +513,19 @@ This is a whole list of <b>Meta-constant</b>s. They can be used to determine dif
 </p>
 
 <p>
-<b>IsNothrowCopyable</b> equals <b>true</b> iff the type <b>T</b> is nothrow copy constructible and nothrow copy assignable.
-</p>
-
-<p>
 <b>IsCopyable</b> equals <b>true</b> iff the type <b>T</b> is copy constructible and copy assignable.
 </p>
 
 <p>
+<b>IsNothrowCopyable</b> equals <b>true</b> iff the type <b>T</b> is nothrow copy constructible and nothrow copy assignable.
+</p>
+
+<p>
 <b>IsMovable</b> equals <b>true</b> iff the type <b>T</b> is move constructible and move assignable.
+</p>
+
+<p>
+<b>IsBaseOf</b> equals <b>true</b> iff the type <b>B</b> is a base class of the class <b>D</b>.
 </p>
 
 <a name="Target"><h2>Target support for Meta</h2></a>
