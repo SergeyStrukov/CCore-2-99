@@ -30,6 +30,140 @@
 
 <p class="Files">Files <b>CCore/inc/gadget/MetaList.h</b> <b>CCore/src/gadget/MetaList.cpp</b></p>
 
+<p>
+The namespace <b>Meta</b> contains a collection of meta-tools widely-used in <b>CCore</b>. 
+They are enclosed in the namespace <b>Meta</b>. 
+This particular file provides tools to work with type lists.
+</p>
+
+<h3>EraseType</h3>
+
+<pre>
+
+template &lt;class T&gt;
+using <span class="Att">EraseType</span> = int ;
+
+</pre>
+
+<p>
+<b>EraseType</b> is a <b>Meta-type</b>. It maps any type to the type <b>int</b>.
+</p>
+
+<h3>IndexListBox</h3>
+
+<pre>
+
+template &lt;int ... IList&gt; struct <span class="Att">IndexListBox</span>;
+
+</pre>
+
+<p>
+<b>IndexListBox</b> is used to "box" a list of integer indexes.
+</p>
+
+<h3>IndexListBox</h3>
+
+<pre>
+
+template &lt;int Base,class ... TT&gt;
+using <span class="Att">IndexList</span> = .... ;
+
+IndexList&lt;Base,T<sub>1</sub>,...,T<sub>n</sub>&gt; == IndexListBox&lt;Base,Base+1,...,Base+n-1&gt;
+
+</pre>
+
+<p>
+<b>IndexListBox</b> is a <b>Meta-type</b>. It creates a box of indexes <b>IndexListBox&lt;i,i+1,...,i+n-1&gt;</b>. 
+The first index is <b>Base</b>, the length of the list is the length of the type list <b>TT</b>.
+</p>
+
+<h3>TypeListBox</h3>
+
+<pre>
+
+template &lt;&gt;
+struct <span class="Att">TypeListBox</span>&lt;&gt;
+ {
+  using Type = TypeListBox&lt;&gt; ;
+
+  template &lt;class ... SS&gt;
+  using Extend = TypeListBox&lt;SS...&gt; ;
+ };
+
+template &lt;class T,class ... TT&gt;
+struct <span class="Att">TypeListBox</span>&lt;T,TT...&gt;
+ {
+  using Type = TypeListBox&lt;T,TT...&gt; ;
+
+  using FirstType = T ;
+
+  template &lt;class ... SS&gt;
+  using Extend = TypeListBox&lt;T,TT...,SS...&gt; ;
+ };
+
+TypeListBox&lt;T<sub>1</sub>,...,T<sub>n</sub>&gt;::Extend&lt;S<sub>1</sub>,...,S<sub>m</sub>&gt; == TypeListBox&lt;T<sub>1</sub>,...,T<sub>n</sub>,S<sub>1</sub>,...,S<sub>m</sub>&gt;
+
+</pre>
+
+<p>
+<b>TypeListBox</b> is another "box" type for a list of types. This box has three inner values:
+</p>
+
+<p>
+<b>Type</b> is the self type.
+</p>
+
+<p>
+<b>FirstType</b> is the first type of the list, if the list is not empty, otherwise it is not defined.
+</p>
+
+<p>
+<b>Extend</b> is a <b>Meta-function</b>. This function extends the box by the provided list of types.
+</p>
+
+<h3>JoinTypeList</h3>
+
+<pre>
+
+template &lt;class Box1,class Box2&gt;
+using <span class="Att">JoinTypeList</span> = .... ;
+
+JoinTypeList&lt; TypeListBox&lt;T<sub>1</sub>,...,T<sub>n</sub>&gt; , TypeListBox&lt;S<sub>1</sub>,...,S<sub>m</sub>&gt; &gt; == TypeListBox&lt;T<sub>1</sub>,...,T<sub>n</sub>,S<sub>1</sub>,...,S<sub>m</sub>&gt;
+
+</pre>
+
+<p>
+<b>JoinTypeList</b> is a <b>Meta-type</b>. It joins two type list boxes.
+</p>
+
+<h3>SplitTypeList</h3>
+
+<pre>
+
+template &lt;unsigned Index,class ... TT&gt; requires ( Index &lt;= sizeof ... (TT) ) 
+struct <span class="Att">SplitTypeList</span> 
+ {
+  using First = .... ;
+
+  using Last = .... ;
+ };
+
+template &lt;unsigned Index,class ... TT&gt;
+struct <span class="Att">SplitTypeListBox</span>&lt;Index,TypeListBox&lt;TT...&gt; &gt; : SplitTypeList&lt;Index,TT...&gt; {};
+
+SplitTypeList&lt;Index,T<sub>0</sub>,...,T<sub>n-1</sub>&gt;::First == TypeListBox&lt;T<sub>0</sub>,...,T<sub>Index-1</sub>&gt;
+
+SplitTypeList&lt;Index,T<sub>0</sub>,...,T<sub>n-1</sub>&gt;::Last == TypeListBox&lt;T<sub>Index</sub>,...,T<sub>n-1</sub>&gt;
+
+</pre>
+
+<p>
+<b>SplitTypeList</b> splits the given type list on two parts.
+<b>SplitTypeListBox</b> uses a type list box as the argument.
+</p>
+
+
+
 <h3>IndexOf</h3>
 
 <pre>
