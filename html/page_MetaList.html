@@ -162,7 +162,65 @@ SplitTypeList&lt;Index,T<sub>0</sub>,...,T<sub>n-1</sub>&gt;::Last == TypeListBo
 <b>SplitTypeListBox</b> uses a type list box as the argument.
 </p>
 
+<h3>PrefixTypeList</h3>
 
+<pre>
+
+template &lt;unsigned Len,class ... TT> requires ( Len &lt;= sizeof ... (TT) )
+using <span class="Att">PrefixTypeList</span> = typename SplitTypeList&lt;Len,TT...&gt;::First ;
+
+PrefixTypeList&lt;Len,T<sub>0</sub>,...,T<sub>n-1</sub>&gt; == TypeListBox&lt;T<sub>0</sub>,...,T<sub>Len-1</sub>&gt;
+
+</pre>
+
+<p>
+<b>PrefixTypeList</b> is a <b>Meta-type</b>. It creates a prefix of the given type list with the given length.
+</p>
+
+<h3>PartTypeList</h3>
+
+<pre>
+
+template &lt;unsigned Off,class ... TT&gt; requires ( Off &lt;= sizeof ... (TT) )
+using <span class="Att">PartTypeList</span> = typename SplitTypeList&lt;Off,TT...&gt;::Last ;
+
+PartTypeList&lt;Off,T<sub>0</sub>,...,T<sub>n-1</sub>&gt; == TypeListBox&lt;T<sub>Off</sub>,...,T<sub>n-1</sub>&gt;
+
+</pre>
+
+<p>
+<b>PartTypeList</b> is a <b>Meta-type</b>. It creates a suffix of the given type list from the given offset.
+</p>
+
+<h3>TypeSubList</h3>
+
+<pre>
+
+template &lt;unsigned Off,unsigned Len,class ... TT&gt; requires ( Off+Len &lt;= sizeof ... (TT) )
+using <span class="Att">TypeSubList</span> = typename SplitTypeListBox&lt;Len,PartTypeList&lt;Off,TT...&gt; &gt;::First ;
+
+PartTypeList&lt;Off,Len,T<sub>0</sub>,...,T<sub>n-1</sub>&gt; == TypeListBox&lt;T<sub>Off</sub>,...,T<sub>Off+Len-1</sub>&gt;
+
+</pre>
+
+<p>
+<b>TypeSubList</b> is a <b>Meta-type</b>. It creates a part of the given type list from the given offset and with the given length.
+</p>
+
+<h3>SelectList</h3>
+
+<pre>
+
+template &lt;unsigned Index,class ... TT&gt; requires ( Index &lt; sizeof ... (TT) )
+using <span class="Att">SelectList</span> = typename SplitTypeList&lt;Index,TT...&gt;::Last::FirstType ;
+
+SelectList&lt;Index,T<sub>0</sub>,...,T<sub>n-1</sub>&gt; == T<sub>Index</sub>
+
+</pre>
+
+<p>
+<b>SelectList</b> is a <b>Meta-type</b>. It selects a type with the given index from the type list.
+</p>
 
 <h3>IndexOf</h3>
 
@@ -177,75 +235,30 @@ const unsigned <span class="Att">IndexOf</span> = .... ;
 <b>IndexOf</b> is a <b>Meta-constant</b>. It equals the 1-based index of the type <b>T</b> in the following type list <b>TT</b>.
 </p>
 
-<h3>SelectList</h3>
+<h3>PopTypeList</h3>
 
 <pre>
 
-template &lt;unsigned Index,class ... TT&gt;
-using <span class="Att">SelectList</span> = .... ;
-
-</pre>
-
-<p>
-<b>SelectList</b> is a <b>Meta-type</b>. It equals the type from the type list <b>TT</b> with the given 0-based index.
-</p>
-
-<h3>SplitTypeList</h3>
-
-<pre>
-
-template &lt;class Split,class ... TT&gt;
-using <span class="Att">SplitTypeList</span> = .... ;
-
-</pre>
-
-<p>
-<b>SplitTypeList</b> is a <b>Meta-type</b>. It can be used to split the type list <b>TT</b>:
-</p>
-
-<pre>
-
-struct Split
+template &lt;class ... TT&gt; requires ( sizeof ... (TT) &gt; 0 )
+struct <span class="Att">PopTypeList</span>
  {
-  template &lt;class T&gt;
-  struct Last
-   {
-    template &lt;class ... SS&gt;
-    struct Start
-     {
-     };
-   };
+  using Split = SplitTypeList&lt;( sizeof ... (TT) - 1 ),TT...&gt; ;
+
+  using Start = typename Split::First ;
+
+  using Last = typename Split::Last::FirstType ;
  };
 
-SplitTypeList&lt;Split,TT,T&gt; == Split::Last&lt;T&gt;::Start&lt;TT&gt;
+PopTypeList&lt;T<sub>0</sub>,...,T<sub>n-1</sub>&gt;::Start == TypeListBox&lt;T<sub>0</sub>,...,T<sub>n-2</sub>&gt; 
 
-</pre>
-
-<h3>SkipTypeList</h3>
-
-<pre>
-
-template &lt;class Skip,ulen Count,class ... TT&gt;
-using <span class="Att">SkipTypeList</span> = .... ;
+PopTypeList&lt;T<sub>0</sub>,...,T<sub>n-1</sub>&gt;::Last == T<sub>n-1</sub>
 
 </pre>
 
 <p>
-<b>SkipTypeList</b> is a <b>Meta-type</b>. It selects the part of the type list <b>TT</b> and use it as the argument
-of instantiation of the <b>Skip::Ctor</b>: 
+<b>PopTypeList</b> is a <b>Meta-function</b>. Being applied to a non-empty type list it returns two values: <b>Start</b> is the length minus one  prefix,
+and <b>Last</b> is the last type of the list.
 </p>
-
-<pre>
-
-struct Skip
- {
-  template &lt;class ... SS&gt; struct Ctor;
- };
-
-SkipTypeList&lt;Skip,Count,T<sub>1</sub>,...,T<sub>Count</sub>,T<sub>Count+1</sub>,...&gt; == Skip::Ctor&lt;T<sub>Count+1</sub>,...&gt;
-
-</pre>
-
 
 </body>
 
