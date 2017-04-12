@@ -281,16 +281,14 @@ PtrLenReverse&lt;const T&gt; <span class="Att">RangeReverse_const</span>(T *ptr,
 </pre>
 
 <p>
-Following generic functions can be used with objects of types with the <b>Range Access Interface</b>:
+The following generic functions can be used with objects of types with the <b>Range Access Interface</b>:
 </p>
 
 <pre>
 
-template &lt;class S&gt;
-auto <span class="Att">RangeReverse</span>(S &amp;&amp;src);
+auto <span class="Att">RangeReverse</span>(RangeAccessType &amp;&amp;src);
  
-template &lt;class S&gt;
-auto <span class="Att">RangeReverse_const</span>(const S &amp;src);
+auto <span class="Att">RangeReverse_const</span>(const RangeAccessType &amp;src);
 
 </pre>
 
