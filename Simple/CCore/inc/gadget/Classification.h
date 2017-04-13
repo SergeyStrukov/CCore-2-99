@@ -106,7 +106,7 @@ concept bool NothrowCopyableType = CopyableType<T> && Meta::IsNothrowCopyable<T>
 
 /* complex concepts */
 
-/* concept ConstructibleType */
+/* concept ConstructibleType<T,SS> */
 
 template <class T,class ... SS>
 concept bool ConstructibleType = requires(SS && ... ss) { T( std::forward<SS>(ss)... ); } ;

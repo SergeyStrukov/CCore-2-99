@@ -240,7 +240,7 @@ PtrLen<const T> Range_const(T *ptr,T *lim) { return {ptr,Dist(ptr,lim)}; }
 /* Single() */
 
 template <class T>
-PtrLen<T> Single(T &obj) { return Range(&obj,1); }
+PtrLen<T> Single(T &obj) { return {&obj,1}; }
 
 /* container Range...() */
 

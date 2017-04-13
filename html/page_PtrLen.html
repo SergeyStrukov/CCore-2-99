@@ -472,6 +472,19 @@ In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b
 zero-terminated string length only one time and then use it everywhere.
 </p>
 
+<h2>Single()</h2>
+
+<pre>
+
+template &lt;class T&gt;
+PtrLen&lt;T&gt; <span class="Att">Single</span>(T &amp;obj) { return Range(&amp;obj,1); }
+
+</pre>
+
+<p>
+<b>Single()</b> creates a range from the single object.
+</p>
+
 <h2>Range() and Range_const()</h2>
 
 <p>
@@ -536,11 +549,9 @@ Finally, there exists two generic functions <b>Range()</b> and <b>Range_const()<
 
 <pre>
 
-template &lt;class S&gt;
-auto <span class="Att">Range</span>(S &&src);
+auto <span class="Att">Range</span>(RangeAccessType &&src);
  
-template &lt;class S&gt;
-auto <span class="Att">Range_const</span>(const S &src);
+auto <span class="Att">Range_const</span>(const RangeAccessType &src);
 
 </pre>
 
@@ -564,6 +575,30 @@ class C
    
    ulen getLen() const;
  };
+
+</pre>
+
+<pre>
+
+/* concept RangeableType&lt;T&gt; */
+
+template &lt;class T&gt; // ref extended
+concept bool <span class="Att">RangeableType</span> = requires(T &amp;obj) { Range(obj); } ;
+
+/* concept TypeRangeableType&lt;T,S&gt; */
+
+template &lt;class T,class S&gt; // T ref extended
+concept bool <span class="Att">TypeRangeableType</span> = RangeableType&lt;T&gt; &amp;&amp; requires(T &amp;obj) { { Range(obj) } -> PtrLen&lt;S&gt; ; } ;
+
+/* concept ConstRangeableType&lt;T&gt; */
+
+template &lt;class T&gt; // ref extended
+concept bool <span class="Att">ConstRangeableType</span> = requires(Meta::ToConst&lt;T&gt; &amp;cobj) { Range_const(cobj); } ;
+
+/* concept TypeRangeableType&lt;T,S&gt; */
+
+template &lt;class T,class S&gt; // T ref extended
+concept bool <span class="Att">ConstTypeRangeableType</span> = ConstRangeableType&lt;T&gt; && requires(Meta::ToConst&lt;T&gt; &amp;cobj) { { Range_const(cobj) } -> PtrLen&lt;const S&gt; ; } ;
 
 </pre>
 
