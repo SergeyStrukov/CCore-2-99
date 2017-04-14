@@ -472,6 +472,26 @@ In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b
 zero-terminated string length only one time and then use it everywhere.
 </p>
 
+<p>
+There is a string literal with the suffix <b>_c</b>.
+</p>
+
+<pre>
+
+inline StrLen operator "" _c (const char *str,ulen len) { return StrLen(str,len); }
+
+</pre>
+
+<p>
+You may use it to create a <b>StrLen</b> object with zero overhead: 
+</p>
+
+<pre>
+
+StrLen str="some string"_c;
+
+</pre>
+
 <h2>Single()</h2>
 
 <pre>
@@ -578,6 +598,11 @@ class C
 
 </pre>
 
+<p>
+The following four concepts can be used to select types &mdash; range providers. 
+I.e. arguments of these types can be used with the function <b>Range()</b>.
+</p>
+
 <pre>
 
 /* concept RangeableType&lt;T&gt; */
@@ -590,6 +615,18 @@ concept bool <span class="Att">RangeableType</span> = requires(T &amp;obj) { Ran
 template &lt;class T,class S&gt; // T ref extended
 concept bool <span class="Att">TypeRangeableType</span> = RangeableType&lt;T&gt; &amp;&amp; requires(T &amp;obj) { { Range(obj) } -> PtrLen&lt;S&gt; ; } ;
 
+</pre>
+
+<p>
+<b>RangeableType</b> &mdash; can be used with the function <b>Range()</b>.
+</p>
+
+<p>
+<b>TypeRangeableType</b> => <b>RangeableType</b> and the result of <b>Range()</b> is implicitly converted to the <b>PtrLen&lt;S&gt;</b>.
+</p>
+
+<pre>
+
 /* concept ConstRangeableType&lt;T&gt; */
 
 template &lt;class T&gt; // ref extended
@@ -601,6 +638,14 @@ template &lt;class T,class S&gt; // T ref extended
 concept bool <span class="Att">ConstTypeRangeableType</span> = ConstRangeableType&lt;T&gt; && requires(Meta::ToConst&lt;T&gt; &amp;cobj) { { Range_const(cobj) } -> PtrLen&lt;const S&gt; ; } ;
 
 </pre>
+
+<p>
+<b>ConstRangeableType</b> &mdash; <b>const</b> type can be used with the function <b>Range_const()</b>.
+</p>
+
+<p>
+<b>ConstTypeRangeableType</b> => <b>ConstRangeableType</b> and the result of <b>Range_const()</b> is implicitly converted to the <b>PtrLen&lt;const S&gt;</b>.
+</p>
 
 <h2>Range and range-based for</h2>
 

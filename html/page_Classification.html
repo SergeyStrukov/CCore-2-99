@@ -46,6 +46,14 @@ concept bool <span class="Att">NoType</span> = false ;
 
 </pre>
 
+<p>
+<b>AnyType</b> covers any type.
+</p>
+
+<p>
+<b>NoType</b> covers no type.
+</p>
+
 <pre>
 
 template &lt;class T&gt;
@@ -61,6 +69,22 @@ template &lt;class T&gt;
 concept bool <span class="Att">SUIntType</span> = SIntType&lt;T&gt; || UIntType&lt;T&gt; ;
 
 </pre>
+
+<p>
+<b>UIntType</b> covers unsigned integral types, i.e. types with <b>Meta::IsUInt&lt;T&gt; == true</b>.
+</p>
+
+<p>
+<b>SIntType</b> covers signed integral types, i.e. types with <b>Meta::IsSInt&lt;T&gt; == true</b>.
+</p>
+
+<p>
+<b>S2sIntType</b> is a subset of <b>SIntType</b> with 2s complemet arithmetic.
+</p>
+
+<p>
+<b>SUIntType</b> is the union of the <b>UIntType</b> and <b>SIntType</b>.
+</p>
 
 <pre>
 
@@ -87,6 +111,34 @@ concept bool <span class="Att">IsDerivedFrom</span> = Meta::IsBaseOf&lt;S,T&gt; 
 
 </pre>
 
+<p>
+<b>VoidType</b> covers <b>void</b> and <b>const void</b>.
+</p>
+
+<p>
+<b>ConstCharType</b> covers <b>const char</b> and <b>const unsigned char</b>.
+</p>
+
+<p>
+<b>CharType</b> covers <b>char</b> , <b>unsigned char</b> , <b>const char</b> and <b>const unsigned char</b>. <b>ConstCharType</b> => <b>CharType</b>. 
+</p>
+
+<p>
+<b>ULenType</b> covers the type <b>ulen</b>.
+</p>
+
+<p>
+<b>IsType&lt;S&gt;</b> covers the type <b>S</b>.
+</p>
+
+<p>
+<b>OneOfTypes&lt;T<sub>1</sub>,...,T<sub>n</sub>&gt;</b> covers types <b>T<sub>1</sub>,...,T<sub>n</sub></b>.
+</p>
+
+<p>
+<b>IsDerivedFrom&lt;S&gt;</b> covers types, derived from <b>S</b>.
+</p>
+
 <pre>
 
 template &lt;class T&gt;
@@ -100,6 +152,18 @@ concept bool <span class="Att">PODType</span> = Meta::IsPOD&lt;T&gt; ;
 
 </pre>
 
+<p>
+<b>EnumType</b> covers enums.
+</p>
+
+<p>
+<b>ClassType</b> covers classes.
+</p>
+
+<p>
+<b>PODType</b> covers POD types.
+</p>
+
 <pre>
 
 template &lt;class T&gt;
@@ -107,6 +171,18 @@ concept bool <span class="Att">NothrowDtorType</span> = Meta::HasNothrowDtor&lt;
 
 template &lt;class T&gt;
 concept bool <span class="Att">TrivDtorType</span> = NothrowDtorType&lt;T&gt; && Meta::HasTrivDtor&lt;T&gt; ;
+
+</pre>
+
+<p>
+<b>NothrowDtorType</b> covers types with nothrow destructor.
+</p>
+
+<p>
+<b>TrivDtorType</b> covers types with trivial destructor. <b>TrivDtorType</b> => <b>NothrowDtorType</b>
+</p>
+
+<pre>
 
 template &lt;class T&gt;
 concept bool <span class="Att">DefaultCtorType</span> = Meta::HasDefaultCtor&lt;T&gt; ;
@@ -123,6 +199,30 @@ concept bool <span class="Att">CopyCtorType</span> = Meta::HasCopyCtor&lt;T&gt; 
 template &lt;class T&gt;
 concept bool <span class="Att">NothrowCopyCtorType</span> = CopyCtorType&lt;T&gt; && Meta::HasNothrowCopyCtor&lt;T&gt; ;
 
+</pre>
+
+<p>
+<b>DefaultCtorType</b> covers types with default constructor.
+</p>
+
+<p>
+<b>NothrowDefaultCtorType</b> covers types with nothrow default constructor. <b>NothrowDefaultCtorType</b> => <b>DefaultCtorType</b>.
+</p>
+
+<p>
+<b>MoveCtorType</b> covers types with move constructor.
+</p>
+
+<p>
+<b>CopyCtorType</b> covers types with copy constructor.
+</p>
+
+<p>
+<b>NothrowCopyCtorType</b> covers types with nothrow copy constructor. <b>NothrowCopyCtorType</b> => <b>CopyCtorType</b>.
+</p>
+
+<pre>
+
 template &lt;class T&gt;
 concept bool <span class="Att">MovableType</span> = Meta::IsMovable&lt;T&gt; ;
 
@@ -133,6 +233,18 @@ template &lt;class T&gt;
 concept bool <span class="Att">NothrowCopyableType</span> = CopyableType&lt;T&gt; && Meta::IsNothrowCopyable&lt;T&gt; ;
 
 </pre>
+
+<p>
+<b>MovableType</b> covers movable types.
+</p>
+
+<p>
+<b>CopyableType</b> covers copyable types.
+</p>
+
+<p>
+<b>NothrowCopyableType</b> covers nothrow copyable types. <b>NothrowCopyableType</b> => <b>CopyableType</b>.
+</p>
 
 <h3>Complex concepts</h3>
 
@@ -152,6 +264,10 @@ concept bool <span class="Att">FuncArgType</span> = requires(Func func,AA &amp;&
 
 template &lt;class Func,class R,class ... AA&gt;
 concept bool <span class="Att">FuncType</span> = FuncArgType&lt;Func,AA...&gt; && requires(Func func,AA &amp;&amp; ... aa) { { func( std::forward&lt;AA&gt;(aa)... ) } -&gt; R ; } ;
+
+</pre>
+
+<pre>
 
 /* concept OpLessType&lt;T&gt; */
 
