@@ -267,6 +267,20 @@ concept bool <span class="Att">FuncType</span> = FuncArgType&lt;Func,AA...&gt; &
 
 </pre>
 
+<p>
+<b>ConstructibleType&lt;T,S<sub>1</sub>,...,S<sub>n</sub>&gt;</b> is satisfied for the type <b>T</b>, constructible with the argument list <b>S<sub>1</sub>,...,S<sub>n</sub></b>.
+</p>
+
+<p>
+<b>FuncArgType&lt;Func,A<sub>1</sub>,...,A<sub>n</sub>&gt;</b> is satisfied for the functor type <b>Func</b>, callable with the argument list <b>A<sub>1</sub>,...,A<sub>n</sub></b>.
+</p>
+
+<p>
+<b>FuncType&lt;Func,R,A<sub>1</sub>,...,A<sub>n</sub>&gt;</b> is satisfied for the functor type <b>Func</b>, 
+callable with the argument list <b>A<sub>1</sub>,...,A<sub>n</sub></b> and with the result type, implicitly converted to the <b>R</b>. 
+<b>FuncType&lt;Func,R,A<sub>1</sub>,...,A<sub>n</sub>&gt;</b> => <b>FuncArgType&lt;Func,A<sub>1</sub>,...,A<sub>n</sub>&gt;</b>.
+</p>
+
 <pre>
 
 /* concept OpLessType&lt;T&gt; */
@@ -283,6 +297,39 @@ concept bool <span class="Att">OpEqualType</span> = requires(Meta::ToConst&lt;T&
 
 template &lt;class T&gt; // ref extended
 concept bool <span class="Att">OpNotEqualType</span> = requires(Meta::ToConst&lt;T&gt; &amp;a,Meta::ToConst&lt;T&gt; &amp;b) { { a != b } -&gt; bool ; } ;
+
+/* concept OpCmpType&lt;T&gt; */
+
+template &lt;class T&gt; // ref extended
+concept bool <span class="Att">OpCmpType</span> = requires(Meta::ToConst&lt;T&gt; &amp;a,Meta::ToConst&lt;T&gt; &amp;b)
+ {
+  { a &lt;  b } -&gt; bool ;
+  { a &lt;= b } -&gt; bool ;
+  { a &gt;  b } -&gt; bool ;
+  { a &gt;= b } -&gt; bool ;
+  { a == b } -&gt; bool ;
+  { a != b } -&gt; bool ;
+ } ;
+
+</pre>
+
+<p>
+<b>OpLessType</b> covers types, comparable by the <b><</b>.
+</p>
+
+<p>
+<b>OpEqualType</b> covers types, comparable by the <b>==</b>.
+</p>
+
+<p>
+<b>OpNotEqualType</b> covers types, comparable by the <b>!=</b>.
+</p>
+
+<p>
+<b>OpCmpType</b> covers types, comparable by the all comparison operators.
+</p>
+
+<pre>
 
 /* concept OpLessTypes&lt;T,S&gt; */
 
@@ -304,20 +351,23 @@ concept bool <span class="Att">OpGreaterTypes</span> = requires(Meta::ToConst&lt
 template &lt;class T,class S&gt; // ref extended
 concept bool <span class="Att">OpGreaterEqualTypes</span> = requires(Meta::ToConst&lt;T&gt; &amp;a,Meta::ToConst&lt;S&gt; &amp;b) { { a &gt;= b } -> bool ; } ;
 
-/* concept OpCmpType&lt;T&gt; */
-
-template &lt;class T&gt; // ref extended
-concept bool <span class="Att">OpCmpType</span> = requires(Meta::ToConst&lt;T&gt; &amp;a,Meta::ToConst&lt;T&gt; &amp;b)
- {
-  { a &lt;  b } -&gt; bool ;
-  { a &lt;= b } -&gt; bool ;
-  { a &gt;  b } -&gt; bool ;
-  { a &gt;= b } -&gt; bool ;
-  { a == b } -&gt; bool ;
-  { a != b } -&gt; bool ;
- } ;
-
 </pre>
+
+<p>
+<b>OpLessTypes</b> covers couples of types, comparable by the <b><</b>.
+</p>
+
+<p>
+<b>OpLessEqualTypes</b> covers couples of types, comparable by the <b><=</b>.
+</p>
+
+<p>
+<b>OpGreaterTypes</b> covers couples of types, comparable by the <b>></b>.
+</p>
+
+<p>
+<b>OpGreaterEqualTypes</b> covers couples of types, comparable by the <b>>=</b>.
+</p>
 
 <pre>
 
@@ -330,6 +380,14 @@ concept bool <span class="Att">NullableType</span> = requires(Meta::ToConst&lt;T
 
   { !cobj } -&gt; bool ;
  } ;
+
+</pre>
+
+<p>
+<b>NullableType</b>
+</p>
+
+<pre>
 
 /* concept IndirectOverType&lt;P,T&gt; */
 
@@ -347,6 +405,10 @@ concept bool <span class="Att">IndirectCastType</span> = requires(Meta::ToConst&
   T(*cobj);
  } ;
 
+</pre>
+
+<pre>
+
 /* concept RangeAccessType&lt;T&gt; */
 
 template &lt;class T,class T1,class T2&gt; requires ( Meta::IsSame&lt;T1,T2&gt; &amp;&amp; Meta::OneOf&lt;T1,T,const T&gt; )
@@ -357,6 +419,10 @@ concept bool <span class="Att">RangeAccessType</span> = requires(T &amp;obj,Meta
  {
   RangeAccessHelper(obj.getPtr(),cobj.getPtr_const(),cobj.getPtr(),cobj.getLen());
  } ;
+
+</pre>
+
+<pre>
 
 /* concept CursorType&lt;R&gt; */
 
@@ -379,6 +445,10 @@ concept bool <span class="Att">CursorOverType</span> = IndirectOverType&lt;R,T&g
 
 template &lt;CursorType R,class T&gt;
 concept bool <span class="Att">CursorCastType</span> = IndirectCastType&lt;R,T&gt; ;
+
+</pre>
+
+<pre>
 
 /* concept RecursorType&lt;R&gt; */
 
@@ -403,6 +473,10 @@ concept bool <span class="Att">RecursorOverType</span> = IndirectOverType&lt;R,T
 
 template &lt;RecursorType R,class T&gt;
 concept bool <span class="Att">RecursorCastType</span> = IndirectCastType&lt;R,T&gt; ;
+
+</pre>
+
+<pre>
 
 /* concept RanType&lt;Ran&gt; */
 
@@ -430,6 +504,10 @@ concept bool <span class="Att">RanType</span> = NothrowDefaultCtorType&lt;Ran&gt
   ptr[len];
  } ;
 
+</pre>
+
+<pre>
+
 /* concept ToOpNotEqualFuncType&lt;Func,T&gt; */
 
 template &lt;class Func,class T&gt;
@@ -450,6 +528,10 @@ concept bool <span class="Att">ToOpLessFuncType</span> = requires(Func func,Meta
 
 template &lt;class Func,class Ptr&gt;
 concept bool <span class="Att">PtrToOpLessFuncType</span> = ToOpLessFuncType&lt;Func,Meta::PtrObjType&lt;Ptr&gt; &gt; ;
+
+</pre>
+
+<pre>
 
 /* concept PrinterType&lt;P&gt; */
 
