@@ -638,6 +638,20 @@ concept bool <span class="Att">RanType</span> = NothrowDefaultCtorType&lt;Ran&gt
 
 </pre>
 
+<p>
+<b>RanType</b> is a "pointer kind" type. It has a bunch of methods to be dealt with.
+</p>
+
+<p>
+<b>RanType</b> => <b>NothrowCopyableType</b>
+</p>
+<p>
+<b>RanType</b> => <b>NothrowDefaultCtorType</b>
+</p>
+<p>
+<b>RanType</b> => <b>OpCmpType</b>
+</p>
+
 <pre>
 
 /* concept ToOpNotEqualFuncType&lt;Func,T&gt; */
@@ -662,6 +676,18 @@ template &lt;class Func,class Ptr&gt;
 concept bool <span class="Att">PtrToOpLessFuncType</span> = ToOpLessFuncType&lt;Func,Meta::PtrObjType&lt;Ptr&gt; &gt; ;
 
 </pre>
+
+<p>
+<b>ToOpNotEqualFuncType&lt;T&gt;</b>
+</p>
+
+<p>
+<b>ToOpLessFuncType&lt;T&gt;</b>
+</p>
+
+<p>
+<b>PtrToOpLessFuncType&lt;Ptr&gt;</b>
+</p>
 
 <pre>
 
