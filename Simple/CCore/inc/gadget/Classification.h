@@ -136,6 +136,19 @@ concept bool OpEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { {
 template <class T> // ref extended
 concept bool OpNotEqualType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b) { { a != b } -> bool ; } ;
 
+/* concept OpCmpType<T> */
+
+template <class T> // ref extended
+concept bool OpCmpType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b)
+ {
+  { a <  b } -> bool ;
+  { a <= b } -> bool ;
+  { a >  b } -> bool ;
+  { a >= b } -> bool ;
+  { a == b } -> bool ;
+  { a != b } -> bool ;
+ } ;
+
 /* concept OpLessTypes<T,S> */
 
 template <class T,class S> // ref extended
@@ -155,19 +168,6 @@ concept bool OpGreaterTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) 
 
 template <class T,class S> // ref extended
 concept bool OpGreaterEqualTypes = requires(Meta::ToConst<T> &a,Meta::ToConst<S> &b) { { a >= b } -> bool ; } ;
-
-/* concept OpCmpType<T> */
-
-template <class T> // ref extended
-concept bool OpCmpType = requires(Meta::ToConst<T> &a,Meta::ToConst<T> &b)
- {
-  { a <  b } -> bool ;
-  { a <= b } -> bool ;
-  { a >  b } -> bool ;
-  { a >= b } -> bool ;
-  { a == b } -> bool ;
-  { a != b } -> bool ;
- } ;
 
 /* concept NullableType<T> */
 

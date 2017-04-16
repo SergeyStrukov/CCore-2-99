@@ -384,7 +384,26 @@ concept bool <span class="Att">NullableType</span> = requires(Meta::ToConst&lt;T
 </pre>
 
 <p>
-<b>NullableType</b>
+<b>NullableType</b> has the model
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   C() noexcept;
+
+   boolable operator + () const;
+
+   boolable operator ! () const;
+ };
+
+</pre>
+
+<p>
+<b>NullableType</b> => <b>NothrowDefaultCtorType</b>.
 </p>
 
 <pre>
@@ -407,6 +426,14 @@ concept bool <span class="Att">IndirectCastType</span> = requires(Meta::ToConst&
 
 </pre>
 
+<p>
+<b>IndirectOverType&lt;T&gt;</b> covers dereferencable types with result, implicitly converted to the type <b>T</b>.
+</p>
+
+<p>
+<b>IndirectCastType&lt;T&gt;</b> covers dereferencable types with result, casted to the type <b>T</b>.
+</p>
+
 <pre>
 
 /* concept RangeAccessType&lt;T&gt; */
@@ -419,6 +446,27 @@ concept bool <span class="Att">RangeAccessType</span> = requires(T &amp;obj,Meta
  {
   RangeAccessHelper(obj.getPtr(),cobj.getPtr_const(),cobj.getPtr(),cobj.getLen());
  } ;
+
+</pre>
+
+<p>
+<b>RangeAccessType</b> has the model
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   T * getPtr();
+
+   CT * getPtr() const;
+
+   const CT * getPtr_const() const; // CT == T OR const T
+
+   ulen getLen() const;
+ };
 
 </pre>
 
@@ -448,6 +496,49 @@ concept bool <span class="Att">CursorCastType</span> = IndirectCastType&lt;R,T&g
 
 </pre>
 
+<p>
+<b>CursorType</b> has the model
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   C() noexcept;
+
+   boolable operator + () const;
+
+   boolable operator ! () const;
+
+
+   C(const C &) noexcept;
+
+   ??? operator = (const C &) noexcept;
+
+
+   ??? operator * () const;
+
+   ??? operator -> () const;
+
+   ??? operator ++ ();
+ };
+
+</pre>
+
+<p>
+<b>CursorType</b> => <b>NothrowCopyableType</b> && <b>NullableType</b>.
+</p>
+
+<p>
+<b>CursorOverType&lt;T&gt;</b> is a conjunction of the <b>CursorType</b> and the <b>IndirectOverType&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>CursorCastType&lt;T&gt;</b> is a conjunction of the <b>CursorType</b> and the <b>IndirectCastType&lt;T&gt;</b>.
+</p>
+
 <pre>
 
 /* concept RecursorType&lt;R&gt; */
@@ -475,6 +566,47 @@ template &lt;RecursorType R,class T&gt;
 concept bool <span class="Att">RecursorCastType</span> = IndirectCastType&lt;R,T&gt; ;
 
 </pre>
+
+<p>
+<b>RecursorType</b> has the model
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   C() noexcept;
+
+   boolable operator + () const;
+
+   boolable operator ! () const;
+
+
+   C(const C &) noexcept;
+
+   ??? operator = (const C &) noexcept;
+
+
+   ??? operator * () const;
+
+   ??? operator -> () const;
+
+   C prev() const;
+
+   C next() const;
+ };
+
+</pre>
+
+<p>
+<b>RecursorOverType&lt;T&gt;</b> is a conjunction of the <b>RecursorType</b> and the <b>IndirectOverType&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>RecursorCastType&lt;T&gt;</b> is a conjunction of the <b>RecursorType</b> and the <b>IndirectCastType&lt;T&gt;</b>.
+</p>
 
 <pre>
 
