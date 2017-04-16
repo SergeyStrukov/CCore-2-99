@@ -683,6 +683,35 @@ concept bool <span class="Att">PrinterType</span> = requires(P &amp;out,char ch,
   out.flush();
  } ;
 
+</pre>
+
+<p>
+<b>PrinterType</b> has the model
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   using PrintOutType = ??? ;
+
+   PrintOutType printRef();
+
+   void put(char ch);
+
+   void put(char ch,ulen count);
+
+   void put(const char *str,ulen len);
+
+   void flush();
+ };
+
+</pre>
+
+<pre>
+
 /* concept ScannerType&lt;S&gt; */
 
 template &lt;class S&gt;
@@ -706,6 +735,37 @@ concept bool <span class="Att">ScannerType</span> = requires(S &amp;obj,const S 
 
   obj.fail();
  } ;
+
+</pre>
+
+<p>
+<b>ScannerType</b> has the model
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   using ScanInpType = ??? ;
+
+   ScanInpType scanRef();
+
+   boolable operator + () const;
+
+   boolable operator ! () const;
+
+   char operator * () const;
+
+   void operator ++ ();
+
+   boolable isOk() const;
+
+   boolable isFailed() const;
+
+   void fail();
+ };
 
 </pre>
 
