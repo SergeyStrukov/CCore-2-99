@@ -87,8 +87,6 @@ struct BinarySearchAlgo : Algo
   static R Find_less(R &r,const S &med) requires ( OpLessTypes<T,S> )
                      // R is decreasing
    {
-    using T = Meta::PtrObjType<R> ;
-
     return Find(r, [&] (const T &obj) -> bool { return obj<med; } );
    }
 
@@ -96,8 +94,6 @@ struct BinarySearchAlgo : Algo
   static R Find_less_or_equal(R &r,const S &med) requires ( OpLessEqualTypes<T,S> )
                               // R is decreasing
    {
-    using T = Meta::PtrObjType<R> ;
-
     return Find(r, [&] (const T &obj) -> bool { return obj<=med; } );
    }
 
@@ -105,8 +101,6 @@ struct BinarySearchAlgo : Algo
   static R Find_greater(R &r,const S &med) requires ( OpGreaterTypes<T,S> )
                         // R is increasing
    {
-    using T = Meta::PtrObjType<R> ;
-
     return Find(r, [&] (const T &obj) -> bool { return obj>med; } );
    }
 
@@ -114,8 +108,6 @@ struct BinarySearchAlgo : Algo
   static R Find_greater_or_equal(R &r,const S &med) requires ( OpGreaterEqualTypes<T,S> )
                                  // R is increasing
    {
-    using T = Meta::PtrObjType<R> ;
-
     return Find(r, [&] (const T &obj) -> bool { return obj>=med; } );
    }
  };

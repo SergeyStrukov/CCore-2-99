@@ -36,10 +36,10 @@
 
 <pre>
 
-template &lt;class Ran,class Pred&gt;
+template &lt;class Ran,FuncType&lt;bool,Meta::PtrObjType&lt;Ran&gt; &gt; Pred&gt;
 Ran <span class="Att">Algon::Partition</span>(Ran ptr,ulen len,Pred pred); // reorder such that pred(Range(ptr,len)) is 1,1,...,0,0,...
 
-template &lt;class T,class Pred&gt;
+template &lt;class T,FuncType&lt;bool,T&gt; Pred&gt;
 ulen <span class="Att">Algon::Partition</span>(PtrLen&lt;T&gt; r,Pred pred)
  {
   return Dist(r.ptr,Partition(r.ptr,r.len,pred));

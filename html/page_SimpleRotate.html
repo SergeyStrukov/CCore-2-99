@@ -46,7 +46,7 @@ void <span class="Att">Algon::RangeRotateRight</span>(R r) { SimpleRotateAlgo&lt
 
 /* struct SimpleRotateAlgo&lt;R,Algo&gt; */
 
-template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
+template &lt;RangeType R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
 struct <span class="Att">Algon::SimpleRotateAlgo</span> : Algo
  {
   using Algo::GetLen;
@@ -67,6 +67,7 @@ struct <span class="Att">Algon::SimpleRotateAlgo</span> : Algo
 
 <p>
 <b>RangeRotateLeft()</b> and <b>RangeRotateRight()</b> permutate the elements of the given range.
+Permutation is performed by the swapping elements.
 <b>RangeRotateLeft()</b> rotates them by the one element left, 
 <b>RangeRotateRight()</b> rotates them by the one element right.
 </p>

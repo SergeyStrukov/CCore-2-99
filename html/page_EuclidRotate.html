@@ -32,12 +32,12 @@
 
 <p>
 <b>EuclidRotateAlgo</b> is an <b>Algorithm Package</b>. It is parametrized by a generalized range type
-and contains range rotation algorithms. The second template parameter is defaulted to <b>BaseRangeAlgo&lt;R&gt;</b>.
+and contains range rotation algorithms. The second template parameter is defaulted to the <b>BaseRangeAlgo&lt;R&gt;</b>.
 </p>
 
 <pre>
 
-template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
+template &lt;RangeType R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
 struct <span class="Att">Algon::EuclidRotateAlgo</span> : Algo
  {
   static void Rotate(R r,LenType prefix,LenType suffix); // prefix+suffix == GetLen(r)
@@ -71,10 +71,10 @@ There is a family of functions for the range rotation.
 
 <pre>
 
-template &lt;class R,class Len&gt;
+template &lt;RangeType R,class Len&gt;
 void <span class="Att">Algon::EuclidRotate_prefix</span>(R r,Len prefix) { Algon::EuclidRotateAlgo&lt;R&gt;::Rotate_prefix(r,prefix); }
 
-template &lt;class R,class Len&gt;
+template &lt;RangeType R,class Len&gt;
 void <span class="Att">Algon::EuclidRotate_suffix</span>(R r,Len suffix) { Algon::EuclidRotateAlgo&lt;R&gt;::Rotate_suffix(r,suffix); }
 
 </pre>

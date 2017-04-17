@@ -38,23 +38,25 @@ to the <b>BaseRangeAlgo&lt;R&gt;</b>.
 
 <pre>
 
-template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
+template &lt;RangeType R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
 struct <span class="Att">Algon::BinarySearchAlgo</span> : Algo
  {
-  template &lt;class Pred&gt;
+  using T = Meta::PtrObjType&lt;R&gt; ;
+
+  template &lt;FuncType&lt;bool,const T &amp;&gt; Pred&gt;
   static R Find(R &amp;r,Pred pred); // pred(R) is 0,0,0,...,0,1,1,...
   
   template &lt;class S&gt;
-  static R Find_less(R &amp;r,const S &amp;med); // R is decreasing
+  static R Find_less(R &amp;r,const S &amp;med) requires ( OpLessTypes&lt;T,S&gt; ); // R is decreasing
   
   template &lt;class S&gt;
-  static R Find_less_or_equal(R &amp;r,const S &amp;med); // R is decreasing
+  static R Find_less_or_equal(R &amp;r,const S &amp;med) requires ( OpLessEqualTypes&lt;T,S&gt; ) ; // R is decreasing
   
   template &lt;class S&gt;
-  static R Find_greater(R &amp;r,const S &amp;med); // R is increasing
+  static R Find_greater(R &amp;r,const S &amp;med) requires ( OpGreaterTypes&lt;T,S&gt; ) ; // R is increasing
   
   template &lt;class S&gt;
-  static R Find_greater_or_equal(R &amp;r,const S &amp;med); // R is increasing
+  static R Find_greater_or_equal(R &amp;r,const S &amp;med) requires ( OpGreaterEqualTypes&lt;T,S&gt; ) ; // R is increasing
  };
 
 </pre>
@@ -93,20 +95,20 @@ There is a family of functions for the binary search.
 
 <pre>
 
-template &lt;class R,class Pred&gt;
+template &lt;RangeType R,FuncType&lt;bool,const Meta::PtrObjType&lt;R&gt; &amp;> Pred&gt;
 R <span class="Att">Algon::BinarySearch_if</span>(R &amp;r,Pred pred) { return Algon::BinarySearchAlgo&lt;R&gt;::Find(r,pred); }
 
-template &lt;class R,class S&gt;
-R <span class="Att">Algon::BinarySearch_less</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_less(r,med); }
+template &lt;RangeType R,class S&gt;
+R <span class="Att">Algon::BinarySearch_less</span>(R &amp;r,const S &amp;med) requires ( OpLessTypes&lt;Meta::PtrObjType&lt;R&gt;,S&gt; ) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_less(r,med); }
 
-template &lt;class R,class S&gt;
-R <span class="Att">Algon::BinarySearch_less_or_equal</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_less_or_equal(r,med); }
+template &lt;RangeType R,class S&gt;
+R <span class="Att">Algon::BinarySearch_less_or_equal</span>(R &amp;r,const S &amp;med) requires ( OpLessEqualTypes&lt;Meta::PtrObjType&lt;R&gt;,S&gt; ) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_less_or_equal(r,med); }
 
-template &lt;class R,class S&gt;
-R <span class="Att">Algon::BinarySearch_greater</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_greater(r,med); }
+template &lt;RangeType R,class S&gt;
+R <span class="Att">Algon::BinarySearch_greater</span>(R &amp;r,const S &amp;med) requires ( OpGreaterTypes&lt;Meta::PtrObjType&lt;R&gt;,S&gt; ) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_greater(r,med); }
 
-template &lt;class R,class S&gt;
-R <span class="Att">Algon::BinarySearch_greater_or_equal</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_greater_or_equal(r,med); }
+template &lt;RangeType R,class S&gt;
+R <span class="Att">Algon::BinarySearch_greater_or_equal</span>(R &amp;r,const S &amp;med) requires ( OpGreaterEqualTypes&lt;Meta::PtrObjType&lt;R&gt;,S&gt; ) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_greater_or_equal(r,med); }
 
 </pre>
 
