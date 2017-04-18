@@ -169,6 +169,22 @@ struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLenReverse&lt;T&gt; &gt;</sp
 
 </pre>
 
+<pre>
+
+template &lt;CursorType R&gt;
+concept bool <span class="Att">RangeType</span> = IsPtrLen&lt;R&gt; || IsPtrLenReverse&lt;R&gt; || Has_RangeAlgo&lt;R&gt; ;
+
+</pre>
+
+<p>
+<b>RangeType</b> covers all range types. <b>RangeType</b> => <b>CursorType</b>.
+</p>
+
+<p>
+A <b>CursorType</b> must provide a member <b>RangeAlgo</b> with range algorithms implementations to be a <b>RangeType</b>.
+It also must accept index <b>operator []</b>.
+</p>
+
 </body>
 
 </html>
