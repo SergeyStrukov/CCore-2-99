@@ -46,19 +46,19 @@ to apply functors.
 
 <pre>
 
-template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
+template &lt;RangeType R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
 struct <span class="Att">Algon::ApplyUniqueAlgo</span> : Algo
  {
-  template &lt;class FuncInit&gt;
-  static void ApplyUnique(R r,FuncInit func_init);
+  template &lt;FuncInitArgType&lt;T &amp;&gt; FuncInit&gt;
+  static void ApplyUnique(R r,FuncInit func_init) requires ( OpNotEqualType&lt;T&gt; ) ;
   
-  template &lt;class Func,class FuncInit&gt;
+  template &lt;ToOpNotEqualFuncType&lt;T&gt; Func,FuncInitArgType&lt;T &amp;&gt; FuncInit&gt;
   static void ApplyUniqueBy(R r,Func by,FuncInit func_init);
   
-  template &lt;class FuncInit&gt;
-  static void ApplyUniqueRange(R r,FuncInit func_init);
+  template &lt;FuncInitArgType&lt;R&gt; FuncInit&gt;
+  static void ApplyUniqueRange(R r,FuncInit func_init) requires ( OpNotEqualType&lt;T&gt; ) ;
   
-  template &lt;class Func,class FuncInit&gt;
+  template &lt;ToOpNotEqualFuncType&lt;T&gt; Func,FuncInitArgType&lt;R&gt; FuncInit&gt;
   static void ApplyUniqueRangeBy(R r,Func by,FuncInit func_init);
  };
 
@@ -104,22 +104,22 @@ The first group is sort algorithms with a "by" functor.
 
 /* ...SortBy() */
 
-template &lt;class Ran,class Len,class Func&gt;
+template &lt;RanType Ran,ULenType Len,PtrToOpLessFuncType&lt;Ran&gt; Func&gt;
 void <span class="Att">Algon::IncrSortBy</span>(Ran ptr,Len len,Func by);
 
-template &lt;class Ran,class Len,class Func&gt;
+template &lt;RanType Ran,ULenType Len,PtrToOpLessFuncType&lt;Ran&gt; Func&gt;
 void <span class="Att">Algon::DecrSortBy</span>(Ran ptr,Len len,Func by);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ToOpLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">Algon::IncrSortBy</span>(PtrLen&lt;T&gt; range,Func by);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ToOpLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">Algon::DecrSortBy</span>(PtrLen&lt;T&gt; range,Func by);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ToOpLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">Algon::IncrSortBy</span>(PtrLenReverse&lt;T&gt; range,Func by);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ToOpLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">Algon::DecrSortBy</span>(PtrLenReverse&lt;T&gt; range,Func by);
 
 </pre>
@@ -130,13 +130,13 @@ Base variants.
 
 <pre>
 
-template &lt;class R,class FuncInit&gt;
+template &lt;RangeType R,class FuncInit&gt;
 void <span class="Att">Algon::ApplyUnique</span>(R r,FuncInit func_init)
  {
   ApplyUniqueAlgo&lt;R&gt;::ApplyUnique(r,func_init);
  }
 
-template &lt;class R,class FuncInit&gt;
+template &lt;RangeType R,class FuncInit&gt;
 void <span class="Att">Algon::SortThenApplyUnique</span>(R r,FuncInit func_init)
  {
   Sort(r);
@@ -151,20 +151,20 @@ void <span class="Att">Algon::SortThenApplyUnique</span>(R r,FuncInit func_init)
 
 <pre>
 
-template &lt;class R,class Func,class FuncInit&gt;
+template &lt;RangeType R,class Func,class FuncInit&gt;
 void <span class="Att">Algon::ApplyUniqueBy</span>(R r,Func by,FuncInit func_init)
  {
   ApplyUniqueAlgo&lt;R&gt;::ApplyUniqueBy(r,by,func_init);
  }
 
-template &lt;class R,class Func,class FuncInit&gt;
+template &lt;RangeType R,class Func,class FuncInit&gt;
 void <span class="Att">Algon::IncrSortThenApplyUniqueBy</span>(R r,Func by,FuncInit func_init)
  {
   IncrSortBy(r,by);
   ApplyUniqueBy(r,by,func_init);
  }
 
-template &lt;class R,class Func,class FuncInit&gt;
+template &lt;RangeType R,class Func,class FuncInit&gt;
 void <span class="Att">Algon::DecrSortThenApplyUniqueBy</span>(R r,Func by,FuncInit func_init)
  {
   DecrSortBy(r,by);
@@ -179,13 +179,13 @@ Base range variants.
 
 <pre>
 
-template &lt;class R,class FuncInit&gt;
+template &lt;RangeType R,class FuncInit&gt;
 void <span class="Att">Algon::ApplyUniqueRange</span>(R r,FuncInit func_init)
  {
   ApplyUniqueAlgo&lt;R&gt;::ApplyUniqueRange(r,func_init);
  }
   
-template &lt;class R,class FuncInit&gt;
+template &lt;RangeType R,class FuncInit&gt;
 void <span class="Att">Algon::SortThenApplyUniqueRange</span>(R r,FuncInit func_init)
  {
   Sort(r);
@@ -200,20 +200,20 @@ void <span class="Att">Algon::SortThenApplyUniqueRange</span>(R r,FuncInit func_
 
 <pre>
 
-template &lt;class R,class Func,class FuncInit&gt;
+template &lt;RangeType R,class Func,class FuncInit&gt;
 void <span class="Att">Algon::ApplyUniqueRangeBy</span>(R r,Func by,FuncInit func_init)
  {
   ApplyUniqueAlgo&lt;R&gt;::ApplyUniqueRangeBy(r,by,func_init);
  }
 
-template &lt;class R,class Func,class FuncInit&gt;
+template &lt;RangeType R,class Func,class FuncInit&gt;
 void <span class="Att">Algon::IncrSortThenApplyUniqueRangeBy</span>(R r,Func by,FuncInit func_init)
  {
   IncrSortBy(r,by);
   ApplyUniqueRangeBy(r,by,func_init);
  }
 
-template &lt;class R,class Func,class FuncInit&gt;
+template &lt;RangeType R,class Func,class FuncInit&gt;
 void <span class="Att">Algon::DecrSortThenApplyUniqueRangeBy</span>(R r,Func by,FuncInit func_init)
  {
   DecrSortBy(r,by);

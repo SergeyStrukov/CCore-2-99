@@ -84,7 +84,7 @@ struct ApplyUniqueAlgo : Algo
    }
 
   template <FuncInitArgType<R> FuncInit>
-  static void ApplyUniqueRange(R r,FuncInit func_init)
+  static void ApplyUniqueRange(R r,FuncInit func_init) requires ( OpNotEqualType<T> )
    {
     FunctorTypeOf<FuncInit> func(func_init);
 

@@ -42,7 +42,7 @@ This package is parametrized by an unsigned integral type. It contains three alg
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 struct <span class="Att">Algon::BitIntAlgo</span>
  {
   static bool IsEven(UInt a);
@@ -79,7 +79,7 @@ The second is an algorithm package, defaulted to the <b>BitIntAlgo&lt;UInt&gt;</
 
 <pre>
 
-template &lt;class UInt,class Algo=Algon::BitIntAlgo&lt;UInt&gt; &gt;
+template &lt;UIntType UInt,CommonBitIntAlgo&lt;UInt&gt; Algo=Algon::BitIntAlgo&lt;UInt&gt; &gt;
 struct <span class="Att">Algon::CommonIntAlgo</span> : Algo
  {
   static UInt GCD(UInt a,UInt b);
@@ -97,10 +97,10 @@ There are two functions to calculate GCD and LCM for unsigned integral arguments
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">Algon::GCD</span>(UInt a,UInt b) { return Algon::CommonIntAlgo&lt;UInt&gt;::GCD(a,b); }
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 UInt <span class="Att">Algon::LCM</span>(UInt a,UInt b) { return Algon::CommonIntAlgo&lt;UInt&gt;::LCM(a,b); }
 
 </pre>
