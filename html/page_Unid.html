@@ -82,6 +82,12 @@ and then get it using the helper <b>UnidOf</b> (beware inheritance!):
 <pre>
 
 template &lt;class T&gt;
+concept bool <span class="Att">UnidType</span> = requires()
+ {
+  { T::TypeUnid } -> const Unid &amp; ;
+ } ;
+
+template &lt;UnidType T&gt;
 struct <span class="Att">UnidOf</span>
  {
   static const Unid & Get() { return T::TypeUnid; }
