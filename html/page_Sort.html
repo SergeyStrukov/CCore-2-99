@@ -68,7 +68,7 @@ An object of a sort context type is required to perform a sort.
 
 <pre>
 
-template &lt;class Ran&gt;
+template &lt;SortRanType Ran&gt;
 struct <span class="Att">SortCtx</span>
  {
   static void swap(Ran a,Ran b) { Swap(*a,*b); }
@@ -85,7 +85,7 @@ struct <span class="Att">SortCtx</span>
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;OpLessType T&gt;
 struct <span class="Att">SortIndexCtx</span>
  {
   T *base;
@@ -113,14 +113,12 @@ Sort <b>Algorithm Package</b>s use the following pattern:
 
 <pre>
 
-template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+template &lt;RanType Ran,SortContextType&lt;Ran&gt; Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">XXXSort</span>
  {
-  template &lt;class Len&gt;
-  static void Sort(Ran ptr,Len len,Ctx ctx);
+  static void Sort(Ran ptr,ULenType len,Ctx ctx);
   
-  template &lt;class Len&gt;
-  static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
+  static void Sort(Ran ptr,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort(ptr,len,Ctx()); }
  };
 
 </pre>
@@ -138,7 +136,7 @@ struct <span class="Att">XXXSort</span>
 
 <pre>
 
-template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+template &lt;RanType Ran,SortContextType&lt;Ran&gt; Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">ShortSort</span>
  {
   // general
@@ -163,21 +161,19 @@ struct <span class="Att">ShortSort</span>
   
   // default
   
-  static void Sort2(Ran a) { Sort2(a,Ctx()); }
+  static void Sort2(Ran a) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort2(a,Ctx()); }
   
-  static void Sort3(Ran a) { Sort3(a,Ctx()); }
+  static void Sort3(Ran a) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort3(a,Ctx()); }
   
-  static void Sort4(Ran a) { Sort4(a,Ctx()); }
+  static void Sort4(Ran a) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort4(a,Ctx()); }
   
-  static void Sort5(Ran a) { Sort5(a,Ctx()); }
+  static void Sort5(Ran a) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort5(a,Ctx()); }
   
   // combined
 
-  template &lt;class Len&gt;
-  static bool Sort(Ran a,Len len,Ctx ctx);
+  static bool Sort(Ran a,ULenType len,Ctx ctx);
    
-  template &lt;class Len&gt;
-  static bool Sort(Ran a,Len len);
+  static bool Sort(Ran a,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; );
  };
 
 </pre>
@@ -211,14 +207,12 @@ which is faster in a common case, but has a bigger run time in special cases.
 
 <pre>
 
-template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+template &lt;RanType Ran,SortContextType&lt;Ran&gt; Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">HeapSort</span>
  {
-  template &lt;class Len&gt;
-  static void Sort(Ran ptr,Len len,Ctx ctx);
+  static void Sort(Ran ptr,ULenType len,Ctx ctx);
   
-  template &lt;class Len&gt;
-  static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
+  static void Sort(Ran ptr,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort(ptr,len,Ctx()); }
  };
 
 </pre>
@@ -233,14 +227,12 @@ To ensure <b>O(N*log(N))</b> complexity, the implementation switches to the heap
 
 <pre>
 
-template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+template &lt;RanType Ran,SortContextType&lt;Ran&gt; Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">QuickSort</span>
  {
-  template &lt;class Len&gt;
-  static void Sort(Ran a,Len len,Ctx ctx);
+  static void Sort(Ran a,ULenType len,Ctx ctx);
   
-  template &lt;class Len&gt;
-  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+  static void Sort(Ran a,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort(a,len,Ctx()); }
  };
 
 </pre>
@@ -263,20 +255,16 @@ return <b>true</b>, if the length is acceptable. Otherwise, they return <b>false
 
 <pre>
 
-template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+template &lt;RanType Ran,SortContextType&lt;Ran&gt; Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">MergeSort</span>
  {
-  template &lt;class Len&gt;
-  static bool MedSort(Ran a,Len len,Ctx ctx);
+  static bool MedSort(Ran a,ULenType len,Ctx ctx);
   
-  template &lt;class Len&gt;
-  static bool MedSort(Ran a,Len len) { return MedSort(a,len,Ctx()); }
+  static bool MedSort(Ran a,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; ) { return MedSort(a,len,Ctx()); }
 
-  template &lt;class Len&gt;
-  static void Sort(Ran a,Len len,Ctx ctx);
+  static void Sort(Ran a,ULenType len,Ctx ctx);
   
-  template &lt;class Len&gt;
-  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+  static void Sort(Ran a,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort(a,len,Ctx()); }
  };
 
 </pre>
@@ -299,14 +287,12 @@ ParaQuickSort<....>::Sort(....);
 
 <pre>
 
-template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+template &lt;RanType Ran,SortContextType&lt;Ran&gt; Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">ParaQuickSort</span>
  {
-  template &lt;class Len&gt;
-  static void Sort(Ran a,Len len,Ctx ctx);
+  static void Sort(Ran a,ULenType len,Ctx ctx);
   
-  template &lt;class Len&gt;
-  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+  static void Sort(Ran a,ULenType len) requires ( DefaultCtorType&lt;Ctx&gt; ) { Sort(a,len,Ctx()); }
  };
 
 </pre>
@@ -319,22 +305,20 @@ Finally, here is the list of common sort functions:
 
 <pre>
 
-template &lt;class Ran,class Len&gt;
-void <span class="Att">Sort</span>(Ran ptr,Len len);
+void <span class="Att">Sort</span>(SortRanType ptr,ULenType len);
 
-template &lt;class T&gt;
-void <span class="Att">Sort</span>(PtrLen&lt;T&gt; range);
+void <span class="Att">Sort</span>(PtrLen&lt;OpLessType&gt; range);
 
-template &lt;class Ran,class Len,class Func&gt;
+template &lt;RanType Ran,ULenType Len,RanLessFuncType&lt;Ran&gt; Func&gt;
 void <span class="Att">IncrSort</span>(Ran ptr,Len len,Func less);
 
-template &lt;class Ran,class Len,class Func&gt;
+template &lt;RanType Ran,ULenType Len,RanLessFuncType&lt;Ran&gt; Func&gt;
 void <span class="Att">DecrSort</span>(Ran ptr,Len len,Func less);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ObjLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">IncrSort</span>(PtrLen&lt;T&gt; range,Func less);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ObjLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">DecrSort</span>(PtrLen&lt;T&gt; range,Func less);
 
 </pre>
@@ -353,13 +337,13 @@ The following functions can be used to sort a reverse range.
 
 <pre>
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ObjLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">IncrSort</span>(PtrLenReverse&lt;T&gt; range,Func less);
 
-template &lt;class T,class Func&gt;
+template &lt;class T,ObjLessFuncType&lt;T&gt; Func&gt;
 void <span class="Att">DecrSort</span>(PtrLenReverse&lt;T&gt; range,Func less);
 
-template &lt;class T&gt;
+template &lt;OpLessType T&gt;
 void <span class="Att">Sort</span>(PtrLenReverse&lt;T&gt; range);
 
 </pre>
@@ -377,7 +361,7 @@ There are two special sort contexts to sort with the given <b>less</b> functor:
 
 /* struct IncrSortCtx&lt;Ran,Func&gt; */
 
-template &lt;class Ran,class Func&gt;
+template &lt;RanType Ran,RanLessFuncType&lt;Ran&gt; Func&gt;
 struct <span class="Att">IncrSortCtx</span> : SortCtx&lt;Ran&gt;
  {
   Func func;
@@ -389,7 +373,7 @@ struct <span class="Att">IncrSortCtx</span> : SortCtx&lt;Ran&gt;
 
 /* struct DecrSortCtx&lt;Ran,Func&gt; */
 
-template &lt;class Ran,class Func&gt;
+template &lt;RanType Ran,RanLessFuncType&lt;Ran&gt; Func&gt;
 struct <span class="Att">DecrSortCtx</span> : SortCtx&lt;Ran&gt;
  {
   Func func;

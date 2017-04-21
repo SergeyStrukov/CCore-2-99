@@ -119,7 +119,7 @@ struct ShortSort
       }
    }
 
-  static bool Sort(Ran a,ULenType len)
+  static bool Sort(Ran a,ULenType len) requires ( DefaultCtorType<Ctx> )
    {
     switch( len )
       {
