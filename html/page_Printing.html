@@ -30,6 +30,8 @@
 
 <p class="Files">Files <b>CCore/inc/Printf.h</b> <b>CCore/src/Printf.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/DetectProxy.h</b> <b>CCore/src/DetectProxy.cpp</b></p>
+
 <p class="Files">Subfolders <b>CCore/inc/printf</b> <b>CCore/src/printf</b></p>
 
 <p>
@@ -48,14 +50,14 @@ Printing is performed with the following printing functions:
 
 <pre>
 
-template &lt;class P,class ... TT&gt;
+template &lt;class P,PrintableType ... TT&gt;
 void <span class="Att">Printf</span>(P &amp;&amp;out,const char *format,const TT &amp; ... tt);
 
-template &lt;class P,class ... TT&gt;
+template &lt;class P,PrintableType ... TT&gt;
 void <span class="Att">Putobj</span>(P &amp;&amp;out,const TT &amp; ... tt);
 
-template &lt;class P,class ... TT&gt;
-void <span class="Att">Putch</span>(P &amp;&amp;out,TT ... tt);
+template &lt;class P,class ... CC&gt;
+void <span class="Att">Putch</span>(P &amp;&amp;out,CC ... cc);
 
 </pre>
 
@@ -99,8 +101,7 @@ class SomeClass
  {
   public:
 
-   template &lt;class P&gt;
-   void print(P &amp;out) const
+   void print(PrinterType &amp;out) const
     {
      ....
     }
@@ -131,8 +132,7 @@ class SomeClass
       // then [ptr,lim) points to the string XXX
     };
 
-   template &lt;class P&gt;
-   void print(P &amp;out,const PrintOptType &amp;opt) const
+   void print(PrinterType &amp;out,const PrintOptType &amp;opt) const
     {
      ....
     }
@@ -571,8 +571,7 @@ class <span class="Att">RepeatChar</span>
   
    RepeatChar(ulen count_,char ch_) : count(count_),ch(ch_) {}
   
-   template &lt;class P&gt;
-   void print(P &amp;out) const
+   void print(PrinterType &amp;out) const
     {
      out.put(ch,count);
     }
@@ -607,8 +606,7 @@ class <span class="Att">Title</span>
 
    using PrintOptType = TitlePrintOpt ;
    
-   template &lt;class P&gt;
-   void print(P &amp;out,PrintOptType opt) const;
+   void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -673,8 +671,7 @@ class <span class="Att">TextDivider</span>
 
    using PrintOptType = TextDividerPrintOpt ;
    
-   template &lt;class P&gt;
-   void print(P &amp;out,PrintOptType opt) const;
+   void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -724,7 +721,7 @@ Integral types are printed using proxy classes <b>SIntPrint&lt;SInt&gt;</b> and 
 
 /* class SIntPrint&lt;SInt&gt; */ 
 
-template &lt;class SInt&gt;
+template &lt;SIntType SInt&gt;
 class <span class="Att">SIntPrint</span>
  {
    SInt value;
@@ -735,13 +732,12 @@ class <span class="Att">SIntPrint</span>
    
    using PrintOptType = IntPrintOpt ;
    
-   template &lt;class P&gt;
-   void print(P &amp;out,PrintOptType opt) const;
+   void print(PrinterType &amp;out,PrintOptType opt) const;
  };
  
 /* class UIntPrint&lt;UInt&gt; */  
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 class <span class="Att">UIntPrint</span>
  {
    UInt value;
@@ -752,8 +748,7 @@ class <span class="Att">UIntPrint</span>
    
    using PrintOptType = IntPrintOpt ;
    
-   template &lt;class P&gt;
-   void print(P &amp;out,PrintOptType opt) const;
+   void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -794,6 +789,7 @@ struct <span class="Att">IntPrintOpt</span>
  {
   ulen width;
   unsigned base; // 2..16, 0 for c
+  unsigned fract;
   IntAlign align;
   IntShowSign show_sign;
   IntShowBase show_base;
@@ -802,6 +798,7 @@ struct <span class="Att">IntPrintOpt</span>
    {
     width=0;
     base=10;
+    fract=0;
     align=IntAlignDefault;
     show_sign=IntShowSignDefault;
     show_base=IntShowBaseDefault;
@@ -812,18 +809,23 @@ struct <span class="Att">IntPrintOpt</span>
   IntPrintOpt(const char *ptr,const char *lim);
   
   //
-  // [+][width=0][.base|.b|.h|.x|.c=.10][l|L|r|R|i|I=R]
+  // [+][width=0][.base|.b|.h|.x|.c|.f&lt;prec&gt;=.10][l|L|r|R|i|I=R]
   //
  };
  
 </pre>
 
 <p>
-There are five printing options: 
+There are six printing options: 
 </p>
 
 <p>
 <b>width</b> is the minimum output length. If the representation is shorter than this value, then it is extended to fit it. 
+</p>
+
+<p>
+<b>fract</b> defines a fractional part length to print integral value as a decimal fraction. 
+If this option is not zero, then the value is interpreted as a fraction <b>value/10<sup>fract</sup></b> and printed in the form <b>"12345.6789"</b>.
 </p>
 
 <p>
@@ -899,13 +901,13 @@ To create the object of <b>PrintDumpType</b> use the overloaded <b>Creator funct
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(const UInt *ptr,ulen len);
  
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(PtrLen&lt;UInt&gt; data);
  
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(PtrLen&lt;const UInt&gt; data);
 
 </pre>
