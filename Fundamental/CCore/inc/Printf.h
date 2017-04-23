@@ -25,7 +25,7 @@ namespace CCore {
 
 /* GetTextDesc() */
 
-inline const char * GetTextDesc(bool value) { return value?"true":"false"; }
+inline StrLen GetTextDesc(bool value) { return value?"true"_c:"false"_c; }
 
 inline int GetTextDesc(int value) { return value; }
 
@@ -55,14 +55,12 @@ template <class OptType,class T> struct BindOptType;
 
 /* struct PrintOptAdapter<T> */
 
+template <class T>
+using TextDescType = Meta::UnConst<Meta::UnRef<decltype( GetTextDesc( Meta::TypeBox<const T &>::Get() ) )> >;
+
 template <class T> requires ( No_ProxyType<PrintProxy<T> > )
-struct PrintOptAdapter<T>
+struct PrintOptAdapter<T> : PrintOptAdapter< TextDescType<T> >
  {
-  static const T & GetObj();
-
-  using S = Meta::UnConst<Meta::UnRef<decltype( GetTextDesc(GetObj()) )> > ;
-
-  using PrintOptType = typename PrintProxy<S>::OptType ;
  };
 
 template <class T> requires ( Has_ProxyType<PrintProxy<T> > && No_OptType<PrintProxy<T> > )
@@ -80,7 +78,7 @@ struct PrintOptAdapter<T>
 /* concept ProxyPrintType<Proxy> */
 
 template <class Proxy>
-concept bool ProxyPrintType = requires(PrintBase &out,Proxy obj)
+concept bool ProxyPrintType = requires(PrintBase &out,Proxy &obj)
  {
   obj.print(out);
  } ;
@@ -88,7 +86,7 @@ concept bool ProxyPrintType = requires(PrintBase &out,Proxy obj)
 /* concept ProxyOptPrintType<Proxy,Opt> */
 
 template <class Proxy,class Opt>
-concept bool ProxyOptPrintType = requires(PrintBase &out,Proxy obj,Opt opt)
+concept bool ProxyOptPrintType = requires(PrintBase &out,Proxy &obj,Opt &opt)
  {
   obj.print(out,opt);
  } ;

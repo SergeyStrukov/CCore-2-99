@@ -183,7 +183,7 @@ There is the set of such functions for <b>bool</b> and integral types:
 
 <pre>
 
-inline const char * <span class="Att">GetTextDesc</span>(bool value) { return value?"true":"false"; }
+inline StrLen <span class="Att">GetTextDesc</span>(bool value) { return value?"true"_c:"false"_c; }
  
 inline int <span class="Att">GetTextDesc</span>(int value) { return value; }
  
