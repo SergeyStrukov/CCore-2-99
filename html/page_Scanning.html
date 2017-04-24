@@ -30,6 +30,8 @@
 
 <p class="Files">Files <b>CCore/inc/Scanf.h</b> <b>CCore/src/Scanf.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/DetectProxy.h</b> <b>CCore/src/DetectProxy.cpp</b></p>
+
 <p class="Files">Subfolders <b>CCore/inc/scanf</b> <b>CCore/src/scanf</b></p>
 
 <p>
@@ -48,10 +50,10 @@ Scanning is performed with the following scanning functions:
 
 <pre>
 
-template &lt;class S,class ... TT&gt;
+template &lt;class S,ScanableType ... TT&gt;
 void <span class="Att">Scanf</span>(S &amp;&amp;inp,const char *format,TT &amp;&amp; ... tt);
 
-template &lt;class S,class ... TT&gt;
+template &lt;class S,ScanableType ... TT&gt;
 void <span class="Att">Scanobj</span>(S &amp;&amp;inp,TT &amp;&amp; ... tt);
 
 </pre>
@@ -91,8 +93,7 @@ class SomeClass
  {
   public:
 
-   template &lt;class S&gt;
-   void scan(S &amp;inp)
+   void scan(ScannerType &amp;inp)
     {
      ....
     }
@@ -123,8 +124,7 @@ class SomeClass
       // then [ptr,lim) points to the string XXX
     };
 
-   template &lt;class S&gt;
-   void scan(S &amp;inp,const ScanOptType &amp;opt)
+   void scan(ScannerType &amp;inp,const ScanOptType &amp;opt)
     {
      ....
     }
@@ -443,6 +443,8 @@ class <span class="Att">StringSetScan</span> : NoCopy
   public:
   
    StringSetScan(std::initializer_list&lt;const char *&gt; zstr_list);
+
+   StringSetScan(std::initializer_list&lt;StrLen&gt; str_list);
    
    ~StringSetScan();
    
@@ -450,8 +452,7 @@ class <span class="Att">StringSetScan</span> : NoCopy
    
    operator ulen() const { return index; }
    
-   template &lt;class S&gt;
-   void scan(S &amp;inp);
+   void scan(ScannerType &amp;inp);
  };
 
 </pre>
@@ -575,6 +576,40 @@ There is a family of scan utility functions.
 
 <pre>
 
+/* concept CharStreamType&lt;S&gt; */
+
+template &lt;class S&gt;
+concept bool <span class="Att">CharStreamType</span> = requires(S &amp;obj,Meta::ToConst&lt;S&gt; &amp;cobj)
+ {
+  { +cobj } -&gt; bool ;
+
+  { !cobj } -&gt; bool ;
+
+  { *cobj } -&gt; char ;
+
+  ++obj;
+ } ;
+
+/* concept CharFailStreamType&lt;S&gt; */
+
+template &lt;class S&gt;
+concept bool <span class="Att">CharFailStreamType</span> = CharStreamType&lt;S&gt; &amp;&amp; requires(S &amp;obj)
+ {
+  obj.fail();
+ } ;
+
+</pre>
+
+<p>
+<b>CharStreamType</b> is a character stream type, it is a cursor over <b>char</b>.
+</p>
+
+<p>
+<b>CharFailStreamType</b> is a <b>CharStreamType</b> with the method <b>fail()</b>. 
+</p>
+
+<pre>
+
 int <span class="Att">CharBaseValue</span>(char ch,unsigned base);
 
 </pre>
@@ -586,8 +621,7 @@ is not a digit, where <b>base</b> is a representation base. It must be in the ra
 
 <pre>
 
-template &lt;class S&gt;
-void <span class="Att">SkipSpace</span>(S &amp;inp);
+void <span class="Att">SkipSpace</span>(CharStreamType &amp;inp);
 
 </pre>
 
@@ -598,8 +632,7 @@ character. Can be applied to any <b>char</b> cursor.
 
 <pre>
 
-template &lt;class S&gt;
-bool <span class="Att">ProbeChar</span>(S &amp;inp,char ch);
+bool <span class="Att">ProbeChar</span>(CharStreamType &amp;inp,char ch);
 
 </pre>
 
@@ -611,7 +644,7 @@ Can be applied to any <b>char</b> cursor.
 
 <pre>
 
-template &lt;class S,class ... CC&gt;
+template &lt;CharFailStreamType S,class ... CC&gt;
 void <span class="Att">PassChars</span>(S &amp;inp,CC ... cc);
 
 </pre>
@@ -622,8 +655,7 @@ This function extracts the given sequence of characters or fail the input.
 
 <pre>
 
-template &lt;class S,class Func&gt;
-void <span class="Att">PassOneOfChar</span>(S &amp;inp,Func func);
+void <span class="Att">PassOneOfChar</span>(CharFailStreamType &amp;inp,FuncType&lt;bool,char&gt; func);
 
 </pre>
 
@@ -634,8 +666,7 @@ This function extracts one character, which satisfies the given condition, or fa
 
 <pre>
 
-template &lt;class S,class Func&gt;
-void <span class="Att">SkipAllOfChar</span>(S &amp;inp,Func func);
+void <span class="Att">SkipAllOfChar</span>(CharStreamType &amp;inp,FuncType&lt;bool,char&gt; func);
 
 </pre>
 
@@ -719,8 +750,7 @@ class SetType
 
    void map(SomeType &amp;ret) const;
 
-   template &lt;class S&gt;
-   void scan(S &amp;inp);
+   void scan(ScannerType &amp;inp);
  };
 
 OR
@@ -735,8 +765,7 @@ class SetType
 
    using ScanOptType = .... ;
 
-   template &lt;class S&gt;
-   void scan(S &amp;inp,ScanOptType opt);
+   void scan(ScannerType &amp;inp,ScanOptType opt);
  };
 
 </pre>

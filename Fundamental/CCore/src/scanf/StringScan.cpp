@@ -58,6 +58,12 @@ StringSetScan::StringSetScan(std::initializer_list<const char *> zstr_list)
   IncrSort(Range(list),StrLess);
  }
 
+StringSetScan::StringSetScan(std::initializer_list<StrLen> str_list)
+ : list(str_list)
+ {
+  IncrSort(Range(list),StrLess);
+ }
+
 StringSetScan::~StringSetScan()
  {
  }

@@ -173,6 +173,8 @@ class StringSetScan : NoCopy
 
    StringSetScan(std::initializer_list<const char *> zstr_list);
 
+   StringSetScan(std::initializer_list<StrLen> str_list);
+
    ~StringSetScan();
 
    using PrintProxyType = ulen ;
