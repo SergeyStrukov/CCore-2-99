@@ -72,23 +72,23 @@ class <span class="Att">Random</span> : NoCopy
    
    uint64 next64(); 
     
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt next_uint();
    
    uint32 select(uint32 lim) { return lim?uint32( next64()%lim ):next32(); }
    
    uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
    
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt select_uint(UInt lim);
  
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt select_uint(UInt a,UInt b);
 
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    void fill(PtrLen&lt;UInt&gt; r); 
    
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    void fill(UInt *ptr,ulen len); 
  };
 
@@ -139,6 +139,29 @@ specified as the template argument.
 specified as the template argument.
 </p>
 
+<h4>RandomType</h4>
+
+<pre>
+
+template &lt;class T&gt;
+concept bool <span class="Att">RandomType</span> = IsDerivedFrom&lt;T,RandomBase&lt;T&gt; &gt; &amp;&amp; requires(T &amp;obj,PtrLen&lt;const uint8&gt; data)
+ {
+  T();
+
+  obj.warp(data);
+
+  { obj.next8() } -&gt; uint8 ;
+  { obj.next16() } -&gt; uint16 ;
+  { obj.next32() } -&gt; uint32 ;
+  { obj.next64() } -&gt; uint64 ;
+ } ;
+
+</pre>
+
+<p>
+<b>RandomType</b> is a concept for <b>Random</b> kind classes.
+</p>
+
 <h4>RandomBase</h4>
 
 <p>
@@ -152,27 +175,27 @@ class <span class="Att">RandomBase</span> : NoCopy
  {
   private:
  
-   T & getObj() { return *static_cast&lt;T *&gt;(this); }
+   T &amp; getObj() requires ( RandomCoreType&lt;T&gt; ) { return *static_cast&lt;T *&gt;(this); }
    
   public:
  
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt next_uint();
  
    uint32 select(uint32 lim);
  
    uint32 select(uint32 a,uint32 b);
  
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt select_uint(UInt lim);
  
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt select_uint(UInt a,UInt b);
  
-   template &lt;class UInt&gt;
-   void fill(PtrLen<UInt> r); 
+   template &lt;UIntType UInt&gt;
+   void fill(PtrLen&lt;UInt&gt; r); 
  
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    void fill(UInt *ptr,ulen len) 
  };
 
@@ -241,6 +264,8 @@ class <span class="Att">CustomRandom</span> : public RandomBase&lt;CustomRandom&
 </pre>
 
 <h4>Mersenne Twister</h4>
+
+<p class="Files">Files <b>CCore/inc/MersenneTwister.h</b> <b>CCore/src/MersenneTwister.cpp</b></p>
 
 <p>
 Mersenne Twister is a generic algorithm, MT19937 &mdash; it's particular version.
@@ -331,7 +356,7 @@ The class <b>Gen</b> is the generator itself. It is a <b>Partial Class</b>, para
 </p>
 
 <p>
-The only public method is the <b>next()</b>: it returns a next random number of the <b>UnitType</b>.
+The main public method is the <b>next()</b>: it returns a next random number of the <b>UnitType</b>.
 But before using this class, its internal state must be initialized.
 </p>
 
@@ -346,6 +371,11 @@ Second, use <b>messup()</b> method to "mess-up" the state and add to it some clo
 unprobably repeatable. You may also use the method <b>pure_init()</b> to skip this mess and start
 the generator as the pure Mersenne Twister generator. In such case to continue use the method <b>pure_next()</b>
 for the random number generation. These "pure" methods are included for the testing purpose mostly.
+</p>
+
+<p>
+Finally, the public method <b>warp()</b> can be used to update the state buffer. 
+The provided value is used to XOR the state buffer.
 </p>
 
 <a name="PlatformRandom"><h2>PlatformRandom</h2></a>

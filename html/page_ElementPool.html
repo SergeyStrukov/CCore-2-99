@@ -67,8 +67,8 @@ class <span class="Att">ElementPool</span> : NoCopy
    
    // methods
  
-   template &lt;class T,class ... SS&gt;
-   T * create(SS &amp;&amp; ... ss);
+   template &lt;TrivDtorType T,class ... SS&gt;
+   T * create(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    StrLen dup(StrLen str);
    
@@ -77,37 +77,39 @@ class <span class="Att">ElementPool</span> : NoCopy
    
    void shrink_extra();
 
+   void erase();
+
    // createArray
    
-   template &lt;class T&gt;
-   PtrLen&lt;T&gt; createArray(ulen len);
+   template &lt;TrivDtorType T&gt;
+   PtrLen&lt;T&gt; createArray(ulen len) requires ( DefaultCtorType&lt;T&gt; ) ;
   
-   template &lt;class T,class Creator&gt;
+   template &lt;TrivDtorType T,CreatorType&lt;T&gt; Creator&gt;
    PtrLen&lt;T&gt; createArray(ulen len,Creator creator);
   
-   template &lt;class T&gt;
-   PtrLen&lt;T&gt; createArray_raw(ulen len);
+   template &lt;TrivDtorType T&gt;
+   PtrLen&lt;T&gt; createArray_raw(ulen len) requires ( DefaultCtorType&lt;T&gt; ) ;
   
-   template &lt;class T,class ... SS&gt;
-   PtrLen&lt;T&gt; createArray_fill(ulen len,SS &amp;&amp; ... ss);
+   template &lt;TrivDtorType T,class ... SS&gt;
+   PtrLen&lt;T&gt; createArray_fill(ulen len,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
   
-   template &lt;class T&gt;
-   PtrLen&lt;T&gt; createArray_copy(ulen len,const T src[]);
+   template &lt;TrivDtorType T&gt;
+   PtrLen&lt;T&gt; createArray_copy(ulen len,const T src[]) requires ( CopyCtorType&lt;T&gt; ) ;
 
-   template &lt;class T&gt;
-   PtrLen&lt;T&gt; createArray_copy(PtrLen&lt;const T&gt; src);
+   template &lt;TrivDtorType T&gt;
+   PtrLen&lt;T&gt; createArray_copy(PtrLen&lt;const T&gt; src) requires ( CopyCtorType&lt;T&gt; ) ;
   
-   template &lt;class T,class S&gt;
-   PtrLen&lt;T&gt; createArray_cast(ulen len,const S src[]);
+   template &lt;TrivDtorType T,class S&gt;
+   PtrLen&lt;T&gt; createArray_cast(ulen len,const S src[]) requires ( ConstructibleType&lt;T,const S&gt; ) ;
 
-   template &lt;class T,class S&gt;
-   PtrLen&lt;T&gt; createArray_cast(PtrLen&lt;const S&gt; src);
+   template &lt;TrivDtorType T,class S&gt;
+   PtrLen&lt;T&gt; createArray_cast(PtrLen&lt;const S&gt; src) requires ( ConstructibleType&lt;T,const S&gt; ) ;
   
-   template &lt;class T&gt;
-   PtrLen&lt;T&gt; createArray_swap(ulen len,T objs[]);
+   template &lt;TrivDtorType T&gt;
+   PtrLen&lt;T&gt; createArray_swap(ulen len,T objs[]) requires ( DefaultCtorType&lt;T&gt; ) ;
    
-   template &lt;class T&gt;
-   PtrLen&lt;T&gt; createArray_swap(PtrLen&lt;T&gt; objs);
+   template &lt;TrivDtorType T&gt;
+   PtrLen&lt;T&gt; createArray_swap(PtrLen&lt;T&gt; objs) requires ( DefaultCtorType&lt;T&gt; ) ;
 
    // swap/move objects
    
@@ -138,6 +140,10 @@ by the concatenation of the received strings.
 
 <p>
 <b>shrink_extra()</b> releases the reserved memory at the pool tail.
+</p>
+
+<p>
+<b>erase()</b> destroys all pool objects.
 </p>
 
 <p>
@@ -212,6 +218,8 @@ class <span class="Att">MemPool</span> : NoCopy
    
    void shrink_extra();
 
+   void erase();
+
    // swap/move objects
    
    void objSwap(MemPool &amp;obj);
@@ -239,6 +247,10 @@ Blocks are always aligned. On failure an exception is thrown.
 
 <p>
 <b>shrink_extra()</b> releases the reserved memory at the pool tail.
+</p>
+
+<p>
+<b>erase()</b> like the destructor releases all allocated memory blocks.
 </p>
 
 <p>
