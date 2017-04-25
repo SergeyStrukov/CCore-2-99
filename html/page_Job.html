@@ -119,7 +119,7 @@ The <b>Job</b> is implemented using the class <b>Starter</b>.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;StarterFuncType T&gt;
 class <span class="Att">Starter</span> : public Funchor_nocopy
  {
    ....
@@ -152,7 +152,7 @@ There are two control classes for the <b>Starter</b>: <b>Run</b> to commit worki
 
 <pre>
 
-template &lt;class T&gt;   
+template &lt;StarterFuncType T&gt;   
 class <span class="Att">Starter&lt;T&gt;::Run</span> : NoCopy
  {
    ....
@@ -188,7 +188,7 @@ Only single <b>Run</b> per <b>Starter</b> is allowed.
 
 <pre>
 
-template &lt;class T&gt;   
+template &lt;StarterFuncType T&gt;   
 class <span class="Att">Starter&lt;T&gt;::Start</span> : NoCopy
  {
    .... 

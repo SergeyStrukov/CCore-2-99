@@ -86,8 +86,7 @@ class CharPropTable : NoCopy
      for(; char ch=*zstr ;zstr++) set(ch,cc);
     }
 
-   template <class Func>
-   void setIf(Func cond,CharClass cc)
+   void setIf(FuncType<bool,char> cond,CharClass cc)
     {
      for(int i=-128; i<128 ;i++)
        {

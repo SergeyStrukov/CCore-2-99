@@ -45,6 +45,9 @@ positions). The class <b>ASCIICode</b> represents an ASCII code.
 
 <pre>
 
+template &lt;class Char&gt;
+concept bool <span class="Att">CharCodeType</span> = Meta::OneOf&lt;Char,char,signed char,unsigned char&gt; ;
+
 class <span class="Att">ASCIICode</span>
  {
   public:
@@ -63,8 +66,7 @@ class <span class="Att">ASCIICode</span>
   
    ASCIICode();
    
-   template &lt;class Char&gt;
-   explicit ASCIICode(Char ch);
+   explicit ASCIICode(CharCodeType ch);
    
    // properties
    
@@ -88,8 +90,7 @@ class <span class="Att">ASCIICode</span>
    
    // print object
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 /* type CharCode */
@@ -170,8 +171,7 @@ class <span class="Att">PrintCString</span>
  
    using PrintOptType = StrPrintOpt ;
    
-   template &lt;class P&gt;
-   void print(P &amp;out,PrintOptType opt) const;
+   void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -185,29 +185,21 @@ character types: <b>char</b>, <b>signed char</b>, <b>unsigned char</b>.
 
 <pre>
 
-template &lt;class Char&gt;
-bool <span class="Att">CharIsSpecial</span>(Char ch) { return CharCode(ch).isSpecial(); }
+bool <span class="Att">CharIsSpecial</span>(CharCodeType ch) { return CharCode(ch).isSpecial(); }
  
-template &lt;class Char&gt;
-bool <span class="Att">CharIsVisible</span>(Char ch) { return CharCode(ch).isVisible(); }
+bool <span class="Att">CharIsVisible</span>(CharCodeType ch) { return CharCode(ch).isVisible(); }
  
-template &lt;class Char&gt;
-bool <span class="Att">CharIsPrintable</span>(Char ch) { return CharCode(ch).isPrintable(); } 
+bool <span class="Att">CharIsPrintable</span>(CharCodeType ch) { return CharCode(ch).isPrintable(); } 
  
-template &lt;class Char&gt;
-bool <span class="Att">CharIsSpace</span>(Char ch) { return CharCode(ch).isSpace(); }
+bool <span class="Att">CharIsSpace</span>(CharCodeType ch) { return CharCode(ch).isSpace(); }
   
-template &lt;class Char&gt;
-bool <span class="Att">CharIsPunct</span>(Char ch) { return CharCode(ch).isPunct(); }
+bool <span class="Att">CharIsPunct</span>(CharCodeType ch) { return CharCode(ch).isPunct(); }
 
-template &lt;class Char&gt;
-bool <span class="Att">CharIsSpaceOrPunct</span>(Char ch) { return CharCode(ch).isSpaceOrPunct(); }
+bool <span class="Att">CharIsSpaceOrPunct</span>(CharCodeType ch) { return CharCode(ch).isSpaceOrPunct(); }
 
-template &lt;class Char&gt;
-int <span class="Att">CharDecValue</span>(Char ch) { return CharCode(ch).decValue(); }
+int <span class="Att">CharDecValue</span>(CharCodeType ch) { return CharCode(ch).decValue(); }
  
-template &lt;class Char&gt;
-int <span class="Att">CharHexValue</span>(Char ch) { return CharCode(ch).hexValue(); }
+int <span class="Att">CharHexValue</span>(CharCodeType ch) { return CharCode(ch).hexValue(); }
 
 </pre>
 

@@ -50,11 +50,14 @@ class <span class="Att">String</span>
 
    String(StrLen str) : data(DoCopy(str.len),str.ptr) {}
    
-   template &lt;class Builder&gt;
-   String(DoBuildType,Builder builder) : data(DoBuild,builder) {}
+   String(DoBuildType,BuilderType&lt;char&gt; builder) : data(DoBuild,builder) {}
    
    ~String() {}
    
+   // methods
+
+   PtrLen&lt;char&gt; modify() { return data.modify(); }
+
    // range access
    
    const char * getPtr() const { return data.getPtr(); }
@@ -67,14 +70,27 @@ class <span class="Att">String</span>
    
    using PrintOptType = StrPrintOpt ;
    
-   template &lt;class P&gt;
-   void print(P &obj,PrintOptType opt) const;
+   void print(PrinterType &obj,PrintOptType opt) const;
    
    // swap/move objects
    
    void objSwap(String &amp;obj);
     
    explicit String(ToMoveCtor&lt;String&gt; obj); 
+
+   // static string
+
+   template &lt;char ... CC&gt; 
+   class StaticObject
+    {
+      String str;
+
+     public:
+
+      operator const String & () const { return str; }
+
+      static StaticObject Object;
+    };
  };
 
 </pre>
@@ -92,7 +108,15 @@ class <span class="Att">String</span>
 </p>
 
 <p>
+<b>modify()</b> makes the string modifiable providing access to the string buffer (buf you cannot change the string length).
+</p>
+
+<p>
 <b>String</b> is printable, usual string print options are accepted.
+</p>
+
+<p>
+<b>String::StaticObject&lt;CC&gt;</b> makes a static object, identified by the character sequence <b>CC</b>. This sequence determines the string text.
 </p>
 
 <h4>PrintString</h4>
@@ -145,10 +169,10 @@ extending the printed sequence.
 
 <pre>
 
-template &lt;class ... TT&gt;
+template &lt;PrintableType ... TT&gt;
 String <span class="Att">Stringf</span>(const char *format,const TT &amp; ... tt);
  
-template &lt;class ... TT&gt;
+template &lt;PrintableType ... TT&gt;
 String <span class="Att">StringCat</span>(const TT &amp; ... tt);
 
 </pre>
@@ -167,7 +191,7 @@ the <b>Range_const()</b> is applied and gives the <b>PtrLen&lt;const char&gt;</b
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;StrLenCastableType T&gt;
 String <span class="Att">operator +</span> (const String &amp;a,const T &amp;t) { return StringSum(a,t); }
 
 </pre>
@@ -178,7 +202,7 @@ To sum more than two such objects, use the function <b>StringSum()</b>.
 
 <pre>
 
-template &lt;class ... TT&gt;
+template &lt;StrLenCastableType ... TT&gt;
 String <span class="Att">StringSum</span>(const TT &amp; ... tt);
 
 </pre>

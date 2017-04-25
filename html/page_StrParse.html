@@ -176,6 +176,17 @@ class <span class="Att">Dev</span>
 </pre>
 
 <p>
+<b>CharPeekType</b> covers such types.
+</p>
+
+<pre>
+
+template &lt;class Dev&gt;
+concept bool <span class="Att">CharPeekType</span> = .... ;
+
+</pre>
+
+<p>
 <b>Peek</b> is used to see the current stream character, if any. Failed stream is empty.
 <b>operator !</b> is true, if the stream is empty. Otherwise, <b>operator *</b> is the current character.
 </p>
@@ -190,13 +201,13 @@ class <span class="Att">Dev</span>
 
 <pre>
 
-template &lt;class Dev&gt;
+template &lt;CharPeekType Dev&gt;
 void <span class="Att">ParseChar</span>(Dev &amp;dev,char ch);
 
-template &lt;class Dev&gt;
+template &lt;CharPeekType Dev&gt;
 bool <span class="Att">ParseChar_try</span>(Dev &amp;dev,char ch);
 
-template &lt;class Dev&gt;
+template &lt;CharPeekType Dev&gt;
 void <span class="Att">ParseChar_empty</span>(Dev &amp;dev,char &amp;ret,char defval);
 
 </pre>
@@ -217,13 +228,13 @@ available. Otherwise, the <b>defval</b> is put.
 
 <pre>
 
-template &lt;class Dev,class UInt,class UInt1,class UInt2&gt;
+template &lt;CharPeekType Dev,UIntType UInt,UIntType UInt1,UIntType UInt2&gt;
 void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 minval,UInt2 maxval);
 
-template &lt;class Dev,class UInt,class UInt1&gt;
+template &lt;CharPeekType Dev,UIntType UInt,UIntType UInt1&gt;
 void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 maxval);
 
-template &lt;class Dev,class UInt&gt;
+template &lt;CharPeekType Dev,UIntType UInt&gt;
 void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret);
 
 </pre>
@@ -237,13 +248,13 @@ unsigned integral types, but values <b>minval</b> and <b>maxval</b> are implicit
 
 <pre>
 
-template &lt;class Dev,class UInt,class UInt1,class UInt2,class UInt3&gt;
+template &lt;CharPeekType Dev,UIntType UInt,UIntType UInt1,UIntType UInt2,UIntType UInt3&gt;
 void <span class="Att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 minval,UInt3 maxval);
 
-template &lt;class Dev,class UInt,class UInt1,class UInt2&gt;
+template &lt;CharPeekType Dev,UIntType UInt,class UInt1,UIntType UInt2&gt;
 void <span class="Att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 maxval);
                                                                   
-template &lt;class Dev,class UInt,class UInt1&gt;
+template &lt;CharPeekType Dev,UIntType UInt,UIntType UInt1&gt;
 void <span class="Att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval);
 
 </pre>
@@ -259,7 +270,7 @@ does not begin with a digit, it returns the <b>defval</b>.
 
 <pre>
 
-template &lt;class Dev&gt;
+template &lt;CharPeekType Dev&gt;
 void <span class="Att">ParseSpace</span>(Dev &amp;dev);
 
 </pre>

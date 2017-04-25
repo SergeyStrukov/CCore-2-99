@@ -95,8 +95,7 @@ struct <span class="Att">TextPos</span>
   
   void update(StrLen text); // must not break "\r\n"
  
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -145,8 +144,7 @@ class <span class="Att">CharPropTable</span> : NoCopy
 
    void setSet(const char *zstr,CharClass cc);
    
-   template &lt;class Func&gt;
-   void setIf(Func cond,CharClass cc);
+   void setIf(FuncType&lt;bool,char&gt; cond,CharClass cc);
 
   public:
 
