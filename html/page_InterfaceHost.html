@@ -101,7 +101,7 @@ struct <span class="Att">InterfaceHost</span>
  {
   virtual void requestInterface(InterfaceCaster &caster) { caster.cast(this); }
   
-  template &lt;class T&gt;
+  template &lt;UnidType T&gt;
   T * pickInterface()
    {
     InterfaceCasterTo&lt;T&gt; caster;
@@ -111,7 +111,7 @@ struct <span class="Att">InterfaceHost</span>
     return caster;
    }
   
-  template &lt;class T&gt;
+  template &lt;UnidType T&gt;
   T * takeInterface(StrLen from)
    {
     T *ret=pickInterface&lt;T&gt;();
@@ -201,7 +201,7 @@ class MultiClass : public InterfaceHost
 </pre>
 
 <p>
-Yoy may do nothing to reject some interface request.
+You may do nothing to reject some interface request.
 </p>
 
 <p>

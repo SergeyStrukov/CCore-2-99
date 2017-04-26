@@ -100,8 +100,7 @@ class FileOpenFlagsTextDesc
   
    explicit FileOpenFlagsTextDesc(FileOpenFlags oflags_) : oflags(oflags_) {}
    
-   template &lt;class P&gt;
-   void print(P &out) const;
+   void print(PrinterType &amp;out) const;
  };
  
 inline FileOpenFlagsTextDesc GetTextDesc(FileOpenFlags oflags) { return FileOpenFlagsTextDesc(oflags); }
@@ -262,8 +261,7 @@ class <span class="Att">FileMultiError</span> : NoCopy
    
    // print object
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>
