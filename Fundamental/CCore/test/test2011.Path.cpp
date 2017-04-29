@@ -225,6 +225,8 @@ bool Testit<2011>::Main()
 
   Putobj(Con,"-----\n");
 
+  testWalk("/");
+  testWalk("C:D:/");
   testWalk("dir1");
   testWalk("dir1/dir2/dir3");
   testWalk("/dir1");

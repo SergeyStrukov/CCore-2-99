@@ -52,6 +52,42 @@ host:d:\exchange\device.1\device.log.txt
 
 </pre>
 
+<h4>PrefixPath()</h4>
+
+<pre>
+
+StrLen <span class="Att">PrefixPath</span>(StrLen file_name);
+
+</pre>
+
+<p>
+<b>PrefixPath()</b> returns the prefix of the given file name which is a path. I.e. 
+</p>
+
+<pre>
+
+host:d:\exchange\device.1\device.log.txt
+
+ prefix path is
+
+host:d:\exchange\device.1
+
+</pre>
+
+<p>
+But
+</p>
+
+<pre>
+
+host:d:\device.log.txt
+
+ prefix path is
+
+host:d:\
+
+</pre>
+
 <h4>PathBase</h4>
 
 <p>
@@ -76,6 +112,8 @@ struct <span class="Att">PathBase</span>
   
   static bool IsTilde(StrLen name) { return name.len==1 && name[0]=='~' ; }
   
+  static void TurnSlash(PtrLen&lt;char&gt; name);
+
   enum NameType
    {
     Name,
@@ -119,13 +157,13 @@ struct <span class="Att">PathBase</span>
     void set(StrLen str);
    };
   
-  template &lt;bool Is(char ch),class To&gt; 
+  template &lt;bool Is(char ch),OneOfTypes&lt;ToPrefix,ToPrefixDel,ToSuffix&gt; To&gt; 
   struct ForwardScan : To
    {
     explicit ForwardScan(StrLen str);
    };
   
-  template &lt;bool Is(char ch),class To&gt; 
+  template &lt;bool Is(char ch),OneOfTypes&lt;ToPrefix,ToPrefixDel,ToSuffix&gt; To&gt; 
   struct BackwardScan : To
    {
     explicit BackwardScan(StrLen str);
@@ -135,7 +173,7 @@ struct <span class="Att">PathBase</span>
 </pre>
 
 <p>
-<b>IsSlash()</b> tests if the given character is slash.
+<b>IsSlash()</b> tests if the given character is a slash.
 </p>
 
 <p>
@@ -156,6 +194,10 @@ struct <span class="Att">PathBase</span>
 
 <p>
 <b>IsTilde()</b> tests if the given name is the single tilde name.
+</p>
+
+<p>
+<b>TurnSlash()</b> turns all slashes into <b>'/'</b>.
 </p>
 
 <p>
@@ -479,6 +521,31 @@ struct <span class="Att">SplitPathName</span> : PathBase
 <pre>
 
 \exchange\device.1   device.log.txt
+
+</pre>
+
+<h4>WalkPath()</h4>
+
+<pre>
+
+template &lt;FuncInitArgType&lt;StrLen&gt; FuncInit&gt;
+void <span class="Att">WalkPath</span>(StrLen path,FuncInit func_init);
+
+</pre>
+
+<p>
+This function calls the second argument for each subpath of the first argument. I.e.
+</p>
+
+<pre>
+
+WalkPath("host:d:\exchange\device.1\device.log.txt",func);
+
+ calls
+
+func("host:d:\exchange");
+func("host:d:\exchange\device.1");
+func("host:d:\exchange\device.1\device.log.txt");
 
 </pre>
 
