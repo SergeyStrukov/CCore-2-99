@@ -4959,7 +4959,7 @@ obj/SysTime.s.o : ../../Target/WIN32/CCore/src/sys/SysTime.s
 
 ifneq ($(MAKECMDGOALS),clean)
 
-include $(DEP_FILE)
+-include $(DEP_FILE)
 
 endif
 

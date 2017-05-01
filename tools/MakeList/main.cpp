@@ -416,7 +416,7 @@ class Engine : NoCopy
 
      Printf(out,"ifneq ($(MAKECMDGOALS),clean)\n\n"
 
-                "include $(DEP_FILE)\n\n"
+                "-include $(DEP_FILE)\n\n"
 
                 "endif\n\n"
            );

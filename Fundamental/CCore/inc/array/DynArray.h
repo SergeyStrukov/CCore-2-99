@@ -96,12 +96,12 @@ class DynArrayBase : NoCopy
 
    // std move
 
-   DynArrayBase(DynArrayBase<T,Algo> &&obj)
+   DynArrayBase(DynArrayBase<T,Algo> &&obj) noexcept
      : DynArrayBase<T,Algo>(obj.ptr)
      {
      }
 
-   DynArrayBase<T,Algo> & operator = (DynArrayBase<T,Algo> &&obj)
+   DynArrayBase<T,Algo> & operator = (DynArrayBase<T,Algo> &&obj) noexcept
     {
      if( this!=&obj )
        {
@@ -213,17 +213,9 @@ class DynArray : DynArrayBase<T,Algo>
 
    // std move
 
-   DynArray(DynArray<T,Algo> &&obj) noexcept
-    : DynArrayBase<T,Algo>(std::move(obj))
-    {
-    }
+   DynArray(DynArray<T,Algo> &&obj) noexcept = default ;
 
-   DynArray<T,Algo> & operator = (DynArray<T,Algo> &&obj) noexcept
-    {
-     (DynArrayBase<T,Algo> &)*this=std::move(obj);
-
-     return *this;
-    }
+   DynArray<T,Algo> & operator = (DynArray<T,Algo> &&obj) noexcept = default ;
 
    // range access
 

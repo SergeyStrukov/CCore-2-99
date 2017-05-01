@@ -95,7 +95,7 @@ obj/test.dep : ./test.cpp
 
 ifneq ($(MAKECMDGOALS),clean)
 
-include $(DEP_FILE)
+-include $(DEP_FILE)
 
 endif
 

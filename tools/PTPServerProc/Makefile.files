@@ -95,7 +95,7 @@ obj/SupportProc.dep : ./SupportProc.cpp
 
 ifneq ($(MAKECMDGOALS),clean)
 
-include $(DEP_FILE)
+-include $(DEP_FILE)
 
 endif
 

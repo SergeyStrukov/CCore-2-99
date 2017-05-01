@@ -35,7 +35,7 @@
 <h3>Helpers</h3>
 
 <p>
-There are several types, which are used to specify the constructor behavior. 
+There are several types that are used to specify the constructor behavior. 
 </p>
 
 <pre>
@@ -88,7 +88,7 @@ typedef DoSomething&lt;6&gt; <span class="Att">DoCreate</span>;
 
 <p>
 <b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b> are not <b>word</b>s, but 
-<b>Small Data Type</b>s. They designate the correspondent variant of constructor and carry two parameters:
+<b>Small Data Type</b>s. They designate the correspondent variant of the constructor and carry two parameters:
 the array length and the reserved length. When the array is being created, the reserved length determines
 the memory space to be allocated, and the length is the number of elements to be created. An exception is thrown,
 if <b>len</b> is greater than <b>maxlen</b>.
@@ -122,6 +122,7 @@ Allocation errors and index check errors throw exceptions. Default constructors 
 The method <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
 If the array is constant, then element references are constant too.
 The variant <b>apply_const()</b> also enforces constantness.
+It also may <a href="page_ApplyToRange.html">return a functor result</a>.
 </p>
 
 <p>
@@ -180,6 +181,8 @@ class <span class="Att">TempArray</span> : NoCopy
 
    bool extend(ulen len);
 
+   void erase();
+
    // range access
    
    T * getPtr() { return ptr; }
@@ -202,23 +205,17 @@ class <span class="Att">TempArray</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init);
+   auto apply(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   auto apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void apply_const(FuncInit func_init) const;
+   auto apply_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init);
+   auto applyReverse(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init) const;
+   auto applyReverse(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
 
-   template &lt;class FuncInit&gt;
-   void applyReverse_const(FuncInit func_init) const;
+   auto applyReverse_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
  };
 
 </pre>
@@ -246,6 +243,10 @@ The new content is not initialized. An exception is thrown if there is no memory
 </p>
 
 <p>
+<b>erase()</b> erases the array.
+</p>
+
+<p>
 Other methods are standard array methods.
 </p>
 
@@ -263,7 +264,7 @@ See <a href="#ArrayAlgo">below</a> about array algorithms.
 
 <pre>
 
-template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
+template &lt;class T,class Algo=ArrayAlgo_mini&lt;T&gt; &gt;
 class <span class="Att">SimpleArray</span> : NoCopy
  {
    T *ptr;
@@ -284,6 +285,10 @@ class <span class="Att">SimpleArray</span> : NoCopy
    SimpleArray(SimpleArray&lt;T,Algo&gt; &amp;&amp;obj) noexcept;
 
    SimpleArray&lt;T,Algo&gt; &amp; operator = (SimpleArray&lt;T,Algo&gt; &amp;&amp;obj) noexcept;
+
+   // methods
+
+   void erase();
 
    // range access
    
@@ -307,23 +312,17 @@ class <span class="Att">SimpleArray</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init);
+   auto apply(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   auto apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void apply_const(FuncInit func_init) const;
+   auto apply_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init);
+   auto applyReverse(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init) const;
+   auto applyReverse(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
 
-   template &lt;class FuncInit&gt;
-   void applyReverse_const(FuncInit func_init) const;
+   auto applyReverse_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
 
    // swap/move objects
    
@@ -395,11 +394,9 @@ class <span class="Att">DynArray</span> : NoCopy
    
    DynArray(DoSwap dotype,T objs[]); 
    
-   template &lt;class Creator&gt;
-   DynArray(DoCreate dotype,Creator creator); 
+   DynArray(DoCreate dotype,CreatorType&lt;T&gt; creator); 
     
-   template &lt;class Builder&gt;
-   DynArray(DoBuildType,Builder builder); 
+   DynArray(DoBuildType,BuilderType&lt;T&gt; builder); 
     
    ~DynArray();
 
@@ -466,11 +463,11 @@ I.e. new elements are created using the default constructor and swapped with mem
 </p>
    
 <p>
-<b>DynArray(DoCreate dotype,Creator creator)</b> uses the given <b>Creator</b> object to create new elements.
+<b>DynArray(DoCreate dotype,CreatorType&lt;T&gt; creator)</b> uses the given <b>Creator</b> object to create new elements.
 </p>
 
 <p>
-<b>DynArray(DoBuildType,Builder builder)</b> uses the given <b>Builder</b> object to create new elements.
+<b>DynArray(DoBuildType,BuilderType&lt;T&gt; builder)</b> uses the given <b>Builder</b> object to create new elements.
 </p>
 
 <p>
@@ -619,11 +616,9 @@ actual array length.
 
    PtrLen&lt;T&gt; extend_swap(PtrLen&lt;T&gt; objs);
    
-   template &lt;class Creator&gt;
-   PtrLen&lt;T&gt; extend(ulen delta_len,Creator creator);
+   PtrLen&lt;T&gt; extend(ulen delta_len,CreatorType&lt;T&gt; creator);
    
-   template &lt;class Builder&gt;
-   PtrLen&lt;T&gt; extend(Builder builder);
+   PtrLen&lt;T&gt; extend(BuilderType&lt;T&gt; builder);
    
 </pre>   
 
@@ -685,8 +680,7 @@ new elements, and the second uses the <b>Builder</b>. See <a href="#Creator">bel
    
    T * append_swap(T &amp;obj);
    
-   template &lt;class Creator&gt;
-   T * append(Creator creator);
+   T * append(CreatorType&lt;T&gt; creator);
    
 </pre>   
 
@@ -700,23 +694,17 @@ The return value is a pointer to the created element.
 
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init);
+   auto apply(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   auto apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void apply_const(FuncInit func_init) const;
+   auto apply_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init);
+   auto applyReverse(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init) const;
+   auto applyReverse(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
 
-   template &lt;class FuncInit&gt;
-   void applyReverse_const(FuncInit func_init) const;
+   auto applyReverse_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
 
 </pre>
 
@@ -793,11 +781,9 @@ class <span class="Att">RefArray</span>
    
    RefArray(DoSwap dotype,T objs[]); 
    
-   template &lt;class Creator&gt;
-   RefArray(DoCreate dotype,Creator creator); 
+   RefArray(DoCreate dotype,CreatorType&lt;T&gt; creator); 
     
-   template &lt;class Builder&gt;
-   RefArray(DoBuildType,Builder builder); 
+   RefArray(DoBuildType,BuilderType&lt;T&gt; builder); 
     
    ~RefArray();
    
@@ -868,11 +854,9 @@ class <span class="Att">RefArray</span>
    
    PtrLen&lt;T&gt; extend_swap(PtrLen&lt;T&gt; objs);
 
-   template &lt;class Creator&gt;
-   PtrLen&lt;T&gt; extend(ulen delta_len,Creator creator);
+   PtrLen&lt;T&gt; extend(ulen delta_len,CreatorType&lt;T&gt; creator);
    
-   template &lt;class Builder&gt;
-   PtrLen&lt;T&gt; extend(Builder builder);
+   PtrLen&lt;T&gt; extend(BuilderType&lt;T&gt; builder);
    
    // append
    
@@ -887,22 +871,17 @@ class <span class="Att">RefArray</span>
    
    T * append_swap(T &amp;obj);
    
-   template &lt;class Creator&gt;
-   T * append(Creator creator);
+   T * append(CreatorType&lt;T&gt; creator);
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply_modify(FuncInit func_init);
+   void apply_modify(FuncInitArgType&lt;T &amp;&gt; func_init func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   void apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyReverse_modify(FuncInit func_init);
+   void applyReverse_modify(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init) const;
+   void applyReverse(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
 
    // swap/move objects
    
@@ -1078,11 +1057,9 @@ modifying operations).
    
    PtrLen&lt;T&gt; extend_swap(PtrLen&lt;T&gt; objs);
 
-   template &lt;class Creator&gt;
-   PtrLen&lt;T&gt; extend(ulen delta_len,Creator creator);
+   PtrLen&lt;T&gt; extend(ulen delta_len,CreatorType&lt;T&gt; creator);
    
-   template &lt;class Builder&gt;
-   PtrLen&lt;T&gt; extend(Builder builder);
+   PtrLen&lt;T&gt; extend(BuilderType&lt;T&gt; builder);
    
    // append
    
@@ -1097,8 +1074,7 @@ modifying operations).
    
    T * append_swap(T &amp;obj);
    
-   template &lt;class Creator&gt;
-   T * append(Creator creator);
+   T * append(CreatorType&lt;T&gt; creator);
 
 </pre>   
 
@@ -1745,6 +1721,20 @@ the range of objects up to this length and returns it, or leaves the memory raw 
 You may use a <b>Builder</b> in a generic array "Builder" constructors and methods.
 </p>
 
+<p>
+There are two concepts for creators and builders:
+</p>
+
+<pre>
+
+template &lt;class Creator,class T&gt;
+concept bool <span class="Att">CreatorType</span> = .... ;
+
+template &lt;class Builder,class T&gt;
+concept bool <span class="Att">BuilderType</span> = .... ;
+
+</pre>
+
 <h4>Standard creators</h4>
 
 <p>
@@ -1781,11 +1771,7 @@ struct <span class="Att">Creator_fill</span>
   
   T * operator () (Place&lt;void&gt; place)
    {
-    T *ret;
-      
-    ss.call( [&amp;ret,place] (SS &amp;&amp; ... ss) { ret=new(place) T( std::forward&lt;SS&gt;(ss)... ); } );
-      
-    return ret;
+    return ss.call( [place] (SS &amp;&amp; ... ss) { return new(place) T( std::forward&lt;SS&gt;(ss)... ); } );
    }
  };
  

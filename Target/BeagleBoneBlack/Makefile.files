@@ -4251,7 +4251,7 @@ obj/SysAtomic.s.o : ../../Target/BeagleBoneBlack/CCore/src/sys/SysAtomic.s
 
 ifneq ($(MAKECMDGOALS),clean)
 
-include $(DEP_FILE)
+-include $(DEP_FILE)
 
 endif
 

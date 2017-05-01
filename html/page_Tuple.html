@@ -156,11 +156,7 @@ struct Creator_fill
   
   T * operator () (Place&lt;void&gt; place)
    {
-    T *ret;
-      
-    ss.call( [&amp;ret,place] (SS &amp;&amp; ... ss) { ret=new(place) T( std::forward&lt;SS&gt;(ss)... ); } );
-      
-    return ret;
+    return ss.call( [place] (SS &amp;&amp; ... ss) { return new(place) T( std::forward&lt;SS&gt;(ss)... ); } );
    }
  };
  
