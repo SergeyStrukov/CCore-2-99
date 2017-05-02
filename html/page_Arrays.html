@@ -1126,60 +1126,45 @@ Otherwise there are two variants: one for the POD types, another for the other (
 <h4>ArrayAlgo_class</h4>
 
 <p>
-<b>ArrayAlgo_class</b> is the generic (class) variant. It is assumed, that the following operations: <b>~T()</b>,
-<b>Move(T *,Place&lt;void&gt;)</b> and <b>Swap(T &amp;,T &amp;)</b> are <b>no-throw</b>.
+<b>ArrayAlgo_class</b> is the generic (class) variant. 
 The template argument <b>Flags</b> provides two flags: <b>Default_no_throw</b> and <b>Copy_no_throw</b>.
 The flag is <b>true</b>, if the correspondent constructor (default or copy) is <b>no-throw</b> or does not exist.
-It's an obligation of the class. 
+It's an obligation of the class. The flag <b>MoveTo_exist</b> is <b>true</b> for replaceable types.
+For such types an array can grow above the initial memory allocation length.
 </p>
 
 <pre>
 
-template &lt;class T,class Flags&gt;
-struct <span class="Att">ArrayAlgo_class</span> : ArrayAlgoMemBase
+template &lt;NothrowDtorType T,class Flags=GetNoThrowFlags&lt;T&gt; &gt;
+struct <span class="Att">ArrayAlgo_class</span> : ArrayAlgoBase&lt;T&gt;
  {
-  //
-  //  assume ~T() , Move(T *,Place&lt;void&gt;) , Swap(T &amp;,T &amp;) no-throw
-  //
- 
-  //
-  //  Create...() : clean on throw
-  //
-  
   enum PropFlagType
    {
     Default_no_throw = Flags::Default_no_throw,
     Copy_no_throw = Flags::Copy_no_throw,
     
-    MoveTo_exist = true
+    MoveTo_exist = Meta::PoorFlag&lt;T, ReplaceableType&lt;T&gt; &gt;
    };
  
-  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
+  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len) requires ( DefaultCtorType&lt;T&gt; ) ;
   
-  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
+  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len) requires ( DefaultCtorType&lt;T&gt; ) ;
    
   template &lt;class ... SS&gt;
-  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss);
+  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
   
-  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
+  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]) requires ( CopyCtorType&lt;T&gt; ) ;
   
   template &lt;class S&gt;
-  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]);
+  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]) requires ( ConstructibleType&lt;T,const S&gt; ) ;
   
-  static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]);
+  static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]) requires ( DefaultCtorType&lt;T&gt; ) ;
    
-  //
-  // using Creator
-  //
-
-  template &lt;class Creator&gt;
-  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
-  
   //
   //  Single
   // 
   
-  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept( Default_no_throw );
+  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept( Default_no_throw ) requires ( DefaultCtorType&lt;T&gt; ) ;
    
   //
   //  ProvideLen() : double extension
@@ -1191,31 +1176,11 @@ struct <span class="Att">ArrayAlgo_class</span> : ArrayAlgoMemBase
   //  MoveTo() : no-throw
   //
 
-  static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept;
-
-  //
-  //  single Destroy() : no-throw
-  // 
-  
-  static void Destroy(T *ptr) noexcept;
-  
-  // 
-  //  Destroy() : no-throw
-  //
-  
-  static void Destroy(T *ptr,ulen len) noexcept;
-
-  //
-  // Guards
-  //
-
-  class BuildGuard;
-  class CreateGuard;
-  class CreateGuard_nothrow;
-  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
+  static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept requires ( ReplaceableType&lt;T&gt; ) ;
  };
 
 </pre>
+
 
 <p>
 The package has the following members.
@@ -1226,7 +1191,7 @@ Flags <b>Default_no_throw</b> and <b>Copy_no_throw</b> are copied from the <b>Fl
 </p>
 
 <p>
-Flag <b>MoveTo_exist</b> is always <b>true</b>.
+Flag <b>MoveTo_exist</b> is <b>true</b> for replaceable types.
 </p>
 
 <p>
@@ -1260,10 +1225,6 @@ the swap are memberwise selected from the provided range of objects.
 </p>
 
 <p>
-<b>Create()</b> uses the given creator for the object creation. See <a href="#Creator">below</a> about creators.
-</p>
-
-<p>
 The single <b>Create_swap()</b> function "creates-swap" a single object.
 </p>
 
@@ -1278,6 +1239,177 @@ overflow.
 <p>
 <b>MoveTo()</b> moves the given range to a new place. The old place becomes a raw memory. 
 The range of new objects is returned.
+</p>
+
+<p>
+Other members are inherited from the <a href="#ArrayAlgoBase"><b>ArrayAlgoBase&lt;T&gt;</b></a>.
+</p>
+
+<h4>ArrayAlgo_pod</h4>
+
+<p>
+<b>ArrayAlgo_pod</b> is the POD variant.
+</p>
+
+<pre>
+
+template &lt;PODType T&gt;
+struct <span class="Att">ArrayAlgo_pod</span> : ArrayAlgoBase_nodtor&lt;T&gt;
+ {
+  enum PropFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true,
+    
+    MoveTo_exist = true
+   };
+ 
+  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
+  
+  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
+   
+  template &lt;class ... SS&gt;
+  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
+  
+  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
+  
+  template &lt;class S&gt;
+  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]) requires ( ConstructibleType&lt;T,const S&gt; ) ;
+  
+  static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]);
+   
+  //
+  //  Single : no-throw
+  // 
+  
+  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept;
+   
+  //
+  //  ProvideLen() : double extension
+  // 
+  
+  static ulen ProvideLen(ulen len,ulen maxlen,ulen extra_len);
+   
+  // 
+  //  MoveTo() : no-throw
+  //
+
+  static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept;
+ };
+
+</pre>
+
+<p>
+Flags <b>Default_no_throw</b>, <b>Copy_no_throw</b> and <b>MoveTo_exist</b> are all <b>true</b>.
+</p>
+
+<p>
+<b>Create_raw()</b> is not using default initialization. It leaves the memory uninitialized.
+</p>
+
+<p>
+Other members are inherited from the <b>ArrayAlgoBase_nodtor&lt;T&gt;</b>.
+</p>
+
+<h4>ArrayAlgo_mini</h4>
+
+<p>
+<b>ArrayAlgo_mini</b> is the mini variant without object moving.
+It is assumed only, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move are not used.
+</p>
+
+<pre>
+
+template &lt;class T,class Flags&gt;
+struct <span class="Att">ArrayAlgo_mini</span> : ArrayAlgoBase&lt;T&gt;
+ {
+  enum PropFlagType
+   {
+    Default_no_throw = Flags::Default_no_throw,
+    Copy_no_throw = Flags::Copy_no_throw,
+    
+    MoveTo_exist = false
+   };
+ 
+  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len) requires ( DefaultCtorType&lt;T&gt; ) ;
+  
+  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len) requires ( DefaultCtorType&lt;T&gt; ) ;
+   
+  template &lt;class ... SS&gt;
+  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
+  
+  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]) requires ( CopyCtorType&lt;T&gt; ) ;
+  
+  template &lt;class S&gt;
+  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]) requires ( ConstructibleType&lt;T,const S&gt; ) ;
+ };
+
+</pre>
+
+<p>
+The flag <b>MoveTo_exist</b> is <b>false</b>.
+</p>
+
+<p>
+Other members are inherited from the <b>ArrayAlgoBase&lt;T&gt;</b>.
+</p>
+
+<p>
+The following functions: <b>Create_swap()</b>, <b>ProvideLen()</b>, <b>MoveTo()</b> are omitted.
+Array, constructed with this algorithm package, cannot be extended beyond the initial memory allocation length.
+</p>
+
+<a name="ArrayAlgoBase"><h4>ArrayAlgoBase</h4></a>
+
+<p>
+<b>ArrayAlgoBase</b> is a common package for all <b>ArrayAlgo</b>s. 
+It has two variants: common and specialized <b>ArrayAlgoBase_nodtor</b> for types with the trivial destructor.
+</p>
+
+<pre>
+
+template &lt;NothrowDtorType T&gt;
+struct <span class="Att">ArrayAlgoBase</span> : ArrayAlgoMemBase
+ {
+  //
+  // Guards
+  //
+
+  class BuildGuard;
+
+  class CreateGuard;
+
+  class CreateGuard_nothrow;
+
+  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
+
+  //
+  //  Create() : clean on throw
+  //
+
+  template &lt;CreatorType&lt;T&gt; Creator&gt;
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( Creator::NoThrow ) ;
+
+  //
+  //  single Destroy() : no-throw
+  //
+
+  static void Destroy(T *ptr) noexcept;
+
+  //
+  //  Destroy() : no-throw
+  //
+
+  static void Destroy(T *ptr,ulen len) noexcept;
+ };
+
+template &lt;NothrowDtorType T&gt; requires ( TrivDtorType&lt;T&gt; )
+struct ArrayAlgoBase&lt;T&gt; : ArrayAlgoBase_nodtor&lt;T&gt; {};
+
+</pre>
+
+<p>
+<b>Create()</b> uses the given creator for the object creation. See <a href="#Creator">below</a> about creators.
 </p>
 
 <p>
@@ -1411,7 +1543,7 @@ Below is the implementation of the generic <b>Create</b>, it uses the <b>CreateG
 
 <pre>
 
-template &lt;class Creator&gt;
+template &lt;CreatorType&lt;T&gt; Creator&gt;
 static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( Creator::NoThrow )
  {
   CreateGuardNoThrow&lt;Creator::NoThrow&gt; guard(place,len);
@@ -1425,183 +1557,52 @@ static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,u
 
 </pre>
 
-<h4>ArrayAlgo_pod</h4>
-
 <p>
-<b>ArrayAlgo_pod</b> is the POD variant.
+<b>ArrayAlgoBase_nodtor&lt;T&gt;</b> provides the same set of algorithms, but implemented with respect to destructor triviality.
 </p>
 
 <pre>
 
-template &lt;class T&gt;
-struct <span class="Att">ArrayAlgo_pod</span> : ArrayAlgoMemBase
+template &lt;TrivDtorType T&gt;
+struct <span class="Att">ArrayAlgoBase_nodtor</span> : ArrayAlgoMemBase
  {
   //
-  //  Create...() : clean on throw
-  //
-  
-  enum PropFlagType
-   {
-    Default_no_throw = true,
-    Copy_no_throw = true,
-    
-    MoveTo_exist = true
-   };
- 
-  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
-  
-  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
-   
-  template &lt;class ... SS&gt;
-  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss);
-  
-  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
-  
-  template &lt;class S&gt;
-  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]);
-  
-  static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]);
-   
-  //
-  // using Creator
+  // Guards
   //
 
-  template &lt;class Creator&gt;
-  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( Creator::NoThrow );
-  
+  class BuildGuard;
+
+  class CreateGuard;
+
+  class CreateGuard_nothrow;
+
+  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
+
   //
-  //  Single
-  // 
-  
-  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept;
-   
-  //
-  //  ProvideLen() : double extension
-  // 
-  
-  static ulen ProvideLen(ulen len,ulen maxlen,ulen extra_len);
-   
-  // 
-  //  MoveTo() : no-throw
+  //  Create()
   //
 
-  static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept;
+  template &lt;CreatorType&lt;T&gt; Creator&gt;
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( Creator::NoThrow ) ;
 
   //
   //  single Destroy() : empty
-  // 
-  
-  static void Destroy(T *ptr) {}
-  
-  // 
+  //
+
+  static void Destroy(T *) noexcept
+   {
+   }
+
+  //
   //  Destroy() : empty
   //
-  
-  static void Destroy(T *ptr,ulen len) {}
 
-  //
-  // Guards
-  //
-
-  class BuildGuard;
-  class CreateGuard;
-  class CreateGuard_nothrow;
-  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
- };
-
-</pre>
-
-<p>
-Flags <b>Default_no_throw</b>, <b>Copy_no_throw</b> and <b>MoveTo_exist</b> are all <b>true</b>.
-</p>
-
-<p>
-<b>Destroy()</b> functions are empty.
-</p>
-
-<p>
-<b>Create_raw()</b> is not using default initialization. It leaves the memory uninitialized.
-</p>
-
-<h4>ArrayAlgo_mini</h4>
-
-<p>
-<b>ArrayAlgo_mini</b> is the mini variant without object moving.
-It is assumed only, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move are not used.
-</p>
-
-<pre>
-
-template &lt;class T,class Flags&gt;
-struct <span class="Att">ArrayAlgo_mini</span> : ArrayAlgoMemBase
- {
-  //
-  //  assume ~T() no-throw
-  //
- 
-  //
-  //  Create...() : clean on throw
-  //
-  
-  enum PropFlagType
+  static void Destroy(T *,ulen) noexcept
    {
-    Default_no_throw = Flags::Default_no_throw,
-    Copy_no_throw = Flags::Copy_no_throw,
-    
-    MoveTo_exist = false
-   };
- 
-  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
-  
-  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
-   
-  template &lt;class ... SS&gt;
-  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss);
-  
-  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
-  
-  template &lt;class S&gt;
-  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]);
-  
-  //
-  // using Creator
-  //
-
-  template &lt;class Creator&gt;
-  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( Creator::NoThrow );
-  
-  //
-  //  single Destroy() : no-throw
-  // 
-  
-  static void Destroy(T *ptr) noexcept;
-  
-  // 
-  //  Destroy() : no-throw
-  //
-  
-  static void Destroy(T *ptr,ulen len) noexcept;
-
-  //
-  // Guards
-  //
-
-  class BuildGuard;
-  class CreateGuard;
-  class CreateGuard_nothrow;
-  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
+   }
  };
 
 </pre>
-
-<p>
-The flag <b>MoveTo_exist</b> is <b>false</b>.
-</p>
-
-<p>
-The following functions: <b>Create_swap()</b>, <b>ProvideLen()</b>, <b>MoveTo()</b> are omitted.
-Array, constructed with this algorithm package, cannot be extended beyond the initial allocation length.
-</p>
 
 <a name="Creator"><h4>Creators and Builders</h4></a>
 
@@ -1873,6 +1874,67 @@ If the return value is <b>true</b>, then the attempt was successful.
 <p>
 <b>MemShrink()</b> shrinks the memory block length to be at least the given argument. 
 The return value is never used.
+</p>
+
+<h4>Insert/Delete algorithms</h4>
+
+<p>
+Insert or delete array elements in the middle of the array are not natural array methods. 
+They have a linear complexity.
+But sometimes they are necessary.
+These algorithms are implemented as a free functions.
+</p>
+
+<pre>
+
+/* del functions */
+
+template &lt;class A&gt;
+bool <span class="Att">ArrayCopyDel</span>(A &amp;a,ulen ind);
+
+template &lt;class A&gt;
+bool <span class="Att">ArraySwapDel</span>(A &amp;a,ulen ind);
+
+template &lt;class A&gt;
+void <span class="Att">ArrayCopyDel_guarded</span>(A &amp;a,ulen ind);
+
+template &lt;class A&gt;
+void <span class="Att">ArraySwapDel_guarded</span>(A &amp;a,ulen ind);
+
+</pre>
+
+<p>
+These functions delete an element from the array at the given index. 
+The first two return <b>false</b> if the index is invalid.
+The last two throw an exception in such case. 
+<b>CopyDel</b> copies elements, <b>SwapDel</b> uses swapping.
+</p>
+
+<pre>
+
+/* ins functions */
+
+template &lt;class A,class ... SS&gt;
+bool <span class="Att">ArraySwapIns</span>(A &amp;a,ulen ind,SS &amp;&amp; ... ss);
+
+template &lt;class A,class ... SS&gt;
+bool <span class="Att">ArrayCopyIns</span>(A &amp;a,ulen ind,SS &amp;&amp; ... ss);
+
+template &lt;class A,class ... SS&gt;
+void <span class="Att">ArraySwapIns_guarded</span>(A &amp;a,ulen ind,SS &amp;&amp; ... ss);
+
+template &lt;class A,class ... SS&gt;
+void <span class="Att">ArrayCopyIns_guarded</span>(A &amp;a,ulen ind,SS &amp;&amp; ... ss);
+
+</pre>
+
+<p>
+These functions insert an element to the array at the given index. 
+The valid index range is <b>[0,len]</b>, where <b>len</b> is the array length. 
+The first two cap the index and return <b>false</b> if the index is out of range.
+The last two throw an exception in such case. 
+<b>CopyIns</b> copies elements, <b>SwapIns</b> uses swapping.
+Extra arguments are used to call an element constructor.
 </p>
 
 </body>
