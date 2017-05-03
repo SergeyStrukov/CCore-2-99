@@ -89,7 +89,7 @@ void PrintFibre(P &out,const TopCompress &compress,PtrLen<const State> range)
   Putch(out,'\n');
  }
 
-static bool HasMultipleProps(PtrLen<const State> range)
+[[maybe_unused]] static bool HasMultipleProps(PtrLen<const State> range)
  {
   ulen prop=range->getPropIndex();
 
