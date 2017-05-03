@@ -1020,7 +1020,7 @@ struct IntegerDivider<Algo,TempArray>::Normalize
 
     switch( Algo::Sign(c,nb) )
      {
-      case CmpEqual : GuardIntegerZeroDivide();
+      case CmpEqual : GuardIntegerZeroDivide(); [[fallthrough]];
 
       case CmpLess :
        {
@@ -1259,7 +1259,7 @@ Integer IntegerFromString<Integer>::operator () (StrLen str) const
     {
      case '-' : ++str; return -convert(str,K);
 
-     case '+' : ++str; // falldown;
+     case '+' : ++str; [[fallthrough]];
 
      default: return convert(str,K);
     }

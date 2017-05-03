@@ -508,7 +508,7 @@ struct IntScanAlgo
       {
        switch( *inp )
          {
-          case '+' : ++inp; // falldown;
+          case '+' : ++inp; [[fallthrough]];
 
           default: ScanHex(inp,ret,false); break;
 
@@ -584,7 +584,7 @@ struct IntScanAlgo
       {
        switch( *inp )
          {
-          case '+' : ++inp; // falldown;
+          case '+' : ++inp; [[fallthrough]];
 
           default: ScanBin(inp,ret,false); break;
 
@@ -641,7 +641,7 @@ struct IntScanAlgo
       {
        switch( *inp )
          {
-          case '+' : ++inp; // falldown;
+          case '+' : ++inp; [[fallthrough]];
 
           default: Scan0X(inp,ret,false); break;
 
@@ -695,7 +695,7 @@ struct IntScanAlgo
       {
        switch( *inp )
          {
-          case '+' : ++inp; // falldown;
+          case '+' : ++inp; [[fallthrough]];
 
           default: ScanBase(inp,ret,base,false); break;
 

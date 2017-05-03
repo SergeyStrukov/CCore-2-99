@@ -877,7 +877,7 @@ void ClientNegotiant::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> d
           {
            send=prepare_send();
           }
-         // falldown;
+         [[fallthrough]];
 
          case State_ServerError :
          case State_Done :

@@ -139,7 +139,7 @@ class ASCIICode
        {
         switch( char ch=getChar() )
           {
-           case '\\' : case '"' : out.put('\\'); // falldown;
+           case '\\' : case '"' : out.put('\\'); [[fallthrough]];
 
            default: out.put(ch);
           }

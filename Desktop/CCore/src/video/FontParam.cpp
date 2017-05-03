@@ -56,6 +56,7 @@ Font FontParam::create() const
       {
        Printf(Exception,"CCore::Video::FontParam::create() : unknown engine type #;",engine_type);
       }
+     [[fallthrough]];
 
      case EngineDefault : return Font();
 

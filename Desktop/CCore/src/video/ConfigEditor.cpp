@@ -50,38 +50,38 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
 
      union Ref
       {
-       Coord      &of_Coord;
-       MCoord     &of_MCoord;
-       VColor     &of_VColor;
-       Clr        &of_Clr;
-       unsigned   &of_unsigned;
-       DefString  &of_String;
-       Point      &of_Point;
-       FontCouple &of_Font;
-       bool       &of_bool;
-       Ratio      &of_Ratio;
+       Coord      *of_Coord;
+       MCoord     *of_MCoord;
+       VColor     *of_VColor;
+       Clr        *of_Clr;
+       unsigned   *of_unsigned;
+       DefString  *of_String;
+       Point      *of_Point;
+       FontCouple *of_Font;
+       bool       *of_bool;
+       Ratio      *of_Ratio;
 
        Ref() {}
 
-       Ref(Coord &var) : of_Coord{var} {}
+       Ref(Coord &var) : of_Coord{&var} {}
 
-       Ref(MCoord &var) : of_MCoord{var} {}
+       Ref(MCoord &var) : of_MCoord{&var} {}
 
-       Ref(VColor &var) : of_VColor{var} {}
+       Ref(VColor &var) : of_VColor{&var} {}
 
-       Ref(unsigned &var) : of_unsigned{var} {}
+       Ref(unsigned &var) : of_unsigned{&var} {}
 
-       Ref(Clr &var) : of_Clr{var} {}
+       Ref(Clr &var) : of_Clr{&var} {}
 
-       Ref(DefString &var) : of_String{var} {}
+       Ref(DefString &var) : of_String{&var} {}
 
-       Ref(Point &var) : of_Point{var} {}
+       Ref(Point &var) : of_Point{&var} {}
 
-       Ref(FontCouple &var) : of_Font{var} {}
+       Ref(FontCouple &var) : of_Font{&var} {}
 
-       Ref(bool &var) : of_bool{var} {}
+       Ref(bool &var) : of_bool{&var} {}
 
-       Ref(Ratio &var) : of_Ratio{var} {}
+       Ref(Ratio &var) : of_Ratio{&var} {}
       };
 
      Ref ref;
@@ -165,25 +165,25 @@ class ConfigEditorWindow::PrefInfo::Base : public ComboInfoBase
       {
        switch( type )
          {
-          case Var_Coord : func(ref.of_Coord); break;
+          case Var_Coord : func(*ref.of_Coord); break;
 
-          case Var_MCoord : func(ref.of_MCoord); break;
+          case Var_MCoord : func(*ref.of_MCoord); break;
 
-          case Var_VColor : func(ref.of_VColor); break;
+          case Var_VColor : func(*ref.of_VColor); break;
 
-          case Var_Clr : func(ref.of_Clr); break;
+          case Var_Clr : func(*ref.of_Clr); break;
 
-          case Var_unsigned : func(ref.of_unsigned); break;
+          case Var_unsigned : func(*ref.of_unsigned); break;
 
-          case Var_String : func(ref.of_String); break;
+          case Var_String : func(*ref.of_String); break;
 
-          case Var_Point : func(ref.of_Point); break;
+          case Var_Point : func(*ref.of_Point); break;
 
-          case Var_Font : func(ref.of_Font); break;
+          case Var_Font : func(*ref.of_Font); break;
 
-          case Var_bool : func(ref.of_bool); break;
+          case Var_bool : func(*ref.of_bool); break;
 
-          case Var_Ratio : func(ref.of_Ratio); break;
+          case Var_Ratio : func(*ref.of_Ratio); break;
          }
       }
     };

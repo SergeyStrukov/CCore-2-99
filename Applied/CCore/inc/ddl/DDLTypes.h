@@ -450,7 +450,7 @@ struct SLen
    {
     switch( flag )
       {
-       case Neg : out.put('-'); // falldown;
+       case Neg : out.put('-'); [[fallthrough]];
 
        case Pos : Putobj(out,len); break;
 
