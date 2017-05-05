@@ -370,7 +370,7 @@ class EventMetaInfo : NoCopy
 
       explicit EnumDesc(ToMoveCtor<EnumDesc> obj)
        : id(obj->id),
-         name(ObjToMove(obj->name)),
+         name(ToMoveCtor(obj->name)),
          kind(obj->kind),
          append_func(obj->append_func),
          root(Replace_null(obj->root)),
@@ -517,7 +517,7 @@ class EventMetaInfo : NoCopy
       explicit FieldDesc(ToMoveCtor<FieldDesc> obj)
        : kind(obj->kind),
          id(obj->id),
-         name(ObjToMove(obj->name)),
+         name(ToMoveCtor(obj->name)),
          offset(obj->offset)
        {
        }
@@ -707,8 +707,8 @@ class EventMetaInfo : NoCopy
 
       explicit StructDesc(ToMoveCtor<StructDesc> obj)
        : id(obj->id),
-         name(ObjToMove(obj->name)),
-         field_list(ObjToMove(obj->field_list))
+         name(ToMoveCtor(obj->name)),
+         field_list(ToMoveCtor(obj->field_list))
        {
        }
 

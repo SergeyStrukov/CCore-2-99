@@ -102,7 +102,7 @@ class AtomicRefArrayBase
     }
 
    explicit AtomicRefArrayBase(RefPtr<AtomicRefArrayHeader,RefAlgo> &ptr_)
-    : ptr(ObjToMove(ptr_))
+    : ptr(ToMoveCtor(ptr_))
     {
     }
 

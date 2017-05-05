@@ -261,7 +261,7 @@ class ElementPool : NoCopy
     }
 
    explicit ElementPool(ToMoveCtor<ElementPool> obj)
-    : pool(ObjToMove(obj->pool))
+    : pool(ToMoveCtor(obj->pool))
     {
     }
  };

@@ -368,7 +368,7 @@ class NodePoolAllocator : NoCopy
     }
 
    explicit NodePoolAllocator(ToMoveCtor<NodePoolAllocator<Node> > obj)
-    : pool(ObjToMove(obj->pool)),
+    : pool(ToMoveCtor(obj->pool)),
       count(Replace_null(obj->count))
     {
     }

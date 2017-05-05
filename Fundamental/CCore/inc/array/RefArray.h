@@ -99,7 +99,7 @@ class RefArrayBase
     }
 
    explicit RefArrayBase(RefPtr<RefArrayHeader,RefAlgo> &ptr_)
-    : ptr(ObjToMove(ptr_))
+    : ptr(ToMoveCtor(ptr_))
     {
     }
 

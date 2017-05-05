@@ -153,7 +153,7 @@ There are several utilities to work with case lists.
 <pre>
 
 template &lt;class CaseList,class T&gt;
-const auto <span class="Att">Meta::CaseVal</span> = .... ;
+inline constexpr auto <span class="Att">Meta::CaseVal</span> = .... ;
 
  //
  // Meta::CaseVal&lt; Meta::CaseList&lt; .... Meta::Case&lt;SUInt,Val,T&gt; .... &gt; , T &gt; == Val
@@ -168,7 +168,7 @@ This <b>Meta-constant</b> returns the value, associated with the given type in t
 <pre>
 
 template &lt;CaseListType CaseList&gt;
-const ulen <span class="Att">Meta::CaseListMaxSizeof</span> = .... ;
+inline constexpr ulen <span class="Att">Meta::CaseListMaxSizeof</span> = .... ;
 
  //
  // Meta::CaseListMaxSizeof&lt; Meta::CaseList&lt; .... Meta::Case&lt;SUInt,Val,T&gt; .... &gt; &gt; == Max_cast( sizeof(T) ... )

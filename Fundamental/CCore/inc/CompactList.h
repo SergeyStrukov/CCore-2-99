@@ -165,7 +165,7 @@ class CompactList : NoCopy
     }
 
    explicit CompactList(ToMoveCtor<CompactList<T> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(obj->list)
     {
     }
@@ -466,7 +466,7 @@ class CompactList2 : NoCopy
     }
 
    explicit CompactList2(ToMoveCtor<CompactList2<T> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(obj->list)
     {
     }
@@ -869,7 +869,7 @@ class CompactCircularList : NoCopy
     }
 
    explicit CompactCircularList(ToMoveCtor<CompactCircularList<T> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }

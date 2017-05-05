@@ -52,11 +52,6 @@ concept bool Has_ToMoveCtor = requires(ToMoveCtor<T> arg)
 template <class T>
 concept bool No_ToMoveCtor = !Has_ToMoveCtor<T> ;
 
-/* ObjToMove() */
-
-template <class T>
-ToMoveCtor<T> ObjToMove(T &obj) { return ToMoveCtor<T>(obj); }
-
 } // namespace CCore
 
 #endif

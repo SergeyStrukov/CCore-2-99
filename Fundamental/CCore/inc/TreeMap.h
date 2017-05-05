@@ -268,7 +268,7 @@ class RBTreeMap : NoCopy
     }
 
    explicit RBTreeMap(ToMoveCtor<RBTreeMap<K,T,KRef,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       root(Replace_null(obj->root))
     {
     }
@@ -653,7 +653,7 @@ class RadixTreeMap : NoCopy
 
    explicit RadixTreeMap(ToMoveCtor<RadixTreeMap<K,T,Allocator> > obj)
     : key_range(obj->key_range),
-      allocator(ObjToMove(obj->allocator)),
+      allocator(ToMoveCtor(obj->allocator)),
       root(Replace_null(obj->root))
     {
     }

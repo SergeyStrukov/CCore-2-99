@@ -170,7 +170,7 @@ class FindNodeMap : NoCopy
 
      explicit Rec(ToMoveCtor<Rec> obj)
       : ind(obj->ind),
-        names(ObjToMove(obj->names)),
+        names(ToMoveCtor(obj->names)),
         crc(obj->crc)
       {
       }

@@ -159,7 +159,7 @@ class BootInfo : NoCopy
       explicit Sect(ToMoveCtor<Sect> obj)
        : address(obj->address),
          len(obj->len),
-         data(ObjToMove(obj->data))
+         data(ToMoveCtor(obj->data))
        {
        }
     };

@@ -32,7 +32,7 @@ struct Case
  {
   using SwType = SUInt ;
 
-  static const SwType Val = Val_ ;
+  static constexpr SwType Val = Val_ ;
 
   using Type = T ;
  };
@@ -42,10 +42,10 @@ struct Case
 /* const IsCaseType<C> */
 
 template <class C>
-const bool IsCaseType = false ;
+inline constexpr bool IsCaseType = false ;
 
 template <SUIntType SUInt,SUInt Val,class T>
-const bool IsCaseType<Case<SUInt,Val,T> > = true ;
+inline constexpr bool IsCaseType<Case<SUInt,Val,T> > = true ;
 
 /* concept CaseType<C> */
 
@@ -76,7 +76,7 @@ using CaseListBox = typename CaseListBoxCtor<Box>::Ret ;
 template <CaseType ... CC>
 struct CaseList
  {
-  static const unsigned Len = sizeof ... (CC) ;
+  static constexpr unsigned Len = sizeof ... (CC) ;
 
   using Split = SplitTypeList<Len/2,CC...> ;
 
@@ -89,13 +89,13 @@ struct CaseList
 template <>
 struct CaseList<>
  {
-  static const unsigned Len = 0 ;
+  static constexpr unsigned Len = 0 ;
  };
 
 template <class C1>
 struct CaseList<C1>
  {
-  static const unsigned Len = 1 ;
+  static constexpr unsigned Len = 1 ;
 
   using SwType = typename C1::SwType ;
  };
@@ -103,7 +103,7 @@ struct CaseList<C1>
 template <class C1,class C2>
 struct CaseList<C1,C2>
  {
-  static const unsigned Len = 2 ;
+  static constexpr unsigned Len = 2 ;
 
   using First = CaseList<C1> ;
   using Last  = CaseList<C2> ;
@@ -116,10 +116,10 @@ struct CaseList<C1,C2>
 /* const IsCaseListType<CaseList> */
 
 template <class CaseList>
-const bool IsCaseListType = false ;
+inline constexpr bool IsCaseListType = false ;
 
 template <CaseType ... CC>
-const bool IsCaseListType<CaseList<CC...> > = true ;
+inline constexpr bool IsCaseListType<CaseList<CC...> > = true ;
 
 /* concept CaseListType<CaseList> */
 
@@ -430,7 +430,7 @@ struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
 template <SUIntType SUInt,SUInt Val>
 struct RetCaseVal
  {
-  static const SUInt Ret = Val ;
+  static constexpr SUInt Ret = Val ;
 
   template <class T>
   constexpr RetCaseVal<SUInt,Val> operator + (T) { return *this; }
@@ -453,13 +453,13 @@ struct PickCaseVal
 template <class T,CaseType ... CC>
 struct CaseValCtor<CaseList<CC...>,T>
  {
-  static const auto Ret = ( PickCaseVal<T>() + ... + CC() ).Ret ;
+  static constexpr auto Ret = ( PickCaseVal<T>() + ... + CC() ).Ret ;
  };
 
 /* const CaseVal<CaseList,T> */
 
 template <CaseListType CaseList,class T>
-const auto CaseVal = CaseValCtor<CaseList,T>::Ret ;
+inline constexpr auto CaseVal = CaseValCtor<CaseList,T>::Ret ;
 
 /* struct CaseListMaxSizeofCtor<CaseList> */
 
@@ -472,7 +472,7 @@ struct CaseListMaxSizeofCtor< CaseList<CC...> >
 /* const CaseListMaxSizeof<CaseList> */
 
 template <CaseListType CaseList>
-const ulen CaseListMaxSizeof = CaseListMaxSizeofCtor<CaseList>::Ret ;
+inline constexpr ulen CaseListMaxSizeof = CaseListMaxSizeofCtor<CaseList>::Ret ;
 
 } // namespace Meta
 } // namespace CCore

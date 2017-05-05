@@ -108,7 +108,7 @@ class FileName : NoCopy
     }
 
    explicit FileName(ToMoveCtor<FileName> obj)
-    : buf(ObjToMove(obj->buf)),
+    : buf(ToMoveCtor(obj->buf)),
       off(obj->off),
       ok(obj->ok)
     {

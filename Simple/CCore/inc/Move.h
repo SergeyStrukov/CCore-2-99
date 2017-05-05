@@ -74,7 +74,7 @@ T * MoveMove(T *obj,Place<void> place) noexcept
 template <Has_ToMoveCtor T>
 T * CtorMove(T *obj,Place<void> place) noexcept
  {
-  T *ret=new(place) T(ObjToMove(*obj));
+  T *ret=new(place) T(ToMoveCtor(*obj));
 
   obj->~T();
 

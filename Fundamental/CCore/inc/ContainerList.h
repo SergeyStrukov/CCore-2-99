@@ -163,7 +163,7 @@ class LinearSList : NoCopy
     }
 
    explicit LinearSList(ToMoveCtor<LinearSList<T,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }
@@ -359,7 +359,7 @@ class LinearSList2 : NoCopy
     }
 
    explicit LinearSList2(ToMoveCtor<LinearSList2<T,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }
@@ -578,7 +578,7 @@ class CircularSList : NoCopy
     }
 
    explicit CircularSList(ToMoveCtor<CircularSList<T,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }
@@ -775,7 +775,7 @@ class LinearDList : NoCopy
     }
 
    explicit LinearDList(ToMoveCtor<LinearDList<T,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }
@@ -1050,7 +1050,7 @@ class LinearDList2 : NoCopy
     }
 
    explicit LinearDList2(ToMoveCtor<LinearDList2<T,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }
@@ -1401,7 +1401,7 @@ class CircularDList : NoCopy
     }
 
    explicit CircularDList(ToMoveCtor<CircularDList<T,Allocator> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       list(Replace_null(obj->list))
     {
     }

@@ -505,7 +505,7 @@ class TopLang : public Lang
      explicit RuleRec(ToMoveCtor<RuleRec> obj)
       : name(obj->name),
         map_index(obj->map_index),
-        args(ObjToMove(obj->args))
+        args(ToMoveCtor(obj->args))
       {
       }
     };

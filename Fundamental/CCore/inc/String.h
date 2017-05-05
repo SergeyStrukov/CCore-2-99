@@ -86,7 +86,7 @@ class String
     }
 
    explicit String(ToMoveCtor<String> obj)
-    : data(ObjToMove(obj->data))
+    : data(ToMoveCtor(obj->data))
     {
     }
 

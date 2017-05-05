@@ -1963,7 +1963,7 @@ class Integer
      Swap(body,obj.body);
     }
 
-   explicit Integer(ToMoveCtor<Integer> obj) : body(ObjToMove(obj->body)) {}
+   explicit Integer(ToMoveCtor<Integer> obj) : body(ToMoveCtor(obj->body)) {}
  };
 
  // normalization

@@ -254,7 +254,7 @@ class CompactRBTreeMap : NoCopy
     }
 
    explicit CompactRBTreeMap(ToMoveCtor<CompactRBTreeMap<K,T,KRef> > obj)
-    : allocator(ObjToMove(obj->allocator)),
+    : allocator(ToMoveCtor(obj->allocator)),
       root(obj->root)
     {
     }
@@ -632,7 +632,7 @@ class CompactRadixTreeMap : NoCopy
 
    explicit CompactRadixTreeMap(ToMoveCtor<CompactRadixTreeMap<K,T> > obj)
     : key_range(obj->key_range),
-      allocator(ObjToMove(obj->allocator)),
+      allocator(ToMoveCtor(obj->allocator)),
       root(obj->root)
     {
     }
