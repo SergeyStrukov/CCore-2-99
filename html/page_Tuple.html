@@ -106,7 +106,7 @@ void func(int a,double b);
 int a;
 double b;
 
-auto tuple = MakeTuple(a,b) ;
+auto tuple = Tuple(a,b) ;
 
 tuple.call(func); // calls func(a,b);
 
@@ -152,7 +152,7 @@ struct Creator_fill
   
   ForwardTuple&lt;SS...&gt; ss;
   
-  explicit Creator_fill(SS &amp;&amp; ... ss_) : ss( std::forward<SS>(ss_)... ) {}
+  explicit Creator_fill(SS &amp;&amp; ... ss_) : ss( std::forward&lt;SS&gt;(ss_)... ) {}
   
   T * operator () (Place&lt;void&gt; place)
    {
@@ -160,17 +160,6 @@ struct Creator_fill
    }
  };
  
-</pre>
-
-<p>
-<b>MakeTuple()</b> is a <b>Creator function</b> for <b>Tuple</b>:
-</p>
-
-<pre>
-
-template &lt;class ... TT&gt;
-Tuple&lt;TT...&gt; <span class="Att">MakeTuple</span>(const TT &amp; ... tt);
-
 </pre>
 
 </body>

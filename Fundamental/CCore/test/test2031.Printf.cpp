@@ -51,7 +51,7 @@ bool Testit<2031>::Main()
  {
   Printf(Con,"#;\n",PrintTitle(12345));
 
-  Printf(Con,"#; #; #;\n",MakeTuple(1,2,3));
+  Printf(Con,"#; #; #;\n",Tuple(1,2,3));
 
   Test test;
 

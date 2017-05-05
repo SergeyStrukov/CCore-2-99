@@ -157,7 +157,7 @@ const char *const Testit<1023>::Name="Test1023 Tuple";
 template<>
 bool Testit<1023>::Main()
  {
-  auto t=MakeTuple(1,2,3,4,5);
+  auto t=Tuple(1,2,3,4,5);
 
   Acc acc;
 

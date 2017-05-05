@@ -95,6 +95,9 @@ struct Tuple : TupleAlias<TT...>
   using TupleAlias<TT...>::TupleAlias;
  };
 
+template <class ... TT>
+Tuple(const TT & ... tt) -> Tuple<TT...> ;
+
 /* struct ForwardTupleFactory<TT> */
 
 template <class ... TT,int ... IList>
@@ -143,11 +146,6 @@ struct ForwardTuple : ForwardTupleAlias<TT...>
  {
   using ForwardTupleAlias<TT...>::ForwardTupleAlias;
  };
-
-/* MakeTuple() */
-
-template <class ... TT>
-Tuple<TT...> MakeTuple(const TT & ... tt) { return Tuple<TT...>(tt...); }
 
 } // namespace CCore
 
