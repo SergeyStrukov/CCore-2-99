@@ -48,7 +48,7 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
 
    Function() noexcept; // null function
 
-   Function(NothingType); // null function
+   Function(NothingType) : Function() {} // null function
 
    Function(R (*func)(AA...)); // callback to the static function
 
@@ -68,6 +68,10 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
  };
 
 </pre>
+
+<p>
+The default constructor creates a "null" function. This function returns the default value of the type <b>R</b>.
+</p>
 
 <p>
 You can bind a <b>Function</b> to a static function, a static function with a handle or an object with a method.

@@ -21,32 +21,17 @@
 #include <CCore/inc/gadget/Handle.h>
 #include <CCore/inc/gadget/Nothing.h>
 #include <CCore/inc/gadget/NoCopy.h>
+#include <CCore/inc/gadget/Meta.h>
 
 namespace CCore {
 
 /* classes */
-
-template <class R> struct DefaultFunction;
 
 template <class FuncType> class Function;
 
 struct Funchor; // Fu(nction) (A)nchor
 
 template <class FuncType,class T> struct ToFunctionProxy;
-
-/* struct DefaultFunction<R> */
-
-template <class R>
-struct DefaultFunction
- {
-  static R Func() { return R(); }
- };
-
-template <>
-struct DefaultFunction<void>
- {
-  static void Func() {}
- };
 
 /* class Function<R,AA> */
 
@@ -69,7 +54,10 @@ class Function<R (AA...)>
 
   private:
 
-   static R EmptyFunction(AA ...) { return DefaultFunction<R>::Func(); }
+   static R EmptyFunction(AA ...)
+    {
+     if constexpr( !Meta::IsSame<R,void> ) return {};
+    }
 
    static R FuncProxy(Handle ctx,AA ... aa)
     {
