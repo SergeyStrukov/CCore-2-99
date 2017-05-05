@@ -23,7 +23,7 @@ namespace Meta {
 
 /* Const */
 
-template <class T,T Val> const T Const = Val ;
+template <class T,T Val> inline constexpr T Const = Val ;
 
 /* classes */
 
@@ -93,7 +93,7 @@ struct DefType
 template <class T,T Val>
 struct DefConst
  {
-  static const T Ret = Val ;
+  static constexpr T Ret = Val ;
  };
 
 /* struct ToConstCtor<T> */
@@ -137,102 +137,102 @@ using Select = typename SelectCtor<Cond,T1,T2>::Ret ;
 /* const IsSame<T1,T2> */
 
 template <class T1,class T2>
-const bool IsSame = false ;
+inline constexpr bool IsSame = false ;
 
 template <class T>
-const bool IsSame<T,T> = true ;
+inline constexpr bool IsSame<T,T> = true ;
 
 /* const OneOf<T,TT> */
 
 template <class T,class ... TT>
-const bool OneOf = ( ... || IsSame<T,TT> ) ;
+inline constexpr bool OneOf = ( ... || IsSame<T,TT> ) ;
 
 /* const IsUInt<T> */
 
 template <class T>
-const bool IsUInt = ExtraInt::Prop<T>::IsUnsigned ;
+inline constexpr bool IsUInt = ExtraInt::Prop<T>::IsUnsigned ;
 
 template <>
-const bool IsUInt<char> = ( char(-1)>=0 ) ;
+inline constexpr bool IsUInt<char> = ( char(-1)>=0 ) ;
 
 template <>
-const bool IsUInt<unsigned char> = true ;
+inline constexpr bool IsUInt<unsigned char> = true ;
 
 template <>
-const bool IsUInt<unsigned short> = true ;
+inline constexpr bool IsUInt<unsigned short> = true ;
 
 template <>
-const bool IsUInt<unsigned int> = true ;
+inline constexpr bool IsUInt<unsigned int> = true ;
 
 template <>
-const bool IsUInt<unsigned long> = true ;
+inline constexpr bool IsUInt<unsigned long> = true ;
 
 template <>
-const bool IsUInt<unsigned long long> = true ;
+inline constexpr bool IsUInt<unsigned long long> = true ;
 
 /* const UIntBits_extra_char<T> */
 
 template <class T>
-const unsigned UIntBits_extra_char = EmptyBox<T>::Ret ;
+inline constexpr unsigned UIntBits_extra_char = EmptyBox<T>::Ret ;
 
 template <class T> requires ( IsSame<T,char> && char(-1)>=0 )
-const unsigned UIntBits_extra_char<T> = Bits::unsigned_char ;
+inline constexpr unsigned UIntBits_extra_char<T> = Bits::unsigned_char ;
 
 template <class T> requires ( !IsSame<T,char> && (bool)ExtraInt::Prop<T>::IsUnsigned )
-const unsigned UIntBits_extra_char<T> = ExtraInt::Prop<T>::Bits ;
+inline constexpr unsigned UIntBits_extra_char<T> = ExtraInt::Prop<T>::Bits ;
 
 /* const UIntBits<T> */
 
 template <class T>
-const unsigned UIntBits = UIntBits_extra_char<T> ;
+inline constexpr unsigned UIntBits = UIntBits_extra_char<T> ;
 
 template <>
-const unsigned UIntBits<unsigned char> = Bits::unsigned_char ;
+inline constexpr unsigned UIntBits<unsigned char> = Bits::unsigned_char ;
 
 template <>
-const unsigned UIntBits<unsigned short> = Bits::unsigned_short ;
+inline constexpr unsigned UIntBits<unsigned short> = Bits::unsigned_short ;
 
 template <>
-const unsigned UIntBits<unsigned int> = Bits::unsigned_int ;
+inline constexpr unsigned UIntBits<unsigned int> = Bits::unsigned_int ;
 
 template <>
-const unsigned UIntBits<unsigned long> = Bits::unsigned_long ;
+inline constexpr unsigned UIntBits<unsigned long> = Bits::unsigned_long ;
 
 template <>
-const unsigned UIntBits<unsigned long long> = Bits::unsigned_long_long ;
+inline constexpr unsigned UIntBits<unsigned long long> = Bits::unsigned_long_long ;
 
 /* const HexWidth<UInt> */
 
 template <class UInt>
-const unsigned HexWidth = (UIntBits<UInt> +3)/4 ;
+inline constexpr unsigned HexWidth = (UIntBits<UInt> +3)/4 ;
 
 /* const IsSInt<T> */
 
 template <class T>
-const bool IsSInt = ExtraInt::Prop<T>::IsSigned ;
+inline constexpr bool IsSInt = ExtraInt::Prop<T>::IsSigned ;
 
 template <>
-const bool IsSInt<char> = ( char(-1)<0 ) ;
+inline constexpr bool IsSInt<char> = ( char(-1)<0 ) ;
 
 template <>
-const bool IsSInt<signed char> = true ;
+inline constexpr bool IsSInt<signed char> = true ;
 
 template <>
-const bool IsSInt<short> = true ;
+inline constexpr bool IsSInt<short> = true ;
 
 template <>
-const bool IsSInt<int> = true ;
+inline constexpr bool IsSInt<int> = true ;
 
 template <>
-const bool IsSInt<long> = true ;
+inline constexpr bool IsSInt<long> = true ;
 
 template <>
-const bool IsSInt<long long> = true ;
+inline constexpr bool IsSInt<long long> = true ;
 
 /* const IsSUInt<T> */
 
 template <class T>
-const bool IsSUInt = IsSInt<T> || IsUInt<T> ;
+inline constexpr bool IsSUInt = IsSInt<T> || IsUInt<T> ;
 
 /* type UnRef<T> */
 
@@ -265,72 +265,72 @@ using CommonType = typename CommonTypeCtor<S,T>::Ret ;
 /* const IsEnum<E> */
 
 template <class E>
-const bool IsEnum = std::is_enum<E>::value ;
+inline constexpr bool IsEnum = std::is_enum<E>::value ;
 
 /* const IsClass<T> */
 
 template <class T>
-const bool IsClass = std::is_class<T>::value ;
+inline constexpr bool IsClass = std::is_class<T>::value ;
 
 /* const IsPOD<T> */
 
 template <class T>
-const bool IsPOD = std::is_pod<T>::value ;
+inline constexpr bool IsPOD = std::is_pod<T>::value ;
 
 /* const HasNothrowDtor<T> */
 
 template <class T>
-const bool HasNothrowDtor = std::is_nothrow_destructible<T>::value ;
+inline constexpr bool HasNothrowDtor = std::is_nothrow_destructible<T>::value ;
 
 /* const HasTrivDtor<T> */
 
 template <class T>
-const bool HasTrivDtor = std::is_trivially_destructible<T>::value ;
+inline constexpr bool HasTrivDtor = std::is_trivially_destructible<T>::value ;
 
 /* const HasDefaultCtor<T> */
 
 template <class T>
-const bool HasDefaultCtor = std::is_default_constructible<T>::value ;
+inline constexpr bool HasDefaultCtor = std::is_default_constructible<T>::value ;
 
 /* const HasNothrowDefaultCtor<T> */
 
 template <class T>
-const bool HasNothrowDefaultCtor = std::is_nothrow_default_constructible<T>::value ;
+inline constexpr bool HasNothrowDefaultCtor = std::is_nothrow_default_constructible<T>::value ;
 
 /* const HasCopyCtor<T> */
 
 template <class T>
-const bool HasCopyCtor = std::is_copy_constructible<T>::value ;
+inline constexpr bool HasCopyCtor = std::is_copy_constructible<T>::value ;
 
 /* const HasNothrowCopyCtor<T> */
 
 template <class T>
-const bool HasNothrowCopyCtor = std::is_nothrow_copy_constructible<T>::value ;
+inline constexpr bool HasNothrowCopyCtor = std::is_nothrow_copy_constructible<T>::value ;
 
 /* const HasMoveCtor<T> */
 
 template <class T>
-const bool HasMoveCtor = std::is_move_constructible<T>::value ;
+inline constexpr bool HasMoveCtor = std::is_move_constructible<T>::value ;
 
 /* const IsCopyable<T> */
 
 template <class T>
-const bool IsCopyable = std::is_copy_constructible<T>::value && std::is_copy_assignable<T>::value ;
+inline constexpr bool IsCopyable = std::is_copy_constructible<T>::value && std::is_copy_assignable<T>::value ;
 
 /* const IsNothrowCopyable<T> */
 
 template <class T>
-const bool IsNothrowCopyable = std::is_nothrow_copy_constructible<T>::value && std::is_nothrow_copy_assignable<T>::value ;
+inline constexpr bool IsNothrowCopyable = std::is_nothrow_copy_constructible<T>::value && std::is_nothrow_copy_assignable<T>::value ;
 
 /* const IsMovable<T> */
 
 template <class T>
-const bool IsMovable = std::is_move_constructible<T>::value && std::is_move_assignable<T>::value ;
+inline constexpr bool IsMovable = std::is_move_constructible<T>::value && std::is_move_assignable<T>::value ;
 
 /* const IsBaseOf<B,D> */
 
 template <class B,class D>
-const bool IsBaseOf = std::is_base_of<B,D>::value ;
+inline constexpr bool IsBaseOf = std::is_base_of<B,D>::value ;
 
 /* type AlignedStorage<ulen Len> */
 
@@ -507,7 +507,7 @@ struct PoorFlagCtor<T,false>
 /* const PoorFlag<T,bool Flag> */
 
 template <class T,bool Flag>
-const bool PoorFlag = PoorFlagCtor<T,Flag>::Ret ;
+inline constexpr bool PoorFlag = PoorFlagCtor<T,Flag>::Ret ;
 
 } // namespace Meta
 } // namespace CCore

@@ -226,8 +226,16 @@ The last method is required to support <b>range-based for</b> with the <b>PtrLen
 
   // begin()/end() support
   
-  bool operator != (PtrLenReverse&lt;T&gt; end) const { return len!=end.len; }
+  bool operator != (ulen end_len) const { return len!=end_len; }
  };
+
+/* begin()/end() */
+
+template &lt;class T&gt;
+PtrLenReverse&lt;T&gt; begin(PtrLenReverse&lt;T&gt; a) { return a; }
+
+template &lt;class T&gt;
+ulen end(PtrLenReverse&lt;T&gt;) { return 0; }
 
 </pre>
 

@@ -185,7 +185,7 @@ struct PtrLen
 
   // begin()/end() support
 
-  bool operator != (PtrLen<T> end) const { return len!=end.len; }
+  bool operator != (ulen end_len) const { return len!=end_len; }
  };
 
 /* struct StrLen */
@@ -280,13 +280,13 @@ concept bool ConstTypeRangeableType = ConstRangeableType<T> && requires(Meta::To
 
 auto begin(RangeAccessType &&obj) { return Range(obj.getPtr(),obj.getLen()); }
 
-auto end(RangeAccessType &&obj) -> decltype( begin(obj) ) { return Nothing; }
+ulen end(RangeAccessType &&) { return 0; }
 
 template <class T>
 PtrLen<T> begin(PtrLen<T> a) { return a; }
 
 template <class T>
-PtrLen<T> end(PtrLen<T>) { return Nothing; }
+ulen end(PtrLen<T>) { return 0; }
 
 /* Mutate...() */
 

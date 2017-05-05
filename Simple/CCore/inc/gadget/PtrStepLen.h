@@ -124,7 +124,7 @@ struct PtrStepLen
 
   // begin()/end() support
 
-  bool operator != (PtrStepLen<T> end) const { return len!=end.len; }
+  bool operator != (ulen end_len) const { return len!=end_len; }
  };
 
 /* begin()/end() */
@@ -133,7 +133,7 @@ template <class T>
 PtrStepLen<T> begin(PtrStepLen<T> a) { return a; }
 
 template <class T>
-PtrStepLen<T> end(PtrStepLen<T>) { return Nothing; }
+ulen end(PtrStepLen<T>) { return 0; }
 
 } // namespace CCore
 

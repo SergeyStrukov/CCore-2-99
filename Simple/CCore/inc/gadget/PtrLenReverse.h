@@ -135,7 +135,7 @@ struct PtrLenReverse
 
   // begin()/end() support
 
-  bool operator != (PtrLenReverse<T> end) const { return len!=end.len; }
+  bool operator != (ulen end_len) const { return len!=end_len; }
  };
 
 /* RangeReverse...() */
@@ -190,7 +190,7 @@ template <class T>
 PtrLenReverse<T> begin(PtrLenReverse<T> a) { return a; }
 
 template <class T>
-PtrLenReverse<T> end(PtrLenReverse<T>) { return Nothing; }
+ulen end(PtrLenReverse<T>) { return 0; }
 
 } // namespace CCore
 

@@ -242,7 +242,7 @@ struct IndexOfBox<T,Ret,true>
 /* const IndexOf<TT> */
 
 template <class T,class ... TT>
-const unsigned IndexOf = ( IndexOfBox<T>() + ... + TypeBox<TT>() ) ;
+inline constexpr unsigned IndexOf = ( IndexOfBox<T>() + ... + TypeBox<TT>() ) ;
 
 /* struct PopTypeList<TT> */
 

@@ -39,7 +39,7 @@ They are enclosed in the namespace <b>Meta</b>.
 
 <pre>
 
-template &lt;class T,T Val&gt; const T <span class="Att">Const</span> = Val ;
+template &lt;class T,T Val&gt; inline constexpr T <span class="Att">Const</span> = Val ;
 
 </pre>
 
@@ -117,7 +117,7 @@ struct <span class="Att">DefType</span>
 template &lt;class T,T Val&gt;
 struct <span class="Att">DefConst</span>
  {
-  static const T Ret = Val ;
+  static constexpr T Ret = Val ;
  };
 
 </pre>
@@ -166,7 +166,7 @@ If <b>Cond</b> is <b>true</b>, then the first type is selected, otherwise the se
 <pre>
 
 template &lt;class T1,class T2&gt;
-const bool <span class="Att">IsSame</span> = .... ;
+inline constexpr bool <span class="Att">IsSame</span> = .... ;
 
 </pre>
 
@@ -179,7 +179,7 @@ const bool <span class="Att">IsSame</span> = .... ;
 <pre>
 
 template &lt;class T,class ... TT&gt;
-const bool <span class="Att">OneOf</span> = .... ;
+inline constexpr bool <span class="Att">OneOf</span> = .... ;
 
 </pre>
 
@@ -193,7 +193,7 @@ belongs to the following type list <b>TT</b>.
 <pre>
 
 template &lt;class T&gt;
-const bool <span class="Att">IsUInt</span> = .... ;
+inline constexpr bool <span class="Att">IsUInt</span> = .... ;
 
 </pre>
 
@@ -210,7 +210,7 @@ Some other types can be also considered as unsigned integral types, it is contro
 <pre>
 
 template &lt;class T&gt;
-const unsigned <span class="Att">UIntBits</span> = .... ;
+inline constexpr unsigned <span class="Att">UIntBits</span> = .... ;
 
 </pre>
 
@@ -224,7 +224,7 @@ and equals the number of bits of the argument.
 <pre>
 
 template &lt;class UInt&gt;
-const unsigned <span class="Att">HexWidth</span> = (UIntBits&lt;UInt&gt; +3)/4 ;
+inline constexpr unsigned <span class="Att">HexWidth</span> = (UIntBits&lt;UInt&gt; +3)/4 ;
 
 </pre>
 
@@ -238,7 +238,7 @@ and equals the number of hex digits required to represent a type value.
 <pre>
 
 template &lt;class T&gt;
-const bool <span class="Att">IsSInt</span> = .... ;
+inline constexpr bool <span class="Att">IsSInt</span> = .... ;
 
 </pre>
 
@@ -255,7 +255,7 @@ Some other types can be also considered as signed integral types, it is controll
 <pre>
 
 template &lt;class T&gt;
-const bool <span class="Att">IsSUInt</span> = IsSInt&lt;T&gt; || IsUInt&lt;T&gt; ;
+inline constexpr bool <span class="Att">IsSUInt</span> = IsSInt&lt;T&gt; || IsUInt&lt;T&gt; ;
 
 </pre>
 
@@ -399,72 +399,72 @@ The implementation is supported by the target (<a href="#Target">see below</a>).
 /* const IsEnum&lt;E&gt; */
 
 template &lt;class E&gt;
-const bool <span class="Att">IsEnum</span> = std::is_enum&lt;E&gt;::value ;
+inline constexpr bool <span class="Att">IsEnum</span> = std::is_enum&lt;E&gt;::value ;
 
 /* const IsClass&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">IsClass</span> = std::is_class&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">IsClass</span> = std::is_class&lt;T&gt;::value ;
 
 /* const IsPOD&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">IsPOD</span> = std::is_pod&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">IsPOD</span> = std::is_pod&lt;T&gt;::value ;
 
 /* const HasNothrowDtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasNothrowDtor</span> = std::is_nothrow_destructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasNothrowDtor</span> = std::is_nothrow_destructible&lt;T&gt;::value ;
 
 /* const HasTrivDtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasTrivDtor</span> = std::is_trivially_destructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasTrivDtor</span> = std::is_trivially_destructible&lt;T&gt;::value ;
 
 /* const HasDefaultCtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasDefaultCtor</span> = std::is_default_constructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasDefaultCtor</span> = std::is_default_constructible&lt;T&gt;::value ;
 
 /* const HasNothrowDefaultCtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasNothrowDefaultCtor</span> = std::is_nothrow_default_constructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasNothrowDefaultCtor</span> = std::is_nothrow_default_constructible&lt;T&gt;::value ;
 
 /* const HasCopyCtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasCopyCtor</span> = std::is_copy_constructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasCopyCtor</span> = std::is_copy_constructible&lt;T&gt;::value ;
 
 /* const HasNothrowCopyCtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasNothrowCopyCtor</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasNothrowCopyCtor</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value ;
 
 /* const HasMoveCtor&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">HasMoveCtor</span> = std::is_move_constructible&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">HasMoveCtor</span> = std::is_move_constructible&lt;T&gt;::value ;
 
 /* const IsCopyable&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">IsCopyable</span> = std::is_copy_constructible&lt;T&gt;::value && std::is_copy_assignable&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">IsCopyable</span> = std::is_copy_constructible&lt;T&gt;::value && std::is_copy_assignable&lt;T&gt;::value ;
 
 /* const IsNothrowCopyable&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">IsNothrowCopyable</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value && std::is_nothrow_copy_assignable&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">IsNothrowCopyable</span> = std::is_nothrow_copy_constructible&lt;T&gt;::value && std::is_nothrow_copy_assignable&lt;T&gt;::value ;
 
 /* const IsMovable&lt;T&gt; */
 
 template &lt;class T&gt;
-const bool <span class="Att">IsMovable</span> = std::is_move_constructible&lt;T&gt;::value && std::is_move_assignable&lt;T&gt;::value ;
+inline constexpr bool <span class="Att">IsMovable</span> = std::is_move_constructible&lt;T&gt;::value && std::is_move_assignable&lt;T&gt;::value ;
 
 /* const IsBaseOf&lt;B,D&gt; */
 
 template &lt;class B,class D&gt;
-const bool <span class="Att">IsBaseOf</span> = std::is_base_of&lt;B,D&gt;::value ;
+inline constexpr bool <span class="Att">IsBaseOf</span> = std::is_base_of&lt;B,D&gt;::value ;
 
 </pre>
 
