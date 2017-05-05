@@ -26,7 +26,7 @@ namespace CCore {
 /* const MaxUInt<UInt> */
 
 template <UIntType UInt>
-const UInt MaxUInt = UInt(-1) ;
+inline constexpr UInt MaxUInt = UInt(-1) ;
 
 /* functions */
 
@@ -52,7 +52,7 @@ template <UIntType UInt> class BitScanner;
 template <UIntType UInt,UIntType ExtUInt> requires ( 2*Meta::UIntBits<UInt> <= Meta::UIntBits<ExtUInt> )
 struct UIntMulFunc<UInt,ExtUInt>
  {
-  static const unsigned Bits = Meta::UIntBits<UInt> ;
+  static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
   static ExtUInt Combine(UInt hi,UInt lo)
    {
@@ -183,13 +183,13 @@ struct UIntMulFunc<UInt,ExtUInt>
 template <UIntType UInt>
 struct UIntBitFunc_gen
  {
-  static const unsigned Bits = Meta::UIntBits<UInt> ;
+  static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
-  static const UInt MaxUnsigned = MaxUInt<UInt> ;
+  static constexpr UInt MaxUnsigned = MaxUInt<UInt> ;
 
-  static const UInt MSBit = MaxUnsigned^(MaxUnsigned>>1) ;
+  static constexpr UInt MSBit = MaxUnsigned^(MaxUnsigned>>1) ;
 
-  static const unsigned ScanBits = Meta::UIntBits<Quick::ScanUInt> ;
+  static constexpr unsigned ScanBits = Meta::UIntBits<Quick::ScanUInt> ;
 
   static unsigned CountZeroMSB(UInt a)
    {
@@ -266,7 +266,7 @@ struct UIntBitFunc<UInt> : UIntBitFunc_gen<UInt> {};
 template <UIntType UInt> requires ( MaxUInt<UInt> <= MaxUInt<Quick::ScanUInt> )
 struct UIntBitFunc<UInt>
  {
-  static const unsigned Bits = Meta::UIntBits<UInt> ;
+  static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
   static unsigned CountZeroMSB(UInt a)
    {
@@ -297,15 +297,15 @@ struct UIntFunc : UIntMulFunc<UInt> , UIntBitFunc<UInt>
  {
   // consts
 
-  static const unsigned Bits = Meta::UIntBits<UInt> ;
+  static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
-  static const UInt MaxUnsigned = MaxUInt<UInt> ;
+  static constexpr UInt MaxUnsigned = MaxUInt<UInt> ;
 
-  static const UInt MSBit = MaxUnsigned^(MaxUnsigned>>1) ;
+  static constexpr UInt MSBit = MaxUnsigned^(MaxUnsigned>>1) ;
 
-  static const UInt MaxPositive = MaxUnsigned>>1 ;
+  static constexpr UInt MaxPositive = MaxUnsigned>>1 ;
 
-  static const UInt MinNegative = MSBit ;
+  static constexpr UInt MinNegative = MSBit ;
 
   // sign
 

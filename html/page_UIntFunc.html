@@ -43,15 +43,15 @@ struct <span class="Att">UIntFunc</span>
  {
   // consts
 
-  static const unsigned <span class="Att">Bits</span> = .... ; // the number of bits
+  static constexpr unsigned <span class="Att">Bits</span> = .... ; // the number of bits
   
-  static const UInt <span class="Att">MaxUnsigned</span> ; // 111...111
+  static constexpr UInt <span class="Att">MaxUnsigned</span> ; // 111...111
   
-  static const UInt <span class="Att">MSBit</span> ;       // 100...000
+  static constexpr UInt <span class="Att">MSBit</span> ;       // 100...000
   
-  static const UInt <span class="Att">MaxPositive</span> ; // 011...111
+  static constexpr UInt <span class="Att">MaxPositive</span> ; // 011...111
   
-  static const UInt <span class="Att">MinNegative</span> ; // 100...000
+  static constexpr UInt <span class="Att">MinNegative</span> ; // 100...000
 
 </pre>
 
@@ -273,7 +273,7 @@ the result is represented by a single length value, otherwise the behavior is un
 <pre>
 
 template &lt;UIntType UInt&gt;
-const UInt <span class="Att">MaxUInt</span> = UInt(-1) ;
+inline constexpr UInt <span class="Att">MaxUInt</span> = UInt(-1) ;
 
 </pre>
 

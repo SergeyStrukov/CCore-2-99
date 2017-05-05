@@ -33,7 +33,7 @@ template <UIntType UInt,UInt ... CC> struct UIntConstAddCtor;
 template <UIntType UInt>
 struct UIntSat
  {
-  static const UInt MaxVal = MaxUInt<UInt> ;
+  static constexpr UInt MaxVal = MaxUInt<UInt> ;
 
   UInt value;
   bool overflow;
@@ -76,12 +76,12 @@ struct UIntSat
 /* const UIntConstAdd2<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B> requires ( A <= MaxUInt<UInt> - B )
-const UInt UIntConstAdd2 = A + B ;
+inline constexpr UInt UIntConstAdd2 = A + B ;
 
 /* const UIntConstAdd<UInt,UInt CC> */
 
 template <UIntType UInt,UInt ... CC>
-const UInt UIntConstAdd = UIntConstAddCtor<UInt,CC...>::Ret ;
+inline constexpr UInt UIntConstAdd = UIntConstAddCtor<UInt,CC...>::Ret ;
 
 /* struct UIntConstAddCtor<UInt,UInt CC> */
 
@@ -100,12 +100,12 @@ struct UIntConstAddCtor<UInt,C,CC...>
 /* const UIntConstMul<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B> requires ( B == 0 || A <= MaxUInt<UInt> / B )
-const UInt UIntConstMul = A * B ;
+inline constexpr UInt UIntConstMul = A * B ;
 
 /* const UIntConstSub<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B> requires ( A >= B )
-const UInt UIntConstSub = A - B ;
+inline constexpr UInt UIntConstSub = A - B ;
 
 /* type ULenSat */
 

@@ -22,9 +22,9 @@ namespace CCore {
 
 /* consts */
 
-const ulen TextBufLen = 256 ;
+inline constexpr ulen TextBufLen = 256 ;
 
-const ulen MaxULen = ulen(-1) ;
+inline constexpr ulen MaxULen = ulen(-1) ;
 
 /* unit functions */
 

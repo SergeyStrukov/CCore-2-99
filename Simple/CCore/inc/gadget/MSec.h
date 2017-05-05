@@ -59,13 +59,13 @@ struct MSecUnit
 
 /* consts */
 
-constexpr MSecUnit tuMSec(1);
+inline constexpr MSecUnit tuMSec(1);
 
-constexpr MSecUnit tuSec(1000);
+inline constexpr MSecUnit tuSec(1000);
 
-constexpr MSecUnit tuMin(60*1000);
+inline constexpr MSecUnit tuMin(60*1000);
 
-constexpr MSecUnit tuHour(60*60*1000);
+inline constexpr MSecUnit tuHour(60*60*1000);
 
 /* struct MSec */
 

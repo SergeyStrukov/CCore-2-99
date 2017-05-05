@@ -46,13 +46,13 @@ struct SIntFunc
 
   // consts
 
-  static const UInt MaxPositiveAbs = UIntFunc<UInt>::MaxPositive ; // 2's complement property
+  static constexpr UInt MaxPositiveAbs = UIntFunc<UInt>::MaxPositive ; // 2's complement property
 
-  static const UInt MinNegativeAbs = UIntFunc<UInt>::MinNegative ; // 2's complement property
+  static constexpr UInt MinNegativeAbs = UIntFunc<UInt>::MinNegative ; // 2's complement property
 
-  static const SInt MaxPositive = SInt(MaxPositiveAbs) ;
+  static constexpr SInt MaxPositive = SInt(MaxPositiveAbs) ;
 
-  static const SInt MinNegative = SInt(MinNegativeAbs) ;
+  static constexpr SInt MinNegative = SInt(MinNegativeAbs) ;
 
   // abs
 
