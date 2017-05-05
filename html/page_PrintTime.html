@@ -31,30 +31,19 @@
 <p class="Files">Files <b>CCore/inc/PrintTime.h</b> <b>CCore/src/PrintTime.cpp</b></p>
 
 <p>
-<b>PrintTime()</b> is a <b>Creator function</b> to build an object of the <b>PrintTimeType</b>.
+<b>PrintTime</b> is a <b>Helper Type</b>, it prints a time, represented by an unsigned integral type in seconds.
 </p>
 
 <pre>
 
 template &lt;UIntType UInt&gt;
-PrintTimeType&lt;UInt&gt; <span class="Att">PrintTime</span>(UInt value) { return PrintTimeType&lt;UInt&gt;(value); }
-
-</pre>
-
-<p>
-<b>PrintTimeType</b> is a <b>Helper Type</b>, it prints a time, represented by an unsigned integral type in seconds.
-</p>
-
-<pre>
-
-template &lt;UIntType UInt&gt;
-class <span class="Att">PrintTimeType</span>
+class <span class="Att">PrintTime</span>
  {
    UInt value;
    
   public: 
   
-   explicit PrintTimeType(UInt value_) : value(value_) {}
+   explicit PrintTime(UInt value_) : value(value_) {}
   
    void print(PrinterType &amp;out) const;
  };

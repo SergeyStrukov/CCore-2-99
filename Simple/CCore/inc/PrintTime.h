@@ -22,18 +22,18 @@ namespace CCore {
 
 /* classes */
 
-template <UIntType UInt> class PrintTimeType;
+template <UIntType UInt> class PrintTime;
 
-/* class PrintTimeType<UInt> */
+/* class PrintTime<UInt> */
 
 template <UIntType UInt>
-class PrintTimeType
+class PrintTime
  {
    UInt value;
 
   public:
 
-   explicit PrintTimeType(UInt value_) : value(value_) {}
+   explicit PrintTime(UInt value_) : value(value_) {}
 
    void print(PrinterType &out) const
     {
@@ -49,11 +49,6 @@ class PrintTimeType
      Printf(out,"#2i;:#2i;:#2i;",thour,tmin,tsec);
     }
  };
-
-/* PrintTime() */
-
-template <UIntType UInt>
-PrintTimeType<UInt> PrintTime(UInt value) { return PrintTimeType<UInt>(value); }
 
 } // namespace CCore
 

@@ -24,7 +24,7 @@ namespace CCore {
 
 template <class FuncInit> struct FunctorTypeOfCtor;
 
-template <class T> struct FunctorRefType;
+template <class T> struct FunctorRef;
 
 /* concept Has_FunctorType<T> */
 
@@ -73,24 +73,19 @@ concept bool FuncInitType = FuncInitArgType<FuncInit,AA...> && requires(FuncInit
   requires ( FuncType<FunctorTypeOf<FuncInit>,R,AA...> );
  } ;
 
-/* struct FunctorRefType<T> */
+/* struct FunctorRef<T> */
 
 template <class T>
-struct FunctorRefType
+struct FunctorRef
  {
   T *obj;
 
-  explicit FunctorRefType(T &obj_) : obj(&obj_) {}
+  explicit FunctorRef(T &obj_) : obj(&obj_) {}
 
   using FunctorType = T & ;
 
   operator FunctorType() const { return *obj; }
  };
-
-/* FunctorRef() */
-
-template <class T>
-FunctorRefType<T> FunctorRef(T &obj) { return FunctorRefType<T>(obj); }
 
 } // namespace CCore
 

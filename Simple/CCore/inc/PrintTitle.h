@@ -22,18 +22,18 @@ namespace CCore {
 
 /* classes */
 
-template <class T> class PrintTitleType;
+template <class T> class PrintTitle;
 
-/* class PrintTitleType<T> */
+/* class PrintTitle<T> */
 
 template <class T>
-class PrintTitleType
+class PrintTitle
  {
    const T &obj;
 
   public:
 
-   explicit PrintTitleType(const T &obj_) : obj(obj_) {}
+   explicit PrintTitle(const T &obj_) : obj(obj_) {}
 
    using PrintOptType = TitlePrintOpt ;
 
@@ -51,11 +51,6 @@ class PrintTitleType
      out.put(opt.border,PosSub(opt.width,opt.off,out_count.getCount(),2u));
     }
  };
-
-/* PrintTitle() */
-
-template <class T>
-PrintTitleType<T> PrintTitle(const T &obj) { return PrintTitleType<T>(obj); }
 
 } // namespace CCore
 

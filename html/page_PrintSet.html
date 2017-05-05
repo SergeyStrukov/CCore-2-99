@@ -31,31 +31,20 @@
 <p class="Files">Files <b>CCore/inc/PrintSet.h</b> <b>CCore/src/PrintSet.cpp</b></p>
 
 <p>
-<b>PrintSet()</b> is a <b>Creator function</b> to build an object of the <b>PrintSetType</b>.
-</p>
-
-<pre>
-
-template &lt;CursorType R&gt;
-PrintSetType&lt;R&gt; <span class="Att">PrintSet</span>(const R &amp;range) { return PrintSetType&lt;R&gt;(range); }
-
-</pre>
-
-<p>
-<b>PrintSetType</b> is a <b>Helper Type</b>, it prints some list of objects in "{ ... }" form. The type <b>R</b> 
+<b>PrintSet</b> is a <b>Helper Type</b>, it prints some list of objects in "{ ... }" form. The type <b>R</b> 
 must be a <b>Cursor</b> to iterate through the list of objects.
 </p>
 
 <pre>
 
-template &lt;CursorType R,class T=Meta::RangeObjType&lt;R&gt; &gt; requires ( CursorOverType&lt;R,T&gt; )
-class <span class="Att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
+template &lt;CursorType R,class T=Meta::PtrObjType&lt;R&gt; &gt; requires ( CursorOverType&lt;R,T&gt; )
+class <span class="Att">PrintSet</span> : public PrintOptAdapter&lt;T&gt;
  {
    R range;
    
   public: 
  
-   explicit PrintSetType(const R &amp;range_) : range(range_) {}
+   explicit PrintSet(const R &amp;range_) : range(range_) {}
   
    void print(PrinterType &amp;out) const;
    
