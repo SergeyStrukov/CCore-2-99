@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/ObjHost.h</b> <b>CCore/src/ObjHost.cpp</b></p>
 
 <p>
-<b>ObjectHost</b> can host a set of objects. Each object is identified by its name.
+<b>ObjHost</b> can host a set of objects. Each object is identified by its name.
 </p>
 
 <h4>ObjBase</h4>
@@ -42,7 +42,7 @@
 
 <pre>
 
-class <span class="Att">ObjBase</span> : public MemBase_nocopy , public InterfaceHost
+class <span class="Att">ObjBase</span> : public NoCopyBase&lt;MemBase,InterfaceHost&gt;
  {
    ....
 
@@ -98,7 +98,7 @@ class <span class="Att">ObjHost</span> : NoCopy
    
    static ObjHost &amp; Default();
    
-   template &lt;class Info&gt; class List;
+   template &lt;ObjInfoType Info&gt; class List;
  };
 
 </pre>
@@ -272,7 +272,7 @@ This class can be used to build a list of records with information about objects
 
 <pre>
 
-template &lt;class Info&gt;
+template &lt;ObjInfoType Info&gt;
 class <span class="Att">ObjHost::List</span> : NoCopy
  {
    ....
@@ -330,8 +330,7 @@ struct <span class="Att">ObjInfo</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -363,8 +362,7 @@ struct <span class="Att">ObjInfo_obj</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -382,7 +380,7 @@ interface.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;UnidType T&gt;
 struct <span class="Att">ObjInfo_if</span>
  {
   ....
@@ -393,8 +391,7 @@ struct <span class="Att">ObjInfo_if</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -412,7 +409,7 @@ implementing the given interface.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;UnidType T&gt;
 struct <span class="Att">ObjInfo_obj_if</span>
  {
   ....
@@ -430,8 +427,7 @@ struct <span class="Att">ObjInfo_obj_if</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>

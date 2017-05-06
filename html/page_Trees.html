@@ -870,13 +870,18 @@ struct <span class="Att">RBTreeLink</span>
   K key; // unique
   RBFlag flag;
 
+  RBTreeLink() {}
+
+  template &lt;class ... SS&gt;
+  explicit RBTreeLink(SS &amp;&amp; ... ss) : key( std::forward&lt;SS&gt;(ss)... ) {}
+
   using Node = RBTreeLink&lt;T,K&gt; ;
   
-  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BaseAlgo;
+  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; requires ( RBTreeKeyTypes&lt;K,KRef&gt; ) struct BaseAlgo;
   
-  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct Algo;
+  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K,void (*CopyKeyFunc)(K &amp;,KRef)=DoCopyKey&gt; requires ( RBTreeKeyTypes&lt;K,KRef&gt; ) struct Algo;
   
-  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct AltAlgo;
+  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K,void (*CopyKeyFunc)(K &amp;,KRef)=DoCopyKey&gt; requires ( RBTreeKeyTypes&lt;K,KRef&gt; ) struct AltAlgo;
  };
 
 </pre>
@@ -906,6 +911,64 @@ struct <span class="Att">BaseAlgo</span>
 
   static T * FindMax(T *root,KRef key); // max <= key
   
+  // struct Cur
+
+  struct Cur
+   {
+    T *ptr;
+
+    // constructors
+
+    Cur() noexcept : ptr(0) {}
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -&gt; () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { return Cur(Link(ptr).lo); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct RevCur
+   {
+    T *ptr;
+
+    // constructors
+
+    RevCur() noexcept : ptr(0) {}
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -&gt; () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { return RevCur(Link(ptr).lo); }
+   };
+
   // struct Check
   
   struct <span class="Att">Check</span>
@@ -924,10 +987,18 @@ struct <span class="Att">BaseAlgo</span>
 </pre>
 
 <p>
-This package contains find operations and the <b>Check</b>. Find operations are exactly the same as find operations 
+This package contains find operations, recursors and the <b>Check</b>. Find operations are exactly the same as find operations 
 of the <b>TreeLink</b>. <b>Check</b> has the same meaning too. It just has different arguments: there are no
 range variables. And it returns additional information: <b>height</b> is a black height of the tree, 
 <b>black_black</b> is <b>true</b>, if two root arrows of the tree are black.
+</p>
+
+<p>
+<b>Cur</b> is a direct recursor to iterate over the tree elements.
+</p>
+
+<p>
+<b>RevCur</b> is a inverse recursor to iterate over the tree elements.
 </p>
 
 <pre>
@@ -977,6 +1048,10 @@ There are four delete functions with the same semantic as <b>TreeLink</b> delete
     
     bool operator ! () const { return !root; }
     
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
+
     // find
     
     T * find(KRef key) const { return Find(root,key); }
@@ -1035,7 +1110,11 @@ Its arguments are: the root double pointer (or the reference to a <b>Root</b> ob
 There are two cases. First,
 there exist an element with the given key already. In such case, the pointer to this element is returned
 in the member <b>found</b>. Otherwise, <b>found</b> is null and you may do insert using the method <b>complete()</b>.
-You must provide an element to be inserted. The key will be placed into the link of this element.
+You must provide an element to be inserted. 
+The last template parameter <b>CopyKeyFunc</b> determines the way of the key handling. If this function is <b>DoCopyKey</b>,
+the key will be placed into the link of this element by copying. This mode requires that <b>K</b> can be nothrow copied from the <b>KRef</b>.
+If this function is <b>NoCopyKey</b>, then no key copying is performed. Ih this case the caller is responsible for creation of the element
+with the proper key using the non-default constructor.
 If you do not complete the operation, the tree remains in the original logical state, but probably
 with some tree structure modifications.
 </p>
@@ -1058,11 +1137,16 @@ struct <span class="Att">RBTreeUpLink</span>
   K key; // unique
   RBFlag flag;
 
+  RBTreeUpLink() {}
+
+  template &lt;class ... SS&gt;
+  explicit RBTreeUpLink(SS &amp;&amp; ... ss) : key( std::forward&lt;SS&gt;(ss)... ) {}
+
   using Node = RBTreeUpLink&lt;T,K&gt; ;
   
-  template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BaseAlgo;
+  template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; requires ( RBTreeKeyTypes&lt;K,KRef&gt; ) struct BaseAlgo;
   
-  template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct Algo;
+  template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K,void (*CopyKeyFunc)(K &amp;,KRef)=DoCopyKey&gt; requires ( RBTreeKeyTypes&lt;K,KRef&gt; ) struct Algo;
  };
 
 </pre>

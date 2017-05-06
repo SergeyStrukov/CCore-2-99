@@ -124,11 +124,11 @@ class CompactList : NoCopy
 
    CountCur<T> begin() { return CountCur<T>(list.start(),getCount()); }
 
-   CountCur<T> end() { return CountCur<T>(); }
+   ulen end() { return 0; }
 
    CountCur<const T> begin() const { return CountCur<const T>(list.start(),getCount()); }
 
-   CountCur<const T> end() const { return CountCur<const T>(); }
+   ulen end() const { return 0; }
 
    // ins/del
 
@@ -376,22 +376,22 @@ class CompactList2 : NoCopy
 
    CountCur<T> begin() { return CountCur<T>(list.start(),getCount()); }
 
-   CountCur<T> end() { return CountCur<T>(); }
+   ulen end() { return 0; }
 
    CountCur<const T> begin() const { return CountCur<const T>(list.start(),getCount()); }
 
-   CountCur<const T> end() const { return CountCur<const T>(); }
+   ulen end() const { return 0; }
 
    template <class S>
    using RevCountCur = ListCountCursor<typename Algo::RevCur,S> ;
 
    RevCountCur<T> rbegin() { return RevCountCur<T>(list.start_rev(),getCount()); }
 
-   RevCountCur<T> rend() { return RevCountCur<T>(); }
+   ulen rend() { return 0; }
 
    RevCountCur<const T> rbegin() const { return RevCountCur<const T>(list.start_rev(),getCount()); }
 
-   RevCountCur<const T> rend() const { return RevCountCur<const T>(); }
+   ulen rend() const { return 0; }
 
    template <class S>
    struct ReverseAdapter
@@ -402,7 +402,7 @@ class CompactList2 : NoCopy
 
      RevCountCur<S> begin() const { return cur; }
 
-     RevCountCur<S> end() const { return RevCountCur<S>(); }
+     ulen end() const { return 0; }
     };
 
    ReverseAdapter<T> reverse() { return rbegin(); }
@@ -756,11 +756,11 @@ class CompactCircularList : NoCopy
 
    CountCur<T> begin() { return CountCur<T>(list.top,getCount()); }
 
-   CountCur<T> end() { return CountCur<T>(); }
+   ulen end() { return 0; }
 
    CountCur<const T> begin() const { return CountCur<const T>(list.top,getCount()); }
 
-   CountCur<const T> end() const { return CountCur<const T>(); }
+   ulen end() const { return 0; }
 
    struct RevFreeCur
     {
@@ -786,11 +786,11 @@ class CompactCircularList : NoCopy
 
    RevCountCur<T> rbegin() { return RevCountCur<T>(list.top,getCount()); }
 
-   RevCountCur<T> rend() { return RevCountCur<T>(); }
+   ulen rend() { return 0; }
 
    RevCountCur<const T> rbegin() const { return RevCountCur<const T>(list.top,getCount()); }
 
-   RevCountCur<const T> rend() const { return RevCountCur<const T>(); }
+   ulen rend() const { return 0; }
 
    template <class S>
    struct ReverseAdapter
@@ -801,7 +801,7 @@ class CompactCircularList : NoCopy
 
      RevCountCur<S> begin() const { return cur; }
 
-     RevCountCur<S> end() const { return RevCountCur<S>(); }
+     ulen end() const { return 0; }
     };
 
    ReverseAdapter<T> reverse() { return rbegin(); }

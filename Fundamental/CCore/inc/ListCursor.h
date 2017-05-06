@@ -84,7 +84,7 @@ struct ListCountCursor
 
   void operator ++ () { ++cur; count--; }
 
-  bool operator != (ListCountCursor<Cur,T> obj) const { return count!=obj.count; }
+  bool operator != (ulen end_count) const { return count!=end_count; }
  };
 
 } // namespace CCore

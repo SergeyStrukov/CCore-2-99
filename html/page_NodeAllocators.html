@@ -72,7 +72,7 @@ class <span class="Att">NodeAllocator</span> : NoCopy
    // methods
    
    template &lt;class ... SS&gt;
-   Node * alloc(SS &amp;&amp; ... ss);
+   Node * alloc(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;Node,SS...&gt; ) ;
   
    void free_nonnull(Node *node);
    
@@ -131,7 +131,7 @@ compact variants of lists and maps.
 
 <pre>
 
-template &lt;class Node&gt;
+template &lt;NothrowDtorType Node&gt;
 class <span class="Att">NodePoolAllocator</span> : NoCopy
  {
    ....
@@ -163,7 +163,7 @@ class <span class="Att">NodePoolAllocator</span> : NoCopy
    // methods
    
    template &lt;class ... SS&gt;
-   Node * alloc(SS &amp;&amp; ... ss);
+   Node * alloc(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;Node,SS...&gt; ) ;
   
    void free_nonnull(Node *node);
    

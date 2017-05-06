@@ -47,7 +47,7 @@ This is a variant of the <a href="page_ContainerLists.html#LinearDList">LinearDL
 
 <pre>
 
-template &lt;class T&gt; 
+template &lt;NothrowDtorType T&gt; 
 class <span class="Att">CompactList</span> : NoCopy
  {
    ....
@@ -121,22 +121,22 @@ class <span class="Att">CompactList</span> : NoCopy
    
    CountCur&lt;T&gt; begin();
    
-   CountCur&lt;T&gt; end();
+   ulen end();
    
    CountCur&lt;const T&gt; begin() const;
    
-   CountCur&lt;const T&gt; end() const;
+   ulen end() const;
    
    // ins/del
 
    template &lt;class ... SS&gt;
-   T * ins(SS &amp;&amp; ... ss);
+   T * ins(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    template &lt;class S,class ... SS&gt;
-   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    bool del();
    
@@ -147,14 +147,11 @@ class <span class="Att">CompactList</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init);
+   auto apply(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   auto apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void apply_const(FuncInit func_init) const;
+   auto apply_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
    // swap/move objects
    
@@ -173,7 +170,7 @@ This is a variant of the <a href="page_ContainerLists.html#LinearDList2">LinearD
 
 <pre>
 
-template &lt;class T&gt; 
+template &lt;NothrowDtorType T&gt; 
 class <span class="Att">CompactList2</span> : NoCopy
  {
    ....
@@ -283,11 +280,11 @@ class <span class="Att">CompactList2</span> : NoCopy
    
    CountCur&lt;T&gt; begin();
    
-   CountCur&lt;T&gt; end();
+   ulen end();
    
    CountCur&lt;const T&gt; begin() const;
    
-   CountCur&lt;const T&gt; end() const;
+   ulen end() const;
    
    template &lt;class S&gt;
    struct RevCountCur
@@ -297,11 +294,11 @@ class <span class="Att">CompactList2</span> : NoCopy
    
    RevCountCur&lt;T&gt; rbegin();
    
-   RevCountCur&lt;T&gt; rend();
+   ulen rend();
    
    RevCountCur&lt;const T&gt; rbegin() const;
    
-   RevCountCur&lt;const T&gt; rend() const;
+   ulen rend() const;
    
    template &lt;class S&gt;
    struct ReverseAdapter
@@ -312,7 +309,7 @@ class <span class="Att">CompactList2</span> : NoCopy
      
      RevCountCur&lt;S&gt; begin() const { return cur; }
      
-     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+     ulen end() const { return 0; }
     };
    
    ReverseAdapter&lt;T&gt; reverse();
@@ -324,22 +321,22 @@ class <span class="Att">CompactList2</span> : NoCopy
    // ins/del
 
    template &lt;class ... SS&gt;
-   T * insFirst(SS &amp;&amp; ... ss);
+   T * insFirst(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    template &lt;class ... SS&gt;
-   T * insLast(SS &amp;&amp; ... ss);
+   T * insLast(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    template &lt;class S,class ... SS&gt;
-   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insBefore(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insBefore(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    bool delFirst();
    
@@ -355,23 +352,17 @@ class <span class="Att">CompactList2</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init);
+   auto apply(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   auto apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void apply_const(FuncInit func_init) const;
+   auto apply_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
+
+   auto applyReverse(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init);
+   auto applyReverse(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init) const;
-   
-   template &lt;class FuncInit&gt;
-   void applyReverse_const(FuncInit func_init) const;
+   auto applyReverse_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
    // swap/move objects
    
@@ -390,7 +381,7 @@ This is a variant of the <a href="page_ContainerLists.html#CircularDList">Circul
 
 <pre>
 
-template &lt;class T&gt; 
+template &lt;NothrowDtorType T&gt; 
 class <span class="Att">CompactCircularList</span> : NoCopy
  {
    ....
@@ -494,11 +485,11 @@ class <span class="Att">CompactCircularList</span> : NoCopy
    
    CountCur&lt;T&gt; begin();
    
-   CountCur&lt;T&gt; end();
+   ulen end();
    
    CountCur&lt;const T&gt; begin() const;
    
-   CountCur&lt;const T&gt; end() const;
+   ulen end() const;
    
    template &lt;class S&gt;
    struct RevCountCur
@@ -508,11 +499,11 @@ class <span class="Att">CompactCircularList</span> : NoCopy
    
    RevCountCur&lt;T&gt; rbegin();
    
-   RevCountCur&lt;T&gt; rend();
+   ulen rend();
    
    RevCountCur&lt;const T&gt; rbegin() const;
    
-   RevCountCur&lt;const T&gt; rend() const;
+   ulen rend() const;
    
    template &lt;class S&gt;
    struct ReverseAdapter
@@ -523,7 +514,7 @@ class <span class="Att">CompactCircularList</span> : NoCopy
      
      RevCountCur&lt;S&gt; begin() const { return cur; }
      
-     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+     ulen end() const { return 0; }
     };
    
    ReverseAdapter&lt;T&gt; reverse();
@@ -535,22 +526,22 @@ class <span class="Att">CompactCircularList</span> : NoCopy
    // ins/del
 
    template &lt;class ... SS&gt;
-   T * insFirst(SS &amp;&amp; ... ss);
+   T * insFirst(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    template &lt;class ... SS&gt;
-   T * insLast(SS &amp;&amp; ... ss);
+   T * insLast(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    template &lt;class S,class ... SS&gt;
-   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insBefore(RevCur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   T * insBefore(RevCur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insAfter(Cur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   T * insAfter(Cur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    template &lt;class S,class ... SS&gt;
-   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ; // +pos   
    
    bool delFirst();
    
@@ -570,23 +561,17 @@ class <span class="Att">CompactCircularList</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init);
+   auto apply(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   auto apply(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void apply_const(FuncInit func_init) const;
+   auto apply_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
+
+   auto applyReverse(FuncInitArgType&lt;T &amp;&gt; func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init);
+   auto applyReverse(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyReverse(FuncInit func_init) const;
-   
-   template &lt;class FuncInit&gt;
-   void applyReverse_const(FuncInit func_init) const;
+   auto applyReverse_const(FuncInitArgType&lt;const T &amp;&gt; func_init) const;
    
    // swap/move objects
    
