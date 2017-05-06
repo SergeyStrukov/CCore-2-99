@@ -159,7 +159,7 @@ struct TreeLink<T,K>::BinAlgo
   // Locate
 
   template <class Ref>
-  static T ** Locate(T **root_ptr,Ref key) requires ( Meta::OneOf<Ref,KRef,const K &> )
+  static T ** Locate(T **root_ptr,Ref key) requires ( OneOfTypes<Ref,KRef,const K &> )
    {
     while( T *root=*root_ptr )
       {

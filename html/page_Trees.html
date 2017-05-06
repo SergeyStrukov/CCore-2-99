@@ -120,9 +120,9 @@ struct <span class="Att">TreeLink</span>
 
   using Node = TreeLink&lt;T,K&gt; ;
   
-  template &lt;TreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BinAlgo;
+  template &lt;TreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; requires ( TreeKeyTypes&lt;K,KRef&gt; ) struct BinAlgo;
    
-  template &lt;TreeLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
+  template &lt;TreeLink&lt;T,K&gt; T::* LinkMember&gt; requires ( UIntType&lt;K&gt; ) struct RadixAlgo;
  };
 
 </pre>
@@ -200,7 +200,8 @@ given <b>key</b>.
 
   // Locate
   
-  static T ** Locate(T **root_ptr,KRef key);
+  template &lt;class Ref&gt;
+  static T ** Locate(T **root_ptr,Ref key) requires ( OneOfTypes&lt;Ref,KRef,const K &amp;&gt; ) ;
 
   static T ** LocateMin(T **root_ptr);
 
@@ -241,7 +242,7 @@ These functions are required by the <b>Del...()</b> implementation, you probably
    
   static void Del(T **root_ptr,T *node); // node!=0
 
-  template &lt;class TestFunc,class DelFunc&gt;
+  template &lt;FuncType&lt;bool,T *&gt; TestFunc,FuncArgType&lt;T *&gt; DelFunc&gt;
   static void DelIf(T **root_ptr,TestFunc test_func,DelFunc del_func); // root_ptr!=0
 
 </pre>   
@@ -297,6 +298,76 @@ return <b>locate...()</b> results.
 
 <pre>
 
+  // struct Cur
+
+  struct <span class="Att">Cur</span>
+   {
+    T *ptr;
+
+    // constructors
+
+    Cur() noexcept : ptr(0) {}
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -&gt; () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { return Cur(Link(ptr).lo); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct <span class="Att">RevCur</span>
+   {
+    T *ptr;
+
+    // constructors
+
+    RevCur() noexcept : ptr(0) {}
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -&gt; () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { return RevCur(Link(ptr).lo); }
+   };
+
+</pre>
+
+<p>
+<b>Cur</b> is a direct recursor to iterate over the tree elements.
+</p>
+
+<p>
+<b>RevCur</b> is a inverse recursor to iterate over the tree elements.
+</p>
+
+<pre>
+
   // struct Root
   
   struct <span class="Att">Root</span>
@@ -315,6 +386,10 @@ return <b>locate...()</b> results.
     
     bool operator ! () const { return !root; }
     
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
+
     // find
     
     T * find(KRef key) const { return Find(root,key); }
@@ -353,7 +428,7 @@ return <b>locate...()</b> results.
     
     void del(T *node) { Del(&amp;root,node); }
 
-    template &lt;class TestFunc,class DelFunc&gt;
+    template &lt;FuncType&lt;bool,T *&gt; TestFunc,FuncArgType&lt;T *&gt; DelFunc&gt;
     void delIf(TestFunc test_func,DelFunc del_func) { DelIf(&root,test_func,del_func); }
    };
  };
@@ -458,16 +533,16 @@ And the <b>Lo</b> and <b>Hi</b> subtrees may have nodes with the same key as the
 template &lt;class T,class K&gt;
 struct <span class="Att">TreeUpLink</span>
  {
-  T *lo; // == this for same-key nodes
+  T *lo; // == cur for same-key nodes
   T *hi;
   T *up;
   K key; // non-unique
 
   using Node = TreeUpLink&lt;T,K&gt; ;
   
-  template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BinAlgo;
+  template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; requires ( TreeKeyTypes&lt;K,KRef&gt; ) struct BinAlgo;
    
-  template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
+  template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember&gt; requires ( UIntType&lt;K&gt; ) struct RadixAlgo;
  };
 
 </pre>
@@ -529,6 +604,76 @@ Again, the family of <b>Del...()</b> functions is the same.
 
 <pre>
 
+  // struct Cur
+
+  struct Cur
+   {
+    T *ptr;
+
+    // constructors
+
+    Cur() noexcept : ptr(0) {}
+
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -&gt; () const { return ptr; }
+
+    // recursor
+
+    Cur prev() const { T *lo=Link(ptr).lo; return Cur( (lo!=ptr)?lo:0 ); }
+
+    Cur next() const { return Cur(Link(ptr).hi); }
+   };
+
+  // struct RevCur
+
+  struct RevCur
+   {
+    T *ptr;
+
+    // constructors
+
+    RevCur() noexcept : ptr(0) {}
+
+    explicit RevCur(T *ptr_) : ptr(ptr_) {}
+
+    // object ptr
+
+    T * operator + () const { return ptr; }
+
+    bool operator ! () const { return !ptr; }
+
+    T & operator * () const { return *ptr; }
+
+    T * operator -&gt; () const { return ptr; }
+
+    // recursor
+
+    RevCur prev() const { return RevCur(Link(ptr).hi); }
+
+    RevCur next() const { T *lo=Link(ptr).lo; return RevCur( (lo!=ptr)?lo:0 ); }
+   };
+
+</pre>
+
+<p>
+<b>Cur</b> is a direct recursor to iterate over the tree elements.
+</p>
+
+<p>
+<b>RevCur</b> is a inverse recursor to iterate over the tree elements.
+</p>
+
+<pre>
+
   // struct Root
   
   struct <span class="Att">Root</span>
@@ -547,6 +692,10 @@ Again, the family of <b>Del...()</b> functions is the same.
     
     bool operator ! () const { return !root; }
     
+    Cur start() const { return Cur(root); }
+
+    RevCur start_rev() const { return RevCur(root); }
+
     // find
     
     T * find(KRef key) const { return Find(root,key); }
