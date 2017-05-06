@@ -47,7 +47,7 @@ This map is a variant of the <a href="page_TreeMaps.html#RBTreeMap">RBTreeMap</a
 
 <pre>
 
-template &lt;class K,class T,class KRef=K&gt; 
+template &lt;NothrowDtorType K,NothrowDtorType T,class KRef=K&gt; requires ( RBTreeMapKeyTypes&lt;K,KRef&gt; ) 
 class <span class="Att">CompactRBTreeMap</span> : NoCopy
  {
    ....
@@ -167,16 +167,17 @@ class <span class="Att">CompactRBTreeMap</span> : NoCopy
    
    struct Result
     {
+     const K *key;
      T *obj;
      bool new_flag;
      
-     Result(T *obj_,bool new_flag_) : obj(obj_),new_flag(new_flag_) {}
-     
+     Result(const K *key_,T *obj_,bool new_flag_) : key(key_),obj(obj_),new_flag(new_flag_) {}
+    
      operator T * () const { return obj; }
     };
    
    template &lt;class ... SS&gt;
-   Result find_or_add(KRef key,SS &amp;&amp; ... ss);
+   Result find_or_add(KRef key,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    bool del(KRef key);
    
@@ -191,23 +192,23 @@ class <span class="Att">CompactRBTreeMap</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
-   void applyIncr(FuncInit func_init);
+   template &lt;FuncInitArgType&lt;const K &amp;,T &amp;&gt; FuncInit&gt;
+   auto applyIncr(FuncInit func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyDecr(FuncInit func_init);
+   template &lt;FuncInitArgType&lt;const K &amp;,T &amp;&gt; FuncInit&gt;
+   auto applyDecr(FuncInit func_init);
    
-   template &lt;class FuncInit&gt;
-   void applyIncr(FuncInit func_init) const;
+   template &lt;FuncInitArgType&lt;const K &amp;,const T &amp;&gt; FuncInit&gt;
+   auto applyIncr(FuncInit func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyDecr(FuncInit func_init) const;
+   template &lt;FuncInitArgType&lt;const K &amp;,const T &amp;&gt; FuncInit&gt;
+   auto applyDecr(FuncInit func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyIncr_const(FuncInit func_init) const;
+   template &lt;FuncInitArgType&lt;const K &amp;,const T &amp;&gt; FuncInit&gt;
+   auto applyIncr_const(FuncInit func_init) const;
    
-   template &lt;class FuncInit&gt;
-   void applyDecr_const(FuncInit func_init) const;
+   template &lt;FuncInitArgType&lt;const K &amp;,const T &amp;&gt; FuncInit&gt;
+   auto applyDecr_const(FuncInit func_init) const;
    
    // swap/move objects
    
@@ -226,7 +227,7 @@ This map is a variant of the <a href="page_TreeMaps.html#RadixTreeMap">RadixTree
 
 <pre>
 
-template &lt;class K,class T&gt; 
+template &lt;UIntType K,NothrowDtorType T&gt; 
 class <span class="Att">CompactRadixTreeMap</span> : NoCopy
  {
    ....
@@ -358,7 +359,7 @@ class <span class="Att">CompactRadixTreeMap</span> : NoCopy
     };
    
    template &lt;class ... SS&gt;
-   Result find_or_add(K key,SS &amp;&amp; ... ss);
+   Result find_or_add(K key,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    bool del(K key);
    
@@ -373,22 +374,22 @@ class <span class="Att">CompactRadixTreeMap</span> : NoCopy
    
    // apply
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;K,T &amp;&gt; FuncInit&gt;
    void applyIncr(FuncInit func_init);
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;K,T &amp;&gt; FuncInit&gt;
    void applyDecr(FuncInit func_init);
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;K,const T &amp;&gt; FuncInit&gt;
    void applyIncr(FuncInit func_init) const;
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;K,const T &amp;&gt; FuncInit&gt;
    void applyDecr(FuncInit func_init) const;
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;K,const T &amp;&gt; FuncInit&gt;
    void applyIncr_const(FuncInit func_init) const;
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;K,const T &amp;&gt; FuncInit&gt;
    void applyDecr_const(FuncInit func_init) const;
    
    // swap/move objects
