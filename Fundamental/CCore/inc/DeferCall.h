@@ -143,9 +143,9 @@ class DeferCallQueue : NoCopy
 
    static constexpr MSec DefaultTickPeriod = 40_msec ; // 25 Hz
 
-   static const unsigned DefaultTicksPerSec = 25 ;
+   static constexpr unsigned DefaultTicksPerSec = 25 ;
 
-   static const ulen DefaultMemLen = 1_MByte ;
+   static constexpr ulen DefaultMemLen = 1_MByte ;
 
    explicit DeferCallQueue(MSec tick_period=DefaultTickPeriod,ulen mem_len=DefaultMemLen);
 

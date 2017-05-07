@@ -269,9 +269,13 @@ class <span class="Att">DeferCallQueue</span> : NoCopy
    
    // constructors
    
-   static const ulen DefaultMemLen = 1_MByte ;
+   static constexpr MSec DefaultTickPeriod = 40_msec ; // 25 Hz
+
+   static constexpr unsigned DefaultTicksPerSec = 25 ;
+
+   static constexpr ulen DefaultMemLen = 1_MByte ;
    
-   explicit DeferCallQueue(ulen mem_len=DefaultMemLen);
+   explicit DeferCallQueue(MSec tick_period=DefaultTickPeriod,ulen mem_len=DefaultMemLen);
    
    ~DeferCallQueue();
    
@@ -298,9 +302,7 @@ class <span class="Att">DeferCallQueue</span> : NoCopy
    
    // loop
    
-   static constexpr MSec DefaultTickPeriod = 40_msec ; // 25 Hz 
-   
-   void loop(MSec tick_period=DefaultTickPeriod);
+   void loop();
    
    void stop();
    
@@ -308,9 +310,11 @@ class <span class="Att">DeferCallQueue</span> : NoCopy
    
    static DeferCallQueue * Get();
    
-   static void Loop(MSec tick_period=DefaultTickPeriod);
+   static bool IsActive();
+
+   static void Loop() { Get()->loop(); }
    
-   static void Stop();
+   static void Stop() { Get()->stop(); }
  };
 
 </pre>
@@ -333,7 +337,12 @@ If some object is already registered, an exception is thrown.
 </p>
 
 <p>
-<b>mem_len</b> is a heap capacity. All <b>DeferCall</b> objects for this loop are created in the heap of this capacity.
+The argument <b>tick_period</b> is the tick period, defaulted to the <b>DefaultTickPeriod</b>,
+equals 40 milliseconds, that gives 25 Hz tick frequency. The tick period is maintained as accurate, as possible.
+</p>
+
+<p>
+The argument <b>mem_len</b> is a heap capacity. All <b>DeferCall</b> objects for this loop are created in the heap of this capacity.
 </p>
 
 <p>
@@ -386,8 +395,7 @@ The next two methods are loop methods. You don't need to use these methods direc
 </p>
 
 <p>
-<b>loop()</b> starts the defer calls loop. The argument is the tick period, defaulted to the <b>DefaultTickPeriod</b>,
-equals 40 milliseconds, that gives 25 Hz tick frequency. The tick period is maintained as accurate, as possible.
+<b>loop()</b> starts the defer calls loop. 
 </p>
 
 <p>
@@ -395,11 +403,15 @@ equals 40 milliseconds, that gives 25 Hz tick frequency. The tick period is main
 </p>
 
 <p>
-Finally, three global methods.
+Finally, four global methods.
 </p>
 
 <p>
 <b>Get()</b> gets the active <b>DeferCallQueue</b> object. An exception is thrown, if there is no one.
+</p>
+
+<p>
+<b>IsActive()</b> is <b>true</b> iff there is an active <b>DeferCallQueue</b> for the current thread.
 </p>
 
 <p>
@@ -501,7 +513,7 @@ class <span class="Att">DeferTick</span> : NoCopy
    
    // constructors
    
-   explicit DeferTick(DeferCouple couple_={});
+   explicit DeferTick(DeferCouple couple=Nothing);
    
    ~DeferTick();
    
@@ -587,45 +599,45 @@ class <span class="Att">DeferInput</span> : NoCopy
    // post
    
    template &lt;class ... TT&gt;
-   DeferCouple create(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   DeferCouple create(void (S::* method)(TT... tt),const TT &amp; ... tt) requires ( ... &amp;&amp; CopyCtorType&lt;TT&gt; ) ; 
    
    template &lt;class ... TT&gt;
-   void post(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   void post(void (S::* method)(TT... tt),const TT &amp; ... tt) requires ( ... &amp;&amp; CopyCtorType&lt;TT&gt; ) ; 
    
    template &lt;class ... TT&gt;
-   void post_first(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   void post_first(void (S::* method)(TT... tt),const TT &amp; ... tt) requires ( ... &amp;&amp; CopyCtorType&lt;TT&gt; ) ; 
 
    // try post
    
    template &lt;class ... TT&gt;
-   DeferCouple try_create(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   DeferCouple try_create(void (S::* method)(TT... tt),const TT &amp; ... tt) requires ( ... &amp;&amp; CopyCtorType&lt;TT&gt; ) ; 
    
    template &lt;class ... TT&gt;
-   void try_post(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   void try_post(void (S::* method)(TT... tt),const TT &amp; ... tt) requires ( ... &amp;&amp; CopyCtorType&lt;TT&gt; ) ; 
    
    template &lt;class ... TT&gt;
-   void try_post_first(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   void try_post_first(void (S::* method)(TT... tt),const TT &amp; ... tt) requires ( ... &amp;&amp; CopyCtorType&lt;TT&gt; ) ; 
    
    // post interface
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;S &amp;&gt; FuncInit&gt;
    DeferCouple create(FuncInit func_init); // func(S &amp;)
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;S &amp;&gt; FuncInit&gt;
    void post(FuncInit func_init); 
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;S &amp;&gt; FuncInit&gt;
    void post_first(FuncInit func_init); 
    
    // try post interface
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;S &amp;&gt; FuncInit&gt;
    DeferCouple try_create(FuncInit func_init); // func(S &amp;)
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;S &amp;&gt; FuncInit&gt;
    void try_post(FuncInit func_init); 
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;S &amp;&gt; FuncInit&gt;
    void try_post_first(FuncInit func_init); 
  };
 

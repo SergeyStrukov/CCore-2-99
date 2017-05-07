@@ -154,8 +154,6 @@ bool DeferCallQueue::IsActive()
 
 /* class DeferCallQueue */
 
-constexpr MSec DeferCallQueue::DefaultTickPeriod ;
-
 void DeferCallQueue::cleanup() noexcept
  {
   while( DeferCall *defer_call=list.del_first() ) defer_call->destroy(this);

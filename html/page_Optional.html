@@ -48,10 +48,10 @@ class <span class="Att">Optional</span> : NoCopy
    
    ~Optional();
    
-   template &lt;unsigned slot,class T&gt;
+   template &lt;unsigned slot,NothrowDtorType T&gt;
    T * try_take();
    
-   template &lt;unsigned slot,class T&gt;
+   template &lt;unsigned slot,NothrowDtorType T&gt;
    T * take();
  };
 

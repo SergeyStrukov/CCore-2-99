@@ -99,6 +99,7 @@ class <span class="Att">Signal</span> : NoCopy
 
 <p>
 <b>assert()</b> asserts the signal. All subscribers are called. Subscriber may disconnect itself during the call.
+But the signal itself must not be destroyed, in such case the <b>Abort()</b> is called.
 </p>
 
 <p>
@@ -207,7 +208,7 @@ class <span class="Att">SignalInterface</span> : NoCopy
    
    // methods
    
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;I &amp;&gt; FuncInit&gt;
    void assert(FuncInit func_init); // func(I &amp;)
    
    // class ConnectorBase
