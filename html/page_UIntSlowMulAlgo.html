@@ -1,0 +1,125 @@
+<!--
+/* page_UIntSlowMulAlgo.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 3.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2017 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Unsigned multiplication and division</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Unsigned multiplication and division</h2>
+
+<p class="Files">Files <b>CCore/inc/math/UIntSlowMulAlgo.h</b> <b>CCore/src/math/UIntSlowMulAlgo.cpp</b></p>
+
+<p>
+This file contains two <b>Algorithm Package</b>s with unsigned integer algorithms.
+They are parametrized by some unsigned integral type.
+</p>
+
+<pre>
+
+/* struct UIntSlowMulAlgo&lt;UInt&gt; */
+
+template &lt;UIntType UInt&gt;
+struct <span class="Att">UIntSlowMulAlgo</span>
+ {
+  static constexpr unsigned Bits = Meta::UIntBits&lt;UInt&gt; ;
+
+  static constexpr UInt MaxVal = MaxUInt&lt;UInt&gt; ;
+
+  struct DoubleUMul
+   {
+    UInt hi;
+    UInt lo;
+
+    DoubleUMul(UInt a,UInt b);
+   };
+
+  static UInt Inv(UInt den);
+
+  static UInt LShift(UInt hi,UInt lo,unsigned shift);
+
+  static UInt DoubleUDiv(UInt hi,UInt lo,UInt den); // hi&lt;den
+ };
+
+</pre>
+
+<p>
+<b>Bits</b> is the number of bits of the type.
+</p>
+
+<p>
+<b>MaxVal</b> is the maximum value of the type.
+</p>
+
+<p>
+<b>DoubleUMul</b> is a <b>Class-function</b>, it creates a product of two values and returns the double-length result.
+</p>
+
+<p>
+<b>Inv()</b>
+</p>
+
+<p>
+<b>LShift()</b>
+</p>
+
+<p>
+<b>DoubleUDiv()</b>
+</p>
+
+<pre>
+
+/* struct UIntSlowMulFunc&lt;UInt&gt; */
+
+template &lt;UIntType UInt&gt;
+struct <span class="Att">UIntSlowMulFunc</span>
+ {
+  using Algo = UIntSlowMulAlgo&lt;UInt&gt; ;
+
+  using Mul = typename Algo::DoubleUMul ;
+
+  static UInt Div(UInt hi,UInt lo,UInt den);
+
+  static UInt Mod(UInt hi,UInt lo,UInt den);
+
+  static UInt MulDiv(UInt a,UInt b,UInt den);
+
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+
+    DivMod(UInt hi,UInt lo,UInt den);
+   };
+
+  static UInt ModMul(UInt a,UInt b,UInt mod);
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod);
+ };
+
+</pre>
+
+</body>
+
+</html>
+

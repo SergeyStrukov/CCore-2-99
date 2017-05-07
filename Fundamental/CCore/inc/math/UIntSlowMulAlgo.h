@@ -32,9 +32,9 @@ template <UIntType UInt> struct UIntSlowMulFunc;
 template <UIntType UInt>
 struct UIntSlowMulAlgo
  {
-  static const unsigned Bits = Meta::UIntBits<UInt> ;
+  static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
-  static const UInt MaxVal = MaxUInt<UInt> ;
+  static constexpr UInt MaxVal = MaxUInt<UInt> ;
 
   struct DoubleUMul
    {
