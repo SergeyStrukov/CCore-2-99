@@ -55,13 +55,13 @@ struct Data
 
   enum { SaveLoadLen = SaveLenCounter&lt;T1,T2,T3&gt;::SaveLoadLen };
   
-  template &lt;class Dev&gt;
+  template &lt;SaveDevType Dev&gt; // OR RangeSaveDevType
   void save(Dev &amp;dev) const
    {
     dev.template use&lt;BeOrder&gt;(t1,t2,t3);
    }
   
-  template &lt;class Dev&gt;
+  template &lt;LoadDevType Dev&gt; // OR RangeLoadDevType OR ExtraLoadDevType
   void load(Dev &amp;dev)
    {
     dev.template use&lt;BeOrder&gt;(t1,t2,t3);
@@ -159,25 +159,25 @@ couple.
 
 <pre>
 
-template &lt;class R,class Dev&gt;
+template &lt;CursorType R,class Dev&gt;
 void <span class="Att">SaveRange</span>(R r,Dev &amp;dev);
 
 template &lt;class T,class Dev&gt;
 void <span class="Att">SaveRange</span>(const T *ptr,ulen len,Dev &amp;dev);
   
-template &lt;class R,class Dev&gt;
+template &lt;CursorType R,class Dev&gt;
 void <span class="Att">LoadRange</span>(R r,Dev &amp;dev);
 
 template &lt;class T,class Dev&gt;
 void <span class="Att">LoadRange</span>(T *ptr,ulen len,Dev &amp;dev);
   
-template &lt;class Custom,class R,class Dev&gt;
+template &lt;class Custom,CursorType R,class Dev&gt;
 void <span class="Att">SaveRange_use</span>(R r,Dev &amp;dev);
 
 template &lt;class Custom,class T,class Dev&gt;
 void <span class="Att">SaveRange_use</span>(const T *ptr,ulen len,Dev &amp;dev);
   
-template &lt;class Custom,class R,class Dev&gt;
+template &lt;class Custom,CursorType R,class Dev&gt;
 void <span class="Att">LoadRange_use</span>(R r,Dev &amp;dev);
 
 template &lt;class Custom,class T,class Dev&gt;
@@ -240,14 +240,12 @@ struct <span class="Att">SaveLoadBe16</span>
   
   enum { SaveLoadLen = 2 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const
+  void save(SaveDevType &amp;dev) const
    {
     dev.put(buf,2);
    }
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev)
+  void load(LoadDevType &amp;dev)
    {
     dev.get(buf,2);
    }
@@ -269,11 +267,15 @@ class Dev
 
    // put
   
+   <b>[SaveDevType]</b>
+
    void put(uint8 value);
    
    void put(const uint8 *ptr,ulen len);
    
    void put(PtrLen&lt;const uint8&gt; data);
+
+   <b>[RangeSaveDevType]</b>
    
    PtrLen&lt;uint8&gt; putRange(ulen len);
    
@@ -332,11 +334,15 @@ class Dev
 
    // get
 
+   <b>[LoadDevType]</b>
+
    uint8 get();
    
    void get(uint8 *ptr,ulen len);
    
    void get(PtrLen&lt;uint8&gt; buf);
+
+   <b>[RangeLoadDevType]</b>
    
    PtrLen&lt;const uint8&gt; getRange(ulen len);
    
@@ -402,13 +408,13 @@ class <span class="Att">PutDevBase</span>
    
    // put
   
-   void put(uint8 value);
+   void put(uint8 value) requires ( CoreSaveDevType&lt;Dev&gt; ) ;
    
-   void put(const uint8 *ptr,ulen len);
+   void put(const uint8 *ptr,ulen len) requires ( CoreSaveDevType&lt;Dev&gt; ) ;
    
-   void put(PtrLen&lt;const uint8&gt; data);
+   void put(PtrLen&lt;const uint8&gt; data) requires ( CoreSaveDevType&lt;Dev&gt; ) ;
    
-   PtrLen&lt;uint8&gt; putRange(ulen len);
+   PtrLen&lt;uint8&gt; putRange(ulen len) requires ( CoreRangeSaveDevType&lt;Dev&gt; ) ;
    
    // save
    
@@ -432,13 +438,13 @@ class <span class="Att">GetDevBase</span>
    
    // get
 
-   uint8 get();
+   uint8 get() requires ( CoreLoadDevType&lt;Dev&gt; ) ;
    
-   void get(uint8 *ptr,ulen len);
+   void get(uint8 *ptr,ulen len) requires ( CoreLoadDevType&lt;Dev&gt; ) ;
    
-   void get(PtrLen&lt;uint8&gt; buf);
+   void get(PtrLen&lt;uint8&gt; buf) requires ( CoreLoadDevType&lt;Dev&gt; ) ;
    
-   PtrLen&lt;const uint8&gt; getRange(ulen len);
+   PtrLen&lt;const uint8&gt; getRange(ulen len) requires ( CoreRangeLoadDevType&lt;Dev&gt; ) ;
    
    // load
    
@@ -467,7 +473,7 @@ class Dev : public PutDevBase&lt;Dev&gt;
    
    void do_put(const uint8 *ptr,ulen len);
    
-   PtrLen&lt;uint8&gt; do_putRange(ulen len);
+   PtrLen&lt;uint8&gt; do_putRange(ulen len); // to get putRange() method
  };
 
 </pre>
@@ -484,7 +490,7 @@ class Dev : public GetDevBase&lt;Dev&gt;
    
    void do_get(uint8 *ptr,ulen len);
    
-   PtrLen&lt;const uint8&gt; do_getRange(ulen len);
+   PtrLen&lt;const uint8&gt; do_getRange(ulen len); // to get getRange() method 
  };
 
 </pre>
@@ -688,6 +694,8 @@ class <span class="Att">RangeGetDev</span>
    PtrLen&lt;const uint8&gt; getFinalRange(ulen len);
     
    void fail() { nok=true; }
+
+   // finish
    
    NegBool finish();
  };
@@ -707,8 +715,9 @@ Constructor argument is an input byte range.
 </b>
 
 <p>
-The next methods are the the standard serialization input device methods. They set the error flag
-in case of underflow. Load methods are optimized if a sequence of fixed serialization length objects are loaded.
+The next methods are the the standard serialization input device methods. 
+They set the error flag in case of underflow. 
+<span class="Alert">Load methods are optimized if a sequence of fixed serialization length objects are loaded.</span>
 </p>
 
 <p>

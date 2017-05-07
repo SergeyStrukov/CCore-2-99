@@ -54,7 +54,7 @@ class <span class="Att">StepEval</span> : public Ctx
       ~Gate(); 
       
       template &lt;class FuncInit&gt;
-      RetStep&lt;FunctorTypeOf&lt;FuncInit&gt; &gt; createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+      auto createStep(FuncInit func_init,StepId dep={0}); // dep executes after
       
       void delay(StepId dep);
       
@@ -74,7 +74,7 @@ class <span class="Att">StepEval</span> : public Ctx
    Gate * createGate(OpenFuncInit openfunc_init,FuncInit func_init);
    
    template &lt;class FuncInit&gt;
-   RetStep&lt;FunctorTypeOf&lt;FuncInit&gt; &gt; createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+   auto createStep(FuncInit func_init,StepId dep={0}); // dep executes after
    
    void run();
  };
@@ -86,7 +86,7 @@ using <span class="Att">StepGate</span> = typename StepEval&lt;Ctx&gt;::Gate ;
 
 <p>
 <b>StepEval</b> is a template, it inherits its template parameter &mdash; <b>Ctx</b>, which is some 
-execution context. <b>StepEval</b> constructor forwards its arguments to <b>Ctx</b> constructor.  
+execution context. <b>StepEval</b> constructor forwards its arguments to the <b>Ctx</b> constructor.  
 The only requirement for <b>Ctx</b> is it must provide the method <b>getAlloc()</b>. This method must return
 some <a href="page_NewDelete.html">alloc class</a> object to be used for functor space allocation/deallocation.
 You may use the default class <b>DefaultHeapAlloc</b>.
@@ -304,7 +304,7 @@ class Context : NoCopy
 
    using Gate = StepGate&lt;ContextPtr&gt; ;
    
-   struct Var : NoCopy , NoThrowFlagsBase
+   struct Var : NoCopy
     {
      int value;
      Expr *expr;
@@ -313,7 +313,7 @@ class Context : NoCopy
      Var() noexcept : value(0),expr(0),gate(0) {}
     };
    
-   DynArray&lt;Var&gt; table;
+   SimpleArray&lt;Var&gt; table;
 
    ....
 

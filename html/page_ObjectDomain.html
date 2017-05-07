@@ -305,7 +305,7 @@ class <span class="Att">ObjectDomain::ExtPtr</span>
    ExtPtr(const WeakPtr&lt;T&gt; &amp;obj); 
    
    template &lt;class ... SS&gt;
-   explicit ExtPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   explicit ExtPtr(ObjectDomain *domain,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS..&gt; ) ;
    
    ~ExtPtr();
    
@@ -378,7 +378,7 @@ class <span class="Att">ObjectDomain::IntPtr</span> // default copying
    IntPtr(const WeakPtr&lt;T&gt; &amp;obj);
    
    template &lt;class ... SS&gt;
-   explicit IntPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   explicit IntPtr(ObjectDomain *domain,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS..&gt; ) ;
   
    void nullify();
    
@@ -438,7 +438,7 @@ class <span class="Att">ObjectDomain::WeakPtr</span> // default copying
    WeakPtr(const IntPtr&lt;T&gt; &amp;obj);
    
    template &lt;class ... SS&gt;
-   explicit WeakPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   explicit WeakPtr(ObjectDomain *domain,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS..&gt; ) ;
   
    void nullify();
    
@@ -494,7 +494,7 @@ class <span class="Att">ExtDelObjPtr</span>
    ExtDelObjPtr(const IntDelObjPtr&lt;T&gt; &amp;obj);
    
    template &lt;class ... SS&gt;
-   ExtDelObjPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   ExtDelObjPtr(ObjectDomain *domain,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS..&gt; ) ;
    
    ~ExtDelObjPtr();
    
@@ -558,7 +558,7 @@ class <span class="Att">IntDelObjPtr</span>
    IntDelObjPtr(const ExtDelObjPtr&lt;T&gt; &amp;obj);
    
    template &lt;class ... SS&gt;
-   IntDelObjPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   IntDelObjPtr(ObjectDomain *domain,SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS..&gt; ) ;
    
    void nullify();
    
