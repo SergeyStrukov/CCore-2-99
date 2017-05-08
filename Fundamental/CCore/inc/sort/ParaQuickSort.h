@@ -32,10 +32,10 @@ template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct ParaQuickSo
 template <RanType Ran,SortContextType<Ran> Ctx>
 struct ParaQuickSort
  {
-  static const ulen MinLen      = 1000 ;
-  static const ulen JobQueueLen =  100 ;
-  static const ulen SplitLim    = 1000 ;
-  static const ulen SpawnLim    =  500 ;
+  static constexpr ulen MinLen      = 1000 ;
+  static constexpr ulen JobQueueLen =  100 ;
+  static constexpr ulen SplitLim    = 1000 ;
+  static constexpr ulen SpawnLim    =  500 ;
 
   template <ULenType Len> class SortEngine;
 

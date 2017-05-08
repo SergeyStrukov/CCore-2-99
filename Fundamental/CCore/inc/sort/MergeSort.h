@@ -31,7 +31,7 @@ template <RanType Ran,SortContextType<Ran> Ctx=SortCtx<Ran> > struct MergeSort;
 template <RanType Ran,SortContextType<Ran> Ctx>
 struct MergeSort
  {
-  static const ulen MedLen = 1000 ;
+  static constexpr ulen MedLen = 1000 ;
 
   template <ULenType Len>
   static void Permutate(Ran a,Len len,Ctx ctx,Len temp[]);
