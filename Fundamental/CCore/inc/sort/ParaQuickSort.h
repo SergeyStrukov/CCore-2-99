@@ -174,8 +174,8 @@ void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::sort(Ran a,Len len)
 template <RanType Ran,SortContextType<Ran> Ctx>
 template <ULenType Len>
 ParaQuickSort<Ran,Ctx>::SortEngine<Len>::SortEngine(Ctx ctx_,Ran a,Len len)
- : mutex("ParaQuickSort"),
-   sem("ParaQuickSort"),
+ : mutex("ParaQuickSort.mutex"),
+   sem("ParaQuickSort.sem"),
    ctx(ctx_)
  {
   spawn(a,len);

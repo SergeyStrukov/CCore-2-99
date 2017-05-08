@@ -46,7 +46,7 @@ class AttachmentHost : NoCopy
 
   public:
 
-   explicit AttachmentHost(StrLen class_name);
+   explicit AttachmentHost(StrLen class_name) : AttachmentHost(class_name,"AttachmentHost") {}
 
    AttachmentHost(StrLen class_name,TextLabel name);
 
@@ -88,12 +88,6 @@ class AttachmentHost : NoCopy
       T * operator -> () const { return obj; }
     };
  };
-
-template <class T>
-AttachmentHost<T>::AttachmentHost(StrLen class_name_)
- : class_name(class_name_)
- {
- }
 
 template <class T>
 AttachmentHost<T>::AttachmentHost(StrLen class_name_,TextLabel name)

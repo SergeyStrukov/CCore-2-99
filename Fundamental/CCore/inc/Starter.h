@@ -402,7 +402,8 @@ class Starter<T>::Run : NoCopy
 
    explicit Run(Starter<T> &starter_)
     : starter(starter_),
-      task_count(0)
+      task_count(0),
+      asem("Starter::Run")
     {
      if( starter_.run_lock++ )
        {

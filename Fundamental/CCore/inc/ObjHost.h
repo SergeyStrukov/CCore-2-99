@@ -97,7 +97,9 @@ class ObjBase : public NoCopyBase<MemBase,InterfaceHost>
 
   public:
 
-   ObjBase() : asem("ObjBase") {}
+   ObjBase() : ObjBase("ObjBase") {}
+
+   explicit ObjBase(TextLabel name) : asem(name) {}
 
    virtual ~ObjBase() {}
 
