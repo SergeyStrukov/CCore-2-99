@@ -201,10 +201,12 @@ If the type <b>T</b> has a scan option type
 
 <p>
 Sometimes you need to specify scan options using the object, not the format string. In such case use the
-function <b>BindScanOpt()</b>:
+class <b>BindScanOpt()</b>:
 </p>
 
 <pre>
+
+template &lt;class OptType,class T&gt; struct <span class="Att">BindScanOpt</span>;
 
 T obj;
 Opt opt;

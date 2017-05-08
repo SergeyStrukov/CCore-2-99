@@ -53,7 +53,7 @@ template <class S> class ScanfDev;
 
 template <class S> class ScanobjDev;
 
-template <class OptType,class T> struct BindScanOptType;
+template <class OptType,class T> struct BindScanOpt;
 
 template <class T,class ProxySet> struct ScanProxySet;
 
@@ -168,10 +168,10 @@ concept bool ScanableType2 = requires(ScanBase &inp,T &t)
  } ;
 
 template <class T>
-const bool IsScanableType = ScanableType2<T> ;
+inline constexpr bool IsScanableType = ScanableType2<T> ;
 
 template <class ... TT>
-const bool IsScanableType<Tuple<TT...> > = ( ... && IsScanableType< Meta::UnRef<TT> > ) ;
+inline constexpr bool IsScanableType<Tuple<TT...> > = ( ... && IsScanableType< Meta::UnRef<TT> > ) ;
 
 template <class T>
 concept bool ScanableType = IsScanableType< Meta::UnRef<T> > ;
@@ -180,8 +180,8 @@ concept bool ScanableType = IsScanableType< Meta::UnRef<T> > ;
 
 struct ScanfDevBase : NoCopy
  {
-  static const char OpenFormat  = '#' ;
-  static const char CloseFormat = ';' ;
+  static constexpr char OpenFormat  = '#' ;
+  static constexpr char CloseFormat = ';' ;
 
   static bool NotFound(char cur,char ch) { return cur && cur!=ch ;  }
 
@@ -398,26 +398,21 @@ class ScanobjDev<S> : NoCopy
     }
  };
 
-/* struct BindScanOptType<OptType,T> */
+/* struct BindScanOpt<OptType,T> */
 
 template <class OptType,class T>
-struct BindScanOptType
+struct BindScanOpt
  {
   const OptType &opt;
   T &t;
 
-  BindScanOptType(const OptType &opt_,T &t_) : opt(opt_),t(t_) {}
+  BindScanOpt(const OptType &opt_,T &t_) : opt(opt_),t(t_) {}
 
   void scan(ScannerType &inp)
    {
     ScanAdapter<T>::Scan(inp,opt,t);
    }
  };
-
-/* BindScanOpt() */
-
-template <class OptType,class T>
-BindScanOptType<OptType,T> BindScanOpt(const OptType &opt,T &t) { return BindScanOptType<OptType,T>(opt,t); }
 
 /* struct ScanProxySet<T,ProxySet> */
 

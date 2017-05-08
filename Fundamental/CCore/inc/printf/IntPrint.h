@@ -22,11 +22,11 @@ namespace CCore {
 
 /* consts */
 
-const unsigned MinIntBase =  2 ;
-const unsigned MaxIntBase = 16 ;
+inline constexpr unsigned MinIntBase =  2 ;
+inline constexpr unsigned MaxIntBase = 16 ;
 
-const unsigned MinIntFract =   1 ;
-const unsigned MaxIntFract = 100 ;
+inline constexpr unsigned MinIntFract =   1 ;
+inline constexpr unsigned MaxIntFract = 100 ;
 
 /* classes */
 
@@ -46,7 +46,7 @@ template <SIntType SInt> class SIntPrint;
 
 struct PrintDumpOptType;
 
-template <UIntType UInt> class PrintDumpType;
+template <UIntType UInt> class PrintDump;
 
 /* enum IntShowSign */
 
@@ -196,7 +196,7 @@ struct IntPrintOpt
 
 class IntToStr : NoCopy
  {
-   static const ulen Len = MaxBitLen+16 ;
+   static constexpr ulen Len = MaxBitLen+16 ;
 
    unsigned base;
    IntShowSign show_sign;
@@ -505,7 +505,7 @@ class SIntPrint
 
 struct PrintDumpOptType
  {
-  static const ulen Default_line_len = 16 ;
+  static constexpr ulen Default_line_len = 16 ;
 
   ulen width;
   ulen line_len;
@@ -533,16 +533,20 @@ struct PrintDumpOptType
    }
  };
 
-/* class PrintDumpType<UInt> */
+/* class PrintDump<UInt> */
 
 template <UIntType UInt>
-class PrintDumpType
+class PrintDump
  {
    PtrLen<const UInt> data;
 
   public:
 
-   explicit PrintDumpType(PtrLen<const UInt> data_) : data(data_) {}
+   explicit PrintDump(PtrLen<UInt> data_) : data(data_) {}
+
+   explicit PrintDump(PtrLen<const UInt> data_) : data(data_) {}
+
+   PrintDump(const UInt *ptr,ulen len) : data(ptr,len) {}
 
    using PrintOptType = PrintDumpOptType ;
 
@@ -593,17 +597,6 @@ class PrintDumpType
      engine.print(out,cur);
     }
  };
-
-/* PrintDump() */
-
-template <UIntType UInt>
-PrintDumpType<UInt> PrintDump(const UInt *ptr,ulen len) { return PrintDumpType<UInt>(Range(ptr,len)); }
-
-template <UIntType UInt>
-PrintDumpType<UInt> PrintDump(PtrLen<UInt> data) { return PrintDumpType<UInt>(data); }
-
-template <UIntType UInt>
-PrintDumpType<UInt> PrintDump(PtrLen<const UInt> data) { return PrintDumpType<UInt>(data); }
 
 } // namespace CCore
 

@@ -51,7 +51,7 @@ template <class P> class PrintfDev;
 
 template <class P> class PutobjDev;
 
-template <class OptType,class T> struct BindOptType;
+template <class OptType,class T> struct BindOpt;
 
 /* struct PrintOptAdapter<T> */
 
@@ -198,10 +198,10 @@ concept bool PrintableType2 = requires(PrintBase &out,const T &t)
  } ;
 
 template <class T>
-const bool IsPrintableType = PrintableType2<T> ;
+inline constexpr bool IsPrintableType = PrintableType2<T> ;
 
 template <class ... TT>
-const bool IsPrintableType<Tuple<TT...> > = ( ... && IsPrintableType< Meta::UnConst<Meta::UnRef<TT> > > ) ;
+inline constexpr bool IsPrintableType<Tuple<TT...> > = ( ... && IsPrintableType< Meta::UnConst<Meta::UnRef<TT> > > ) ;
 
 template <class T>
 concept bool PrintableType = IsPrintableType< Meta::UnConst<Meta::UnRef<T> > > ;
@@ -210,8 +210,8 @@ concept bool PrintableType = IsPrintableType< Meta::UnConst<Meta::UnRef<T> > > ;
 
 struct PrintfDevBase : NoCopy
  {
-  static const char OpenFormat  = '#' ;
-  static const char CloseFormat = ';' ;
+  static constexpr char OpenFormat  = '#' ;
+  static constexpr char CloseFormat = ';' ;
 
   static bool NotFound(char cur,char ch) { return cur && cur!=ch ; }
 
@@ -452,26 +452,21 @@ class PutobjDev<void>
     }
  };
 
-/* struct BindOptType<OptType,T> */
+/* struct BindOpt<OptType,T> */
 
 template <class OptType,class T>
-struct BindOptType
+struct BindOpt
  {
   const OptType &opt;
   const T &t;
 
-  BindOptType(const OptType &opt_,const T &t_) : opt(opt_),t(t_) {}
+  BindOpt(const OptType &opt_,const T &t_) : opt(opt_),t(t_) {}
 
   void print(PrinterType &out) const
    {
     PrintAdapter<T>::Print(out,opt,t);
    }
  };
-
-/* BindOpt() */
-
-template <class OptType,class T>
-BindOptType<OptType,T> BindOpt(const OptType &opt,const T &t) { return BindOptType<OptType,T>(opt,t); }
 
 /* Printf() */
 

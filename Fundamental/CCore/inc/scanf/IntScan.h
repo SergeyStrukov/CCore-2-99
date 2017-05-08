@@ -22,8 +22,8 @@ namespace CCore {
 
 /* consts */
 
-const unsigned MinScanIntBase =  2 ;
-const unsigned MaxScanIntBase = 16 ;
+inline constexpr unsigned MinScanIntBase =  2 ;
+inline constexpr unsigned MaxScanIntBase = 16 ;
 
 /* classes */
 
@@ -113,7 +113,7 @@ class UIntDigitAcc : NoCopy
 
   public:
 
-   static const unsigned Bits = Meta::UIntBits<UInt> ;
+   static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
    UIntDigitAcc(int dig,unsigned base,bool minus_)
     {
@@ -157,7 +157,7 @@ class SIntDigitAcc : NoCopy
 
   public:
 
-   static const unsigned Bits = Meta::UIntBits<UInt> ;
+   static constexpr unsigned Bits = Meta::UIntBits<UInt> ;
 
    SIntDigitAcc(int dig,unsigned base,bool minus_)
     {

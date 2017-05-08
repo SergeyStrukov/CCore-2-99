@@ -239,10 +239,12 @@ You can determine the printing option type using the <b>PrintOptAdapter&lt;T&gt;
 
 <p>
 Sometimes you need to specify printing options using the object, not the format string. In such case use the
-function <b>BindOpt()</b>:
+class <b>BindOpt</b>:
 </p>
 
 <pre>
+
+template &lt;class OptType,class T&gt; struct <span class="Att">BindOpt</span>;
 
 T obj;
 Opt opt;
@@ -883,7 +885,7 @@ prints
 <h3>Dumps</h3>
 
 <p>
-<b>PrintDumpType</b> is designed to print hexadecimal dumps of integers. Dumps look like this:
+<b>PrintDump</b> is designed to print hexadecimal dumps of integers. Dumps look like this:
 </p>
 
 <pre>
@@ -896,19 +898,24 @@ prints
 </pre>
 
 <p>
-To create the object of <b>PrintDumpType</b> use the overloaded <b>Creator function</b> <b>PrintDump()</b>:
+To create an object of the <b>PrintDump</b> type use the overloaded <b>PrintDump</b> constructors:
 </p>
 
 <pre>
 
 template &lt;UIntType UInt&gt;
-PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(const UInt *ptr,ulen len);
- 
-template &lt;UIntType UInt&gt;
-PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(PtrLen&lt;UInt&gt; data);
- 
-template &lt;UIntType UInt&gt;
-PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(PtrLen&lt;const UInt&gt; data);
+class <span class="Att">PrintDump</span>
+ {
+  public:
+
+   explicit PrintDump(PtrLen&lt;UInt&gt; data_) : data(data_) {}
+
+   explicit PrintDump(PtrLen&lt;const UInt&gt; data_) : data(data_) {}
+
+   PrintDump(const UInt *ptr,ulen len) : data(ptr,len) {}
+
+   ....
+ };
 
 </pre>
 
@@ -920,7 +927,7 @@ And here is the options:
 
 struct <span class="Att">PrintDumpOptType</span>
  {
-  static const ulen Default_line_len = 16 ;
+  static constexpr ulen Default_line_len = 16 ;
  
   ulen width;
   ulen line_len;
