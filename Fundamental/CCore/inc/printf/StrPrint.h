@@ -183,9 +183,9 @@ class StrPrint
 
 struct TitlePrintOpt
  {
-  static const ulen Default_width  = 80  ;
-  static const ulen Default_off    =  3  ;
-  static const char Default_border = '-' ;
+  static constexpr ulen Default_width  = 80  ;
+  static constexpr ulen Default_off    =  3  ;
+  static constexpr char Default_border = '-' ;
 
   ulen width;
   ulen off;
@@ -233,8 +233,8 @@ class Title
 
 struct TextDividerPrintOpt
  {
-  static const ulen Default_width  = TitlePrintOpt::Default_width  ;
-  static const char Default_border = TitlePrintOpt::Default_border ;
+  static constexpr ulen Default_width  = TitlePrintOpt::Default_width  ;
+  static constexpr char Default_border = TitlePrintOpt::Default_border ;
 
   ulen width;
   char border;

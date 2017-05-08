@@ -215,8 +215,8 @@ class Collector : NoCopy
 
    // constructors
 
-   static const ulen DefaultBlockLen = 1024 ;
-   static const ulen MinBlockLen = 10 ;
+   static constexpr ulen DefaultBlockLen = 1024 ;
+   static constexpr ulen MinBlockLen = 10 ;
 
    explicit Collector(ulen block_len_=DefaultBlockLen) noexcept
     : block_len(Max(MinBlockLen,block_len_)),

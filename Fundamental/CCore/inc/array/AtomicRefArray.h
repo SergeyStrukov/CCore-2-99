@@ -213,7 +213,7 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
     }
 
    template <ulen MaxLen> requires ( MaxLen>0 )
-   static const ulen StaticMemLen = Base::template StaticMemLen<MaxLen> ;
+   static constexpr ulen StaticMemLen = Base::template StaticMemLen<MaxLen> ;
 
    template <class S>
    AtomicRefArray(void *mem,ulen maxlen,std::initializer_list<S> il) requires ( TrivDtorType<T> )

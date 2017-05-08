@@ -94,7 +94,7 @@ struct ArrayBase
  {
   // placement
 
-  static const ulen Delta = Align(sizeof (H)) ;
+  static constexpr ulen Delta = Align(sizeof (H)) ;
 
   static T * GetPtr(H *ptr) { return PlaceAt(ptr)+Delta; }
 
@@ -112,7 +112,7 @@ struct ArrayBase
   // basic
 
   template <ulen MaxLen> requires ( MaxLen>0 )
-  static const ulen StaticMemLen = UIntConstAdd<ulen, Delta , UIntConstMul<ulen,MaxLen,sizeof (T)> > ;
+  static constexpr ulen StaticMemLen = UIntConstAdd<ulen, Delta , UIntConstMul<ulen,MaxLen,sizeof (T)> > ;
 
   static H * Create(void *mem,ulen maxlen) requires ( ArrayAlgo_core<Algo,T> ) // mem is aligned , maxlen > 0
    {

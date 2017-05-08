@@ -924,6 +924,34 @@ This is a constant method.
 <b>AtomicRefArray</b> methods <b>shrink_extra()</b> and <b>shrink_reserve()</b> are not working, if the array is shared.
 </p>
 
+<p>
+<b>AtomicRefArray</b> has an extra special constructor
+</p>
+
+<pre>
+
+   template &lt;ulen MaxLen&gt; requires ( MaxLen&gt;0 )
+   static constexpr ulen StaticMemLen = Base::template StaticMemLen&lt;MaxLen&gt; ;
+
+   template &lt;class S&gt;
+   AtomicRefArray(void *mem,ulen maxlen,std::initializer_list&lt;S&gt; il) requires ( TrivDtorType&lt;T&gt; )
+                 // mem is aligned , maxlen &gt; 0 , il.size() &lt;= maxlen , static object !
+    : AtomicRefArrayBase&lt;T,Algo&gt;(mem,maxlen)
+    {
+     Base::Extend_cast(ptr.getPtr(),il.size(),il.begin());
+    }
+
+</pre>
+
+<p>
+This constructor can be used to create a static <b>AtomicRefArray</b> with unlimited life-time. 
+The type <b>T</b> must have a trivial destructor, however.
+You must supply a statically allocated memory, aligned and proper size.
+You also must supply a maximum number of elements (&gt;0) and an intializer list.
+To calculate the required memory size use the meta constant <b>StaticMemLen</b>.
+The object state, created with this constructor, lives forever and contains the initial object array, initialized from the given intializer list.
+</p>
+
 <h4>Collector</h4>
 
 <p>
@@ -944,8 +972,8 @@ class <span class="Att">Collector</span> : NoCopy
    
    // constructors
    
-   static const ulen DefaultBlockLen = 1024 ;
-   static const ulen MinBlockLen = 10 ;
+   static constexpr ulen DefaultBlockLen = 1024 ;
+   static constexpr ulen MinBlockLen = 10 ;
    
    explicit Collector(ulen block_len=DefaultBlockLen) noexcept;
    
