@@ -369,7 +369,7 @@ void WalkPath(StrLen path,FuncInit func_init)
 
 class Path : public NoCopyBase<PathBase>
  {
-   static const ulen StackLen = 10 ;
+   static constexpr ulen StackLen = 10 ;
 
    //
    // --- begin ---

@@ -916,7 +916,7 @@ struct Get_SaveLoadLenCtor<uint64> { enum RetType : ulen { Ret = 8 }; };
 /* const Get_SaveLoadLen<T> */
 
 template <Has_SaveLoadLen T>
-const ulen Get_SaveLoadLen = Get_SaveLoadLenCtor<T>::Ret ;
+inline constexpr ulen Get_SaveLoadLen = Get_SaveLoadLenCtor<T>::Ret ;
 
 /* struct SaveLenCounter<TT> */
 

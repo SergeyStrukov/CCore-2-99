@@ -100,7 +100,7 @@ class String
 template <char ... CC>
 class String::StaticObject
  {
-   static const ulen Len = Max<ulen>(sizeof ... (CC),1) ;
+   static constexpr ulen Len = Max<ulen>(sizeof ... (CC),1) ;
 
    Meta::AlignedStorage< AtomicRefArray<char>::StaticMemLen<Len> > storage;
    String str;
@@ -140,7 +140,7 @@ class PrintString : public PrintBase
 
   public:
 
-   static const ulen DefaultFrameLen = 1_KByte ;
+   static constexpr ulen DefaultFrameLen = 1_KByte ;
 
    explicit PrintString(ulen max_len=MaxULen,ulen frame_len=DefaultFrameLen);
 

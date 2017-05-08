@@ -247,7 +247,7 @@ struct RadixHeapBlock
 
 class RadixHeapStore_small : NoCopy
  {
-   static const ulen Len = 8 ;
+   static constexpr ulen Len = 8 ;
 
    using Bits = Meta::Select<Quick::ScanMSBitIsFast, ScanBit<ScanMSBitAlgo,Len> ,
                                                      ScanBit<ScanLSBitAlgo,Len> > ;
