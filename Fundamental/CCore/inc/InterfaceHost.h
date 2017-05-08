@@ -55,7 +55,7 @@ struct GetInterfaceName<T> : StrLen
 template <No_InterfaceName T>
 struct GetInterfaceName<T> : StrLen
  {
-  GetInterfaceName() : StrLen("<Unknown interface>") {}
+  GetInterfaceName() : StrLen("<Unknown interface>"_c) {}
  };
 
 /* struct InterfaceCaster */

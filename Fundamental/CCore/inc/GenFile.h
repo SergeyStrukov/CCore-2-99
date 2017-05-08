@@ -28,7 +28,7 @@ using CmpFileTimeType = uint64 ;
 
 /* consts */
 
-const ulen MaxPathLen = 512 ;
+inline constexpr ulen MaxPathLen = 512 ;
 
 /* classes */
 

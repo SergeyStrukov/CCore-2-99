@@ -37,8 +37,8 @@ class MemPool : NoCopy
      SLink<Node> link;
     };
 
-   static const ulen Delta = Align(sizeof (Node)) ;
-   static const ulen MaxLen = AlignDown(MaxULen)-Delta ;
+   static constexpr ulen Delta = Align(sizeof (Node)) ;
+   static constexpr ulen MaxLen = AlignDown(MaxULen)-Delta ;
 
    using Algo = SLink<Node>::LinearAlgo<&Node::link> ;
 
@@ -64,7 +64,7 @@ class MemPool : NoCopy
 
    // constructors
 
-   static const ulen DefaultBlockLen = 64_KByte ;
+   static constexpr ulen DefaultBlockLen = 64_KByte ;
 
    MemPool() noexcept : MemPool(DefaultBlockLen) {}
 

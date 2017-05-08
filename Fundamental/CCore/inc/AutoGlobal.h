@@ -61,7 +61,9 @@ class AutoGlobal : NoCopy
 
   public:
 
-   AutoGlobal() : mutex("AutoGlobal"),obj() {}
+   AutoGlobal() : obj() {}
+
+   explicit AutoGlobal(TextLabel name) : mutex(name),obj() {}
 
    ~AutoGlobal() {}
 

@@ -47,6 +47,8 @@ class <span class="Att">AutoGlobal</span> : NoCopy
 
    AutoGlobal();
 
+   explicit AutoGlobal(TextLabel name);
+
    ~AutoGlobal();
 
    class Lock : NoCopy
@@ -70,6 +72,10 @@ class <span class="Att">AutoGlobal</span> : NoCopy
  };
 
 </pre>
+
+<p>
+You may specify a <b>TextLabel</b> in the constructor to name the internal mutex.
+</p>
 
 <p>
 To access the inner object use the <b>Object Pointer Interface</b>  methods. You must do it inside a <b>Lock</b> scope.

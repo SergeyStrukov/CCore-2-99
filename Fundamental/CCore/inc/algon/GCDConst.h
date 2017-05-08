@@ -32,12 +32,12 @@ constexpr UInt EuclidAlgo()
 /* const GCDConst<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B>
-constexpr UInt GCDConst = EuclidAlgo<UInt,A,B>() ;
+inline constexpr UInt GCDConst = EuclidAlgo<UInt,A,B>() ;
 
 /* const LCMConst<UInt,UInt A,UInt B> */
 
 template <UIntType UInt,UInt A,UInt B> requires ( A!=0 || B!=0 )
-constexpr UInt LCMConst = UIntConstMul<UInt, A/GCDConst<UInt,A,B> , B > ;
+inline constexpr UInt LCMConst = UIntConstMul<UInt, A/GCDConst<UInt,A,B> , B > ;
 
 } // namespace Algon
 } // namespace CCore

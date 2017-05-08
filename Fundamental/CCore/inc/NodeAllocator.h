@@ -125,7 +125,7 @@ class MemBlockPool : NoCopy
      explicit FreeNode(FreeNode *next_) : next(next_) {}
     };
 
-   static const ulen Delta = Align(sizeof (FreeNode)) ;
+   static constexpr ulen Delta = Align(sizeof (FreeNode)) ;
 
   private:
 
@@ -149,14 +149,14 @@ class MemBlockPool : NoCopy
 
    // constructors
 
-   static const ulen DefaultCount = 100 ;
+   static constexpr ulen DefaultCount = 100 ;
 
    template <ulen Len,ulen AlignOf>
    struct LenCheckCtor
     {
-     static const ulen A = Algon::LCMConst<ulen,AlignOf,alignof (FreeNode)> ;
+     static constexpr ulen A = Algon::LCMConst<ulen,AlignOf,alignof (FreeNode)> ;
 
-     static const ulen Lim = A*((MaxULen-Delta)/A) ;
+     static constexpr ulen Lim = A*((MaxULen-Delta)/A) ;
 
      enum RetType { Ret = ( Len <= Lim && sizeof (FreeNode) <= Lim ) };
     };

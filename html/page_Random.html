@@ -280,30 +280,30 @@ struct <span class="Att">MT19937</span>
  
   using UnitType = uint32 ;
   
-  static const ulen W = 32 ;
+  static constexpr ulen W = 32 ;
   
   // state
   
-  static const ulen N = 624 ;
-  static const ulen M = 397 ;
-  static const ulen R =  31 ;
+  static constexpr ulen N = 624 ;
+  static constexpr ulen M = 397 ;
+  static constexpr ulen R =  31 ;
   
-  static const UnitType A = 0x9908B0DF ;
+  static constexpr UnitType A = 0x9908B0DF ;
   
   // output
   
-  static const ulen S1 = 11 ;
-  static const ulen S2 =  7 ;
-  static const ulen S3 = 15 ;
-  static const ulen S4 = 18 ;
+  static constexpr ulen S1 = 11 ;
+  static constexpr ulen S2 =  7 ;
+  static constexpr ulen S3 = 15 ;
+  static constexpr ulen S4 = 18 ;
   
-  static const UnitType B = 0x9D2C5680 ;
-  static const UnitType C = 0xEFC60000 ;
+  static constexpr UnitType B = 0x9D2C5680 ;
+  static constexpr UnitType C = 0xEFC60000 ;
   
   // initialization
   
-  static const ulen ReMessCount =  100 ;
-  static const ulen MessCount   = 1000 ;
+  static constexpr ulen ReMessCount =  100 ;
+  static constexpr ulen MessCount   = 1000 ;
   
   static const UnitType HotBits[N];
  };

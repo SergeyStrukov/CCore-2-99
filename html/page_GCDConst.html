@@ -37,11 +37,11 @@ of some unsigned integral type.
 
 <pre>
 
-template &lt;class UInt,UInt A,UInt B&gt;
-const UInt <span class="Att">Algon::GCDConst</span> = .... ;
+template &lt;UIntType UInt,UInt A,UInt B&gt;
+inline constexpr UInt <span class="Att">Algon::GCDConst</span> = .... ;
 
-template &lt;class UInt,UInt A,UInt B&gt; requires ( A!=0 || B!=0 )
-const UInt <span class="Att">Algon::LCMConst</span> = .... ;
+template &lt;UIntType UInt,UInt A,UInt B&gt; requires ( A!=0 || B!=0 )
+inline constexpr UInt <span class="Att">Algon::LCMConst</span> = .... ;
 
 </pre>
 
