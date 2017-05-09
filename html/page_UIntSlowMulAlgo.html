@@ -54,10 +54,6 @@ struct <span class="Att">UIntSlowMulAlgo</span>
     DoubleUMul(UInt a,UInt b);
    };
 
-  static UInt Inv(UInt den);
-
-  static UInt LShift(UInt hi,UInt lo,unsigned shift);
-
   static UInt DoubleUDiv(UInt hi,UInt lo,UInt den); // hi&lt;den
  };
 
@@ -72,19 +68,16 @@ struct <span class="Att">UIntSlowMulAlgo</span>
 </p>
 
 <p>
-<b>DoubleUMul</b> is a <b>Class-function</b>, it creates a product of two values and returns the double-length result.
+<b>DoubleUMul</b> is a <b>Class-function</b>, 
+it performs the full multiplication of the arguments <b>a</b> and <b>b</b> 
+and returns the result in the pair <b>hi</b> and <b>lo</b>, where <b>hi</b> is the high part
+of the product and the <b>lo</b> is the lower part of the product.
 </p>
 
 <p>
-<b>Inv()</b>
-</p>
-
-<p>
-<b>LShift()</b>
-</p>
-
-<p>
-<b>DoubleUDiv()</b>
+<b>DoubleUDiv()</b> performs the division of the double-size value, given by the arguments <b>hi</b> and 
+<b>lo</b>, by the third argument <b>den</b>. It is assumed, that <b>hi < den</b>, in such case
+the result is represented by the single-size value. Otherwise the behavior is unspecified.
 </p>
 
 <pre>
@@ -118,6 +111,46 @@ struct <span class="Att">UIntSlowMulFunc</span>
  };
 
 </pre>
+
+<p>
+<b>Mul()</b> performs the full multiplication of the arguments <b>a</b> and <b>b</b> 
+and returns the result in the pair <b>hi</b> and <b>lo</b>, where <b>hi</b> is the high part
+of the product and the <b>lo</b> is the lower part of the product.
+</p>
+
+<p>
+<b>Div()</b> performs the division of the double-size value, given by the arguments <b>hi</b> and 
+<b>lo</b>, by the third argument <b>den</b>. It is assumed, that <b>hi < den</b>, in such case
+the result is represented by the single-size value. Otherwise the behavior is unspecified. 
+</p>
+
+<p>
+<b>Mod()</b> calculates the remainder of the division of the double-size value, given by the arguments <b>hi</b> and 
+<b>lo</b>, by the third argument <b>den</b>. 
+It is assumed, that <b>hi < den</b>, otherwise the behavior is unspecified.
+</p>
+
+<p>
+<b>MulDiv()</b> multiplies <b>a</b> and <b>b</b> and divides the full double-size product by <b>den</b>. 
+The high part of the product must be less than <b>den</b>, otherwise the behavior is unspecified.
+</p>
+
+<p>
+<b>DivMod()</b> performs both operations <b>Div()</b> and <b>Mod()</b> and returns the result
+in the fields <b>div</b> and <b>mod</b>.
+</p>
+
+<p>
+<b>ModMul()</b> calculates the product of the <b>a</b> and <b>b</b> by the module <b>mod</b>.
+It is assumed, that <b>a</b> and <b>b < mod</b>, otherwise the behavior is unspecified. 
+The result is less than <b>mod</b>.
+</p>
+
+<p>
+<b>ModMac()</b> calculates the expression <b>s+a*b</b> by the module <b>mod</b>.
+It is assumed, that <b>a</b>, <b>b</b> and <b>s < mod</b>, otherwise the behavior is unspecified. 
+The result is less than <b>mod</b>.
+</p>
 
 </body>
 
