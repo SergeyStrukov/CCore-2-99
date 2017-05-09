@@ -110,7 +110,7 @@ class PartAsyncFileToMem : NoCopy
 
   public:
 
-   static const ulen DefaultBufLen = 64_KByte ;
+   static constexpr ulen DefaultBufLen = 64_KByte ;
 
    explicit PartAsyncFileToMem(StrLen file_name,ulen buf_len=DefaultBufLen,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 

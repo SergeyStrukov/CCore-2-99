@@ -1,7 +1,7 @@
 /* AsyncFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -91,7 +91,7 @@ class AsyncFile : public Funchor_nocopy
 
    explicit AsyncFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
-   explicit AsyncFile(StrLen file_name,FileOpenFlags oflags,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   AsyncFile(StrLen file_name,FileOpenFlags oflags,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
    AsyncFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 

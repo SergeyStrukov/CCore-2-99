@@ -46,7 +46,7 @@ class AsyncBinaryFile : public NoCopyBase<PutDevBase<AsyncBinaryFile> >
 
    // constructors
 
-   AsyncBinaryFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   explicit AsyncBinaryFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
    explicit AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 

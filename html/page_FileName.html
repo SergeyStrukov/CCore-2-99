@@ -32,7 +32,7 @@
 
 <p>
 <b>FileName</b> is a class, developed to deal with file names as required in standard handling of the
-directive <b>include</b>. It can be used with <a href="page_DDLEngine.html">DDL</a> Engine.
+directive <b>include</b>. It can be used with the <a href="page_DDLEngine.html">DDL</a> Engine.
 </p>
 
 <pre>
@@ -73,8 +73,7 @@ class <span class="Att">FileName</span> : NoCopy
    
    StrLen getFile() const;
    
-   template &lt;class P&gt;
-   void printPos(P &amp;out,TextPos pos) { Putobj(out,getFile(),pos); }
+   void printPos(PrinterType &amp;out,TextPos pos) { Putobj(out,getFile(),pos); }
   
    // swap/move objects
   

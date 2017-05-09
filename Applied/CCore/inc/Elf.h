@@ -403,7 +403,7 @@ void Parse(Dev &dev,PtrLen<const uint8> map)
  {
   Take take(map);
 
-  StrLen no_name("<no name>");
+  StrLen no_name("<no name>"_c);
   uint32 name_list_off;
 
   // Header

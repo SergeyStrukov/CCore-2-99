@@ -39,8 +39,8 @@ The parser and related software entities are enclosed in the namespace <b>Elf</b
 
 <pre>
 
-template &lt;class Custom,class Dev&gt;
-void <span class="Att">Parse</span>(Dev &amp;dev,PtrLen&lt;const uint8&gt; map);
+template &lt;class Custom,ParseDevType Dev&gt;
+void <span class="Att">Elf::Parse</span>(Dev &amp;dev,PtrLen&lt;const uint8&gt; map);
 
 </pre>
 
@@ -64,11 +64,11 @@ class Dev
  {
   public:
 
-   void operator () (const Elf::Header &header);
+   void operator () (const Elf::Header &amp;header);
 
-   void operator () (ulen index,StrLen name,const Elf::SectHeader &sect);
+   void operator () (ulen index,StrLen name,const Elf::SectHeader &amp;sect);
 
-   void operator () (ulen index,StrLen name,const Elf::SectHeader &sect,PtrLen&lt;const uint8&gt; data);
+   void operator () (ulen index,StrLen name,const Elf::SectHeader &amp;sect,PtrLen&lt;const uint8&gt; data);
 
    void operator () ();
  };
@@ -154,8 +154,7 @@ struct <span class="Att">Header</span>
 
   bool check_cpu(uint16 cpu_type_) const;
 
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -216,8 +215,7 @@ struct <span class="Att">SectHeader</span>
   uint32 address_align;
   uint32 entry_size;
 
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>

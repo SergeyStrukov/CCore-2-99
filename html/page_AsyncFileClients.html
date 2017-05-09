@@ -69,10 +69,10 @@ class <span class="Att">AsyncFile</span> : public Funchor_nocopy
    explicit AsyncFile(MSec timeout=DefaultTimeout,
                       ulen max_packets=DefaultMaxPackets);
    
-   explicit AsyncFile(StrLen file_name,
-                      FileOpenFlags oflags,
-                      MSec timeout=DefaultTimeout,
-                      ulen max_packets=DefaultMaxPackets);
+   AsyncFile(StrLen file_name,
+             FileOpenFlags oflags,
+             MSec timeout=DefaultTimeout,
+             ulen max_packets=DefaultMaxPackets);
 
    AsyncFile(StrLen dev_name,StrLen dev_file_name,
              FileOpenFlags oflags,
@@ -392,7 +392,7 @@ class <span class="Att">PartAsyncFileToMem</span> : NoCopy
 
   public:
 
-   static const ulen DefaultBufLen = 64_KByte ;
+   static constexpr ulen DefaultBufLen = 64_KByte ;
 
    explicit PartAsyncFileToMem(StrLen file_name,ulen buf_len=DefaultBufLen,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
@@ -472,8 +472,8 @@ class <span class="Att">AsyncFileListToMem</span> : public ToMemBase
    
    FileType getFileType() const;
 
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init); // func(StrLen file_name,FileType file_type)
+   template &lt;FuncInitArgType&lt;StrLen,FileType&gt; FuncInit&gt;
+   auto apply(FuncInit func_init); // func(StrLen file_name,FileType file_type)
  };
 
 </pre>

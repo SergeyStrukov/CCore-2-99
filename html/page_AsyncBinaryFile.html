@@ -49,17 +49,19 @@ class <span class="Att">AsyncBinaryFile</span> : NoCopy , public PutDevBase&lt;A
    
    // constructors
   
-   AsyncBinaryFile();
+   explicit AsyncBinaryFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
    
-   explicit AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   explicit AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
    
-   AsyncBinaryFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags=Open_ToWrite);
+   AsyncBinaryFile(StrLen dev_name,StrLen dev_file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
 
    ~AsyncBinaryFile();
    
    // methods
    
    bool isOpened() const;
+
+   void setFinalTimeout(MSec t);
    
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
    
@@ -86,8 +88,6 @@ class <span class="Att">AsyncBinaryFile</span> : NoCopy , public PutDevBase&lt;A
    void do_put(uint8 value);
    
    void do_put(const uint8 *ptr,ulen len);
-   
-   PtrLen&lt;uint8&gt; do_putRange(ulen len);
    
    void flush();
  };
@@ -128,10 +128,6 @@ object.
 <p>
 Other methods are direct calls of the correspondent <b>AsyncFile</b> methods. Usually they are
 not required.
-</p>
-
-<p>
-<b>do_putRange()</b> operation is not implemented and throw an exception.
 </p>
 
 <p>
