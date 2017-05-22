@@ -150,9 +150,11 @@ class Event : public Funchor_nocopy
 
    // constructors
 
-   explicit Event(int flag=false); // bool is assumed
+   explicit Event(bool flag=false);
 
    explicit Event(TextLabel name,bool flag=false);
+
+   explicit Event(const char *name) : Event(TextLabel(name)) {}
 
    ~Event();
 

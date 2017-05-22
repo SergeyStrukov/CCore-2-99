@@ -148,7 +148,7 @@ bool Event::wait_locked(MSec timeout)
     }
  }
 
-Event::Event(int flag)
+Event::Event(bool flag)
  : name(GetAutoText<ObjName>()),
    event_number(name)
  {

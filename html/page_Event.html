@@ -54,6 +54,8 @@ class <span class="Att">Event</span> : public Funchor_nocopy
    
    explicit Event(TextLabel name,bool flag=false);
    
+   explicit Event(const char *name) : Event(TextLabel(name)) {}
+
    ~Event();
    
    // trigger
@@ -122,6 +124,8 @@ class <span class="Att">Event</span> : public Funchor_nocopy
    
    explicit Event(TextLabel name,bool flag=false);
    
+   explicit Event(const char *name) : Event(TextLabel(name)) {}
+
    ~Event();
    
    // trigger
@@ -168,6 +172,8 @@ class <span class="Att">Event</span> : public Funchor_nocopy
    
    explicit Event(TextLabel name,bool flag=false);
    
+   explicit Event(const char *name) : Event(TextLabel(name)) {}
+
    ~Event();
    
    TextLabel getName() const { return name; }
