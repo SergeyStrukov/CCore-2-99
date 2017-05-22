@@ -74,8 +74,7 @@ class <span class="Att">LogCategory_enum</span>
    
    // print object
  
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -173,8 +172,7 @@ class <span class="Att">LogStamp</span>
    
    // print object
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const
+   void print(PrinterType &amp;out) const
     {
      Printf(out,"#;) [#;,#6r;]",num,PrintTime(time_sec),time_clock);
     }
@@ -220,8 +218,7 @@ class <span class="Att">SomeLogTimeStamp</span> // Small Data Type
 
    // print object
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
 
    // Host -- time-stamp generator
     
@@ -271,8 +268,7 @@ class <span class="Att">LogCounter</span>
    
    // print object
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const
+   void print(PrinterType &amp;out) const
     {
      Printf(out,"total = #;",total);
      
@@ -327,7 +323,10 @@ It is derived from the <b>LogMsgBase</b>.
 
 <pre>
 
-template &lt;class Cat,class Stamp,class ... TT&gt;
+template &lt;class T&gt;
+concept bool <span class="Att">LogableType</span> = PrintableType&lt;T&gt; &amp;&amp; NothrowCopyableType&lt;T&gt; ;
+
+template &lt;class Cat,class Stamp,LogableType ... TT&gt;
 class <span class="Att">LogMsg&lt;Cat,Stamp,TT...&gt;</span> : public LogMsgBase&lt;Cat,Stamp&gt;
  {
    const char *format;
@@ -557,7 +556,7 @@ class <span class="Att">UserLog</span> : NoCopy
    // message
    
    template &lt;class ... TT&gt;
-   void operator () (Cat cat,const char *format,const TT &amp; ... tt);
+   void operator () (Cat cat,const char *format,const TT &amp; ... tt) requires ( ... &amp;&amp; LogableType&lt;TT&gt; ) ;
    
    // cursor
     
@@ -567,7 +566,7 @@ class <span class="Att">UserLog</span> : NoCopy
    
    class PrintFunc;
    
-   PrintFunc getPrint(ulen count,Filter filter=Filter());
+   auto getPrint(ulen count,const Filter &amp;filter=Filter());
  };
 
 </pre>
@@ -624,7 +623,7 @@ The global function <b>PrintLog()</b> can also be used to build a print object:
 <pre>
 
 template &lt;class Cat,class Stamp,class Filter,class Mutex&gt;
-auto <span class="Att">PrintLog</span>(UserLog&lt;Cat,Stamp,Filter,Mutex&gt; &amp;log,ulen count,Filter filter);
+auto <span class="Att">PrintLog</span>(UserLog&lt;Cat,Stamp,Filter,Mutex&gt; &amp;log,ulen count,const Filter &amp;filter);
  
 template &lt;class Cat,class Stamp,class Filter,class Mutex&gt;
 auto <span class="Att">PrintLog</span>(UserLog&lt;Cat,Stamp,Filter,Mutex&gt; &amp;log,ulen count);

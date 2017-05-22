@@ -50,19 +50,19 @@ class <span class="Att">PerTask</span> : NoCopy
    
    static PerTask * Peak() noexcept;
 
-   template &lt;class TOC&gt;
+   template &lt;TOCType TOC&gt;
    typename TOC::ObjectType * getTaskObject();
    
-   template &lt;class TOC&gt;
+   template &lt;TOCType TOC&gt;
    typename TOC::ObjectType * tryGetTaskObject() noexcept;
 
-   template &lt;class TOC&gt;
+   template &lt;TOCType TOC&gt;
    void destroyTaskObject();
    
-   template &lt;class TOC&gt;
+   template &lt;FullTOCType TOC&gt;
    static void SetBuilder(typename TOC::BuilderType *builder);
    
-   template &lt;class TOC&gt;
+   template &lt;TOCType TOC&gt;
    static void ClearBuilder();
  };
 
@@ -137,13 +137,13 @@ Its method <b>create()</b> is used to create an object. To destroy an object the
 
 <pre>
 
-template &lt;class TOC&gt;
+template &lt;TOCType TOC&gt;
 typename TOC::ObjectType * <span class="Att">GetTaskObject</span>() 
  { 
   return PerTask::Get()->getTaskObject&lt;TOC&gt;(); 
  }
 
-template &lt;class TOC&gt;
+template &lt;TOCType TOC&gt;
 typename TOC::ObjectType * <span class="Att">TryGetTaskObject</span>() noexcept 
  { 
   if( PerTask *obj=PerTask::TryGet() ) return obj->tryGetTaskObject&lt;TOC&gt;();
@@ -163,7 +163,7 @@ is designed for.
 
 <pre>
 
-template &lt;class TOC&gt;
+template &lt;TOCType TOC&gt;
 class <span class="Att">TaskObjectBuild</span> : NoCopy
  {
    using BuilderType = typename TOC::BuilderType ;
@@ -198,7 +198,7 @@ To control the life-time of the per-task object the class <b>PerTaskObjectScope<
 
 <pre>
 
-template &lt;class TOC&gt;
+template &lt;TOCType TOC&gt;
 class <span class="Att">PerTaskObjectScope</span> : NoCopy
  {
    void destroy()

@@ -157,7 +157,7 @@ The only argument of the constructor is the length of the first big block of mem
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;NothrowDtorType T&gt;
 class <span class="Att">StackObject</span> : NoCopy
  {
    T *ptr;
@@ -167,7 +167,7 @@ class <span class="Att">StackObject</span> : NoCopy
    // constructors
    
    template &lt;class ... SS&gt;
-   explicit StackObject(SS &amp;&amp; ... ss);
+   explicit StackObject(SS &amp;&amp; ... ss) requires ( ConstructibleType&lt;T,SS...&gt; ) ;
    
    ~StackObject();
    

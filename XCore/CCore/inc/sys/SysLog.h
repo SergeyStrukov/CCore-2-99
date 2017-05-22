@@ -1,7 +1,7 @@
 /* SysLog.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -174,7 +174,7 @@ class PrintLog
 
 #ifdef CCORE_SYS_LOG_ENABLE
 
-template <class ... TT>
+template <LogableType ... TT>
 void Log(LogCategory cat,const char *format,const TT & ... tt)
  {
   using MsgType = LogMsg<LogCategory,LogStamp,TT...> ;
@@ -191,7 +191,7 @@ void Log(LogCategory cat,const char *format,const TT & ... tt)
 
 #else
 
-template <class ... TT>
+template <LogableType ... TT>
 void Log(LogCategory,const char *,const TT & ...) {}
 
 #endif

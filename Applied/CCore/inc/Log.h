@@ -587,7 +587,7 @@ class UserLog : NoCopy
 
    class PrintFunc;
 
-   PrintFunc getPrint(ulen count,const Filter &filter=Filter());
+   auto getPrint(ulen count,const Filter &filter=Filter());
  };
 
  // message
@@ -750,7 +750,7 @@ class UserLog<Cat,Stamp,Filter,Mutex>::PrintFunc
  };
 
 template <class Cat,class Stamp,class Filter,class Mutex>
-auto UserLog<Cat,Stamp,Filter,Mutex>::getPrint(ulen count,const Filter &filter) -> PrintFunc
+auto UserLog<Cat,Stamp,Filter,Mutex>::getPrint(ulen count,const Filter &filter)
  {
   return PrintFunc(*this,count,filter);
  }
@@ -758,13 +758,13 @@ auto UserLog<Cat,Stamp,Filter,Mutex>::getPrint(ulen count,const Filter &filter) 
 /* PrintLog() */
 
 template <class Cat,class Stamp,class Filter,class Mutex>
-auto PrintLog(UserLog<Cat,Stamp,Filter,Mutex> &log,ulen count,const Filter &filter) -> typename UserLog<Cat,Stamp,Filter,Mutex>::PrintFunc
+auto PrintLog(UserLog<Cat,Stamp,Filter,Mutex> &log,ulen count,const Filter &filter)
  {
   return log.getPrint(count,filter);
  }
 
 template <class Cat,class Stamp,class Filter,class Mutex>
-auto PrintLog(UserLog<Cat,Stamp,Filter,Mutex> &log,ulen count) -> typename UserLog<Cat,Stamp,Filter,Mutex>::PrintFunc
+auto PrintLog(UserLog<Cat,Stamp,Filter,Mutex> &log,ulen count)
  {
   return log.getPrint(count);
  }

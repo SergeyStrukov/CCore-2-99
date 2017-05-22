@@ -55,7 +55,7 @@ To log a message use the function <b>Sys::Log</b>:
 
 <pre>
 
-template &lt;class ... TT&gt;
+template &lt;LogableType ... TT&gt;
 void <span class="Att">Sys::Log</span>(Sys::LogCategory cat,const char *format,const TT &amp; ... tt); 
 
 </pre>
@@ -174,7 +174,7 @@ Below is an example how to add a message.
 
 <pre>
 
-template &lt;class ... TT&gt;
+template &lt;LogableType ... TT&gt;
 void Log(LogCategory cat,const char *format,const TT &amp; ... tt) 
  {
   using MsgType = LogMsg&lt;LogCategory,LogStamp,TT...&gt; ;

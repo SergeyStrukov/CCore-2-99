@@ -1,7 +1,7 @@
 /* TlsBuf.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -27,7 +27,7 @@ PlanInitNode * GetPlanInitNode_TlsBuf();
 
 /* consts */
 
-const ulen TlsLen = 128 ;
+inline constexpr ulen TlsLen = 128 ;
 
 /* classes */
 

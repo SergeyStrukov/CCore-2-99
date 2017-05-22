@@ -20,7 +20,7 @@ namespace CCore {
 
 /* consts */
 
-inline const unsigned TicksPerSec = 10'000 ;
+inline constexpr unsigned TicksPerSec = 10'000 ;
 
 } // namespace CCore
 
