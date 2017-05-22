@@ -1,7 +1,7 @@
 /* DevTick.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -20,7 +20,7 @@ namespace CCore {
 
 /* consts */
 
-const unsigned TicksPerSec = 10'000 ;
+inline const unsigned TicksPerSec = 10'000 ;
 
 } // namespace CCore
 

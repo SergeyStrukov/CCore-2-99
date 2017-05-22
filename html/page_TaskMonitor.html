@@ -153,14 +153,13 @@ class <span class="Att">TaskMonitor_CPU</span> : public TaskMonitor
 
   public:
    
-   static const ulen DefaultBufLen = 100 ;
+   static constexpr ulen DefaultBufLen = 100 ;
   
    explicit TaskMonitor_CPU(ulen buf_len=DefaultBufLen);
    
    ~TaskMonitor_CPU();
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>

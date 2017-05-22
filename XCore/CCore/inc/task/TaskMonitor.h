@@ -1,7 +1,7 @@
 /* TaskMonitor.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -245,14 +245,13 @@ class TaskMonitor_CPU : public TaskMonitor
 
   public:
 
-   static const ulen DefaultBufLen = 100 ;
+   static constexpr ulen DefaultBufLen = 100 ;
 
    explicit TaskMonitor_CPU(ulen buf_len=DefaultBufLen);
 
    ~TaskMonitor_CPU();
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      guardStopped();
 

@@ -194,7 +194,7 @@ enum <span class="Att">TaskPriority</span> : unsigned
   DefaultTaskPriority  = 10000,               // default
   MainTaskPriority     = DefaultTaskPriority,       
   
-  IdleTaskPriority     = unsigned(-1)         // lowest
+  IdleTaskPriority     = MaxUInt&lt;unsigned&gt;    // lowest
  };
  
 inline bool Preempt(TaskPriority a,TaskPriority b) { return a&lt;b; }
