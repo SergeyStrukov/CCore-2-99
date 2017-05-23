@@ -69,7 +69,7 @@ class PTPConOpenClose : NoCopy
 
 class ReadPTPCon : NoCopyBase<PTPConOpenClose::InputProc>
  {
-   static const ulen FifoLen = 128 ;
+   static constexpr ulen FifoLen = 128 ;
 
    PTPConOpenClose &con_openclose;
 

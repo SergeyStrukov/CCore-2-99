@@ -39,7 +39,7 @@ capabilities rather than textual. It contains inside the <a href="page_AsyncFile
 
 <pre>
 
-class <span class="Att">AsyncBinaryFile</span> : NoCopy , public PutDevBase&lt;AsyncBinaryFile&gt;
+class <span class="Att">AsyncBinaryFile</span> : NoCopyBase&lt;PutDevBase&lt;AsyncBinaryFile&gt; &gt;
  {
    AsyncFile file;
 

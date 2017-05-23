@@ -59,7 +59,7 @@ class RawFileToScan : NoCopy
 
 class ScanFile : public ScanBase
  {
-   static const ulen BufLen = 64_KByte ;
+   static constexpr ulen BufLen = 64_KByte ;
 
    RawFileToScan file;
    SafeBuf buf;

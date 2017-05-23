@@ -62,7 +62,7 @@ class RawFileToPrint : NoCopy
 
 class PrintFile : public PrintBase
  {
-   static const ulen BufLen = 64_KByte ;
+   static constexpr ulen BufLen = 64_KByte ;
 
    RawFileToPrint file;
    SafeBuf buf;

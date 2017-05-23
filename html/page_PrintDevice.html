@@ -67,12 +67,6 @@ struct PrintOutAdapter&lt;ConType&gt;
   using PrintOutType = PrintCon ;
  };
 
-template &lt;&gt; 
-struct PrintOutAdapter&lt;const ConType&gt;
- {
-  using PrintOutType = PrintCon ;
- };
-
 </pre>
 
 <p>
@@ -170,7 +164,7 @@ the <b>Sys::ConBase</b> class is defined. Usually a target device has a serial p
 to the host computer through the port driver.
 </p>
 
-<a name="PrintFile"><h4>PrintFile (HCore only)</h4></a>
+<a name="PrintFile"><h4>PrintFile (HCore)</h4></a>
 
 <p>
 <b>PrintFile</b> class is designed to print to a file. On <b>HCore</b> targets this class is based on
@@ -346,6 +340,33 @@ struct <span class="Att">Sys::File</span>
 Methods of this class call directly OS file system interface functions.
 </p>
 
+<h4>PrintFile (XCore)</h4>
+
+<p>
+On <b>XCore</b> targets <b>PrintFile</b> class is derived from the <a href="#PrintAsyncFile"><b>PrintAsyncFile</b></a>.
+</p>
+
+<pre>
+
+class <span class="Att">PrintFile</span> : public PrintAsyncFile
+ {
+  public:
+
+   PrintFile() noexcept;
+
+   explicit PrintFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+
+   ~PrintFile();
+
+   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+ };
+
+</pre>
+
+<p>
+To open a file the <a href="page_DefaultFileDevice.html"><b>DefaultFileDevice</b></a> is used.
+</p>
+
 <a name="PrintAsyncFile"><h4>PrintAsyncFile</h4></a>
 
 <p>
@@ -508,7 +529,7 @@ class <span class="Att">PTPConOpenClose</span> : NoCopy
    
    // constructors
   
-   PTPConOpenClose(StrLen con_dev_name,StrLen name,const Net::PTPCon::Cfg &cfg=DefaultValue());
+   PTPConOpenClose(StrLen con_dev_name,StrLen name,const Net::PTPCon::Cfg &cfg=Net::PTPCon::Cfg());
    
    ~PTPConOpenClose();
    
