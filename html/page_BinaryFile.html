@@ -39,7 +39,7 @@ capabilities rather than textual.
 
 <pre>
 
-class <span class="Att">BinaryFile</span> : NoCopy , public PutDevBase&lt;BinaryFile&gt;
+class <span class="Att">BinaryFile</span> : NoCopyBase&lt; PutDevBase&lt;BinaryFile&gt; &gt;
  {
    ....
 
@@ -72,8 +72,6 @@ class <span class="Att">BinaryFile</span> : NoCopy , public PutDevBase&lt;Binary
    void do_put(uint8 value);
    
    void do_put(const uint8 *ptr,ulen len);
-   
-   PtrLen&lt;uint8&gt; do_putRange(ulen len);
    
    void flush();
  };
@@ -118,10 +116,6 @@ is added in the error list during a close operation.
 
 <p>
 <b>preserveFile()</b> preserves a file, opened with the <b>AutoDelete</b> open flag.
-</p>
-
-<p>
-<b>do_putRange()</b> operation is not implemented and throw an exception.
 </p>
 
 <p>

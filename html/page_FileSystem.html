@@ -112,8 +112,8 @@ class <span class="Att">FileSystem::DirCursor</span> : NoCopy
    
    FileType getFileType() const; 
 
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init); // func(StrLen file_name,FileType file_type)
+   template &lt;FuncInitArgType&lt;StrLen,FileType&gt; FuncInit&gt;
+   auto apply(FuncInit func_init); // func(StrLen file_name,FileType file_type)
  };
 
 </pre>

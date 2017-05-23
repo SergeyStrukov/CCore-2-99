@@ -48,8 +48,7 @@ class <span class="Att">DirTreeRun</span> : NoCopy
    
    StrLen pathOfRoot(char buf[MaxPathLen+1]);
    
-   template &lt;class Proc&gt;
-   void apply(Proc &proc);
+   void apply(DirTreeProcType &proc);
  };
 
 </pre>
@@ -69,7 +68,7 @@ Methods of the object are called per each directory entry.
 </p>
 
 <p>
-The class <b>Proc</b> must implement the following interface:
+The processing object class must implement the following interface:
 </p>
 
 <pre>

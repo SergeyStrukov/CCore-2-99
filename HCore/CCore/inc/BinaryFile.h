@@ -31,7 +31,7 @@ class BinaryFile;
 
 class BinaryFile : public NoCopyBase< PutDevBase<BinaryFile> >
  {
-   static const ulen BufLen = 64_KByte ;
+   static constexpr ulen BufLen = 64_KByte ;
 
    RawFileToPrint file;
    DynArray<uint8> buf;
