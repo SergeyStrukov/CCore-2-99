@@ -43,6 +43,8 @@ class <span class="Att">FileToMem</span> : public ToMemBase
  {
   public:
 
+   FileToMem() noexcept;
+
    explicit FileToMem(StrLen file_name,ulen max_len=MaxULen);
 
    ~FileToMem();
@@ -146,7 +148,7 @@ class <span class="Att">PartFileToMem</span> : NoCopy
 
   public:
 
-   static const ulen DefaultBufLen = 64_KByte ;
+   static constexpr ulen DefaultBufLen = 64_KByte ;
 
    explicit PartFileToMem(StrLen file_name,ulen buf_len=DefaultBufLen);
 

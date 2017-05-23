@@ -46,7 +46,7 @@ class <span class="Att">AsyncFileDevice</span> : public ObjBase , public Sys::As
 
   public:
    
-   static const ulen DefaultMaxSlots = .... ;
+   static constexpr ulen DefaultMaxSlots = .... ;
    
    explicit AsyncFileDevice(ulen max_slots=DefaultMaxSlots);
    
@@ -74,7 +74,7 @@ struct <span class="Att">Sys::AltAsyncFile</span>
 
   // public
   
-  static const ulen MaxRWLen = ... ; // like 1_MByte
+  static constexpr ulen MaxRWLen = ... ; // like 1_MByte
   
   struct AsyncState;
 
@@ -123,7 +123,7 @@ struct <span class="Att">Sys::AsyncFileWait</span>
 
   // public
   
-  static const ulen MaxAsyncs = .... ;
+  static constexpr ulen MaxAsyncs = .... ;
   
   FileError init(ulen async_count) noexcept;
   

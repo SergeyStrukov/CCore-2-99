@@ -1,7 +1,7 @@
 /* FileToMem.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -89,7 +89,7 @@ class PartFileToMem : NoCopy
 
   public:
 
-   static const ulen DefaultBufLen = 64_KByte ;
+   static constexpr ulen DefaultBufLen = 64_KByte ;
 
    explicit PartFileToMem(StrLen file_name,ulen buf_len=DefaultBufLen);
 

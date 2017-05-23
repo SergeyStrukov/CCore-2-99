@@ -1,7 +1,7 @@
 /* SysFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -273,7 +273,7 @@ struct AltAsyncFile
 
   // public
 
-  static const ulen MaxRWLen = 1_MByte ;
+  static constexpr ulen MaxRWLen = 1_MByte ;
 
   Result open(StrLen file_name,FileOpenFlags oflags_)
    {
@@ -374,7 +374,7 @@ struct AsyncFileWait
 
   // public
 
-  static const ulen MaxAsyncs = 50 ;
+  static constexpr ulen MaxAsyncs = 50 ;
 
   FileError init(ulen async_count) noexcept;
 

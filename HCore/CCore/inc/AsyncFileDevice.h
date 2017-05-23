@@ -1,7 +1,7 @@
 /* AsyncFileDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore
 //
@@ -161,7 +161,7 @@ class AsyncFileProcessor : NoCopy
 
   public:
 
-   static const ulen MaxSlots = Sys::AsyncFileWait::MaxAsyncs ;
+   static constexpr ulen MaxSlots = Sys::AsyncFileWait::MaxAsyncs ;
 
    AsyncFileProcessor(ulen max_slots,WorkDelay &work_delay);
 
@@ -292,7 +292,7 @@ class AsyncFileDevice : public ObjBase , public Sys::AsyncFileDevice
 
   public:
 
-   static const ulen DefaultMaxSlots = AsyncFileProcessor::MaxSlots ;
+   static constexpr ulen DefaultMaxSlots = AsyncFileProcessor::MaxSlots ;
 
    explicit AsyncFileDevice(ulen max_slots=DefaultMaxSlots);
 
