@@ -1,7 +1,7 @@
 /* CompletePacket.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -24,8 +24,7 @@ namespace CCore {
 
 void CompletePacket_int(PacketHeader *packet);
 
-template <class P>
-void CompletePacket_int(P packet) { CompletePacket_int(GetPacketHeader(packet)); }
+void CompletePacket_int(PacketType packet) { CompletePacket_int(GetPacketHeader(packet)); }
 
 } // namespace CCore
 

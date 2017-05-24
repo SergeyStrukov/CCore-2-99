@@ -1,7 +1,7 @@
 /* CancelPacketList.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -72,13 +72,11 @@ class CancelPacketList : public Funchor_nocopy
 
    bool try_put(PacketList &list,PacketHeader *packet);
 
-   template <class P>
-   bool try_put(PacketList &list,P packet) { return try_put(list,GetPacketHeader(packet)); }
+   bool try_put(PacketList &list,PacketType packet) { return try_put(list,GetPacketHeader(packet)); }
 
    void put(PacketList &list,PacketHeader *packet);
 
-   template <class P>
-   void put(PacketList &list,P packet) { put(list,GetPacketHeader(packet)); }
+   void put(PacketList &list,PacketType packet) { put(list,GetPacketHeader(packet)); }
 
    PacketHeader * get(PacketList &list);
 

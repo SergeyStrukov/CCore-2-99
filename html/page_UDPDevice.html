@@ -52,7 +52,7 @@ class <span class="Att">UDPEndpointDevice</span> : public ObjBase , public Packe
    
    // constructors
   
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
   
    UDPEndpointDevice(UDPort udport,UDPoint dst,ulen max_packets=DefaultMaxPackets);
    
@@ -166,7 +166,7 @@ class <span class="Att">UDPMultipointDevice</span> : public ObjBase , public Pac
    
    // constructors
   
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
   
    explicit UDPMultipointDevice(UDPort udport,ulen max_packets=DefaultMaxPackets);
    

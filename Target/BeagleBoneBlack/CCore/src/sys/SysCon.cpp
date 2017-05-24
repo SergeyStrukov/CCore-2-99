@@ -37,7 +37,7 @@ class ImpCon : public ConBase
 
    class Fifo : NoCopy
     {
-      static const ulen Len = 4_KByte ;
+      static constexpr ulen Len = 4_KByte ;
 
       BlockFifoBuf<char,Len> fifo;
 
@@ -186,9 +186,9 @@ class ImpCon : public ConBase
 
 class DefaultCon : NoCopy
  {
-   static const ulen MaxDataLen = 512 ;
-   static const ulen Count      = 100 ;
-   static const ulen MemLen     = ConBase::MemLen(MaxDataLen,Count) ;
+   static constexpr ulen MaxDataLen = 512 ;
+   static constexpr ulen Count      = 100 ;
+   static constexpr ulen MemLen     = ConBase::MemLen(MaxDataLen,Count) ;
 
   private:
 

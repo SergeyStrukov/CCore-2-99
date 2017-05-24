@@ -222,7 +222,7 @@ struct AsyncUDPSocketWait
 
   // public
 
-  static const ulen MaxAsyncs = 50 ;
+  static constexpr ulen MaxAsyncs = 50 ;
 
   ErrorType init(ulen async_count) noexcept;
 

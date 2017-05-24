@@ -28,7 +28,7 @@
 
 <h2>(XCore) CompletePacket</h2>
 
-<p class="Files">Files <b>CCore/inc/CompletePacket.h</b> <b>CCore/src/CompletePacket.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/CompletePacket.h</b>
 
 <p>
 The function <b>CompletePacket_int</b> is <b>XCore</b> only. This function is required to complete a packet
@@ -42,8 +42,7 @@ This function can be called only in the interrupt context.
 
 void <span class="Att">CompletePacket_int</span>(PacketHeader *packet);
 
-template &lt;class P&gt;
-void <span class="Att">CompletePacket_int</span>(P packet) { CompletePacket_int(GetPacketHeader(packet)); }
+void <span class="Att">CompletePacket_int</span>(PacketType packet) { CompletePacket_int(GetPacketHeader(packet)); }
 
 </pre>
 

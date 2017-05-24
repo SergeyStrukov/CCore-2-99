@@ -53,7 +53,7 @@ class <span class="Att">AsyncUDPEndpointDevice</span> : public ObjBase , public 
    
    // constructors
   
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
   
    AsyncUDPEndpointDevice(UDPort udport,UDPoint dst,ulen max_packets=DefaultMaxPackets);
    
@@ -170,7 +170,7 @@ class <span class="Att">AsyncUDPMultipointDevice</span> : public ObjBase , publi
 
    // constructors
   
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
   
    explicit AsyncUDPMultipointDevice(UDPort udport,ulen max_packets=DefaultMaxPackets);
    
@@ -329,7 +329,7 @@ struct <span class="Att">Sys::AsyncUDPSocketWait</span>
   
   // public
   
-  static const ulen MaxAsyncs = 50 ;
+  static constexpr ulen MaxAsyncs = 50 ;
   
   Sys::ErrorType init(ulen async_count) noexcept;
   

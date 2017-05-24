@@ -81,13 +81,11 @@ class <span class="Att">CancelPacketList</span> : public Funchor_nocopy
    
    bool try_put(PacketList &amp;list,PacketHeader *packet);
    
-   template &lt;class P&gt;
-   bool try_put(PacketList &amp;list,P packet) { return try_put(list,GetPacketHeader(packet)); }
+   bool try_put(PacketList &amp;list,PacketType packet) { return try_put(list,GetPacketHeader(packet)); }
    
    void put(PacketList &amp;list,PacketHeader *packet);
    
-   template &lt;class P&gt;
-   void put(PacketList &amp;list,P packet) { put(list,GetPacketHeader(packet)); }
+   void put(PacketList &amp;list,PacketType packet) { put(list,GetPacketHeader(packet)); }
    
    PacketHeader * get(PacketList &amp;list);
    

@@ -104,28 +104,28 @@ correspondent raw functions.
 
 <pre>
 
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">TryAllocPacket</span>() { return TryAllocPacket_raw(); }
  
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">AllocPacket</span>() { return AllocPacket_raw(); } // may return 0
  
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">AllocPacket</span>(MSec timeout) { return AllocPacket_raw(timeout); }
  
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">AllocPacket</span>(TimeScope time_scope) { return AllocPacket_raw(time_scope); }
                                                                        
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">TryAllocPacket_short</span>() { return TryAllocPacket_raw_short(); }
  
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>() { return AllocPacket_raw_short(); } // never return 0
  
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>(MSec timeout) { return AllocPacket_raw_short(timeout); }
  
-template &lt;class POD&gt;
+template &lt;PODType POD&gt;
 Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>(TimeScope time_scope) { return AllocPacket_raw_short(time_scope); }
 
 </pre>

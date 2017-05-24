@@ -1,7 +1,7 @@
 /* AsyncUDPDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore
 //
@@ -882,7 +882,7 @@ class AsyncUDPEndpointDevice : public ObjBase , public PacketEndpointDevice , pu
 
    // constructors
 
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
 
    AsyncUDPEndpointDevice(UDPort udport,UDPoint dst,ulen max_packets=DefaultMaxPackets);
 
@@ -984,7 +984,7 @@ class AsyncUDPMultipointDevice : public ObjBase , public PacketMultipointDevice 
 
    // constructors
 
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
 
    explicit AsyncUDPMultipointDevice(UDPort udport,ulen max_packets=DefaultMaxPackets);
 

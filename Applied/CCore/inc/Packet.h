@@ -26,11 +26,11 @@ namespace CCore {
 
 /* consts */
 
-constexpr ulen MaxPacketExtLen = Align(256) ;
+inline constexpr ulen MaxPacketExtLen = Align(256) ;
 
-const ulen MaxPacketCompleteFunctions = 8 ;
+inline constexpr ulen MaxPacketCompleteFunctions = 8 ;
 
-const ulen DefaultPacketMaxDataLen = 1600 ;
+inline constexpr ulen DefaultPacketMaxDataLen = 1600 ;
 
 enum PacketCancelState
  {
@@ -273,7 +273,7 @@ class PacketBuf : NoCopy
 /* const PacketDeepExtLen<TT> */
 
 template <class ... TT>
-constexpr ulen PacketDeepExtLen = ( ... + Align(sizeof (TT)) ) ;
+inline constexpr ulen PacketDeepExtLen = ( ... + Align(sizeof (TT)) ) ;
 
 /* class PacketHeader */
 

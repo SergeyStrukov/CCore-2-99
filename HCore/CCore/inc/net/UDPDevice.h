@@ -1,7 +1,7 @@
 /* UDPDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore
 //
@@ -389,7 +389,7 @@ class UDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public 
 
    // constructors
 
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
 
    UDPEndpointDevice(UDPort udport,UDPoint dst,ulen max_packets=DefaultMaxPackets);
 
@@ -488,7 +488,7 @@ class UDPMultipointDevice : public ObjBase , public PacketMultipointDevice , pub
 
    // constructors
 
-   static const ulen DefaultMaxPackets = 500 ;
+   static constexpr ulen DefaultMaxPackets = 500 ;
 
    explicit UDPMultipointDevice(UDPort udport,ulen max_packets=DefaultMaxPackets);
 

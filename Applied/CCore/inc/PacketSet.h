@@ -22,7 +22,7 @@ namespace CCore {
 
 /* consts */
 
-const unsigned DefaultMaxPackets = 50 ;
+inline constexpr unsigned DefaultMaxPackets = 50 ;
 
 /* classes */
 

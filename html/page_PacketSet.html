@@ -37,7 +37,9 @@ with a packet processing control and packet cancellation features. This class is
 
 <pre>
 
-template &lt;class POD&gt;
+inline constexpr unsigned <span class="Att">DefaultMaxPackets</span> = 50 ;
+
+template &lt;PODType POD&gt;
 class <span class="Att">PacketSet</span> : public Funchor_nocopy
  {
    ....
