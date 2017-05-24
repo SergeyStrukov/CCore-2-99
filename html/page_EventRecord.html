@@ -216,7 +216,9 @@ This class implements the event recording logic and the recorder attach/detach l
 
 <pre>
 
-template &lt;class Recorder,unsigned GuardCount=1000000&gt;
+inline constexpr unsigned <span class="Att">DefaultGuardCount</span> = 1'000'000 ;
+
+template &lt;class Recorder,unsigned GuardCount=DefaultGuardCount&gt;
 class <span class="Att">EventRecorderHost</span> : NoCopy
  {
    ....
@@ -237,7 +239,7 @@ class <span class="Att">EventRecorderHost</span> : NoCopy
     };
    
    template &lt;class T,class ... SS&gt;
-   void add(SS &amp;&amp; ... ss);
+   void add(SS &amp;&amp; ... ss) requires ( EventInitArg&lt;T,SS...&gt; ) ;
    
    void tick()
     {
@@ -277,27 +279,25 @@ class <span class="Att">EventRecorder</span> : NoCopy
 
   public: 
    
-   static const ulen RecordAlign = Algo::RecordAlign ;
+   static constexpr ulen RecordAlign = Algo::RecordAlign ;
    
    explicit EventRecorder(ulen buf_len);
    
    ~EventRecorder();
    
    template &lt;class T,class ... SS&gt;
-   void add(SS &amp;&amp; ... ss);
+   void add(SS &amp;&amp; ... ss) requires ( EventInitArg&lt;T,SS...&gt; ) ;
    
-   template &lt;class FuncInit&gt;
-   void parse(FuncInit func_init) const // func(const EventMetaInfo &info,const EventDesc &desc,void *ptr);
+   template &lt;FuncInitArgType&lt;const EventRecorder &,const EventDesc &,void *&gt; FuncInit&gt;
+   void parse(FuncInit func_init) const
    
    // save/load object
 
-   template &lt;class Dev&gt;
-   void save(Dev &amp;dev) const;
+   void save(SaveDevType &amp;dev) const;
    
    // print object
    
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -339,9 +339,9 @@ This is a core-specific structure with some basic algorithms.
 
 struct <span class="Att">TaskEventAlgo</span>
  {
-  static const ulen RecordAlign = 4 ;
+  static constexpr ulen RecordAlign = 4 ;
   
-  static const uint64 TimeFreq = .... ;
+  static constexpr uint64 TimeFreq = .... ;
 
   class AllocPos : NoCopy
    {
@@ -779,9 +779,9 @@ struct T
  {
   using ValueType = uint16 ;
   
-  static const ValueType Base = 10 ;
-  static const ValueType Lim = 100 ;
-  static const EventMarker Marker = EventMarker_None ;
+  static constexpr ValueType Base = 10 ;
+  static constexpr ValueType Lim = 100 ;
+  static constexpr EventMarker Marker = EventMarker_None ;
  };
 
 #endif

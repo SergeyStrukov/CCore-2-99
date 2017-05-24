@@ -1,7 +1,7 @@
 /* TaskEvent.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -44,9 +44,9 @@ class TickTask;
 
 struct TaskEventAlgo
  {
-  static const ulen RecordAlign = 4 ;
+  static constexpr ulen RecordAlign = 4 ;
 
-  static const uint64 TimeFreq = Sys::ClocksPerSec ;
+  static constexpr uint64 TimeFreq = Sys::ClocksPerSec ;
 
   class AllocPos : NoCopy
    {
@@ -218,9 +218,9 @@ struct TaskNumber
     TaskBase
    };
 
-  static const ValueType Base = TaskBase ;
-  static const ValueType Lim = Base+DefaultEventElementCount ;
-  static const EventMarker Marker = EventMarker_Push ;
+  static constexpr ValueType Base = TaskBase ;
+  static constexpr ValueType Lim = Base+DefaultEventElementCount ;
+  static constexpr EventMarker Marker = EventMarker_Push ;
 
   static EventIdType Register(EventMetaInfo &info);
  };

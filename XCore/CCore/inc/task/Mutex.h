@@ -1,7 +1,7 @@
 /* Mutex.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: XCore
 //
@@ -34,9 +34,9 @@ struct MutexNumber
  {
   using ValueType = uint16 ;
 
-  static const ValueType Base = 0 ;
-  static const ValueType Lim = Base+DefaultEventElementCount ;
-  static const EventMarker Marker = EventMarker_None ;
+  static constexpr ValueType Base = 0 ;
+  static constexpr ValueType Lim = Base+DefaultEventElementCount ;
+  static constexpr EventMarker Marker = EventMarker_None ;
 
   static EventIdType Register(EventMetaInfo &info);
  };

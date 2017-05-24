@@ -30,9 +30,9 @@ namespace CCore {
 
 /* consts */
 
-const ulen MaxEventLen = 256 ;
+inline constexpr ulen MaxEventLen = 256 ;
 
-const unsigned DefaultGuardCount = 1'000'000 ;
+inline constexpr unsigned DefaultGuardCount = 1'000'000 ;
 
 /* types */
 
@@ -135,9 +135,9 @@ struct EventPrefix // each event type must be layout-compatible with EventPrefix
  //  {
  //   using ValueType = uint16 ;
  //
- //   static const ValueType Base = 10 ;
- //   static const ValueType Lim = 100 ;
- //   static const EventMarker Marker = EventMarker_None ;
+ //   static constexpr ValueType Base = 10 ;
+ //   static constexpr ValueType Lim = 100 ;
+ //   static constexpr EventMarker Marker = EventMarker_None ;
  //  };
  //
 
@@ -146,7 +146,7 @@ class EventEnumValue
  {
    using ValueType = typename T::ValueType ;
 
-   static const ulen Len = UIntConstMul<ulen,T::Lim-T::Base,sizeof (TextLabel)> ;
+   static constexpr ulen Len = UIntConstMul<ulen,T::Lim-T::Base,sizeof (TextLabel)> ;
 
    ValueType value;
 
@@ -1067,9 +1067,9 @@ struct EventControl
  //
  // struct EventRecorderAlgo
  //  {
- //   static const ulen RecordAlign = 4 ;
+ //   static constexpr ulen RecordAlign = 4 ;
  //
- //   static const uint64 TimeFreq = ??? ;
+ //   static constexpr uint64 TimeFreq = ??? ;
  //
  //   class AllocPos : NoCopy
  //    {
@@ -1100,7 +1100,7 @@ class EventRecorder : public EventMetaInfo
 
   public:
 
-   static const ulen RecordAlign = Algo::RecordAlign ;
+   static constexpr ulen RecordAlign = Algo::RecordAlign ;
 
    explicit EventRecorder(ulen buf_len_)
     : EventMetaInfo(Algo::TimeFreq)

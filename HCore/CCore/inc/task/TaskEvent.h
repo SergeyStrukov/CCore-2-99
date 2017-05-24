@@ -1,7 +1,7 @@
 /* TaskEvent.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -40,9 +40,9 @@ class TickTask;
 
 struct TaskEventAlgo
  {
-  static const ulen RecordAlign = 4 ;
+  static constexpr ulen RecordAlign = 4 ;
 
-  static const uint64 TimeFreq = 0 ; // meaningless value
+  static constexpr uint64 TimeFreq = 0 ; // meaningless value
 
   class AllocPos : FastMutexBase
    {
