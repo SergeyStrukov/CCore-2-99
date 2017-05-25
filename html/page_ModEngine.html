@@ -34,51 +34,6 @@
 <b>ModEngine</b> and related classes support modular arithmetic.
 </p>
 
-<h4>BitScanner</h4>
-
-<p>
-<b>BitScanner</b> performs the bit scanning of an unsigned integer from MSB to LSB. 
-</p>
-
-<pre>
-
-template &lt;class UInt&gt;
-class <span class="Att">BitScanner</span> : NoCopy
- {
-   ....
-
-  public:
- 
-   explicit BitScanner(UInt d);
-   
-   boolable operator + () const;
-   
-   boolable operator * () const;
-   
-   void operator ++ ();
- };
-
-</pre>
-
-<p>
-Constructor takes an unsigned integer value to be scanned as the argument. The type is determined by the
-template parameter. In each moment scanner "observes" some bit position or the past-the-last bit position.
-Initially it observes the most significant 1-bit position, if any. Otherwise it starts with the past-the-last bit position.
-</p>
-
-<p>
-<b>operator +</b> returns <b>true</b>, if the scanner is at some bit position.
-</p>
-
-<p>
-<b>operator *</b> returns the current bit. Scanner must be at a bit position.
-</p>
-
-<p>
-<b>operator ++</b> moves to the next bit position. Scanner must be at a bit position. If the current bit
-is the LSB, the scanner is moved to the past-the-last bit position.
-</p>
-
 <h4>IntegerBitScanner</h4>
 
 <p>
@@ -170,8 +125,8 @@ class <span class="Att">ModEngine</span> : NoCopy
    
    Integer squac(const Integer &s,const Integer &a) const; // s,a &gt;= 0 , s,a &lt; M
    
-   template &lt;class UInt&gt;
-   Meta::EnableIf&lt;Meta::IsUInt&lt;UInt&gt;::Ret,Integer&gt; pow(const Integer &a,UInt d) const; // a &gt;=0 , a &lt; M , M &gt; 1
+   template &lt;UIntType UInt&gt;
+   Integer pow(const Integer &a,UInt d) const; // a &gt;=0 , a &lt; M , M &gt; 1
    
    Integer pow(const Integer &a,const Integer &d) const; // a,d &gt;=0 , a &lt; M , M &gt; 1
  };

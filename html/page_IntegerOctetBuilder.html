@@ -36,33 +36,25 @@ A collection of tools to work with integer octet representations.
 
 <h4>PrintIntegerOctets</h4>
 
-<pre>
-
-template &lt;class Integer&gt;
-PrintIntegerOctetsType&lt;Integer&gt; <span class="Att">PrintIntegerOctets</span>(const Integer &amp;a) { return PrintIntegerOctetsType&lt;Integer&gt;(a); }
-
-</pre>
-
 <p>
-This is a <b>Creator Function</b>, it creates a printable object to print an octet representation
-of the given <a href="page_Integer.html">Integer</a>. The type of the object is <b>PrintIntegerOctetsType&lt;Integer&gt;</b>.
+<b>PrintIntegerOctets&lt;Integer&gt;</b> is a printable object to print an octet representation
+of the given <a href="page_Integer.html">Integer</a>.
 </p>
 
 <pre>
 
 template &lt;class Integer&gt;
-class <span class="Att">PrintIntegerOctetsType</span>
+class <span class="Att">PrintIntegerOctets</span>
  {
    ....
 
   public:
    
-   explicit PrintIntegerOctetsType(const Integer &amp;a);
+   explicit PrintIntegerOctets(const Integer &amp;a);
   
-   ~PrintIntegerOctetsType() {}
+   ~PrintIntegerOctets() {}
 
-   template &lt;class P&gt;
-   void print(P &amp;out) const;
+   void print(PrinterType &amp;out) const;
  };
 
 </pre>

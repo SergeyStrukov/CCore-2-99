@@ -612,7 +612,7 @@ class TestData : NoCopy
 
   public:
 
-   static const unsigned MaxN = 10 ;
+   static constexpr unsigned MaxN = 10 ;
 
    TestData();
  };
@@ -1440,7 +1440,7 @@ class ParaTestEngine : TestData
 
      private:
 
-      static const ulen ListLen = 1000 ;
+      static constexpr ulen ListLen = 1000 ;
 
       void job()
        {

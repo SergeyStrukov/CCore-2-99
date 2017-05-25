@@ -23,20 +23,20 @@ namespace Math {
 
 /* classes */
 
-template <class Integer> class PrintIntegerOctetsType;
+template <class Integer> class PrintIntegerOctets;
 
 template <class Integer> class IntegerOctetBuilder;
 
 template <class Integer> class OctetInteger;
 
-/* class PrintIntegerOctetsType<Integer> */
+/* class PrintIntegerOctets<Integer> */
 
 template <class Integer>
-class PrintIntegerOctetsType
+class PrintIntegerOctets
  {
    using Unit = typename Integer::Unit ;
 
-   static const ulen Count = Integer::UnitBits/8 ;
+   static constexpr ulen Count = Integer::UnitBits/8 ;
 
    static_assert( (Integer::UnitBits%8)==0 ,"CCore::Math::PrintIntegerOctets<Integer> : bad Integer::UnitBits");
 
@@ -44,9 +44,9 @@ class PrintIntegerOctetsType
 
   public:
 
-   explicit PrintIntegerOctetsType(const Integer &a_) : a(a_) {}
+   explicit PrintIntegerOctets(const Integer &a_) : a(a_) {}
 
-   ~PrintIntegerOctetsType() {}
+   ~PrintIntegerOctets() {}
 
    void print(PrinterType &out) const
     {
@@ -84,11 +84,6 @@ class PrintIntegerOctetsType
     }
  };
 
-/* PrintIntegerOctets() */
-
-template <class Integer>
-PrintIntegerOctetsType<Integer> PrintIntegerOctets(const Integer &a) { return PrintIntegerOctetsType<Integer>(a); }
-
 /* class IntegerOctetBuilder<Integer> */
 
 template <class Integer>
@@ -102,7 +97,7 @@ class IntegerOctetBuilder
 
    using Unit = typename Integer::Unit ;
 
-   static const ulen Delta = Integer::UnitBits/8 ;
+   static constexpr ulen Delta = Integer::UnitBits/8 ;
 
    static_assert( (Integer::UnitBits%8)==0 ,"CCore::Math::IntegerOctetBuilder<Integer> : bad Integer::UnitBits");
 

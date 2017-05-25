@@ -1,7 +1,7 @@
 /* SmallPrimes.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -27,7 +27,7 @@ namespace Math {
  // All primes < 1'000'000
  //
 
-const unsigned SmallPrimesCap = 1'000'000 ;
+inline constexpr unsigned SmallPrimesCap = 1'000'000 ;
 
 extern const unsigned SmallPrimes[78'498];
 

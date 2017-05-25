@@ -35,17 +35,17 @@ struct NoPrimeTest
  {
   using Unit = typename Integer::Unit ;
 
-  static const unsigned Delta = 4 ;
+  static constexpr unsigned Delta = 4 ;
 
   static_assert( (Integer::UnitBits%Delta)==0 ,"CCore::Math::NoPrimeTest<Integer> : bad Integer::UnitBits");
 
-  static const Unit Mask = (Unit(1)<<Delta)-1 ;
+  static constexpr Unit Mask = (Unit(1)<<Delta)-1 ;
 
   class ExpEngine : NoCopy
    {
      ModEngine<Integer> engine;
 
-     static const ulen Len = (ulen(1)<<Delta)-1 ;
+     static constexpr ulen Len = (ulen(1)<<Delta)-1 ;
 
      Integer Pminus1;
 
