@@ -95,7 +95,7 @@ struct PacketFormat
 
    // prefix + suffix + max_data <= MaxULen
 
-  PacketFormat()
+  PacketFormat() noexcept
    {
     prefix=0;
     max_data=0;

@@ -42,7 +42,7 @@ construct an input with the given output.
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;HashFuncType T&gt;
 class <span class="Att">HashFunction</span> : NoCopy
  {
    ....
@@ -51,9 +51,9 @@ class <span class="Att">HashFunction</span> : NoCopy
  
    // length in octets
  
-   static const ulen DigestLen = T::DigestLen ;
+   static constexpr ulen DigestLen = T::DigestLen ;
 
-   static const ulen BlockLen  = T::BlockLen ;
+   static constexpr ulen BlockLen  = T::BlockLen ;
   
    static const char * GetName() { return T::GetName(); }
 
@@ -119,9 +119,9 @@ struct HashAlgo
  {
   // global properties
 
-  static const ulen DigestLen = .... ;
+  static constexpr ulen DigestLen = .... ;
 
-  static const ulen BlockLen = .... ;
+  static constexpr ulen BlockLen = .... ;
 
   static const char * GetName() { return "...."; }
 
@@ -131,9 +131,9 @@ struct HashAlgo
 
   // methods
 
-  void reset();
+  void reset() noexcept;
 
-  void forget();
+  void forget() noexcept;
 
   void add(const uint8 *data,ulen len);
 
@@ -146,6 +146,17 @@ struct HashAlgo
 The method <b>forget()</b> is used to clean the state.
 </p>
 
+<p>
+Concept <b>HashType</b> covers hash classes like <b>HashFunction&lt;....&gt;</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+concept bool <span class="Att">HashType</span> = .... ;
+
+</pre>
+
 <h4>KeyedHashFunction</h4>
 
 <p>
@@ -157,7 +168,7 @@ This variant of the hash uses the additional argument &mdash; the key.
 
 <pre>
 
-template &lt;class T,ulen L&gt;
+template &lt;HashFuncType T,ulen L=T::DigestLen&gt;
 class <span class="Att">KeyedHashFunction</span> : NoCopy
  {
    ....
@@ -166,9 +177,9 @@ class <span class="Att">KeyedHashFunction</span> : NoCopy
 
    // length in octets
 
-   static const ulen DigestLen = L ;
+   static constexpr ulen DigestLen = L ;
 
-   static const ulen BlockLen  = T::BlockLen ;
+   static constexpr ulen BlockLen  = T::BlockLen ;
  
    static const char * GetName() { return T::GetName(); }
    
@@ -221,6 +232,17 @@ void <span class="Att">GuardNoHashKey</span>();
 <p>
 The method <b>unkey()</b> cleans the key information from the object. It is called by the destructor.
 </p>
+
+<p>
+Concept <b>KeyedHashType</b> covers keyed hash classes like <b>KeyedHashFunction&lt;....&gt;</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+concept bool <span class="Att">KeyedHashType</span> = .... ;
+
+</pre>
 
 </body>
 

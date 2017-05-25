@@ -58,7 +58,7 @@ class <span class="Att">DHExp</span> : NoCopy
  {
   public: 
  
-   static const ulen GLen = DHMod::GLen ;
+   static constexpr ulen GLen = DHMod::GLen ;
 
    DHExp();
    
@@ -99,7 +99,7 @@ In both methods <b>x</b> represents the unsigned number in the lendian byte orde
 
 struct <span class="Att">DHModI</span>
  {
-  static const ulen GLen = 96 ;
+  static constexpr ulen GLen = 96 ;
   
   static const uint8 G[GLen];
   
@@ -112,7 +112,7 @@ struct <span class="Att">DHModI</span>
 
 struct <span class="Att">DHModII</span>
  {
-  static const ulen GLen = 128 ;
+  static constexpr ulen GLen = 128 ;
   
   static const uint8 G[GLen];
   
@@ -158,7 +158,7 @@ struct <span class="Att">Algo</span>
  {
   using Unit = ??? ;
   
-  static const unsigned UnitBits = ??? ;
+  static constexpr unsigned UnitBits = ??? ;
   
   template &lt;ulen Len&gt;
   class MulOp : NoCopy
@@ -273,7 +273,7 @@ struct <span class="Att">DefaultDHAlgo</span>
   
   using Unit = Algo::Unit ;
   
-  static const unsigned UnitBits = Algo::UnitBits ;
+  static constexpr unsigned UnitBits = Algo::UnitBits ;
   
   template &lt;ulen Len&gt;
   class MulOp : NoCopy
@@ -319,6 +319,19 @@ struct <span class="Att">DefaultDHAlgo</span>
 <p>
 This is the default implementation of the <b>Algo</b>, based on the <b>Math::IntegerFastAlgo</b> package.
 </p>
+
+<p>
+
+Concept <b>DHExpType</b> covers Diffie-Hellman classes like <b>DHExp&lt;....&gt;</b>.
+
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+concept bool <span class="Att">DHExpType</span> = .... ;
+
+</pre>
 
 </body>
 

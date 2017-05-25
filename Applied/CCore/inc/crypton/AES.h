@@ -42,10 +42,10 @@ struct AESBase
  {
   // consts
 
-  static const ulen BlockWordLen = 4 ;
-  static const ulen BlockLen = 4*BlockWordLen ;
+  static constexpr ulen BlockWordLen = 4 ;
+  static constexpr ulen BlockLen = 4*BlockWordLen ;
 
-  static const uint8 PolynomMask = 0x1b ; // x^8 + ( x^4 + x^3 + x + 1 )
+  static constexpr uint8 PolynomMask = 0x1b ; // x^8 + ( x^4 + x^3 + x + 1 )
 
   static const uint8 SBox[256];
 
@@ -557,8 +557,8 @@ struct AESBase
 
 struct AES128Param
  {
-  static const ulen KeyWordLen = 4 ;
-  static const ulen Rounds = 10 ;
+  static constexpr ulen KeyWordLen = 4 ;
+  static constexpr ulen Rounds = 10 ;
 
   static const char *const Name;
   static const char *const InverseName;
@@ -568,8 +568,8 @@ struct AES128Param
 
 struct AES192Param
  {
-  static const ulen KeyWordLen = 6 ;
-  static const ulen Rounds = 12 ;
+  static constexpr ulen KeyWordLen = 6 ;
+  static constexpr ulen Rounds = 12 ;
 
   static const char *const Name;
   static const char *const InverseName;
@@ -579,8 +579,8 @@ struct AES192Param
 
 struct AES256Param
  {
-  static const ulen KeyWordLen = 8 ;
-  static const ulen Rounds = 14 ;
+  static constexpr ulen KeyWordLen = 8 ;
+  static constexpr ulen Rounds = 14 ;
 
   static const char *const Name;
   static const char *const InverseName;
@@ -593,13 +593,13 @@ struct AES : AESBase
  {
   // consts
 
-  static const ulen KeyWordLen = Param::KeyWordLen ;
-  static const ulen KeyLen = 4*KeyWordLen ;
+  static constexpr ulen KeyWordLen = Param::KeyWordLen ;
+  static constexpr ulen KeyLen = 4*KeyWordLen ;
 
-  static const ulen Rounds = Param::Rounds ;
+  static constexpr ulen Rounds = Param::Rounds ;
 
-  static const ulen RoundKeyWordLen = (Rounds+1)*BlockWordLen ;
-  static const ulen RoundKeyLen = (Rounds+1)*BlockLen ;
+  static constexpr ulen RoundKeyWordLen = (Rounds+1)*BlockWordLen ;
+  static constexpr ulen RoundKeyLen = (Rounds+1)*BlockLen ;
 
   static const char * GetName() { return Param::Name; }
 
@@ -641,13 +641,13 @@ struct AESInverse : AESBase
  {
   // consts
 
-  static const ulen KeyWordLen = Param::KeyWordLen ;
-  static const ulen KeyLen = 4*KeyWordLen ;
+  static constexpr ulen KeyWordLen = Param::KeyWordLen ;
+  static constexpr ulen KeyLen = 4*KeyWordLen ;
 
-  static const ulen Rounds = Param::Rounds ;
+  static constexpr ulen Rounds = Param::Rounds ;
 
-  static const ulen RoundKeyWordLen = (Rounds+1)*BlockWordLen ;
-  static const ulen RoundKeyLen = (Rounds+1)*BlockLen ;
+  static constexpr ulen RoundKeyWordLen = (Rounds+1)*BlockWordLen ;
+  static constexpr ulen RoundKeyLen = (Rounds+1)*BlockLen ;
 
   static const char * GetName() { return Param::InverseName; }
 

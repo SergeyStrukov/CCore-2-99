@@ -71,11 +71,11 @@ using <span class="Att">PacketFunction</span> = Function&lt;void (PacketHeader *
 
 <pre>
 
-const ulen <span class="Att">MaxPacketExtLen</span> = Align(256) ;
+inline constexpr ulen <span class="Att">MaxPacketExtLen</span> = Align(256) ;
 
-const ulen <span class="Att">MaxPacketCompleteFunctions</span> = 8 ;
+inline constexpr ulen <span class="Att">MaxPacketCompleteFunctions</span> = 8 ;
 
-const ulen <span class="Att">DefaultPacketMaxDataLen</span> = 1600 ;
+inline constexpr ulen <span class="Att">DefaultPacketMaxDataLen</span> = 1600 ;
 
 enum <span class="Att">PacketCancelState</span>
  {
@@ -137,6 +137,12 @@ void <span class="Att">DropPacketExt</span>(PacketHeader *packet_)
   packet.popExt().complete();
  }
 
+template &lt;class P&gt;
+concept bool <span class="Att">PacketType</span> = requires(P packet)
+ {
+  { GetPacketHeader(packet) } -> PacketHeader * ;
+ } ;
+
 </pre>
 
 <p>
@@ -152,6 +158,10 @@ is a function name in the exception message.
 <p>
 <b>DropPacketExt()</b> is a simple packet completion function. Use it when you need only
 to pop some packet extension.
+</p>
+
+<p>
+Concept <b>PacketType</b> covers all advanced packet header pointers.
 </p>
 
 <h4>PacketBuf</h4>
@@ -229,7 +239,7 @@ Destructor releases the buffer.
 <p>
 <b>provide()</b> ensures the data buffer has the given capacity. It also clears <b>data_len</b>.
 If the buffer of a greater capacity was already allocated, the extra memory is returned to the heap.
-The return value is true, if the operation is successful.
+The return value is <b>true</b>, if the operation is successful.
 </p>
 
 <p>
@@ -237,7 +247,7 @@ The return value is true, if the operation is successful.
 </p>
 
 <p>
-<b>noSpace()</b> is true, if the buffer is empty.
+<b>noSpace()</b> is <b>true</b>, if the buffer is empty.
 </p>
 
 <p>
@@ -448,7 +458,7 @@ and the second is a desired life-time.
    // ext
    
    template &lt;class T,class ... SS&gt;
-   T * pushExt(SS &amp;&amp; ... ss);
+   T * pushExt(SS &amp;&amp; ... ss) requires ( NothrowDtorType&lt;T&gt; && ConstructibleType&lt;T,SS...&gt; ) ;
    
    template &lt;class T&gt;
    T * getExt();
@@ -577,11 +587,9 @@ class <span class="Att">PacketList</span> : NoCopy
    
    void put_first(PacketHeader *packet);
    
-   template &lt;class P&gt;
-   void put(P packet) { put(GetPacketHeader(packet)); }
+   void put(PacketType packet) { put(GetPacketHeader(packet)); }
   
-   template &lt;class P&gt;
-   void put_first(P packet) { put_first(GetPacketHeader(packet)); }
+   void put_first(PacketType packet) { put_first(GetPacketHeader(packet)); }
    
    // get
    
@@ -593,8 +601,7 @@ class <span class="Att">PacketList</span> : NoCopy
    
    void del(PacketHeader *packet);
     
-   template &lt;class P&gt;
-   void del(P packet) { del(GetPacketHeader(packet)); }
+   void del(PacketType packet) { del(GetPacketHeader(packet)); }
    
    // methods
    
@@ -670,7 +677,7 @@ with caution.
 
 <pre>
 
-template &lt;class POD,class ... TT&gt; // T1, T2, ... , Ttop
+template &lt;PODType POD,class ... TT&gt; // T1, T2, ... , Ttop
 class <span class="Att">Packet</span>
  {
    PacketHeader *packet;
@@ -773,7 +780,7 @@ These methods are the packet time-stamp methods.
    // ext
    
    template &lt;class T,class ... SS&gt;
-   Packet&lt;POD,TT...,T&gt; pushExt(SS &amp;&amp; ... ss) 
+   Packet&lt;POD,TT...,T&gt; pushExt(SS &amp;&amp; ... ss) requires ( NothrowDtorType&lt;T&gt; && ConstructibleType&lt;T,SS...&gt; )
     { 
      PacketHeader *ret=<span class="Att">Replace_null(packet)</span>;
      
@@ -796,13 +803,13 @@ These methods are the packet time-stamp methods.
      return ret; 
     }
  
-   template&lt;ulen Index&gt;
+   template&lt;unsigned Index&gt;
    TIndex * getDeepExt() // 1 -&gt; T1, 2 -&gt; T2, ...
     {
      return PacketDeepExt&lt;Index,TT...&gt;::Get(packet);
     }
     
-   template&lt;ulen Index&gt;
+   template&lt;unsigned Index&gt;
    Packet&lt;POD,TIndex+1,...&gt; forgetExt() // 1 -&gt; T2,... , 2 -&gt; T3,... , ...
     {
      return <span class="Att">Replace_null(packet)</span>;
@@ -1024,8 +1031,7 @@ class <span class="Att">PacketCanceller</span> : NoCopy
    
   public: 
    
-   template &lt;class P&gt;
-   explicit PacketCanceller(P packet_) : packet(GetPacketHeader(packet_)) {}
+   explicit PacketCanceller(PacketType packet_) : packet(GetPacketHeader(packet_)) {}
    
    bool getCancelFunction() { return packet->getCancelFunction(cancel_function)==Packet_HasCancelFunction; }
    
@@ -1077,7 +1083,7 @@ struct <span class="Att">PacketFormat</span>
   
    // prefix + suffix + max_data &lt;= MaxULen
   
-  PacketFormat()
+  PacketFormat() noexcept
    {
     prefix=0;
     max_data=0;

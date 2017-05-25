@@ -41,9 +41,9 @@ template <class Param> struct SHA;
 
 struct SHA32Word
  {
-  static const ulen BlockLen  = 64 ;
-  static const ulen TailLen   =  8 ;
-  static const ulen WLoadLen  = 16 ;
+  static constexpr ulen BlockLen  = 64 ;
+  static constexpr ulen TailLen   =  8 ;
+  static constexpr ulen WLoadLen  = 16 ;
 
   using Word = uint32 ;
 
@@ -62,9 +62,9 @@ struct SHA32Word
 
 struct SHA64Word
  {
-  static const ulen BlockLen  = 128 ;
-  static const ulen TailLen   =  16 ;
-  static const ulen WLoadLen  =  16 ;
+  static constexpr ulen BlockLen  = 128 ;
+  static constexpr ulen TailLen   =  16 ;
+  static constexpr ulen WLoadLen  =  16 ;
 
   using Word = uint64 ;
 
@@ -100,8 +100,8 @@ struct SHA64Word
 
 struct SHA1Param : SHA32Word
  {
-  static const ulen DigestLen = 20 ;
-  static const ulen WLen      = 80 ;
+  static constexpr ulen DigestLen = 20 ;
+  static constexpr ulen WLen      = 80 ;
 
   static const char *const Name;
 
@@ -204,8 +204,8 @@ struct SHA1Param : SHA32Word
 
 struct SHA256Param : SHA32Word
  {
-  static const ulen DigestLen = 32 ;
-  static const ulen WLen      = 64 ;
+  static constexpr ulen DigestLen = 32 ;
+  static constexpr ulen WLen      = 64 ;
 
   static const char *const Name;
 
@@ -277,8 +277,8 @@ struct SHA256Param : SHA32Word
 
 struct SHA224Param : SHA32Word
  {
-  static const ulen DigestLen = 28 ;
-  static const ulen WLen      = 64 ;
+  static constexpr ulen DigestLen = 28 ;
+  static constexpr ulen WLen      = 64 ;
 
   static const char *const Name;
 
@@ -304,8 +304,8 @@ struct SHA224Param : SHA32Word
 
 struct SHA512Param : SHA64Word
  {
-  static const ulen DigestLen = 64 ;
-  static const ulen WLen      = 80 ;
+  static constexpr ulen DigestLen = 64 ;
+  static constexpr ulen WLen      = 80 ;
 
   static const char *const Name;
 
@@ -377,8 +377,8 @@ struct SHA512Param : SHA64Word
 
 struct SHA384Param : SHA64Word
  {
-  static const ulen DigestLen = 48 ;
-  static const ulen WLen      = 80 ;
+  static constexpr ulen DigestLen = 48 ;
+  static constexpr ulen WLen      = 80 ;
 
   static const char *const Name;
 
@@ -407,9 +407,9 @@ struct SHABlock
  {
   // consts
 
-  static const ulen Len     = Param::BlockLen ;
-  static const ulen TailLen =  Param::TailLen ;
-  static const ulen LastLen =   Len - TailLen ;
+  static constexpr ulen Len     = Param::BlockLen ;
+  static constexpr ulen TailLen =  Param::TailLen ;
+  static constexpr ulen LastLen =   Len - TailLen ;
 
   // data
 
@@ -501,9 +501,9 @@ struct SHA
  {
   // consts
 
-  static const ulen DigestLen = Param::DigestLen ;
+  static constexpr ulen DigestLen = Param::DigestLen ;
 
-  static const ulen BlockLen  = Param::BlockLen ;
+  static constexpr ulen BlockLen  = Param::BlockLen ;
 
   static const char * GetName() { return Param::Name; }
 

@@ -40,7 +40,7 @@ a block of bytes of the defined length (the cipher key length).
 
 <pre>
 
-template &lt;class T&gt;
+template &lt;CipherFuncType T&gt;
 class <span class="Att">BlockCipher</span> : NoCopy
  {
    ....
@@ -49,9 +49,9 @@ class <span class="Att">BlockCipher</span> : NoCopy
   
    // length in octets
   
-   static const ulen BlockLen = T::BlockLen ;
+   static constexpr ulen BlockLen = T::BlockLen ;
 
-   static const ulen KeyLen = T::KeyLen ;
+   static constexpr ulen KeyLen = T::KeyLen ;
    
    static const char * GetName() { return T::GetName(); }
    
@@ -139,9 +139,9 @@ struct CipherAlgo
  {
   // global properties
 
-  static const ulen KeyLen = .... ;
+  static constexpr ulen KeyLen = .... ;
 
-  static const ulen BlockLen = .... ;
+  static constexpr ulen BlockLen = .... ;
 
   static const char * GetName() { return "...."; }
 
@@ -153,12 +153,23 @@ struct CipherAlgo
 
   void key(const uint8 src[KeyLen]);
 
-  void unkey();
+  void unkey() noexcept;
 
   void apply(const uint8 src[BlockLen],uint8 *restrict dst/* [BlockLen] */);
 
   void apply(uint8 src_dst[BlockLen]);
  };
+
+</pre>
+
+<p>
+Concept <b>CipherType</b> covers cipher classes like <b>BlockCipher&lt;...&gt;</b>. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+concept bool <span class="Att">CipherType</span> = .... ;
 
 </pre>
 

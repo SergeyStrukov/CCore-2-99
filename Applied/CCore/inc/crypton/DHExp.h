@@ -37,7 +37,7 @@ template <class DHMod,class Algo=DefaultDHAlgo> class DHExp;
 
 struct DHModI
  {
-  static const ulen GLen = 96 ;
+  static constexpr ulen GLen = 96 ;
 
   static const uint8 G[GLen];
 
@@ -52,7 +52,7 @@ struct DHModI
 
 struct DHModII
  {
-  static const ulen GLen = 128 ;
+  static constexpr ulen GLen = 128 ;
 
   static const uint8 G[GLen];
 
@@ -71,7 +71,7 @@ struct Algo
  {
   using Unit = ??? ;
 
-  static const unsigned UnitBits = ??? ;
+  static constexpr unsigned UnitBits = ??? ;
 
   template <ulen Len>
   class MulOp : NoCopy
@@ -120,7 +120,7 @@ struct DefaultDHAlgo
 
   using Unit = Algo::Unit ;
 
-  static const unsigned UnitBits = Algo::UnitBits ;
+  static constexpr unsigned UnitBits = Algo::UnitBits ;
 
   template <ulen Len>
   class MulOp : NoCopy
@@ -205,19 +205,19 @@ class DHExp : NoCopy
  {
   public:
 
-   static const ulen GLen = DHMod::GLen ;
+   static constexpr ulen GLen = DHMod::GLen ;
 
   public:
 
-   static const unsigned UnitBits = Algo::UnitBits ;
+   static constexpr unsigned UnitBits = Algo::UnitBits ;
 
    static_assert( (UnitBits%8)==0 ,"CCore::Crypton::DHExp<...> : UnitBits is not multiple 8");
 
-   static const unsigned UnitOctets = UnitBits/8 ;
+   static constexpr unsigned UnitOctets = UnitBits/8 ;
 
    static_assert( (GLen%UnitOctets)==0 ,"CCore::Crypton::DHExp<...> : GLen is not multiple UnitOctets");
 
-   static const ulen IntLen = GLen/UnitOctets ;
+   static constexpr ulen IntLen = GLen/UnitOctets ;
 
    using Unit = typename Algo::Unit ;
 

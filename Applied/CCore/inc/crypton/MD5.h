@@ -31,10 +31,10 @@ struct MD5Core
  {
   // consts
 
-  static const ulen BlockWordLen = 16 ;
-  static const ulen BlockLen = BlockWordLen*4 ;
-  static const ulen TailLen = 8 ;
-  static const ulen DigestLen = 16 ;
+  static constexpr ulen BlockWordLen = 16 ;
+  static constexpr ulen BlockLen = BlockWordLen*4 ;
+  static constexpr ulen TailLen = 8 ;
+  static constexpr ulen DigestLen = 16 ;
 
   static const char * GetName() { return "MD5"; }
 

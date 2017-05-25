@@ -61,9 +61,9 @@ class HashFunction : NoCopy
 
    // length in octets
 
-   static const ulen DigestLen = T::DigestLen ;
+   static constexpr ulen DigestLen = T::DigestLen ;
 
-   static const ulen BlockLen  = T::BlockLen ;
+   static constexpr ulen BlockLen  = T::BlockLen ;
 
    static const char * GetName() { return T::GetName(); }
 
@@ -99,15 +99,15 @@ class KeyedHashFunction : NoCopy
 
    // length in octets
 
-   static const ulen DigestLen = L ;
+   static constexpr ulen DigestLen = L ;
 
-   static const ulen BlockLen  = T::BlockLen ;
+   static constexpr ulen BlockLen  = T::BlockLen ;
 
    static const char * GetName() { return T::GetName(); }
 
   private:
 
-   static const ulen DLen = T::DigestLen ;
+   static constexpr ulen DLen = T::DigestLen ;
 
    static_assert( DigestLen<=DLen ,"CCore::Crypton::KeyedHashFunction<T,L> : L > T::DigestLen");
    static_assert( DLen<=BlockLen ,"CCore::Crypton::KeyedHashFunction<T,L> : T::DigestLen > T::BlockLen");

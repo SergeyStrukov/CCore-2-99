@@ -59,8 +59,8 @@ class BlockCipher : NoCopy
 
    // length in octets
 
-   static const ulen BlockLen = T::BlockLen ;
-   static const ulen KeyLen = T::KeyLen ;
+   static constexpr ulen BlockLen = T::BlockLen ;
+   static constexpr ulen KeyLen = T::KeyLen ;
 
    static const char * GetName() { return T::GetName(); }
 
