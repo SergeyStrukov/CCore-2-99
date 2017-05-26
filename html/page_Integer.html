@@ -61,7 +61,7 @@ The null value is represented by the empty array.
 
 <pre>
 
-template &lt;class Algo,
+template &lt;IntAlgo Algo,
           template &lt;class T,class A&gt; class ArrayType = RefArray ,
           template &lt;class T,class F=GetNoThrowFlags&lt;T&gt; &gt; class ArrayAlgoType = ArrayAlgo &gt;
 class <span class="Att">Integer</span>
@@ -72,7 +72,7 @@ class <span class="Att">Integer</span>
 
    using Unit = typename Algo::Unit ;
    
-   static const unsigned UnitBits = Algo::UnitBits ;
+   static constexpr unsigned UnitBits = Algo::UnitBits ;
    
    using TempArrayType = <span class="Att">DynArray&lt;Unit,ArrayAlgoType&lt;Unit&gt; &gt;</span> ;
    
@@ -125,8 +125,7 @@ or <b>AtomicRefArray</b>. It means it is efficiently copyable and multiple objec
    
    // generic constructor 
 
-   template &lt;class Builder&gt;
-   Integer(DoBuildType,Builder builder) : body(DoBuild,builder) { normalize(); }
+   Integer(DoBuildType,BuilderType&lt;Unit&gt; builder) : body(DoBuild,builder) { normalize(); }
    
    // constructors 
   
@@ -134,10 +133,10 @@ or <b>AtomicRefArray</b>. It means it is efficiently copyable and multiple objec
    
    Integer(StrLen str);
    
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    Integer(UInt val);
    
-   template &lt;class SInt&gt;
+   template &lt;SIntType SInt&gt;
    Integer(SInt val);
    
    ~Integer();
@@ -175,7 +174,7 @@ silently cast operation arguments.
      
      BitsOf(ulen units_,unsigned msbits_) : units(units_),msbits(msbits_) {}
      
-     template &lt;class UInt&gt;
+     template &lt;UIntType UInt&gt;
      void total(UInt &amp;ret) const;
      
      unsigned total() const;
@@ -264,7 +263,7 @@ body. This method is useful in multi-task situations.
 
    // cast
    
-   template &lt;class UInt&gt;
+   template &lt;UIntType UInt&gt;
    UInt cast() const;
 
 </pre>
@@ -468,94 +467,94 @@ the usual integer comparison operations.
 
 <pre>
 
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    Integer &amp; revsub(SUInt val);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    Integer &amp; operator += (SUInt val);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    Integer &amp; operator -= (SUInt val);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    Integer &amp; operator *= (SUInt val);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    Integer &amp; operator /= (SUInt val);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    Integer &amp; operator %= (SUInt val);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator + (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator + (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator - (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator - (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator * (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator * (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator / (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator / (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator % (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend Integer operator % (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    DivMod divmod(SUInt b) const;
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    CmpResult cmp(SUInt b) const;
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator == (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator == (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator != (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator != (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &lt; (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &lt; (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &gt; (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &gt; (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &lt;= (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &lt;= (SUInt a,const Integer &amp;b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &gt;= (const Integer &amp;a,SUInt b);
    
-   template &lt;class SUInt&gt;
+   template &lt;SUIntType SUInt&gt;
    friend bool operator &gt;= (SUInt a,const Integer &amp;b);
 
 </pre>
@@ -575,8 +574,7 @@ signed or unsigned integral type. They are introduced for efficiency reason.
 
    using PrintOptType = IntegerPrintOpt ;
    
-   template &lt;class P&gt;   
-   void print(P &amp;out,PrintOptType opt) const;
+   void print(PrinterType &amp;out,PrintOptType opt) const;
    
    // swap/move objects
    
@@ -627,7 +625,7 @@ class <span class="Att">RandomInteger</span> : public Integer
      
   public:
   
-   template &lt;class Random&gt;
+   template &lt;RandomType Random&gt;
    RandomInteger(ulen n,Random &random);
    
    ~RandomInteger();
@@ -680,11 +678,11 @@ struct <span class="Att">Algo</span>
 
   using Unit = ??? ; // unsigned integral type
   
-  static const unsigned UnitBits = ??? ; 
+  static constexpr unsigned UnitBits = ??? ; 
 
-  static const Unit MaxUnit = ??? ;
+  static constexpr Unit MaxUnit = ??? ;
   
-  static const Unit MSBit = ??? ;
+  static constexpr Unit MSBit = ??? ;
 
 </pre>
 

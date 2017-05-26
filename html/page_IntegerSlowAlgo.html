@@ -38,18 +38,18 @@ You can use this package for algorithm definitions and for comparative testing.
 
 <pre>
 
-template &lt;class UInt&gt;
+template &lt;UIntType UInt&gt;
 struct <span class="Att">IntegerSlowAlgo</span>
  {
   // types and consts
   
   using Unit = UInt ;
 
-  static const unsigned UnitBits = Meta::UIntBits&lt;Unit&gt; ;
+  static constexpr unsigned UnitBits = Meta::UIntBits&lt;Unit&gt; ;
 
-  static const Unit MaxUnit = Unit(-1) ;
+  static constexpr Unit MaxUnit = Unit(-1) ;
   
-  static const Unit MSBit = Unit( MaxUnit^(MaxUnit&gt;&gt;1) );
+  static constexpr Unit MSBit = Unit( MaxUnit^(MaxUnit&gt;&gt;1) );
   
   // functions
   

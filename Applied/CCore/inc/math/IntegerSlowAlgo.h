@@ -110,11 +110,11 @@ struct IntegerSlowAlgo : IntegerSlowMulAlgo<UInt>
 
   using Unit = UInt ;
 
-  static const unsigned UnitBits = Meta::UIntBits<Unit> ;
+  static constexpr unsigned UnitBits = Meta::UIntBits<Unit> ;
 
-  static const Unit MaxUnit = Unit(-1) ;
+  static constexpr Unit MaxUnit = Unit(-1) ;
 
-  static const Unit MSBit = Unit( MaxUnit^(MaxUnit>>1) );
+  static constexpr Unit MSBit = Unit( MaxUnit^(MaxUnit>>1) );
 
   // functions
 

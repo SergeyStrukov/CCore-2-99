@@ -135,8 +135,7 @@ void GuardAddLenOverflow_ulen(ulen a,ulen b);
 
 void GuardAddLenOverflow_ulen();
 
-template <class UInt>
-void GuardAddLenOverflow(UInt a,ulen b)
+void GuardAddLenOverflow(UIntType a,ulen b)
  {
   if( a<=MaxULen )
     GuardAddLenOverflow_ulen(ulen(a),b);
@@ -196,13 +195,13 @@ struct IntegerPrintOpt;
 template <class Integer> class PrintInteger;
 
 template <IntAlgo Algo, template <class T,class A> class ArrayType = RefArray ,
-                      template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType = ArrayAlgo > class Integer;
+                        template <class T,class F=GetNoThrowFlags<T> > class ArrayAlgoType = ArrayAlgo > class Integer;
 
 template <class Integer> class RandomInteger;
 
 template <IntAlgo Algo> struct GCDAlgo;
 
-template <class Unit,class TempArrayType> class TempInteger2;
+template <UIntType Unit,class TempArrayType> class TempInteger2;
 
 template <IntAlgo Algo,class TempArrayType> class GCDivBuilder;
 
@@ -218,11 +217,11 @@ struct Algo
 
 ! using Unit = ??? ; // unsigned integral type
 
-! static const unsigned UnitBits = ??? ;
+! static constexpr unsigned UnitBits = ??? ;
 
-/ static const Unit MaxUnit = ??? ;
+/ static constexpr Unit MaxUnit = ??? ;
 
-/ static const Unit MSBit = ??? ;
+/ static constexpr Unit MSBit = ??? ;
 
   // functions
 
@@ -480,7 +479,7 @@ IntegerInverse<Algo,TempArray>::IntegerInverse(const Unit *a,ulen na,ulen K)
 template <UIntType Unit,UIntType UInt,unsigned UnitBits,unsigned UIntBits> requires( UIntBits>UnitBits && UIntBits%UnitBits!=0 ) // split
 struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
  {
-  static const ulen Len = 1+UIntBits/UnitBits ;
+  static constexpr ulen Len = 1+UIntBits/UnitBits ;
 
   static void FillPos(Unit a[Len],UInt val)
    {
@@ -508,7 +507,7 @@ struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
 template <UIntType Unit,UIntType UInt,unsigned UnitBits,unsigned UIntBits> requires( UIntBits>UnitBits && UIntBits%UnitBits==0 ) // split exact
 struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
  {
-  static const ulen Len = 1+UIntBits/UnitBits ;
+  static constexpr ulen Len = 1+UIntBits/UnitBits ;
 
   static void FillPos(Unit a[Len],UInt val)
    {
@@ -538,7 +537,7 @@ struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
 template <UIntType Unit,UIntType UInt,unsigned UnitBits,unsigned UIntBits> requires( UIntBits<UnitBits ) // ext
 struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
  {
-  static const ulen Len = 1 ;
+  static constexpr ulen Len = 1 ;
 
   static void FillPos(Unit a[Len],UInt val)
    {
@@ -554,7 +553,7 @@ struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
 template <UIntType Unit,UIntType UInt,unsigned UnitBits,unsigned UIntBits> requires( UIntBits==UnitBits ) // same
 struct IntegerFillUInt<Unit,UInt,UnitBits,UIntBits>
  {
-  static const ulen Len = 2 ;
+  static constexpr ulen Len = 2 ;
 
   static void FillPos(Unit a[Len],UInt val)
    {
@@ -578,7 +577,7 @@ class CastInteger<Algo,SInt>
 
    using UInt = typename Meta::SIntToUInt<SInt>::UType ;
 
-   static const ulen Len = IntegerFillUInt<Unit,UInt>::Len ;
+   static constexpr ulen Len = IntegerFillUInt<Unit,UInt>::Len ;
 
    Unit buf[Len];
    ulen len;
@@ -611,7 +610,7 @@ class CastInteger<Algo,UInt>
  {
    using Unit = typename Algo::Unit ;
 
-   static const ulen Len = IntegerFillUInt<Unit,UInt>::Len ;
+   static constexpr ulen Len = IntegerFillUInt<Unit,UInt>::Len ;
 
    Unit buf[Len];
    ulen len;
@@ -1169,8 +1168,8 @@ IntegerDivider<Algo,TempArray>::IntegerDivider(PtrLen<const Unit> a,PtrLen<const
 template <class Integer>
 class IntegerFromString
  {
-   static const ulen LoLen = (3*Meta::UIntBits<unsigned>)/10 ; // 10^LoLen-1 <= unsigned::MaxVal
-                                                               // 0.3 < log10(2)
+   static constexpr ulen LoLen = (3*Meta::UIntBits<unsigned>)/10 ; // 10^LoLen-1 <= unsigned::MaxVal
+                                                                   // 0.3 < log10(2)
 
    static_assert( LoLen>=2 ,"CCore::Math::IntegerFromString<Integer> : bad LoLen");
 
@@ -1558,7 +1557,7 @@ class Integer
 
    using Unit = typename Algo::Unit ;
 
-   static const unsigned UnitBits = Algo::UnitBits ;
+   static constexpr unsigned UnitBits = Algo::UnitBits ;
 
    using TempArrayType = DynArray<Unit,ArrayAlgoType<Unit> > ;
 
@@ -2716,7 +2715,7 @@ struct GCDAlgo
 
 /* class TempInteger2<Unit,TempArrayType> */
 
-template <class Unit,class TempArrayType>
+template <UIntType Unit,class TempArrayType>
 class TempInteger2
  {
    TempArrayType buf;
