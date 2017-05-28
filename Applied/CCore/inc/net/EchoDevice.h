@@ -90,7 +90,7 @@ class EchoDevice : public NoCopyBase<PacketMultipointDevice::InboundProc,PacketM
 
   public:
 
-   static const ulen DefaultMaxPackets = 200 ;
+   static constexpr ulen DefaultMaxPackets = 200 ;
 
    explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets,bool show_flag=false);
 

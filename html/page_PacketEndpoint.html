@@ -207,6 +207,10 @@ Multipoint device can store a native address in the type <b>XPoint</b>, if it is
 It also can perform an address mapping from the native address to the type <b>XPoint</b>.
 </p>
 
+<p>
+<b>connection_open()</b> is called to inform that a connection with a particular endpoint is established.
+</p>
+
 <h4>PortManager</h4>
 
 <p>
@@ -246,7 +250,7 @@ struct <span class="Att">PortManager</span>
 
 <pre>
 
-const unsigned <span class="Att">InboundTicksPerSec</span> = 10 ;
+inline constexpr unsigned <span class="Att">InboundTicksPerSec</span> = 10 ;
 
 </pre>
 
@@ -287,8 +291,7 @@ class <span class="Att">PointDesc</span> : NoCopy
     
    using PrintOptType = StrPrintOpt ; 
     
-   template &lt;class P&gt; 
-   void print(P &amp;out,PrintOptType opt) const
+   void print(PrinterType &amp;out,PrintOptType opt) const
     {
      Putobj(out,BindOpt(opt,str));
     }

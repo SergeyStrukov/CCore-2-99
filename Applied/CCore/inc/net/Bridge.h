@@ -77,7 +77,7 @@ class Bridge : NoCopy
       void tick();
     };
 
-   class Client : NoCopy , public ObjBase , public PacketEndpointDevice , public PortManager
+   class Client : public ObjBase , public PacketEndpointDevice , public PortManager
     {
       Bridge &bridge;
       XPoint point;

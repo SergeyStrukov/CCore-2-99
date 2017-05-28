@@ -86,7 +86,7 @@ class SingleEchoDevice : public NoCopyBase<PacketEndpointDevice::InboundProc,Pac
 
   public:
 
-   static const ulen DefaultMaxPackets = 200 ;
+   static constexpr ulen DefaultMaxPackets = 200 ;
 
    explicit SingleEchoDevice(StrLen ep_dev_name,ulen max_packets=DefaultMaxPackets);
 

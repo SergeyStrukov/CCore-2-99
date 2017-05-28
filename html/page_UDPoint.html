@@ -61,13 +61,11 @@ struct <span class="Att">UDPoint</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
 
   // scan object
 
-  template &lt;class S&gt;
-  void scan(S &amp;inp);
+  void scan(ScannerType &amp;inp);
  };
 
 </pre>
@@ -87,19 +85,19 @@ There are several UDP port constants, defined in the header <b>net/UDPoint.h</b>
 
 <pre>
 
-const UDPort <span class="Att">EchoUDPort</span>       =     7 ;
+inline constexpr UDPort <span class="Att">EchoUDPort</span>       =     7 ;
 
-const UDPort <span class="Att">PTPServerUDPort</span>  = 52000 ;
+inline constexpr UDPort <span class="Att">PTPServerUDPort</span>  = 52000 ;
 
-const UDPort <span class="Att">PTPClientUDPort</span>  = 52001 ;
+inline constexpr UDPort <span class="Att">PTPClientUDPort</span>  = 52001 ;
 
-const UDPort <span class="Att">PKEClientUDPort</span>  = 52100 ;
+inline constexpr UDPort <span class="Att">PKEClientUDPort</span>  = 52100 ;
 
-const UDPort <span class="Att">PSecClientUDPort</span> = 52101 ;
+inline constexpr UDPort <span class="Att">PSecClientUDPort</span> = 52101 ;
 
-const UDPort <span class="Att">PKEServerUDPort</span>  = 52102 ;
+inline constexpr UDPort <span class="Att">PKEServerUDPort</span>  = 52102 ;
 
-const UDPort <span class="Att">PSecServerUDPort</span> = 52103 ;
+inline constexpr UDPort <span class="Att">PSecServerUDPort</span> = 52103 ;
 
 </pre>
 
@@ -133,7 +131,7 @@ const UDPort <span class="Att">PSecServerUDPort</span> = 52103 ;
 
 <pre>
 
-template &lt;class Dev&gt;
+template &lt;CharPeekType Dev&gt;
 void <span class="Att">ParseUDPoint</span>(Dev &amp;dev,UDPoint &amp;ret);
 
 </pre>

@@ -27,7 +27,7 @@ namespace Net {
 
 /* consts */
 
-const unsigned InboundTicksPerSec = 10 ;
+inline constexpr unsigned InboundTicksPerSec = 10 ;
 
 /* functions */
 
