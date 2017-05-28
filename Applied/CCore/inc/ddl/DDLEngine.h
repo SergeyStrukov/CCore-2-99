@@ -155,9 +155,9 @@ class FileEngine : ParserContext
 
   public:
 
-   static const ulen DefaultMaxFiles = 1000 ;
-   static const ulen DefaultMaxIncludes = 100 ;
-   static const ulen DefaultMaxFileLen = MaxULen ;
+   static constexpr ulen DefaultMaxFiles    = 1000 ;
+   static constexpr ulen DefaultMaxIncludes = 100 ;
+   static constexpr ulen DefaultMaxFileLen  = MaxULen ;
 
    explicit FileEngine(PrintBase &msg,ulen mem_cap=MaxULen,
                                       ulen max_files=DefaultMaxFiles,

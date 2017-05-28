@@ -110,16 +110,16 @@ Result objects life-time is ended with the engine life-time end.
 
 <pre>
 
-template &lt;class FileName,class FileText&gt;
+template &lt;FileNameType FileName,FileTextType FileText&gt;
 class <span class="Att">FileEngine</span> : NoCopy
  {
    ....
 
   public:
    
-   static const ulen DefaultMaxFiles = 1000 ;
-   static const ulen DefaultMaxIncludes = 100 ;
-   static const ulen DefaultMaxFileLen = MaxULen ;
+   static constexpr ulen DefaultMaxFiles    = 1000 ;
+   static constexpr ulen DefaultMaxIncludes = 100 ;
+   static constexpr ulen DefaultMaxFileLen  = MaxULen ;
   
    explicit FileEngine(PrintBase &msg,ulen mem_cap=MaxULen,
                                       ulen max_files=DefaultMaxFiles,
@@ -127,6 +127,10 @@ class <span class="Att">FileEngine</span> : NoCopy
                                       ulen max_file_len=DefaultMaxFileLen);
    
    ~FileEngine();
+
+   void reset();
+
+   void purge();
 
    EngineResult process(StrLen file_name,StrLen pretext);
 
@@ -144,6 +148,14 @@ Additional files may be opened during include operations.
 The second argument is a "pretext". It is included before the file text.
 The method <b>process()</b> can be called multiple times for different files. Loaded files are cached.
 Result objects life-time is ended with the next call of <b>process()</b>, or with the engine life-time end.
+</p>
+
+<p>
+<b>reset()</b> cleans the engine context. In particular, all result nodes are destroyed.
+</p>
+
+<p>
+<b>purge()</b> purges the file cache.
 </p>
 
 <p>
@@ -222,8 +234,7 @@ struct <span class="Att">ConstResult</span>
     PrintOptType(EvalResult &amp;result_) : result(result_) {}
    };
   
-  template &lt;class P&gt;
-  void print(P &amp;out,PrintOptType opt) const;
+  void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -244,8 +255,7 @@ struct <span class="Att">LenResult</span>
   
   void set(LenNode *node,ulen_type value);
  
-  template &lt;class P&gt;
-  void print(P &out) const;
+  void print(PrinterType &out) const;
  };
 
 </pre>
@@ -393,8 +403,7 @@ struct <span class="Att">Text</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -421,8 +430,7 @@ struct <span class="Att">IP</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>

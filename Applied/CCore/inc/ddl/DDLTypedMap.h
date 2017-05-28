@@ -273,7 +273,7 @@ struct MapTypeFunc<MapRange<T>,TypeSet>
 template <class TypeSet>
 class TypedMap : NoCopy
  {
-   static const ulen MaxLevel = 100 ;
+   static constexpr ulen MaxLevel = 100 ;
 
    struct RecValue
     {

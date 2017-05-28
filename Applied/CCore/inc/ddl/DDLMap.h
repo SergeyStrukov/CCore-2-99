@@ -1,7 +1,7 @@
 /* DDLMap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -35,7 +35,7 @@ class Map;
 
 class Map : NoCopy
  {
-   static const unsigned MaxLevel = 100 ;
+   static constexpr unsigned MaxLevel = 100 ;
 
    struct RecValue
     {

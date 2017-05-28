@@ -1,7 +1,7 @@
 /* DDLErrorMsg.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -23,7 +23,7 @@ namespace DDL {
 
 /* consts */
 
-const ulen ErrorMsgCap = 100 ;
+inline constexpr ulen ErrorMsgCap = 100 ;
 
 /* classes */
 

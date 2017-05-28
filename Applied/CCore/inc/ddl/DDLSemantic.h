@@ -208,8 +208,7 @@ struct NameIdNode : NoCopy
 
   // print object
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Putobj(out,name);
    }
