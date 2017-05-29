@@ -34,42 +34,42 @@ using CmpFileTimeType = uint64 ;
 
 /* consts */
 
-const ulen MaxPathLen    =  512 ;
-const ulen DeltaReadLen  =   24 ;
-const ulen MaxReadLen    = 1416 ;
-const ulen DeltaWriteLen =   40 ;
-const ulen MaxWriteLen   = 1400 ;
+inline constexpr ulen MaxPathLen    =  512 ;
+inline constexpr ulen DeltaReadLen  =   24 ;
+inline constexpr ulen MaxReadLen    = 1416 ;
+inline constexpr ulen DeltaWriteLen =   40 ;
+inline constexpr ulen MaxWriteLen   = 1400 ;
 
-const ServiceIdType ServiceId = 2 ;
+inline constexpr ServiceIdType ServiceId = 2 ;
 
-const FunctionIdType FunctionId_Open        =  1 ;
-const FunctionIdType FunctionId_Read        =  2 ;
-const FunctionIdType FunctionId_Write       =  3 ;
-const FunctionIdType FunctionId_Close       =  4 ;
-const FunctionIdType FunctionId_GetFileType =  5 ;
-const FunctionIdType FunctionId_GetFileList =  6 ;
-const FunctionIdType FunctionId_CreateFile  =  7 ;
-const FunctionIdType FunctionId_DeleteFile  =  8 ;
-const FunctionIdType FunctionId_CreateDir   =  9 ;
-const FunctionIdType FunctionId_DeleteDir   = 10 ;
-const FunctionIdType FunctionId_Rename      = 11 ;
-const FunctionIdType FunctionId_Remove      = 12 ;
-const FunctionIdType FunctionId_Exec        = 13 ;
-const FunctionIdType FunctionId_Exec2       = 14 ;
-const FunctionIdType FunctionId_GetFileUpdateTime = 15 ;
+inline constexpr FunctionIdType FunctionId_Open        =  1 ;
+inline constexpr FunctionIdType FunctionId_Read        =  2 ;
+inline constexpr FunctionIdType FunctionId_Write       =  3 ;
+inline constexpr FunctionIdType FunctionId_Close       =  4 ;
+inline constexpr FunctionIdType FunctionId_GetFileType =  5 ;
+inline constexpr FunctionIdType FunctionId_GetFileList =  6 ;
+inline constexpr FunctionIdType FunctionId_CreateFile  =  7 ;
+inline constexpr FunctionIdType FunctionId_DeleteFile  =  8 ;
+inline constexpr FunctionIdType FunctionId_CreateDir   =  9 ;
+inline constexpr FunctionIdType FunctionId_DeleteDir   = 10 ;
+inline constexpr FunctionIdType FunctionId_Rename      = 11 ;
+inline constexpr FunctionIdType FunctionId_Remove      = 12 ;
+inline constexpr FunctionIdType FunctionId_Exec        = 13 ;
+inline constexpr FunctionIdType FunctionId_Exec2       = 14 ;
+inline constexpr FunctionIdType FunctionId_GetFileUpdateTime = 15 ;
 
-const FlagType OpenFlag_Read       = 0x01 ;
-const FlagType OpenFlag_Write      = 0x02 ;
-const FlagType OpenFlag_Create     = 0x10 ;
-const FlagType OpenFlag_Erase      = 0x20 ;
-const FlagType OpenFlag_New        = 0x40 ;
-const FlagType OpenFlag_AutoDelete = 0x80 ;
+inline constexpr FlagType OpenFlag_Read       = 0x01 ;
+inline constexpr FlagType OpenFlag_Write      = 0x02 ;
+inline constexpr FlagType OpenFlag_Create     = 0x10 ;
+inline constexpr FlagType OpenFlag_Erase      = 0x20 ;
+inline constexpr FlagType OpenFlag_New        = 0x40 ;
+inline constexpr FlagType OpenFlag_AutoDelete = 0x80 ;
 
-const FlagType FileType_none = 0 ;
-const FlagType FileType_file = 1 ;
-const FlagType FileType_dir  = 2 ;
+inline constexpr FlagType FileType_none = 0 ;
+inline constexpr FlagType FileType_file = 1 ;
+inline constexpr FlagType FileType_dir  = 2 ;
 
-const ErrorIdType ErrorBase = 100 ;
+inline constexpr ErrorIdType ErrorBase = 100 ;
 
 /* classes */
 
@@ -164,7 +164,7 @@ struct FileId
 
 struct OpenInput // + uint8 path[len];
  {
-  static const ulen MaxLen = MaxPathLen ;
+  static constexpr ulen MaxLen = MaxPathLen ;
 
   FlagType open_flags;
   LenType len;
@@ -251,7 +251,7 @@ struct ReadInput
 
 struct ReadOutput // + uint8 data[len];
  {
-  static const ulen MaxLen = MaxReadLen ;
+  static constexpr ulen MaxLen = MaxReadLen ;
 
   FileLenType off;
   LenType len;
@@ -281,7 +281,7 @@ struct ReadOutput // + uint8 data[len];
 
 struct WriteInput // + uint8 data[len];
  {
-  static const ulen MaxLen = MaxWriteLen ;
+  static constexpr ulen MaxLen = MaxWriteLen ;
 
   FileId file_id;
   FileLenType off;
@@ -367,7 +367,7 @@ struct CloseInput
 
 struct PathInput // + uint8 path[len];
  {
-  static const ulen MaxLen = MaxPathLen ;
+  static constexpr ulen MaxLen = MaxPathLen ;
 
   LenType len;
 
@@ -451,7 +451,7 @@ struct GetFileListOutput
 
 struct DeleteDirInput // + uint8 path[len];
  {
-  static const ulen MaxLen = MaxPathLen ;
+  static constexpr ulen MaxLen = MaxPathLen ;
 
   BoolType recursive;
   LenType len;

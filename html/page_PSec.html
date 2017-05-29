@@ -496,7 +496,7 @@ class <span class="Att">MultipointDevice</span> : public ObjBase , public Packet
 
    bool getStat(XPoint point,StatInfo &amp;ret) const;
 
-   template &lt;class FuncInit&gt;
+   template &lt;FuncInitArgType&lt;XPoint,StatInfo &amp;&gt; FuncInit&gt;
    void processStat(FuncInit func_init) const; // func(XPoint point,StatInfo &amp;temp_copy)
 
    // InterfaceHost

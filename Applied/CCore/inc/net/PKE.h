@@ -33,17 +33,17 @@ namespace PSec {
 
 /* consts */
 
-const ulen MaxClientIDLen = 255 ;
+inline constexpr ulen MaxClientIDLen = 255 ;
 
-const ulen NonceLen = 128 ;
+inline constexpr ulen NonceLen = 128 ;
 
-const unsigned StartTickCount = InboundTicksPerSec*1 ; // 1 sec
+inline constexpr unsigned StartTickCount = InboundTicksPerSec*1 ; // 1 sec
 
-const unsigned MaxRetry = 100 ;
+inline constexpr unsigned MaxRetry = 100 ;
 
-const ulen MaxAlgos = 16 ;
+inline constexpr ulen MaxAlgos = 16 ;
 
-const ulen MaxPKETransLen = 1100 ;
+inline constexpr ulen MaxPKETransLen = 1100 ;
 
 /* enum PKEType */
 
@@ -592,7 +592,7 @@ class ServerNegotiant : NoCopy
 
   public:
 
-   static const ulen DefaultMaxClients = 10'000 ;
+   static constexpr ulen DefaultMaxClients = 10'000 ;
 
    ServerNegotiant(StrLen mp_dev_name,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
 

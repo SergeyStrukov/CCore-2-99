@@ -176,9 +176,9 @@ class PacketProcessor : public MemBase_nocopy
       }
     };
 
-   static const ulen HeaderLen = Header::SaveLoadLen ;
+   static constexpr ulen HeaderLen = Header::SaveLoadLen ;
 
-   static const ulen KeyIndexLen = SaveLenCounter<KeyIndex>::SaveLoadLen ;
+   static constexpr ulen KeyIndexLen = SaveLenCounter<KeyIndex>::SaveLoadLen ;
 
   private:
 

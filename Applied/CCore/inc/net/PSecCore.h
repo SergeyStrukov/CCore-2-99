@@ -36,27 +36,27 @@ namespace PSec {
 
 /* consts */
 
-const ulen MinBLen = 8 ;
+inline constexpr ulen MinBLen = 8 ;
 
-const ulen MaxBLen = 64 ;
+inline constexpr ulen MaxBLen = 64 ;
 
-const ulen MinKLen = 16 ;
+inline constexpr ulen MinKLen = 16 ;
 
-const ulen MaxKLen = 512 ;
+inline constexpr ulen MaxKLen = 512 ;
 
-const ulen MinHLen = 16 ;
+inline constexpr ulen MinHLen = 16 ;
 
-const ulen MaxHLen = 64 ;
+inline constexpr ulen MaxHLen = 64 ;
 
-const ulen MinGLen = 64 ;
+inline constexpr ulen MinGLen = 64 ;
 
-const ulen MaxGLen = 512 ;
+inline constexpr ulen MaxGLen = 512 ;
 
-const ulen DLen = 15 ;
+inline constexpr ulen DLen = 15 ;
 
-const unsigned RepeatTimeout = 20 ; // sec
+inline constexpr unsigned RepeatTimeout = 20 ; // sec
 
-const unsigned PingRepeatTimeout = 5 ; // sec
+inline constexpr unsigned PingRepeatTimeout = 5 ; // sec
 
 enum Packets
  {
@@ -302,7 +302,7 @@ struct AbstractKeyGen : MemBase_nocopy
 template <Crypton::DHExpType Exp>
 class KeyGen : public AbstractKeyGen
  {
-   static const ulen GLen = Exp::GLen ;
+   static constexpr ulen GLen = Exp::GLen ;
 
    Exp exp;
 
@@ -603,11 +603,11 @@ class TestMasterKey : public MasterKey
 
 class RandomEngine : NoCopy
  {
-   static const ulen ExtLen = 256 ;
+   static constexpr ulen ExtLen = 256 ;
 
    class Fifo : public BlockFifo<uint8>
     {
-      static const ulen Len = 2*ExtLen ;
+      static constexpr ulen Len = 2*ExtLen ;
 
       uint8 buf[Len];
 
@@ -1014,7 +1014,7 @@ typename ConvolutionMulConst<K>::TableInit ConvolutionMulConst<K>::Table;
 template <uint8 ... KK>
 struct ConvolutionParam
  {
-  static const ulen Len = sizeof ... (KK) ;
+  static constexpr ulen Len = sizeof ... (KK) ;
 
   static const ConvolutionMul Mul[Len];
  };
@@ -1177,10 +1177,10 @@ class AntiReplay : NoCopy
  {
    using Unit = unsigned ;
 
-   static const unsigned UnitBits = Meta::UIntBits<Unit> ;
-   static const unsigned WinUnits = 128 ;
-   static const SequenceNumber WinLen = UnitBits*WinUnits ;
-   static const SequenceNumber ForeLen = 1'000'000 ;
+   static constexpr unsigned UnitBits = Meta::UIntBits<Unit> ;
+   static constexpr unsigned WinUnits = 128 ;
+   static constexpr SequenceNumber WinLen = UnitBits*WinUnits ;
+   static constexpr SequenceNumber ForeLen = 1'000'000 ;
 
    SequenceNumber base;
 

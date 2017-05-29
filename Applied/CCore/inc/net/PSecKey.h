@@ -27,17 +27,17 @@ namespace PSec {
 
 /* consts */
 
-const uint16 MinKeySetLen     = 5 ;
-const uint16 DefaultKeySetLen = 10 ;
-const uint16 MaxKeySetLen     = 100 ;
+inline constexpr uint16 MinKeySetLen     = 5 ;
+inline constexpr uint16 DefaultKeySetLen = 10 ;
+inline constexpr uint16 MaxKeySetLen     = 100 ;
 
-const uint32 MinTTL     = 360 ;   // 6 min
-const uint32 DefaultTTL = 3600 ;  // 1 hour
-const uint32 MaxTTL     = 36000 ; // 10 hour
+inline constexpr uint32 MinTTL     = 360 ;   // 6 min
+inline constexpr uint32 DefaultTTL = 3600 ;  // 1 hour
+inline constexpr uint32 MaxTTL     = 36000 ; // 10 hour
 
-const uint32 MinUTL     = 1'000'000 ;
-const uint32 DefaultUTL = 100'000'000 ;
-const uint32 MaxUTL     = 1'000'000'000 ;
+inline constexpr uint32 MinUTL     = 1'000'000 ;
+inline constexpr uint32 DefaultUTL = 100'000'000 ;
+inline constexpr uint32 MaxUTL     = 1'000'000'000 ;
 
 /* enum CryptID */
 
@@ -276,7 +276,7 @@ struct SessionKeyParam
 
 class SessionKey : public MasterKey
  {
-   static const ulen RandomWarpLen = 128 ;
+   static constexpr ulen RandomWarpLen = 128 ;
 
    CryptAlgoSelect algo_select;
    SessionKeyParam param;
