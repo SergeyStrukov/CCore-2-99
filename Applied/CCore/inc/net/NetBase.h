@@ -27,25 +27,25 @@ namespace Net {
 
 /* consts */
 
-const ulen EthHeaderLen = 14 ;
+inline constexpr ulen EthHeaderLen = 14 ;
 
-const ulen IPHeaderLen  = 20 ;
+inline constexpr ulen IPHeaderLen  = 20 ;
 
-const ulen ARPacketLen  = 28 ;
+inline constexpr ulen ARPacketLen  = 28 ;
 
-const ulen ICMPEchoLen  =  8 ;
+inline constexpr ulen ICMPEchoLen  =  8 ;
 
-const ulen UDPHeaderLen =  8 ;
+inline constexpr ulen UDPHeaderLen =  8 ;
 
 /* consts */
 
-const ulen MaxEthFrameLen = 1514 ;
+inline constexpr ulen MaxEthFrameLen = 1514 ;
 
-const ulen MaxEthDataLen  = MaxEthFrameLen - EthHeaderLen ; // 1500
+inline constexpr ulen MaxEthDataLen  = MaxEthFrameLen - EthHeaderLen ; // 1500
 
-const ulen MaxIPDataLen   = MaxEthDataLen - IPHeaderLen ;   // 1480
+inline constexpr ulen MaxIPDataLen   = MaxEthDataLen - IPHeaderLen ;   // 1480
 
-const ulen MaxUDPDataLen  = MaxIPDataLen - UDPHeaderLen ;   // 1472
+inline constexpr ulen MaxUDPDataLen  = MaxIPDataLen - UDPHeaderLen ;   // 1472
 
 /* enum KnownEthType */
 
@@ -470,7 +470,7 @@ struct EthHeader
 
   struct PrintOptType
    {
-    static const bool Default_inbound = false ;
+    static constexpr bool Default_inbound = false ;
 
     bool inbound;
 
@@ -599,14 +599,14 @@ struct IPHeader
  {
   // consts
 
-  static const uint8  DefaultVHL         = 0x45 ;
-  static const uint8  DefaultTOS         = 0    ;
-  static const uint16 DefaultFlagsOffset = 0    ;
-  static const uint8  DefaultTTL         = 128  ;
+  static constexpr uint8  DefaultVHL         = 0x45 ;
+  static constexpr uint8  DefaultTOS         = 0    ;
+  static constexpr uint16 DefaultFlagsOffset = 0    ;
+  static constexpr uint8  DefaultTTL         = 128  ;
 
-  static const uint16 Flag_DF    = Bit(14)      ; // don't fragment
-  static const uint16 Flag_MF    = Bit(13)      ; // more fragments
-  static const uint16 OffsetMask = Bit(13)-1    ;
+  static constexpr uint16 Flag_DF    = Bit(14)      ; // don't fragment
+  static constexpr uint16 Flag_MF    = Bit(13)      ; // more fragments
+  static constexpr uint16 OffsetMask = Bit(13)-1    ;
 
   // data
 
@@ -689,8 +689,8 @@ struct IPHeader
 
   struct PrintOptType
    {
-    static const bool Default_inbound = false ;
-    static const bool Default_extra = false ;
+    static constexpr bool Default_inbound = false ;
+    static constexpr bool Default_extra = false ;
 
     bool inbound;
     bool extra;
@@ -781,10 +781,10 @@ struct ARPacket
  {
   // consts
 
-  static const uint16 DefaultMACType = 1                       ;
-  static const uint16 DefaultIPType  = Eth_IP                  ;
-  static const uint8  DefaultMACLen  = MACAddress::SaveLoadLen ;
-  static const uint8  DefaultIPLen   = IPAddress::SaveLoadLen  ;
+  static constexpr uint16 DefaultMACType = 1                       ;
+  static constexpr uint16 DefaultIPType  = Eth_IP                  ;
+  static constexpr uint8  DefaultMACLen  = MACAddress::SaveLoadLen ;
+  static constexpr uint8  DefaultIPLen   = IPAddress::SaveLoadLen  ;
 
   // data
 

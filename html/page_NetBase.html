@@ -62,23 +62,23 @@ The following constants represent different protocol lengths.
 
 <pre>
 
-const ulen <span class="Att">EthHeaderLen</span> = 14 ;
+inline constexpr ulen <span class="Att">EthHeaderLen</span> = 14 ;
 
-const ulen <span class="Att">IPHeaderLen</span>  = 20 ;
+inline constexpr ulen <span class="Att">IPHeaderLen</span>  = 20 ;
 
-const ulen <span class="Att">ARPacketLen</span>  = 28 ;
+inline constexpr ulen <span class="Att">ARPacketLen</span>  = 28 ;
 
-const ulen <span class="Att">ICMPEchoLen</span>  =  8 ;
+inline constexpr ulen <span class="Att">ICMPEchoLen</span>  =  8 ;
 
-const ulen <span class="Att">UDPHeaderLen</span> =  8 ;
+inline constexpr ulen <span class="Att">UDPHeaderLen</span> =  8 ;
 
-const ulen <span class="Att">MaxEthFrameLen</span> = 1514 ;
+inline constexpr ulen <span class="Att">MaxEthFrameLen</span> = 1514 ;
 
-const ulen <span class="Att">MaxEthDataLen</span>  = MaxEthFrameLen - EthHeaderLen ; // 1500
+inline constexpr ulen <span class="Att">MaxEthDataLen</span>  = MaxEthFrameLen - EthHeaderLen ; // 1500
 
-const ulen <span class="Att">MaxIPDataLen</span>   = MaxEthDataLen - IPHeaderLen ;   // 1480
+inline constexpr ulen <span class="Att">MaxIPDataLen</span>   = MaxEthDataLen - IPHeaderLen ;   // 1480
 
-const ulen <span class="Att">MaxUDPDataLen</span>  = MaxIPDataLen - UDPHeaderLen ;   // 1472
+inline constexpr ulen <span class="Att">MaxUDPDataLen</span>  = MaxIPDataLen - UDPHeaderLen ;   // 1472
 
 </pre>
 
@@ -114,16 +114,13 @@ struct <span class="Att">EthType</span>
   
   enum { SaveLoadLen = 2 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -176,16 +173,13 @@ struct <span class="Att">IProto</span>
   
   enum { SaveLoadLen = 1 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
    
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -238,16 +232,13 @@ struct <span class="Att">ARPType</span>
   
   enum { SaveLoadLen = 2 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
    
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -300,16 +291,13 @@ struct <span class="Att">ICMPEchoType</span>
   
   enum { SaveLoadLen = 1 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
    
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -360,16 +348,13 @@ struct <span class="Att">MACAddress</span>
   
   enum { SaveLoadLen = 6 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -431,21 +416,17 @@ struct <span class="Att">IPAddress</span>
    
   enum { SaveLoadLen = 4 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
 
   // scan object
 
-  template &lt;class S&gt;
-  void scan(S &amp;inp);
+  void scan(ScannerType &amp;inp);
  };
 
 </pre>
@@ -481,7 +462,7 @@ The class may participate in save/load operations. It is also printable and scan
 
 <pre>
 
-template &lt;class Dev&gt;
+template &lt;CharPeekType Dev&gt;
 void <span class="Att">ParseIPAddress</span>(Dev &dev,IPAddress &ret);
 
 </pre>
@@ -515,17 +496,15 @@ struct <span class="Att">EthHeader</span>
   
   enum { SaveLoadLen = 14 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
    
   struct PrintOptType
    {
-    static const bool Default_inbound = false ;
+    static constexpr bool Default_inbound = false ;
     
     bool inbound;
    
@@ -539,12 +518,11 @@ struct <span class="Att">EthHeader</span>
     // [i|o|I|O]
     //
     
-    template &lt;class Dev&gt;
+    template &lt;CharPeekType Dev&gt;
     static void ParseInbound(Dev &dev,bool &amp;inbound);
    }; 
    
-  template &lt;class P&gt;
-  void print(P &amp;out,PrintOptType opt) const;
+  void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -638,14 +616,14 @@ struct <span class="Att">IPHeader</span>
  {
   // consts
   
-  static const uint8  DefaultVHL         = 0x45 ;
-  static const uint8  DefaultTOS         = 0    ;
-  static const uint16 DefaultFlagsOffset = 0    ;
-  static const uint8  DefaultTTL         = 128  ;
+  static constexpr uint8  DefaultVHL         = 0x45 ;
+  static constexpr uint8  DefaultTOS         = 0    ;
+  static constexpr uint16 DefaultFlagsOffset = 0    ;
+  static constexpr uint8  DefaultTTL         = 128  ;
   
-  static const uint16 Flag_DF    = 1u&lt;&lt;14     ; // don't fragment
-  static const uint16 Flag_MF    = 1u&lt;&lt;13     ; // more fragments
-  static const uint16 OffsetMask = (1u&lt;&lt;13)-1 ;
+  static constexpr uint16 Flag_DF    = 1u&lt;&lt;14     ; // don't fragment
+  static constexpr uint16 Flag_MF    = 1u&lt;&lt;13     ; // more fragments
+  static constexpr uint16 OffsetMask = (1u&lt;&lt;13)-1 ;
   
   // data
  
@@ -686,18 +664,16 @@ struct <span class="Att">IPHeader</span>
  
   enum { SaveLoadLen = 20 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
   
   // print object
    
   struct PrintOptType
    {
-    static const bool Default_inbound = false ;
-    static const bool Default_extra = false ;
+    static constexpr bool Default_inbound = false ;
+    static constexpr bool Default_extra = false ;
     
     bool inbound;
     bool extra;
@@ -712,15 +688,14 @@ struct <span class="Att">IPHeader</span>
     // [i|o|I|O][x|X]
     //
     
-    template &lt;class Dev&gt;
+    template &lt;CharPeekType Dev&gt;
     static void ParseInbound(Dev &amp;dev,bool &amp;inbound);
      
-    template &lt;class Dev&gt;
+    template &lt;CharPeekType Dev&gt;
     void ParseExtra(Dev &amp;dev,bool &amp;extra);
    }; 
    
-  template &lt;class P&gt;
-  void print(P &amp;out,PrintOptType opt) const;
+  void print(PrinterType &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -778,10 +753,10 @@ struct <span class="Att">ARPacket</span>
  {
   // consts
   
-  static const uint16 DefaultMACType = 1                       ;
-  static const uint16 DefaultIPType  = Eth_IP                  ;
-  static const uint8  DefaultMACLen  = MACAddress::SaveLoadLen ;
-  static const uint8  DefaultIPLen   = IPAddress::SaveLoadLen  ;
+  static constexpr uint16 DefaultMACType = 1                       ;
+  static constexpr uint16 DefaultIPType  = Eth_IP                  ;
+  static constexpr uint8  DefaultMACLen  = MACAddress::SaveLoadLen ;
+  static constexpr uint8  DefaultIPLen   = IPAddress::SaveLoadLen  ;
   
   // data
  
@@ -813,11 +788,9 @@ struct <span class="Att">ARPacket</span>
   
   enum { SaveLoadLen = 28 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
  };
 
 </pre>
@@ -870,16 +843,13 @@ struct <span class="Att">ICMPEcho</span>
   
   enum { SaveLoadLen = 8 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
    
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -935,11 +905,9 @@ struct <span class="Att">UDPHeader</span>
   
   enum { SaveLoadLen = 8 };
  
-  template &lt;class Dev&gt;
-  void save(Dev &amp;dev) const;
+  void save(SaveDevType &amp;dev) const;
    
-  template &lt;class Dev&gt;
-  void load(Dev &amp;dev);
+  void load(LoadDevType &amp;dev);
  };
 
 </pre>
