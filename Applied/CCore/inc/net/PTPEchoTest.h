@@ -54,10 +54,10 @@ class EchoTest : public NoCopyBase<ServerProc>
 
   public:
 
-   static const ServiceIdType ServiceId = 10000 ;
-   static const FunctionIdType FunctionId = 1 ;
+   static constexpr ServiceIdType ServiceId = 10000 ;
+   static constexpr FunctionIdType FunctionId = 1 ;
 
-   static const ulen DeltaLen = 12 ;
+   static constexpr ulen DeltaLen = 12 ;
 
    struct Ext;
 
@@ -74,7 +74,7 @@ struct EchoTest::Ext : ExtBase<EchoTest::ServiceId,EchoTest::FunctionId,MovePack
  {
   struct InputType // + uint8 info[len];
    {
-    static const uint32 MaxLen = MaxInfoLen ;
+    static constexpr uint32 MaxLen = MaxInfoLen ;
 
     uint32 len;
 

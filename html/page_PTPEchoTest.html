@@ -43,8 +43,8 @@ class <span class="Att">EchoTest</span> : NoCopy
 
   public: 
   
-   static const ServiceIdType ServiceId = 10000 ;
-   static const FunctionIdType FunctionId = 1 ;
+   static constexpr ServiceIdType ServiceId = 10000 ;
+   static constexpr FunctionIdType FunctionId = 1 ;
    
    struct Ext;
   
@@ -106,7 +106,7 @@ struct <span class="Att">EchoTest::Ext</span> : ExtBase&lt;EchoTest::ServiceId,E
  {
   struct InputType // + uint8 info[len];
    {
-    static const uint32 MaxLen = MaxInfoLen ;
+    static constexpr uint32 MaxLen = MaxInfoLen ;
    
     uint32 len;
     

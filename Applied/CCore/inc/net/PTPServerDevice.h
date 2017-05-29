@@ -1,7 +1,7 @@
 /* PTPServerDevice.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -202,7 +202,7 @@ struct ServerProc : InterfaceHost
 
 class ServerEngine : public Funchor_nocopy , public PacketMultipointDevice::InboundProc , public PacketMultipointDevice::ConnectionProc
  {
-   static const unsigned MaxRetries = 100 ;
+   static constexpr unsigned MaxRetries = 100 ;
 
    Mutex mutex;
 
@@ -480,7 +480,7 @@ class ServerEngine : public Funchor_nocopy , public PacketMultipointDevice::Inbo
 
    // constructors
 
-   static const ulen DefaultMaxSlots = 100 ;
+   static constexpr ulen DefaultMaxSlots = 100 ;
 
    explicit ServerEngine(ulen max_slots=DefaultMaxSlots);
 

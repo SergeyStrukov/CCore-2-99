@@ -38,11 +38,11 @@ using ErrorIdType = uint32 ;
 
 /* consts */
 
-const ErrorIdType NoError          = 0 ;
-const ErrorIdType Error_BadInput   = 1 ;
-const ErrorIdType Error_NoFunction = 2 ;
-const ErrorIdType Error_Exhausted  = 3 ;
-const ErrorIdType Error_Unknown    = 4 ;
+inline constexpr ErrorIdType NoError          = 0 ;
+inline constexpr ErrorIdType Error_BadInput   = 1 ;
+inline constexpr ErrorIdType Error_NoFunction = 2 ;
+inline constexpr ErrorIdType Error_Exhausted  = 3 ;
+inline constexpr ErrorIdType Error_Unknown    = 4 ;
 
 /* classes */
 

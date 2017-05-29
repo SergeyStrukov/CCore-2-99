@@ -28,14 +28,14 @@ using namespace PTP;
 
 /* consts */
 
-const ulen DeltaWriteLen   =   24 ;
-const ulen MaxWriteDataLen = 1416 ; // MaxInfoLen-DeltaWriteLen
+inline constexpr ulen DeltaWriteLen   =   24 ;
+inline constexpr ulen MaxWriteDataLen = 1416 ; // MaxInfoLen-DeltaWriteLen
 
-const ServiceIdType ServiceId = 4 ;
+inline constexpr ServiceIdType ServiceId = 4 ;
 
-const FunctionIdType FunctionId_Alloc = 1 ;
-const FunctionIdType FunctionId_Write = 2 ;
-const FunctionIdType FunctionId_Boot  = 3 ;
+inline constexpr FunctionIdType FunctionId_Alloc = 1 ;
+inline constexpr FunctionIdType FunctionId_Write = 2 ;
+inline constexpr FunctionIdType FunctionId_Boot  = 3 ;
 
 /* types */
 
@@ -113,7 +113,7 @@ struct AllocOutput
 
 struct WriteInput // + uint8 data[len];
  {
-  static const ulen MaxLen = MaxWriteDataLen ;
+  static constexpr ulen MaxLen = MaxWriteDataLen ;
 
   IndexType index;
   AddressType off;

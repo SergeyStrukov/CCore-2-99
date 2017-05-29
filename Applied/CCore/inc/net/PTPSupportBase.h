@@ -28,16 +28,16 @@ using namespace PTP;
 
 /* consts */
 
-const ServiceIdType ServiceId = 1 ;
+inline constexpr ServiceIdType ServiceId = 1 ;
 
-const FunctionIdType FunctionId_Len       = 1 ;
-const FunctionIdType FunctionId_Seed      = 2 ;
-const FunctionIdType FunctionId_Session   = 3 ;
-const FunctionIdType FunctionId_Echo      = 4 ;
-const FunctionIdType FunctionId_ErrorDesc = 5 ;
-const FunctionIdType FunctionId_Exist     = 6 ;
+inline constexpr FunctionIdType FunctionId_Len       = 1 ;
+inline constexpr FunctionIdType FunctionId_Seed      = 2 ;
+inline constexpr FunctionIdType FunctionId_Session   = 3 ;
+inline constexpr FunctionIdType FunctionId_Echo      = 4 ;
+inline constexpr FunctionIdType FunctionId_ErrorDesc = 5 ;
+inline constexpr FunctionIdType FunctionId_Exist     = 6 ;
 
-const uint32 MaxDelay = 1000*60*60 ; // 1 hour
+inline constexpr uint32 MaxDelay = 1000*60*60 ; // 1 hour
 
 /* classes */
 
@@ -149,7 +149,7 @@ struct SeedOutput
 
 struct EchoInput // + uint8 data[len];
  {
-  static const ulen MaxLen = 255 ;
+  static constexpr ulen MaxLen = 255 ;
 
   uint32 delay_msec;
   uint8 len;
@@ -179,7 +179,7 @@ struct EchoInput // + uint8 data[len];
 
 struct EchoOutput // + uint8 data[len];
  {
-  static const ulen MaxLen = 255 ;
+  static constexpr ulen MaxLen = 255 ;
 
   uint8 len;
 
@@ -238,7 +238,7 @@ struct ErrorDescInput
 
 struct ErrorDescOutput // + uint8 str[len];
  {
-  static const ulen MaxLen = 255 ;
+  static constexpr ulen MaxLen = 255 ;
 
   uint8 len;
 

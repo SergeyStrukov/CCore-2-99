@@ -242,7 +242,6 @@ class <span class="Att">Support_Exist</span> : NoCopy
   
    Support_Exist(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
    
-   template &lt;class TimeoutType&gt;
    bool perform(TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id); 
     
    enum ResultType
@@ -280,7 +279,6 @@ class <span class="Att">Support_ErrorDesc</span> : NoCopy
   
    Support_ErrorDesc(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
    
-   template &lt;class TimeoutType&gt;
    bool perform(TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id,ErrorIdType error_id); 
     
    StrLen getDesc() const;
@@ -309,10 +307,8 @@ class <span class="Att">Support_Seed</span> : NoCopy
   
    Support_Seed(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
    
-   template &lt;class TimeoutType&gt;
    bool perform(TimeoutType timeout); 
     
-   template &lt;class TimeoutType&gt;
    void perform_guarded(TimeoutType timeout); 
     
    uint64 getSeed1() const;
@@ -338,11 +334,9 @@ class <span class="Att">Support_Echo</span> : NoCopy
   
    Support_Echo(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
    
-   template &lt;class TimeoutType,class Fill&gt;
-   bool perform(TimeoutType timeout,uint32 delay_msec,Fill &amp;fill); 
+   bool perform(TimeoutType timeout,uint32 delay_msec,FillType &amp;fill); 
     
-   template &lt;class TimeoutType,class Fill&gt;
-   void perform_guarded(TimeoutType timeout,uint32 delay_msec,Fill &amp;fill); 
+   void perform_guarded(TimeoutType timeout,uint32 delay_msec,FillType &amp;fill); 
     
    PtrLen&lt;const uint8&gt; getEcho() const;
  };
@@ -350,7 +344,7 @@ class <span class="Att">Support_Echo</span> : NoCopy
 </pre>
 
 <p>
-<b>perform()</b> takes the <b>delay</b> and the reference to the <b>Fill</b> class as arguments.
+<b>perform()</b> takes the <b>delay</b> and the reference to the <b>FillType</b> class as arguments.
 This class is responsible for the echo data creation. It must implement the following interface:
 </p>
 

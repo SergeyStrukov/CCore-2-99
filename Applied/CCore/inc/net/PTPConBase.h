@@ -28,18 +28,18 @@ using namespace PTP;
 
 /* consts */
 
-const ulen MaxNameLen      =  128 ;
-const ulen DeltaReadLen    =   20 ;
-const ulen MaxReadDataLen  = 1420 ;
-const ulen DeltaWriteLen   =   36 ;
-const ulen MaxWriteDataLen = 1404 ;
+inline constexpr ulen MaxNameLen      =  128 ;
+inline constexpr ulen DeltaReadLen    =   20 ;
+inline constexpr ulen MaxReadDataLen  = 1420 ;
+inline constexpr ulen DeltaWriteLen   =   36 ;
+inline constexpr ulen MaxWriteDataLen = 1404 ;
 
-const ServiceIdType ServiceId = 3 ;
+inline constexpr ServiceIdType ServiceId = 3 ;
 
-const FunctionIdType FunctionId_Open  = 1 ;
-const FunctionIdType FunctionId_Read  = 2 ;
-const FunctionIdType FunctionId_Write = 3 ;
-const FunctionIdType FunctionId_Close = 4 ;
+inline constexpr FunctionIdType FunctionId_Open  = 1 ;
+inline constexpr FunctionIdType FunctionId_Read  = 2 ;
+inline constexpr FunctionIdType FunctionId_Write = 3 ;
+inline constexpr FunctionIdType FunctionId_Close = 4 ;
 
 enum Trigger
  {
@@ -163,7 +163,7 @@ struct TriggerMask
 
 struct OpenInput // + uint8 name[len];
  {
-  static const ulen MaxLen = MaxNameLen ;
+  static constexpr ulen MaxLen = MaxNameLen ;
 
   uint32 write_timeout_msec;
   uint32 read_timeout_msec;
@@ -257,7 +257,7 @@ struct ReadInput
 
 struct ReadOutput // + uint8 data[len];
  {
-  static const ulen MaxLen = MaxReadDataLen ;
+  static constexpr ulen MaxLen = MaxReadDataLen ;
 
   uint32 number;
   LenType len;
@@ -287,7 +287,7 @@ struct ReadOutput // + uint8 data[len];
 
 struct WriteInput // + uint8 data[len];
  {
-  static const ulen MaxLen = MaxWriteDataLen ;
+  static constexpr ulen MaxLen = MaxWriteDataLen ;
 
   ConId con_id;
   uint32 number;

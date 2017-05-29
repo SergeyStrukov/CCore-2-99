@@ -34,22 +34,22 @@ using InfoLenType = uint32 ;
 
 /* consts */
 
-const ulen MaxPacketLen = 1472 ;
-const ulen DeltaInfoLen =   32 ;
-const ulen MaxInfoLen   = 1440 ;
+inline constexpr ulen MaxPacketLen = 1472 ;
+inline constexpr ulen DeltaInfoLen =   32 ;
+inline constexpr ulen MaxInfoLen   = 1440 ;
 
-const unsigned MinTimeout   =   300 ; // msec
-const unsigned MaxTimeout   = 10000 ; // msec
-const unsigned DeltaTimeout =   100 ; // msec
+inline constexpr unsigned MinTimeout   =   300 ; // msec
+inline constexpr unsigned MaxTimeout   = 10000 ; // msec
+inline constexpr unsigned DeltaTimeout =   100 ; // msec
 
-const PacketType PacketType_CALL    = 1 ; // toServer , info
-const PacketType PacketType_RET     = 2 ; // toClient , info
-const PacketType PacketType_RECALL  = 3 ; // toServer , info
-const PacketType PacketType_ACK     = 4 ; // toServer
-const PacketType PacketType_NOINFO  = 5 ; // toClient
-const PacketType PacketType_RERET   = 6 ; // toClient
-const PacketType PacketType_SENDRET = 7 ; // toServer
-const PacketType PacketType_CANCEL  = 8 ; // toClient
+inline constexpr PacketType PacketType_CALL    = 1 ; // toServer , info
+inline constexpr PacketType PacketType_RET     = 2 ; // toClient , info
+inline constexpr PacketType PacketType_RECALL  = 3 ; // toServer , info
+inline constexpr PacketType PacketType_ACK     = 4 ; // toServer
+inline constexpr PacketType PacketType_NOINFO  = 5 ; // toClient
+inline constexpr PacketType PacketType_RERET   = 6 ; // toClient
+inline constexpr PacketType PacketType_SENDRET = 7 ; // toServer
+inline constexpr PacketType PacketType_CANCEL  = 8 ; // toClient
 
 /* classes */
 

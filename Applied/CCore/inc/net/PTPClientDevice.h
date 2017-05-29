@@ -268,7 +268,7 @@ struct TransExt
 
 class ClientEngine : public Funchor_nocopy , public PacketEndpointDevice::InboundProc , public PacketEndpointDevice::ConnectionProc
  {
-   static const unsigned MaxRetries = 100 ;
+   static constexpr unsigned MaxRetries = 100 ;
 
    Mutex mutex;
 
@@ -501,7 +501,7 @@ class ClientEngine : public Funchor_nocopy , public PacketEndpointDevice::Inboun
 
    // constructors
 
-   static const ulen DefaultMaxSlots = 100 ;
+   static constexpr ulen DefaultMaxSlots = 100 ;
 
    explicit ClientEngine(ulen max_slots=DefaultMaxSlots);
 
@@ -561,8 +561,8 @@ struct ExtBase : ExtMoveBase<MoveFlag>
  {
   // consts
 
-  static const ServiceIdType  ServiceId  = ServiceId_ ;
-  static const FunctionIdType FunctionId = FunctionId_ ;
+  static constexpr ServiceIdType  ServiceId  = ServiceId_ ;
+  static constexpr FunctionIdType FunctionId = FunctionId_ ;
 
   // data
 
