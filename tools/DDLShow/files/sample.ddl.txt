@@ -69,6 +69,33 @@ struct #Ptr#R [] #Ptr#list =
    }
  }
 
+sint [] [] #Block#d2 = 
+ {
+   {
+    (sint) 1,
+    (sint) 2,
+    (sint) 3
+   },
+   {
+    (sint) 1,
+    (sint) 2,
+    (sint) 3,
+    (sint) 4,
+    (sint) 5
+   },
+   {
+    (sint) 1,
+    (sint) 2,
+    (sint) 3,
+    (sint) 4,
+    (sint) 5,
+    (sint) 6,
+    (sint) 7,
+    (sint) 8,
+    (sint) 9
+   }
+ }
+
 sint #Block#de = (sint) 100
 
 struct #Block#E #Block#e = 

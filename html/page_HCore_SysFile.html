@@ -156,7 +156,7 @@ struct <span class="Att">AltAsyncFile</span>
  
   // public
   
-  static const ulen MaxRWLen = .... ;
+  static constexpr ulen MaxRWLen = .... ;
   
   Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
   
@@ -187,7 +187,7 @@ struct <span class="Att">AsyncFileWait</span>
 
   // public
   
-  static const ulen MaxAsyncs = .... ;
+  static constexpr ulen MaxAsyncs = .... ;
   
   FileError init(ulen async_count) noexcept;
   
@@ -440,7 +440,7 @@ struct <span class="Att">AltAsyncFile</span>
  
   // public
   
-  static const ulen MaxRWLen = .... ; // like 1_MByte 
+  static constexpr ulen MaxRWLen = .... ; // like 1_MByte 
   
   Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
   
@@ -648,7 +648,7 @@ struct <span class="Att">AsyncFileWait</span>
 
   // public
   
-  static const ulen MaxAsyncs = .... ; // like 50-100
+  static constexpr ulen MaxAsyncs = .... ; // like 50-100
   
   FileError init(ulen async_count) noexcept;
   
