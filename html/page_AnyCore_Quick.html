@@ -47,8 +47,8 @@ namespace Quick {
 
 /* consts */
 
-const bool <span class="Att">ScanLSBitIsFast</span> = false ;
-const bool <span class="Att">ScanMSBitIsFast</span> = false ;
+inline constexpr bool <span class="Att">ScanLSBitIsFast</span> = false ;
+inline constexpr bool <span class="Att">ScanMSBitIsFast</span> = false ;
 
 /* types */ 
 
@@ -68,43 +68,40 @@ uint64 <span class="Att">ByteSwap64</span>(uint64 value) noexcept;
 
 /* classes */
 
-template &lt;unsigned UIntBits&gt; struct <span class="Att">UIntMulSelect</span>;
+template &lt;unsigned UIntBits&gt; struct <span class="Att">UIntMulSelectCtor</span>;
 
 template &lt;class UInt&gt; struct <span class="Att">UIntMulFunc</span>;
 
 /* struct UIntMulSelect&lt;unsigned UIntBits&gt; */
 
 template &lt;&gt;
-struct UIntMulSelect&lt;8&gt;
+struct UIntMulSelectCtor&lt;8&gt;
  {
-  using ExtType = uint16 ;
-  
-  enum { IsDoubleType = true };
+  using Ret = uint16 ;
  };
 
 template &lt;&gt;
-struct UIntMulSelect&lt;16&gt;
+struct UIntMulSelectCtor&lt;16&gt;
  {
-  using ExtType = uint32 ;
-  
-  enum { IsDoubleType = true };
+  using Ret = uint32 ;
  };
 
 template &lt;&gt;
-struct UIntMulSelect&lt;32&gt;
+struct UIntMulSelectCtor&lt;32&gt;
  {
-  using ExtType = uint32 ;
-  
-  enum { IsDoubleType = false };
+  using Ret = uint32 ;
  };
 
 template &lt;&gt;
-struct UIntMulSelect&lt;64&gt;
+struct UIntMulSelectCtor&lt;64&gt;
  {
-  using ExtType = uint64 ;
-  
-  enum { IsDoubleType = false };
+  using Ret = uint64 ;
  };
+
+/* type UIntMulSelect&lt;unsigned UIntBits&gt; */
+
+template &lt;unsigned UIntBits&gt;
+using <span class="Att">UIntMulSelect</span> = typename UIntMulSelectCtor&lt;UIntBits&gt;::Ret ;
 
 /* struct UIntMulFunc&lt;uint32&gt; */
 
@@ -219,8 +216,8 @@ then the result is (b<sub>7</sub>,b<sub>6</sub>,b<sub>5</sub>,b<sub>4</sub>,b<su
 <h4>Integer multiplicative operations</h4>
 
 <p>
-The rest is to support integer multiplicative operations. This is done using the structure templates
-<b>UIntMulSelect</b> and <b>UIntMulFunc</b>. These structures are not defined itself, but its specializations
+The rest is to support integer multiplicative operations. This is done using the <b>Meta-Type</b> <b>UIntMulSelect</b> and the structure template
+<b>UIntMulFunc</b>. These structures are not defined itself, but its specializations
 must be given.
 </p>
 
@@ -232,20 +229,20 @@ must be given.
 <pre>
 
 template &lt;&gt;
-struct UIntMulSelect&lt;N&gt;
+struct UIntMulSelectCtor&lt;N&gt;
  {
-  using ExtType = .... ; // unsigned integral type
-  
-  enum { IsDoubleType = .... }; // true or false
+  using Ret = .... ; // unsigned integral type
  };
+
+template &lt;unsigned UIntBits&gt;
+using <span class="Att">UIntMulSelect</span> = typename UIntMulSelectCtor&lt;UIntBits&gt;::Ret ;
 
 </pre>
 
 <p>
-<b>ExtType</b> is some unsigned integral type. Either this type has the bit width greater or equal
-than <b>2*N</b> and <b>IsDoubleType</b> is assigned to <b>true</b>, or <b>IsDoubleType</b> is <b>false</b>
-and <b>ExtType</b> is any unsigned integral type. In the first case extended multiplicative operations
-for the type <b>uintN</b> are implemented using the operations on the type <b>ExtType</b>.
+<b>Ret</b> is some unsigned integral type. Either this type has the bit width greater or equal
+than <b>2*N</b>, or <b>Ret</b> is the <b>N-bit</b> unsigned integral type. In the first case extended multiplicative operations
+for the type <b>uintN</b> are implemented using the operations on the type <b>Ret</b>.
 Otherwise the specialization <b>UIntMulFunc&lt;uintN&gt;</b> must be given.
 Such specialization must provide the following:
 </p>

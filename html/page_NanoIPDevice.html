@@ -85,11 +85,9 @@ class <span class="Att">NanoIPDevice</span> : public ObjBase
    
    // send
    
-   template &lt;class P&gt;
-   bool send_prepare(P packet,PacketFunction function); 
+   bool send_prepare(PacketType packet,PacketFunction function); 
     
-   template &lt;class P&gt;
-   void send_prepare_or_complete(P packet,PacketFunction function); 
+   void send_prepare_or_complete(PacketType packet,PacketFunction function); 
     
    void send(Packet&lt;uint8,IPTxExt&gt; packet);
    
@@ -226,8 +224,7 @@ struct <span class="Att">IPTxExt</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>
@@ -257,8 +254,7 @@ struct <span class="Att">UDPTxExt</span>
   
   // print object
   
-  template &lt;class P&gt;
-  void print(P &amp;out) const;
+  void print(PrinterType &amp;out) const;
  };
 
 </pre>

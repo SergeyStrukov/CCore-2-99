@@ -23,8 +23,8 @@ namespace Quick {
 
 /* consts */
 
-const bool ScanLSBitIsFast = true ;
-const bool ScanMSBitIsFast = true ;
+inline constexpr bool ScanLSBitIsFast = true ;
+inline constexpr bool ScanMSBitIsFast = true ;
 
 /* types */
 

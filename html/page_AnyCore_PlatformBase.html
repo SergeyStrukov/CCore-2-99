@@ -72,13 +72,13 @@ namespace CCore {
 
 /* consts */ 
 
-const bool <span class="Att">IsLEPlatform</span>  = true ;
+inline constexpr bool <span class="Att">IsLEPlatform</span>  = true ;
 
-const bool <span class="Att">Is2sComplementArithmetic</span> = true ;
+inline constexpr bool <span class="Att">Is2sComplementArithmetic</span> = true ;
 
-const unsigned <span class="Att">MaxBitLen</span> = 64   ;
+inline constexpr unsigned <span class="Att">MaxBitLen</span> = 64   ;
 
-const unsigned <span class="Att">MaxAlign</span>  = 16   ;
+inline constexpr unsigned <span class="Att">MaxAlign</span>  = 16   ;
 
 /* types */ 
 
@@ -97,19 +97,19 @@ using <span class="Att">sint64</span> =   signed long long ;
 
 /* consts */ 
 
-const ulen <span class="Att">DefaultPacketCount</span> = 50'000 ;
+inline constexpr ulen <span class="Att">DefaultPacketCount</span> = 50'000 ;
 
-const unsigned <span class="Att">DefaultEventElementCount</span> = 10'000 ;
+inline constexpr unsigned <span class="Att">DefaultEventElementCount</span> = 10'000 ;
 
 /* namespace Bits */ 
 
 namespace Bits {
 
-const unsigned <span class="Att">unsigned_char</span>      =  8 ;
-const unsigned <span class="Att">unsigned_short</span>     = 16 ;
-const unsigned <span class="Att">unsigned_int</span>       = 32 ;
-const unsigned <span class="Att">unsigned_long</span>      = 32 ;
-const unsigned <span class="Att">unsigned_long_long</span> = 64 ;
+inline constexpr unsigned <span class="Att">unsigned_char</span>      =  8 ;
+inline constexpr unsigned <span class="Att">unsigned_short</span>     = 16 ;
+inline constexpr unsigned <span class="Att">unsigned_int</span>       = 32 ;
+inline constexpr unsigned <span class="Att">unsigned_long</span>      = 32 ;
+inline constexpr unsigned <span class="Att">unsigned_long_long</span> = 64 ;
 
 } // namespace Bits
 

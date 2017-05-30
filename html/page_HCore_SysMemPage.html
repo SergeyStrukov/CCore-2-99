@@ -47,7 +47,7 @@ namespace Sys {
 
 /* consts */ 
 
-const ulen <span class="Att">MemPageLen</span> = .... ;
+inline constexpr ulen <span class="Att">MemPageLen</span> = .... ;
 
 static_assert( (MemPageLen%MaxAlign)==0 ,"CCore::Sys::MemPageLen is not aligned");
  

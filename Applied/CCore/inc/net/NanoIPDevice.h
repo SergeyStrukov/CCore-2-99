@@ -210,9 +210,9 @@ class ARPTable : NoCopy
 
    struct TimeGuard
     {
-     static const unsigned LifeTime    = 10*60*InboundTicksPerSec ; // 10 min
-     static const unsigned AlertTime   = LifeTime/10 ;
-     static const unsigned AlertPeriod = 8 ;                        // ticks, 0.8 sec
+     static constexpr unsigned LifeTime    = 10*60*InboundTicksPerSec ; // 10 min
+     static constexpr unsigned AlertTime   = LifeTime/10 ;
+     static constexpr unsigned AlertPeriod = 8 ;                        // ticks, 0.8 sec
 
      unsigned ticks;
 
@@ -279,7 +279,7 @@ class ARPending : NoCopy
 
    struct Entry : MemBase_nocopy
     {
-     static const unsigned LifeTime = 10*InboundTicksPerSec ; // 10 sec
+     static constexpr unsigned LifeTime = 10*InboundTicksPerSec ; // 10 sec
 
      TreeLink<Entry,uint32> tlink;
      DLink<Entry> dlink;
@@ -395,7 +395,7 @@ class TxPrepareList : public Funchor_nocopy
 
 class TxSendList : NoCopy
  {
-   static const ulen LifeTime = 10*InboundTicksPerSec ; // 10 sec
+   static constexpr ulen LifeTime = 10*InboundTicksPerSec ; // 10 sec
 
    CancelPacketList canlist;
 
