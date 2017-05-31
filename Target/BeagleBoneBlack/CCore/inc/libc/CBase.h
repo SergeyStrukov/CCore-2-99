@@ -1,7 +1,7 @@
 /* CBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -50,12 +50,12 @@ using Format_ut_t = unsigned ;
 
 /* consts */
 
-const Size NumberBufSize = 64 ;
+inline constexpr Size NumberBufSize = 64 ;
 
       // sufficient to hold the octal representation of any unsigned long long
 
 
-const Size PtrValueHexSize = 8 ;
+inline constexpr Size PtrValueHexSize = 8 ;
 
       // number of hex digit to represent PtrValue
 
@@ -66,7 +66,7 @@ using FilePos = unsigned long long ;
 
 /* consts */
 
-const Size FileBufSize = 4*(1<<10) ;
+inline constexpr Size FileBufSize = 4*(1<<10) ;
 
 /* functions */
 
