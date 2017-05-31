@@ -67,7 +67,7 @@ and platform-independent manner (despite it's a platform itself!). So it's recom
 practice. Developing components on a host target is usually simpler and more productive.
 </p>
 <p>
-<b>CCore</b> is implemented using <b>C++17</b>. It enables the full advantage of this renewed language for the
+<b>CCore</b> is implemented using <b>C++17+concepts</b>. It enables the full advantage of this renewed language for the
 embedded and real-time software development. You can also use it to build usual host applications. <b>CCore</b> 
 is well-suited to develop a wide range of applications like servers, mathematical calculations or file-processing utilities.
 The number of them are supplied as supplementary tools.
@@ -114,7 +114,7 @@ class IntLock : NoCopy
 </pre>
 
 <p>
-<b>CCore</b> is designed as a <span class="Alert">compliant</span> <b>C++17</b> library. There are a few places where we are using non-standard 
+<b>CCore</b> is designed as a <span class="Alert">compliant</span> <b>C++17+concepts</b> library. There are a few places where we are using non-standard 
 language extensions. In fact, we need only two of them: <b>restrict</b> and initialization priority
 attributes for static objects, supported in <b>gcc</b> family of compilers. As the result, there is no restriction
 on the compiler optimization level, unlike other OS cores. Another advantage is the platform-independence of the code. 

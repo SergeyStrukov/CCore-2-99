@@ -91,15 +91,8 @@ Class methods can also be guard methods.
 <p>
 <b>Creator function</b> creates some object. Normally we create an object using its class constructor. But if we are using
 class templates, we have to provide a template argument list. Using <b>Creator function</b> allows infer this list from the
-function argument types. See, for example, <a href="page_Tuple.html"><b>MakeTuple()</b></a>:
+function argument types. In C++17 <b>Creator function</b>s are obsolete, but still used in some situations.
 </p>
-
-<pre>
-
-template &lt;class ... TT&gt;
-Tuple&lt;TT...&gt; MakeTuple(const TT &amp; ... tt);
-
-</pre>
 
 <h4>Partial class</h4>
 
@@ -323,7 +316,7 @@ inherit these properties by a derived class. For example, see <a href="page_NoCo
 
 <p>
 <b>Helper Type</b> is a type, designed to do some job, usually objects of such types are temporary, or local objects.
-See, for example, <a href="page_PrintSet.html"><b>PrintSetType</b></a>. <b>Helper Type</b>s are used instead of
+See, for example, <a href="page_PrintSet.html"><b>PrintSet</b></a>. <b>Helper Type</b>s are used instead of
 functions, in such cases, where, for instance, the object is required, like in the example above.
 </p>
 
@@ -402,8 +395,8 @@ struct SelectCtor&lt;false,T1,T2&gt;
 
 <pre>
 
-template &lt;class UInt,class=Meta::EnableIf&lt; Meta::IsUInt&lt;UInt&gt; &gt; &gt;
-const UInt MaxUInt = UInt(-1) ;
+template &lt;UIntType UInt&gt;
+inline constexpr UInt MaxUInt = UInt(-1) ;
 
 </pre>
 
