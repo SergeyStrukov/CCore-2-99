@@ -43,7 +43,7 @@ You have to copy the <b>sysroot</b> directory there (headers only on this stage)
 <p>
 The you need a directory for the source code, like <b>~/Downloads</b>. 
 When you have downloaded the source code of the <b>binutils</b> and <b>gcc</b>, unpack it here. 
-You got two directories like <b>binutils-2.25.1</b> and <b>gcc-5.2.0-cross</b>.
+You got two directories like <b>binutils-2.25.1</b> and <b>gcc-7.1.0-cross</b>.
 Then create a directory <b>Build</b> and inside two directories with the same names. 
 They serve as build locations.
 </p>
@@ -149,7 +149,7 @@ The first step is the configuration. Create the file <b>MakeCfg</b> in the build
 
 # MakeCfg
 
-CONFIGURE = ../../gcc-5.2.0-cross/configure
+CONFIGURE = ../../gcc-7.1.0-cross/configure
 
 OPT = --program-prefix=arm-                                         \
       --prefix=/opt/BeagleBoneBlack                                 \
@@ -187,6 +187,10 @@ libstdc++-v3/libsupc++/eh_globals.cc
 
 libstdc++-v3/libsupc++/pure.cc
 
+libstdc++-v3/src/c++11/random.cc
+
+libstdc++-v3/include/std/type_traits
+
 libstdc++-v3/configure
 
 </pre>
@@ -223,12 +227,32 @@ static __cxa_eh_globals eh_globals <b>__attribute__((section(".context_data")))<
 </p>
 
 <p>
+In <b>random.cc</b> the following sections must be switched off: 
+</p>
+
+<pre>
+
+#if 0 // def _GLIBCXX_HAVE_UNISTD_H
+
+</pre>
+
+<p>
+In <b>type_traits</b> the following sections must be switched off: 
+</p>
+
+<pre>
+
+# if 0 // defined (__UINT_LEAST16_TYPE__) && defined(__UINT_LEAST32_TYPE__)
+
+</pre>
+
+<p>
 <b>configure</b> script have two problems. It emits error for unknown OS. So we have to disable it.
 </p>
 
 <pre>
 
-    <b>#</b> as_fn_error "No support for this host/target combination." "$LINENO" 5 // line 77171
+    <b>#</b> as_fn_error "No support for this host/target combination." "$LINENO" 5 // line 78196
 
 </pre>
 
@@ -238,7 +262,7 @@ The second problem is to disable attempts to link target applications. It can be
 
 <pre>
 
-gcc_no_link=no // line 10555
+gcc_no_link=no // line 10556
 
 </pre>
 
