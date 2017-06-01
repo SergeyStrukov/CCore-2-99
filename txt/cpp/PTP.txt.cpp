@@ -169,17 +169,16 @@
      SlotId server_slot;
     };
 
-   concept CondTrue<bool Cond>;
+   template <class Packet>
+   concept bool AnyPacket = true ;
 
-   concept ToClientPacket<class Packet> // Packet_RET,Packet_NOINFO,Packet_RERET,Packet_CANCEL
-    {
-     requires CondTrue< Packet::PacketDirection == ServerToClient >;
-    };
+   template <AnyPacket Packet>
+   concept bool ToClientPacket // Packet_RET,Packet_NOINFO,Packet_RERET,Packet_CANCEL
+    = ( Packet::PacketDirection == ServerToClient ) ;
 
-   concept ToServerPacket<class Packet> // Packet_CALL,Packet_RECALL,Packet_ACK,Packet_SENDRET
-    {
-     requires CondTrue< Packet::PacketDirection == ClientToServer >;
-    };
+   template <AnyPacket Packet>
+   concept bool ToServerPacket // Packet_CALL,Packet_RECALL,Packet_ACK,Packet_SENDRET
+    = ( Packet::PacketDirection == ClientToServer );
 
 /* 4) Transaction processing */
 
@@ -193,8 +192,7 @@
 
     /* input-output routines */
 
-    template <class Packet>
-    void SendPacket(Packet packet);
+    void SendPacket(AnyPacket packet);
 
   /* Client Side */
 
@@ -219,8 +217,7 @@
 
     ClientSlot * Find(SlotId client_slot,TransId tid);
 
-    template <ToClientPacket Packet>
-    void Process(Packet packet)
+    void Process(ToClientPacket packet)
      {
       if( ClientSlot *slot=Find(packet.client_slot,packet.tid) )
         {

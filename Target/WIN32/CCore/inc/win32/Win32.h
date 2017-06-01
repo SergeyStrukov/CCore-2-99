@@ -349,11 +349,11 @@ bool_t WIN32_API GlobalUnlock(handle_t h_mem);
 
 /* const TryTimeout */
 
-const timeout_t TryTimeout = timeout_t(0) ;
+inline constexpr timeout_t TryTimeout = timeout_t(0) ;
 
 /* const NoTimeout */
 
-const timeout_t NoTimeout = timeout_t(-1) ;
+inline constexpr timeout_t NoTimeout = timeout_t(-1) ;
 
 /* enum WaitOptions */
 
@@ -651,7 +651,7 @@ bool_t WIN32_API ReadConsoleInputA(handle_t h_con,
 
 /* const InvalidFileHandle */
 
-const handle_t InvalidFileHandle = -1 ;
+inline constexpr handle_t InvalidFileHandle = -1 ;
 
 /* enum StdHandleOptions */
 
@@ -726,7 +726,7 @@ enum FileAttributes
 
 /* const InvalidFileAttributes */
 
-const flags_t InvalidFileAttributes = flags_t(-1) ;
+inline constexpr flags_t InvalidFileAttributes = flags_t(-1) ;
 
 /* enum MoveFileExFlags */
 
@@ -896,11 +896,11 @@ ulen_t WIN32_API GetFullPathNameA(const char *path,
 
 /* const InvalidSocket */
 
-const socket_t InvalidSocket = -1 ;
+inline constexpr socket_t InvalidSocket = -1 ;
 
 /* const InvalidULen */
 
-const ulen_t InvalidULen = ulen_t(-1) ;
+inline constexpr ulen_t InvalidULen = ulen_t(-1) ;
 
 /* enum WSAVersions */
 
@@ -1136,7 +1136,7 @@ options_t WIN32_API WSAWaitForMultipleEvents(ulen_t hcount,
 
 /* const TlsNoIndex */
 
-const int TlsNoIndex = -1 ;
+inline constexpr int TlsNoIndex = -1 ;
 
 /*--------------------------------------------------------------------------------------*/
 /* TLS functions                                                                        */
@@ -1179,7 +1179,7 @@ bool_t WIN32_API SetEvent(handle_t h_event);
 
 /* const MaxSemaphoreCount */
 
-const sem_count_t MaxSemaphoreCount = 0x7FFF'FFFF ;
+inline constexpr sem_count_t MaxSemaphoreCount = 0x7FFF'FFFF ;
 
 /*--------------------------------------------------------------------------------------*/
 /* Semaphore functions                                                                  */

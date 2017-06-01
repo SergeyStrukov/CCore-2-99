@@ -329,20 +329,20 @@ enum WMCode
 
 /* const HWND_... */
 
-const int HWND_Bottom    =  1 ;
-const int HWND_NoTopMost = -2 ;
-const int HWND_Top       =  0 ;
-const int HWND_TopMost   = -1 ;
+inline constexpr int HWND_Bottom    =  1 ;
+inline constexpr int HWND_NoTopMost = -2 ;
+inline constexpr int HWND_Top       =  0 ;
+inline constexpr int HWND_TopMost   = -1 ;
 
 /* const InvalidColor */
 
-const Color32 InvalidColor = 0xFFFF'FFFF ;
+inline constexpr Color32 InvalidColor = 0xFFFF'FFFF ;
 
 #ifdef WIN32GUI_EXTRA_CONTENT
 
 /* const GDIError */
 
-const unsigned GDIError = 0xFFFF'FFFF ;
+inline constexpr unsigned GDIError = 0xFFFF'FFFF ;
 
 #endif
 
@@ -525,7 +525,7 @@ enum MouseActivate
 
 /* const WheelDelta */
 
-const int WheelDelta = 120 ;
+inline constexpr int WheelDelta = 120 ;
 
 /*--------------------------------------------------------------------------------------*/
 /* common structures                                                                    */
@@ -736,9 +736,9 @@ enum SysCursor : IntRes
 
 /* const KeyState... */
 
-const unsigned short KeyStateDown   = 0x8000 ;
+inline constexpr unsigned short KeyStateDown   = 0x8000 ;
 
-const unsigned short KeyStateToggle = 0x0001 ;
+inline constexpr unsigned short KeyStateToggle = 0x0001 ;
 
 /*--------------------------------------------------------------------------------------*/
 /* Desktop functions                                                                    */
@@ -958,11 +958,11 @@ enum MouseTrackFlags
 
 /* const UserDefault */
 
-const int UserDefault = (int)0x8000'0000 ;
+inline constexpr int UserDefault = (int)0x8000'0000 ;
 
 /* const HoverTimeDefault */
 
-const unsigned HoverTimeDefault = 0xFFFF'FFFF ;
+inline constexpr unsigned HoverTimeDefault = 0xFFFF'FFFF ;
 
 /*--------------------------------------------------------------------------------------*/
 /* Window structures                                                                    */
@@ -1530,7 +1530,7 @@ enum PatOptions // incomplete
 
 /* const MaxTextExtOutLen */
 
-const int MaxExtTextOutLen = 8192 ;
+inline constexpr int MaxExtTextOutLen = 8192 ;
 
 #endif
 
