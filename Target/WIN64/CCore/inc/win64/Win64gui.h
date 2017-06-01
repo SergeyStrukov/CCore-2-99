@@ -1,7 +1,7 @@
 /* Win64gui.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/WIN64
 //
@@ -327,14 +327,14 @@ enum WMCode : unsigned
 
 /* const HWND_... */
 
-const long HWND_Bottom    =  1 ;
-const long HWND_NoTopMost = -2 ;
-const long HWND_Top       =  0 ;
-const long HWND_TopMost   = -1 ;
+inline constexpr long HWND_Bottom    =  1 ;
+inline constexpr long HWND_NoTopMost = -2 ;
+inline constexpr long HWND_Top       =  0 ;
+inline constexpr long HWND_TopMost   = -1 ;
 
 /* InvalidColor */
 
-const Color32 InvalidColor = 0xFFFF'FFFF ;
+inline constexpr Color32 InvalidColor = 0xFFFF'FFFF ;
 
 /*--------------------------------------------------------------------------------------*/
 /* message constants                                                                    */
@@ -384,7 +384,7 @@ enum HitCode
 
 /* const WheelDelta */
 
-const int WheelDelta = 120 ;
+inline constexpr int WheelDelta = 120 ;
 
 /*--------------------------------------------------------------------------------------*/
 /* common structures                                                                    */
@@ -578,9 +578,9 @@ enum SysCursor : IntRes
 
 /* const KeyState... */
 
-const unsigned short KeyStateDown   = 0x8000 ;
+inline constexpr unsigned short KeyStateDown   = 0x8000 ;
 
-const unsigned short KeyStateToggle = 0x0001 ;
+inline constexpr unsigned short KeyStateToggle = 0x0001 ;
 
 /*--------------------------------------------------------------------------------------*/
 /* Desktop functions                                                                    */
@@ -800,11 +800,11 @@ enum MouseTrackFlags : unsigned
 
 /* const UserDefault */
 
-const int UserDefault = (int)0x8000'0000 ;
+inline constexpr int UserDefault = (int)0x8000'0000 ;
 
 /* const HoverTimeDefault */
 
-const unsigned HoverTimeDefault = 0xFFFF'FFFF ;
+inline constexpr unsigned HoverTimeDefault = 0xFFFF'FFFF ;
 
 /*--------------------------------------------------------------------------------------*/
 /* Window structures                                                                    */

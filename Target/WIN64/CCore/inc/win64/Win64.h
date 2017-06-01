@@ -352,11 +352,11 @@ bool_t WIN64_API GlobalUnlock(handle_t h_mem);
 
 /* const TryTimeout */
 
-const timeout_t TryTimeout = timeout_t(0) ;
+inline constexpr timeout_t TryTimeout = timeout_t(0) ;
 
 /* const NoTimeout */
 
-const timeout_t NoTimeout = timeout_t(-1) ;
+inline constexpr timeout_t NoTimeout = timeout_t(-1) ;
 
 /* enum WaitOptions */
 
@@ -654,7 +654,7 @@ bool_t WIN64_API ReadConsoleInputA(handle_t h_con,
 
 /* const InvalidFileHandle */
 
-const handle_t InvalidFileHandle = -1 ;
+inline constexpr handle_t InvalidFileHandle = -1 ;
 
 /* enum StdHandleOptions */
 
@@ -729,7 +729,7 @@ enum FileAttributes
 
 /* const InvalidFileAttributes */
 
-const flags_t InvalidFileAttributes = flags_t(-1) ;
+inline constexpr flags_t InvalidFileAttributes = flags_t(-1) ;
 
 /* enum MoveFileExFlags */
 
@@ -899,11 +899,11 @@ ushortlen_t WIN64_API GetFullPathNameA(const char *path,
 
 /* const InvalidSocket */
 
-const socket_t InvalidSocket = -1 ;
+inline constexpr socket_t InvalidSocket = -1 ;
 
 /* const InvalidUShortLen */
 
-const ushortlen_t InvalidUShortLen = ushortlen_t(-1) ;
+inline constexpr ushortlen_t InvalidUShortLen = ushortlen_t(-1) ;
 
 /* enum WSAVersions */
 
@@ -1139,7 +1139,7 @@ options_t WIN64_API WSAWaitForMultipleEvents(ushortlen_t hcount,
 
 /* const TlsNoIndex */
 
-const int TlsNoIndex = -1 ;
+inline constexpr int TlsNoIndex = -1 ;
 
 /*--------------------------------------------------------------------------------------*/
 /* TLS functions                                                                        */
@@ -1182,7 +1182,7 @@ bool_t WIN64_API SetEvent(handle_t h_event);
 
 /* const MaxSemaphoreCount */
 
-const sem_count_t MaxSemaphoreCount = 0x7FFF'FFFF ;
+inline constexpr sem_count_t MaxSemaphoreCount = 0x7FFF'FFFF ;
 
 /*--------------------------------------------------------------------------------------*/
 /* Semaphore functions                                                                  */
@@ -1203,9 +1203,9 @@ bool_t WIN64_API ReleaseSemaphore(handle_t h_sem, sem_count_t delta, sem_count_t
 
 /* adapters */
 
-const ushortlen_t MaxUShortLen = ushortlen_t(-1) ;
+inline constexpr ushortlen_t MaxUShortLen = ushortlen_t(-1) ;
 
-const ushortlen_t SplitLen = 0x10'0000 ;
+inline constexpr ushortlen_t SplitLen = 0x10'0000 ;
 
 inline ushortlen_t CapLen(ulen_t len) { if( len>MaxUShortLen ) return MaxUShortLen; return (ushortlen_t)len; }
 

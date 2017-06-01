@@ -1,7 +1,7 @@
 /* IntegerFastAlgo.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/LIN64
 //
@@ -39,13 +39,13 @@ struct IntegerFastAlgo
 
   using SUnit = mp_limb_signed_t ;
 
-  static const unsigned UnitBits = Meta::UIntBits<Unit> ;
+  static constexpr unsigned UnitBits = Meta::UIntBits<Unit> ;
 
   static_assert( UnitBits==64 ,"CCore::IntegerFastAlgo : bad gmp limb size");
 
-  static const Unit MaxUnit = Unit(-1) ;
+  static constexpr Unit MaxUnit = Unit(-1) ;
 
-  static const Unit MSBit = Unit( MaxUnit^(MaxUnit>>1) );
+  static constexpr Unit MSBit = Unit( MaxUnit^(MaxUnit>>1) );
 
   // private functions
 
