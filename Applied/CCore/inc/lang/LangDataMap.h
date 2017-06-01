@@ -81,7 +81,7 @@ class DataMap : NoCopy
 
    // generator support
 
-   void atoms(auto func) const // func(1-based index,StrLen name)
+   void atoms(FuncArgType<ulen,StrLen> func) const // func(1-based atom index,StrLen name)
     {
      for(const TypeDef::Atom &atom : lang.atoms.getRange() )
        {
@@ -97,7 +97,7 @@ class DataMap : NoCopy
 
       explicit ArgList(const TypeDef::Rule &rule) : args(rule.args.getRange()) {}
 
-      template <class Func>
+      template <FuncArgType<bool,StrLen> Func>
       void operator () (Func func) const // func(bool is_atom,StrLen name)
        {
         for(TypeDef::Rule::Arg arg : args )
@@ -130,7 +130,7 @@ class DataMap : NoCopy
 
       explicit RuleList(const TypeDef::Synt &synt) : rules(synt.rules.getRange()) {}
 
-      void operator () (auto func) const // func(StrLen rule_name,ArgList arg_list)
+      void operator () (FuncArgType<StrLen,ArgList> func) const // func(StrLen rule_name,ArgList arg_list)
        {
         for(const TypeDef::Rule *rule : rules )
           {
@@ -139,7 +139,7 @@ class DataMap : NoCopy
        }
     };
 
-   void synts(auto func) const // func(StrLen name,RuleList rule_list)
+   void synts(FuncArgType<StrLen,RuleList> func) const // func(StrLen name,RuleList rule_list)
     {
      for(const TypeDef::Synt &synt : lang.synts.getRange() )
        {
@@ -147,7 +147,7 @@ class DataMap : NoCopy
        }
     }
 
-   void rules(auto func) const // func(1-based index,StrLen synt_name,StrLen rule_name,1-based element index)
+   void rules(FuncArgType<ulen,StrLen,StrLen,ulen> func) const // func(1-based rule index,StrLen synt_name,StrLen rule_name,1-based element index)
     {
      for(const TypeDef::Rule &rule : lang.rules.getRange() )
        {
@@ -166,7 +166,7 @@ class DataMap : NoCopy
 
       explicit ActionList(const TypeDef::Final &final) : actions(final.actions.getRange()) {}
 
-      void operator () (auto func) const // func(1-based atom index plus 0,1-based rule index plus 0)
+      void operator () (FuncArgType<ulen,ulen> func) const // func(1-based atom index OR 0,1-based rule index OR 0)
        {
         for(const TypeDef::Final::Action &action : actions )
           {
@@ -183,7 +183,7 @@ class DataMap : NoCopy
        }
     };
 
-   void finals(auto func) // func(0-based final index,ActionList action_list)
+   void finals(FuncArgType<ulen,ActionList> func) // func(0-based final index,ActionList action_list)
     {
      for(const TypeDef::Final &final : lang.finals.getRange() )
        {
@@ -203,7 +203,7 @@ class DataMap : NoCopy
 
       bool operator ! () const { return !transitions.len; }
 
-      void operator () (auto func) const // func(1-based element index,0-based state index)
+      void operator () (FuncArgType<ulen,ulen> func) const // func(1-based element index,0-based state index)
        {
         for(const TypeDef::State::Transition &t : transitions )
           {
@@ -212,7 +212,7 @@ class DataMap : NoCopy
        }
     };
 
-   void states(auto func) // func(0-based state index,0-based final index,TransList trans_list)
+   void states(FuncArgType<ulen,ulen,TransList> func) // func(0-based state index,0-based final index,TransList trans_list)
     {
      for(const TypeDef::State &state : lang.states.getRange() )
        {
