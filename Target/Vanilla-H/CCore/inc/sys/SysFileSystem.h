@@ -1,7 +1,7 @@
 /* SysFileSystem.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-H
 //
@@ -37,6 +37,12 @@ struct FileSystem
     FileError error;
    };
 
+  struct CmpTimeResult
+   {
+    CmpFileTimeType time;
+    FileError error;
+   };
+
   struct PathOfResult
    {
     StrLen path;
@@ -66,6 +72,8 @@ struct FileSystem
   static FileError exit() noexcept;
 
   static TypeResult getFileType(StrLen path) noexcept;
+
+  static CmpTimeResult getFileUpdateTime(StrLen path) noexcept;
 
   static FileError createFile(StrLen file_name) noexcept;
 

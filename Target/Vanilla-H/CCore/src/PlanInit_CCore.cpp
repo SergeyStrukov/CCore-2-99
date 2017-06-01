@@ -20,12 +20,13 @@
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/Job.h>
 #include <CCore/inc/PerTask.h>
+#include <CCore/inc/DeferCall.h>
 
 namespace CCore {
 
 /* GetPlanInitNode_...() */
 
-namespace Private_PlanInit {
+namespace Private_PlanInit_CCore {
 
 struct Empty
  {
@@ -37,11 +38,12 @@ PlanInitObject<Empty,PlanInitReq<GetPlanInitNode_PacketPool>
                     ,PlanInitReq<GetPlanInitNode_ObjHost>
                     ,PlanInitReq<GetPlanInitNode_JobHost>
                     ,PlanInitReq<GetPlanInitNode_PerTask>
+                    ,PlanInitReq<GetPlanInitNode_DeferCall>
                     > Object CCORE_INITPRI_1 ;
 
-} // namespace Private_PlanInit
+} // namespace Private_PlanInit_CCore
 
-using namespace Private_PlanInit;
+using namespace Private_PlanInit_CCore;
 
 PlanInitNode * GetPlanInitNode_CCore() { return &Object; }
 

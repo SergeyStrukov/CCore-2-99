@@ -1,7 +1,7 @@
 /* PlatformBase.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-H
 //
@@ -15,6 +15,10 @@
 
 #ifndef CCore_inc_base_PlatformBase_h
 #define CCore_inc_base_PlatformBase_h
+
+/* target label */
+
+#define CCORE_TARGET Vanilla_H
 
 /* init priority */
 
@@ -44,13 +48,13 @@ namespace CCore {
 
 /* consts */
 
-const bool IsLEPlatform  = true ;
+inline constexpr bool IsLEPlatform  = true ;
 
-const bool Is2sComplementArithmetic = true ;
+inline constexpr bool Is2sComplementArithmetic = true ;
 
-const unsigned MaxBitLen = 64   ;
+inline constexpr unsigned MaxBitLen = 64   ;
 
-const unsigned MaxAlign  = 16   ;
+inline constexpr unsigned MaxAlign  = 16   ;
 
 /* types */
 
@@ -69,19 +73,19 @@ using sint64 =   signed long long ;
 
 /* consts */
 
-const ulen DefaultPacketCount = 50'000 ;
+inline constexpr ulen DefaultPacketCount = 50'000 ;
 
-const unsigned DefaultEventElementCount = 10'000 ;
+inline constexpr unsigned DefaultEventElementCount = 10'000 ;
 
 /* namespace Bits */
 
 namespace Bits {
 
-const unsigned unsigned_char      =  8 ;
-const unsigned unsigned_short     = 16 ;
-const unsigned unsigned_int       = 32 ;
-const unsigned unsigned_long      = 32 ;
-const unsigned unsigned_long_long = 64 ;
+inline constexpr unsigned unsigned_char      =  8 ;
+inline constexpr unsigned unsigned_short     = 16 ;
+inline constexpr unsigned unsigned_int       = 32 ;
+inline constexpr unsigned unsigned_long      = 32 ;
+inline constexpr unsigned unsigned_long_long = 64 ;
 
 } // namespace Bits
 
@@ -105,37 +109,37 @@ struct Prop
    };
  };
 
-//
-// template <>
-// struct Prop<???>
-//  {
-//   enum
-//    {
-//     IsSigned   = true,
-//     IsUnsigned = false,
-//    };
-//
-//   using SType = ??? ;
-//   using UType = ??? ;
-//
-//   using PromoteSType = ??? ;
-//   using PromoteUType = ??? ;
-//  };
-//
-// template <>
-// struct Prop<???>
-//  {
-//   enum
-//    {
-//     IsSigned   = false,
-//     IsUnsigned = true,
-//
-//     Bits = ???
-//    };
-//
-//   using PromoteUType = ??? ;
-//  };
-//
+ //
+ // template <>
+ // struct Prop<???>
+ //  {
+ //   enum
+ //    {
+ //     IsSigned   = true,
+ //     IsUnsigned = false,
+ //    };
+ //
+ //   using SType = ??? ;
+ //   using UType = ??? ;
+ //
+ //   using PromoteSType = ??? ;
+ //   using PromoteUType = ??? ;
+ //  };
+ //
+ // template <>
+ // struct Prop<???>
+ //  {
+ //   enum
+ //    {
+ //     IsSigned   = false,
+ //     IsUnsigned = true,
+ //
+ //     Bits = ???
+ //    };
+ //
+ //   using PromoteUType = ??? ;
+ //  };
+ //
 
 } // namespace ExtraInt
 
@@ -186,7 +190,7 @@ template <class T> void Used(T &) {}
 
 /* OptimizeBarrier() */
 
-void OptimizeBarrier(void *ptr,ulen len);
+void OptimizeBarrier(void *ptr,ulen len) noexcept;
 
 } // namespace CCore
 

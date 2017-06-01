@@ -1,7 +1,7 @@
 /* SysFileSystem.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-H
 //
@@ -54,6 +54,13 @@ auto FileSystem::getFileType(StrLen /*path*/) noexcept -> TypeResult
   // TODO
 
   return TypeResult{};
+ }
+
+auto FileSystem::getFileUpdateTime(StrLen /*path*/) noexcept -> CmpTimeResult
+ {
+  // TODO
+
+  return CmpTimeResult{};
  }
 
 FileError FileSystem::createFile(StrLen /*file_name*/) noexcept

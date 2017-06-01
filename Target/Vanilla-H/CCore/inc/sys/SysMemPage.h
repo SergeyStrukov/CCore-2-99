@@ -1,7 +1,7 @@
 /* SysMemPage.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-H
 //
@@ -23,7 +23,7 @@ namespace Sys {
 
 /* consts */
 
-const ulen MemPageLen = 4_KByte ;
+inline constexpr ulen MemPageLen = 4_KByte ;
 
 static_assert( (MemPageLen%MaxAlign)==0 ,"CCore::Sys::MemPageLen is not aligned");
 

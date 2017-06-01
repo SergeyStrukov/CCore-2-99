@@ -21,7 +21,7 @@ namespace CCore {
 
 #if 1
 
-void OptimizeBarrier(void *,ulen)
+void OptimizeBarrier(void *,ulen) noexcept
  {
  }
 

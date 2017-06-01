@@ -1,7 +1,7 @@
 /* SysSem.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-H
 //
@@ -33,7 +33,7 @@ struct Sem
  {
   // public
 
-  ErrorType init(ulen count) noexcept;
+  ErrorType init(ulen count=0) noexcept;
 
   void exit() noexcept;
 
