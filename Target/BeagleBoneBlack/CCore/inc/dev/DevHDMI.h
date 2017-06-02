@@ -1,7 +1,7 @@
 /* DevHDMI.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -54,7 +54,7 @@ class HDMI : InstanceLock<HDMI>
 
    class CECRegRW : NoCopy
     {
-      static const uint8 SlaveAddress = 0x34 ;
+      static constexpr uint8 SlaveAddress = 0x34 ;
 
       RegRW &dev;
 
@@ -73,7 +73,7 @@ class HDMI : InstanceLock<HDMI>
 
    class HDMIRegRW : NoCopy
     {
-      static const uint8 SlaveAddress = 0x70 ;
+      static constexpr uint8 SlaveAddress = 0x70 ;
 
       RegRW &dev;
 

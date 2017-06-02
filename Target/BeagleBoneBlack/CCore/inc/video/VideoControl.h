@@ -1,7 +1,7 @@
 /* VideoControl.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -39,7 +39,7 @@ class VideoControl;
 
 class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
  {
-   static const auto GPIOBit = Dev::Bit(25) ;
+   static constexpr auto GPIOBit = Dev::Bit(25) ;
 
    static Space VideoSpace;
 

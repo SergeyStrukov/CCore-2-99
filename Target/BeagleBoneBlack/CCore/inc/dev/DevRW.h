@@ -1,7 +1,7 @@
 /* DevRW.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -25,18 +25,23 @@ namespace Dev {
 
 using AddressType = uint32 ;
 
+/* concept RegType */
+
+template <class UInt>
+concept bool RegisterType = OneOfTypes<UInt,uint8,uint16,uint32> ;
+
 /* functions */
 
-template <class UInt>
+template <RegisterType UInt>
 UInt VarGet(const void *ptr) noexcept;
 
-template <class UInt>
+template <RegisterType UInt>
 void VarSet(void *ptr,UInt value) noexcept;
 
-template <class UInt>
+template <RegisterType UInt>
 UInt VarGet(AddressType address) { return VarGet<UInt>((const void *)address); }
 
-template <class UInt>
+template <RegisterType UInt>
 void VarSet(AddressType address,UInt value) { VarSet<UInt>((void *)address,value); }
 
 /* classes */
@@ -59,10 +64,10 @@ class RegRW
 
    explicit RegRW(AddressType base_address_) : base_address(base_address_) {}
 
-   template <class UInt>
+   template <RegisterType UInt>
    UInt get(AddressType address) { return VarGet<UInt>(base_address+address); }
 
-   template <class UInt>
+   template <RegisterType UInt>
    void set(AddressType address,UInt value) { VarSet<UInt>(base_address+address,value); }
  };
 

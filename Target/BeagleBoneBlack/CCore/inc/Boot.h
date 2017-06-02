@@ -1,7 +1,7 @@
 /* Boot.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/BeagleBoneBlack
 //
@@ -49,12 +49,12 @@ class Boot : public Net::PTPBoot::BootInfo
 
    using UnitType = unsigned ;
 
-   static const uint32 MinAddress   = 0x8010'0000 ;
-   static const uint32 LimAddress   = 0x9000'0000 ;
-   static const uint32 TopAddress   = 0xA000'0000 ;
-   static const uint32 AlignAddress =          4 ;
+   static constexpr uint32 MinAddress   = 0x8010'0000 ;
+   static constexpr uint32 LimAddress   = 0x9000'0000 ;
+   static constexpr uint32 TopAddress   = 0xA000'0000 ;
+   static constexpr uint32 AlignAddress =           4 ;
 
-   const unsigned UnitLen = sizeof (UnitType) ;
+   static constexpr unsigned UnitLen = sizeof (UnitType) ;
 
    DynArray<UnitType> buf;
 
