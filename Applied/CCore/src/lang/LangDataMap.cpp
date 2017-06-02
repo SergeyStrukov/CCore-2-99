@@ -148,14 +148,13 @@ StrLen DataMap::Pretext()
 "   };"_c;
  }
 
-DataMap::DataMap(StrLen file_name)
+void DataMap::load(StrLen file_name,PrintBase &eout)
  {
-  PrintCon out;
-  DDL::FileEngine<FileName,FileToMem> engine(out);
+  DDL::FileEngine<FileName,FileToMem> engine(eout);
 
   auto result=engine.process(file_name,Pretext());
 
-  out.flush();
+  eout.flush();
 
   if( !result )
     {
@@ -172,6 +171,18 @@ DataMap::DataMap(StrLen file_name)
 
      mem=guard.disarm();
     }
+ }
+
+DataMap::DataMap(StrLen file_name)
+ {
+  PrintCon eout;
+
+  load(file_name,eout);
+ }
+
+DataMap::DataMap(StrLen file_name,PrintBase &eout)
+ {
+  load(file_name,eout);
  }
 
 DataMap::~DataMap()

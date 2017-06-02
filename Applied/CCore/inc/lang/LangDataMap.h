@@ -69,9 +69,13 @@ class DataMap : NoCopy
    void sanity_states();
    void sanity_finals();
 
+   void load(StrLen file_name,PrintBase &eout);
+
   public:
 
    explicit DataMap(StrLen file_name);
+
+   DataMap(StrLen file_name,PrintBase &eout);
 
    ~DataMap();
 
@@ -183,7 +187,7 @@ class DataMap : NoCopy
        }
     };
 
-   void finals(FuncArgType<ulen,ActionList> func) // func(0-based final index,ActionList action_list)
+   void finals(FuncArgType<ulen,ActionList> func) const// func(0-based final index,ActionList action_list)
     {
      for(const TypeDef::Final &final : lang.finals.getRange() )
        {
@@ -212,7 +216,7 @@ class DataMap : NoCopy
        }
     };
 
-   void states(FuncArgType<ulen,ulen,TransList> func) // func(0-based state index,0-based final index,TransList trans_list)
+   void states(FuncArgType<ulen,ulen,TransList> func) const// func(0-based state index,0-based final index,TransList trans_list)
     {
      for(const TypeDef::State &state : lang.states.getRange() )
        {
