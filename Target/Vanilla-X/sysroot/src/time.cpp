@@ -1,11 +1,11 @@
-/* time.cpp */ 
+/* time.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: Target/Vanilla-X
 //
-//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
@@ -17,10 +17,10 @@
 
 #include <sysroot/usr/include/__std_init.h>
 
-/* time utilities */ 
+/* time utilities */
 
 size_t strftime(char *__restrict,size_t,const char *__restrict,const struct tm *__restrict)
  {
   __std_abort("strftime() is called -- trap");
  }
- 
+

@@ -36,18 +36,6 @@ extern void __std_main(void);
 
 extern void __std_exit(void);
 
-/* debug */
-
-extern void __std_debug_init(void);
-
-extern void __std_debug(const char *zstr);
-
-extern void __std_debug2(const char *ptr,__std_len_t len);
-
-extern void __std_debug_console(const char *ptr,__std_len_t len);
-
-extern void __std_debug_trap(unsigned LR,unsigned trap);
-
 /* constructors/destructors */
 
 typedef void (*__std_init_t)(void);

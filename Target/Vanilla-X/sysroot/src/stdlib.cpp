@@ -1,11 +1,11 @@
-/* stdlib.cpp */ 
+/* stdlib.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: Target/Vanilla-X
 //
-//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
@@ -17,37 +17,37 @@
 
 #include <sysroot/usr/include/__std_init.h>
 
-/* strto...() */ 
+/* strto...() */
 
 float strtof(const char *__restrict,char **__restrict)
  {
   __std_abort("strtof() is called -- trap");
  }
- 
+
 double strtod(const char *__restrict,char **__restrict)
  {
   __std_abort("strtod() is called -- trap");
  }
- 
+
 long double strtold(const char *__restrict,char **__restrict)
  {
   __std_abort("strtold() is called -- trap");
  }
- 
-/* termination */ 
+
+/* termination */
 
 void abort(void)
  {
   __std_abort("abort() is called");
  }
-  
+
 void exit(int)
  {
   __std_abort("exit() is called -- trap");
- }  
- 
+ }
+
 void _Exit(int)
  {
   __std_abort("_Exit() is called -- trap");
- }  
- 
+ }
+

@@ -214,7 +214,7 @@ template &lt;class T&gt; void <span class="Att">Used</span>(T &amp;) {}
  
 /* OptimizeBarrier() */
  
-void <span class="Att">OptimizeBarrier</span>(void *ptr,ulen len);
+void <span class="Att">OptimizeBarrier</span>(void *ptr,ulen len) noexcept;
 
 } // namespace CCore
  
@@ -524,7 +524,7 @@ template &lt;class T&gt; void <span class="Att">Used</span>(T &amp;) {}
  
 /* OptimizeBarrier() */
  
-void <span class="Att">OptimizeBarrier</span>(void *ptr,ulen len);
+void <span class="Att">OptimizeBarrier</span>(void *ptr,ulen len) noexcept;
 
 </pre>
 

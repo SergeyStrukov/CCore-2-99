@@ -1,7 +1,7 @@
 /* PlatformBase.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-X
 //
@@ -21,7 +21,7 @@ namespace CCore {
 
 #if 1
 
-void OptimizeBarrier(void *,ulen)
+void OptimizeBarrier(void *,ulen) noexcept
  {
  }
 

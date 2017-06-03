@@ -1,11 +1,11 @@
-/* string.cpp */ 
+/* string.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: Target/Vanilla-X
 //
-//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
@@ -17,10 +17,10 @@
 
 #include <sysroot/usr/include/stdlib.h>
 
-/* mem...() */ 
+/* mem...() */
 
 typedef unsigned char uchar;
- 
+
 #if 0
 
 void __std_memcpy(void *__restrict dst,const void *__restrict src_,size_t size)
@@ -29,10 +29,10 @@ void __std_memcpy(void *__restrict dst,const void *__restrict src_,size_t size)
   uchar *lim=ptr+size;
 
   const uchar *src=static_cast<const uchar *>(src_);
- 
+
   for(; ptr<lim ;ptr++,src++) (*ptr)=(*src);
  }
- 
+
 #endif
 
 void * memmove(void *dst_,const void *src_,size_t size)
@@ -58,41 +58,41 @@ void * memmove(void *dst_,const void *src_,size_t size)
 
   return dst_;
  }
- 
+
 #if 0
- 
+
 int memcmp(const void *a_,const void *b_,size_t size)
  {
   const uchar *a=static_cast<const uchar *>(a_);
   const uchar *b=static_cast<const uchar *>(b_);
- 
-  for(; size ;a++,b++,size--) 
+
+  for(; size ;a++,b++,size--)
     {
      uchar ca=(*a);
      uchar cb=(*b);
-     
+
      if( int ret=(int)ca-(int)cb ) return ret;
     }
-  
+
   return 0;
  }
- 
+
 #endif
 
 #if 0
-  
+
 void __std_memset(void *dst,int c_,size_t size)
  {
   uchar *ptr=static_cast<uchar *>(dst);
   uchar *lim=ptr+size;
 
   uchar c=(uchar)c_;
- 
+
   for(; ptr<lim ;ptr++) (*ptr)=c;
  }
- 
+
 #endif
- 
+
 void * memchr(const void *a,int c,size_t size)
  {
   const char *ptr=static_cast<const char *>(a);
@@ -102,8 +102,8 @@ void * memchr(const void *a,int c,size_t size)
 
   return 0;
  }
- 
-/* str...() */ 
+
+/* str...() */
 
 #if 0
 
@@ -113,60 +113,60 @@ const char * __std_strend(const char *str)
 
   return str;
  }
- 
+
 #endif
- 
+
 char * strcpy(char *__restrict dst,const char *__restrict src)
  {
   for(char *ptr=dst; ((*ptr)=(*src)) ;ptr++,src++);
- 
+
   return dst;
  }
- 
+
 char * strcat(char *__restrict dst,const char *__restrict src)
  {
   char *end=const_cast<char *>(__std_strend(dst));
- 
+
   strcpy(end,src);
-  
+
   return dst;
  }
- 
+
 #if 0
- 
+
 int strcmp(const char *a,const char *b)
  {
   for(;;a++,b++)
     {
      char ca=(*a);
      char cb=(*b);
-     
+
      if( int ret=(int)ca-(int)cb ) return ret;
-     
+
      if( !ca ) return 0;
     }
  }
- 
+
 #endif
- 
+
 #if 0
- 
+
 int strcoll(const char *a,const char *b)
  {
   for(;;a++,b++)
     {
      char ca=(*a);
      char cb=(*b);
-     
+
      if( int ret=(int)ca-(int)cb ) return ret;
-     
+
      if( !ca ) return 0;
     }
  }
- 
+
 #endif
- 
-/* strdup() */ 
+
+/* strdup() */
 
 char * strdup(const char *str)
  {
@@ -180,26 +180,26 @@ char * strdup(const char *str)
 
   return static_cast<char *>(ret);
  }
- 
-/* strn...() */ 
+
+/* strn...() */
 
 #if 0
- 
+
 int strncmp(const char *a,const char *b,size_t size)
  {
   for(; size ;a++,b++,size--)
     {
      char ca=(*a);
      char cb=(*b);
-     
+
      if( int ret=(int)ca-(int)cb ) return ret;
-     
+
      if( !ca ) return 0;
     }
-    
-  return 0;  
+
+  return 0;
  }
-  
+
 #endif
 
 size_t strxfrm(char *__restrict dst,const char *__restrict src,size_t dst_size)
@@ -213,4 +213,4 @@ size_t strxfrm(char *__restrict dst,const char *__restrict src,size_t dst_size)
 
   return ret;
  }
- 
+

@@ -1,7 +1,7 @@
 /* SysCon.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-X
 //
@@ -82,9 +82,9 @@ class ImpCon : public ConBase
 
 class DefaultCon : NoCopy
  {
-   static const ulen MaxDataLen = 512 ;
-   static const ulen Count      = 100 ;
-   static const ulen MemLen     = ConBase::MemLen(MaxDataLen,Count) ;
+   static constexpr ulen MaxDataLen = 512 ;
+   static constexpr ulen Count      = 100 ;
+   static constexpr ulen MemLen     = ConBase::MemLen(MaxDataLen,Count) ;
 
   private:
 
@@ -119,48 +119,5 @@ ConBase * ConBase::GetObject() { return Object->getBase(); }
 } // namespace Sys
 } // namespace CCore
 
-#if 1
-
-#include <__std_init.h>
-
-using namespace CCore;
-
-void __std_debug_init(void)
- {
-  // TODO
- }
-
-void __std_debug(const char *zstr)
- {
-  Used(zstr);
-
-  // TODO
- }
-
-void __std_debug2(const char *ptr,__std_len_t len)
- {
-  Used(ptr);
-  Used(len);
-
-  // TODO
- }
-
-void __std_debug_console(const char *ptr,__std_len_t len)
- {
-  Used(ptr);
-  Used(len);
-
-  // TODO
- }
-
-void __std_debug_trap(unsigned LR,unsigned trap)
- {
-  Used(LR);
-  Used(trap);
-
-  // TODO
- }
-
-#endif
 
 

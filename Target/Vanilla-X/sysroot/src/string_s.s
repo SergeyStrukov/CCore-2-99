@@ -1,11 +1,11 @@
 @ string_s.s
 @-----------------------------------------------------------------------------------------
 @
-@  Project: CCore 2.00
+@  Project: CCore 3.00
 @
-@  Tag: Target/BeagleBoneBlack
+@  Tag: Target/Vanilla-X
 @
-@  License: Boost Software License - Version 1.0 - August 17th, 2003 
+@  License: Boost Software License - Version 1.0 - August 17th, 2003
 @
 @            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 @
@@ -40,7 +40,7 @@ strcoll:
         beq     1b
 
         sub     r0, r2, r3
-        
+
         mov     pc, lr
 
 @-----------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ strncmp:
         beq     1b
 
         sub     r0, r2, r3
-        
+
         mov     pc, lr
 
 @-----------------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ memcmp:
         beq     1b
 
         sub     r0, r2, r3
-        
+
         mov     pc, lr
 
 @-----------------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ __std_strend:
         bne     1b
 
         sub     r0, r0, #1
-        
+
         mov     pc, lr
 
 2:
@@ -249,13 +249,13 @@ wordcpy:  @@  r0 , r1 aligned
         bcs     wordcpy_big
 
         tst     r2, #16
-        ldmneia r1!, {r3,ip}  
+        ldmneia r1!, {r3,ip}
         stmneia r0!, {r3,ip}
-        ldmneia r1!, {r3,ip}  
+        ldmneia r1!, {r3,ip}
         stmneia r0!, {r3,ip}
 
         tst     r2, #8
-        ldmneia r1!, {r3,ip}  
+        ldmneia r1!, {r3,ip}
         stmneia r0!, {r3,ip}
 
         tst     r2, #4
@@ -274,7 +274,7 @@ wordcpy:  @@  r0 , r1 aligned
 
         mov     pc, lr
 
-wordcpy_big:  @@  r0 , r1 aligned , r2 >= 32 
+wordcpy_big:  @@  r0 , r1 aligned , r2 >= 32
 
         push    {r4-r10}
 
@@ -282,17 +282,17 @@ wordcpy_big:  @@  r0 , r1 aligned , r2 >= 32
         add     ip, r1, ip
 
 1:
-        ldmia   r1!, {r3,r4,r5,r6,r7,r8,r9,r10}  
+        ldmia   r1!, {r3,r4,r5,r6,r7,r8,r9,r10}
         stmia   r0!, {r3,r4,r5,r6,r7,r8,r9,r10}
         cmp     r1, ip
         bne     1b
 
         tst     r2, #16
-        ldmneia r1!, {r3,r4,r5,r6}  
+        ldmneia r1!, {r3,r4,r5,r6}
         stmneia r0!, {r3,r4,r5,r6}
 
         tst     r2, #8
-        ldmneia r1!, {r3,r4}  
+        ldmneia r1!, {r3,r4}
         stmneia r0!, {r3,r4}
 
         tst     r2, #4
@@ -433,7 +433,7 @@ badcpy_big:  @@  r1 is aligned, r0 is not aligned , r2 >= 36
         sub     r2, r2, #36
 
 1:
-        ldmia   r1!, {r4,r5,r6,r7,r8,r9,r10,r11}  
+        ldmia   r1!, {r4,r5,r6,r7,r8,r9,r10,r11}
 
         CpyShift r3, r4
         CpyShift r4, r5

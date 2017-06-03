@@ -1,11 +1,11 @@
-/* ctype.c */ 
+/* ctype.c */
 /*----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: Target/Vanilla-X
 //
-//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//  License: Boost Software License - Version 1.0 - August 17th, 2003
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
@@ -286,10 +286,10 @@ int isupper(int c) { return __std_ctype_flags[c+1]&__std_ctype_isupper; }
 int islower(int c) { return __std_ctype_flags[c+1]&__std_ctype_islower; }
 int isdigit(int c) { return __std_ctype_flags[c+1]&__std_ctype_isdigit; }
 int isxdigit(int c) { return __std_ctype_flags[c+1]&__std_ctype_isxdigit; }
- 
+
 int isalpha(int c) { return __std_ctype_flags[c+1]&__std_ctype_isalpha; }
 int isalnum(int c) { return __std_ctype_flags[c+1]&__std_ctype_isalnum; }
- 
+
 int isblank(int c) { return __std_ctype_flags[c+1]&__std_ctype_isblank; }
 int isspace(int c) { return __std_ctype_flags[c+1]&__std_ctype_isspace; }
 
@@ -298,10 +298,10 @@ int isprint(int c) { return __std_ctype_flags[c+1]&__std_ctype_isprint; }
 
 int isgraph(int c) { return __std_ctype_flags[c+1]&__std_ctype_isgraph; }
 int ispunct(int c) { return __std_ctype_flags[c+1]&__std_ctype_ispunct; }
- 
+
 int tolower(int c) { return (c<'A')?c:( (c>'Z')?c:( (c-'A')+'a' ) ); }
 int toupper(int c) { return (c<'a')?c:( (c>'z')?c:( (c-'a')+'A' ) ); }
- 
+
 #endif
 
 

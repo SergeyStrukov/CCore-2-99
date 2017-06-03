@@ -1,7 +1,7 @@
 /* SysTime.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Target/Vanilla-X
 //
@@ -35,7 +35,7 @@ using ClockTimeType = uint64 ; // unsigned integral type
 
 /* consts */
 
-const ClockTimeType ClocksPerSec = 24'000'000 ;
+inline constexpr ClockTimeType ClocksPerSec = 24'000'000 ;
 
 /* functions */
 
