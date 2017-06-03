@@ -1,7 +1,7 @@
 /* TaskHeap.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -46,8 +46,8 @@ class TaskHeapControl::ObjectType : public MemBase_nocopy
       }
     };
 
-   static const ulen Delta = Align(sizeof (Prefix)) ;
-   static const ulen MaxAllocLen = MaxULen-Delta ;
+   static constexpr ulen Delta = Align(sizeof (Prefix)) ;
+   static constexpr ulen MaxAllocLen = MaxULen-Delta ;
 
    static Prefix * GetPrefix(void *mem) { return static_cast<Prefix *>(PtrSub(mem,Delta)); }
 

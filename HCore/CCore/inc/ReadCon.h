@@ -1,7 +1,7 @@
 /* ReadCon.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: HCore Mini
 //
@@ -30,7 +30,7 @@ class ReadCon;
 
 class ReadCon : NoCopy
  {
-   static const ulen Len = 32 ;
+   static constexpr ulen Len = 32 ;
 
    Sys::ConRead con;
 
