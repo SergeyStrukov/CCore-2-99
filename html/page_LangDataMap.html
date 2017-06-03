@@ -112,6 +112,8 @@ class <span class="Att">Lang::DataMap</span> : NoCopy
       void operator () (FuncArgType&lt;ulen,ulen&gt; func) const // func(1-based element index,0-based state index)
     };
 
+   ulen getStatesCount() const;
+
    void states(FuncArgType&lt;ulen,ulen,TransList&gt; func) const; // func(0-based state index,0-based final index,TransList trans_list)
  };
 
@@ -134,27 +136,57 @@ Once the object is constructed you may acccess the lang data.
 </p>
 
 <p>
-Other methods iterate over various data tables and feed provided functors with data.
+Other methods iterate (in ascending order) over various data tables and feed provided functors with data.
 </p>
 
 <p>
-<b>atoms()</b>
+<b>atoms()</b> iterates over the lang atoms, the first argument is the 1-based atom index, the second is the atom name.
 </p>
 
 <p>
-<b>synts()</b>
+<b>synts()</b> iterates over the lang synts, the first argument is the synt name, the second is the synt rule list.
 </p>
 
 <p>
-<b>rules()</b>
+<b>RuleList::operator ()</b> iterates over the list, the first argument is the rule name, the second is the rule argument list.
 </p>
 
 <p>
-<b>finals()</b>
+<b>ArgList::operator ()</b> iterates over the list, the first argument is the atom flag (equals <b>true</b> iff the argument is an atom), 
+the second is the atom/synt name.
 </p>
 
 <p>
-<b>states()</b>
+<b>rules()</b> iterates over the rule list, the first argument is the 1-based rule index, the second is the resulting synt name, 
+the third is the rule name, the last is the resulting 1-based element index.
+</p>
+
+<p>
+<b>finals()</b> iterates over the final list, the first argument is the 0-based final index, the second is the action list.
+</p>
+
+<p>
+<b>ActionList::operator ()</b> iterates over the list, the first argument is the 1-based atom index OR 0, the second is the 1-based rule index OR 0.
+</p>
+
+<p>
+<b>getStatesCount()</b> returns the number of the LR1 parser states.
+</p>
+
+<p>
+<b>states()</b> iterates over the LR1 parser states, the first argument is the 0-based state index, the second is the 0-based final index, the third is the transition list.
+</p>
+
+<p>
+<b>TransList::operator +</b> is <b>true</b> iff the list is not empty.
+</p>
+
+<p>
+<b>TransList::operator !</b> is <b>true</b> iff the list is empty.
+</p>
+
+<p>
+<b>TransList::operator ()</b> iterates over the list, the first argument is the 1-based element index, the second is the 0-based state index.
 </p>
 
 </body>

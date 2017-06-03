@@ -28,8 +28,6 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
 
   map.sanity();
 
-  const TypeDef::Lang &lang=map.getLang();
-
   PrintFile outh(h_file_name);
   PrintFile outc(cpp_file_name);
 
@@ -199,7 +197,7 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
 
   // 4
 
-  ulen state_count=lang.states.len;
+  ulen state_count=map.getStatesCount();
 
   {
    map.finals( [&] (auto final_index,auto action_list)

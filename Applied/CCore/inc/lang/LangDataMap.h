@@ -216,6 +216,8 @@ class DataMap : NoCopy
        }
     };
 
+   ulen getStatesCount() const { return lang.states.len; }
+
    void states(FuncArgType<ulen,ulen,TransList> func) const// func(0-based state index,0-based final index,TransList trans_list)
     {
      for(const TypeDef::State &state : lang.states.getRange() )
