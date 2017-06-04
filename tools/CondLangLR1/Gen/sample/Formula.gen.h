@@ -48,7 +48,7 @@ struct FormulaParserData
     Transition trans;
    };
 
-  static const State *Start;
+  static const State *const Start;
 
   struct Element;
 

@@ -1728,5 +1728,5 @@ static const FormulaParserData::State StateList[89]=
   {Prop53,TransNone}
  };
 
-const FormulaParserData::State * FormulaParserData::Start=StateList;
+const FormulaParserData::State *const FormulaParserData::Start=StateList;
 

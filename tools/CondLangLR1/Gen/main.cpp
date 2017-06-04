@@ -52,7 +52,7 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
    Printf(outh,"/* struct #; */\n\n",class_name);
 
    Printf(outh,"struct #;\n",class_name);
-   Printf(outh," {\n",class_name);
+   Printf(outh," {\n");
 
    Printf(outh,"  using Rule = int ;\n\n");
 
@@ -77,7 +77,7 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
    Printf(outh,"    Transition trans;\n");
    Printf(outh,"   };\n\n");
 
-   Printf(outh,"  static const State *Start;\n\n");
+   Printf(outh,"  static const State *const Start;\n\n");
 
    Printf(outh,"  struct Element;\n\n");
 
@@ -258,7 +258,7 @@ void Main(StrLen ddl_file_name,StrLen class_name,StrLen h_file_name,StrLen cpp_f
 
    Printf(outc,"\n };\n\n");
 
-   Printf(outc,"const #;::State * #;::Start=StateList;\n\n",class_name,class_name);
+   Printf(outc,"const #;::State *const #;::Start=StateList;\n\n",class_name,class_name);
   }
  }
 
