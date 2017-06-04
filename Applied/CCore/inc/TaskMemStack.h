@@ -59,7 +59,7 @@ class TaskMemStack : NoCopy
      explicit Block(Block *prev_) : prev(prev_) {}
     };
 
-   static const ulen DeltaBlock = Align(sizeof (Block)) ;
+   static constexpr ulen DeltaBlock = Align(sizeof (Block)) ;
 
    struct Node : NoCopy
     {
@@ -80,7 +80,7 @@ class TaskMemStack : NoCopy
       }
     };
 
-   static const ulen DeltaNode = Align(sizeof (Node)) ;
+   static constexpr ulen DeltaNode = Align(sizeof (Node)) ;
 
    ulen reserve;
    Node *top;

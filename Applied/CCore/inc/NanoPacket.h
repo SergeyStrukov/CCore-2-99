@@ -61,7 +61,7 @@ class NanoPacket
       }
     };
 
-   static const ulen Delta = Align(sizeof (Header)) ;
+   static constexpr ulen Delta = Align(sizeof (Header)) ;
 
    using Algo = typename DLink<Header>::template CircularAlgo<&Header::link> ;
 
