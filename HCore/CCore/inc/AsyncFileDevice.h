@@ -123,7 +123,7 @@ class AsyncFileProcessor : NoCopy
       void completeStop() {}
     };
 
-   class Pool
+   class Pool : NoCopy
     {
       SlotTop avail_list;
 
