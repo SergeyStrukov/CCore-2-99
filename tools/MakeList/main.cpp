@@ -14,10 +14,10 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
-#include <CCore/inc/CharProp.h>
 #include <CCore/inc/Array.h>
 #include <CCore/inc/Sort.h>
 #include <CCore/inc/Path.h>
+#include <CCore/inc/Scanf.h>
 
 #include <CCore/inc/FileToMem.h>
 
@@ -76,13 +76,13 @@ class Cursor
 
    StrLen next()
     {
-     for(; +text && CharIsSpace(*text) ;++text);
+     SkipSpace(text);
 
      if( !text ) return text;
 
      StrLen start=text;
 
-     for(; +text && !CharIsSpace(*text) ;++text);
+     SkipNonSpace(text);
 
      return start.prefix(text);
     }
@@ -151,8 +151,7 @@ class FileList
      Process(Range(buf));
     }
 
-   template <class Func>
-   void apply(Func &func) const
+   void apply(FuncArgType<FileName> &func) const
     {
      for(auto r=Range(buf); +r ;++r) func(*r);
     }

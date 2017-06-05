@@ -60,6 +60,13 @@ void SkipSpace(CharStreamType &inp)
   for(; +inp && CharIsSpace(*inp) ;++inp);
  }
 
+/* SkipNonSpace() */
+
+void SkipNonSpace(CharStreamType &inp)
+ {
+  for(; +inp && !CharIsSpace(*inp) ;++inp);
+ }
+
 /* ProbeChar() */
 
 bool ProbeChar(CharStreamType &inp,char ch)

@@ -32,7 +32,7 @@ using namespace CCore;
 
 /* const MaxLevel */
 
-const unsigned MaxLevel = 100 ;
+inline constexpr unsigned MaxLevel = 100 ;
 
 /* class Data */
 
@@ -187,10 +187,9 @@ class PrintType : NoCopy
        }
     }
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
-     type->ptr.apply(PrintFunc<P>(out,level,use_alias));
+     type->ptr.apply(PrintFunc(out,level,use_alias));
     }
  };
 
@@ -242,8 +241,7 @@ struct Name
       }
    }
 
-  template <class P>
-  void print(P &out) const
+  void print(PrinterType &out) const
    {
     Printf(out,"#;#;",type,index);
    }
@@ -263,8 +261,7 @@ class NameDirectory : NoCopy
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        Putobj(out,result);
       }
@@ -279,8 +276,7 @@ class NameDirectory : NoCopy
 
      // print object
 
-     template <class P>
-     void print(P &out) const
+     void print(PrinterType &out) const
       {
        if( index )
          Printf(out,"S#;",index);
@@ -359,8 +355,7 @@ class NameDirectory : NoCopy
        dirs.applyIncr( [&] (const StrKey &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
       }
 
-     template <class P>
-     void printUsing(P &out,StrLen prefix) const
+     void printUsing(PrinterType &out,StrLen prefix) const
       {
        if( entries.getCount()+dirs.getCount() ) Putch(out,'\n');
 
@@ -371,8 +366,7 @@ class NameDirectory : NoCopy
 
      // print object
 
-     template <class P>
-     void print(P &out,StrLen name=Empty,ulen off=0) const
+     void print(PrinterType &out,StrLen name=Empty,ulen off=0) const
       {
        if( index )
          Printf(out,"#;#; -> S#;\n",RepeatChar(off,' '),name,index);
@@ -445,24 +439,21 @@ class NameDirectory : NoCopy
      root.complete_root(struct_list,extra_list);
     }
 
-   template <class P>
-   void printStruct(P &out,StrLen prefix,DDL::StructNode &node) const
+   void printStruct(PrinterType &out,StrLen prefix,DDL::StructNode &node) const
     {
      Dir *dir=struct_list[node.index];
 
      dir->printUsing(out,prefix);
     }
 
-   template <class P>
-   void printExtra(P &out,StrLen prefix,ulen ind) const
+   void printExtra(PrinterType &out,StrLen prefix,ulen ind) const
     {
      Dir *dir=extra_list[ind];
 
      dir->printUsing(out,prefix);
     }
 
-   template <class P>
-   void printRoot(P &out,StrLen prefix) const
+   void printRoot(PrinterType &out,StrLen prefix) const
     {
      root.printUsing(out,prefix);
     }
@@ -471,8 +462,7 @@ class NameDirectory : NoCopy
 
    // print object
 
-   template <class P>
-   void print(P &out) const
+   void print(PrinterType &out) const
     {
      Putobj(out,root);
     }

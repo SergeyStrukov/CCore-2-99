@@ -78,7 +78,7 @@ class Engine : public NoCopyBase<CmdInput::Target>
 
    Net::PSec::AlgoSet algo_set;
 
-   class ClientDatabase : NoCopy , public Net::PSec::ClientDatabase
+   class ClientDatabase : public NoCopyBase<Net::PSec::ClientDatabase>
     {
       DynArray<uint8> name;
 

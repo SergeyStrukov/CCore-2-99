@@ -47,8 +47,7 @@ class StrPunct : NoCopy
 
    explicit StrPunct(unsigned period_) : ind(period_),period(period_) {}
 
-   template <class P>
-   void operator () (P &out,bool more)
+   void operator () (PrinterType &out,bool more)
      {
       if( more )
         {
@@ -72,8 +71,7 @@ class StrPunct : NoCopy
 
 /* PrintDigits() */
 
-template <class P>
-void PrintDigits(P &out,PtrLen<const char> str)
+void PrintDigits(PrinterType &out,PtrLen<const char> str)
  {
   StrPunct punct(5);
 
@@ -92,8 +90,8 @@ void PrintDigits(P &out,PtrLen<const char> str)
 template <class Int>
 class SimpleSpan
  {
-   static const unsigned D0 = 10 ;
-   static const unsigned D1 = 10 ;
+   static constexpr unsigned D0 = 10 ;
+   static constexpr unsigned D1 = 10 ;
 
   private:
 
@@ -250,11 +248,9 @@ class SimpleSpan
 
    // print object
 
-   template <class P>
-   void print(P &out,unsigned dexp) const;
+   void print(PrinterType &out,unsigned dexp) const;
 
-   template <class P>
-   void print(P &out) const;
+   void print(PrinterType &out) const;
  };
 
 template <class Int>
@@ -404,8 +400,7 @@ SimpleSpan<Int> SimpleSpan<Int>::sq() const
  // print object
 
 template <class Int>
-template <class P>
-void SimpleSpan<Int>::print(P &out,unsigned dexp) const
+void SimpleSpan<Int>::print(PrinterType &out,unsigned dexp) const
  {
   Int mul=Int(10).pow(dexp);
 
@@ -441,8 +436,7 @@ void SimpleSpan<Int>::print(P &out,unsigned dexp) const
  }
 
 template <class Int>
-template <class P>
-void SimpleSpan<Int>::print(P &out) const
+void SimpleSpan<Int>::print(PrinterType &out) const
  {
   unsigned n=precision();
 
