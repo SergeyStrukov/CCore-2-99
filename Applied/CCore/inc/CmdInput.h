@@ -20,6 +20,7 @@
 #include <CCore/inc/Array.h>
 #include <CCore/inc/CharProp.h>
 #include <CCore/inc/ReadConType.h>
+#include <CCore/inc/StrMap.h>
 
 namespace CCore {
 
@@ -69,31 +70,7 @@ class CmdInput : NoCopy
    DynArray<Rec> list;
    bool locked;
 
-   struct Frame
-    {
-     ulen ind;
-     ulen lim;
-
-     // constructors
-
-     Frame() noexcept : ind(0),lim(0) {}
-
-     Frame(NothingType) : Frame() {}
-
-     explicit Frame(ulen lim_) : ind(0),lim(lim_) {}
-
-     Frame(ulen ind_,ulen lim_) : ind(ind_),lim(lim_) {}
-
-     // methods
-
-     bool operator + () const { return ind<lim; }
-
-     bool operator ! () const { return ind>=lim; }
-
-     ulen getCount() const { return lim-ind; }
-
-     ulen getMed() const { return ind+(lim-ind)/2; }
-    };
+   using Frame = PtrLen<const Rec> ;
 
    DynArray<Frame> frame_list;
    ulen off;
@@ -103,16 +80,6 @@ class CmdInput : NoCopy
    void add(StrLen cmd,TargetMethod method);
 
    Frame getCur() const;
-
-   CmpResult cmp(ulen ind,char ch) const;
-
-   ulen findMin(Frame cur,char ch) const;
-
-   ulen findMax(Frame cur,char ch) const;
-
-   Frame find(Frame cur,char ch) const;
-
-   Frame find(Frame cur) const;
 
   public:
 
@@ -153,7 +120,7 @@ class CmdInput : NoCopy
 
      CompleteResult(ulen count_) : count(count_) {}
 
-     CompleteResult(PtrLen<const char> str_) : count(1),str(str_) {}
+     CompleteResult(StrLen str_) : count(1),str(str_) {}
     };
 
    CompleteResult complete() const;

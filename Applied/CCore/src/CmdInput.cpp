@@ -1,7 +1,7 @@
 /* CmdInput.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -36,135 +36,7 @@ auto CmdInput::getCur() const -> Frame
  {
   if( off>0 ) return frame_list[off-1];
 
-  return Frame(list.getLen());
- }
-
-CmpResult CmdInput::cmp(ulen ind,char ch) const
- {
-  if( list[ind].cmd.len<=off ) return CmpLess;
-
-  return Cmp(list[ind].cmd[off],ch);
- }
-
-ulen CmdInput::findMin(Frame cur,char ch) const
- {
-  while( cur.getCount()>1 )
-    {
-     ulen med=cur.getMed();
-
-     switch( cmp(med,ch) )
-       {
-        case CmpLess :
-         {
-          cur.ind=med+1;
-         }
-        break;
-
-        default: // CmpEqual
-         {
-          cur.lim=med;
-         }
-       }
-    }
-
-  if( !cur ) return cur.ind;
-
-  if( cmp(cur.ind,ch)==CmpEqual ) return cur.ind;
-
-  return cur.lim;
- }
-
-ulen CmdInput::findMax(Frame cur,char ch) const
- {
-  while( cur.getCount()>1 )
-    {
-     ulen med=cur.getMed();
-
-     switch( cmp(med,ch) )
-       {
-        case CmpGreater :
-         {
-          cur.lim=med;
-         }
-        break;
-
-        default: // CmpEqual
-         {
-          cur.ind=med+1;
-         }
-       }
-    }
-
-  if( !cur ) return cur.ind;
-
-  if( cmp(cur.ind,ch)==CmpEqual ) return cur.lim;
-
-  return cur.ind;
- }
-
-auto CmdInput::find(Frame cur,char ch) const -> Frame
- {
-  if( !cur ) return Nothing;
-
-  while( cur.getCount()>1 )
-    {
-     ulen med=cur.getMed();
-
-     switch( cmp(med,ch) )
-       {
-        case CmpLess :
-         {
-          cur.ind=med+1;
-         }
-        break;
-
-        case CmpGreater :
-         {
-          cur.lim=med;
-         }
-        break;
-
-        default: // CmpEqual
-         {
-          ulen ind=findMin(Frame(cur.ind,med),ch);
-
-          ulen lim=findMax(Frame(med+1,cur.lim),ch);
-
-          return Frame(ind,lim);
-         }
-       }
-    }
-
-  if( +cur && cmp(cur.ind,ch)==CmpEqual ) return cur;
-
-  return Nothing;
- }
-
-auto CmdInput::find(Frame cur) const -> Frame
- {
-  if( !cur ) return Nothing;
-
-  ulen ind=cur.ind;
-
-  while( cur.getCount()>1 )
-    {
-     ulen med=cur.getMed();
-
-     if( list[med].cmd.len>off )
-       {
-        cur.lim=med;
-       }
-     else
-       {
-        cur.ind=med+1;
-       }
-    }
-
-  if( !cur ) return Frame(ind,cur.ind);
-
-  if( list[cur.ind].cmd.len==off ) return Frame(ind,cur.lim);
-
-  return Frame(ind,cur.ind);
+  return Range(list);
  }
 
  // constructors
@@ -205,8 +77,7 @@ bool CmdInput::put(char ch)
      return false;
     }
 
-  Frame cur=getCur();
-  Frame next=find(cur,ch);
+  Frame next=StrNextFrame(getCur(),off,ch, [] (const Rec &rec) { return rec.cmd; } );
 
   frame_list[off++]=next;
 
@@ -221,22 +92,24 @@ auto CmdInput::complete() const -> CompleteResult
 
   if( !cur ) return Nothing;
 
-  ulen count=cur.getCount();
+  ulen count=cur.len;
 
   if( count>1 ) return count;
 
-  return list[cur.ind].cmd.part(off);
+  StrLen rest=cur->cmd.part(off);
+
+  return rest;
  }
 
 auto CmdInput::finish() -> FinishResult
  {
   if( off>frame_list.getLen() ) return Nothing;
 
-  Frame cur=find(getCur());
+  Frame last=StrLastFrame(getCur(),off, [] (const Rec &rec) { return rec.cmd; } );
 
-  if( !cur ) return Nothing;
+  if( !last ) return Nothing;
 
-  return FinishResult(target,list[cur.ind].method);
+  return FinishResult(target,last->method);
  }
 
 } // namespace CCore

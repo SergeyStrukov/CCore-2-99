@@ -23,6 +23,26 @@
 
 namespace CCore {
 
+/* functions */
+
+template <Algon::RangeType R,class Func>
+R StrNextFrame(R r,ulen ind,char ch,Func by)
+ {
+  using T = Meta::PtrObjType<R> ;
+
+  Algon::BinarySearch_if(r, [=] (const T &obj) { StrLen str=by(obj); return str.len>ind && str[ind]>=ch ; } );
+
+  return Algon::BinarySearch_if(r, [=] (const T &obj) { StrLen str=by(obj); return str[ind]>ch ; } );
+ }
+
+template <Algon::RangeType R,class Func>
+R StrLastFrame(R r,ulen len,Func by)
+ {
+  using T = Meta::PtrObjType<R> ;
+
+  return Algon::BinarySearch_if(r, [=] (const T &obj) { StrLen str=by(obj); return str.len>len; } );
+ }
+
 /* classes */
 
 template <class T> class StrMap;
@@ -62,15 +82,13 @@ class StrMap : NoCopy
    template <class R>
    static R Search(R r,ulen i,char ch)
     {
-     Algon::BinarySearch_if(r, [=] (const Rec &rec) { StrLen key=rec.key; return key.len>i && key[i]>=ch ; } );
-
-     return Algon::BinarySearch_if(r, [=] (const Rec &rec) { StrLen key=rec.key; return key[i]>ch ; } );
+     return StrNextFrame(r,i,ch, [] (const Rec &rec) { return rec.key; } );
     }
 
    template <class R>
    static R Search(R r,ulen len)
     {
-     return Algon::BinarySearch_if(r, [=] (const Rec &rec) { StrLen key=rec.key; return key.len>len; } );
+     return StrLastFrame(r,len, [] (const Rec &rec) { return rec.key; } );
     }
 
    static T * PickNone(PtrLen<Rec>)

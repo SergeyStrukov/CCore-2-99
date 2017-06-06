@@ -72,6 +72,36 @@ The first argument is the <b>StrLen</b> key, it must be persistent for the map l
 Other arguments are forwarded to the <b>T</b> constructor. To finish the map building the method <b>complete()</b> must be called.
 </p>
 
+<h4>Utilities</h4>
+
+<p>
+There are two common algorithms of incremental search a given string in a sorted range of strings.
+Both operates on a range of objects. 
+It is assumed, that each object contains a <b>StrLen</b> property and the range is sorted in respect to this property.
+To extract this property the functor <b>by</b> is used.
+</p>
+
+<pre>
+
+template &lt;Algon::RangeType R,class Func&gt;
+R <span class="Att">StrNextFrame</span>(R r,ulen ind,char ch,Func by);
+
+template &lt;Algon::RangeType R,class Func&gt;
+R <span class="Att">StrLastFrame</span>(R r,ulen len,Func by);
+
+</pre>
+
+<p>
+<b>StrNextFrame()</b> returns the subrange of objects, which string has the <b>ind</b>-th character equals <b>ch</b>. 
+It is assumed, that <b>ind</b>-length prefix of all strings are the same. The resulting subrange consists of objects with
+<b>ind+1</b>-length prefix of all strings are the same.
+</p>
+
+<p>
+<b>StrLastFrame()</b> returns the subrange of objects, which string has the length <b>len</b>. 
+It is assumed, that <b>len</b>-length prefix of all strings are the same.
+</p>
+
 </body>
 
 </html>
