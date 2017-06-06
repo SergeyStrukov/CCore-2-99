@@ -1,7 +1,7 @@
 /* AsyncFileToMem.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -30,7 +30,7 @@ AsyncFileToMem::AsyncFileToMem(StrLen file_name,ulen max_len,MSec timeout,ulen m
 
   if( file_len>max_len )
     {
-     Printf(Exception,"CCore::AsyncFileToMem::AsyncFileToMem(#.q;,max_len=#;) : file is too long #;",file_name,max_len,file_len);
+     Printf(Exception,"CCore::AsyncFileToMem::AsyncFileToMem(#.q;,max_len=#;,...) : file is too long #;",file_name,max_len,file_len);
     }
 
   ulen len=(ulen)file_len;
@@ -46,7 +46,7 @@ AsyncFileToMem::AsyncFileToMem(StrLen dev_name,StrLen dev_file_name,ulen max_len
 
   if( file_len>max_len )
     {
-     Printf(Exception,"CCore::AsyncFileToMem::AsyncFileToMem(#.q;,#.q;,max_len=#;) : file is too long #;",dev_name,dev_file_name,max_len,file_len);
+     Printf(Exception,"CCore::AsyncFileToMem::AsyncFileToMem(#.q;,#.q;,max_len=#;,...) : file is too long #;",dev_name,dev_file_name,max_len,file_len);
     }
 
   ulen len=(ulen)file_len;

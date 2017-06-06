@@ -32,8 +32,8 @@ class AsyncFileSystem;
 
 class AsyncFile : public Funchor_nocopy
  {
-   static const ulen MinLargeLen = 5*DefaultPacketMaxDataLen ;
-   static const ulen MaxLargeLen = 64_KByte ;
+   static constexpr ulen MinLargeLen = 5*DefaultPacketMaxDataLen ;
+   static constexpr ulen MaxLargeLen = 64_KByte ;
 
    Sys::AsyncFile file;
 
