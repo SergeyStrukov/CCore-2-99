@@ -23,7 +23,7 @@ namespace Lang {
 
 /* TypeDef */
 
-#include "LangData.TypeDef.gen.h"
+#include <CCore/inc/lang/LangData.TypeDef.gen.h>
 
 /* classes */
 
@@ -42,24 +42,10 @@ class DataMap : NoCopy
    static StrLen Pretext();
 
    template <class T>
-   static bool Checkin(T *ptr,PtrLen<T> range)
-    {
-     if( ptr==0 ) return false;
-
-     ulen index=ptr->index;
-
-     return index<range.len && ptr==range.ptr+index ;
-    }
+   static bool Checkin(T *ptr,PtrLen<T> range);
 
    template <class T>
-   static bool Checkin_null(T *ptr,PtrLen<T> range)
-    {
-     if( ptr==0 ) return true;
-
-     ulen index=ptr->index;
-
-     return index<range.len && ptr==range.ptr+index ;
-    }
+   static bool Checkin_null(T *ptr,PtrLen<T> range);
 
    void sanity_atoms();
    void sanity_synts();

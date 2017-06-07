@@ -30,7 +30,7 @@ namespace Lang {
 
 /* TypeSet */
 
-#include "LangData.TypeSet.gen.h"
+#include <CCore/src/lang/LangData.TypeSet.gen.h>
 
 /* class DataMap */
 
@@ -148,6 +148,26 @@ StrLen DataMap::Pretext()
 "   };"_c;
  }
 
+template <class T>
+bool DataMap::Checkin(T *ptr,PtrLen<T> range)
+ {
+  if( ptr==0 ) return false;
+
+  ulen index=ptr->index;
+
+  return index<range.len && ptr==range.ptr+index ;
+ }
+
+template <class T>
+bool DataMap::Checkin_null(T *ptr,PtrLen<T> range)
+ {
+  if( ptr==0 ) return true;
+
+  ulen index=ptr->index;
+
+  return index<range.len && ptr==range.ptr+index ;
+ }
+
 void DataMap::load(StrLen file_name,PrintBase &eout)
  {
   DDL::FileEngine<FileName,FileToMem> engine(eout);
@@ -158,7 +178,7 @@ void DataMap::load(StrLen file_name,PrintBase &eout)
 
   if( !result )
     {
-     Printf(Exception,"CCore::Lang::DataMap::DataMap() : input file processing error");
+     Printf(Exception,"CCore::Lang::DataMap::DataMap(...) : input file processing error");
     }
   else
     {

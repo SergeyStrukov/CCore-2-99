@@ -1,7 +1,7 @@
 /* AsyncFile.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -299,7 +299,7 @@ void AsyncFile::setLargeWriteLen(ulen large_write_len_)
     large_write_len=0;
  }
 
-AsyncFile::WritePacket AsyncFile::getWritePacket()
+auto AsyncFile::getWritePacket() -> WritePacket
  {
   guard();
 
