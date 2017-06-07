@@ -1,7 +1,7 @@
 /* ScanAsyncFile.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 2.00
+//  Project: CCore 3.00
 //
 //  Tag: Applied
 //
@@ -50,8 +50,8 @@ class ScanAsyncFile : public ScanBase , public Funchor
 
    PacketBuf pbuf;
 
-   static const ulen MaxSlots = 100 ;
-   static const ulen MaxReadLen = 64_KByte ;
+   static constexpr ulen MaxSlots = 100 ;
+   static constexpr ulen MaxReadLen = 64_KByte ;
 
    struct Slot : NoCopy
     {
