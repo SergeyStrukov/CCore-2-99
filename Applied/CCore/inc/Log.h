@@ -488,11 +488,11 @@ class LogMsg<Cat,Stamp> : public LogMsgBase<Cat,Stamp>
    LogMsg(Cat cat,const char *format_) : LogMsgBase<Cat,Stamp>(cat),format(format_) {}
  };
 
-template <class Cat,class Stamp,LogableType T,LogableType ... TT>
-class LogMsg<Cat,Stamp,T,TT...> : public LogMsgBase<Cat,Stamp>
+template <class Cat,class Stamp,LogableType ... TT> requires ( sizeof ... (TT)>0 )
+class LogMsg<Cat,Stamp,TT...> : public LogMsgBase<Cat,Stamp>
  {
    const char *format;
-   Tuple<T,TT...> data;
+   Tuple<TT...> data;
 
   private:
 
@@ -503,7 +503,7 @@ class LogMsg<Cat,Stamp,T,TT...> : public LogMsgBase<Cat,Stamp>
 
   public:
 
-   LogMsg(Cat cat,const char *format_,const T &t,const TT & ... tt) : LogMsgBase<Cat,Stamp>(cat),format(format_),data(t,tt...) {}
+   LogMsg(Cat cat,const char *format_,const TT & ... tt) : LogMsgBase<Cat,Stamp>(cat),format(format_),data(tt...) {}
  };
 
 /* class UserLog<Cat,Stamp,Filter,Mutex> */

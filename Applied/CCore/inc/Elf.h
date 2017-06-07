@@ -122,6 +122,8 @@ struct Header
   uint16 section_header_count;
   uint16 section_name_section_index;
 
+  // methods
+
   bool check_id(uint8 bit_type_,uint8 endian_type_) const
    {
     return elf0==0x7f &&
@@ -136,6 +138,8 @@ struct Header
    {
     return cpu_type==cpu_type_;
    }
+
+  // print object
 
   void print(PrinterType &out) const
    {
@@ -175,6 +179,8 @@ struct PrintSectType
  {
   uint32 type;
 
+  // methods
+
   explicit PrintSectType(uint32 type_) : type(type_) {}
 
   const char * getStr() const
@@ -198,6 +204,8 @@ struct PrintSectType
       }
    }
 
+  // print object
+
   void print(PrinterType &out) const
    {
     if( const char *zstr=getStr() )
@@ -217,7 +225,11 @@ struct PrintSectFlags
  {
   uint32 flags;
 
+  // methods
+
   explicit PrintSectFlags(uint32 flags_) : flags(flags_) {}
+
+  // print object
 
   void print(PrinterType &out) const
    {
@@ -251,10 +263,14 @@ struct SectHeader
   uint32 address_align;
   uint32 entry_size;
 
+  // methods
+
   bool isLoadable() const
    {
     return (flags&SectFlag_alloc) && (type!=SectType_no_data) && size!=0 ;
    }
+
+  // print object
 
   void print(PrinterType &out) const
    {
