@@ -150,9 +150,13 @@ struct <span class="Att">Header</span>
   uint16 section_header_count;
   uint16 section_name_section_index;
 
+  // methods
+
   bool check_id(uint8 bit_type_,uint8 endian_type_) const;
 
   bool check_cpu(uint16 cpu_type_) const;
+
+  // print object
 
   void print(PrinterType &amp;out) const;
  };
@@ -215,6 +219,12 @@ struct <span class="Att">SectHeader</span>
   uint32 address_align;
   uint32 entry_size;
 
+  // methods
+
+  bool isLoadable() const;
+
+  // print object
+
   void print(PrinterType &amp;out) const;
  };
 
@@ -234,6 +244,10 @@ The most interesting properties are:
 
 <p>
 <b>size</b> is the section size.
+</p>
+
+<p>
+<b>isLoadable()</b> returns <b>true</b> iff the section must be loaded.
 </p>
 
 </body>
