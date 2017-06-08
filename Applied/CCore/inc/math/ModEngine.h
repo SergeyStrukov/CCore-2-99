@@ -178,11 +178,9 @@ class ModEngine : NoCopy
 
    Integer squac(const Integer &s,const Integer &a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < M
 
-   template <UIntType UInt>
-   Integer pow(const Integer &a,UInt d) const // a >=0 , a < M , M > 1
+   template <class Scanner>
+   Integer pow_scanner(const Integer &a,Scanner &scanner) const
     {
-     BitScanner<UInt> scanner(d);
-
      if( +scanner )
        {
         Integer ret=a;
@@ -200,25 +198,19 @@ class ModEngine : NoCopy
      return 1u;
     }
 
+   template <UIntType UInt>
+   Integer pow(const Integer &a,UInt d) const // a >=0 , a < M , M > 1
+    {
+     BitScanner<UInt> scanner(d);
+
+     return pow_scanner(a,scanner);
+    }
+
    Integer pow(const Integer &a,const Integer &d) const // a,d >=0 , a < M , M > 1
     {
      IntegerBitScanner<Integer> scanner(d);
 
-     if( +scanner )
-       {
-        Integer ret=a;
-
-        for(++scanner; +scanner ;++scanner)
-          {
-           ret=sq(ret);
-
-           if( *scanner ) ret=mul(ret,a);
-          }
-
-        return ret;
-       }
-
-     return 1u;
+     return pow_scanner(a,scanner);
     }
  };
 
