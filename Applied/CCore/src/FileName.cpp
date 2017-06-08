@@ -34,9 +34,24 @@ struct FileName::PathUp : PathBase
 
     for(; len && up ;up--)
       {
-       if( !--len ) return;
+       SplitName split({split_dev.path.ptr,len-1});
 
-       for(; len && !IsSlash(split_dev.path[len-1]) ;len--);
+       switch( split.getNameType() )
+         {
+          case Name :
+           {
+            len=split.path.len;
+           }
+          break;
+
+          case DotDotName :
+           {
+            set(path.prefix(split_dev.dev.len+len),up);
+           }
+          return;
+
+          default: return;
+         }
       }
 
     set(path.prefix(split_dev.dev.len+len),up);
@@ -185,7 +200,7 @@ void FileName::setRel(StrLen path,SplitPathName split_file)
  {
   if( split_file.no_path )
     {
-     ulen len=path.len+split_file.name.len;
+     ulen len=LenAdd(path.len,split_file.name.len);
 
      Out out(buf,len);
 
@@ -253,19 +268,23 @@ void FileName::setRel(StrLen path,SplitPathName split_file)
 
      // count length
 
-     ulen len=path.len;
+     ULenSat len=path.len;
 
      len+=3*up;
 
      for(ulen i=list.getLen()-1; i ;i--) len+=list[i].len+1;
 
-     off=len;
+     ulen off_=len.value;
 
      len+=list[0].len;
 
+     if( !len ) return;
+
+     off=off_;
+
      // build
 
-     Out out(buf,len);
+     Out out(buf,len.value);
 
      out(path);
 

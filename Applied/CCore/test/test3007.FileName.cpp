@@ -65,6 +65,12 @@ bool Testit<3007>::Main()
 
   test("D:/home/","../d1/d2/d3/./../.././f");
 
+  test("D:/home/","../../d1/d2/d3/./../.././f");
+
+  test("D:../home/","../d1/d2/d3/./../.././f");
+
+  test("D:../home/","../../d1/d2/d3/./../.././f");
+
   return true;
  }
 
