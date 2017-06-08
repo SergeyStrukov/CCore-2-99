@@ -127,7 +127,7 @@ struct SHA1Param : SHA32Word
 
     static Word Func4(Word b,Word c,Word d) { return Word( (b^c^d)+0xCA62C1D6u ); }
 
-    static const ulen RunLen = 20 ;
+    static constexpr ulen RunLen = 20 ;
 
     template <Word Func(Word,Word,Word)>
     static void Run(Word &a,Word &b,Word &c,Word &d,Word &e,Word w)

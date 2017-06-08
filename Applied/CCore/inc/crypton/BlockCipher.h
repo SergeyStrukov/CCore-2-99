@@ -28,7 +28,7 @@ void GuardNoCipherKey();
 /* concept CipherFuncType<T> */
 
 template <NothrowDtorType T>
-concept bool CipherFuncType = requires(T func,const uint8 *src,uint8 *dst)
+concept bool CipherFuncType = requires(T &func,const uint8 *src,uint8 *dst)
  {
   { T::BlockLen } -> ulen ;
   { T::KeyLen } -> ulen ;
@@ -82,9 +82,9 @@ class BlockCipher : NoCopy
 
    BlockCipher() { unkey(); }
 
-   ~BlockCipher() { unkey(); }
+   ~BlockCipher() { func.unkey(); }
 
-   explicit BlockCipher(const uint8 src[KeyLen]) : ok(false) { key(src); }
+   explicit BlockCipher(const uint8 src[KeyLen]) : BlockCipher() { key(src); }
 
    // methods
 

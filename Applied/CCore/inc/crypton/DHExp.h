@@ -575,7 +575,7 @@ void DHExp<DHMod,Algo>::pow(const uint8 x[GLen],uint8 gx[GLen])
 
 /* concept DHExpType<T> */
 
-template <class T>
+template <NothrowDtorType T>
 concept bool DHExpType = requires(T &obj,const uint8 *a,const uint8 *x,uint8 *y)
  {
   { T::GLen } -> ulen ;

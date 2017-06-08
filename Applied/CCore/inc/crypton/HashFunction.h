@@ -28,7 +28,7 @@ void GuardNoHashKey();
 /* concept HashFuncType<T> */
 
 template <NothrowDtorType T>
-concept bool HashFuncType = requires(T func,const uint8 *data,ulen len,uint8 *digest)
+concept bool HashFuncType = NothrowCopyableType<T> && requires(T &func,const uint8 *data,ulen len,uint8 *digest)
  {
   { T::DigestLen } -> ulen ;
   { T::BlockLen } -> ulen ;
